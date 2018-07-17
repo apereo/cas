@@ -1,9 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -27,6 +23,10 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.SurrogateSessionExpirationPolicy;
 import org.apereo.cas.util.io.CommunicationsManager;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -146,6 +146,7 @@ public class SurrogateAuthenticationConfiguration {
     public PrincipalElectionStrategy principalElectionStrategy() {
         return new SurrogatePrincipalElectionStrategy();
     }
+
     @Bean
     public AuditPrincipalIdProvider surrogateAuditPrincipalIdProvider() {
         return new SurrogateAuditPrincipalIdProvider();

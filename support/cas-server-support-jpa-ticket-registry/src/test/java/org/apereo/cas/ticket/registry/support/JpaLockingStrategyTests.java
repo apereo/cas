@@ -1,8 +1,5 @@
 package org.apereo.cas.ticket.registry.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
@@ -24,6 +21,9 @@ import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRe
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
@@ -108,15 +108,31 @@ public class JpaLockingStrategyTests {
     @Qualifier("dataSourceTicket")
     private DataSource dataSource;
 
-    @TestConfiguration
-    public static class JpaTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
+    private static void testConcurrency(final ExecutorService executor,
+                                        final Collection<LockingStrategy> locks) throws Exception {
+        val lockers = new ArrayList<Locker>(locks.size());
+        lockers.addAll(locks.stream().map(Locker::new).collect(Collectors.toList()));
 
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
+        val lockCount = executor.invokeAll(lockers).stream().filter(result -> {
+            try {
+                return result.get();
+            } catch (final InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }).count();
+        assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
+
+        val releasers = new ArrayList<Releaser>(locks.size());
+
+        releasers.addAll(locks.stream().map(Releaser::new).collect(Collectors.toList()));
+        val releaseCount = executor.invokeAll(lockers).stream().filter(result -> {
+            try {
+                return result.get();
+            } catch (final InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }).count();
+        assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);
     }
 
     /**
@@ -234,31 +250,15 @@ public class JpaLockingStrategyTests {
         return (String) results.get(0).get("unique_id");
     }
 
-    private static void testConcurrency(final ExecutorService executor,
-                                        final Collection<LockingStrategy> locks) throws Exception {
-        val lockers = new ArrayList<Locker>(locks.size());
-        lockers.addAll(locks.stream().map(Locker::new).collect(Collectors.toList()));
+    @TestConfiguration
+    public static class JpaTestConfiguration implements InitializingBean {
+        @Autowired
+        protected ApplicationContext applicationContext;
 
-        val lockCount = executor.invokeAll(lockers).stream().filter(result -> {
-            try {
-                return result.get();
-            } catch (final InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e.getMessage(), e);
-            }
-        }).count();
-        assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
-
-        val releasers = new ArrayList<Releaser>(locks.size());
-
-        releasers.addAll(locks.stream().map(Releaser::new).collect(Collectors.toList()));
-        val releaseCount = executor.invokeAll(lockers).stream().filter(result -> {
-            try {
-                return result.get();
-            } catch (final InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e.getMessage(), e);
-            }
-        }).count();
-        assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);
+        @Override
+        public void afterPropertiesSet() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
     }
 
     private static class TransactionalLockInvocationHandler implements InvocationHandler {

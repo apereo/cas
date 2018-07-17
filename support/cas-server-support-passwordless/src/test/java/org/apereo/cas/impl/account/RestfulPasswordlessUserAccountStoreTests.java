@@ -1,8 +1,5 @@
 package org.apereo.cas.impl.account;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -29,6 +26,9 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

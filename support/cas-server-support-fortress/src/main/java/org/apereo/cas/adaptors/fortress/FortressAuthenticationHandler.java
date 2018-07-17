@@ -1,17 +1,18 @@
 package org.apereo.cas.adaptors.fortress;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.directory.fortress.core.AccessMgr;
-import org.apache.directory.fortress.core.model.Session;
-import org.apache.directory.fortress.core.model.User;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.directory.fortress.core.AccessMgr;
+import org.apache.directory.fortress.core.model.Session;
+import org.apache.directory.fortress.core.model.User;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.xml.bind.JAXBContext;

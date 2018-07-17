@@ -1,12 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -28,6 +21,14 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -131,6 +132,37 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         this.localeParamName = localeParamName;
         this.themeParamName = themeParamName;
         this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
+    }
+
+    /**
+     * Determine if request has errors.
+     *
+     * @param request the request
+     * @param status  the status
+     * @return the optional model and view, if request is an error.
+     */
+    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
+        val params = request.getParameterMap();
+        if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description") || params.containsKey("error_message")) {
+            val model = new HashMap<String, Object>();
+            if (params.containsKey("error_code")) {
+                model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));
+            } else {
+                model.put("code", status);
+            }
+            model.put("error", StringEscapeUtils.escapeHtml4(request.getParameter("error")));
+            model.put("reason", StringEscapeUtils.escapeHtml4(request.getParameter("error_reason")));
+            if (params.containsKey("error_description")) {
+                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_description")));
+            } else if (params.containsKey("error_message")) {
+                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_message")));
+            }
+            model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
+            model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
+            LOGGER.debug("Delegation request has failed. Details are [{}]", model);
+            return Optional.of(new ModelAndView("casPac4jStopWebflow", model));
+        }
+        return Optional.empty();
     }
 
     @Override
@@ -305,7 +337,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return Optional.of(p);
     }
 
-
     /**
      * Get a valid CSS class for the given provider name.
      *
@@ -328,37 +359,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
      */
     protected Event stopWebflow() {
         return new Event(this, CasWebflowConstants.TRANSITION_ID_STOP);
-    }
-
-    /**
-     * Determine if request has errors.
-     *
-     * @param request the request
-     * @param status  the status
-     * @return the optional model and view, if request is an error.
-     */
-    public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
-        val params = request.getParameterMap();
-        if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description") || params.containsKey("error_message")) {
-            val model = new HashMap<String, Object>();
-            if (params.containsKey("error_code")) {
-                model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));
-            } else {
-                model.put("code", status);
-            }
-            model.put("error", StringEscapeUtils.escapeHtml4(request.getParameter("error")));
-            model.put("reason", StringEscapeUtils.escapeHtml4(request.getParameter("error_reason")));
-            if (params.containsKey("error_description")) {
-                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_description")));
-            } else if (params.containsKey("error_message")) {
-                model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_message")));
-            }
-            model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
-            model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
-            LOGGER.debug("Delegation request has failed. Details are [{}]", model);
-            return Optional.of(new ModelAndView("casPac4jStopWebflow", model));
-        }
-        return Optional.empty();
     }
 
     /**

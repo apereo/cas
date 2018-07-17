@@ -1,13 +1,13 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import lombok.val;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapTestUtils;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.ldaptive.LdapAttribute;
 import org.springframework.core.io.ClassPathResource;
 

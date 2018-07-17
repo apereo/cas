@@ -1,12 +1,12 @@
 package org.apereo.cas.audit;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.junit.Test;
 import org.junit.runner.RunWith;

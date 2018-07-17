@@ -1,9 +1,9 @@
 package org.apereo.cas.pm;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import lombok.Getter;
 
 /**
  * Raised by {@link PasswordManagementService} if it is also responsible for validating

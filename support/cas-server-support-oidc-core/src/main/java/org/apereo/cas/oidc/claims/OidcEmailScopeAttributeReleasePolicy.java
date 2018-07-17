@@ -1,8 +1,9 @@
 package org.apereo.cas.oidc.claims;
 
+import org.apereo.cas.oidc.OidcConstants;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.oidc.OidcConstants;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,10 +1,11 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 /**

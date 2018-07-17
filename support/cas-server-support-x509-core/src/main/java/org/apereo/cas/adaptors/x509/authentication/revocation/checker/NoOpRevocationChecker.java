@@ -17,8 +17,6 @@ public class NoOpRevocationChecker implements RevocationChecker {
      * NO-OP check implementation.
      *
      * @param certificate Certificate to check.
-     *
-     *
      */
     @Override
     public void check(final X509Certificate certificate) {

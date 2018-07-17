@@ -1,14 +1,14 @@
 package org.apereo.cas.support.geo.google;
 
-import lombok.val;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.support.geo.AbstractGeoLocationService;
 
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.model.LatLng;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.support.geo.AbstractGeoLocationService;
+import lombok.val;
 
 import java.net.InetAddress;
 import java.util.Arrays;

@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
-import lombok.val;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.util.ResourceUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
-import org.apereo.cas.util.ResourceUtils;
+import lombok.val;
 import org.springframework.core.io.Resource;
 
 import java.util.HashMap;
@@ -30,19 +30,6 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
     }
 
     @SneakyThrows
-    @Override
-    public boolean registerAccountFor(final String uid, final String token) {
-        if (getAccountValidator().isValid(uid, token)) {
-            val yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            val file = jsonResource.getFile();
-            this.devices.put(uid, getCipherExecutor().encode(yubikeyPublicId));
-            MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
-            return true;
-        }
-        return false;
-    }
-
-    @SneakyThrows
     private static Map<String, String> getDevicesFromJsonResource(final Resource jsonResource) {
         if (!ResourceUtils.doesResourceExist(jsonResource)) {
             val res = jsonResource.getFile().createNewFile();
@@ -59,5 +46,18 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
             LOGGER.warn("JSON resource @ [{}] does not exist", jsonResource);
         }
         return new HashMap<>(0);
+    }
+
+    @SneakyThrows
+    @Override
+    public boolean registerAccountFor(final String uid, final String token) {
+        if (getAccountValidator().isValid(uid, token)) {
+            val yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            val file = jsonResource.getFile();
+            this.devices.put(uid, getCipherExecutor().encode(yubikeyPublicId));
+            MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
+            return true;
+        }
+        return false;
     }
 }

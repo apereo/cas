@@ -1,14 +1,14 @@
 package org.apereo.cas.web.flow.action;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -43,7 +43,7 @@ public class SurrogateAuthorizationAction extends AbstractAction {
                     .build();
                 val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
                 accessResult.throwExceptionIfNeeded();
-                
+
                 return success();
             }
             return null;

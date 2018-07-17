@@ -1,9 +1,5 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
@@ -32,6 +28,10 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.CookieUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -101,13 +101,18 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
             webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties,
             ticketGrantingTicketCookieGenerator);
-        
+
         this.oAuthCodeFactory = oAuthCodeFactory;
         this.consentApprovalViewResolver = consentApprovalViewResolver;
         this.authenticationBuilder = authenticationBuilder;
         this.oauthAuthorizationResponseBuilders = oauthAuthorizationResponseBuilders;
         this.oauthRequestValidators = oauthRequestValidators;
         this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
+    }
+
+    private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
+        val opt = manager.get(true);
+        return opt.isPresent();
     }
 
     /**
@@ -167,11 +172,6 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
-    }
-
-    private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
-        val opt = manager.get(true);
-        return opt.isPresent();
     }
 
     /**

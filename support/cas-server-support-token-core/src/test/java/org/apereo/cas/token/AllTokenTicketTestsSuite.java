@@ -1,6 +1,7 @@
 package org.apereo.cas.token;
 
 import org.apereo.cas.token.cipher.TokenTicketCipherExecutorTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

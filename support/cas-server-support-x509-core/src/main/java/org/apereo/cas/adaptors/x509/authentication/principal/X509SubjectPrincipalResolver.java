@@ -1,17 +1,18 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.cryptacular.x509.dn.AttributeType;
 import org.cryptacular.x509.dn.NameReader;
 import org.cryptacular.x509.dn.RDNSequence;
 import org.cryptacular.x509.dn.StandardAttributeType;
+
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,33 +81,6 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
     }
 
     /**
-     * Replaces placeholders in the descriptor with values extracted from attribute
-     * values in relative distinguished name components of the DN.
-     *
-     * @param certificate X.509 certificate credential.
-     * @return Resolved principal ID.
-     */
-    @Override
-    protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        LOGGER.debug("Resolving principal for [{}]", certificate);
-        val sb = new StringBuffer();
-        val m = ATTR_PATTERN.matcher(this.descriptor);
-        val attrMap = new HashMap<String, AttributeContext>();
-        val rdnSequence = new NameReader(certificate).readSubject();
-        while (m.find()) {
-            val name = m.group(1);
-            if (!attrMap.containsKey(name)) {
-                val values = getAttributeValues(rdnSequence, StandardAttributeType.fromName(name));
-                attrMap.put(name, new AttributeContext(values));
-            }
-            val context = attrMap.get(name);
-            m.appendReplacement(sb, context.nextValue());
-        }
-        m.appendTail(sb);
-        return sb.toString();
-    }
-
-    /**
      * Gets the values of the given attribute contained in the DN.
      * <p>
      * <p><strong>NOTE:</strong> no escaping is done on special characters in the
@@ -133,11 +107,37 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         return values.toArray(new String[0]);
     }
 
+    /**
+     * Replaces placeholders in the descriptor with values extracted from attribute
+     * values in relative distinguished name components of the DN.
+     *
+     * @param certificate X.509 certificate credential.
+     * @return Resolved principal ID.
+     */
+    @Override
+    protected String resolvePrincipalInternal(final X509Certificate certificate) {
+        LOGGER.debug("Resolving principal for [{}]", certificate);
+        val sb = new StringBuffer();
+        val m = ATTR_PATTERN.matcher(this.descriptor);
+        val attrMap = new HashMap<String, AttributeContext>();
+        val rdnSequence = new NameReader(certificate).readSubject();
+        while (m.find()) {
+            val name = m.group(1);
+            if (!attrMap.containsKey(name)) {
+                val values = getAttributeValues(rdnSequence, StandardAttributeType.fromName(name));
+                attrMap.put(name, new AttributeContext(values));
+            }
+            val context = attrMap.get(name);
+            m.appendReplacement(sb, context.nextValue());
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
     private static class AttributeContext {
 
-        private int currentIndex;
-
         private final Object[] values;
+        private int currentIndex;
 
         /**
          * Instantiates a new attribute context.

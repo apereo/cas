@@ -17,7 +17,7 @@ public abstract class AbstractInspektrAuditHandlerInterceptorAdapter extends Abs
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
             authenticationFailureCode, auditTrailManager, applicationCode);
     }
-    
+
     @Override
     protected void recordThrottle(final HttpServletRequest request) {
         super.recordThrottle(request);

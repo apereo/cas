@@ -1,13 +1,14 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import lombok.val;
+import org.apereo.cas.CipherExecutor;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CipherExecutor;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
+import java.io.Serializable;
 
 /**
  * This is {@link BaseU2FDeviceRepository}.

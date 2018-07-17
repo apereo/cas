@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.trusted.authentication.handler.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
 public class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
     private final PrincipalBearingCredentialsAuthenticationHandler handler = new PrincipalBearingCredentialsAuthenticationHandler("", null, null);
+
     /**
      * When the credentials bear a Principal, succeed the authentication.
      */

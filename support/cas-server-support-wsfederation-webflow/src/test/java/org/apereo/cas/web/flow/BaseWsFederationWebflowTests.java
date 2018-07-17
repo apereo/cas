@@ -18,6 +18,7 @@ import org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAu
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.config.WsFederationAuthenticationWebflowConfiguration;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

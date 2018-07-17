@@ -1,13 +1,12 @@
 package org.apereo.cas.support.pac4j.config;
 
-import lombok.val;
-
 import com.github.scribejava.core.model.OAuth1RequestToken;
+import lombok.val;
 import org.junit.Test;
 
 import java.util.HashMap;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * This is Pac4jJacksonTests.

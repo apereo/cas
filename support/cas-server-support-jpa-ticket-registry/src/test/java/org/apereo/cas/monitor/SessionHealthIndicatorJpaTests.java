@@ -1,7 +1,5 @@
 package org.apereo.cas.monitor;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -32,6 +30,9 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.SchedulingUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
@@ -93,14 +94,17 @@ public class SessionHealthIndicatorJpaTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry jpaRegistry;
 
-    @TestConfiguration
-    public static class JpaTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+    private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
+        for (var i = 0; i < tgtCount; i++) {
+            val ticket = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"), CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
+            registry.addTicket(ticket);
+            val testService = RegisteredServiceTestUtils.getService("junit");
+            for (var j = 0; j < stCount; j++) {
+                registry.addTicket(ticket.grantServiceTicket(GENERATOR.getNewTicketId("ST"),
+                    testService,
+                    TEST_EXP_POLICY,
+                    false, true));
+            }
         }
     }
 
@@ -114,17 +118,14 @@ public class SessionHealthIndicatorJpaTests {
         assertEquals(Status.UP, status.getStatus());
     }
 
-    private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {
-        for (var i = 0; i < tgtCount; i++) {
-            val ticket = new TicketGrantingTicketImpl(GENERATOR.getNewTicketId("TGT"), CoreAuthenticationTestUtils.getAuthentication(), TEST_EXP_POLICY);
-            registry.addTicket(ticket);
-            val testService = RegisteredServiceTestUtils.getService("junit");
-            for (var j = 0; j < stCount; j++) {
-                registry.addTicket(ticket.grantServiceTicket(GENERATOR.getNewTicketId("ST"),
-                    testService,
-                    TEST_EXP_POLICY,
-                    false, true));
-            }
+    @TestConfiguration
+    public static class JpaTestConfiguration implements InitializingBean {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @Override
+        public void afterPropertiesSet() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
 }

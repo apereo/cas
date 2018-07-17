@@ -1,6 +1,5 @@
 package org.apereo.cas.web;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
@@ -13,6 +12,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -65,9 +66,9 @@ public class ServiceValidateController extends AbstractServiceValidateController
     protected void prepareForTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
         super.prepareForTicketValidation(request, service, serviceTicketId);
         LOGGER.debug("Preparing to validate ticket [{}] for service [{}] via [{}]. Do note that this validation request "
-                        + "is not equipped to release principal attributes to applications. To access the authenticated "
-                        + "principal along with attributes, invoke the [{}] endpoint instead.",
-                CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE,
-                serviceTicketId, service, CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3);
+                + "is not equipped to release principal attributes to applications. To access the authenticated "
+                + "principal along with attributes, invoke the [{}] endpoint instead.",
+            CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE,
+            serviceTicketId, service, CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3);
     }
 }

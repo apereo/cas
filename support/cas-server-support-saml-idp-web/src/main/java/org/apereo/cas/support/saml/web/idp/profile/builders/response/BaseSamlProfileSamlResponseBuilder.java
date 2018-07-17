@@ -1,9 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -14,6 +10,10 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.velocity.app.VelocityEngine;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
@@ -37,17 +37,14 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
     extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
-
-    /**
-     * The Saml object encoder.
-     */
-    protected SamlIdPObjectSigner samlObjectSigner;
-
     /**
      * The Velocity engine factory.
      */
     protected final VelocityEngine velocityEngineFactory;
-
+    /**
+     * The Saml object encoder.
+     */
+    protected SamlIdPObjectSigner samlObjectSigner;
     /**
      * CAS settings.
      */
@@ -55,7 +52,6 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
     protected CasConfigurationProperties casProperties;
 
     private final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
-
     private final SamlObjectEncrypter samlObjectEncrypter;
 
     public BaseSamlProfileSamlResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,

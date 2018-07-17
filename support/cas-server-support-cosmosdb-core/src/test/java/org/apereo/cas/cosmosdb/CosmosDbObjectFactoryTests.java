@@ -1,8 +1,8 @@
 package org.apereo.cas.cosmosdb;
 
-import lombok.val;
-
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

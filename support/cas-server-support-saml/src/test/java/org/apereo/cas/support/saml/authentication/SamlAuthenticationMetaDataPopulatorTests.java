@@ -1,14 +1,14 @@
 package org.apereo.cas.support.saml.authentication;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.junit.Test;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.util.HashMap;
 

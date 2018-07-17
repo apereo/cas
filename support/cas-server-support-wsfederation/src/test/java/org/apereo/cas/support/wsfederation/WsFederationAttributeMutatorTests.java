@@ -13,6 +13,7 @@ import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link WsFederationAttributeMutator}.
+ *
  * @author John Gasper
  * @since 4.2.0
  */
@@ -28,7 +29,7 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
         val values = new ArrayList<Object>();
         values.add("test@example.com");
         attributes.put(UPN_PARAM, values);
-        
+
         val instance = new WsFederationAttributeMutatorImpl();
         instance.modifyAttributes(attributes);
 

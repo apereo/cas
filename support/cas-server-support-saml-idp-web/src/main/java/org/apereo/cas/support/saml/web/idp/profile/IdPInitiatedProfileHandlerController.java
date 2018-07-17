@@ -1,13 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
-import lombok.val;
-
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -22,6 +14,14 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.util.CommonUtils;
 import org.joda.time.DateTime;
 import org.joda.time.chrono.ISOChronology;
@@ -49,7 +49,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHandlerController {
-    
+
     public IdPInitiatedProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
                                                 final ParserPool parserPool,
                                                 final AuthenticationSystemSupport authenticationSystemSupport,
@@ -62,10 +62,10 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
                                                 final SamlObjectSignatureValidator samlObjectSignatureValidator,
                                                 final Service callbackService) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport,
-                servicesManager, webApplicationServiceFactory,
-                samlRegisteredServiceCachingMetadataResolver,
-                configBean, responseBuilder, casProperties,
-                samlObjectSignatureValidator, callbackService);
+            servicesManager, webApplicationServiceFactory,
+            samlRegisteredServiceCachingMetadataResolver,
+            configBean, responseBuilder, casProperties,
+            samlObjectSignatureValidator, callbackService);
     }
 
     /**
@@ -131,7 +131,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
 
         if (NumberUtils.isCreatable(time)) {
             authnRequest.setIssueInstant(new DateTime(TimeUnit.SECONDS.convert(Long.parseLong(time), TimeUnit.MILLISECONDS),
-                    ISOChronology.getInstanceUTC()));
+                ISOChronology.getInstanceUTC()));
         } else {
             authnRequest.setIssueInstant(new DateTime(DateTime.now(), ISOChronology.getInstanceUTC()));
         }
@@ -145,7 +145,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
 
         if (facade.isAuthnRequestsSigned()) {
             samlObjectSigner.encode(authnRequest, registeredService,
-                    facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
+                facade, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest);
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);

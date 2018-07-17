@@ -1,11 +1,11 @@
 package org.apereo.cas.support.wsfederation.web;
 
-import lombok.val;
-
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 import org.apereo.cas.util.HttpRequestUtils;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;

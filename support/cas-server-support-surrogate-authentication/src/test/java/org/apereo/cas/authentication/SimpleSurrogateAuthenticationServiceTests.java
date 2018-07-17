@@ -1,11 +1,11 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

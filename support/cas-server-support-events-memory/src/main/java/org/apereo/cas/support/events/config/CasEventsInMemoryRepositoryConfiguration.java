@@ -1,12 +1,13 @@
 package org.apereo.cas.support.events.config;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.dao.InMemoryCasEventRepository;
+
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,18 +29,18 @@ public class CasEventsInMemoryRepositoryConfiguration {
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1_000_000;
     private static final long EXPIRATION_TIME = 2;
-    
+
     @Bean
     public CasEventRepository casEventRepository() {
         final LoadingCache<String, CasEvent> storage = Caffeine.newBuilder()
-                .initialCapacity(INITIAL_CACHE_SIZE)
-                .maximumSize(MAX_CACHE_SIZE)
-                .recordStats()
-                .expireAfterWrite(EXPIRATION_TIME, TimeUnit.HOURS)
-                .build(s -> {
-                    LOGGER.error("Load operation of the cache is not supported.");
-                    return null;
-                });
+            .initialCapacity(INITIAL_CACHE_SIZE)
+            .maximumSize(MAX_CACHE_SIZE)
+            .recordStats()
+            .expireAfterWrite(EXPIRATION_TIME, TimeUnit.HOURS)
+            .build(s -> {
+                LOGGER.error("Load operation of the cache is not supported.");
+                return null;
+            });
         LOGGER.debug("Created an in-memory event repository to store CAS events for [{}] hours", EXPIRATION_TIME);
         return new InMemoryCasEventRepository(storage);
     }

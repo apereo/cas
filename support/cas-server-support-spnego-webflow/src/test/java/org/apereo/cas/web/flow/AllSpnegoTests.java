@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.web.flow.client.LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests;
 import org.apereo.cas.web.flow.client.LdapSpnegoKnownClientSystemsFilterActionTests;
 import org.apereo.cas.web.flow.client.SpnegoKnownClientSystemsFilterActionTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

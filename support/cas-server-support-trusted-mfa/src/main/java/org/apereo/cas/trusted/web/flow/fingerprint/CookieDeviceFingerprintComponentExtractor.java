@@ -1,13 +1,13 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
-import lombok.val;
+import org.apereo.cas.util.gen.RandomStringGenerator;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.apereo.cas.util.gen.RandomStringGenerator;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.apereo.cas.web.support.WebUtils;
+import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;

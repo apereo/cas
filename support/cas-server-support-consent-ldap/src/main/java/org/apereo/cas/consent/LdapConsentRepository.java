@@ -1,16 +1,16 @@
 package org.apereo.cas.consent;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties.Ldap;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -44,6 +44,27 @@ public class LdapConsentRepository implements ConsentRepository {
         this.connectionFactory = connectionFactory;
         this.ldap = ldap;
         this.searchFilter = '(' + this.ldap.getSearchFilter() + ')';
+    }
+
+    private static ConsentDecision mapFromJson(final String json) {
+        try {
+            LOGGER.trace("Mapping JSON value [{}] to consent object", json);
+            return MAPPER.readValue(json, ConsentDecision.class);
+        } catch (final IOException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private static String mapToJson(final ConsentDecision consent) {
+        try {
+            val json = MAPPER.writeValueAsString(consent);
+            LOGGER.trace("Transformed consent object [{}] as JSON value [{}]", consent, json);
+            return json;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     @Override
@@ -124,7 +145,6 @@ public class LdapConsentRepository implements ConsentRepository {
         }
         return false;
     }
-
 
     /**
      * Modifies the consent decisions attribute on the entry.
@@ -240,26 +260,5 @@ public class LdapConsentRepository implements ConsentRepository {
             LOGGER.debug(e.getMessage(), e);
         }
         return new HashSet<>(0);
-    }
-
-    private static ConsentDecision mapFromJson(final String json) {
-        try {
-            LOGGER.trace("Mapping JSON value [{}] to consent object", json);
-            return MAPPER.readValue(json, ConsentDecision.class);
-        } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    private static String mapToJson(final ConsentDecision consent) {
-        try {
-            val json = MAPPER.writeValueAsString(consent);
-            LOGGER.trace("Transformed consent object [{}] as JSON value [{}]", consent, json);
-            return json;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
     }
 }

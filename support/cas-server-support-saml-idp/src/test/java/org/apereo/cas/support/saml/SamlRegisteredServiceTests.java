@@ -1,10 +1,5 @@
 package org.apereo.cas.support.saml;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultServicesManager;
@@ -15,8 +10,13 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
@@ -57,8 +57,8 @@ public class SamlRegisteredServiceTests {
         service.setMetadataLocation(METADATA_LOCATION);
 
         val dao = new JsonServiceRegistry(RESOURCE, false,
-                mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
-                     new DefaultRegisteredServiceResourceNamingStrategy());
+            mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
+            new DefaultRegisteredServiceResourceNamingStrategy());
         dao.save(service);
         dao.load();
     }
@@ -75,8 +75,8 @@ public class SamlRegisteredServiceTests {
         service.setAttributeReleasePolicy(chain);
 
         val dao = new JsonServiceRegistry(RESOURCE, false,
-                mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
-                     new DefaultRegisteredServiceResourceNamingStrategy());
+            mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy(),
+            new DefaultRegisteredServiceResourceNamingStrategy());
         dao.save(service);
         dao.load();
     }
@@ -94,7 +94,7 @@ public class SamlRegisteredServiceTests {
         impl.load();
 
         val s = impl.findServiceBy(new WebApplicationServiceFactory()
-                .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));
+            .createService("http://mmoayyed.unicon.net:8081/sp/saml/SSO"));
         assertNotNull(s);
     }
 

@@ -1,9 +1,9 @@
 package org.apereo.cas.interrupt;
 
-import lombok.val;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 

@@ -1,14 +1,15 @@
 package org.apereo.cas.support.pac4j.authentication;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.pac4j.cas.config.CasProtocol;
 import org.springframework.boot.test.context.SpringBootTest;

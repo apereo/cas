@@ -1,14 +1,14 @@
 package org.apereo.cas.support.rest;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.ticket.InvalidTicketException;
-import org.junit.Test;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

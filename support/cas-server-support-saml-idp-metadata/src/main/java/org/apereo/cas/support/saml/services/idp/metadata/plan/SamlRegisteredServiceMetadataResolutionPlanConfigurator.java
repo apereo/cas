@@ -13,5 +13,6 @@ public interface SamlRegisteredServiceMetadataResolutionPlanConfigurator {
      *
      * @param plan the plan
      */
-    default void configureMetadataResolutionPlan(final SamlRegisteredServiceMetadataResolutionPlan plan) {}
+    default void configureMetadataResolutionPlan(final SamlRegisteredServiceMetadataResolutionPlan plan) {
+    }
 }

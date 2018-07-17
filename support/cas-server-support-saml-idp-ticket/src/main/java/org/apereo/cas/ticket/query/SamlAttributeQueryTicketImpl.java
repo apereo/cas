@@ -1,9 +1,5 @@
 package org.apereo.cas.ticket.query;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;
@@ -11,6 +7,13 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -18,7 +21,6 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import lombok.Getter;
 
 /**
  * This is {@link SamlAttributeQueryTicketImpl}.
@@ -57,7 +59,7 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
     @Lob
     @Column(name = "SERVICE", nullable = false)
     private Service service;
-    
+
 
     /**
      * Constructs saml attribute query ticket.
@@ -83,7 +85,7 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
     public boolean isFromNewLogin() {
         return true;
     }
-    
+
     @Override
     public boolean isValidFor(final Service serviceToValidate) {
         update();
@@ -99,7 +101,7 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
     public Authentication getAuthentication() {
         return this.ticketGrantingTicket.getAuthentication();
     }
-    
+
     @Override
     public String getPrefix() {
         return SamlAttributeQueryTicket.PREFIX;

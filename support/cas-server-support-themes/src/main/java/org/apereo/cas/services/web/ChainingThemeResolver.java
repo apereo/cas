@@ -1,8 +1,7 @@
 package org.apereo.cas.services.web;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 
@@ -20,7 +19,7 @@ import java.util.Set;
 @Slf4j
 public class ChainingThemeResolver extends AbstractThemeResolver {
 
-    
+
     private final Set<ThemeResolver> chain = new LinkedHashSet<>();
 
     /**

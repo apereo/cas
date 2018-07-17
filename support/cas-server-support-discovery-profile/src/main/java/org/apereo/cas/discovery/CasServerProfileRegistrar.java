@@ -1,11 +1,5 @@
 package org.apereo.cas.discovery;
 
-import com.google.common.base.Predicates;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -15,6 +9,13 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
+
+import com.google.common.base.Predicates;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
@@ -45,12 +46,11 @@ import java.util.stream.Collectors;
 @Setter
 @RequiredArgsConstructor
 public class CasServerProfileRegistrar implements ApplicationContextAware {
-    private ApplicationContext applicationContext;
-
     private final ServicesManager servicesManager;
     private final CasConfigurationProperties casProperties;
     private final Clients clients;
     private final Set<String> availableAttributes;
+    private ApplicationContext applicationContext;
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesActive() {
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);

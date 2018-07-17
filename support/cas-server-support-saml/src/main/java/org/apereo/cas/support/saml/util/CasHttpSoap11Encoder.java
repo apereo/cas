@@ -1,9 +1,8 @@
 package org.apereo.cas.support.saml.util;
 
-import lombok.val;
-
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.saml1.binding.encoding.impl.HTTPSOAP11Encoder;
@@ -29,14 +28,14 @@ public class CasHttpSoap11Encoder extends HTTPSOAP11Encoder {
         val builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
         val envBuilder =
-                (SOAPObjectBuilder<Envelope>) builderFactory.getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
+            (SOAPObjectBuilder<Envelope>) builderFactory.getBuilder(Envelope.DEFAULT_ELEMENT_NAME);
         val envelope = envBuilder.buildObject(
-                SOAPConstants.SOAP11_NS, Envelope.DEFAULT_ELEMENT_LOCAL_NAME, OPENSAML_11_SOAP_NS_PREFIX);
+            SOAPConstants.SOAP11_NS, Envelope.DEFAULT_ELEMENT_LOCAL_NAME, OPENSAML_11_SOAP_NS_PREFIX);
 
         val bodyBuilder =
-                (SOAPObjectBuilder<Body>) builderFactory.getBuilder(Body.DEFAULT_ELEMENT_NAME);
+            (SOAPObjectBuilder<Body>) builderFactory.getBuilder(Body.DEFAULT_ELEMENT_NAME);
         val body = bodyBuilder.buildObject(
-                SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, OPENSAML_11_SOAP_NS_PREFIX);
+            SOAPConstants.SOAP11_NS, Body.DEFAULT_ELEMENT_LOCAL_NAME, OPENSAML_11_SOAP_NS_PREFIX);
 
         if (!body.getUnknownXMLObjects().isEmpty()) {
             LOGGER.warn("Existing SOAP Envelope Body already contained children");

@@ -16,7 +16,7 @@ import java.util.List;
 public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperations> {
 
     private final List<MongoDbProperty> list;
-    
+
     public MongoDbPropertySource(final String context, final MongoOperations mongo) {
         super(context, mongo);
         list = getSource().findAll(MongoDbProperty.class, MongoDbProperty.class.getSimpleName());
@@ -26,11 +26,11 @@ public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperati
     public String[] getPropertyNames() {
         return list.stream().map(MongoDbProperty::getName).toArray(String[]::new);
     }
-    
+
     @Override
     public Object getProperty(final String s) {
         return list.stream().filter(prop -> prop.getName().equals(s))
-                .findFirst().map(MongoDbProperty::getValue)
-                .orElse(null);
+            .findFirst().map(MongoDbProperty::getValue)
+            .orElse(null);
     }
 }

@@ -1,10 +1,9 @@
 package org.apereo.cas.support.realm;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
 
 import javax.security.auth.callback.Callback;

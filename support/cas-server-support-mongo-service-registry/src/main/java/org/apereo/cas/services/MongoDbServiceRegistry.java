@@ -1,11 +1,11 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

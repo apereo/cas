@@ -1,7 +1,8 @@
 package org.apereo.cas.oidc.dynareg;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link OidcClientRegistrationRequestSerializer}.

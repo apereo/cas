@@ -12,7 +12,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * @since 5.0.0
  */
 public interface OAuth20CallbackAuthorizeViewResolver {
-    
+
     /**
      * Pre callback redirect.
      *

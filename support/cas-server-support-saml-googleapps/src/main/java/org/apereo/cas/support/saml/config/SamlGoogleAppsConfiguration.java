@@ -1,8 +1,5 @@
 package org.apereo.cas.support.saml.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
@@ -14,6 +11,9 @@ import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServic
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceResponseBuilder;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -71,12 +71,12 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
     public ResponseBuilder googleAccountsServiceResponseBuilder() {
         val gApps = casProperties.getGoogleApps();
         return new GoogleAccountsServiceResponseBuilder(
-                gApps.getPrivateKeyLocation(),
-                gApps.getPublicKeyLocation(),
-                gApps.getKeyAlgorithm(),
-                servicesManager,
-                googleSaml20ObjectBuilder(),
-                casProperties.getSamlCore().getSkewAllowance(),
-                casProperties.getServer().getPrefix());
+            gApps.getPrivateKeyLocation(),
+            gApps.getPublicKeyLocation(),
+            gApps.getKeyAlgorithm(),
+            servicesManager,
+            googleSaml20ObjectBuilder(),
+            casProperties.getSamlCore().getSkewAllowance(),
+            casProperties.getServer().getPrefix());
     }
 }

@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.refreshtoken;
 
-import lombok.val;
-
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 

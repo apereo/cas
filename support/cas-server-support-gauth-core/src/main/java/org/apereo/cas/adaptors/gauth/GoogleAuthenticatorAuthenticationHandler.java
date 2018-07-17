@@ -1,14 +1,8 @@
 package org.apereo.cas.adaptors.gauth;
 
-import lombok.val;
-
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -16,6 +10,12 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
+
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
@@ -32,7 +32,7 @@ import java.security.GeneralSecurityException;
 
 @Slf4j
 public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    
+
     private final IGoogleAuthenticator googleAuthenticatorInstance;
     private final OneTimeTokenRepository tokenRepository;
     private final OneTimeTokenCredentialRepository credentialRepository;

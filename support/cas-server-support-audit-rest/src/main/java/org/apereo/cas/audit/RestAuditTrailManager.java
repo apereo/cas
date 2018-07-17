@@ -1,6 +1,9 @@
 package org.apereo.cas.audit;
 
-import lombok.val;
+import org.apereo.cas.audit.spi.AuditActionContextJsonSerializer;
+import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -10,12 +13,9 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpStatus;
-import org.apereo.cas.audit.spi.AuditActionContextJsonSerializer;
-import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 
@@ -41,12 +41,10 @@ public class RestAuditTrailManager implements AuditTrailManager {
         .registerModule(new SimpleModule().setMixInAnnotation(AuditActionContext.class, AbstractAuditActionContextMixin.class));
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-    @Setter
-    private boolean asynchronous = true;
-
     private final AuditActionContextJsonSerializer serializer = new AuditActionContextJsonSerializer();
     private final AuditRestProperties properties;
+    @Setter
+    private boolean asynchronous = true;
 
     @Override
     public void record(final AuditActionContext audit) {

@@ -1,15 +1,17 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
+
 import java.nio.file.Path;
-import lombok.Getter;
 
 /**
  * Implementation of {@code ServiceRegistry} that reads services definition from YAML
@@ -57,7 +59,7 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
         super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher,
-                registeredServiceReplicationStrategy, resourceNamingStrategy);
+            registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     /**

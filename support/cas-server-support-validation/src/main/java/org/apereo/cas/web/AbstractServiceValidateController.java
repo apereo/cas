@@ -1,12 +1,5 @@
 package org.apereo.cas.web;
 
-import lombok.AllArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CentralAuthenticationService;
@@ -39,6 +32,14 @@ import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.web.support.ArgumentExtractor;
+
+import lombok.AllArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -74,30 +75,41 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private Set<CasProtocolValidationSpecification> validationSpecifications = new LinkedHashSet<>();
 
     private final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers;
-
     private final AuthenticationSystemSupport authenticationSystemSupport;
-
     private final ServicesManager servicesManager;
-
     private final CentralAuthenticationService centralAuthenticationService;
 
     private ProxyHandler proxyHandler;
-
     private final View successView;
-
     private final View failureView;
 
     private final ArgumentExtractor argumentExtractor;
-
     private final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-
     private final AuthenticationContextValidator authenticationContextValidator;
-
     private final View jsonView;
-
     private final String authnContextAttribute;
 
     private boolean renewEnabled = true;
+
+    /**
+     * Ensure that the service is found and enabled in the service registry.
+     *
+     * @param registeredService the located entry in the registry
+     * @param service           authenticating service
+     * @throws UnauthorizedServiceException if service is determined to be unauthorized
+     */
+    private static void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
+        if (registeredService == null) {
+            val msg = String.format("Service [%s] is not found in service registry.", service.getId());
+            LOGGER.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        }
+        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            val msg = String.format("ServiceManagement: Unauthorized Service Access. " + "Service [%s] is not enabled in service registry.", service.getId());
+            LOGGER.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        }
+    }
 
     /**
      * Overrideable method to determine which credentials to use to grant a
@@ -402,26 +414,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         return true;
-    }
-
-    /**
-     * Ensure that the service is found and enabled in the service registry.
-     *
-     * @param registeredService the located entry in the registry
-     * @param service           authenticating service
-     * @throws UnauthorizedServiceException if service is determined to be unauthorized
-     */
-    private static void verifyRegisteredServiceProperties(final RegisteredService registeredService, final Service service) {
-        if (registeredService == null) {
-            val msg = String.format("Service [%s] is not found in service registry.", service.getId());
-            LOGGER.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
-        }
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            val msg = String.format("ServiceManagement: Unauthorized Service Access. " + "Service [%s] is not enabled in service registry.", service.getId());
-            LOGGER.warn(msg);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
-        }
     }
 
     public View getSuccessView() {

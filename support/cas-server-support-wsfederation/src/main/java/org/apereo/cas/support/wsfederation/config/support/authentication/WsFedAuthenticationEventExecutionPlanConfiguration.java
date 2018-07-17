@@ -1,8 +1,5 @@
 package org.apereo.cas.support.wsfederation.config.support.authentication;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -20,6 +17,10 @@ import org.apereo.cas.support.wsfederation.authentication.principal.WsFederation
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
 import org.apereo.cas.web.support.DefaultCasCookieValueManager;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;

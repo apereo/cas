@@ -1,7 +1,8 @@
 package org.apereo.cas.hz;
 
-import com.hazelcast.config.DiscoveryStrategyConfig;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
+
+import com.hazelcast.config.DiscoveryStrategyConfig;
 
 /**
  * This is {@link HazelcastDiscoveryStrategy}.

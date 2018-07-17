@@ -1,9 +1,5 @@
 package org.apereo.cas.support.openid.web.mvc;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -16,6 +12,10 @@ import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.support.ArgumentExtractor;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.VerifyResponse;
 import org.openid4java.server.ServerManager;

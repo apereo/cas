@@ -1,5 +1,10 @@
 package org.apereo.cas.scim.v1;
 
+import org.apereo.cas.api.PrincipalProvisioner;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
+
 import com.unboundid.scim.data.UserResource;
 import com.unboundid.scim.schema.CoreSchema;
 import com.unboundid.scim.sdk.OAuthToken;
@@ -9,10 +14,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.api.PrincipalProvisioner;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.Principal;
 
 import javax.ws.rs.core.MediaType;
 import java.net.URI;

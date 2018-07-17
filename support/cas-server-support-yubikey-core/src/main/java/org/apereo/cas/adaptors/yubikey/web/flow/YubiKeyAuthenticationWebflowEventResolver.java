@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -8,6 +7,8 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
@@ -30,7 +31,7 @@ public class YubiKeyAuthenticationWebflowEventResolver extends BaseMultifactorAu
                                                      final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                      final MultifactorAuthenticationProviderSelector selector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
-                authenticationSelectionStrategies, selector);
+            authenticationSelectionStrategies, selector);
     }
 
     @Override
@@ -39,7 +40,7 @@ public class YubiKeyAuthenticationWebflowEventResolver extends BaseMultifactorAu
     }
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
-            resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+        resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);

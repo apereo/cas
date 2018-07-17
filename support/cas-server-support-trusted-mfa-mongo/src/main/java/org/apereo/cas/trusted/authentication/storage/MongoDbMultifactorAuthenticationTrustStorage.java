@@ -1,10 +1,10 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.val;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

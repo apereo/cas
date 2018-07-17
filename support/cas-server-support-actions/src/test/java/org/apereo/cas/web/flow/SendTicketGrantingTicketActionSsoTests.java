@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -10,10 +7,13 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -44,11 +44,11 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
     private static final String LOCALHOST_IP = "127.0.0.1";
     private static final String TEST_STRING = "test";
     private static final String SUCCESS = "success";
-    
+
     @Autowired
     @Qualifier("sendTicketGrantingTicketAction")
     private Action action;
-    
+
     private MockRequestContext context;
 
     @Before
@@ -58,7 +58,7 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
 
     @Test
     public void verifySsoSessionCookieOnRenewAsParameter() throws Exception {
-        
+
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
@@ -66,7 +66,7 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
         request.setLocalAddr(LOCALHOST_IP);
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
-        
+
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TEST_STRING);
         request.setCookies(new Cookie("TGT", "test5"));
@@ -83,14 +83,14 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
 
         val svc = mock(WebApplicationService.class);
         when(svc.getId()).thenReturn("TestSsoFalse");
-        
+
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TEST_STRING);
         request.setCookies(new Cookie("TGT", "test5"));
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
         this.context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
         this.context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, svc);
-        
+
         assertEquals(SUCCESS, action.execute(this.context).getId());
         assertEquals(0, response.getCookies().length);
     }

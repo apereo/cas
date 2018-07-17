@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import lombok.val;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.binding.encoding.impl.BaseSAML2MessageEncoder;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostSimpleSignEncoder;

@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication.surrogate;
 
+import org.apereo.cas.services.ServicesManager;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.ServicesManager;
 import org.springframework.core.io.Resource;
 
 import java.io.File;

@@ -1,11 +1,12 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
-import lombok.Builder;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+
+import lombok.Builder;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
