@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import org.apereo.cas.configuration.support.RestEndpointProperties;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.support.RestEndpointProperties;
 
 /**
  * This is {@link AuditRestProperties}.

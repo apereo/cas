@@ -1,12 +1,14 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link CasEmbeddedApacheTomcatBasicAuthenticationProperties}.

@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
-import lombok.Getter;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**

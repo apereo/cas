@@ -17,7 +17,9 @@ public class UnauthorizedSsoServiceException extends UnauthorizedServiceExceptio
      */
     private static final long serialVersionUID = 8909291297815558561L;
 
-    /** The code description. */
+    /**
+     * The code description.
+     */
     private static final String CODE = "service.not.authorized.sso";
 
     /**
@@ -31,10 +33,10 @@ public class UnauthorizedSsoServiceException extends UnauthorizedServiceExceptio
      * Instantiates a new unauthorized sso service exception.
      *
      * @param message the message
-     * @param cause the cause
+     * @param cause   the cause
      */
     public UnauthorizedSsoServiceException(final String message,
-        final Throwable cause) {
+                                           final Throwable cause) {
         super(message, cause);
     }
 

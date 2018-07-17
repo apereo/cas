@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.support.couchdb;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.support.RequiresModule;
 
 /**
  * This is {@link CouchDbServiceRegistryProperties}.

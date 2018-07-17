@@ -94,7 +94,7 @@ public interface CasWebflowConfigurer extends Ordered {
      * @return the transition
      */
     Transition createTransition(String targetState);
-    
+
     /**
      * Create evaluate action evaluate action.
      *
@@ -143,7 +143,7 @@ public interface CasWebflowConfigurer extends Ordered {
      * @param state the state
      */
     void setStartState(Flow flow, TransitionableState state);
-    
+
 
     /**
      * Create end state.

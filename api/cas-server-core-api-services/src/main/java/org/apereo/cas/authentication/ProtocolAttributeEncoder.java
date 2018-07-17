@@ -26,8 +26,9 @@ public interface ProtocolAttributeEncoder {
      * before they are released. Attributes should not be filtered
      * and removed and it is assumed that all will be returned
      * back to the service.
+     *
      * @param attributes The attribute collection that is ready to be released
-     * @param service the requesting service for which attributes are to be encoded
+     * @param service    the requesting service for which attributes are to be encoded
      * @return collection of attributes after encryption ready for release.
      * @since 4.1
      */

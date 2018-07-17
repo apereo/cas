@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;

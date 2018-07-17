@@ -1,9 +1,10 @@
 package org.apereo.cas.support.events.authentication.adaptive;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.AbstractCasEvent;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link CasRiskBasedAuthenticationEvaluationStartedEvent}.

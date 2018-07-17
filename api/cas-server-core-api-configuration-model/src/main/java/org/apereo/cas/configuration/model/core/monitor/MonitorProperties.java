@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -11,6 +9,9 @@ import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperti
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
@@ -200,7 +201,7 @@ public class MonitorProperties implements Serializable {
          * for admin status authorization and access control.
          */
         private LdapSecurity ldap = new LdapSecurity();
-        
+
         @Getter
         @Setter
         public static class JaasSecurity implements Serializable {

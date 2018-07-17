@@ -1,8 +1,9 @@
 package org.apereo.cas.support.events;
 
+import org.apereo.cas.authentication.Authentication;
+
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
 import org.springframework.context.ApplicationEvent;
 
 /**

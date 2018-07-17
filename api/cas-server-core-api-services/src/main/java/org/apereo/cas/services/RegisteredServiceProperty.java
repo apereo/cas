@@ -1,12 +1,11 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.base.Predicates;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -22,6 +21,28 @@ import java.util.function.Predicate;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceProperty extends Serializable {
+
+    /**
+     * Gets values.
+     *
+     * @return the values
+     */
+    Set<String> getValues();
+
+    /**
+     * Gets the first single value.
+     *
+     * @return the value, or null if the collection is empty.
+     */
+    String getValue();
+
+    /**
+     * Contains elements?
+     *
+     * @param value the value
+     * @return true/false
+     */
+    boolean contains(String value);
 
     /**
      * Collection of supported properties that control various functionality in CAS.
@@ -165,26 +186,4 @@ public interface RegisteredServiceProperty extends Serializable {
                     && valueFilter.test(entry.getValue().getValue()));
         }
     }
-
-    /**
-     * Gets values.
-     *
-     * @return the values
-     */
-    Set<String> getValues();
-
-    /**
-     * Gets the first single value.
-     *
-     * @return the value, or null if the collection is empty.
-     */
-    String getValue();
-
-    /**
-     * Contains elements?
-     *
-     * @param value the value
-     * @return true/false
-     */
-    boolean contains(String value);
 }

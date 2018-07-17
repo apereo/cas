@@ -6,14 +6,13 @@ package org.apereo.cas.ticket.registry.support;
  *
  * @author Marvin S. Addison
  * @since 3.3.6
- *
  */
 public interface LockingStrategy {
 
     /**
      * Attempt to acquire the lock.
      *
-     * @return  True if lock was successfully acquired, false otherwise.
+     * @return True if lock was successfully acquired, false otherwise.
      */
     boolean acquire();
 

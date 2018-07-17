@@ -15,7 +15,6 @@ public interface ContextualAuthenticationPolicyFactory<T> {
      * Creates a contextual (presumably stateful) authentication policy based on provided context data.
      *
      * @param context Context data used to create an authentication policy.
-     *
      * @return Contextual authentication policy object. The returned object should be assumed to be stateful
      * and not thread safe unless explicitly noted otherwise.
      */

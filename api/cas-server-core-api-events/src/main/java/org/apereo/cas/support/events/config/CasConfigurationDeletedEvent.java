@@ -1,9 +1,11 @@
 package org.apereo.cas.support.events.config;
 
+import org.apereo.cas.support.events.AbstractCasEvent;
+
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.events.AbstractCasEvent;
+
 import java.nio.file.Path;
 
 /**

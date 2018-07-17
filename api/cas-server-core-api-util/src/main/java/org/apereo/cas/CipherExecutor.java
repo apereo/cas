@@ -28,6 +28,33 @@ public interface CipherExecutor<I, O> {
         ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
 
     /**
+     * Factory method.
+     *
+     * @return Strongly -typed Noop {@code CipherExecutor Serializable -> Serializable}
+     */
+    static CipherExecutor<Serializable, Serializable> noOp() {
+        return NoOpCipherExecutor.getInstance();
+    }
+
+    /**
+     * Factory method.
+     *
+     * @return Strongly -typed Noop {@code CipherExecutor String -> String}
+     */
+    static CipherExecutor<String, String> noOpOfStringToString() {
+        return NoOpCipherExecutor.getInstance();
+    }
+
+    /**
+     * Factory method.
+     *
+     * @return Strongly -typed Noop {@code CipherExecutor Serializable -> String}
+     */
+    static CipherExecutor<Serializable, String> noOpOfSerializableToString() {
+        return NoOpCipherExecutor.getInstance();
+    }
+
+    /**
      * Encrypt the value. Implementations may
      * choose to also sign the final value.
      *
@@ -107,33 +134,6 @@ public interface CipherExecutor<I, O> {
      */
     default String getName() {
         return getClass().getSimpleName();
-    }
-
-    /**
-     * Factory method.
-     *
-     * @return Strongly -typed Noop {@code CipherExecutor Serializable -> Serializable}
-     */
-    static CipherExecutor<Serializable, Serializable> noOp() {
-        return NoOpCipherExecutor.getInstance();
-    }
-
-    /**
-     * Factory method.
-     *
-     * @return Strongly -typed Noop {@code CipherExecutor String -> String}
-     */
-    static CipherExecutor<String, String> noOpOfStringToString() {
-        return NoOpCipherExecutor.getInstance();
-    }
-
-    /**
-     * Factory method.
-     *
-     * @return Strongly -typed Noop {@code CipherExecutor Serializable -> String}
-     */
-    static CipherExecutor<Serializable, String> noOpOfSerializableToString() {
-        return NoOpCipherExecutor.getInstance();
     }
 
 

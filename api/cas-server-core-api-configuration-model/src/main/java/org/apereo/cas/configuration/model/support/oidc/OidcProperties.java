@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 

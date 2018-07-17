@@ -3,9 +3,10 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link RadiusMultifactorProperties}.

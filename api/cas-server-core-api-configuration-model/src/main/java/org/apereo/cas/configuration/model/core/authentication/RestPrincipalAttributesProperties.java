@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
+
 import lombok.Getter;
 import lombok.Setter;
 

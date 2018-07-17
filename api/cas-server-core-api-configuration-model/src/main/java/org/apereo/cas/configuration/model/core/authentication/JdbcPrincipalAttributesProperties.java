@@ -2,14 +2,16 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link JdbcPrincipalAttributesProperties}.

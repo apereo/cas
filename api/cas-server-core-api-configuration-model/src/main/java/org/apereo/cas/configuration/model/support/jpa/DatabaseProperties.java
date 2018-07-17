@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link DatabaseProperties}.

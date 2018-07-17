@@ -19,13 +19,14 @@ import java.nio.charset.StandardCharsets;
 @FunctionalInterface
 public interface Service extends Principal {
     Logger LOGGER = LoggerFactory.getLogger(Service.class);
-    
+
     /**
      * Sets the principal.
      *
      * @param principal the new principal
      */
-    default void setPrincipal(String principal) {}
+    default void setPrincipal(String principal) {
+    }
 
     /**
      * Whether the services matches another.

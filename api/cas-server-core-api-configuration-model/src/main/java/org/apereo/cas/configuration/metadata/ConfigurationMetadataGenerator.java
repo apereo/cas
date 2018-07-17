@@ -1,5 +1,13 @@
 package org.apereo.cas.configuration.metadata;
 
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
+import org.apereo.cas.configuration.support.RelaxedPropertyNames;
+import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -20,13 +28,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
-import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
-import org.apereo.cas.configuration.support.RelaxedPropertyNames;
-import org.apereo.cas.configuration.support.RequiredProperty;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
@@ -183,6 +184,87 @@ public class ConfigurationMetadataGenerator {
         }
     }
 
+    private Class locatePropertiesClassForType(final ClassOrInterfaceType type) {
+        if (cachedPropertiesClasses.containsKey(type.getNameAsString())) {
+            return cachedPropertiesClasses.get(type.getNameAsString());
+        }
+
+        final Predicate<String> filterInputs = s -> s.contains(type.getNameAsString());
+        final Predicate<String> filterResults = s -> s.endsWith(type.getNameAsString());
+        final var packageName = ConfigurationMetadataGenerator.class.getPackage().getName();
+        final var reflections =
+            new Reflections(new ConfigurationBuilder()
+                .filterInputsBy(filterInputs)
+                .setUrls(ClasspathHelper.forPackage(packageName))
+                .setScanners(new TypeElementsScanner()
+                        .includeFields(false)
+                        .includeMethods(false)
+                        .includeAnnotations(false)
+                        .filterResultsBy(filterResults),
+                    new SubTypesScanner(false)));
+        final Class clz = reflections.getSubTypesOf(Serializable.class).stream()
+            .filter(c -> c.getSimpleName().equalsIgnoreCase(type.getNameAsString()))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));
+        cachedPropertiesClasses.put(type.getNameAsString(), clz);
+        return clz;
+    }
+
+    private Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
+                                                        final Collection<ConfigurationMetadataProperty> groups) {
+
+        final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>();
+
+        for (final var entry : props) {
+            try {
+                final var propName = StringUtils.substringAfterLast(entry.getName(), ".");
+                final var groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
+                final var grp = groups
+                    .stream()
+                    .filter(g -> g.getName().equalsIgnoreCase(groupName))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
+
+                final var matcher = PATTERN_GENERICS.matcher(grp.getType());
+                final var className = matcher.find() ? matcher.group(1) : grp.getType();
+                final Class clazz = ClassUtils.getClass(className);
+
+
+                final var hint = new ConfigurationMetadataHint();
+                hint.setName(entry.getName());
+
+                if (clazz.isAnnotationPresent(RequiresModule.class)) {
+                    final var annotation = Arrays.stream(clazz.getAnnotations())
+                        .filter(a -> a.annotationType().equals(RequiresModule.class))
+                        .findFirst()
+                        .map(RequiresModule.class::cast)
+                        .get();
+                    final var valueHint = new ValueHint();
+                    valueHint.setValue(Stream.of(RequiresModule.class.getName(), annotation.automated()).collect(Collectors.toList()));
+                    valueHint.setDescription(annotation.name());
+                    hint.getValues().add(valueHint);
+                }
+
+                final var foundRequiredProperty = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName).spliterator(), false)
+                    .map(n -> ReflectionUtils.findField(clazz, n))
+                    .anyMatch(f -> f != null && f.isAnnotationPresent(RequiredProperty.class));
+
+                if (foundRequiredProperty) {
+                    final var valueHint = new ValueHint();
+                    valueHint.setValue(RequiredProperty.class.getName());
+                    hint.getValues().add(valueHint);
+                }
+
+                if (!hint.getValues().isEmpty()) {
+                    hints.add(hint);
+                }
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        return hints;
+    }
+
     private class FieldVisitor extends VoidVisitorAdapter<ConfigurationMetadataProperty> {
         private final Set<ConfigurationMetadataProperty> properties;
         private final Set<ConfigurationMetadataProperty> groups;
@@ -301,86 +383,5 @@ public class ConfigurationMetadataGenerator {
                     + Set.class.getSimpleName());
         }
 
-    }
-
-    private Class locatePropertiesClassForType(final ClassOrInterfaceType type) {
-        if (cachedPropertiesClasses.containsKey(type.getNameAsString())) {
-            return cachedPropertiesClasses.get(type.getNameAsString());
-        }
-
-        final Predicate<String> filterInputs = s -> s.contains(type.getNameAsString());
-        final Predicate<String> filterResults = s -> s.endsWith(type.getNameAsString());
-        final var packageName = ConfigurationMetadataGenerator.class.getPackage().getName();
-        final var reflections =
-            new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(filterInputs)
-                .setUrls(ClasspathHelper.forPackage(packageName))
-                .setScanners(new TypeElementsScanner()
-                        .includeFields(false)
-                        .includeMethods(false)
-                        .includeAnnotations(false)
-                        .filterResultsBy(filterResults),
-                    new SubTypesScanner(false)));
-        final Class clz = reflections.getSubTypesOf(Serializable.class).stream()
-            .filter(c -> c.getSimpleName().equalsIgnoreCase(type.getNameAsString()))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));
-        cachedPropertiesClasses.put(type.getNameAsString(), clz);
-        return clz;
-    }
-
-    private Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
-                                                        final Collection<ConfigurationMetadataProperty> groups) {
-
-        final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>();
-
-        for (final var entry : props) {
-            try {
-                final var propName = StringUtils.substringAfterLast(entry.getName(), ".");
-                final var groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
-                final var grp = groups
-                    .stream()
-                    .filter(g -> g.getName().equalsIgnoreCase(groupName))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
-
-                final var matcher = PATTERN_GENERICS.matcher(grp.getType());
-                final var className = matcher.find() ? matcher.group(1) : grp.getType();
-                final Class clazz = ClassUtils.getClass(className);
-
-
-                final var hint = new ConfigurationMetadataHint();
-                hint.setName(entry.getName());
-
-                if (clazz.isAnnotationPresent(RequiresModule.class)) {
-                    final var annotation = Arrays.stream(clazz.getAnnotations())
-                        .filter(a -> a.annotationType().equals(RequiresModule.class))
-                        .findFirst()
-                        .map(RequiresModule.class::cast)
-                        .get();
-                    final var valueHint = new ValueHint();
-                    valueHint.setValue(Stream.of(RequiresModule.class.getName(), annotation.automated()).collect(Collectors.toList()));
-                    valueHint.setDescription(annotation.name());
-                    hint.getValues().add(valueHint);
-                }
-
-                final var foundRequiredProperty = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName).spliterator(), false)
-                    .map(n -> ReflectionUtils.findField(clazz, n))
-                    .anyMatch(f -> f != null && f.isAnnotationPresent(RequiredProperty.class));
-
-                if (foundRequiredProperty) {
-                    final var valueHint = new ValueHint();
-                    valueHint.setValue(RequiredProperty.class.getName());
-                    hint.getValues().add(valueHint);
-                }
-
-                if (!hint.getValues().isEmpty()) {
-                    hints.add(hint);
-                }
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-            }
-        }
-        return hints;
     }
 }

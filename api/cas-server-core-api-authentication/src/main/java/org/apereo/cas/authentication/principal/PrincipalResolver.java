@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
+
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Optional;
@@ -44,7 +45,7 @@ public interface PrincipalResolver {
     default Principal resolve(Credential credential, Optional<AuthenticationHandler> handler) {
         return resolve(credential, Optional.empty(), handler);
     }
-    
+
     /**
      * Resolves a principal from the given credential using an arbitrary strategy.
      *

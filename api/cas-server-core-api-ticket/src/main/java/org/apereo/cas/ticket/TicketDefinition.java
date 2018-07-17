@@ -39,6 +39,7 @@ public interface TicketDefinition extends Ordered {
     /**
      * Returns order/priority associated with this definition.
      * Typically used in collection sorting and compare operations.
+     *
      * @return the order.
      */
     @Override

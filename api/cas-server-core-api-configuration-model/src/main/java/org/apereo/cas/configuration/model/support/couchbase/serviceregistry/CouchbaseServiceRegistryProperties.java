@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.couchbase.serviceregistry;
 
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 

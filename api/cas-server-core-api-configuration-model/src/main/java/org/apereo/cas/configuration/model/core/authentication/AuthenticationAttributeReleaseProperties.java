@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.List;
 @Setter
 public class AuthenticationAttributeReleaseProperties implements Serializable {
     private static final long serialVersionUID = 6123748197108749858L;
-    
+
     /**
      * List of authentication attributes that should never be released.
      */

@@ -1,9 +1,10 @@
 package org.apereo.cas.support.events.authentication;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationTransaction;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 

@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.core.io.Resource;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.io.Resource;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for http.client.truststore.

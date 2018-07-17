@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.sms;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link SmsProperties}.

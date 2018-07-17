@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.support.geo.googlemaps;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.model.support.geo.BaseGeoLocationProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link GoogleMapsProperties}.

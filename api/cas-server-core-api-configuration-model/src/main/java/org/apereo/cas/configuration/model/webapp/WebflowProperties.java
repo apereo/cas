@@ -3,10 +3,12 @@ package org.apereo.cas.configuration.model.webapp;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for webflow.

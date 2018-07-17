@@ -1,7 +1,8 @@
 package org.apereo.cas.support.events.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link BaseCasRegisteredServiceEvent}.

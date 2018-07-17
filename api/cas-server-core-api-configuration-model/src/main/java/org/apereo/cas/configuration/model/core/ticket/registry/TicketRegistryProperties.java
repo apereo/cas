@@ -15,11 +15,12 @@ import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTick
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link TicketRegistryProperties}.
@@ -139,8 +140,8 @@ public class TicketRegistryProperties implements Serializable {
         private int initialCapacity = 1000;
 
         /**
-         *  The load factor threshold, used to control resizing.
-         *  Resizing may be performed when the average number of elements per bin exceeds this threshold.
+         * The load factor threshold, used to control resizing.
+         * Resizing may be performed when the average number of elements per bin exceeds this threshold.
          */
         private int loadFactor = 1;
 

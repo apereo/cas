@@ -1,6 +1,7 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.authentication.Authentication;
+
 import org.springframework.core.Ordered;
 
 /**

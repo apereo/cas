@@ -24,5 +24,6 @@ public interface CasProtocolValidationSpecification {
     /**
      * Reset.
      */
-    default void reset() {}
+    default void reset() {
+    }
 }

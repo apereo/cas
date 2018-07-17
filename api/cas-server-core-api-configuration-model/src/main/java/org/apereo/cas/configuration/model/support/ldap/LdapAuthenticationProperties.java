@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.ArrayList;
@@ -74,7 +75,6 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * This flag only has an effect if {@link #principalAttributeId} is configured. If multiple values are detected
      * when the flag is false, the first value is used and a warning is logged. If multiple values are detected
      * when the flag is true, an exception is raised.
-     *
      */
     private boolean allowMultiplePrincipalAttributeValues;
 

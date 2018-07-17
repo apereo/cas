@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.dynamodb;
 
 import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 

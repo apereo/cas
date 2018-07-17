@@ -13,6 +13,8 @@ import org.apereo.cas.ticket.ServiceTicket;
  * @since 4.2
  */
 public interface ProxyTicket extends ServiceTicket {
-    /** Proxy ticket prefix applied to unique ids. */
+    /**
+     * Proxy ticket prefix applied to unique ids.
+     */
     String PROXY_TICKET_PREFIX = "PT";
 }

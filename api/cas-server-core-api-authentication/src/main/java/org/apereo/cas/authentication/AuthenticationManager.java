@@ -5,13 +5,14 @@ package org.apereo.cas.authentication;
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
- *
  * @since 3.0.0
  */
 @FunctionalInterface
 public interface AuthenticationManager {
 
-    /** Authentication method attribute name. **/
+    /**
+     * Authentication method attribute name.
+     **/
     String AUTHENTICATION_METHOD_ATTRIBUTE = "authenticationMethod";
 
     /**
@@ -22,11 +23,9 @@ public interface AuthenticationManager {
      * an AuthenticationException is thrown.
      *
      * @param authenticationTransaction Process a single authentication transaction
-     *
      * @return Authentication object on success that contains metadata about credentials that were authenticated.
-     *
      * @throws AuthenticationException On authentication failure. The exception contains details
-     * on each of the credentials that failed to authenticate.
+     *                                 on each of the credentials that failed to authenticate.
      */
     Authentication authenticate(AuthenticationTransaction authenticationTransaction) throws AuthenticationException;
 }

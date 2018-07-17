@@ -7,10 +7,12 @@ import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProper
 import org.apereo.cas.configuration.model.core.ticket.TransientSessionTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for {@code ticket}.

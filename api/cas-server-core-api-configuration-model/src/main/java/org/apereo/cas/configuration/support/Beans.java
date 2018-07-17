@@ -1,11 +1,12 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
-import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;

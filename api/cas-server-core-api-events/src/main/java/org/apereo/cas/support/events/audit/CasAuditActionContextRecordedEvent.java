@@ -1,7 +1,8 @@
 package org.apereo.cas.support.events.audit;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.AuditActionContext;
 
 /**
@@ -14,7 +15,7 @@ import org.apereo.inspektr.audit.AuditActionContext;
 public class CasAuditActionContextRecordedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -1262975970594313844L;
-    
+
     private final AuditActionContext auditActionContext;
 
     /**

@@ -25,5 +25,5 @@ public interface ProxyGrantingTicketFactory extends TicketFactory {
      * @throws AbstractTicketException the abstract ticket exception
      */
     <T extends ProxyGrantingTicket> T create(ServiceTicket ticket, Authentication authentication, Class<T> clazz)
-            throws AbstractTicketException;
+        throws AbstractTicketException;
 }
