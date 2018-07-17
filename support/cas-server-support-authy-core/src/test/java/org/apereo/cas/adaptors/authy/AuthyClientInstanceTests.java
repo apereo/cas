@@ -1,10 +1,10 @@
 package org.apereo.cas.adaptors.authy;
 
-import lombok.val;
-
-import com.authy.api.Error;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+
+import com.authy.api.Error;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;

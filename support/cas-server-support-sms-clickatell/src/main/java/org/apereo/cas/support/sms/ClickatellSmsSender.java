@@ -1,14 +1,13 @@
 package org.apereo.cas.support.sms;
 
-import lombok.val;
-
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.io.SmsSender;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.io.SmsSender;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;

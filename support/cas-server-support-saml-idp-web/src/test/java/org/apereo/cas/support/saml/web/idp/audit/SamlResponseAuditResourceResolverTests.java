@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
-import lombok.val;
-
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +41,7 @@ public class SamlResponseAuditResourceResolverTests {
         var result = r.resolveFrom(mock(JoinPoint.class), response);
         assertNotNull(result);
         assertTrue(result.length > 0);
-        
+
         val envelope = mock(Envelope.class);
         val body = mock(Body.class);
 

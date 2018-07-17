@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationService;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 

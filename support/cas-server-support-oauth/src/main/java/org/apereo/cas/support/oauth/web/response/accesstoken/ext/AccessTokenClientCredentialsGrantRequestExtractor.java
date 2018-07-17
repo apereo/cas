@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
@@ -8,6 +7,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link AccessTokenClientCredentialsGrantRequestExtractor}.

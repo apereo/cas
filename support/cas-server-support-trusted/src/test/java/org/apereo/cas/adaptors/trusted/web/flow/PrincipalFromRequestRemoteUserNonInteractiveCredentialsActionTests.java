@@ -1,10 +1,10 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.adaptors.trusted.config.TrustedAuthenticationConfiguration;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 /**
  * @author Scott Battaglia
  * @since 3.0.0
- *
  */
 @Import(TrustedAuthenticationConfiguration.class)
 @Slf4j
@@ -30,7 +29,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     @Autowired
     @Qualifier("principalFromRemoteUserAction")
     private Action action;
-    
+
     @Test
     public void verifyRemoteUserExists() throws Exception {
         val request = new MockHttpServletRequest();
@@ -38,7 +37,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
 
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
-                new MockServletContext(), request, new MockHttpServletResponse()));
+            new MockServletContext(), request, new MockHttpServletResponse()));
 
         assertEquals("success", this.action.execute(context).getId());
     }
@@ -47,7 +46,7 @@ public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests 
     public void verifyRemoteUserDoesntExists() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
-                new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
+            new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
 
         assertEquals("error", this.action.execute(context).getId());
     }

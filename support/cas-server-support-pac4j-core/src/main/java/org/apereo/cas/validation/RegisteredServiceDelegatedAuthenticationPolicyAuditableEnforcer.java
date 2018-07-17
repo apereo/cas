@@ -1,13 +1,13 @@
 package org.apereo.cas.validation;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
 import org.apereo.cas.services.UnauthorizedServiceException;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.pac4j.core.client.Client;
 
@@ -34,7 +34,7 @@ public class RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer ext
             if (policy != null) {
                 if (!policy.isProviderAllowed(clientName, registeredService)) {
                     LOGGER.debug("Delegated authentication policy for [{}] does not allow for using client [{}]", registeredService,
-                            clientName);
+                        clientName);
                     val e = new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
                     result.setException(e);
                 }

@@ -1,8 +1,9 @@
 package org.apereo.cas.monitor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.monitor.config.LdapMonitorConfiguration;
+
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

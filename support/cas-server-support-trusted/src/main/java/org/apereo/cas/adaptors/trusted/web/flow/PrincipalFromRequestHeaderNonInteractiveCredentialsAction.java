@@ -1,14 +1,14 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
                                                                      final RemoteRequestPrincipalAttributesExtractor extractor,
                                                                      final String remotePrincipalHeader) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy, principalFactory, extractor);
+            adaptiveAuthenticationPolicy, principalFactory, extractor);
         this.remotePrincipalHeader = remotePrincipalHeader;
     }
 

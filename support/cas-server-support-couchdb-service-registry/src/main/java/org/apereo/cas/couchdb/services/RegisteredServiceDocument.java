@@ -1,9 +1,10 @@
 package org.apereo.cas.couchdb.services;
 
+import org.apereo.cas.services.RegisteredService;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apereo.cas.services.RegisteredService;
 import org.ektorp.support.CouchDbDocument;
 
 /**

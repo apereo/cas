@@ -1,13 +1,13 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import lombok.val;
-
-import com.google.common.collect.Maps;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
+
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 

@@ -1,12 +1,13 @@
 package org.apereo.cas.support.openid.web.mvc;
 
+import org.apereo.cas.support.openid.OpenIdProtocolConstants;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.AbstractDelegateController;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.support.openid.OpenIdProtocolConstants;
-import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.AbstractDelegateController;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
 import org.springframework.web.servlet.ModelAndView;

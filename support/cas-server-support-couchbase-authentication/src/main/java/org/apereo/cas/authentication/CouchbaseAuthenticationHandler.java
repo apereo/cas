@@ -1,14 +1,14 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
-import com.couchbase.client.java.document.json.JsonObject;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import com.couchbase.client.java.document.json.JsonObject;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;

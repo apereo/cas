@@ -34,41 +34,6 @@ import java.util.function.Function;
 public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
     private final List<AWSCredentialsProvider> chain;
 
-    @Override
-    public AWSCredentials getCredentials() {
-        LOGGER.debug("Attempting to locate AWS credentials from the chain...");
-        for (val p : this.chain) {
-            val c = getCredentialsFromProvider(p);
-            if (c != null) {
-                LOGGER.debug("Fetched credentials from [{}] provider successfully.", p.getClass().getSimpleName());
-                return c;
-            }
-        }
-        LOGGER.warn("No AWS credentials could be determined from the chain. Using anonymous credentials...");
-        return new AnonymousAWSCredentials();
-    }
-
-    private AWSCredentials getCredentialsFromProvider(final AWSCredentialsProvider p) {
-        try {
-            LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
-            return p.getCredentials();
-        } catch (final Throwable e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    @Override
-    public void refresh() {
-        for (val p : this.chain) {
-            try {
-                p.refresh();
-            } catch (final Throwable e) {
-                LOGGER.trace(e.getMessage(), e);
-            }
-        }
-    }
-
     /**
      * Gets instance.
      *
@@ -167,6 +132,41 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
             func.apply(null);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public AWSCredentials getCredentials() {
+        LOGGER.debug("Attempting to locate AWS credentials from the chain...");
+        for (val p : this.chain) {
+            val c = getCredentialsFromProvider(p);
+            if (c != null) {
+                LOGGER.debug("Fetched credentials from [{}] provider successfully.", p.getClass().getSimpleName());
+                return c;
+            }
+        }
+        LOGGER.warn("No AWS credentials could be determined from the chain. Using anonymous credentials...");
+        return new AnonymousAWSCredentials();
+    }
+
+    private AWSCredentials getCredentialsFromProvider(final AWSCredentialsProvider p) {
+        try {
+            LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
+            return p.getCredentials();
+        } catch (final Throwable e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
+    public void refresh() {
+        for (val p : this.chain) {
+            try {
+                p.refresh();
+            } catch (final Throwable e) {
+                LOGGER.trace(e.getMessage(), e);
+            }
         }
     }
 }

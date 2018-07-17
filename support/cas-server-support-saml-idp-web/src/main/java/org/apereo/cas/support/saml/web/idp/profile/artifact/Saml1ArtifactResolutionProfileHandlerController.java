@@ -1,9 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -22,6 +18,10 @@ import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.ArtifactResolve;
@@ -58,8 +58,8 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
                                                            final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder,
                                                            final Service callbackService) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager,
-                webApplicationServiceFactory, samlRegisteredServiceCachingMetadataResolver, configBean,
-                responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
+            webApplicationServiceFactory, samlRegisteredServiceCachingMetadataResolver, configBean,
+            responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
         this.ticketRegistry = ticketRegistry;
         this.artifactTicketFactory = artifactTicketFactory;
         this.samlFaultResponseBuilder = samlFaultResponseBuilder;
@@ -91,15 +91,15 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
 
             val issuerService = webApplicationServiceFactory.createService(issuer);
             val casAssertion = buildCasAssertion(ticket.getTicketGrantingTicket().getAuthentication(),
-                    issuerService, service,
-                    CollectionUtils.wrap("artifact", ticket));
+                issuerService, service,
+                CollectionUtils.wrap("artifact", ticket));
             this.responseBuilder.build(artifactMsg, request, response, casAssertion,
-                    service, facade, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
+                service, facade, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR, e.getMessage());
             samlFaultResponseBuilder.build(artifactMsg, request, response,
-                    null, null, null, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
+                null, null, null, SAMLConstants.SAML2_ARTIFACT_BINDING_URI, ctx);
         }
     }
 }

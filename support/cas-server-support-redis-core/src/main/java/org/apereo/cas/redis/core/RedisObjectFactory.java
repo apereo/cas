@@ -1,9 +1,10 @@
 package org.apereo.cas.redis.core;
 
+import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisNode;
 import org.springframework.data.redis.connection.RedisPassword;

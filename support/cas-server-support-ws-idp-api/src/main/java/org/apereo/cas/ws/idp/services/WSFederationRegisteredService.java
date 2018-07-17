@@ -1,14 +1,15 @@
 package org.apereo.cas.ws.idp.services;
 
+import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.ws.idp.WSFederationConstants;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;

@@ -1,16 +1,16 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.web.flow.OAuth20RegisteredServiceUIAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20WebflowConfigurer;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -55,7 +55,7 @@ public class CasOAuthWebflowConfiguration implements CasWebflowExecutionPlanConf
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
@@ -64,7 +64,7 @@ public class CasOAuthWebflowConfiguration implements CasWebflowExecutionPlanConf
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
         val c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
+            oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(this.logoutFlowDefinitionRegistry);
         return c;
     }

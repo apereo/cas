@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.LdapAttribute;

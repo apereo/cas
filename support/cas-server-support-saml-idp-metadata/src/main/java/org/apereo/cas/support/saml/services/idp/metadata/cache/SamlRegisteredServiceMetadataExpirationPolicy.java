@@ -1,13 +1,13 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
-import lombok.val;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;

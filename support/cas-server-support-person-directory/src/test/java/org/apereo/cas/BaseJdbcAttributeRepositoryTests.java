@@ -1,12 +1,12 @@
 package org.apereo.cas;
 
-import lombok.val;
-
-import lombok.Cleanup;
-import lombok.SneakyThrows;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+
+import lombok.Cleanup;
+import lombok.SneakyThrows;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.After;
 import org.junit.Before;

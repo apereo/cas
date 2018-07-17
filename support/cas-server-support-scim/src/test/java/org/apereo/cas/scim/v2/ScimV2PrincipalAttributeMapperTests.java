@@ -1,11 +1,11 @@
 package org.apereo.cas.scim.v2;
 
-import lombok.val;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import com.unboundid.scim2.common.types.Meta;
 import com.unboundid.scim2.common.types.Name;
 import com.unboundid.scim2.common.types.UserResource;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import lombok.val;
 import org.junit.Test;
 
 import java.net.URI;

@@ -1,9 +1,9 @@
 package org.apereo.cas.shell.commands.properties;
 
-import lombok.val;
+import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
+import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;

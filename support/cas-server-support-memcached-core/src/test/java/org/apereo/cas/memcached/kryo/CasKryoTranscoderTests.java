@@ -1,9 +1,5 @@
 package org.apereo.cas.memcached.kryo;
 
-import lombok.val;
-
-import com.esotericsoftware.kryo.KryoException;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
@@ -18,6 +14,10 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+
+import com.esotericsoftware.kryo.KryoException;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -53,23 +53,6 @@ public class CasKryoTranscoderTests {
     private final CasKryoTranscoder transcoder;
 
     private final Map<String, Object> principalAttributes;
-
-    /**
-     * Class for testing Kryo unregistered class handling.
-     */
-    private static class UnregisteredServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
-        private static final long serialVersionUID = -1704993954986738308L;
-
-        /**
-         * Instantiates a new Service ticket expiration policy.
-         *
-         * @param numberOfUses        the number of uses
-         * @param timeToKillInSeconds the time to kill in seconds
-         */
-        UnregisteredServiceTicketExpirationPolicy(final int numberOfUses, final long timeToKillInSeconds) {
-            super(numberOfUses, timeToKillInSeconds);
-        }
-    }
 
     public CasKryoTranscoderTests() {
         val classesToRegister = new ArrayList<Class>();
@@ -259,6 +242,23 @@ public class CasKryoTranscoderTests {
             LOGGER.trace(e.getMessage(), e);
         } catch (final Exception e) {
             throw new AssertionError("Unexpected exception due to not resetting Kryo between de-serializations with unregistered class.");
+        }
+    }
+
+    /**
+     * Class for testing Kryo unregistered class handling.
+     */
+    private static class UnregisteredServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+        private static final long serialVersionUID = -1704993954986738308L;
+
+        /**
+         * Instantiates a new Service ticket expiration policy.
+         *
+         * @param numberOfUses        the number of uses
+         * @param timeToKillInSeconds the time to kill in seconds
+         */
+        UnregisteredServiceTicketExpirationPolicy(final int numberOfUses, final long timeToKillInSeconds) {
+            super(numberOfUses, timeToKillInSeconds);
         }
     }
 }

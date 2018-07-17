@@ -1,16 +1,16 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
+import org.apereo.cas.ws.idp.WSFederationConstants;
+import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.wss4j.dom.WSConstants;
-import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
-import org.apereo.cas.ws.idp.WSFederationConstants;
-import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import javax.xml.namespace.QName;
 import java.util.HashMap;

@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow.action;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -9,6 +7,8 @@ import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -84,7 +84,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         val builder = mock(AuthenticationResultBuilder.class);
         when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication()));
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
-        
+
         WebUtils.putAuthenticationResultBuilder(builder, context);
         assertEquals("success", loadSurrogatesListAction.execute(context).getId());
     }

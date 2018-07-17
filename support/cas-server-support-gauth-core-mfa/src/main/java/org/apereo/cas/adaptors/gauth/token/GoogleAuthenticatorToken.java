@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.gauth.token;
 
+import org.apereo.cas.authentication.OneTimeToken;
+
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.OneTimeToken;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;

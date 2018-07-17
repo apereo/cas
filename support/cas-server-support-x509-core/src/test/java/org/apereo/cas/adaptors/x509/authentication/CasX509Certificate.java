@@ -1,10 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
+import org.apereo.cas.util.crypto.CertUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import org.apache.commons.io.IOUtils;
-import org.apereo.cas.util.crypto.CertUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 

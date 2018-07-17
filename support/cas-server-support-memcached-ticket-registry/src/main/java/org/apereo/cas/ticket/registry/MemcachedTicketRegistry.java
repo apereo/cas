@@ -1,13 +1,13 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import org.apereo.cas.ticket.Ticket;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
-import org.apereo.cas.ticket.Ticket;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.ArrayList;
@@ -29,6 +29,20 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
      * Memcached client.
      */
     private final ObjectPool<MemcachedClientIF> connectionPool;
+
+    /**
+     * If not time out value is specified, expire the ticket immediately.
+     *
+     * @param ticket the ticket
+     * @return timeout in milliseconds.
+     */
+    private static int getTimeout(final Ticket ticket) {
+        val ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        if (ttl == 0) {
+            return 1;
+        }
+        return ttl;
+    }
 
     @Override
     public Ticket updateTicket(final Ticket ticketToUpdate) {
@@ -114,20 +128,6 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
     @Override
     public void destroy() {
         this.connectionPool.close();
-    }
-
-    /**
-     * If not time out value is specified, expire the ticket immediately.
-     *
-     * @param ticket the ticket
-     * @return timeout in milliseconds.
-     */
-    private static int getTimeout(final Ticket ticket) {
-        val ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        if (ttl == 0) {
-            return 1;
-        }
-        return ttl;
     }
 
     @SneakyThrows

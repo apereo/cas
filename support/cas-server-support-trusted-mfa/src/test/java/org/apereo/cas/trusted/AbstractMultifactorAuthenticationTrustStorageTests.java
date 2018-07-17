@@ -1,7 +1,5 @@
 package org.apereo.cas.trusted;
 
-import lombok.val;
-
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -12,6 +10,8 @@ import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintCon
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintComponentExtractor;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,15 +65,6 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Qualifier("mfaTrustStorageCleaner")
     protected MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner;
 
-    @Test
-    public void verifyTrustEngine() {
-        val record = getMultifactorAuthenticationTrustRecord();
-        mfaTrustEngine.set(record);
-        assertFalse(mfaTrustEngine.get(record.getPrincipal()).isEmpty());
-        assertFalse(mfaTrustEngine.get(LocalDateTime.MAX.now()).isEmpty());
-        assertFalse(mfaTrustEngine.get(record.getPrincipal(), LocalDateTime.now()).isEmpty());
-    }
-
     protected static MultifactorAuthenticationTrustRecord getMultifactorAuthenticationTrustRecord() {
         val record = new MultifactorAuthenticationTrustRecord();
         record.setDeviceFingerprint("Fingerprint");
@@ -83,5 +74,14 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         record.setRecordDate(LocalDateTime.now().plusDays(1));
         record.setRecordKey("RecordKey");
         return record;
+    }
+
+    @Test
+    public void verifyTrustEngine() {
+        val record = getMultifactorAuthenticationTrustRecord();
+        mfaTrustEngine.set(record);
+        assertFalse(mfaTrustEngine.get(record.getPrincipal()).isEmpty());
+        assertFalse(mfaTrustEngine.get(LocalDateTime.MAX.now()).isEmpty());
+        assertFalse(mfaTrustEngine.get(record.getPrincipal(), LocalDateTime.now()).isEmpty());
     }
 }

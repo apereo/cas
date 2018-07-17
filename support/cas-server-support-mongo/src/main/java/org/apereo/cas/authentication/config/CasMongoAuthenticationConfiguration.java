@@ -1,10 +1,5 @@
 package org.apereo.cas.authentication.config;
 
-import lombok.val;
-
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MongoDbAuthenticationHandler;
@@ -15,6 +10,11 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.pac4j.mongo.profile.service.MongoProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +37,10 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class CasMongoAuthenticationConfiguration {
 
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -48,7 +48,7 @@ public class CasMongoAuthenticationConfiguration {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
-    
+
     @ConditionalOnMissingBean(name = "mongoPrincipalFactory")
     @Bean
     public PrincipalFactory mongoPrincipalFactory() {
@@ -75,7 +75,7 @@ public class CasMongoAuthenticationConfiguration {
     @Bean
     public MongoProfileService mongoAuthenticatorProfileService() {
         val mongo = casProperties.getAuthn().getMongo();
-        
+
         val uri = new MongoClientURI(mongo.getMongoHostUri());
         val client = new MongoClient(uri);
         LOGGER.info("Connected to MongoDb instance @ [{}] using database [{}]", uri.getHosts(), uri.getDatabase());

@@ -56,9 +56,11 @@ public abstract class AbstractServiceRegistryTests {
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
-    private final Class<? extends RegisteredService> registeredServiceClass;
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    private final Class<? extends RegisteredService> registeredServiceClass;
     private ServiceRegistry serviceRegistry;
 
     @Before

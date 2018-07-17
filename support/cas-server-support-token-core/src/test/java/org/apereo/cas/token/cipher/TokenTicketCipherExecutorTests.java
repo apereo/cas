@@ -1,8 +1,7 @@
 package org.apereo.cas.token.cipher;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

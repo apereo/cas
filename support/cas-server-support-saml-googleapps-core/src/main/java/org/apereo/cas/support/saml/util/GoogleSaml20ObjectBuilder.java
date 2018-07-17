@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml.util;
 
-import lombok.val;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
 
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import lombok.val;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Status;
@@ -37,7 +37,7 @@ public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
             val name = f.get(null).toString();
 
             if (objectType.equals(Response.class) || objectType.equals(Status.class)
-                    || objectType.equals(StatusCode.class)) {
+                || objectType.equals(StatusCode.class)) {
                 return new QName(SAMLConstants.SAML20P_NS, name, "samlp");
             }
             return new QName(SAMLConstants.SAML20_NS, name, XMLConstants.DEFAULT_NS_PREFIX);

@@ -1,13 +1,13 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.val;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.util.ResourceUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.util.ResourceUtils;
+import lombok.val;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 

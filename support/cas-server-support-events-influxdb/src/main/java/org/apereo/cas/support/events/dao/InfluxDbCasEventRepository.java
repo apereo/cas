@@ -1,12 +1,12 @@
 package org.apereo.cas.support.events.dao;
 
-import lombok.val;
+import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.QueryResult;
 import org.springframework.beans.factory.DisposableBean;

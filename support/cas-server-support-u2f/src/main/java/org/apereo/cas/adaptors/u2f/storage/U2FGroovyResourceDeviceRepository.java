@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.util.ScriptingUtils;
+
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.ScriptingUtils;
 import org.springframework.core.io.Resource;
 
 import java.util.List;

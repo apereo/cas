@@ -30,7 +30,6 @@ import java.time.ZonedDateTime;
 @ToString
 @Getter
 public class JpaLockingStrategy implements LockingStrategy {
-
     /**
      * Transactional entity manager from Spring context.
      */
@@ -43,12 +42,10 @@ public class JpaLockingStrategy implements LockingStrategy {
      * a single application.
      */
     private final String applicationId;
-
     /**
      * Unique identifier that identifies the client using this lock instance.
      */
     private final String uniqueId;
-
     /**
      * Amount of time in seconds lock may be held.
      */
@@ -163,7 +160,9 @@ public class JpaLockingStrategy implements LockingStrategy {
     private static class Lock implements Serializable {
 
         private static final long serialVersionUID = -5750740484289616656L;
-
+        @Version
+        @Column(name = "lockVer", columnDefinition = "integer DEFAULT 0", nullable = false)
+        private final Long version = 0L;
         /**
          * column name that holds application identifier.
          */
@@ -171,21 +170,15 @@ public class JpaLockingStrategy implements LockingStrategy {
         @Id
         @Column(name = "application_id")
         private String applicationId;
-
         /**
          * Database column name that holds unique identifier.
          */
         @Column(name = "unique_id")
         private String uniqueId;
-
         /**
          * Database column name that holds expiration date.
          */
         @Column(name = "expiration_date")
         private ZonedDateTime expirationDate;
-
-        @Version
-        @Column(name = "lockVer", columnDefinition = "integer DEFAULT 0", nullable = false)
-        private final Long version = 0L;
     }
 }

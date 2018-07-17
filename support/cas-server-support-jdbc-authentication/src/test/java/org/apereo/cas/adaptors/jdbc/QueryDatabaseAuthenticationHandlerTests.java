@@ -1,8 +1,5 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.PreventedException;
@@ -10,10 +7,13 @@ import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.junit.Rule;
-import org.junit.Test;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +62,11 @@ public class QueryDatabaseAuthenticationHandlerTests {
     @Qualifier("dataSource")
     private DataSource dataSource;
 
+    private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
+        return String.format("insert into casusers (username, password, expired, disabled, phone) values('%s', '%s', '%s', '%s', '%s');",
+            "user" + i, "psw" + i, expired, disabled, "123456789");
+    }
+
     @Before
     public void initialize() throws Exception {
         val c = this.dataSource.getConnection();
@@ -88,33 +93,6 @@ public class QueryDatabaseAuthenticationHandlerTests {
             s.execute("delete from casusers;");
         }
         c.close();
-    }
-
-    private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
-        return String.format("insert into casusers (username, password, expired, disabled, phone) values('%s', '%s', '%s', '%s', '%s');",
-            "user" + i, "psw" + i, expired, disabled, "123456789");
-    }
-
-    @Entity(name = "casusers")
-    public static class UsersTable {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-
-        @Column
-        private String username;
-
-        @Column
-        private String password;
-
-        @Column
-        private String expired;
-
-        @Column
-        private String disabled;
-
-        @Column
-        private String phone;
     }
 
     @Test
@@ -211,5 +189,27 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
         q.setPasswordEncoder(encoder);
         assertNotNull(q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "pswbc2")));
+    }
+
+    @Entity(name = "casusers")
+    public static class UsersTable {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+
+        @Column
+        private String username;
+
+        @Column
+        private String password;
+
+        @Column
+        private String expired;
+
+        @Column
+        private String disabled;
+
+        @Column
+        private String phone;
     }
 }

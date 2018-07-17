@@ -1,10 +1,10 @@
 package org.apereo.cas.consent;
 
-import lombok.val;
-
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 

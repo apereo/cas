@@ -1,5 +1,10 @@
 package org.apereo.cas.audit;
 
+import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.serialization.StringSerializer;
+
 import com.couchbase.client.java.document.StringDocument;
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.N1qlQuery;
@@ -10,10 +15,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 

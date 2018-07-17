@@ -1,12 +1,13 @@
 package org.apereo.cas.oidc.jwks;
 
+import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
+import org.apereo.cas.util.ResourceUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
-import org.apereo.cas.util.ResourceUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJwkGenerator;

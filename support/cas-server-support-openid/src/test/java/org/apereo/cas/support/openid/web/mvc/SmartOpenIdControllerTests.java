@@ -1,9 +1,9 @@
 package org.apereo.cas.support.openid.web.mvc;
 
-import lombok.val;
+import org.apereo.cas.support.openid.AbstractOpenIdTests;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.openid.AbstractOpenIdTests;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -15,6 +15,7 @@ import static org.junit.Assert.*;
 
 /**
  * Test case of the Smart OpenId Controller.
+ *
  * @author Frederic Esnault
  * @since 3.0.0
  */
@@ -50,7 +51,7 @@ public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
         request.addParameter("openid.session_type", "DH-SHA1");
         request.addParameter("openid.assoc_type", "HMAC-SHA1");
         request.addParameter("openid.dh_consumer_public",
-                "NzKoFMyrzFn/5iJFPdX6MVvNA/BChV1/sJdnYbupDn7ptn+cerwEzyFfWFx25KsoLSkxQCaSMmYtc1GPy/2GI1BSKSDhpdJmDBb"
+            "NzKoFMyrzFn/5iJFPdX6MVvNA/BChV1/sJdnYbupDn7ptn+cerwEzyFfWFx25KsoLSkxQCaSMmYtc1GPy/2GI1BSKSDhpdJmDBb"
                 + "QRa/9Gs+giV/5fHcz/mHz8sREc7RTGI+0Ka9230arwrWt0fnoaJLRKEGUsmFR71rCo4EUOew=");
         val assocResponse = smartOpenIdController.getAssociationResponse(request);
         assertTrue(assocResponse.containsKey("assoc_handle"));

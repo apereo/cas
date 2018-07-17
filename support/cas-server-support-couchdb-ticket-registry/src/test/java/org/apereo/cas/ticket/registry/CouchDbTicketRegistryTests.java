@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -26,6 +25,8 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -77,7 +78,7 @@ public class CouchDbTicketRegistryTests extends BaseSpringRunnableTicketRegistry
 
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-    
+
     @Rule
     public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
@@ -97,14 +98,14 @@ public class CouchDbTicketRegistryTests extends BaseSpringRunnableTicketRegistry
         super(useEncryption);
     }
 
-    @After
-    public void afterEachTest() {
-        couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
-    }
-
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
         return Arrays.asList(false, true);
+    }
+
+    @After
+    public void afterEachTest() {
+        couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }
 
     @Override

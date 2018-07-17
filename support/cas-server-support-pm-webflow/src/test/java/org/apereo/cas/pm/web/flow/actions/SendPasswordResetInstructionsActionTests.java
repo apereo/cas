@@ -1,10 +1,10 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import lombok.val;
-
 import org.apereo.cas.category.MailCategory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.mock.web.MockHttpServletRequest;
