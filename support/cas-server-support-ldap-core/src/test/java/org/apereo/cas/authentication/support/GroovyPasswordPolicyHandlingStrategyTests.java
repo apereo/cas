@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -9,6 +10,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -22,6 +25,10 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    CasCoreUtilConfiguration.class
+})
 @Slf4j
 public class GroovyPasswordPolicyHandlingStrategyTests {
 
