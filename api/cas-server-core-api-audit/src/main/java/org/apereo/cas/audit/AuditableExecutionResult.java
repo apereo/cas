@@ -1,10 +1,9 @@
 package org.apereo.cas.audit;
 
-import lombok.val;
-
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
@@ -51,6 +50,11 @@ public class AuditableExecutionResult {
      * RuntimeException.
      */
     private RuntimeException exception;
+
+    /**
+     * The execution result of the auditable action.
+     */
+    private Object executionResult;
 
     /**
      * TicketGrantingTicket.
@@ -223,6 +227,15 @@ public class AuditableExecutionResult {
      */
     public Optional<ServiceTicket> getServiceTicket() {
         return Optional.ofNullable(serviceTicket);
+    }
+
+    /**
+     * Get.
+     *
+     * @return optional execution result.
+     */
+    public Optional<Object> getExecutionResult() {
+        return Optional.ofNullable(executionResult);
     }
 
     /**

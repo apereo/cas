@@ -1,9 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
 import lombok.RequiredArgsConstructor;
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.ticket.Ticket;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -50,10 +49,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         try {
             LOGGER.debug("Adding ticket [{}]", ticket);
             val redisKey = getTicketRedisKey(ticket.getId());
-            // Encode first, then add
-            val encodeTicket = this.encodeTicket(ticket);
-            this.client.boundValueOps(redisKey)
-                .set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
+            val encodeTicket = encodeTicket(ticket);
+            val timeout = getTimeout(ticket);
+            this.client.boundValueOps(redisKey).set(encodeTicket, timeout, TimeUnit.SECONDS);
         } catch (final Exception e) {
             LOGGER.error("Failed to add [{}]", ticket, e);
         }
@@ -115,20 +113,18 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
      * @param ticket the ticket
      * @return timeout
      */
-    private static int getTimeout(final Ticket ticket) {
-        val ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        if (ttl == 0) {
+    private static long getTimeout(final Ticket ticket) {
+        val ttl = ticket.getExpirationPolicy().getTimeToLive().longValue();
+        if (ttl <= 0) {
             return 1;
         }
         return ttl;
     }
 
-    // Add a prefix as the key of redis
     private static String getTicketRedisKey(final String ticketId) {
         return CAS_TICKET_PREFIX + ticketId;
     }
 
-    // pattern all ticket redisKey
     private static String getPatternTicketRedisKey() {
         return CAS_TICKET_PREFIX + '*';
     }

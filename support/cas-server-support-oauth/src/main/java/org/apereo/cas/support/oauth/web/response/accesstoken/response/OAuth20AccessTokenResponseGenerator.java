@@ -22,6 +22,5 @@ public interface OAuth20AccessTokenResponseGenerator {
      * @param result   the result
      * @return the model and view
      */
-    ModelAndView generate(HttpServletRequest request, HttpServletResponse response,
-                          OAuth20AccessTokenResponseResult result);
+    ModelAndView generate(HttpServletRequest request, HttpServletResponse response, OAuth20AccessTokenResponseResult result);
 }

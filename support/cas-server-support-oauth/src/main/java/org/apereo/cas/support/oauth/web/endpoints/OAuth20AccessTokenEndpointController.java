@@ -4,6 +4,8 @@ import com.google.common.base.Supplier;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -20,7 +22,6 @@ import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20Devic
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
@@ -53,11 +54,10 @@ import java.util.Collection;
 public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller {
     private final OAuth20TokenGenerator accessTokenGenerator;
     private final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
-
     private final ExpirationPolicy accessTokenExpirationPolicy;
-    private final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
     private final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators;
     private final ExpirationPolicy deviceTokenExpirationPolicy;
+    private final AuditableExecution accessTokenGrantAuditableRequestExtractor;
 
     public OAuth20AccessTokenEndpointController(final ServicesManager servicesManager,
                                                 final TicketRegistry ticketRegistry,
@@ -71,8 +71,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                                 final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                 final ExpirationPolicy accessTokenExpirationPolicy,
                                                 final ExpirationPolicy deviceTokenExpirationPolicy,
-                                                final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
-                                                final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators) {
+                                                final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators,
+                                                final AuditableExecution accessTokenGrantAuditableRequestExtractor) {
         super(servicesManager,
             ticketRegistry,
             accessTokenFactory,
@@ -86,8 +86,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         this.accessTokenResponseGenerator = accessTokenResponseGenerator;
         this.accessTokenExpirationPolicy = accessTokenExpirationPolicy;
         this.deviceTokenExpirationPolicy = deviceTokenExpirationPolicy;
-        this.accessTokenGrantRequestExtractors = accessTokenGrantRequestExtractors;
         this.accessTokenGrantRequestValidators = accessTokenGrantRequestValidators;
+        this.accessTokenGrantAuditableRequestExtractor = accessTokenGrantAuditableRequestExtractor;
     }
 
     /**
@@ -180,11 +180,16 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
 
     private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
                                                                                   final HttpServletResponse response) {
-        return this.accessTokenGrantRequestExtractors.stream()
-            .filter(ext -> ext.supports(request))
-            .findFirst()
-            .orElseThrow((Supplier<RuntimeException>) () -> new UnsupportedOperationException("Access token request is not supported"))
-            .extract(request, response);
+        val audit = AuditableContext.builder()
+            .httpRequest(request)
+            .httpResponse(response)
+            .build();
+        val accessResult = this.accessTokenGrantAuditableRequestExtractor.execute(audit);
+        val execResult = accessResult.getExecutionResult();
+        if (execResult.isPresent()) {
+            return (AccessTokenRequestDataHolder) execResult.get();
+        }
+        throw new UnsupportedOperationException("Access token request is not supported");
     }
 
     /**
