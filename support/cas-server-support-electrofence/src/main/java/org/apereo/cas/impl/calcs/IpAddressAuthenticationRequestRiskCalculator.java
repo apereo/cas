@@ -1,12 +1,12 @@
 package org.apereo.cas.impl.calcs;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,7 +22,7 @@ import java.util.Collection;
 @Slf4j
 public class IpAddressAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
 
-    
+
     public IpAddressAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository) {
         super(casEventRepository);
     }

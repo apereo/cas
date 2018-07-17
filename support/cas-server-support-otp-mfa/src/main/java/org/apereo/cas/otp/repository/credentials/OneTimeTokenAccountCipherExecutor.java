@@ -1,7 +1,8 @@
 package org.apereo.cas.otp.repository.credentials;
 
-import lombok.Getter;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
+
+import lombok.Getter;
 
 /**
  * This is {@link OneTimeTokenAccountCipherExecutor}.

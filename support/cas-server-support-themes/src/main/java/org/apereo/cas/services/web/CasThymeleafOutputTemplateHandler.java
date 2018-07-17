@@ -1,13 +1,12 @@
 package org.apereo.cas.services.web;
 
-import lombok.val;
-
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.thymeleaf.engine.AbstractTemplateHandler;
 import org.thymeleaf.model.ICloseElementTag;
 import org.thymeleaf.model.IOpenElementTag;
 import org.thymeleaf.model.IText;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link CasThymeleafOutputTemplateHandler}.

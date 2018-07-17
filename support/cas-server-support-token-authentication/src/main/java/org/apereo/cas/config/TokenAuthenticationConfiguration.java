@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -12,6 +9,9 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -40,7 +40,7 @@ public class TokenAuthenticationConfiguration {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
-    
+
     @ConditionalOnMissingBean(name = "tokenPrincipalFactory")
     @Bean
     public PrincipalFactory tokenPrincipalFactory() {
@@ -52,7 +52,7 @@ public class TokenAuthenticationConfiguration {
     public AuthenticationHandler tokenAuthenticationHandler() {
         val token = casProperties.getAuthn().getToken();
         return new TokenAuthenticationHandler(token.getName(), servicesManager, tokenPrincipalFactory(),
-                PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation()));
+            PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation()));
     }
 
     @ConditionalOnMissingBean(name = "tokenAuthenticationEventExecutionPlanConfigurer")

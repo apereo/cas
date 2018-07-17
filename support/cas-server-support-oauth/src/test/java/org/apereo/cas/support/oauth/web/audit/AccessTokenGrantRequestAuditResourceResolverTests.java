@@ -1,13 +1,13 @@
 package org.apereo.cas.support.oauth.web.audit;
 
-import lombok.val;
-
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
 

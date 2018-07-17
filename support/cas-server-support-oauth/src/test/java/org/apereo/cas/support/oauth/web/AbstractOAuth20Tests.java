@@ -1,10 +1,5 @@
 package org.apereo.cas.support.oauth.web;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.HttpStatus;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.authentication.Authentication;
@@ -67,6 +62,12 @@ import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.http.HttpStatus;
 import org.junit.runner.RunWith;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -194,34 +195,6 @@ public abstract class AbstractOAuth20Tests {
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
-    @TestConfiguration
-    public static class OAuthTestConfiguration implements ComponentSerializationPlanConfigurator, InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        public void init() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-
-        @Override
-        public void afterPropertiesSet() throws Exception {
-            init();
-        }
-
-        @Bean
-        public List inMemoryRegisteredServices() {
-            val svc = RegisteredServiceTestUtils.getRegisteredService("^(https?|imaps?)://.*");
-            svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-            return CollectionUtils.wrapList(svc);
-        }
-
-        @Override
-        public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
-            plan.registerSerializableClass(MockTicketGrantingTicket.class);
-            plan.registerSerializableClass(MockServiceTicket.class);
-        }
-    }
-
     protected static Principal createPrincipal() {
         val map = new HashMap<String, Object>();
         map.put(NAME, VALUE);
@@ -229,6 +202,30 @@ public abstract class AbstractOAuth20Tests {
         map.put(NAME2, list);
 
         return CoreAuthenticationTestUtils.getPrincipal(ID, map);
+    }
+
+    protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String secret) {
+        val registeredServiceImpl = new OAuthRegisteredService();
+        registeredServiceImpl.setName("The registered service name");
+        registeredServiceImpl.setServiceId(serviceId);
+        registeredServiceImpl.setClientId(CLIENT_ID);
+        registeredServiceImpl.setClientSecret(secret);
+        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        return registeredServiceImpl;
+    }
+
+    protected static Authentication getAuthentication(final Principal principal) {
+        final CredentialMetaData metadata = new BasicCredentialMetaData(
+            new BasicIdentifiableCredential(principal.getId()));
+        final AuthenticationHandlerExecutionResult handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
+            metadata, principal, new ArrayList<>());
+
+        return DefaultAuthenticationBuilder.newInstance()
+            .setPrincipal(principal)
+            .setAuthenticationDate(ZonedDateTime.now())
+            .addCredential(metadata)
+            .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
+            .build();
     }
 
     protected OAuthRegisteredService addRegisteredService() {
@@ -262,34 +259,10 @@ public abstract class AbstractOAuth20Tests {
         return refreshToken;
     }
 
-    protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String secret) {
-        val registeredServiceImpl = new OAuthRegisteredService();
-        registeredServiceImpl.setName("The registered service name");
-        registeredServiceImpl.setServiceId(serviceId);
-        registeredServiceImpl.setClientId(CLIENT_ID);
-        registeredServiceImpl.setClientSecret(secret);
-        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        return registeredServiceImpl;
-    }
-
     protected void clearAllServices() {
         val col = servicesManager.getAllServices();
         col.forEach(r -> servicesManager.delete(r.getId()));
         servicesManager.load();
-    }
-
-    protected static Authentication getAuthentication(final Principal principal) {
-        final CredentialMetaData metadata = new BasicCredentialMetaData(
-            new BasicIdentifiableCredential(principal.getId()));
-        final AuthenticationHandlerExecutionResult handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
-            metadata, principal, new ArrayList<>());
-
-        return DefaultAuthenticationBuilder.newInstance()
-            .setPrincipal(principal)
-            .setAuthenticationDate(ZonedDateTime.now())
-            .addCredential(metadata)
-            .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
-            .build();
     }
 
     protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service, final boolean refreshToken) throws Exception {
@@ -336,13 +309,11 @@ public abstract class AbstractOAuth20Tests {
         return Pair.of(accessTokenId, refreshTokenId);
     }
 
-
     protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service) throws Exception {
         val principal = createPrincipal();
         val refreshToken = addRefreshToken(principal, service);
         return internalVerifyRefreshTokenOk(service, refreshToken, principal);
     }
-
 
     protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service,
                                                                            final RefreshToken refreshToken, final Principal principal) throws Exception {
@@ -370,5 +341,33 @@ public abstract class AbstractOAuth20Tests {
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
 
         return Pair.of(accessToken, refreshToken);
+    }
+
+    @TestConfiguration
+    public static class OAuthTestConfiguration implements ComponentSerializationPlanConfigurator, InitializingBean {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        public void init() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
+
+        @Override
+        public void afterPropertiesSet() throws Exception {
+            init();
+        }
+
+        @Bean
+        public List inMemoryRegisteredServices() {
+            val svc = RegisteredServiceTestUtils.getRegisteredService("^(https?|imaps?)://.*");
+            svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+            return CollectionUtils.wrapList(svc);
+        }
+
+        @Override
+        public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
+            plan.registerSerializableClass(MockTicketGrantingTicket.class);
+            plan.registerSerializableClass(MockServiceTicket.class);
+        }
     }
 }

@@ -1,12 +1,11 @@
 package org.apereo.cas.otp.repository.token;
 
-import lombok.val;
-
+import org.apereo.cas.authentication.OneTimeToken;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.OneTimeToken;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,10 +56,10 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
             LOGGER.debug("Found used tokens [{}]", tokens);
             if (tokens != null) {
                 return tokens
-                        .stream()
-                        .filter(t -> t.getToken().equals(otp))
-                        .findFirst()
-                        .orElse(null);
+                    .stream()
+                    .filter(t -> t.getToken().equals(otp))
+                    .findFirst()
+                    .orElse(null);
             }
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);

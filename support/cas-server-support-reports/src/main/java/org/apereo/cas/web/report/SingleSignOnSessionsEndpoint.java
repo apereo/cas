@@ -1,9 +1,5 @@
 package org.apereo.cas.web.report;
 
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
@@ -11,6 +7,11 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
+
+import lombok.Getter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -40,48 +41,6 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     private static final String STATUS = "status";
 
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
-
-    private enum SsoSessionReportOptions {
-
-        ALL("all"), PROXIED("proxied"), DIRECT("direct");
-
-        private final String type;
-
-        /**
-         * Instantiates a new Sso session report options.
-         *
-         * @param type the type
-         */
-        SsoSessionReportOptions(final String type) {
-            this.type = type;
-        }
-    }
-
-    /**
-     * The enum Sso session attribute keys.
-     */
-    @Getter
-    private enum SsoSessionAttributeKeys {
-
-        AUTHENTICATED_PRINCIPAL("authenticated_principal"), PRINCIPAL_ATTRIBUTES("principal_attributes"),
-        AUTHENTICATION_DATE("authentication_date"), AUTHENTICATION_DATE_FORMATTED("authentication_date_formatted"),
-        TICKET_GRANTING_TICKET("ticket_granting_ticket"), AUTHENTICATION_ATTRIBUTES("authentication_attributes"),
-        PROXIED_BY("proxied_by"), AUTHENTICATED_SERVICES("authenticated_services"),
-        IS_PROXIED("is_proxied"),
-        NUMBER_OF_USES("number_of_uses");
-
-        private final String attributeKey;
-
-        /**
-         * Instantiates a new Sso session attribute keys.
-         *
-         * @param attributeKey the attribute key
-         */
-        SsoSessionAttributeKeys(final String attributeKey) {
-            this.attributeKey = attributeKey;
-        }
-    }
-
     private final CentralAuthenticationService centralAuthenticationService;
 
     public SingleSignOnSessionsEndpoint(final CentralAuthenticationService centralAuthenticationService,
@@ -232,5 +191,46 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
             sessionsMap.put("failedTicketGrantingTickets", failedTickets);
         }
         return sessionsMap;
+    }
+
+    private enum SsoSessionReportOptions {
+
+        ALL("all"), PROXIED("proxied"), DIRECT("direct");
+
+        private final String type;
+
+        /**
+         * Instantiates a new Sso session report options.
+         *
+         * @param type the type
+         */
+        SsoSessionReportOptions(final String type) {
+            this.type = type;
+        }
+    }
+
+    /**
+     * The enum Sso session attribute keys.
+     */
+    @Getter
+    private enum SsoSessionAttributeKeys {
+
+        AUTHENTICATED_PRINCIPAL("authenticated_principal"), PRINCIPAL_ATTRIBUTES("principal_attributes"),
+        AUTHENTICATION_DATE("authentication_date"), AUTHENTICATION_DATE_FORMATTED("authentication_date_formatted"),
+        TICKET_GRANTING_TICKET("ticket_granting_ticket"), AUTHENTICATION_ATTRIBUTES("authentication_attributes"),
+        PROXIED_BY("proxied_by"), AUTHENTICATED_SERVICES("authenticated_services"),
+        IS_PROXIED("is_proxied"),
+        NUMBER_OF_USES("number_of_uses");
+
+        private final String attributeKey;
+
+        /**
+         * Instantiates a new Sso session attribute keys.
+         *
+         * @param attributeKey the attribute key
+         */
+        SsoSessionAttributeKeys(final String attributeKey) {
+            this.attributeKey = attributeKey;
+        }
     }
 }

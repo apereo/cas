@@ -1,9 +1,5 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.http.HttpStatus;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -12,6 +8,11 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSaml
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.HttpUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.http.HttpStatus;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.http.MediaType;
 

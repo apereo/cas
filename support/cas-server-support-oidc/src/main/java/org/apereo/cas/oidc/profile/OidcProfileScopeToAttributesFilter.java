@@ -1,8 +1,5 @@
 package org.apereo.cas.oidc.profile;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -21,6 +18,9 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.J2EContext;
 import org.reflections.Reflections;

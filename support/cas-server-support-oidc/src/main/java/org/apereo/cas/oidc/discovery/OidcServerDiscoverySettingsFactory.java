@@ -1,9 +1,10 @@
 package org.apereo.cas.oidc.discovery;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.FactoryBean;
 
 /**

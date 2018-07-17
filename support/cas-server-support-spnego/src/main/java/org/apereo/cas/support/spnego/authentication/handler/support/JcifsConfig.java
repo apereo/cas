@@ -1,10 +1,9 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
-import lombok.val;
-
 import jcifs.Config;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;

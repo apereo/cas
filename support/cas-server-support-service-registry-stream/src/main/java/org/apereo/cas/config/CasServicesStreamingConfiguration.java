@@ -1,11 +1,12 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.CasServicesRegistryStreamingEventListener;
 import org.apereo.cas.services.publisher.CasRegisteredServiceNoOpStreamPublisher;
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
-import org.apereo.cas.StringBean;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,6 +39,6 @@ public class CasServicesStreamingConfiguration {
     @ConditionalOnMissingBean(name = "casRegisteredServiceStreamPublisherIdentifier")
     @Bean
     public StringBean casRegisteredServiceStreamPublisherIdentifier() {
-        return new StringBean();     
+        return new StringBean();
     }
 }

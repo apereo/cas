@@ -1,8 +1,7 @@
 package org.apereo.cas.aws;
 
-import lombok.val;
-
 import com.amazonaws.auth.BasicAWSCredentials;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.core.io.FileSystemResource;

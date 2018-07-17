@@ -1,11 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.nameid;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import net.shibboleth.idp.attribute.IdPAttribute;
-import net.shibboleth.idp.attribute.StringAttributeValue;
-import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -15,6 +9,13 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.shibboleth.idp.attribute.IdPAttribute;
+import net.shibboleth.idp.attribute.StringAttributeValue;
+import net.shibboleth.idp.saml.attribute.encoding.impl.SAML2StringNameIDEncoder;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
@@ -43,6 +44,64 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean, final PersistentIdGenerator persistentIdGenerator) {
         super(configBean);
         this.persistentIdGenerator = persistentIdGenerator;
+    }
+
+    /**
+     * Gets supported name id formats.
+     *
+     * @param service the service
+     * @param adaptor the adaptor
+     * @return the supported name id formats
+     */
+    protected static List<String> getSupportedNameIdFormats(final SamlRegisteredService service,
+                                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+        val supportedNameFormats = adaptor.getSupportedNameIdFormats();
+        LOGGER.debug("Metadata for [{}] declares the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
+
+        if (supportedNameFormats.isEmpty()) {
+            supportedNameFormats.add(NameIDType.TRANSIENT);
+            LOGGER.debug("No supported nameId formats could be determined from metadata. Added default [{}]", NameIDType.TRANSIENT);
+        }
+        if (StringUtils.isNotBlank(service.getRequiredNameIdFormat())) {
+            val fmt = parseAndBuildRequiredNameIdFormat(service);
+            supportedNameFormats.add(0, fmt);
+            LOGGER.debug("Added required nameId format [{}] based on saml service configuration for [{}]", fmt, service.getServiceId());
+        }
+        return supportedNameFormats;
+    }
+
+    private static String parseAndBuildRequiredNameIdFormat(final SamlRegisteredService service) {
+        val fmt = service.getRequiredNameIdFormat().trim();
+        LOGGER.debug("Required NameID format assigned to service [{}] is [{}]", service.getName(), fmt);
+
+        if (StringUtils.containsIgnoreCase(NameIDType.EMAIL, fmt)) {
+            return NameIDType.EMAIL;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.TRANSIENT, fmt)) {
+            return NameIDType.TRANSIENT;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.UNSPECIFIED, fmt)) {
+            return NameIDType.UNSPECIFIED;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.PERSISTENT, fmt)) {
+            return NameIDType.PERSISTENT;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.ENTITY, fmt)) {
+            return NameIDType.ENTITY;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.X509_SUBJECT, fmt)) {
+            return NameIDType.X509_SUBJECT;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.WIN_DOMAIN_QUALIFIED, fmt)) {
+            return NameIDType.WIN_DOMAIN_QUALIFIED;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.KERBEROS, fmt)) {
+            return NameIDType.KERBEROS;
+        }
+        if (StringUtils.containsIgnoreCase(NameIDType.ENCRYPTED, fmt)) {
+            return NameIDType.ENCRYPTED;
+        }
+        return fmt;
     }
 
     @Override
@@ -151,30 +210,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             return AuthnRequest.class.cast(authnRequest).getNameIDPolicy();
         }
         return null;
-    }
-
-    /**
-     * Gets supported name id formats.
-     *
-     * @param service the service
-     * @param adaptor the adaptor
-     * @return the supported name id formats
-     */
-    protected static List<String> getSupportedNameIdFormats(final SamlRegisteredService service,
-                                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        val supportedNameFormats = adaptor.getSupportedNameIdFormats();
-        LOGGER.debug("Metadata for [{}] declares the following NameIDs [{}]", adaptor.getEntityId(), supportedNameFormats);
-
-        if (supportedNameFormats.isEmpty()) {
-            supportedNameFormats.add(NameIDType.TRANSIENT);
-            LOGGER.debug("No supported nameId formats could be determined from metadata. Added default [{}]", NameIDType.TRANSIENT);
-        }
-        if (StringUtils.isNotBlank(service.getRequiredNameIdFormat())) {
-            val fmt = parseAndBuildRequiredNameIdFormat(service);
-            supportedNameFormats.add(0, fmt);
-            LOGGER.debug("Added required nameId format [{}] based on saml service configuration for [{}]", fmt, service.getServiceId());
-        }
-        return supportedNameFormats;
     }
 
     /**
@@ -299,40 +334,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             encoder.setNameQualifier(qualifier);
         }
         return encoder;
-    }
-
-    private static String parseAndBuildRequiredNameIdFormat(final SamlRegisteredService service) {
-        val fmt = service.getRequiredNameIdFormat().trim();
-        LOGGER.debug("Required NameID format assigned to service [{}] is [{}]", service.getName(), fmt);
-
-        if (StringUtils.containsIgnoreCase(NameIDType.EMAIL, fmt)) {
-            return NameIDType.EMAIL;
-        }
-        if (StringUtils.containsIgnoreCase(NameIDType.TRANSIENT, fmt)) {
-            return NameIDType.TRANSIENT;
-        }
-        if (StringUtils.containsIgnoreCase(NameIDType.UNSPECIFIED, fmt)) {
-            return NameIDType.UNSPECIFIED;
-        }
-        if (StringUtils.containsIgnoreCase(NameIDType.PERSISTENT, fmt)) {
-            return NameIDType.PERSISTENT;
-        }
-        if (StringUtils.containsIgnoreCase(NameIDType.ENTITY, fmt)) {
-            return NameIDType.ENTITY;
-        }
-        if (StringUtils.containsIgnoreCase(NameIDType.X509_SUBJECT, fmt)) {
-            return NameIDType.X509_SUBJECT;
-        }
-        if (StringUtils.containsIgnoreCase(NameIDType.WIN_DOMAIN_QUALIFIED, fmt)) {
-            return NameIDType.WIN_DOMAIN_QUALIFIED;
-        }
-        if (StringUtils.containsIgnoreCase(NameIDType.KERBEROS, fmt)) {
-            return NameIDType.KERBEROS;
-        }
-        if (StringUtils.containsIgnoreCase(NameIDType.ENCRYPTED, fmt)) {
-            return NameIDType.ENCRYPTED;
-        }
-        return fmt;
     }
 
 }

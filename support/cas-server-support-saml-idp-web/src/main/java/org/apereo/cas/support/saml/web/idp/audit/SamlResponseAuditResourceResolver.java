@@ -1,8 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;

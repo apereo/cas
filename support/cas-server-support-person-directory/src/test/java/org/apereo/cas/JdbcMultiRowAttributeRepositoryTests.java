@@ -1,8 +1,7 @@
 package org.apereo.cas;
 
-import lombok.val;
-
 import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 

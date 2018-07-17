@@ -1,7 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.couchbase.client.java.document.SerializableDocument;
 import com.couchbase.client.java.view.DefaultView;
@@ -9,15 +13,11 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.ticket.ServiceTicket;
-import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.ArrayList;
@@ -67,6 +67,34 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
 
     private final TicketCatalog ticketCatalog;
     private final CouchbaseClientFactory couchbase;
+
+    private static int getViewRowCountFromViewResultIterator(final Iterator<ViewRow> iterator) {
+        if (iterator.hasNext()) {
+            val res = iterator.next();
+            val count = (Integer) res.value();
+            LOGGER.debug("Found [{}] rows", count);
+            return count;
+        }
+        LOGGER.debug("No rows could be found by the query iterator.");
+        return 0;
+    }
+
+    /**
+     * Get the expiration policy value of the ticket in seconds.
+     *
+     * @param ticket the ticket
+     * @return the exp value
+     * @see <a href="http://docs.couchbase.com/developer/java-2.0/documents-basics.html">Couchbase Docs</a>
+     */
+    private static int getTimeToLive(final Ticket ticket) {
+        val expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        if (TimeUnit.SECONDS.toDays(expTime) >= MAX_EXP_TIME_IN_DAYS) {
+            LOGGER.warn("Any expiration time larger than [{}] days in seconds is considered absolute (as in a Unix time stamp) "
+                + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
+
+        }
+        return expTime;
+    }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
@@ -193,17 +221,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
         return getViewRowCountFromViewResultIterator(iterator);
     }
 
-    private static int getViewRowCountFromViewResultIterator(final Iterator<ViewRow> iterator) {
-        if (iterator.hasNext()) {
-            val res = iterator.next();
-            val count = (Integer) res.value();
-            LOGGER.debug("Found [{}] rows", count);
-            return count;
-        }
-        LOGGER.debug("No rows could be found by the query iterator.");
-        return 0;
-    }
-
     private ViewResult getViewResultIteratorForPrefixedTickets(final String prefix) {
         LOGGER.debug("Running query on document [{}] and view [{}] with prefix [{}]",
             UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS, prefix);
@@ -212,23 +229,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
                 .startKey(prefix)
                 .endKey(prefix + END_TOKEN)
                 .reduce());
-    }
-
-    /**
-     * Get the expiration policy value of the ticket in seconds.
-     *
-     * @param ticket the ticket
-     * @return the exp value
-     * @see <a href="http://docs.couchbase.com/developer/java-2.0/documents-basics.html">Couchbase Docs</a>
-     */
-    private static int getTimeToLive(final Ticket ticket) {
-        val expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
-        if (TimeUnit.SECONDS.toDays(expTime) >= MAX_EXP_TIME_IN_DAYS) {
-            LOGGER.warn("Any expiration time larger than [{}] days in seconds is considered absolute (as in a Unix time stamp) "
-                + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
-
-        }
-        return expTime;
     }
 }
 

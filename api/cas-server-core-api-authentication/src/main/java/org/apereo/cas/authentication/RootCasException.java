@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

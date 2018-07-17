@@ -1,8 +1,9 @@
 package org.apereo.cas.aup;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;

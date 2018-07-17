@@ -1,9 +1,10 @@
 package org.apereo.cas.consent;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
 import java.time.temporal.ChronoUnit;
@@ -29,11 +30,11 @@ public interface ConsentEngine extends Serializable {
      * @return the stored decision
      */
     ConsentDecision storeConsentDecision(Service service,
-                                 RegisteredService registeredService,
-                                 Authentication authentication,
-                                 long reminder,
-                                 ChronoUnit reminderTimeUnit,
-                                 ConsentReminderOptions options);
+                                         RegisteredService registeredService,
+                                         Authentication authentication,
+                                         long reminder,
+                                         ChronoUnit reminderTimeUnit,
+                                         ConsentReminderOptions options);
 
     /**
      * Find consent decision consent decision.
@@ -44,8 +45,8 @@ public interface ConsentEngine extends Serializable {
      * @return the consent decision
      */
     ConsentDecision findConsentDecision(Service service,
-                                         RegisteredService registeredService,
-                                         Authentication authentication);
+                                        RegisteredService registeredService,
+                                        Authentication authentication);
 
     /**
      * Gets consentable attributes.
@@ -63,6 +64,7 @@ public interface ConsentEngine extends Serializable {
      * Gets consentable attributes from an existing consent decision.
      * Typically decisions are signed and encoded, so this op will need to ensure
      * the correct attribute names and values in the existing decision record are produced.
+     *
      * @param decision the decision
      * @return the consentable attributes
      */

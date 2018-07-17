@@ -1,16 +1,16 @@
 package org.apereo.cas.support.saml.mdui;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
+
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import javax.servlet.http.HttpServletRequest;
 
-import lombok.NoArgsConstructor;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link MetadataUIUtils}.

@@ -1,8 +1,8 @@
 package org.apereo.cas;
 
+import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandlerTests;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandlerTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

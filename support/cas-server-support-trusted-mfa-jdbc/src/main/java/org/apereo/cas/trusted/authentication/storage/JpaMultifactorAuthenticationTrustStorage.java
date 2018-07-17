@@ -1,9 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.val;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,10 +1,10 @@
 package org.apereo.cas.interrupt;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
+
+import lombok.val;
 import org.junit.Test;
 
 import java.util.LinkedHashMap;

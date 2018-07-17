@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 /**

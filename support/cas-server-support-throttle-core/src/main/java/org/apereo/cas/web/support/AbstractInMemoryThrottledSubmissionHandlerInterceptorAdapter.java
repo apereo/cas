@@ -1,8 +1,9 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
@@ -35,6 +36,17 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
             authenticationFailureCode, auditTrailExecutionPlan, applicationCode);
     }
 
+    /**
+     * Computes the instantaneous rate in between two given dates corresponding to two submissions.
+     *
+     * @param a First date.
+     * @param b Second date.
+     * @return Instantaneous submission rate in submissions/sec, e.g. {@code a - b}.
+     */
+    private static double submissionRate(final ZonedDateTime a, final ZonedDateTime b) {
+        return SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
+    }
+
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
         val last = this.ipMap.get(constructKey(request));
@@ -56,16 +68,5 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
         val now = ZonedDateTime.now(ZoneOffset.UTC);
         this.ipMap.entrySet().removeIf(entry -> submissionRate(now, entry.getValue()) < getThresholdRate());
         LOGGER.debug("Done decrementing count for throttler.");
-    }
-
-    /**
-     * Computes the instantaneous rate in between two given dates corresponding to two submissions.
-     *
-     * @param a First date.
-     * @param b Second date.
-     * @return Instantaneous submission rate in submissions/sec, e.g. {@code a - b}.
-     */
-    private static double submissionRate(final ZonedDateTime a, final ZonedDateTime b) {
-        return SUBMISSION_RATE_DIVIDEND / (a.toInstant().toEpochMilli() - b.toInstant().toEpochMilli());
     }
 }

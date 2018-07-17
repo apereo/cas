@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import org.apereo.cas.category.CassandraCategory;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -13,6 +11,8 @@ import org.apereo.cas.config.CassandraCoreConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;

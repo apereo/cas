@@ -1,14 +1,14 @@
 package org.apereo.cas.impl.engine;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;

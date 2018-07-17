@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -33,7 +33,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }
-    
+
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (getAccountValidator().isValid(uid, token)) {

@@ -1,15 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
-import lombok.val;
-
-import com.google.common.base.Splitter;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.net.URLBuilder;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -35,6 +25,16 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
+
+import com.google.common.base.Splitter;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.shibboleth.utilities.java.support.net.URLBuilder;
+import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;

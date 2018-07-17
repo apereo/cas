@@ -1,10 +1,10 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.duo.authn.DuoDirectCredential;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -17,7 +17,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class DuoDirectAuthenticationAction extends AbstractAction {
-    
+
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val c = new DuoDirectCredential(WebUtils.getAuthentication(requestContext));

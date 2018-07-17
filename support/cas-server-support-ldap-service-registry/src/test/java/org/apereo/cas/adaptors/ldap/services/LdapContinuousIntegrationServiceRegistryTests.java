@@ -4,6 +4,7 @@ import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
 import org.junit.experimental.categories.Category;
 import org.springframework.test.context.TestPropertySource;
 

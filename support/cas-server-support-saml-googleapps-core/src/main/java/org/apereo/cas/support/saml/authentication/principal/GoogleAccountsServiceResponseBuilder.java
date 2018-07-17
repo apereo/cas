@@ -1,13 +1,5 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
-import lombok.val;
-
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.Response;
@@ -20,6 +12,14 @@ import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
@@ -47,17 +47,11 @@ import java.util.HashMap;
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4584732364007702423L;
-
-    private PrivateKey privateKey;
-
-    private PublicKey publicKey;
-
     private final String publicKeyLocation;
-
     private final String privateKeyLocation;
-
     private final String keyAlgorithm;
-
+    private PrivateKey privateKey;
+    private PublicKey publicKey;
     private GoogleSaml20ObjectBuilder samlObjectBuilder;
 
     private int skewAllowance;

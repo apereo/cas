@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 

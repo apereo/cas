@@ -1,8 +1,9 @@
 package org.apereo.cas.web.flow.logout;
 
+import org.apereo.cas.web.support.WebUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -18,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public abstract class AbstractLogoutAction extends AbstractAction {
-    
+
     private static final String NO_CACHE = "no-cache";
     private static final String CACHE_CONTROL = "Cache-Control";
 

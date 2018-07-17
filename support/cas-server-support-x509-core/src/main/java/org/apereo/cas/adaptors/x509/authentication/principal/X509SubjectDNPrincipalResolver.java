@@ -1,11 +1,13 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
+
 import java.security.cert.X509Certificate;
-import lombok.NoArgsConstructor;
 
 /**
  * Returns a principal based on the Subject DNs name.

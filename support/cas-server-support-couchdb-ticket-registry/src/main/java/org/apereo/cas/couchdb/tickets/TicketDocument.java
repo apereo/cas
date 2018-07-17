@@ -1,12 +1,12 @@
 package org.apereo.cas.couchdb.tickets;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.ticket.Ticket;
-import org.ektorp.support.CouchDbDocument;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.ektorp.support.CouchDbDocument;
 
 /**
  * This is {@link TicketDocument}. Wraps a {@link Ticket} for use with CouchDB.

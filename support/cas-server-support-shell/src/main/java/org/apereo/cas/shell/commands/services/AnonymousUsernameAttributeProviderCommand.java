@@ -1,9 +1,9 @@
 package org.apereo.cas.shell.commands.services;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import lombok.val;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;

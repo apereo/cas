@@ -1,11 +1,5 @@
 package org.apereo.cas.interrupt;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
@@ -13,6 +7,12 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.HttpUtils;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.HashMap;
 

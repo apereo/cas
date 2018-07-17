@@ -1,8 +1,5 @@
 package org.apereo.cas.web.view;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
@@ -11,6 +8,9 @@ import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
 import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 import org.apereo.cas.web.view.json.CasJsonServiceResponse;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.web.servlet.View;

@@ -1,14 +1,14 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import lombok.val;
+import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlIdPUtils;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
-import org.apereo.cas.support.saml.SamlException;
-import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;

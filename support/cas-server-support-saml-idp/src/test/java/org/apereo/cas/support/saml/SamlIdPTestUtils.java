@@ -1,9 +1,9 @@
 package org.apereo.cas.support.saml;
 
-import lombok.val;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.experimental.UtilityClass;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import lombok.val;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

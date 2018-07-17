@@ -1,12 +1,12 @@
 package org.apereo.cas.ticket.support;
 
-import lombok.val;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Delegates to different expiration policies depending on whether surrogate
@@ -19,21 +19,7 @@ import org.apereo.cas.ticket.TicketState;
 @Slf4j
 public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPolicy {
     private static final long serialVersionUID = -2735975347698196127L;
-    
-    /**
-     * Policy types.
-     */
-    public enum PolicyTypes {
-        /**
-         * Surrogate policy type.
-         */
-        SURROGATE,
-        /**
-         * Default policy type.
-         */
-        DEFAULT
-    }
-    
+
     /**
      * Instantiates a new surrogate session expiration policy.
      *
@@ -47,12 +33,26 @@ public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPo
     protected String getExpirationPolicyNameFor(final TicketState ticketState) {
         val attributes = ticketState.getAuthentication().getAttributes();
         if (attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL)
-                && attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER)) {
+            && attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER)) {
             LOGGER.debug("Ticket is associated with a surrogate authentication.");
             return PolicyTypes.SURROGATE.name();
         }
 
         LOGGER.debug("Ticket is not associated with a surrogate authentication.");
         return PolicyTypes.DEFAULT.name();
+    }
+
+    /**
+     * Policy types.
+     */
+    public enum PolicyTypes {
+        /**
+         * Surrogate policy type.
+         */
+        SURROGATE,
+        /**
+         * Default policy type.
+         */
+        DEFAULT
     }
 }

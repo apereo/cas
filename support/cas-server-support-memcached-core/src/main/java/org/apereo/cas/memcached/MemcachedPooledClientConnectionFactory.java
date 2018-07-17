@@ -1,10 +1,11 @@
 package org.apereo.cas.memcached;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
@@ -17,7 +18,6 @@ import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 
 /**
  * This is {@link MemcachedPooledClientConnectionFactory}.

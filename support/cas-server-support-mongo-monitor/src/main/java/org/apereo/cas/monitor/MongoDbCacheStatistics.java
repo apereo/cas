@@ -1,11 +1,10 @@
 package org.apereo.cas.monitor;
 
-import lombok.val;
-
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 

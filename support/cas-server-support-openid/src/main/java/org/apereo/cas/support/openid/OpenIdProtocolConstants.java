@@ -57,7 +57,9 @@ public class OpenIdProtocolConstants {
      */
     public static final String ASSOCIATE = "associate";
 
-    /** Check authentication constant. */
+    /**
+     * Check authentication constant.
+     */
     public static final String CHECK_AUTHENTICATION = "check_authentication";
 
 }

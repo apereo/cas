@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.duo.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoAuthenticationWebflowAction;
@@ -13,6 +12,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -69,16 +70,16 @@ public class DuoSecurityConfiguration {
     public Action duoAuthenticationWebflowAction() {
         return new DuoAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver());
     }
-    
+
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {
         return new DuoAuthenticationWebflowEventResolver(authenticationSystemSupport,
-                centralAuthenticationService,
-                servicesManager,
-                ticketRegistrySupport,
-                warnCookieGenerator,
-                authenticationRequestServiceSelectionStrategies,
-                multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
+            centralAuthenticationService,
+            servicesManager,
+            ticketRegistrySupport,
+            warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+            multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
     }
 
 

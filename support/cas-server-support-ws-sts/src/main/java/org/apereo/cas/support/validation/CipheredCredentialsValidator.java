@@ -1,14 +1,14 @@
 package org.apereo.cas.support.validation;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import org.apereo.cas.CipherExecutor;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.handler.RequestData;
 import org.apache.wss4j.dom.validate.Credential;
 import org.apache.wss4j.dom.validate.Validator;
-import org.apereo.cas.CipherExecutor;
 
 /**
  * This is {@link CipheredCredentialsValidator}.

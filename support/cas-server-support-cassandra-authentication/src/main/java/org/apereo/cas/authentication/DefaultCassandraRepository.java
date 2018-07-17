@@ -1,14 +1,14 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
+import org.apereo.cas.cassandra.CassandraSessionFactory;
+import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Session;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.cassandra.CassandraSessionFactory;
-import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +31,12 @@ public class DefaultCassandraRepository implements CassandraRepository {
         this.selectUserQuery = session.prepare(query);
     }
 
+    private static BoundStatement bind(final PreparedStatement statement, final Object... params) {
+        val boundStatement = statement.bind(params);
+        LOGGER.debug("CQL: {} with parameters [{}]", statement.getQueryString(), StringUtils.join(params, ", "));
+        return boundStatement;
+    }
+
     @Override
     public Map<String, Object> getUser(final String uid) {
         val attributes = new HashMap<String, Object>();
@@ -42,11 +48,5 @@ public class DefaultCassandraRepository implements CassandraRepository {
             });
         }
         return attributes;
-    }
-
-    private static BoundStatement bind(final PreparedStatement statement, final Object... params) {
-        val boundStatement = statement.bind(params);
-        LOGGER.debug("CQL: {} with parameters [{}]", statement.getQueryString(), StringUtils.join(params, ", "));
-        return boundStatement;
     }
 }

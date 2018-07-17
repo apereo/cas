@@ -10,9 +10,9 @@ import org.springframework.test.context.TestPropertySource;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@TestPropertySource(locations={"classpath:/inmemoryuser.properties"})
+@TestPropertySource(locations = {"classpath:/inmemoryuser.properties"})
 @EnableScheduling
 @Slf4j
 public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests
-        extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests {
+    extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests {
 }

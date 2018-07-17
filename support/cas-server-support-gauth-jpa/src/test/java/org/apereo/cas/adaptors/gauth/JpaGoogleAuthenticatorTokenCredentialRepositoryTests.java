@@ -1,8 +1,5 @@
 package org.apereo.cas.adaptors.gauth;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -27,9 +24,12 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.SchedulingUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
@@ -93,22 +93,11 @@ public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
 
-    @TestConfiguration
-    public static class JpaTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-    }
-
     @Before
     public void cleanUp() {
         registry.deleteAll();
     }
-    
+
     @Test
     public void verifySave() {
         registry.save("uid", "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
@@ -129,5 +118,16 @@ public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests {
         s = registry.get("casuser");
         assertEquals(999666, s.getValidationCode());
         assertEquals("newSecret", s.getSecretKey());
+    }
+
+    @TestConfiguration
+    public static class JpaTestConfiguration implements InitializingBean {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @Override
+        public void afterPropertiesSet() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
     }
 }

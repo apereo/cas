@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -26,6 +24,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
+
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

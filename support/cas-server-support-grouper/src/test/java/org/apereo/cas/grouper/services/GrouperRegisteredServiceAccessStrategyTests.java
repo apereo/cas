@@ -1,15 +1,15 @@
 package org.apereo.cas.grouper.services;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
-import org.junit.Test;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 

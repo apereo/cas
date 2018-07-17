@@ -1,9 +1,8 @@
 package org.apereo.cas.support.saml;
 
-import lombok.val;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.cxf.sts.token.realm.SAMLRealmCodec;
 import org.apache.wss4j.common.saml.SamlAssertionWrapper;
 

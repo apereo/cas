@@ -1,9 +1,5 @@
 package org.apereo.cas.authentication.surrogate;
 
-import lombok.val;
-
-import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.SneakyThrows;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.category.LdapCategory;
@@ -36,11 +32,15 @@ import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
+
+import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -108,6 +108,19 @@ public class SurrogateLdapAuthenticationServiceTests {
     @Qualifier("surrogateAuthenticationService")
     private SurrogateAuthenticationService surrogateAuthenticationService;
 
+    @BeforeClass
+    @SneakyThrows
+    public static void bootstrap() {
+        val localhost = new LDAPConnection("localhost", LDAP_PORT,
+            "cn=Directory Manager", "password");
+        localhost.connect("localhost", LDAP_PORT);
+        localhost.bind("cn=Directory Manager", "password");
+        LdapIntegrationTestsOperations.populateEntries(
+            localhost,
+            new ClassPathResource("ldif/ldap-surrogate.ldif").getInputStream(),
+            "ou=people,dc=example,dc=org");
+    }
+
     @Test
     public void verifyAccountsQualifying() {
         val results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
@@ -120,18 +133,5 @@ public class SurrogateLdapAuthenticationServiceTests {
             CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getService());
         assertTrue(result);
-    }
-
-    @BeforeClass
-    @SneakyThrows
-    public static void bootstrap() {
-        val localhost = new LDAPConnection("localhost", LDAP_PORT,
-            "cn=Directory Manager", "password");
-        localhost.connect("localhost", LDAP_PORT);
-        localhost.bind("cn=Directory Manager", "password");
-        LdapIntegrationTestsOperations.populateEntries(
-            localhost,
-            new ClassPathResource("ldif/ldap-surrogate.ldif").getInputStream(),
-            "ou=people,dc=example,dc=org");
     }
 }

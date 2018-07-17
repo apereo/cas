@@ -1,9 +1,10 @@
 package org.apereo.cas.oidc.web;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;

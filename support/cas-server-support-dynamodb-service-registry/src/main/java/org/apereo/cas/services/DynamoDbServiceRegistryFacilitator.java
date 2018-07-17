@@ -1,6 +1,9 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
@@ -20,10 +23,7 @@ import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.serialization.StringSerializer;
+import lombok.val;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,21 +44,7 @@ import java.util.stream.Collectors;
 public class DynamoDbServiceRegistryFacilitator {
 
     private final StringSerializer<RegisteredService> jsonSerializer = new DefaultRegisteredServiceJsonSerializer();
-
-    @Getter
-    private enum ColumnNames {
-
-        ID("id"), NAME("name"), DESCRIPTION("description"), SERVICE_ID("serviceId"), ENCODED("encoded");
-
-        private final String columnName;
-
-        ColumnNames(final String columnName) {
-            this.columnName = columnName;
-        }
-    }
-
     private final DynamoDbServiceRegistryProperties dynamoDbProperties;
-
     private final AmazonDynamoDB amazonDynamoDBClient;
 
     public DynamoDbServiceRegistryFacilitator(final DynamoDbServiceRegistryProperties dynamoDbProperties,
@@ -221,5 +207,17 @@ public class DynamoDbServiceRegistryFacilitator {
         values.put(ColumnNames.ENCODED.getColumnName(), new AttributeValue().withB(ByteBuffer.wrap(out.toByteArray())));
         LOGGER.debug("Created attribute values [{}] based on provided service [{}]", values, service);
         return values;
+    }
+
+    @Getter
+    private enum ColumnNames {
+
+        ID("id"), NAME("name"), DESCRIPTION("description"), SERVICE_ID("serviceId"), ENCODED("encoded");
+
+        private final String columnName;
+
+        ColumnNames(final String columnName) {
+            this.columnName = columnName;
+        }
     }
 }

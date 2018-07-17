@@ -1,9 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.val;
-
-import com.hazelcast.core.HazelcastInstance;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -26,8 +22,12 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
-import org.junit.Test;
+
+import com.hazelcast.core.HazelcastInstance;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.After;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,17 +86,6 @@ public class DefaultHazelcastInstanceConfigurationTests {
         return hzInstance;
     }
 
-    @TestConfiguration
-    public static class HazelcastTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-    }
-
     @Test
     public void correctHazelcastInstanceIsCreated() {
         assertNotNull(this.hzInstance);
@@ -114,6 +103,17 @@ public class DefaultHazelcastInstanceConfigurationTests {
         this.hzInstance.shutdown();
         while (this.hzInstance.getLifecycleService().isRunning()) {
             LOGGER.info("Waiting for instances to shut down");
+        }
+    }
+
+    @TestConfiguration
+    public static class HazelcastTestConfiguration implements InitializingBean {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @Override
+        public void afterPropertiesSet() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
 }

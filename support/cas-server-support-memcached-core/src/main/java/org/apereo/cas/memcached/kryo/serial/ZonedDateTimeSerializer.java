@@ -1,14 +1,14 @@
 package org.apereo.cas.memcached.kryo.serial;
 
-import lombok.val;
+import org.apereo.cas.util.DateTimeUtils;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.DateTimeUtils;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

@@ -1,11 +1,11 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
 
@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes={RadiusConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {RadiusConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/radius2.properties"})
 @Slf4j
 public class RadiusConfigurationTests {

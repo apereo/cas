@@ -1,10 +1,5 @@
 package org.apereo.cas.support.rest;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -16,6 +11,11 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

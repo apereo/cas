@@ -1,9 +1,5 @@
 package org.apereo.cas.support.openid.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -17,6 +13,10 @@ import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -31,8 +31,8 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
-    private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
     private final TicketRegistrySupport ticketRegistrySupport;
+    private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();
 
     public OpenIdSingleSignOnAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                     final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
@@ -73,7 +73,7 @@ public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsA
             }
             return OpenIdProtocolConstants.OPENID_IDENTIFIERSELECT;
         }
-        
+
         val userName = this.extractor.extractLocalUsernameFromUri(openidIdentityParameter);
         context.getFlowScope().put(OpenIdProtocolConstants.OPENID_LOCALID, userName);
         return userName;

@@ -1,9 +1,12 @@
 package org.apereo.cas.web.report;
 
-import lombok.val;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.apereo.cas.web.report.util.ControllerUtils;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -16,9 +19,6 @@ import org.apache.logging.log4j.core.appender.RollingFileAppender;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.slf4j.Log4jLoggerFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.BaseCasMvcEndpoint;
-import org.apereo.cas.web.report.util.ControllerUtils;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,14 +49,10 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
     private static final String LOGGER_NAME_ROOT = "root";
     private static final String FILE_PARAM = "file";
     private static final String FILE_PATTERN_PARAM = "filePattern";
-
+    private final Environment environment;
+    private final ResourceLoader resourceLoader;
     @NonNull
     private LoggerContext loggerContext;
-
-    private final Environment environment;
-
-    private final ResourceLoader resourceLoader;
-
     private Resource logConfigurationFile;
 
     public LoggingConfigurationEndpoint(final CasConfigurationProperties casProperties,
@@ -65,6 +61,10 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
         super(casProperties);
         this.environment = environment;
         this.resourceLoader = resourceLoader;
+    }
+
+    private static ILoggerFactory getCasLoggerFactoryInstance() {
+        return LoggerFactory.getILoggerFactory();
     }
 
     @Override
@@ -150,10 +150,6 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
             return factory.getLoggersInContext(this.loggerContext);
         }
         return new HashMap<>(0);
-    }
-
-    private static ILoggerFactory getCasLoggerFactoryInstance() {
-        return LoggerFactory.getILoggerFactory();
     }
 
     /**

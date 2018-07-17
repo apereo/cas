@@ -1,15 +1,16 @@
 package org.apereo.cas.scim.v2;
 
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
+
 import com.unboundid.scim2.common.types.Email;
 import com.unboundid.scim2.common.types.Name;
 import com.unboundid.scim2.common.types.PhoneNumber;
 import com.unboundid.scim2.common.types.UserResource;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.util.CollectionUtils;
 
 /**
  * This is {@link ScimV2PrincipalAttributeMapper}.

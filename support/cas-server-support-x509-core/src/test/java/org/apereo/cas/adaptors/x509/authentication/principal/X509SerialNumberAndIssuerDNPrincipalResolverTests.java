@@ -1,17 +1,17 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.val;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 
-import static org.junit.Assert.*;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.junit.Test;
 
 import java.security.cert.X509Certificate;
 import java.util.Optional;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia

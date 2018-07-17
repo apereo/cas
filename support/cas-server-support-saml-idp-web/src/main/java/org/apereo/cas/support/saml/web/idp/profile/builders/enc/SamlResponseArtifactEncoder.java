@@ -1,13 +1,13 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.common.messaging.context.SAMLArtifactContext;

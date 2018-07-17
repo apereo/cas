@@ -1,16 +1,16 @@
 package org.apereo.cas.adaptors.duo.web.flow.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
-import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
@@ -47,9 +47,9 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
     private final VariegatedMultifactorAuthenticationProvider provider;
 
-    public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
+    public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                           final boolean enableDeviceRegistration, 
+                                           final boolean enableDeviceRegistration,
                                            final VariegatedMultifactorAuthenticationProvider provider,
                                            final ApplicationContext applicationContext,
                                            final CasConfigurationProperties casProperties) {
@@ -68,23 +68,23 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         });
 
         casProperties.getAuthn().getMfa().getDuo()
-                .stream()
-                .filter(DuoSecurityMultifactorProperties::isTrustedDeviceEnabled)
-                .forEach(duo -> {
-                    val id = duo.getId();
-                    try {
-                        LOGGER.debug("Activating multifactor trusted authentication for webflow [{}]", id);
-                        val registry = applicationContext.getBean(id, FlowDefinitionRegistry.class);
-                        registerMultifactorTrustedAuthentication(registry);
-                    } catch (final Exception e) {
-                        LOGGER.error("Failed to register multifactor trusted authentication for " + id, e);
-                    }
-                });
+            .stream()
+            .filter(DuoSecurityMultifactorProperties::isTrustedDeviceEnabled)
+            .forEach(duo -> {
+                val id = duo.getId();
+                try {
+                    LOGGER.debug("Activating multifactor trusted authentication for webflow [{}]", id);
+                    val registry = applicationContext.getBean(id, FlowDefinitionRegistry.class);
+                    registerMultifactorTrustedAuthentication(registry);
+                } catch (final Exception e) {
+                    LOGGER.error("Failed to register multifactor trusted authentication for " + id, e);
+                }
+            });
     }
 
     private FlowDefinitionRegistry buildDuoFlowRegistry(final MultifactorAuthenticationProvider p) {
         val modelBuilder = new DynamicFlowModelBuilder();
-        
+
         createDuoFlowVariables(modelBuilder);
         createDuoFlowStartActions(modelBuilder);
         createDuoFlowStates(modelBuilder);
@@ -112,7 +112,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         createDuoAuthenticationWebflowAction(states);
         createDuoRedirectToRegistrationAction(states);
         createDuoSuccessEndState(states);
-        
+
         modelBuilder.setStates(states);
     }
 

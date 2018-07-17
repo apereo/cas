@@ -1,8 +1,5 @@
 package org.apereo.cas.web.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
@@ -31,6 +28,9 @@ import org.apereo.cas.web.view.Cas30ResponseView;
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
 import org.apereo.cas.web.view.attributes.InlinedCas30ProtocolAttributesRenderer;
 import org.apereo.cas.web.view.json.Cas30JsonResponseView;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

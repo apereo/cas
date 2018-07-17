@@ -52,47 +52,57 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     private static final long serialVersionUID = -7572316677901391166L;
     /**
+     * Application event publisher.
+     */
+    protected ApplicationEventPublisher applicationEventPublisher;
+
+    /**
      * {@link TicketRegistry}  for storing and retrieving tickets as needed.
      */
     protected final TicketRegistry ticketRegistry;
+
     /**
      * Implementation of Service Manager.
      */
     protected final ServicesManager servicesManager;
+
     /**
      * The logout manager.
      **/
     protected final LogoutManager logoutManager;
+
     /**
      * The ticket factory.
      **/
     protected final TicketFactory ticketFactory;
+
     /**
      * The service selection strategy during validation events.
      **/
     protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
     /**
      * Authentication policy that uses a service context to produce stateful security policies to apply when
      * authenticating credentials.
      */
     protected final ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory;
+
     /**
      * Factory to create the principal type.
      **/
     protected final PrincipalFactory principalFactory;
+
     /**
      * Cipher executor to handle ticket validation.
      */
     protected final CipherExecutor<String, String> cipherExecutor;
+
     /**
      * Enforce registered service access in an auditable way
      * since the access strategy is not usually managed as a Spring bean.
      */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
-    /**
-     * Application event publisher.
-     */
-    protected ApplicationEventPublisher applicationEventPublisher;
+
 
     /**
      * Publish CAS events.
