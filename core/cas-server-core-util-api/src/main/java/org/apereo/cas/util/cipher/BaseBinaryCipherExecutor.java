@@ -1,21 +1,20 @@
 package org.apereo.cas.util.cipher;
 
-import lombok.val;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link BaseBinaryCipherExecutor}.
@@ -36,17 +35,13 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      * Name of the cipher/component whose keys are generated here.
      */
     protected final String cipherName;
-
+    private final SecretKeySpec encryptionKey;
+    private final Cipher aesCipher;
     /**
      * Secret key IV algorithm. Default is {@code AES}.
      */
     private String secretKeyAlgorithm = "AES";
-
     private byte[] encryptionSecretKey;
-
-    private final SecretKeySpec encryptionKey;
-
-    private final Cipher aesCipher;
 
     /**
      * Instantiates a new cryptic ticket cipher executor.
@@ -67,6 +62,13 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         this.aesCipher = Cipher.getInstance("AES");
     }
 
+    @SneakyThrows
+    private static String generateOctetJsonWebKeyOfSize(final int size) {
+        val octetKey = OctJwkGenerator.generateJwk(size);
+        val params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
+        return params.get("k").toString();
+    }
+
     @Override
     @SneakyThrows
     public byte[] encode(final byte[] value, final Object[] parameters) {
@@ -82,13 +84,6 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         this.aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
         val bytePlainText = aesCipher.doFinal(verifiedValue);
         return bytePlainText;
-    }
-
-    @SneakyThrows
-    private static String generateOctetJsonWebKeyOfSize(final int size) {
-        val octetKey = OctJwkGenerator.generateJwk(size);
-        val params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
-        return params.get("k").toString();
     }
 
     /**

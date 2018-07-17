@@ -1,17 +1,16 @@
 package org.apereo.cas.util.crypto;
 
-import lombok.val;
-
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * FactoryBean for creating a public key from a file.
@@ -41,7 +40,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
             return factory.generatePublic(pubSpec);
         }
     }
-    
+
     @Override
     public Class getObjectType() {
         return PublicKey.class;

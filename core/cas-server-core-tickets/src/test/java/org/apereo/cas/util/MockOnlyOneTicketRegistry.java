@@ -1,14 +1,15 @@
 package org.apereo.cas.util;
 
-import java.util.Collection;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.Ticket;
+
+import java.util.Collection;
 
 /**
  * This ticket registry only stores one ticket at the same time and offers the ability to update a ticket.
- * 
+ *
  * @author Jerome Leleu
  * @since 4.0.0
  */
@@ -16,7 +17,7 @@ import org.apereo.cas.ticket.Ticket;
 public class MockOnlyOneTicketRegistry implements TicketRegistry {
 
     private Ticket ticket;
-    
+
     @Override
     public void addTicket(final Ticket ticket) {
         this.ticket = ticket;

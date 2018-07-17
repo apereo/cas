@@ -1,13 +1,14 @@
 package org.apereo.cas.util;
 
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link CoreTicketUtils}.

@@ -1,8 +1,7 @@
 package org.apereo.cas.web.view;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 

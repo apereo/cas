@@ -1,7 +1,5 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
@@ -44,6 +42,9 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,6 +82,23 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         super(applicationEventPublisher, ticketRegistry, servicesManager, logoutManager, ticketFactory,
             authenticationRequestServiceSelectionStrategies, serviceContextAuthenticationPolicyFactory,
             principalFactory, cipherExecutor, registeredServiceAccessStrategyEnforcer);
+    }
+
+    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context, final TicketGrantingTicket ticketGrantingTicket)
+        throws MixedPrincipalException {
+
+        if (context == null) {
+            return null;
+        }
+
+        val currentAuthentication = context.getAuthentication();
+        if (currentAuthentication != null) {
+            val original = ticketGrantingTicket.getAuthentication();
+            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
+                throw new MixedPrincipalException(currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
+            }
+        }
+        return currentAuthentication;
     }
 
     @Audit(
@@ -370,22 +388,5 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         this.ticketRegistry.addTicket(ticketGrantingTicket);
         doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket));
         return ticketGrantingTicket;
-    }
-
-    private static Authentication evaluatePossibilityOfMixedPrincipals(final AuthenticationResult context, final TicketGrantingTicket ticketGrantingTicket)
-        throws MixedPrincipalException {
-
-        if (context == null) {
-            return null;
-        }
-
-        val currentAuthentication = context.getAuthentication();
-        if (currentAuthentication != null) {
-            val original = ticketGrantingTicket.getAuthentication();
-            if (!currentAuthentication.getPrincipal().equals(original.getPrincipal())) {
-                throw new MixedPrincipalException(currentAuthentication, currentAuthentication.getPrincipal(), original.getPrincipal());
-            }
-        }
-        return currentAuthentication;
     }
 }

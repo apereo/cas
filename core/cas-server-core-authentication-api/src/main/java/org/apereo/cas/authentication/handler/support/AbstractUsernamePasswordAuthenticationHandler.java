@@ -1,12 +1,5 @@
 package org.apereo.cas.authentication.handler.support;
 
-import lombok.val;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.Credential;
@@ -16,6 +9,13 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -40,7 +40,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * Decide how to execute password policy handling, if at all.
      */
     protected AuthenticationPasswordPolicyHandlingStrategy passwordPolicyHandlingStrategy = (o, o2) -> new ArrayList<>(0);
-    
+
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;

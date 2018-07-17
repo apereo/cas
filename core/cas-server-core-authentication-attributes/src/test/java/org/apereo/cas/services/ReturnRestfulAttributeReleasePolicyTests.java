@@ -1,13 +1,13 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

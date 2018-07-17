@@ -1,16 +1,16 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.ScriptingUtils;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * This is {@link ScriptedRegisteredServiceUsernameProvider}.

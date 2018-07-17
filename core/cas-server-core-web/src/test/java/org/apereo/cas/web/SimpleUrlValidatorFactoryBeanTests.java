@@ -1,13 +1,12 @@
 package org.apereo.cas.web;
 
-import lombok.val;
-
-import static org.junit.Assert.*;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import static org.junit.Assert.*;
 
 /**
  * @author swoeste
@@ -30,7 +29,7 @@ public class SimpleUrlValidatorFactoryBeanTests {
         assertTrue(validator.isValid("http://www.demo.com/logout"));
         assertTrue(validator.isValid("http://localhost/logout"));
     }
-    
+
     @Test
     public void verifyValidationWithRegEx() {
         val validator = new SimpleUrlValidatorFactoryBean(false, "\\w{2}\\.\\w{4}\\.authority", true).getObject();
@@ -39,7 +38,7 @@ public class SimpleUrlValidatorFactoryBeanTests {
         assertFalse(validator.isValid("http://other.test.authority/logout"));
         assertFalse(validator.isValid("http://localhost/logout"));
     }
-    
+
     @Test
     public void verifyValidationWithRegExCaseInsensitiv() {
         val validator = new SimpleUrlValidatorFactoryBean(false, "\\w{2}\\.\\w{4}\\.authority", false).getObject();

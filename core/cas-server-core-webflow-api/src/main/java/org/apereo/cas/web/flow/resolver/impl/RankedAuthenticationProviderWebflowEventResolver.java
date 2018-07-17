@@ -1,9 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -15,6 +11,10 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.EventFactorySupport;

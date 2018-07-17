@@ -1,7 +1,5 @@
 package org.apereo.cas.support.events;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -14,10 +12,12 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

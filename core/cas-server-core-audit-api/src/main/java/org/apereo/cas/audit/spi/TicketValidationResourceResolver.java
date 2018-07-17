@@ -1,11 +1,11 @@
 package org.apereo.cas.audit.spi;
 
-import lombok.val;
+import org.apereo.cas.util.AopUtils;
+import org.apereo.cas.validation.Assertion;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.AopUtils;
-import org.apereo.cas.validation.Assertion;
+import lombok.val;
 import org.aspectj.lang.JoinPoint;
 
 import java.io.StringWriter;
@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
  */
 @Slf4j
 public class TicketValidationResourceResolver extends TicketAsFirstParameterResourceResolver {
-    
+
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
     @Override

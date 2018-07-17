@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
@@ -27,7 +27,7 @@ public class DefaultPasswordEncoderTests {
         val e = PasswordEncoderUtils.newPasswordEncoder(p);
         assertNotNull(e);
     }
-    
+
     @Test
     public void verifyPasswordEncoderByMD5() {
         val p = new PasswordEncoderProperties();

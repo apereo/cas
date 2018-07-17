@@ -1,9 +1,8 @@
 package org.apereo.cas.util.gen;
 
-import lombok.val;
-
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.stream.IntStream;
 

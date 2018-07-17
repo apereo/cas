@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -11,6 +10,7 @@ import static org.junit.Assert.*;
 
 /**
  * Handles tests for {@link DefaultPrincipalFactory}.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */

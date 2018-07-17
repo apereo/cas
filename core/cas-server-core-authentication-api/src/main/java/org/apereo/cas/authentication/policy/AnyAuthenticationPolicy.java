@@ -1,12 +1,13 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
-import lombok.Setter;
+
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Authentication policy that is satisfied by at least one successfully authenticated credential.

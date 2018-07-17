@@ -1,15 +1,16 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 
 import java.util.Map;
 import java.util.function.Function;

@@ -1,12 +1,12 @@
 package org.apereo.cas.logging;
 
-import lombok.val;
+import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 
+import lombok.val;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.logging.log4j.util.SortedArrayStringMap;
-import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 
 /**
  * This is {@link LoggingUtils}.
@@ -16,8 +16,9 @@ import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
  */
 public final class LoggingUtils {
 
-    private LoggingUtils() {}
-    
+    private LoggingUtils() {
+    }
+
     /**
      * Prepare log event log event.
      *

@@ -1,12 +1,12 @@
 package org.apereo.cas.logout;
 
-import lombok.val;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CompressionUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Collection;

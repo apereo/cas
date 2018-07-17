@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.support;
 
-import lombok.val;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -9,9 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketState;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -101,7 +101,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         val match = getExpirationPolicyFor(ticketState);
         if (!match.isPresent()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
-                    + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
+                + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
             return super.getTimeToLive(ticketState);
         }
         val policy = match.get();

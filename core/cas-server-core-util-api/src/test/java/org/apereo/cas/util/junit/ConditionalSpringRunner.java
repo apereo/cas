@@ -1,8 +1,9 @@
 package org.apereo.cas.util.junit;
 
+import org.apereo.cas.util.SocketUtils;
+
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apereo.cas.util.SocketUtils;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;

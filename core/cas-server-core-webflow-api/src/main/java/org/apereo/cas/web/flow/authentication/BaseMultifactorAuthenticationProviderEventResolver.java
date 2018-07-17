@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow.authentication;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -16,6 +13,9 @@ import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -33,9 +33,9 @@ import java.util.Optional;
  */
 @Slf4j
 public abstract class BaseMultifactorAuthenticationProviderEventResolver extends AbstractCasWebflowEventResolver
-        implements MultifactorAuthenticationProviderResolver {
+    implements MultifactorAuthenticationProviderResolver {
 
-    
+
     public BaseMultifactorAuthenticationProviderEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                               final CentralAuthenticationService centralAuthenticationService,
                                                               final ServicesManager servicesManager,
@@ -44,25 +44,25 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
                                                               final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                               final MultifactorAuthenticationProviderSelector selector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator,
-                authenticationSelectionStrategies, selector);
+            ticketRegistrySupport, warnCookieGenerator,
+            authenticationSelectionStrategies, selector);
     }
 
     @Override
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final Collection<String> requestMfaMethod) {
         val providerFound = providers.values()
-                .stream()           
-                .filter(p -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(p::matches))
-                .findFirst();
+            .stream()
+            .filter(p -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(p::matches))
+            .findFirst();
         if (providerFound.isPresent()) {
             val provider = providerFound.get();
             if (provider instanceof VariegatedMultifactorAuthenticationProvider) {
                 val multi = VariegatedMultifactorAuthenticationProvider.class.cast(provider);
                 return multi.getProviders()
-                        .stream()
-                        .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
-                        .findFirst();
+                    .stream()
+                    .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
+                    .findFirst();
             }
         }
 

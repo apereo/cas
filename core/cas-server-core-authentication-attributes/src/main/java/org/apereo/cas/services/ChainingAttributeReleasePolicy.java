@@ -1,16 +1,18 @@
 package org.apereo.cas.services;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.ToString;
-import lombok.Setter;
 
 /**
  * This is {@link ChainingAttributeReleasePolicy}.

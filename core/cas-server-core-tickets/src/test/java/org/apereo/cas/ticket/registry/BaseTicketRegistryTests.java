@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.val;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
@@ -14,6 +13,8 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
+
+import lombok.val;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;

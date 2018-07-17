@@ -1,7 +1,8 @@
 package org.apereo.cas.services.resource;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.RegisteredService;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link DefaultRegisteredServiceResourceNamingStrategy}. This class provides the default
@@ -15,7 +16,7 @@ public class DefaultRegisteredServiceResourceNamingStrategy implements Registere
     /**
      * Method creates a filename to store the service.
      *
-     * @param service - Service to be stored.
+     * @param service   - Service to be stored.
      * @param extension - extension to use for the file.
      * @return - String representing file name.
      */

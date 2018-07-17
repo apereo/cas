@@ -1,11 +1,12 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import org.apereo.cas.authentication.principal.Principal;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Principal;
 import org.springframework.data.annotation.Transient;
 
 import java.util.HashMap;

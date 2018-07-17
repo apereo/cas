@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
  *
  * @author Scott Battaglia
  * @since 3.2.1
- *
  */
 @Slf4j
 @Setter
@@ -21,7 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class RememberMeUsernamePasswordCredential extends UsernamePasswordCredential implements RememberMeCredential {
-    /** Unique Id for serialization. */
+    /**
+     * Unique Id for serialization.
+     */
     private static final long serialVersionUID = -6710007659431302397L;
 
     private boolean rememberMe;

@@ -15,17 +15,6 @@ import java.lang.reflect.Modifier;
  * @since 5.3.0
  */
 public class ConditionalIgnoreRule implements MethodRule {
-    @Override
-    public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-        if (hasConditionalIgnoreAnnotation(method)) {
-            val condition = getIgnoreCondition(target, method);
-            if (condition.isSatisfied()) {
-                return new IgnoreStatement(condition);
-            }
-        }
-        return base;
-    }
-
     /**
      * Has conditional ignore annotation boolean.
      *
@@ -46,6 +35,17 @@ public class ConditionalIgnoreRule implements MethodRule {
     private static IgnoreCondition getIgnoreCondition(final Object target, final FrameworkMethod method) {
         val annotation = method.getAnnotation(ConditionalIgnore.class);
         return new IgnoreConditionCreator(target, annotation).create();
+    }
+
+    @Override
+    public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
+        if (hasConditionalIgnoreAnnotation(method)) {
+            val condition = getIgnoreCondition(target, method);
+            if (condition.isSatisfied()) {
+                return new IgnoreStatement(condition);
+            }
+        }
+        return base;
     }
 
     /**

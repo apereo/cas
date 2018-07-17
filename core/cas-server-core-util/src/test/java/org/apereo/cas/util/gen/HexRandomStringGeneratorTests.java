@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
  * Tests for {@link HexRandomStringGenerator}.
  *
  * @author Timur Duehr
- *
  * @since 5.2.0
  */
 @Slf4j

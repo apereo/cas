@@ -1,10 +1,11 @@
 package org.apereo.cas.services;
 
-import lombok.val;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
 import org.apereo.cas.authentication.PrincipalException;
+
+import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 /**

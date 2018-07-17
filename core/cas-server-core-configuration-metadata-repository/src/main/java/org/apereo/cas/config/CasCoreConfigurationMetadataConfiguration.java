@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.metadata.rest.CasConfigurationMetadataServerEndpoint;
+
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

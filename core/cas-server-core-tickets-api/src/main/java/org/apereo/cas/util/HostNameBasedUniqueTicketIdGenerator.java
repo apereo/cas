@@ -1,8 +1,9 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 
 /**
  * An implementation of {@link UniqueTicketIdGenerator} that is able auto-configure

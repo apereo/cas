@@ -1,8 +1,5 @@
 package org.apereo.cas.authentication.handler.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -11,6 +8,9 @@ import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -25,12 +25,13 @@ import java.security.GeneralSecurityException;
  * a connection does the heavy process of authenticating.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 @Slf4j
 public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
-    /** Instance of Apache Commons HttpClient. */
+    /**
+     * Instance of Apache Commons HttpClient.
+     */
     private final HttpClient httpClient;
 
     /**
@@ -42,7 +43,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
      * @param order            the order
      * @param httpClient       the http client
      */
-    public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, 
+    public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                                             final PrincipalFactory principalFactory,
                                                             final Integer order, final HttpClient httpClient) {
         super(name, servicesManager, principalFactory, order);
@@ -54,7 +55,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
         val httpCredential = (HttpBasedServiceCredential) credential;
         if (!httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(httpCredential.getCallbackUrl())) {
             LOGGER.warn("Proxy policy for service [{}] cannot authorize the requested callback url [{}].",
-                    httpCredential.getService().getServiceId(), httpCredential.getCallbackUrl());
+                httpCredential.getService().getServiceId(), httpCredential.getCallbackUrl());
             throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");
         }
 
@@ -67,7 +68,6 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     }
 
     /**
-     *
      * @return true if the credential provided are not null and the credential
      * are a subclass of (or equal to) HttpBasedServiceCredential.
      */

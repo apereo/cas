@@ -24,6 +24,7 @@ import org.apereo.cas.util.http.HttpMessageTests;
 import org.apereo.cas.util.http.SimpleHttpClientTests;
 import org.apereo.cas.util.io.CommunicationsManagerTests;
 import org.apereo.cas.util.io.CopyServletOutputStreamTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

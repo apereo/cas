@@ -1,18 +1,18 @@
 package org.apereo.cas.services.support;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.util.serialization.SerializationUtils;
-import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -114,13 +114,13 @@ public class RegisteredServiceRegexAttributeFilterTests {
         when(p.getId()).thenReturn("principalId");
 
         val attr = policy.getAttributes(p, RegisteredServiceTestUtils.getService(),
-                RegisteredServiceTestUtils.getRegisteredService("test"));
+            RegisteredServiceTestUtils.getRegisteredService("test"));
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey("attr3"));
 
         val data = SerializationUtils.serialize(policy);
         val p2 =
-                SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
+            SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
         assertEquals(p2.getAttributeFilter(), policy.getAttributeFilter());
@@ -130,7 +130,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     public void verifySerialization() {
         val data = SerializationUtils.serialize(this.filter);
         val secondFilter =
-                SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
+            SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
 

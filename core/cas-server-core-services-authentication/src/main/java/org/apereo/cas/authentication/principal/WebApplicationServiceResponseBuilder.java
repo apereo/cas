@@ -1,14 +1,14 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
-
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Response.ResponseType;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;

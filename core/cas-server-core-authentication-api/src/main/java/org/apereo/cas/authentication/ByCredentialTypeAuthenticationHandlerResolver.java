@@ -1,7 +1,8 @@
 package org.apereo.cas.authentication;
 
-import lombok.RequiredArgsConstructor;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.RequiredArgsConstructor;
 
 import java.util.Collection;
 import java.util.Set;

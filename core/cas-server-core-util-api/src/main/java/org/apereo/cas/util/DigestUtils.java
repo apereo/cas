@@ -1,9 +1,8 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.StringUtils;
 

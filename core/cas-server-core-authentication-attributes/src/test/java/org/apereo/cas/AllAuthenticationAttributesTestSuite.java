@@ -8,6 +8,7 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicyTests;
 import org.apereo.cas.services.ReturnRestfulAttributeReleasePolicyTests;
 import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicyTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

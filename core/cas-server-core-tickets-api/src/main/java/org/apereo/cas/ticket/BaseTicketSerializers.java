@@ -1,17 +1,18 @@
 package org.apereo.cas.ticket;
 
-import com.fasterxml.jackson.core.PrettyPrinter;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.registry.EncodedTicket;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
+
+import com.fasterxml.jackson.core.PrettyPrinter;
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 
 import java.io.StringWriter;

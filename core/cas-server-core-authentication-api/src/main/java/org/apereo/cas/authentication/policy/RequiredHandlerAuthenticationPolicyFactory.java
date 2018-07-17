@@ -1,11 +1,12 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceContext;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Produces {@link ContextualAuthenticationPolicy} instances that are satisfied iff the given {@link Authentication}
