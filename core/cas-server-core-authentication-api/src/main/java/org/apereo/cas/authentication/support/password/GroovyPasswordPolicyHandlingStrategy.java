@@ -5,6 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.util.ScriptingUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
+
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
 
 import java.util.List;
@@ -24,7 +27,7 @@ public class GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse> implem
     @Override
     public List<MessageDescriptor> handle(final AuthenticationResponse response,
                                           final PasswordPolicyConfiguration configuration) {
-
-        return ScriptingUtils.executeGroovyScript(groovyResource, new Object[]{response, configuration, LOGGER}, List.class);
+        final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+        return ScriptingUtils.executeGroovyScript(groovyResource, new Object[]{response, configuration, LOGGER, applicationContext}, List.class);
     }
 }
