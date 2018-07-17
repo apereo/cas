@@ -1,8 +1,9 @@
 package org.apereo.cas;
 
+import org.apereo.cas.util.spring.boot.AbstractCasBanner;
+
 import io.undertow.Version;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.spring.boot.AbstractCasBanner;
 import org.springframework.core.env.Environment;
 
 import java.util.Formatter;

@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import lombok.val;
-
 import org.junit.Test;
 import org.springframework.mock.env.MockEnvironment;
 

@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import lombok.val;
-
 import org.apache.commons.io.output.WriterOutputStream;
 import org.junit.Test;
 import org.junit.runner.RunWith;

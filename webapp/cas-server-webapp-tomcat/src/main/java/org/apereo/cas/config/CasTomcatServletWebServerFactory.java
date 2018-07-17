@@ -1,10 +1,11 @@
 package org.apereo.cas.config;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
 
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.catalina.ha.session.BackupManager;
 import org.apache.catalina.ha.session.ClusterManagerBase;
 import org.apache.catalina.ha.session.ClusterSessionListener;
@@ -23,7 +24,6 @@ import org.apache.catalina.tribes.membership.StaticMember;
 import org.apache.catalina.tribes.transport.ReplicationTransmitter;
 import org.apache.catalina.tribes.transport.nio.NioReceiver;
 import org.apache.catalina.tribes.transport.nio.PooledParallelSender;
-import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 
