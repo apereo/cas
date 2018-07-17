@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.device.DeviceTokenFactory;
 import org.apereo.cas.ticket.device.DeviceUserCode;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -30,6 +31,11 @@ import java.util.Map;
  * @since 6.0.0
  */
 public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20Controller {
+    /**
+     * User code parameter name.
+     */
+    public static final String PARAMETER_USER_CODE = "usercode";
+
     private final DeviceTokenFactory deviceTokenFactory;
 
     public OAuth20DeviceUserCodeApprovalEndpointController(final ServicesManager servicesManager,
@@ -70,7 +76,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
      */
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.DEVICE_AUTHZ_URL)
     public ModelAndView handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        val userCode = request.getParameter("usercode");
+        val userCode = request.getParameter(PARAMETER_USER_CODE);
         if (StringUtils.isBlank(userCode)) {
             return getModelAndViewForFailure("codenotfound");
         }
@@ -87,7 +93,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
         }
         deviceUserCode.approveUserCode();
         this.ticketRegistry.updateTicket(deviceUserCode);
-        return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW);
+        return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW, HttpStatus.OK);
     }
 
     private ModelAndView getModelAndViewForFailure(final String code) {
