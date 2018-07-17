@@ -10,7 +10,7 @@ import lombok.val;
  */
 public class RunningContinuousIntegrationCondition implements IgnoreCondition {
     @Override
-    public boolean isSatisfied() {
+    public Boolean isSatisfied() {
         val sysProp = System.getProperty("CI", Boolean.FALSE.toString());
         val envProp = System.getenv("CI");
         return "true".equals(sysProp) || "true".equals(envProp);
