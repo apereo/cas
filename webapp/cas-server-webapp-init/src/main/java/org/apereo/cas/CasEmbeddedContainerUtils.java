@@ -1,11 +1,11 @@
 package org.apereo.cas;
 
-import lombok.val;
+import org.apereo.cas.util.spring.boot.AbstractCasBanner;
+import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.spring.boot.AbstractCasBanner;
-import org.apereo.cas.util.spring.boot.DefaultCasBanner;
+import lombok.val;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
