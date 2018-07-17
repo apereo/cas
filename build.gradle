@@ -14,8 +14,8 @@ ext {
 
     publishingRelease = publishReleases && rootProject.sonatypeUsername != null && rootProject.sonatypePassword != null
     /*
-    Open the Git repository in the current directory.
-    Get commit id of HEAD.
+        Open the Git repository in the current directory.
+        Get commit id of HEAD.
      */
     git = org.ajoberstar.grgit.Grgit.open(dir: file('.').canonicalPath)
     def gitHead = git.head()
@@ -237,7 +237,9 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
-        it.options.fork = true
+        it.options.fork = false
+        it.options.incremental = false
+        
         def casCompilerArgs = ["-parameters"]
 
         if (!rootProject.skipErrorProneCompiler) {

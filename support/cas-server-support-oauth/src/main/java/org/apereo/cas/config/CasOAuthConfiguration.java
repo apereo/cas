@@ -358,20 +358,21 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
                 centralAuthenticationService, casProperties.getAuthn().getOauth(),
                 webApplicationServiceFactory);
 
+        val authenticationBuilder = oauthCasAuthenticationBuilder();
         final AccessTokenGrantRequestExtractor pswExt =
             new AccessTokenPasswordGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
-                oauthCasAuthenticationBuilder(), centralAuthenticationService,
+                authenticationBuilder, centralAuthenticationService,
                 casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
 
         final AccessTokenGrantRequestExtractor credsExt =
             new AccessTokenClientCredentialsGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
-                oauthCasAuthenticationBuilder(), centralAuthenticationService,
+                authenticationBuilder, centralAuthenticationService,
                 casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
 
         final AccessTokenGrantRequestExtractor deviceCodeExt =
             new AccessTokenDeviceCodeResponseRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
                 centralAuthenticationService, casProperties.getAuthn().getOauth(),
-                oauthCasAuthenticationBuilder(), registeredServiceAccessStrategyEnforcer);
+                authenticationBuilder, registeredServiceAccessStrategyEnforcer);
 
         return CollectionUtils.wrapList(authzCodeExt, refreshTokenExt, deviceCodeExt, pswExt, credsExt);
     }
