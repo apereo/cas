@@ -2,9 +2,11 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link PrincipalTransformationProperties}.
@@ -21,49 +23,46 @@ import lombok.Setter;
 public class PrincipalTransformationProperties implements Serializable {
 
     private static final long serialVersionUID = 1678602647607236322L;
-
-    public enum CaseConversion {
-
-        /**
-         * No conversion.
-         */
-        NONE, /**
-         * Lowercase conversion.
-         */
-        UPPERCASE, /**
-         * Uppcase conversion.
-         */
-        LOWERCASE
-    }
-
     /**
      * Prefix to add to the principal id prior to authentication.
      */
     private String prefix;
-
     /**
      * Suffix to add to the principal id prior to authentication.
      */
     private String suffix;
-
     /**
      * A regular expression that will be used against the provided username
      * for username extractions. On a successful match, the first matched group
      * in the pattern will be used as the extracted username.
      */
     private String pattern;
-
     /**
      * Transform usernames using a Groovy resource.
      */
     private Groovy groovy = new Groovy();
-
     /**
      * Indicate whether the principal identifier should be transformed
      * into upper-case, lower-case, etc.
      * Accepted values are {@code NONE, UPPERCASE, LOWERCASE},
      */
     private CaseConversion caseConversion = CaseConversion.NONE;
+
+    public enum CaseConversion {
+
+        /**
+         * No conversion.
+         */
+        NONE,
+        /**
+         * Lowercase conversion.
+         */
+        UPPERCASE,
+        /**
+         * Uppcase conversion.
+         */
+        LOWERCASE
+    }
 
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter

@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mongo;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
+
 import lombok.Getter;
 import lombok.Setter;
 

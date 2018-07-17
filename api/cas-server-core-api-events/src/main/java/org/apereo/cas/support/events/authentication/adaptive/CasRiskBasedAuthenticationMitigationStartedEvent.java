@@ -1,9 +1,10 @@
 package org.apereo.cas.support.events.authentication.adaptive;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.AbstractCasEvent;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link CasRiskBasedAuthenticationMitigationStartedEvent}.
@@ -28,7 +29,7 @@ public class CasRiskBasedAuthenticationMitigationStartedEvent extends AbstractCa
      * @param service        the service
      * @param score          the score
      */
-    public CasRiskBasedAuthenticationMitigationStartedEvent(final Object source, final Authentication authentication, 
+    public CasRiskBasedAuthenticationMitigationStartedEvent(final Object source, final Authentication authentication,
                                                             final RegisteredService service, final Object score) {
         super(source);
         this.authentication = authentication;

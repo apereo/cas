@@ -22,5 +22,5 @@ public class CasRegisteredServicesRefreshEvent extends BaseCasRegisteredServiceE
     public CasRegisteredServicesRefreshEvent(final Object source) {
         super(source);
     }
-    
+
 }

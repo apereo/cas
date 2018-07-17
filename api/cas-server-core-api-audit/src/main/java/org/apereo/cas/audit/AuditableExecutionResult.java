@@ -1,9 +1,5 @@
 package org.apereo.cas.audit;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
@@ -11,9 +7,15 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+
 
 /**
  * This is {@link AuditableExecutionResult}.
@@ -74,6 +76,25 @@ public class AuditableExecutionResult {
     @Builder.Default
     private Map<String, Object> properties = new TreeMap<>();
 
+    /**
+     * Of auditable execution result.
+     *
+     * @param context the context
+     * @return the auditable execution result
+     */
+    public static AuditableExecutionResult of(final AuditableContext context) {
+        return AuditableExecutionResult.builder()
+            .registeredService(context.getRegisteredService().orElseGet(null))
+            .ticketGrantingTicket(context.getTicketGrantingTicket().orElseGet(null))
+            .authentication(context.getAuthentication().orElseGet(null))
+            .authenticationResult(context.getAuthenticationResult().orElseGet(null))
+            .service(context.getService().orElseGet(null))
+            .serviceTicket(context.getServiceTicket().orElseGet(null))
+            .serviceTicket(context.getServiceTicket().orElseGet(null))
+            .properties(context.getProperties())
+            .build();
+    }
+
     public boolean isExecutionFailure() {
         return getException().isPresent();
     }
@@ -95,25 +116,6 @@ public class AuditableExecutionResult {
      */
     public void addProperty(final String name, final Object value) {
         this.properties.put(name, value);
-    }
-    
-    /**
-     * Of auditable execution result.
-     *
-     * @param context the context
-     * @return the auditable execution result
-     */
-    public static AuditableExecutionResult of(final AuditableContext context) {
-        return AuditableExecutionResult.builder()
-            .registeredService(context.getRegisteredService().orElseGet(null))
-            .ticketGrantingTicket(context.getTicketGrantingTicket().orElseGet(null))
-            .authentication(context.getAuthentication().orElseGet(null))
-            .authenticationResult(context.getAuthenticationResult().orElseGet(null))
-            .service(context.getService().orElseGet(null))
-            .serviceTicket(context.getServiceTicket().orElseGet(null))
-            .serviceTicket(context.getServiceTicket().orElseGet(null))
-            .properties(context.getProperties())
-            .build();
     }
 
     /**

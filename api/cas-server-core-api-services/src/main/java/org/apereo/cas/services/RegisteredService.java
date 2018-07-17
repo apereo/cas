@@ -1,8 +1,9 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.apereo.cas.authentication.principal.Service;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -20,24 +21,6 @@ import java.util.Set;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredService extends Serializable, Comparable<RegisteredService> {
-
-    /**
-     * The logout type.
-     */
-    enum LogoutType {
-        /**
-         * For no SLO.
-         */
-        NONE,
-        /**
-         * For back channel SLO.
-         */
-        BACK_CHANNEL,
-        /**
-         * For front channel SLO.
-         */
-        FRONT_CHANNEL
-    }
 
     /**
      * Initial ID value of newly created (but not persisted) registered service.
@@ -72,6 +55,13 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return the numeric identifier for this service.
      */
     long getId();
+
+    /**
+     * Sets the identifier for this service. Use {@link #INITIAL_IDENTIFIER_VALUE} to indicate a branch new service definition.
+     *
+     * @param id the numeric identifier for the service.
+     */
+    void setId(long id);
 
     /**
      * Returns the name of the service.
@@ -119,13 +109,6 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @param evaluationOrder the service evaluation order
      */
     void setEvaluationOrder(int evaluationOrder);
-
-    /**
-     * Sets the identifier for this service. Use {@link #INITIAL_IDENTIFIER_VALUE} to indicate a branch new service definition.
-     *
-     * @param id the numeric identifier for the service.
-     */
-    void setId(long id);
 
     /**
      * Get the name of the attribute this service prefers to consume as username.
@@ -278,5 +261,23 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * values or object instances, etc.
      */
     default void initialize() {
+    }
+
+    /**
+     * The logout type.
+     */
+    enum LogoutType {
+        /**
+         * For no SLO.
+         */
+        NONE,
+        /**
+         * For back channel SLO.
+         */
+        BACK_CHANNEL,
+        /**
+         * For front channel SLO.
+         */
+        FRONT_CHANNEL
     }
 }

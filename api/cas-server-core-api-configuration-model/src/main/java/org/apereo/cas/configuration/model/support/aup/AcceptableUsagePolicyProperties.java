@@ -6,9 +6,11 @@ import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbP
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link AcceptableUsagePolicyProperties}.

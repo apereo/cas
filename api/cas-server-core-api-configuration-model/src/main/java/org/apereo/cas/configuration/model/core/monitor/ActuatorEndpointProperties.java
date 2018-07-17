@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,6 +21,22 @@ import java.util.stream.Stream;
 @Setter
 public class ActuatorEndpointProperties implements Serializable {
     private static final long serialVersionUID = -2463521198550485506L;
+    /**
+     * Required user roles.
+     */
+    private List<String> requiredRoles;
+    /**
+     * Required user authorities.
+     */
+    private List<String> requiredAuthorities;
+    /**
+     * Required ip addresses.
+     */
+    private List<String> requiredIpAddresses;
+    /**
+     * Define the security access level of the endpoint.
+     */
+    private List<EndpointAccessLevel> access = Stream.of(EndpointAccessLevel.DENY).collect(Collectors.toList());
 
     /**
      * Define the security access level for the endpoint.
@@ -54,24 +71,4 @@ public class ActuatorEndpointProperties implements Serializable {
          */
         IP_ADDRESS
     }
-
-    /**
-     * Required user roles.
-     */
-    private List<String> requiredRoles;
-
-    /**
-     * Required user authorities.
-     */
-    private List<String> requiredAuthorities;
-
-    /**
-     * Required ip addresses.
-     */
-    private List<String> requiredIpAddresses;
-
-    /**
-     * Define the security access level of the endpoint.
-     */
-    private List<EndpointAccessLevel> access = Stream.of(EndpointAccessLevel.DENY).collect(Collectors.toList());
 }

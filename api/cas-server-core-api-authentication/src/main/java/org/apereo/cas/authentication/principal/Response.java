@@ -10,19 +10,6 @@ import java.util.Map;
  * @since 4.1.0
  */
 public interface Response extends Serializable {
-    /** An enumeration of different response types. */
-    enum ResponseType {
-
-        /** The post. */
-        POST,
-
-        /** The redirect. */
-        REDIRECT,
-
-        /** Response is provided in form of headers. */
-        HEADER
-    }
-
     /**
      * Gets attributes.
      *
@@ -43,4 +30,25 @@ public interface Response extends Serializable {
      * @return the url
      */
     String getUrl();
+
+    /**
+     * An enumeration of different response types.
+     */
+    enum ResponseType {
+
+        /**
+         * The post.
+         */
+        POST,
+
+        /**
+         * The redirect.
+         */
+        REDIRECT,
+
+        /**
+         * Response is provided in form of headers.
+         */
+        HEADER
+    }
 }

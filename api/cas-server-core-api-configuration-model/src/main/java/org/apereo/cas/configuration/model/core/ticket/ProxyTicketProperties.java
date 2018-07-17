@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link ProxyTicketProperties}.

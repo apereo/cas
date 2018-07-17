@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceExpirationPolicy extends Serializable {
-    
+
     /**
      * Gets expiration date that indicates when this may be expired.
      *
@@ -30,7 +30,7 @@ public interface RegisteredServiceExpirationPolicy extends Serializable {
 
     /**
      * Whether service should be deleted from the registry
-     * if and when expired. 
+     * if and when expired.
      *
      * @return true/false
      */
