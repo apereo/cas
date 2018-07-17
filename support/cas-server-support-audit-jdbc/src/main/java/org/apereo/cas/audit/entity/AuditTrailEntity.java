@@ -51,7 +51,7 @@ public class AuditTrailEntity {
     @Column(name = "APPLIC_CD")
     private String applicationCode;
 
-    @Column(name = "AUD_DATE", nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(name = "AUD_DATE", nullable = false)
     private ZonedDateTime recordDate;
 
     public AuditTrailEntity() {
