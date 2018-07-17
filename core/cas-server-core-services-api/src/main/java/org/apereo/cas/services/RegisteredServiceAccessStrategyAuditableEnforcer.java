@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import lombok.val;
-
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
@@ -21,26 +20,27 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         actionResolverName = "SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER",
         resourceResolverName = "SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER")
     public AuditableExecutionResult execute(final AuditableContext context) {
-        val registeredService = context.getRegisteredService();
-        if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && registeredService.isPresent()) {
+        val providedRegisteredService = context.getRegisteredService();
+        if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && providedRegisteredService.isPresent()) {
             val result = AuditableExecutionResult.of(context);
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
-                    context.getAuthenticationResult().get(), registeredService.get());
+                    context.getAuthenticationResult().get(), providedRegisteredService.get());
             } catch (final PrincipalException e) {
                 result.setException(e);
             }
             return result;
         }
 
-        val service = context.getService();
+        val providedService = context.getService();
         val ticketGrantingTicket = context.getTicketGrantingTicket();
-        if (service.isPresent() && registeredService.isPresent() && ticketGrantingTicket.isPresent()) {
-            val result = AuditableExecutionResult.of(service.get(),
-                registeredService.get(), ticketGrantingTicket.get());
+        if (providedService.isPresent() && providedRegisteredService.isPresent() && ticketGrantingTicket.isPresent()) {
+            val registeredService = providedRegisteredService.get();
+            val service = providedService.get();
+            val result = AuditableExecutionResult.of(service, registeredService, ticketGrantingTicket.get());
             try {
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service.get(),
-                    registeredService.get(),
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
+                    registeredService,
                     ticketGrantingTicket.get(),
                     context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
             } catch (final PrincipalException e) {
@@ -50,11 +50,14 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         }
 
         val authentication = context.getAuthentication();
-        if (service.isPresent() && registeredService.isPresent() && authentication.isPresent()) {
-            val result = AuditableExecutionResult.of(authentication.get(), service.get(), registeredService.get());
+        if (providedService.isPresent() && providedRegisteredService.isPresent() && authentication.isPresent()) {
+            val registeredService = providedRegisteredService.get();
+            val service = providedService.get();
+            val result = AuditableExecutionResult.of(authentication.get(), service, registeredService);
+
             try {
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service.get(),
-                    registeredService.get(),
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
+                    registeredService,
                     authentication.get(),
                     context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
             } catch (final PrincipalException e) {
@@ -63,20 +66,29 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             return result;
         }
 
-        if (service.isPresent() && registeredService.isPresent()) {
-            val result = AuditableExecutionResult.of(service.get(), registeredService.get());
+        if (providedService.isPresent() && providedRegisteredService.isPresent()) {
+            val registeredService = providedRegisteredService.get();
+            val service = providedService.get();
+
+            val result = AuditableExecutionResult.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .build();
             try {
-                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service.get(), registeredService.get());
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             } catch (final PrincipalException e) {
                 result.setException(e);
             }
             return result;
         }
 
-        if (registeredService.isPresent()) {
-            val result = AuditableExecutionResult.of(registeredService.get());
+        if (providedRegisteredService.isPresent()) {
+            val registeredService = providedRegisteredService.get();
+            val result = AuditableExecutionResult.builder()
+                .registeredService(registeredService)
+                .build();
             try {
-                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService.get());
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
             } catch (final PrincipalException e) {
                 result.setException(e);
             }

@@ -1,9 +1,9 @@
 package org.apereo.cas.audit;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
@@ -23,7 +23,7 @@ import java.util.TreeMap;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
+@Builder
 public class AuditableExecutionResult {
 
     /**
@@ -49,11 +49,13 @@ public class AuditableExecutionResult {
     /**
      * RuntimeException.
      */
+    @Setter
     private RuntimeException exception;
 
     /**
      * The execution result of the auditable action.
      */
+    @Setter
     private Object executionResult;
 
     /**
@@ -69,6 +71,7 @@ public class AuditableExecutionResult {
     /**
      * Properties.
      */
+    @Builder.Default
     private Map<String, Object> properties = new TreeMap<>();
 
     public boolean isExecutionFailure() {
@@ -93,6 +96,7 @@ public class AuditableExecutionResult {
     public void addProperty(final String name, final Object value) {
         this.properties.put(name, value);
     }
+
     /**
      * Factory method to create a result.
      *
@@ -104,12 +108,12 @@ public class AuditableExecutionResult {
      */
     public static AuditableExecutionResult of(final RuntimeException e, final Authentication authentication,
                                               final Service service, final RegisteredService registeredService) {
-        val result = new AuditableExecutionResult();
-        result.setAuthentication(authentication);
-        result.setException(e);
-        result.setRegisteredService(registeredService);
-        result.setService(service);
-        return result;
+        return AuditableExecutionResult.builder()
+            .registeredService(registeredService)
+            .authentication(authentication)
+            .service(service)
+            .exception(e)
+            .build();
     }
 
     /**
@@ -122,7 +126,11 @@ public class AuditableExecutionResult {
      */
     public static AuditableExecutionResult of(final Authentication authentication,
                                               final Service service, final RegisteredService registeredService) {
-        return of(null, authentication, service, registeredService);
+        return AuditableExecutionResult.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .authentication(authentication)
+            .build();
     }
 
     /**
@@ -135,11 +143,11 @@ public class AuditableExecutionResult {
      */
     public static AuditableExecutionResult of(final ServiceTicket serviceTicket, final AuthenticationResult authenticationResult,
                                               final RegisteredService registeredService) {
-        val result = new AuditableExecutionResult();
-        result.setServiceTicket(serviceTicket);
-        result.setAuthenticationResult(authenticationResult);
-        result.setRegisteredService(registeredService);
-        return result;
+        return AuditableExecutionResult.builder()
+            .registeredService(registeredService)
+            .serviceTicket(serviceTicket)
+            .authenticationResult(authenticationResult)
+            .build();
     }
 
     /**
@@ -151,39 +159,13 @@ public class AuditableExecutionResult {
      * @return the auditable execution result
      */
     public static AuditableExecutionResult of(final Service service, final RegisteredService registeredService, final TicketGrantingTicket ticketGrantingTicket) {
-        val result = new AuditableExecutionResult();
-        result.setTicketGrantingTicket(ticketGrantingTicket);
-        result.setRegisteredService(registeredService);
-        result.setService(service);
-        return result;
+        return AuditableExecutionResult.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .ticketGrantingTicket(ticketGrantingTicket)
+            .build();
     }
-
-    /**
-     * Of auditable execution result.
-     *
-     * @param service           the service
-     * @param registeredService the registered service
-     * @return the auditable execution result
-     */
-    public static AuditableExecutionResult of(final Service service, final RegisteredService registeredService) {
-        val result = new AuditableExecutionResult();
-        result.setRegisteredService(registeredService);
-        result.setService(service);
-        return result;
-    }
-
-    /**
-     * Of auditable execution result.
-     *
-     * @param registeredService the registered service
-     * @return the auditable execution result
-     */
-    public static AuditableExecutionResult of(final RegisteredService registeredService) {
-        val result = new AuditableExecutionResult();
-        result.setRegisteredService(registeredService);
-        return result;
-    }
-
+    
     /**
      * Of auditable execution result.
      *
@@ -191,15 +173,16 @@ public class AuditableExecutionResult {
      * @return the auditable execution result
      */
     public static AuditableExecutionResult of(final AuditableContext context) {
-        val result = new AuditableExecutionResult();
-        context.getTicketGrantingTicket().ifPresent(result::setTicketGrantingTicket);
-        context.getAuthentication().ifPresent(result::setAuthentication);
-        context.getAuthenticationResult().ifPresent(result::setAuthenticationResult);
-        context.getRegisteredService().ifPresent(result::setRegisteredService);
-        context.getService().ifPresent(result::setService);
-        context.getServiceTicket().ifPresent(result::setServiceTicket);
-        result.getProperties().putAll(context.getProperties());
-        return result;
+        return AuditableExecutionResult.builder()
+            .registeredService(context.getRegisteredService().orElseGet(null))
+            .ticketGrantingTicket(context.getTicketGrantingTicket().orElseGet(null))
+            .authentication(context.getAuthentication().orElseGet(null))
+            .authenticationResult(context.getAuthenticationResult().orElseGet(null))
+            .service(context.getService().orElseGet(null))
+            .serviceTicket(context.getServiceTicket().orElseGet(null))
+            .serviceTicket(context.getServiceTicket().orElseGet(null))
+            .properties(context.getProperties())
+            .build();
     }
 
     /**

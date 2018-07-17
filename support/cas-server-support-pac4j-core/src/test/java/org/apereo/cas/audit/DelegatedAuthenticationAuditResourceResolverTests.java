@@ -1,7 +1,6 @@
 package org.apereo.cas.audit;
 
 import lombok.val;
-
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
@@ -21,9 +20,10 @@ public class DelegatedAuthenticationAuditResourceResolverTests {
     @Test
     public void verifyAction() {
         val r = new DelegatedAuthenticationAuditResourceResolver();
-        val result = AuditableExecutionResult.of(
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val result = AuditableExecutionResult.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .build();
         result.addProperty(CasClient.class.getSimpleName(), new CasClient(new CasConfiguration("http://cas.example.org")));
         val outcome = r.resolveFrom(mock(JoinPoint.class), result);
         assertTrue(outcome.length > 0);
