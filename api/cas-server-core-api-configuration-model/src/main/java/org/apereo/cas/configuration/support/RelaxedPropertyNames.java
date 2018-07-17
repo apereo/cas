@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.support;
 
-import lombok.var;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
