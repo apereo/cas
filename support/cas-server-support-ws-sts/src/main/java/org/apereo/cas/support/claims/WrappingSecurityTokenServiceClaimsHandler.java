@@ -1,18 +1,18 @@
 package org.apereo.cas.support.claims;
 
-import lombok.val;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.ws.idp.WSFederationClaims;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.cxf.rt.security.claims.ClaimCollection;
 import org.apache.cxf.sts.claims.ClaimsHandler;
 import org.apache.cxf.sts.claims.ClaimsParameters;
 import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.claims.ProcessedClaimCollection;
 import org.apache.cxf.sts.token.realm.RealmSupport;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.ws.idp.WSFederationClaims;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;

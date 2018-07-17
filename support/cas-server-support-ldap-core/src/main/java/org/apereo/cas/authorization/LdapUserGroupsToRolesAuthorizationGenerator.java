@@ -1,10 +1,10 @@
 package org.apereo.cas.authorization;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchExecutor;
@@ -28,7 +28,6 @@ import org.pac4j.core.profile.CommonProfile;
  */
 @Slf4j
 public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttributesAuthorizationGenerator {
-
 
 
     private final String groupAttributeName;
@@ -62,9 +61,9 @@ public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttribut
         try {
             LOGGER.debug("Attempting to get roles for user [{}].", userEntry.getDn());
             val response = this.groupSearchExecutor.search(
-                    this.connectionFactory,
-                    LdapUtils.newLdaptiveSearchFilter(this.groupSearchExecutor.getSearchFilter().getFilter(),
-                            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(userEntry.getDn())));
+                this.connectionFactory,
+                LdapUtils.newLdaptiveSearchFilter(this.groupSearchExecutor.getSearchFilter().getFilter(),
+                    LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(userEntry.getDn())));
             LOGGER.debug("LDAP role search response: [{}]", response);
             val groupResult = response.getResult();
 

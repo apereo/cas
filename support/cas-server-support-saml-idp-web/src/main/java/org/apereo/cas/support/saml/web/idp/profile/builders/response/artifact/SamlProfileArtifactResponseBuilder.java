@@ -1,9 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.artifact;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -14,6 +10,10 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.velocity.app.VelocityEngine;
 import org.joda.time.DateTime;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -40,8 +40,8 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
 
     public SamlProfileArtifactResponseBuilder(final OpenSamlConfigBean openSamlConfigBean, final SamlIdPObjectSigner samlObjectSigner,
                                               final VelocityEngine velocityEngineFactory,
-                                              final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder, 
-                                              final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder, 
+                                              final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
+                                              final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
                                               final SamlObjectEncrypter samlObjectEncrypter) {
         super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder,
             saml2ResponseBuilder, samlObjectEncrypter);
@@ -65,15 +65,15 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         artifactResponse.setInResponseTo(ticket.getRelyingPartyId());
         artifactResponse.setID(ticket.getId());
         artifactResponse.setStatus(newStatus(StatusCode.SUCCESS, "Success"));
-        
+
         val samlResponse = SamlUtils.transformSamlObject(configBean, ticket.getObject(), SAMLObject.class);
         artifactResponse.setMessage(samlResponse);
-        
+
         val header = newSoapObject(Header.class);
-        
+
         val body = newSoapObject(Body.class);
         body.getUnknownXMLObjects().add(artifactResponse);
-        
+
         val envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
         envelope.setBody(body);

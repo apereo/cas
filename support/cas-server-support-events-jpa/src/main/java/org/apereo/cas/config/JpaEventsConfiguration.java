@@ -1,15 +1,15 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.jpa.JpaCasEventRepository;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -53,26 +53,26 @@ public class JpaEventsConfiguration {
     public DataSource dataSourceEvent() {
         return JpaBeans.newDataSource(casProperties.getEvents().getJpa());
     }
-    
+
     public List<String> jpaEventPackagesToScan() {
         return CollectionUtils.wrap(CasEvent.class.getPackage().getName());
     }
-    
+
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean eventsEntityManagerFactory() {
         val bean =
-                JpaBeans.newHibernateEntityManagerFactoryBean(
-                        new JpaConfigDataHolder(
-                                jpaEventVendorAdapter(),
-                                "jpaEventRegistryContext",
-                                jpaEventPackagesToScan(),
-                                dataSourceEvent()),
-                        casProperties.getEvents().getJpa());
+            JpaBeans.newHibernateEntityManagerFactoryBean(
+                new JpaConfigDataHolder(
+                    jpaEventVendorAdapter(),
+                    "jpaEventRegistryContext",
+                    jpaEventPackagesToScan(),
+                    dataSourceEvent()),
+                casProperties.getEvents().getJpa());
 
         return bean;
     }
-    
+
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerEvents(@Qualifier("eventsEntityManagerFactory") final EntityManagerFactory emf) {
@@ -80,7 +80,7 @@ public class JpaEventsConfiguration {
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
-    
+
     @Bean
     public CasEventRepository casEventRepository() {
         return new JpaCasEventRepository();

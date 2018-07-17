@@ -1,12 +1,11 @@
 package org.apereo.cas.monitor;
 
-import lombok.val;
-
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.IMap;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.ArrayList;
 

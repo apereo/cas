@@ -1,6 +1,8 @@
 package org.apereo.cas.hz;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryConfig;
@@ -14,10 +16,8 @@ import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
 import com.hazelcast.config.TcpIpConfig;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
-import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -32,7 +32,7 @@ import java.util.ServiceLoader;
  */
 @Slf4j
 public class HazelcastConfigurationFactory {
-    
+
     /**
      * Build map config map config.
      *

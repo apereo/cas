@@ -1,6 +1,7 @@
 package org.apereo.cas.clouddirectory;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
 import com.amazonaws.services.clouddirectory.model.AttributeKey;
@@ -9,8 +10,7 @@ import com.amazonaws.services.clouddirectory.model.IndexAttachment;
 import com.amazonaws.services.clouddirectory.model.ListIndexResult;
 import com.amazonaws.services.clouddirectory.model.ListObjectAttributesResult;
 import com.amazonaws.services.clouddirectory.model.TypedAttributeValue;
-import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
-import org.apereo.cas.util.CollectionUtils;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

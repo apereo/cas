@@ -1,9 +1,10 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
 import org.apereo.cas.category.CosmosDbCategory;
 import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,7 +20,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.ArrayList;
 import java.util.stream.IntStream;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  */
 @Category(CosmosDbCategory.class)
 @SpringBootTest(
-        classes = {RefreshAutoConfiguration.class, CosmosDbServiceRegistryConfiguration.class})
+    classes = {RefreshAutoConfiguration.class, CosmosDbServiceRegistryConfiguration.class})
 @IfProfileValue(name = "cosmosDbEnabled", value = "true")
 @TestPropertySource(locations = {"classpath:/cosmosdb.properties"})
 @Slf4j
@@ -47,6 +47,10 @@ public class CosmosDbServiceRegistryTests {
     @Qualifier("cosmosDbServiceRegistry")
     private ServiceRegistry serviceRegistry;
 
+    private static RegisteredService buildService(final int i) {
+        return RegisteredServiceTestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
+    }
+
     private void deleteAll() {
         val services = this.serviceRegistry.load();
         services.forEach(service -> this.serviceRegistry.delete(service));
@@ -57,7 +61,7 @@ public class CosmosDbServiceRegistryTests {
         deleteAll();
         assertTrue(this.serviceRegistry.load().isEmpty());
         assertTrue(this.serviceRegistry.size() == 0);
-        
+
         val list = new ArrayList<RegisteredService>();
         IntStream.range(0, 5).forEach(i -> {
             list.add(buildService(i));
@@ -72,9 +76,5 @@ public class CosmosDbServiceRegistryTests {
         });
         deleteAll();
         assertTrue(this.serviceRegistry.load().isEmpty());
-    }
-
-    private static RegisteredService buildService(final int i) {
-        return RegisteredServiceTestUtils.getRegisteredService("^http://www.serviceid" + i + ".org");
     }
 }

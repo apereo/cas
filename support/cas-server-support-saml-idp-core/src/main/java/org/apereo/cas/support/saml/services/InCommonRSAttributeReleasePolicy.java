@@ -1,8 +1,9 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.util.CollectionUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -17,12 +18,12 @@ import java.util.Set;
 public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAttributeReleasePolicy {
     private static final long serialVersionUID = 1532960981124784595L;
     private List<String> allowedAttributes = CollectionUtils.wrapList("eduPersonPrincipalName",
-            "eduPersonTargetedID", "email", "displayName", "givenName", "surname", "eduPersonScopedAffiliation");
+        "eduPersonTargetedID", "email", "displayName", "givenName", "surname", "eduPersonScopedAffiliation");
 
     public InCommonRSAttributeReleasePolicy() {
         setAllowedAttributes(allowedAttributes);
     }
-    
+
     @JsonIgnore
     @Override
     public String getEntityAttribute() {

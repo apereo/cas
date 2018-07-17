@@ -1,9 +1,8 @@
 package org.apereo.cas.web;
 
-import lombok.val;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -37,15 +36,15 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
      * Since FlowExecutionRepositoryException is a common ancestor to these exceptions and other
      * error cases we would likely want to hide from the user, it seems reasonable to check for
      * FlowExecutionRepositoryException.
-     *
+     * <p>
      * BadlyFormattedFlowExecutionKeyException is specifically ignored by this handler
      * because redirecting to the requested URI with this exception may cause an infinite
      * redirect loop (i.e. when invalid "execution" parameter exists as part of the query string
      */
     @Override
     public ModelAndView resolveException(final HttpServletRequest request,
-        final HttpServletResponse response, final Object handler,
-        final Exception exception) {
+                                         final HttpServletResponse response, final Object handler,
+                                         final Exception exception) {
 
 
         if (!(exception instanceof FlowExecutionRepositoryException) || exception instanceof BadlyFormattedFlowExecutionKeyException) {
@@ -54,8 +53,8 @@ public class FlowExecutionExceptionResolver implements HandlerExceptionResolver 
         }
 
         val urlToRedirectTo = request.getRequestURI()
-                + (request.getQueryString() != null ? '?'
-                + request.getQueryString() : StringUtils.EMPTY);
+            + (request.getQueryString() != null ? '?'
+            + request.getQueryString() : StringUtils.EMPTY);
 
         LOGGER.debug("Error getting flow information for URL [{}]", urlToRedirectTo, exception);
         val model = new HashMap<String, Object>();

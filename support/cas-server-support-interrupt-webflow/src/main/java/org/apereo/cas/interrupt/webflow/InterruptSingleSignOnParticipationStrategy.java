@@ -1,10 +1,10 @@
 package org.apereo.cas.interrupt.webflow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
 /**

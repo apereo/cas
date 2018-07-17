@@ -1,13 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import com.unboundid.scim.data.Meta;
-import com.unboundid.scim.data.Name;
-import com.unboundid.scim.data.UserResource;
-import com.unboundid.scim.marshal.json.JsonMarshaller;
-import com.unboundid.scim.schema.CoreSchema;
-import com.unboundid.scim.sdk.Resources;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -19,6 +11,14 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
+
+import com.unboundid.scim.data.Meta;
+import com.unboundid.scim.data.Name;
+import com.unboundid.scim.data.UserResource;
+import com.unboundid.scim.marshal.json.JsonMarshaller;
+import com.unboundid.scim.schema.CoreSchema;
+import com.unboundid.scim.sdk.Resources;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,9 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link DynamoDbTicketRegistryWithoutEncryptionTests}.

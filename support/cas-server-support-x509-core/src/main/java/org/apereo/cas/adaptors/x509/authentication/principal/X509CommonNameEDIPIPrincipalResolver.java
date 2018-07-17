@@ -1,18 +1,17 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.security.cert.X509Certificate;
 import java.util.StringTokenizer;
-
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link X509CommonNameEDIPIPrincipalResolver}.

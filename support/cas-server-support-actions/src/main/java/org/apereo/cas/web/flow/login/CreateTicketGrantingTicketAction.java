@@ -1,10 +1,5 @@
 package org.apereo.cas.web.flow.login;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -15,6 +10,12 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
@@ -42,6 +43,42 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
     private final CentralAuthenticationService centralAuthenticationService;
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final TicketRegistrySupport ticketRegistrySupport;
+
+    /**
+     * Add warning messages to message context if needed.
+     *
+     * @param tgtId          the tgt id
+     * @param messageContext the message context
+     * @return authn warnings from all handlers and results
+     * @since 4.1.0
+     */
+    private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
+        val entries = tgtId.getAuthentication().getSuccesses().entrySet();
+        return entries
+            .stream()
+            .map(entry -> entry.getValue().getWarnings())
+            .flatMap(Collection::stream)
+            .map(message -> {
+                addMessageDescriptorToMessageContext(messageContext, message);
+                return message;
+            })
+            .collect(Collectors.toSet());
+    }
+
+    /**
+     * Adds a warning message to the message context.
+     *
+     * @param context Message context.
+     * @param warning Warning message.
+     */
+    protected static void addMessageDescriptorToMessageContext(final MessageContext context, final MessageDescriptor warning) {
+        val builder = new MessageBuilder()
+            .warning()
+            .code(warning.getCode())
+            .defaultText(warning.getDefaultMessage())
+            .args((Object[]) warning.getParams());
+        context.addMessage(builder.build());
+    }
 
     @Override
     public Event doExecute(final RequestContext context) {
@@ -132,41 +169,5 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         builder.append(auth1.getSuccesses(), auth2.getSuccesses());
         builder.append(auth1.getAttributes(), auth2.getAttributes());
         return builder.isEquals();
-    }
-
-    /**
-     * Add warning messages to message context if needed.
-     *
-     * @param tgtId          the tgt id
-     * @param messageContext the message context
-     * @return authn warnings from all handlers and results
-     * @since 4.1.0
-     */
-    private static Collection<MessageDescriptor> calculateAuthenticationWarningMessages(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
-        val entries = tgtId.getAuthentication().getSuccesses().entrySet();
-        return entries
-            .stream()
-            .map(entry -> entry.getValue().getWarnings())
-            .flatMap(Collection::stream)
-            .map(message -> {
-                addMessageDescriptorToMessageContext(messageContext, message);
-                return message;
-            })
-            .collect(Collectors.toSet());
-    }
-
-    /**
-     * Adds a warning message to the message context.
-     *
-     * @param context Message context.
-     * @param warning Warning message.
-     */
-    protected static void addMessageDescriptorToMessageContext(final MessageContext context, final MessageDescriptor warning) {
-        val builder = new MessageBuilder()
-            .warning()
-            .code(warning.getCode())
-            .defaultText(warning.getDefaultMessage())
-            .args((Object[]) warning.getParams());
-        context.addMessage(builder.build());
     }
 }

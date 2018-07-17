@@ -1,21 +1,21 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import lombok.val;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.crypto.hash.DefaultHashService;
-import org.apache.shiro.crypto.hash.HashRequest;
-import org.apache.shiro.util.ByteSource;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
-import org.junit.Rule;
-import org.junit.Test;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.shiro.crypto.hash.DefaultHashService;
+import org.apache.shiro.crypto.hash.HashRequest;
+import org.apache.shiro.util.ByteSource;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +65,33 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Qualifier("dataSource")
     private DataSource dataSource;
 
+    private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
+        val psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
+
+        return String.format(
+            "insert into users (username, password, salt, numIterations, expired, disabled) values('%s', '%s', '%s', %s, '%s', '%s');",
+            "user" + i, psw, "salt" + i, NUM_ITERATIONS, expired, disabled);
+    }
+
+    private static String buildSql(final String where) {
+        return String.format(SQL, where);
+    }
+
+    private static String buildSql() {
+        return String.format(SQL, "username=?;");
+    }
+
+    @SneakyThrows
+    private static String genPassword(final String psw, final String salt, final int iter) {
+        val hash = new DefaultHashService();
+        hash.setPrivateSalt(ByteSource.Util.bytes(STATIC_SALT));
+        hash.setHashIterations(iter);
+        hash.setGeneratePublicSalt(false);
+        hash.setHashAlgorithmName(ALG_NAME);
+
+        return hash.computeHash(new HashRequest.Builder().setSource(psw).setSalt(salt).setIterations(iter).build()).toHex();
+    }
+
     @Before
     public void initialize() throws Exception {
         val c = this.dataSource.getConnection();
@@ -79,14 +106,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         s.execute(getSqlInsertStatementToCreateUserAccount(21, Boolean.FALSE.toString(), Boolean.TRUE.toString()));
 
         c.close();
-    }
-
-    private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
-        val psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
-
-        return String.format(
-            "insert into users (username, password, salt, numIterations, expired, disabled) values('%s', '%s', '%s', %s, '%s', '%s');",
-            "user" + i, psw, "salt" + i, NUM_ITERATIONS, expired, disabled);
     }
 
     @After
@@ -181,25 +200,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
         assertNotNull(r);
         assertEquals("user1", r.getPrincipal().getId());
-    }
-
-    private static String buildSql(final String where) {
-        return String.format(SQL, where);
-    }
-
-    private static String buildSql() {
-        return String.format(SQL, "username=?;");
-    }
-
-    @SneakyThrows
-    private static String genPassword(final String psw, final String salt, final int iter) {
-        val hash = new DefaultHashService();
-        hash.setPrivateSalt(ByteSource.Util.bytes(STATIC_SALT));
-        hash.setHashIterations(iter);
-        hash.setGeneratePublicSalt(false);
-        hash.setHashAlgorithmName(ALG_NAME);
-
-        return hash.computeHash(new HashRequest.Builder().setSource(psw).setSalt(salt).setIterations(iter).build()).toHex();
     }
 
     @Entity(name = "users")

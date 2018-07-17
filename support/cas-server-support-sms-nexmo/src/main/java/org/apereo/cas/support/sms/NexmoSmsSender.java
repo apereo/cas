@@ -1,5 +1,7 @@
 package org.apereo.cas.support.sms;
 
+import org.apereo.cas.util.io.SmsSender;
+
 import com.nexmo.client.NexmoClient;
 import com.nexmo.client.auth.AuthMethod;
 import com.nexmo.client.auth.TokenAuthMethod;
@@ -7,7 +9,6 @@ import com.nexmo.client.sms.SmsSubmissionResult;
 import com.nexmo.client.sms.messages.TextMessage;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.util.io.SmsSender;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

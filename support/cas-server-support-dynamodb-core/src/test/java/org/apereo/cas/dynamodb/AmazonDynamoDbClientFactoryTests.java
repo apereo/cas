@@ -1,9 +1,9 @@
 package org.apereo.cas.dynamodb;
 
-import lombok.val;
-
 import org.apereo.cas.category.DynamoDbCategory;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

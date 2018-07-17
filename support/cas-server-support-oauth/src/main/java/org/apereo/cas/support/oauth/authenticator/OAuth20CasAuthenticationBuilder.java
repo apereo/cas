@@ -1,9 +1,5 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
@@ -24,6 +20,11 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
 
@@ -62,6 +63,22 @@ public class OAuth20CasAuthenticationBuilder {
      * Collection of CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
+
+    private static Map<String, Object> getPrincipalAttributesFromProfile(final UserProfile profile) {
+        val profileAttributes = new HashMap<String, Object>(profile.getAttributes());
+        profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
+        profileAttributes.remove(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
+        profileAttributes.remove(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
+        profileAttributes.remove(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS);
+        profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
+        return profileAttributes;
+    }
+
+    private static void addAuthenticationAttribute(final String name, final AuthenticationBuilder bldr,
+                                                   final UserProfile profile) {
+        bldr.addAttribute(name, profile.getAttribute(name));
+        LOGGER.debug("Added attribute [{}] to the authentication", name);
+    }
 
     /**
      * Build service.
@@ -131,16 +148,6 @@ public class OAuth20CasAuthenticationBuilder {
         return bldr.build();
     }
 
-    private static Map<String, Object> getPrincipalAttributesFromProfile(final UserProfile profile) {
-        val profileAttributes = new HashMap<String, Object>(profile.getAttributes());
-        profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
-        profileAttributes.remove(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
-        profileAttributes.remove(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
-        profileAttributes.remove(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS);
-        profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
-        return profileAttributes;
-    }
-
     private void collectionAuthenticationAttributesIfNecessary(final UserProfile profile, final AuthenticationBuilder bldr) {
         if (casProperties.getAuthn().getOauth().getAccessToken().isReleaseProtocolAttributes()) {
             addAuthenticationAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, bldr, profile);
@@ -149,11 +156,5 @@ public class OAuth20CasAuthenticationBuilder {
             addAuthenticationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE, bldr, profile);
             addAuthenticationAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, bldr, profile);
         }
-    }
-
-    private static void addAuthenticationAttribute(final String name, final AuthenticationBuilder bldr,
-                                                   final UserProfile profile) {
-        bldr.addAttribute(name, profile.getAttribute(name));
-        LOGGER.debug("Added attribute [{}] to the authentication", name);
     }
 }

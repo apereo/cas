@@ -1,10 +1,5 @@
 package org.apereo.cas.oidc.web;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -16,6 +11,11 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizat
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.web.servlet.View;
 
@@ -50,8 +50,8 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
                                                 final J2EContext context) throws Exception {
 
         val idToken = this.idTokenGenerator.generate(context.getRequest(),
-                context.getResponse(), accessToken, idTokenExpirationPolicy.getTimeToLive(),
-                OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getRegisteredService());
+            context.getResponse(), accessToken, idTokenExpirationPolicy.getTimeToLive(),
+            OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);
         params.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken));
         return super.buildCallbackUrlResponseType(holder, redirectUri, accessToken, params, refreshToken, context);

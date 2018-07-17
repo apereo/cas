@@ -1,8 +1,5 @@
 package org.apereo.cas.support.saml;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -41,6 +38,9 @@ import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
@@ -139,6 +139,20 @@ public abstract class BaseSamlIdPConfigurationTests {
         METADATA_DIRECTORY = new FileSystemResource("src/test/resources/metadata");
     }
 
+    protected static Assertion getAssertion() {
+        val casuser = new AttributePrincipalImpl("casuser", CoreAuthenticationTestUtils.getAttributes());
+        return new AssertionImpl(casuser, CoreAuthenticationTestUtils.getAttributes());
+    }
+
+    protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
+        val authnRequest = mock(AuthnRequest.class);
+        when(authnRequest.getID()).thenReturn("23hgbcehfgeb7843jdv1");
+        val issuer = mock(Issuer.class);
+        when(issuer.getValue()).thenReturn(service.getServiceId());
+        when(authnRequest.getIssuer()).thenReturn(issuer);
+        return authnRequest;
+    }
+
     protected SamlRegisteredService getSamlRegisteredServiceForTestShib() {
         return getSamlRegisteredServiceForTestShib(false, false, false);
     }
@@ -162,21 +176,6 @@ public abstract class BaseSamlIdPConfigurationTests {
         service.setMetadataLocation("classpath:metadata/testshib-providers.xml");
         return service;
     }
-
-    protected static Assertion getAssertion() {
-        val casuser = new AttributePrincipalImpl("casuser", CoreAuthenticationTestUtils.getAttributes());
-        return new AssertionImpl(casuser, CoreAuthenticationTestUtils.getAttributes());
-    }
-
-    protected static AuthnRequest getAuthnRequestFor(final SamlRegisteredService service) {
-        val authnRequest = mock(AuthnRequest.class);
-        when(authnRequest.getID()).thenReturn("23hgbcehfgeb7843jdv1");
-        val issuer = mock(Issuer.class);
-        when(issuer.getValue()).thenReturn(service.getServiceId());
-        when(authnRequest.getIssuer()).thenReturn(issuer);
-        return authnRequest;
-    }
-
 
     @TestConfiguration
     public static class SamlIdPMetadataTestConfiguration {

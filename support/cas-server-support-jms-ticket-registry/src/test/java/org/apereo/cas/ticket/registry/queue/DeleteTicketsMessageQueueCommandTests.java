@@ -1,13 +1,13 @@
 package org.apereo.cas.ticket.registry.queue;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -24,7 +24,7 @@ public class DeleteTicketsMessageQueueCommandTests extends AbstractTicketMessage
     @Test
     public void verifyDeleteTickets() {
         final TicketGrantingTicket ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
+            new NeverExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);
         val cmd = new DeleteTicketsMessageQueueCommand(new StringBean());
         cmd.execute(ticketRegistry);

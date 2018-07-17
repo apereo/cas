@@ -1,11 +1,11 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
+import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.support.WebUtils;
+import lombok.val;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;

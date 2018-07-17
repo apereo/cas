@@ -23,8 +23,8 @@ public interface AuthenticationRiskContingencyPlan {
      * @param request        the request
      * @return the authentication risk contingency response
      */
-    AuthenticationRiskContingencyResponse execute(Authentication authentication, 
-                                                  RegisteredService service, 
-                                                  AuthenticationRiskScore score, 
+    AuthenticationRiskContingencyResponse execute(Authentication authentication,
+                                                  RegisteredService service,
+                                                  AuthenticationRiskScore score,
                                                   HttpServletRequest request);
 }

@@ -1,10 +1,5 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import lombok.val;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -13,6 +8,11 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.filter.impl.EntityRoleFilter;
@@ -47,6 +47,47 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * The config bean.
      */
     protected final OpenSamlConfigBean configBean;
+
+    private static void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
+        if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
+            val roles = new ArrayList<QName>();
+            val rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
+            rolesSet.forEach(s -> {
+                if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
+                    LOGGER.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                    roles.add(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                }
+                if (s.equalsIgnoreCase(IDPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
+                    LOGGER.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                    roles.add(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
+                }
+            });
+            val filter = new EntityRoleFilter(roles);
+            filter.setRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
+            filter.setRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
+
+            metadataFilterList.add(filter);
+            LOGGER.debug("Added entity role filter with roles [{}]", roles);
+        }
+    }
+
+    private static void buildPredicateFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
+        if (StringUtils.isNotBlank(service.getMetadataCriteriaDirection())
+            && StringUtils.isNotBlank(service.getMetadataCriteriaPattern())
+            && RegexUtils.isValidRegex(service.getMetadataCriteriaPattern())) {
+
+            val dir = PredicateFilter.Direction.valueOf(service.getMetadataCriteriaDirection());
+            LOGGER.debug("Metadata predicate filter configuring with direction [{}] and pattern [{}]",
+                service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
+
+            val filter = new PredicateFilter(dir, entityDescriptor ->
+                StringUtils.isNotBlank(entityDescriptor.getEntityID()) && entityDescriptor.getEntityID().matches(service.getMetadataCriteriaPattern()));
+
+            metadataFilterList.add(filter);
+            LOGGER.debug("Added metadata predicate filter with direction [{}] and pattern [{}]",
+                service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
+        }
+    }
 
     /**
      * Build metadata resolver from document.
@@ -155,48 +196,6 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
 
         LOGGER.debug("Metadata filter chain initialized with [{}] filters", metadataFilterList.size());
         metadataProvider.setMetadataFilter(metadataFilterChain);
-    }
-
-    private static void buildEntityRoleFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
-        if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
-            val roles = new ArrayList<QName>();
-            val rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
-            rolesSet.forEach(s -> {
-                if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                    LOGGER.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                    roles.add(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                }
-                if (s.equalsIgnoreCase(IDPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
-                    LOGGER.debug("Added entity role filter [{}]", IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                    roles.add(IDPSSODescriptor.DEFAULT_ELEMENT_NAME);
-                }
-            });
-            val filter = new EntityRoleFilter(roles);
-            filter.setRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
-            filter.setRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
-
-            metadataFilterList.add(filter);
-            LOGGER.debug("Added entity role filter with roles [{}]", roles);
-        }
-    }
-
-
-    private static void buildPredicateFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) {
-        if (StringUtils.isNotBlank(service.getMetadataCriteriaDirection())
-            && StringUtils.isNotBlank(service.getMetadataCriteriaPattern())
-            && RegexUtils.isValidRegex(service.getMetadataCriteriaPattern())) {
-
-            val dir = PredicateFilter.Direction.valueOf(service.getMetadataCriteriaDirection());
-            LOGGER.debug("Metadata predicate filter configuring with direction [{}] and pattern [{}]",
-                service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
-
-            val filter = new PredicateFilter(dir, entityDescriptor ->
-                StringUtils.isNotBlank(entityDescriptor.getEntityID()) && entityDescriptor.getEntityID().matches(service.getMetadataCriteriaPattern()));
-
-            metadataFilterList.add(filter);
-            LOGGER.debug("Added metadata predicate filter with direction [{}] and pattern [{}]",
-                service.getMetadataCriteriaDirection(), service.getMetadataCriteriaPattern());
-        }
     }
 
     /**

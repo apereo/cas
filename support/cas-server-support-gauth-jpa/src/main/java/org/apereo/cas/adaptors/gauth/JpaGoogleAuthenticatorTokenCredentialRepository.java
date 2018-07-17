@@ -1,15 +1,15 @@
 package org.apereo.cas.adaptors.gauth;
 
-import lombok.val;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
-import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
+import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 

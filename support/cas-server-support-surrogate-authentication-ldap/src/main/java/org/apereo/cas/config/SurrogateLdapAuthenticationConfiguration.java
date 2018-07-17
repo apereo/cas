@@ -1,14 +1,13 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.surrogate.SurrogateLdapAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateLdapAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +30,7 @@ public class SurrogateLdapAuthenticationConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -40,7 +39,7 @@ public class SurrogateLdapAuthenticationConfiguration {
     public SurrogateAuthenticationService surrogateAuthenticationService() {
         val su = casProperties.getAuthn().getSurrogate();
         LOGGER.debug("Using LDAP [{}] with baseDn [{}] to locate surrogate accounts",
-                su.getLdap().getLdapUrl(), su.getLdap().getBaseDn());
+            su.getLdap().getLdapUrl(), su.getLdap().getBaseDn());
         val factory = LdapUtils.newLdaptivePooledConnectionFactory(su.getLdap());
         return new SurrogateLdapAuthenticationService(factory, su.getLdap(), servicesManager);
     }

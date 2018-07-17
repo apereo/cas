@@ -1,8 +1,7 @@
 package org.apereo.cas.monitor;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.sf.ehcache.Cache;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,7 +18,7 @@ public class EhCacheStatistics implements CacheStatistics {
 
     private static final double TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE = 1048510.0;
     private static final int PERCENTAGE_VALUE = 100;
-    
+
     private final Cache cache;
 
     private final boolean useBytes;

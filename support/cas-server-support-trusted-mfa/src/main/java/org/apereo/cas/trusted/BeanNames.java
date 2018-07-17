@@ -1,10 +1,11 @@
 package org.apereo.cas.trusted;
 
-import lombok.experimental.UtilityClass;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.experimental.UtilityClass;
 
 /**
  * A utility class containing the names of several beans trusted-mfa provides.
@@ -33,5 +34,5 @@ public class BeanNames {
      * The {@link RandomStringGenerator} used to generate device fingerprint cookie values.
      */
     public static final String BEAN_DEVICE_FINGERPRINT_COOKIE_RANDOM_STRING_GENERATOR =
-            "deviceFingerprintCookieRandomStringGenerator";
+        "deviceFingerprintCookieRandomStringGenerator";
 }

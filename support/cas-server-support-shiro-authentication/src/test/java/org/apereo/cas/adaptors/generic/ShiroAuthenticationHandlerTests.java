@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.generic;
 
-import lombok.val;
+import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
 
 /**
  * Handles tests for {@link ShiroAuthenticationHandler}.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
@@ -42,7 +43,7 @@ public class ShiroAuthenticationHandlerTests {
     @Test
     public void checkAuthenticationSuccessfulRolesAndPermissions() throws Exception {
         val shiro = new ShiroAuthenticationHandler("", null, null, Collections.singleton("admin"),
-                Collections.singleton("superuser:deleteAll"));
+            Collections.singleton("superuser:deleteAll"));
         shiro.loadShiroConfiguration(new ClassPathResource("shiro.ini"));
 
         val creds = new RememberMeUsernamePasswordCredential();

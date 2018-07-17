@@ -1,15 +1,15 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
-import lombok.val;
-
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
+
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

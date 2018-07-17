@@ -1,10 +1,11 @@
 package org.apereo.cas.support.spnego;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+
 import java.security.Principal;
-import lombok.Getter;
 
 /**
  * @author Marc-Antoine Garrigue

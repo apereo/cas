@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import lombok.val;
-
 import org.junit.Test;
 import org.springframework.util.LinkedMultiValueMap;
 

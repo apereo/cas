@@ -1,5 +1,14 @@
 package org.apereo.cas.support.wsfederation;
 
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.google.common.base.Predicates;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -9,14 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.RegisteredServiceProperty;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.X509CertParser;
 import org.bouncycastle.jce.provider.X509CertificateObject;
@@ -82,6 +83,75 @@ public class WsFederationHelper {
 
     private final OpenSamlConfigBean configBean;
     private final ServicesManager servicesManager;
+
+    /**
+     * Build signature trust engine.
+     *
+     * @param wsFederationConfiguration the ws federation configuration
+     * @return the signature trust engine
+     */
+    @SneakyThrows
+    private static SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) {
+        val signingWallet = wsFederationConfiguration.getSigningWallet();
+        LOGGER.debug("Building signature trust engine based on the following signing certificates:");
+        signingWallet.forEach(c -> LOGGER.debug("Credential entity id [{}] with public key [{}]", c.getEntityId(), c.getPublicKey()));
+
+        val resolver = new StaticCredentialResolver(signingWallet);
+        val keyResolver = new StaticKeyInfoCredentialResolver(signingWallet);
+        return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
+    }
+
+    @SneakyThrows
+    private static Credential getEncryptionCredential(final WsFederationConfiguration config) {
+        // This will need to contain the private keypair in PEM format
+        LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
+        val br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
+        Security.addProvider(new BouncyCastleProvider());
+        LOGGER.debug("Parsing credential private key");
+        try (val pemParser = new PEMParser(br)) {
+            val privateKeyPemObject = pemParser.readObject();
+            val converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
+
+            val kp = FunctionUtils.doIf(Predicates.instanceOf(PEMEncryptedKeyPair.class),
+                Unchecked.supplier(() -> {
+                    LOGGER.debug("Encryption private key is an encrypted keypair");
+                    val ckp = (PEMEncryptedKeyPair) privateKeyPemObject;
+                    val decProv = new JcePEMDecryptorProviderBuilder().build(config.getEncryptionPrivateKeyPassword().toCharArray());
+                    LOGGER.debug("Attempting to decrypt the encrypted keypair based on the provided encryption private key password");
+                    return converter.getKeyPair(ckp.decryptKeyPair(decProv));
+                }),
+                Unchecked.supplier(() -> {
+                    LOGGER.debug("Extracting a keypair from the private key");
+                    return converter.getKeyPair((PEMKeyPair) privateKeyPemObject);
+                }))
+                .apply(privateKeyPemObject);
+
+            val certParser = new X509CertParser();
+            // This is the certificate shared with ADFS in DER format, i.e certificate.crt
+            LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
+            certParser.engineInit(config.getEncryptionCertificate().getInputStream());
+            LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
+            val cert = (X509CertificateObject) certParser.engineRead();
+            LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
+            return new BasicX509Credential(cert, kp.getPrivate());
+        }
+
+    }
+
+    private static Decrypter buildAssertionDecrypter(final WsFederationConfiguration config) {
+        val list = new ArrayList<EncryptedKeyResolver>();
+        list.add(new InlineEncryptedKeyResolver());
+        list.add(new EncryptedElementTypeEncryptedKeyResolver());
+        list.add(new SimpleRetrievalMethodEncryptedKeyResolver());
+        LOGGER.debug("Built a list of encrypted key resolvers: [{}]", list);
+        val encryptedKeyResolver = new ChainingEncryptedKeyResolver(list);
+        LOGGER.debug("Building credential instance to decrypt data");
+        val encryptionCredential = getEncryptionCredential(config);
+        val resolver = new StaticKeyInfoCredentialResolver(encryptionCredential);
+        val decrypter = new Decrypter(null, resolver, encryptedKeyResolver);
+        decrypter.setRootInNewDocument(true);
+        return decrypter;
+    }
 
     /**
      * createCredentialFromToken converts a SAML 1.1 assertion to a WSFederationCredential.
@@ -298,74 +368,5 @@ public class WsFederationHelper {
         }
         LOGGER.debug("Determined relying party identifier to be [{}]", relyingPartyIdentifier);
         return relyingPartyIdentifier;
-    }
-
-    /**
-     * Build signature trust engine.
-     *
-     * @param wsFederationConfiguration the ws federation configuration
-     * @return the signature trust engine
-     */
-    @SneakyThrows
-    private static SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) {
-        val signingWallet = wsFederationConfiguration.getSigningWallet();
-        LOGGER.debug("Building signature trust engine based on the following signing certificates:");
-        signingWallet.forEach(c -> LOGGER.debug("Credential entity id [{}] with public key [{}]", c.getEntityId(), c.getPublicKey()));
-
-        val resolver = new StaticCredentialResolver(signingWallet);
-        val keyResolver = new StaticKeyInfoCredentialResolver(signingWallet);
-        return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
-    }
-
-    @SneakyThrows
-    private static Credential getEncryptionCredential(final WsFederationConfiguration config) {
-        // This will need to contain the private keypair in PEM format
-        LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
-        val br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
-        Security.addProvider(new BouncyCastleProvider());
-        LOGGER.debug("Parsing credential private key");
-        try (val pemParser = new PEMParser(br)) {
-            val privateKeyPemObject = pemParser.readObject();
-            val converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
-
-            val kp = FunctionUtils.doIf(Predicates.instanceOf(PEMEncryptedKeyPair.class),
-                Unchecked.supplier(() -> {
-                    LOGGER.debug("Encryption private key is an encrypted keypair");
-                    val ckp = (PEMEncryptedKeyPair) privateKeyPemObject;
-                    val decProv = new JcePEMDecryptorProviderBuilder().build(config.getEncryptionPrivateKeyPassword().toCharArray());
-                    LOGGER.debug("Attempting to decrypt the encrypted keypair based on the provided encryption private key password");
-                    return converter.getKeyPair(ckp.decryptKeyPair(decProv));
-                }),
-                Unchecked.supplier(() -> {
-                    LOGGER.debug("Extracting a keypair from the private key");
-                    return converter.getKeyPair((PEMKeyPair) privateKeyPemObject);
-                }))
-                .apply(privateKeyPemObject);
-
-            val certParser = new X509CertParser();
-            // This is the certificate shared with ADFS in DER format, i.e certificate.crt
-            LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
-            certParser.engineInit(config.getEncryptionCertificate().getInputStream());
-            LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
-            val cert = (X509CertificateObject) certParser.engineRead();
-            LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
-            return new BasicX509Credential(cert, kp.getPrivate());
-        }
-
-    }
-
-    private static Decrypter buildAssertionDecrypter(final WsFederationConfiguration config) {
-        val list = new ArrayList<EncryptedKeyResolver>();
-        list.add(new InlineEncryptedKeyResolver());
-        list.add(new EncryptedElementTypeEncryptedKeyResolver());
-        list.add(new SimpleRetrievalMethodEncryptedKeyResolver());
-        LOGGER.debug("Built a list of encrypted key resolvers: [{}]", list);
-        val encryptedKeyResolver = new ChainingEncryptedKeyResolver(list);
-        LOGGER.debug("Building credential instance to decrypt data");
-        val encryptionCredential = getEncryptionCredential(config);
-        val resolver = new StaticKeyInfoCredentialResolver(encryptionCredential);
-        val decrypter = new Decrypter(null, resolver, encryptedKeyResolver);
-        decrypter.setRootInNewDocument(true);
-        return decrypter;
     }
 }

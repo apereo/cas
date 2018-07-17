@@ -1,9 +1,5 @@
 package org.apereo.cas.ticket.accesstoken;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -12,6 +8,10 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Collection;
 
@@ -25,10 +25,14 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
-    /** Default instance for the ticket id generator. */
+    /**
+     * Default instance for the ticket id generator.
+     */
     protected final UniqueTicketIdGenerator accessTokenIdGenerator;
 
-    /** ExpirationPolicy for refresh tokens. */
+    /**
+     * ExpirationPolicy for refresh tokens.
+     */
     protected final ExpirationPolicy expirationPolicy;
 
     public DefaultAccessTokenFactory(final ExpirationPolicy expirationPolicy) {
@@ -39,8 +43,8 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     public AccessToken create(final Service service, final Authentication authentication,
                               final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
         val codeId = this.accessTokenIdGenerator.getNewTicketId(AccessToken.PREFIX);
-        final AccessToken at = new AccessTokenImpl(codeId, service, authentication, 
-                this.expirationPolicy, ticketGrantingTicket, scopes);
+        final AccessToken at = new AccessTokenImpl(codeId, service, authentication,
+            this.expirationPolicy, ticketGrantingTicket, scopes);
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(at.getId());
         }

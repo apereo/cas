@@ -1,12 +1,12 @@
 package org.apereo.cas.support.saml.idp.metadata.writer;
 
-import lombok.val;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.RandomUtils;
+import lombok.val;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x500.X500Name;

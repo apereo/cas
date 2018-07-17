@@ -1,9 +1,9 @@
 package org.apereo.cas.oidc.web.controllers;
 
-import lombok.val;
+import org.apereo.cas.oidc.AbstractOidcTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apereo.cas.oidc.AbstractOidcTests;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -1,17 +1,16 @@
 package org.apereo.cas.web.flow.client;
 
-import lombok.val;
-
-import com.unboundid.ldap.sdk.LDAPConnection;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
 import org.springframework.test.context.TestPropertySource;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Test cases for {@link LdapSpnegoKnownClientSystemsFilterAction}.

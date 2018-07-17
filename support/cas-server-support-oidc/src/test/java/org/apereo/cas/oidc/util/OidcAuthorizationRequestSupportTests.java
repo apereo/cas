@@ -1,9 +1,9 @@
 package org.apereo.cas.oidc.util;
 
-import lombok.val;
+import org.apereo.cas.oidc.OidcConstants;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.oidc.OidcConstants;
+import lombok.val;
 import org.junit.Test;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;

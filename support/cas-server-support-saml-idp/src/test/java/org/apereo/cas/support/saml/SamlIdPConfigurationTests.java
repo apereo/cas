@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.category.FileSystemCategory;
+
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 

@@ -1,6 +1,9 @@
 package org.apereo.cas.support.geo;
 
-import lombok.val;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.util.HttpUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.userinfo.client.UserInfo;
@@ -8,13 +11,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
-import org.apereo.cas.util.HttpUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;

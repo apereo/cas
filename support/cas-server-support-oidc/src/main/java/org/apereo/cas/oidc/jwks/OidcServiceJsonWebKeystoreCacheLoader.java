@@ -1,13 +1,13 @@
 package org.apereo.cas.oidc.jwks;
 
-import lombok.val;
+import org.apereo.cas.services.OidcRegisteredService;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.springframework.core.io.Resource;
@@ -28,19 +28,6 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRe
 
     private final ResourceLoader resourceLoader;
 
-    @Override
-    public Optional<RsaJsonWebKey> load(final OidcRegisteredService svc) {
-        val jwks = buildJsonWebKeySet(svc);
-        if (!jwks.isPresent() || jwks.get().getJsonWebKeys().isEmpty()) {
-            return Optional.empty();
-        }
-        val key = getJsonWebKeyFromJwks(jwks.get());
-        if (key == null) {
-            return Optional.empty();
-        }
-        return Optional.of(key);
-    }
-
     private static RsaJsonWebKey getJsonWebKeyFromJwks(final JsonWebKeySet jwks) {
         if (jwks.getJsonWebKeys().isEmpty()) {
             LOGGER.warn("No JSON web keys are available in the keystore");
@@ -60,6 +47,23 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRe
             return null;
         }
         return key;
+    }
+
+    private static JsonWebKeySet buildJsonWebKeySet(final Resource resource) throws Exception {
+        LOGGER.debug("Loading JSON web key from [{}]", resource);
+        val json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+        LOGGER.debug("Retrieved JSON web key from [{}] as [{}]", resource, json);
+        return buildJsonWebKeySet(json);
+    }
+
+    private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
+        val jsonWebKeySet = new JsonWebKeySet(json);
+        val webKey = getJsonWebKeyFromJwks(jsonWebKeySet);
+        if (webKey == null || webKey.getPublicKey() == null) {
+            LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated public key", webKey);
+            return null;
+        }
+        return jsonWebKeySet;
     }
 
     private Optional<JsonWebKeySet> buildJsonWebKeySet(final OidcRegisteredService service) {
@@ -97,20 +101,16 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRe
         return Optional.empty();
     }
 
-    private static JsonWebKeySet buildJsonWebKeySet(final Resource resource) throws Exception {
-        LOGGER.debug("Loading JSON web key from [{}]", resource);
-        val json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-        LOGGER.debug("Retrieved JSON web key from [{}] as [{}]", resource, json);
-        return buildJsonWebKeySet(json);
-    }
-
-    private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
-        val jsonWebKeySet = new JsonWebKeySet(json);
-        val webKey = getJsonWebKeyFromJwks(jsonWebKeySet);
-        if (webKey == null || webKey.getPublicKey() == null) {
-            LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated public key", webKey);
-            return null;
+    @Override
+    public Optional<RsaJsonWebKey> load(final OidcRegisteredService svc) {
+        val jwks = buildJsonWebKeySet(svc);
+        if (!jwks.isPresent() || jwks.get().getJsonWebKeys().isEmpty()) {
+            return Optional.empty();
         }
-        return jsonWebKeySet;
+        val key = getJsonWebKeyFromJwks(jwks.get());
+        if (key == null) {
+            return Optional.empty();
+        }
+        return Optional.of(key);
     }
 }

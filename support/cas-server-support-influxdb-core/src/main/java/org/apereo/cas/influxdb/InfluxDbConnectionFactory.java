@@ -1,12 +1,12 @@
 package org.apereo.cas.influxdb;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.support.Beans;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import okhttp3.OkHttpClient;
+import org.apache.commons.lang3.StringUtils;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.BatchPoints;
@@ -132,7 +132,7 @@ public class InfluxDbConnectionFactory implements AutoCloseable {
         Arrays.stream(point).forEach(batchPoints::point);
         influxDb.write(batchPoints);
     }
-    
+
     /**
      * Query all result.
      *

@@ -1,8 +1,8 @@
 package org.apereo.cas.oidc.token;
 
-import lombok.val;
-
 import org.apereo.cas.oidc.AbstractOidcTests;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

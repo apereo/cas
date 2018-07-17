@@ -1,8 +1,7 @@
 package org.apereo.cas.shell.commands.jasypt;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -41,7 +40,7 @@ public class JasyptListProvidersCommand {
         }
 
         val providers = Security.getProviders();
-        for (val provider: providers) {
+        for (val provider : providers) {
             val services = provider.getServices();
             val algorithms =
                 services.stream()
@@ -50,7 +49,7 @@ public class JasyptListProvidersCommand {
                     .collect(Collectors.toList());
             if (!algorithms.isEmpty()) {
                 LOGGER.info("Provider: Name: [{}] Class: [{}]", provider.getName(), provider.getClass().getName());
-                for (val algorithm: algorithms) {
+                for (val algorithm : algorithms) {
                     LOGGER.info(" - Algorithm: [{}]", algorithm);
                 }
             }

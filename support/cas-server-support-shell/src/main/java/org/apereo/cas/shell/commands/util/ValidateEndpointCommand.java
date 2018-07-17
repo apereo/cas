@@ -1,10 +1,11 @@
 package org.apereo.cas.shell.commands.util;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -46,6 +47,26 @@ import java.util.Arrays;
 @ShellComponent
 @Slf4j
 public class ValidateEndpointCommand {
+    private static X509TrustManager[] getSystemTrustManagers() {
+        try {
+            var trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            trustManagerFactory.init((KeyStore) null);
+            LOGGER.info("Detected Truststore: {}", trustManagerFactory.getProvider().getName());
+            val x509TrustManagers = new ArrayList<X509TrustManager>();
+            for (val trustManager : trustManagerFactory.getTrustManagers()) {
+                if (trustManager instanceof X509TrustManager) {
+                    val x509TrustManager = (X509TrustManager) trustManager;
+                    LOGGER.info("Trusted issuers found: {}", x509TrustManager.getAcceptedIssuers().length);
+                    x509TrustManagers.add(x509TrustManager);
+                }
+            }
+            return x509TrustManagers.toArray(new X509TrustManager[]{});
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return new X509TrustManager[]{};
+    }
+
     /**
      * Validate endpoint.
      *
@@ -169,26 +190,6 @@ public class ValidateEndpointCommand {
             LOGGER.info("  trust anchor {}", checkTrustedCertStatus(certificate, systemTrustManagers));
             LOGGER.info("---");
         }
-    }
-
-    private static X509TrustManager[] getSystemTrustManagers() {
-        try {
-            var trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            trustManagerFactory.init((KeyStore) null);
-            LOGGER.info("Detected Truststore: {}", trustManagerFactory.getProvider().getName());
-            val x509TrustManagers = new ArrayList<X509TrustManager>();
-            for (val trustManager : trustManagerFactory.getTrustManagers()) {
-                if (trustManager instanceof X509TrustManager) {
-                    val x509TrustManager = (X509TrustManager) trustManager;
-                    LOGGER.info("Trusted issuers found: {}", x509TrustManager.getAcceptedIssuers().length);
-                    x509TrustManagers.add(x509TrustManager);
-                }
-            }
-            return x509TrustManagers.toArray(new X509TrustManager[]{});
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        return new X509TrustManager[]{};
     }
 
     private String checkTrustedCertStatus(final X509Certificate certificate, final X509TrustManager[] trustManagers) {

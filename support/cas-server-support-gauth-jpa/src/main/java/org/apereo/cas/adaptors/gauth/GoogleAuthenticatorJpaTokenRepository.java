@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.gauth;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +26,9 @@ import java.time.LocalDateTime;
 public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepository {
 
 
+    private final long expireTokensInSeconds;
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private transient EntityManager entityManager;
-
-    private final long expireTokensInSeconds;
 
     public GoogleAuthenticatorJpaTokenRepository(final long expireTokensInSeconds) {
         this.expireTokensInSeconds = expireTokensInSeconds;

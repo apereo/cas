@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow.client;
 
-import lombok.val;
-
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.flow.AbstractSpnegoTests;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,17 +28,6 @@ import static org.junit.Assert.*;
 @Import(BaseLdapSpnegoKnownClientSystemsFilterActionTests.CasTestConfiguration.class)
 public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends AbstractSpnegoTests {
 
-    @TestConfiguration
-    public static class CasTestConfiguration implements InitializingBean {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @Override
-        public void afterPropertiesSet() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-    }
-
     @Test
     public void ensureLdapAttributeShouldDoSpnego() throws Exception {
         val ctx = new MockRequestContext();
@@ -50,5 +39,16 @@ public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests extends 
         ctx.setExternalContext(extCtx);
         val ev = ldapSpnegoClientAction.execute(ctx);
         assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
+    }
+
+    @TestConfiguration
+    public static class CasTestConfiguration implements InitializingBean {
+        @Autowired
+        protected ApplicationContext applicationContext;
+
+        @Override
+        public void afterPropertiesSet() {
+            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+        }
     }
 }

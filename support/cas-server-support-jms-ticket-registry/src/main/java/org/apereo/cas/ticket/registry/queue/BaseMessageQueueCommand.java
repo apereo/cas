@@ -1,12 +1,13 @@
 package org.apereo.cas.ticket.registry.queue;
 
+import org.apereo.cas.StringBean;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.StringBean;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import java.io.Serializable;
 

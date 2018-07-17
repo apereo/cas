@@ -23,12 +23,13 @@ import static org.junit.Assert.*;
  */
 @Slf4j
 public class AcceptUsersAuthenticationHandlerTests {
-
     private static final String SCOTT = "scott";
     private static final String RUTGERS = "rutgers";
-    private final AcceptUsersAuthenticationHandler authenticationHandler;
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    private final AcceptUsersAuthenticationHandler authenticationHandler;
 
     public AcceptUsersAuthenticationHandlerTests() {
         val users = new HashMap<String, String>();

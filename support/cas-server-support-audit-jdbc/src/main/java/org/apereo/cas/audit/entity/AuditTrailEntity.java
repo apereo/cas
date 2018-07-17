@@ -1,14 +1,15 @@
 package org.apereo.cas.audit.entity;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.ZonedDateTime;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link AuditTrailEntity} that represents the audit table.

@@ -1,10 +1,10 @@
 package org.apereo.cas.support.saml.mdui;
 
-import lombok.val;
-
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.opensaml.saml.ext.saml2mdui.Description;

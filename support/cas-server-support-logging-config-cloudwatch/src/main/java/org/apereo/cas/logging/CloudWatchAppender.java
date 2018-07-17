@@ -1,6 +1,6 @@
 package org.apereo.cas.logging;
 
-import lombok.val;
+import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClient;
@@ -13,6 +13,7 @@ import com.amazonaws.services.logs.model.InputLogEvent;
 import com.amazonaws.services.logs.model.InvalidSequenceTokenException;
 import com.amazonaws.services.logs.model.PutLogEventsRequest;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
@@ -22,7 +23,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -48,11 +48,10 @@ public class CloudWatchAppender extends AbstractAppender {
     private static final int AWS_LOG_STREAM_FLUSH_PERIOD_IN_SECONDS = 5;
 
     private final BlockingQueue<InputLogEvent> queue = new LinkedBlockingQueue<>(AWS_LOG_STREAM_MAX_QUEUE_DEPTH);
+    private final Object monitor = new Object();
     private volatile boolean shutdown;
     private int flushPeriodMillis;
     private Thread deliveryThread;
-    private final Object monitor = new Object();
-
     /**
      * Every PutLogEvents request must include the sequenceToken obtained from the response of the previous request.
      */
@@ -92,6 +91,39 @@ public class CloudWatchAppender extends AbstractAppender {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Create appender cloud watch appender.
+     *
+     * @param name                             the name
+     * @param awsLogStreamName                 the aws log stream name
+     * @param awsLogGroupName                  the aws log group name
+     * @param awsLogStreamFlushPeriodInSeconds the aws log stream flush period in seconds
+     * @param credentialAccessKey              the credential access key
+     * @param credentialSecretKey              the credential secret key
+     * @param awsLogRegionName                 the aws log region name
+     * @param layout                           the layout
+     * @return the cloud watch appender
+     */
+    @PluginFactory
+    public static CloudWatchAppender createAppender(@PluginAttribute("name") final String name,
+                                                    @PluginAttribute("awsLogStreamName") final String awsLogStreamName,
+                                                    @PluginAttribute("awsLogGroupName") final String awsLogGroupName,
+                                                    @PluginAttribute("awsLogStreamFlushPeriodInSeconds") final String awsLogStreamFlushPeriodInSeconds,
+                                                    @PluginAttribute("credentialAccessKey") final String credentialAccessKey,
+                                                    @PluginAttribute("credentialSecretKey") final String credentialSecretKey,
+                                                    @PluginAttribute("awsLogRegionName") final String awsLogRegionName,
+                                                    @PluginElement("Layout") final Layout<Serializable> layout) {
+        return new CloudWatchAppender(
+            name,
+            awsLogGroupName,
+            awsLogStreamName,
+            awsLogStreamFlushPeriodInSeconds,
+            StringUtils.defaultIfBlank(credentialAccessKey, System.getProperty("AWS_ACCESS_KEY")),
+            StringUtils.defaultIfBlank(credentialSecretKey, System.getProperty("AWS_SECRET_KEY")),
+            StringUtils.defaultIfBlank(awsLogRegionName, System.getProperty("AWS_REGION_NAME")),
+            layout);
     }
 
     private void flush() {
@@ -225,38 +257,5 @@ public class CloudWatchAppender extends AbstractAppender {
         if (queue.size() > 0) {
             flush();
         }
-    }
-
-    /**
-     * Create appender cloud watch appender.
-     *
-     * @param name                             the name
-     * @param awsLogStreamName                 the aws log stream name
-     * @param awsLogGroupName                  the aws log group name
-     * @param awsLogStreamFlushPeriodInSeconds the aws log stream flush period in seconds
-     * @param credentialAccessKey              the credential access key
-     * @param credentialSecretKey              the credential secret key
-     * @param awsLogRegionName                 the aws log region name
-     * @param layout                           the layout
-     * @return the cloud watch appender
-     */
-    @PluginFactory
-    public static CloudWatchAppender createAppender(@PluginAttribute("name") final String name,
-                                                    @PluginAttribute("awsLogStreamName") final String awsLogStreamName,
-                                                    @PluginAttribute("awsLogGroupName") final String awsLogGroupName,
-                                                    @PluginAttribute("awsLogStreamFlushPeriodInSeconds") final String awsLogStreamFlushPeriodInSeconds,
-                                                    @PluginAttribute("credentialAccessKey") final String credentialAccessKey,
-                                                    @PluginAttribute("credentialSecretKey") final String credentialSecretKey,
-                                                    @PluginAttribute("awsLogRegionName") final String awsLogRegionName,
-                                                    @PluginElement("Layout") final Layout<Serializable> layout) {
-        return new CloudWatchAppender(
-            name,
-            awsLogGroupName,
-            awsLogStreamName,
-            awsLogStreamFlushPeriodInSeconds,
-            StringUtils.defaultIfBlank(credentialAccessKey, System.getProperty("AWS_ACCESS_KEY")),
-            StringUtils.defaultIfBlank(credentialSecretKey, System.getProperty("AWS_SECRET_KEY")),
-            StringUtils.defaultIfBlank(awsLogRegionName, System.getProperty("AWS_REGION_NAME")),
-            layout);
     }
 }

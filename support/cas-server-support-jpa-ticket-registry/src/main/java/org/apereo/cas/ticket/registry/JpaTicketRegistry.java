@@ -1,12 +1,13 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.hibernate.LockOptions;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,14 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     public JpaTicketRegistry(final LockModeType lockType, final TicketCatalog ticketCatalog) {
         this.lockType = lockType;
         this.ticketCatalog = ticketCatalog;
+    }
+
+    private static String getTicketEntityName(final TicketDefinition tk) {
+        return tk.getImplementationClass().getSimpleName();
+    }
+
+    private static long countToLong(final Object result) {
+        return ((Number) result).longValue();
     }
 
     @Override
@@ -166,10 +175,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         return totalCount != 0;
     }
 
-    private static String getTicketEntityName(final TicketDefinition tk) {
-        return tk.getImplementationClass().getSimpleName();
-    }
-
     /**
      * Delete ticket granting tickets int.
      *
@@ -198,9 +203,5 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         totalCount += query.executeUpdate();
 
         return totalCount;
-    }
-
-    private static long countToLong(final Object result) {
-        return ((Number) result).longValue();
     }
 }

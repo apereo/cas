@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -15,6 +15,7 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
+
 /**
  * This is {@link PrepareForPasswordlessAuthenticationActionTests}.
  *

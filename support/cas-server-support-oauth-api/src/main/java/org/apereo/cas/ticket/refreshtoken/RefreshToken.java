@@ -12,7 +12,7 @@ import org.apereo.cas.ticket.OAuthToken;
 public interface RefreshToken extends OAuthToken {
 
     /**
-     *  The prefix for refresh tokens.
+     * The prefix for refresh tokens.
      */
     String PREFIX = "RT";
 }

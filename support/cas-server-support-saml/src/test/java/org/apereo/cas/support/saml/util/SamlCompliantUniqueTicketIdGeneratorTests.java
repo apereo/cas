@@ -1,15 +1,16 @@
 package org.apereo.cas.support.saml.util;
 
+import org.apereo.cas.support.saml.AbstractOpenSamlTests;
+
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.saml.AbstractOpenSamlTests;
-import org.junit.Test;
-
 /**
  * Test cases for {@link SamlCompliantUniqueTicketIdGenerator}.
+ *
  * @author Scott Battaglia
  * @since 3.4.3
  */

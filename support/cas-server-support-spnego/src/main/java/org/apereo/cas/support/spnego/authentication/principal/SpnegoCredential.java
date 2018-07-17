@@ -1,5 +1,8 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
+
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -7,14 +10,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.Principal;
 
 import java.io.IOException;
 import java.util.stream.IntStream;
-
-import lombok.ToString;
 
 /**
  * Credential that are a holder for SPNEGO init token.
@@ -29,7 +29,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of ={"initToken", "nextToken", "principal"})
+@EqualsAndHashCode(of = {"initToken", "nextToken", "principal"})
 public class SpnegoCredential implements Credential {
 
     /**
@@ -77,11 +77,6 @@ public class SpnegoCredential implements Credential {
         this.isNtlm = isTokenNtlm(this.initToken);
     }
 
-    @Override
-    public String getId() {
-        return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
-    }
-
     /**
      * Checks if is token ntlm.
      *
@@ -95,7 +90,6 @@ public class SpnegoCredential implements Credential {
         return IntStream.range(0, NTLM_TOKEN_MAX_LENGTH).noneMatch(i -> NTLMSSP_SIGNATURE[i] != token[i]);
     }
 
-    
     /**
      * Read the contents of the source into a byte array.
      *
@@ -112,5 +106,10 @@ public class SpnegoCredential implements Credential {
             LOGGER.warn("Could not consume the byte array source", e);
             return null;
         }
+    }
+
+    @Override
+    public String getId() {
+        return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
     }
 }

@@ -1,12 +1,13 @@
 package org.apereo.cas.web.consent;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.util.Pac4jUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.http.adapter.J2ENopHttpActionAdapter;

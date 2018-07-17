@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.val;
 
 import java.util.Map;
 import java.util.Optional;
@@ -83,16 +84,15 @@ public class AuditableExecutionResult {
      * @return the auditable execution result
      */
     public static AuditableExecutionResult of(final AuditableContext context) {
-        return AuditableExecutionResult.builder()
-            .registeredService(context.getRegisteredService().orElseGet(null))
-            .ticketGrantingTicket(context.getTicketGrantingTicket().orElseGet(null))
-            .authentication(context.getAuthentication().orElseGet(null))
-            .authenticationResult(context.getAuthenticationResult().orElseGet(null))
-            .service(context.getService().orElseGet(null))
-            .serviceTicket(context.getServiceTicket().orElseGet(null))
-            .serviceTicket(context.getServiceTicket().orElseGet(null))
-            .properties(context.getProperties())
-            .build();
+        val builder = AuditableExecutionResult.builder();
+        context.getTicketGrantingTicket().ifPresent(builder::ticketGrantingTicket);
+        context.getAuthentication().ifPresent(builder::authentication);
+        context.getAuthenticationResult().ifPresent(builder::authenticationResult);
+        context.getRegisteredService().ifPresent(builder::registeredService);
+        context.getService().ifPresent(builder::service);
+        context.getServiceTicket().ifPresent(builder::serviceTicket);
+        builder.properties(context.getProperties());
+        return builder.build();
     }
 
     public boolean isExecutionFailure() {

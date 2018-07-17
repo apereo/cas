@@ -1,14 +1,14 @@
 package org.apereo.cas.trusted.util;
 
-import lombok.val;
-
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -31,10 +31,10 @@ public class MultifactorAuthenticationTrustUtils {
     public static String generateKey(final MultifactorAuthenticationTrustRecord r) {
         val builder = new StringBuilder(r.getPrincipal());
         return builder.append('@')
-                .append(r.getRecordDate())
-                .append('@')
-                .append(r.getDeviceFingerprint())
-                .toString();
+            .append(r.getRecordDate())
+            .append('@')
+            .append(r.getDeviceFingerprint())
+            .toString();
     }
 
     /**
@@ -55,12 +55,12 @@ public class MultifactorAuthenticationTrustUtils {
      * @param attributeName the attribute name
      */
     public static void trackTrustedMultifactorAuthenticationAttribute(
-            final Authentication authn,
-            final String attributeName) {
+        final Authentication authn,
+        final String attributeName) {
 
         val newAuthn = DefaultAuthenticationBuilder.newInstance(authn)
-                .addAttribute(attributeName, Boolean.TRUE)
-                .build();
+            .addAttribute(attributeName, Boolean.TRUE)
+            .build();
         LOGGER.debug("Updated authentication session to remember trusted multifactor record via [{}]", attributeName);
         authn.update(newAuthn);
     }
@@ -73,7 +73,7 @@ public class MultifactorAuthenticationTrustUtils {
      */
     public static boolean isMultifactorAuthenticationTrustedInScope(final RequestContext requestContext) {
         return requestContext.getFlashScope().contains(
-                AbstractMultifactorTrustedDeviceWebflowConfigurer.MFA_TRUSTED_AUTHN_SCOPE_ATTR);
+            AbstractMultifactorTrustedDeviceWebflowConfigurer.MFA_TRUSTED_AUTHN_SCOPE_ATTR);
     }
 
     /**

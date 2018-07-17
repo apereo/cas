@@ -1,12 +1,13 @@
 package org.apereo.cas.couchdb.core;
 
+import org.apereo.cas.configuration.model.support.couchdb.AbstractCouchDbProperties;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.couchdb.AbstractCouchDbProperties;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.http.StdHttpClient;

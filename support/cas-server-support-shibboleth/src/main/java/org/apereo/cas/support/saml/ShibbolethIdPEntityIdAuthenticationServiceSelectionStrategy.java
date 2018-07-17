@@ -1,5 +1,10 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.web.support.WebUtils;
+
 import com.google.common.base.Splitter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,10 +12,6 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.utils.URIBuilder;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.web.support.WebUtils;
 import org.springframework.core.Ordered;
 
 import java.util.Arrays;
@@ -30,25 +31,6 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final transient ServiceFactory webApplicationServiceFactory;
     private final String idpServerPrefix;
-
-    @Override
-    public Service resolveServiceFrom(final Service service) {
-        val result = getEntityIdAsParameter(service);
-        if (result.isPresent()) {
-            val entityId = result.get();
-            LOGGER.debug("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
-            return this.webApplicationServiceFactory.createService(entityId);
-        }
-        LOGGER.debug("Could not located entity id from service authentication request at [{}]", service.getId());
-        return service;
-    }
-
-    @Override
-    public boolean supports(final Service service) {
-        val casPattern = "^".concat(idpServerPrefix).concat(".*");
-        return service != null && service.getId().matches(casPattern)
-            && getEntityIdAsParameter(service).isPresent();
-    }
 
     /**
      * Gets entity id as parameter.
@@ -84,6 +66,25 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
             LOGGER.error(e.getMessage(), e);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public Service resolveServiceFrom(final Service service) {
+        val result = getEntityIdAsParameter(service);
+        if (result.isPresent()) {
+            val entityId = result.get();
+            LOGGER.debug("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
+            return this.webApplicationServiceFactory.createService(entityId);
+        }
+        LOGGER.debug("Could not located entity id from service authentication request at [{}]", service.getId());
+        return service;
+    }
+
+    @Override
+    public boolean supports(final Service service) {
+        val casPattern = "^".concat(idpServerPrefix).concat(".*");
+        return service != null && service.getId().matches(casPattern)
+            && getEntityIdAsParameter(service).isPresent();
     }
 
     @Override

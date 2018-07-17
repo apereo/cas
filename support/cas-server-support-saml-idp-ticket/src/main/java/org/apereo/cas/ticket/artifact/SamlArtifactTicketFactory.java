@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.artifact;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+
 import org.opensaml.saml.common.SAMLObject;
 
 /**

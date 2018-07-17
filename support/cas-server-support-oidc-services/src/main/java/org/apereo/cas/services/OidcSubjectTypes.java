@@ -14,7 +14,8 @@ public enum OidcSubjectTypes {
     /**
      * Public subject type.
      */
-    PUBLIC("public"), /**
+    PUBLIC("public"),
+    /**
      * Pairwise subject type.
      */
     PAIRWISE("pairwise");

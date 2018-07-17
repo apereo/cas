@@ -1,8 +1,5 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -11,8 +8,11 @@ import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.junit.Test;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -42,6 +42,10 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     @Autowired
     private ApplicationContextProvider applicationContextProvider;
 
+    private static String encodeMessage(final String xmlString) {
+        return CompressionUtils.deflate(xmlString);
+    }
+
     @Before
     public void init() {
         this.applicationContextProvider.setApplicationContext(this.applicationContext);
@@ -56,21 +60,17 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     public void verifyAuthnRequest() {
         val request = new MockHttpServletRequest();
         val samlRequest = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
-                + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
-                + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
-                + "ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
+            + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
+            + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
+            + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
+            + "ProviderName=\"https://localhost:8443/myRutgers\" AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(samlRequest));
 
         val service = (GoogleAccountsService) this.factory.createService(request);
         service.setPrincipal(CoreAuthenticationTestUtils.getPrincipal().getId());
         assertNotNull(service);
         val response = googleAccountsServiceResponseBuilder.build(service, "SAMPLE_TICKET",
-                CoreAuthenticationTestUtils.getAuthentication());
+            CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
-    }
-
-    private static String encodeMessage(final String xmlString) {
-        return CompressionUtils.deflate(xmlString);
     }
 }

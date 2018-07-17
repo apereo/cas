@@ -1,6 +1,6 @@
 package org.apereo.cas.cosmosdb;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.cosmosdb.BaseCosmosDbProperties;
 
 import com.microsoft.azure.documentdb.ConnectionPolicy;
 import com.microsoft.azure.documentdb.ConsistencyLevel;
@@ -13,8 +13,8 @@ import com.microsoft.azure.spring.data.documentdb.core.mapping.DocumentDbMapping
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.cosmosdb.BaseCosmosDbProperties;
 import org.springframework.boot.autoconfigure.domain.EntityScanner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.annotation.Persistent;
@@ -31,6 +31,39 @@ public class CosmosDbObjectFactory {
     private static final String USER_AGENT_SUFFIX = "spring-boot-starter/0.2.0";
 
     private final ApplicationContext applicationContext;
+
+    /**
+     * Gets database link.
+     *
+     * @param databaseName the database name
+     * @return the database link
+     */
+    public static String getDatabaseLink(final String databaseName) {
+        return "dbs/" + databaseName;
+    }
+
+    /**
+     * Gets collection link.
+     *
+     * @param databaseName   the database name
+     * @param collectionName the collection name
+     * @return the collection link
+     */
+    public static String getCollectionLink(final String databaseName, final String collectionName) {
+        return getDatabaseLink(databaseName) + "/colls/" + collectionName;
+    }
+
+    /**
+     * Gets document link.
+     *
+     * @param databaseName   the database name
+     * @param collectionName the collection name
+     * @param documentId     the document id
+     * @return the document link
+     */
+    public static String getDocumentLink(final String databaseName, final String collectionName, final String documentId) {
+        return getCollectionLink(databaseName, collectionName) + "/docs/" + documentId;
+    }
 
     /**
      * Create document client.
@@ -96,38 +129,5 @@ public class CosmosDbObjectFactory {
      */
     private MappingDocumentDbConverter createMappingDocumentDbConverter(final DocumentDbMappingContext documentDbMappingContext) {
         return new MappingDocumentDbConverter(documentDbMappingContext);
-    }
-
-    /**
-     * Gets database link.
-     *
-     * @param databaseName the database name
-     * @return the database link
-     */
-    public static String getDatabaseLink(final String databaseName) {
-        return "dbs/" + databaseName;
-    }
-
-    /**
-     * Gets collection link.
-     *
-     * @param databaseName   the database name
-     * @param collectionName the collection name
-     * @return the collection link
-     */
-    public static String getCollectionLink(final String databaseName, final String collectionName) {
-        return getDatabaseLink(databaseName) + "/colls/" + collectionName;
-    }
-
-    /**
-     * Gets document link.
-     *
-     * @param databaseName   the database name
-     * @param collectionName the collection name
-     * @param documentId     the document id
-     * @return the document link
-     */
-    public static String getDocumentLink(final String databaseName, final String collectionName, final String documentId) {
-        return getCollectionLink(databaseName, collectionName) + "/docs/" + documentId;
     }
 }

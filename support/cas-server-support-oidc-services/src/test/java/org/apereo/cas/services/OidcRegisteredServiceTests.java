@@ -1,14 +1,14 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
+import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
-import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
-import org.junit.Test;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
@@ -34,9 +34,9 @@ public class OidcRegisteredServiceTests {
 
     public OidcRegisteredServiceTests() throws Exception {
         this.dao = new JsonServiceRegistry(RESOURCE, false,
-                mock(ApplicationEventPublisher.class),
-                     new NoOpRegisteredServiceReplicationStrategy(),
-                     new DefaultRegisteredServiceResourceNamingStrategy());
+            mock(ApplicationEventPublisher.class),
+            new NoOpRegisteredServiceReplicationStrategy(),
+            new DefaultRegisteredServiceResourceNamingStrategy());
     }
 
     @BeforeClass

@@ -1,14 +1,14 @@
 package org.apereo.cas.ws.idp.authentication;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ws.idp.WSFederationConstants;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.core.Ordered;
 
 import java.util.Optional;
@@ -30,6 +30,34 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
         this.webApplicationServiceFactory = webApplicationServiceFactory;
     }
 
+    private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
+        try {
+            val builder = new URIBuilder(service.getId());
+            final Optional param = builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
+                .findFirst();
+            return param;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return Optional.empty();
+    }
+
+    private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
+        try {
+            val builder = new URIBuilder(service.getId());
+            final Optional param = builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
+                .findFirst();
+            return param;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return Optional.empty();
+    }
+
     @Override
     public Service resolveServiceFrom(final Service service) {
         if (service != null) {
@@ -43,34 +71,6 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
     @Override
     public boolean supports(final Service service) {
         return service != null && getRealmAsParameter(service).isPresent() && getReplyAsParameter(service).isPresent();
-    }
-
-    private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            final Optional param = builder.getQueryParams()
-                    .stream()
-                    .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
-                    .findFirst();
-            return param;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return Optional.empty();
-    }
-
-    private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
-        try {
-            val builder = new URIBuilder(service.getId());
-            final Optional param = builder.getQueryParams()
-                    .stream()
-                    .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
-                    .findFirst();
-            return param;
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return Optional.empty();
     }
 
     @Override

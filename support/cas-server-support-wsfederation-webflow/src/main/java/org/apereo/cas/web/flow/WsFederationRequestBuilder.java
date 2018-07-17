@@ -1,18 +1,18 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -38,6 +38,28 @@ public class WsFederationRequestBuilder {
 
     private final Collection<WsFederationConfiguration> configurations;
     private final WsFederationHelper wsFederationHelper;
+
+    /**
+     * Gets redirect url for.
+     *
+     * @param config  the config
+     * @param service the service
+     * @param request the request
+     * @return the redirect url for
+     */
+    @SneakyThrows
+    private static String getRelativeRedirectUrlFor(final WsFederationConfiguration config, final Service service, final HttpServletRequest request) {
+        val builder = new URIBuilder(WsFederationNavigationController.ENDPOINT_REDIRECT);
+        builder.addParameter(WsFederationNavigationController.PARAMETER_NAME, config.getId());
+        if (service != null) {
+            builder.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        }
+        val method = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
+        if (StringUtils.isNotBlank(method)) {
+            builder.addParameter(CasProtocolConstants.PARAMETER_METHOD, method);
+        }
+        return builder.toString();
+    }
 
     /**
      * Build authentication request event event.
@@ -67,27 +89,5 @@ public class WsFederationRequestBuilder {
         });
         context.getFlowScope().put(PARAMETER_NAME_WSFED_CLIENTS, clients);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
-    }
-
-    /**
-     * Gets redirect url for.
-     *
-     * @param config  the config
-     * @param service the service
-     * @param request the request
-     * @return the redirect url for
-     */
-    @SneakyThrows
-    private static String getRelativeRedirectUrlFor(final WsFederationConfiguration config, final Service service, final HttpServletRequest request) {
-        val builder = new URIBuilder(WsFederationNavigationController.ENDPOINT_REDIRECT);
-        builder.addParameter(WsFederationNavigationController.PARAMETER_NAME, config.getId());
-        if (service != null) {
-            builder.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        }
-        val method = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
-        if (StringUtils.isNotBlank(method)) {
-            builder.addParameter(CasProtocolConstants.PARAMETER_METHOD, method);
-        }
-        return builder.toString();
     }
 }

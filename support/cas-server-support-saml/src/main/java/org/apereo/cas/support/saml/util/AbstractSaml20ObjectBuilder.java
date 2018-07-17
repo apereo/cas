@@ -1,8 +1,5 @@
 package org.apereo.cas.support.saml.util;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CompressionUtils;
@@ -10,6 +7,10 @@ import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.util.RandomUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -54,6 +55,23 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
     public AbstractSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
         super(configBean);
+    }
+
+    private static void configureAttributeNameFormat(final Attribute attribute, final String nameFormat) {
+        if (StringUtils.isBlank(nameFormat)) {
+            return;
+        }
+
+        val compareFormat = nameFormat.trim().toLowerCase();
+        if ("basic".equals(compareFormat) || compareFormat.equals(Attribute.BASIC)) {
+            attribute.setNameFormat(Attribute.BASIC);
+        } else if ("uri".equals(compareFormat) || compareFormat.equals(Attribute.URI_REFERENCE)) {
+            attribute.setNameFormat(Attribute.URI_REFERENCE);
+        } else if ("unspecified".equals(compareFormat) || compareFormat.equals(Attribute.UNSPECIFIED)) {
+            attribute.setNameFormat(Attribute.UNSPECIFIED);
+        } else {
+            attribute.setNameFormat(nameFormat);
+        }
     }
 
     /**
@@ -253,23 +271,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
         LOGGER.debug("Attribute [{}] has [{}] value(s)", attribute.getName(), attribute.getAttributeValues().size());
         return attribute;
-    }
-
-    private static void configureAttributeNameFormat(final Attribute attribute, final String nameFormat) {
-        if (StringUtils.isBlank(nameFormat)) {
-            return;
-        }
-
-        val compareFormat = nameFormat.trim().toLowerCase();
-        if ("basic".equals(compareFormat) || compareFormat.equals(Attribute.BASIC)) {
-            attribute.setNameFormat(Attribute.BASIC);
-        } else if ("uri".equals(compareFormat) || compareFormat.equals(Attribute.URI_REFERENCE)) {
-            attribute.setNameFormat(Attribute.URI_REFERENCE);
-        } else if ("unspecified".equals(compareFormat) || compareFormat.equals(Attribute.UNSPECIFIED)) {
-            attribute.setNameFormat(Attribute.UNSPECIFIED);
-        } else {
-            attribute.setNameFormat(nameFormat);
-        }
     }
 
     /**

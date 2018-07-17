@@ -1,8 +1,7 @@
 package org.apereo.cas.authorization;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchExecutor;
@@ -24,7 +23,7 @@ import org.pac4j.core.profile.CommonProfile;
  */
 @Slf4j
 public class LdapUserAttributesToRolesAuthorizationGenerator extends BaseUseAttributesAuthorizationGenerator {
-    
+
     private final String roleAttribute;
     private final String rolePrefix;
 

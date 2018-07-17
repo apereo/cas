@@ -1,10 +1,9 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import lombok.val;
-
 import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.VerificationResponse;
 import com.yubico.client.v2.YubicoClient;
+import lombok.val;
 import org.junit.Test;
 
 import java.util.Date;

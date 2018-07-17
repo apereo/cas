@@ -1,11 +1,11 @@
 package org.apereo.cas.shell.commands.services;
 
-import lombok.val;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;

@@ -51,6 +51,7 @@ public interface ConsentDecisionBuilder extends Serializable {
      * Gets consentable attributes from the consent decision.
      * The operation is allowed to change attributes and/or unpack
      * attributes from encoded strings, etc.
+     *
      * @param decision the decision
      * @return the consentable attributes
      */

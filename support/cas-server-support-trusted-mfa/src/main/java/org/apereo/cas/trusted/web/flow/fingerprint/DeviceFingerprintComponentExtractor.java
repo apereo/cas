@@ -13,6 +13,15 @@ import java.util.Optional;
  */
 @FunctionalInterface
 public interface DeviceFingerprintComponentExtractor extends Ordered {
+    /**
+     * Return a no-op DeviceFingerprintComponent.
+     *
+     * @return a no-op DeviceFingerprintComponent.
+     */
+    static DeviceFingerprintComponentExtractor noOp() {
+        return (principal, context, isNew) -> Optional.empty();
+    }
+
     @Override
     default int getOrder() {
         return LOWEST_PRECEDENCE;
@@ -27,13 +36,4 @@ public interface DeviceFingerprintComponentExtractor extends Ordered {
      * @return The fingerprint component
      */
     Optional<String> extractComponent(String principal, RequestContext context, boolean isNew);
-
-    /**
-     * Return a no-op DeviceFingerprintComponent.
-     *
-     * @return a no-op DeviceFingerprintComponent.
-     */
-    static DeviceFingerprintComponentExtractor noOp() {
-        return (principal, context, isNew) -> Optional.empty();
-    }
 }

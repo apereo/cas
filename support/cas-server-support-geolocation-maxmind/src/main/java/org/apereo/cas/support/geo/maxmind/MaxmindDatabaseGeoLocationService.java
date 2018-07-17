@@ -1,13 +1,13 @@
 package org.apereo.cas.support.geo.maxmind;
 
-import lombok.val;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
+import org.apereo.cas.support.geo.AbstractGeoLocationService;
 
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.AddressNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
-import org.apereo.cas.support.geo.AbstractGeoLocationService;
+import lombok.val;
 
 import java.net.InetAddress;
 

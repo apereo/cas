@@ -1,14 +1,13 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.adaptors.x509.util.MockX509CRL;
+import org.apereo.cas.util.DateTimeUtils;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,26 +27,31 @@ import java.util.Collection;
  *
  * @author Marvin S. Addison
  * @since 3.4.7
- *
  */
 @RunWith(Parameterized.class)
 @Slf4j
 @RequiredArgsConstructor
 public class ThresholdExpiredCRLRevocationPolicyTests {
-    /** Policy instance under test. */
+    /**
+     * Policy instance under test.
+     */
     private final ThresholdExpiredCRLRevocationPolicy policy;
 
-    /** CRL to test. */
+    /**
+     * CRL to test.
+     */
     private final X509CRL crl;
 
-    /** Expected result of check; null for success */
+    /**
+     * Expected result of check; null for success
+     */
     private final GeneralSecurityException expected;
 
 
     /**
      * Gets the unit test parameters.
      *
-     * @return  Test parameter data.
+     * @return Test parameter data.
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
@@ -62,27 +66,27 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
         // Test case #1
         // Expect expired for zero leniency on CRL expiring 1ms ago
         val zeroThreshold = new ThresholdExpiredCRLRevocationPolicy(0);
-        params.add(new Object[] {
-                zeroThreshold,
-                new MockX509CRL(issuer, DateTimeUtils.dateOf(oneHourAgo), DateTimeUtils.dateOf(now.minusSeconds(1))),
-                new ExpiredCRLException("CN=CAS", ZonedDateTime.now(ZoneOffset.UTC)),
+        params.add(new Object[]{
+            zeroThreshold,
+            new MockX509CRL(issuer, DateTimeUtils.dateOf(oneHourAgo), DateTimeUtils.dateOf(now.minusSeconds(1))),
+            new ExpiredCRLException("CN=CAS", ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         // Test case #2
         // Expect expired for 1h leniency on CRL expired 1 hour 1ms ago
         val oneHourThreshold = new ThresholdExpiredCRLRevocationPolicy(3600);
-        params.add(new Object[] {
-                oneHourThreshold,
-                new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(oneHourAgo.minusSeconds(1))),
-                new ExpiredCRLException("CN=CAS", ZonedDateTime.now(ZoneOffset.UTC)),
+        params.add(new Object[]{
+            oneHourThreshold,
+            new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(oneHourAgo.minusSeconds(1))),
+            new ExpiredCRLException("CN=CAS", ZonedDateTime.now(ZoneOffset.UTC)),
         });
 
         // Test case #3
         // Expect valid for 1h leniency on CRL expired 30m ago
-        params.add(new Object[] {
-                oneHourThreshold,
-                new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(halfHourAgo)),
-                null,
+        params.add(new Object[]{
+            oneHourThreshold,
+            new MockX509CRL(issuer, DateTimeUtils.dateOf(twoHoursAgo), DateTimeUtils.dateOf(halfHourAgo)),
+            null,
         });
 
         return params;
@@ -106,8 +110,8 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
                 val expectedClass = this.expected.getClass();
                 val actualClass = e.getClass();
                 Assert.assertTrue(
-                        String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
-                        expectedClass.isAssignableFrom(actualClass));
+                    String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
+                    expectedClass.isAssignableFrom(actualClass));
             }
         }
     }

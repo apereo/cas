@@ -1,8 +1,7 @@
 package org.apereo.cas.persondir;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.aop.support.AopUtils;
 

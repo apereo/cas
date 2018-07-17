@@ -1,8 +1,5 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -13,6 +10,9 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,7 +37,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     protected String getOAuthParameterName() {
         return OAuth20Constants.REFRESH_TOKEN;
     }
-    
+
     @Override
     protected boolean isAllowedToGenerateRefreshToken() {
         return false;

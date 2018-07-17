@@ -1,29 +1,28 @@
 package org.apereo.cas.oidc.util;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.UserProfile;
 
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcAuthorizationRequestSupport}.
@@ -146,18 +145,17 @@ public class OidcAuthorizationRequestSupport {
                                                                        final Authentication authentication) {
         return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication.getAuthenticationDate());
     }
-    
+
     /**
      * Is cas authentication available and old for max age authorization request?
      *
-     * @param context
-     *            the context
+     * @param context the context
      * @return true/false
      */
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context) {
         return isCasAuthenticationAvailable(context)
-                .filter(a -> isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, a))
-                .isPresent();
+            .filter(a -> isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, a))
+            .isPresent();
     }
 
     /**

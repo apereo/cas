@@ -1,17 +1,17 @@
 package org.apereo.cas.web.support;
 
-import lombok.val;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.HttpStatus;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.beans.factory.InitializingBean;
@@ -53,14 +53,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     private final int failureRangeInSeconds;
 
     private final String usernameParameter;
-
-    private double thresholdRate = -1;
-
     private final String authenticationFailureCode;
-
     private final AuditTrailExecutionPlan auditTrailExecutionPlan;
-
     private final String applicationCode;
+    private double thresholdRate = -1;
 
     /**
      * Configure the threshold rate.

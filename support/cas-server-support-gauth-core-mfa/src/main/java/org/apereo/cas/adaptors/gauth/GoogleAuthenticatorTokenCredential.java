@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.gauth;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.NoArgsConstructor;
 import org.apereo.cas.authentication.OneTimeTokenCredential;
+
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link GoogleAuthenticatorTokenCredential}.

@@ -1,10 +1,10 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -37,7 +37,7 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String EVENT_ID_START_X509 = "startX509Authenticate";
 
-    public X509WebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
+    public X509WebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                  final ApplicationContext applicationContext,
                                  final CasConfigurationProperties casProperties) {
@@ -50,13 +50,13 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
         if (flow != null) {
             val actionState = createActionState(flow, EVENT_ID_START_X509, createEvaluateAction("x509Check"));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                    CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
+                CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
-                    CasWebflowConstants.TRANSITION_ID_WARN));
+                CasWebflowConstants.TRANSITION_ID_WARN));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR,
-                    CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
+                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
-                    CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
+                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
 
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
             registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);

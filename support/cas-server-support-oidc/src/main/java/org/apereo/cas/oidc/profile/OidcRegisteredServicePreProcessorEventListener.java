@@ -1,10 +1,11 @@
 package org.apereo.cas.oidc.profile;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 
 /**
@@ -29,12 +30,12 @@ public class OidcRegisteredServicePreProcessorEventListener {
     @EventListener
     public void handleRegisteredServicesLoadedEvent(final CasRegisteredServicesLoadedEvent event) {
         event.getServices()
-                .stream()
-                .filter(OidcRegisteredService.class::isInstance)
-                .forEach(s -> {
-                    LOGGER.debug("Attempting to reconcile scopes and attributes for service [{}] of type [{}]",
-                            s.getServiceId(), s.getClass().getSimpleName());
-                    this.scopeToAttributesFilter.reconcile(s);
-                });
+            .stream()
+            .filter(OidcRegisteredService.class::isInstance)
+            .forEach(s -> {
+                LOGGER.debug("Attempting to reconcile scopes and attributes for service [{}] of type [{}]",
+                    s.getServiceId(), s.getClass().getSimpleName());
+                this.scopeToAttributesFilter.reconcile(s);
+            });
     }
 }

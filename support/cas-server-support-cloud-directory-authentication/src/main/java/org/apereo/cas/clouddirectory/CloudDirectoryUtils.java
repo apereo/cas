@@ -1,6 +1,6 @@
 package org.apereo.cas.clouddirectory;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 
 import com.amazonaws.services.clouddirectory.model.AttributeKey;
 import com.amazonaws.services.clouddirectory.model.AttributeKeyAndValue;
@@ -14,7 +14,7 @@ import com.amazonaws.services.clouddirectory.model.TypedAttributeValue;
 import com.amazonaws.services.clouddirectory.model.TypedAttributeValueRange;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
+import lombok.val;
 
 /**
  * This is {@link CloudDirectoryUtils}.
@@ -34,11 +34,11 @@ public class CloudDirectoryUtils {
      * @return the attribute key value by name
      */
     public static AttributeKeyAndValue getAttributeKeyValueByName(final ListObjectAttributesResult attributesResult,
-                                                                   final String attributeName) {
+                                                                  final String attributeName) {
         return attributesResult.getAttributes().stream()
-                .filter(a -> a.getKey().getName().equalsIgnoreCase(attributeName))
-                .findFirst()
-                .orElse(null);
+            .filter(a -> a.getKey().getName().equalsIgnoreCase(attributeName))
+            .findFirst()
+            .orElse(null);
     }
 
     /**
@@ -49,10 +49,10 @@ public class CloudDirectoryUtils {
      * @return the list object attributes request
      */
     public static ListObjectAttributesRequest getListObjectAttributesRequest(final String arnName,
-                                                                              final String objectId) {
+                                                                             final String objectId) {
         return new ListObjectAttributesRequest()
-                .withDirectoryArn(arnName)
-                .withObjectReference(getObjectRefById(objectId));
+            .withDirectoryArn(arnName)
+            .withObjectReference(getObjectRefById(objectId));
     }
 
 
@@ -89,15 +89,15 @@ public class CloudDirectoryUtils {
      * @return the list index request
      */
     public static ListIndexRequest getListIndexRequest(final String attributeName,
-                                                        final String attributeValue,
-                                                        final ObjectReference reference,
-                                                        final CloudDirectoryProperties cloud) {
+                                                       final String attributeValue,
+                                                       final ObjectReference reference,
+                                                       final CloudDirectoryProperties cloud) {
         val range = getObjectAttributeRanges(cloud.getSchemaArn(), cloud.getFacetName(),
-                attributeName, attributeValue);
+            attributeName, attributeValue);
 
         return new ListIndexRequest().withDirectoryArn(cloud.getDirectoryArn())
-                .withIndexReference(reference)
-                .withRangesOnIndexedValues(range);
+            .withIndexReference(reference)
+            .withRangesOnIndexedValues(range);
     }
 
     /**
@@ -110,15 +110,15 @@ public class CloudDirectoryUtils {
      * @return the object attribute ranges
      */
     public static ObjectAttributeRange getObjectAttributeRanges(final String schemaArn, final String facetName,
-                                                                 final String attributeName, final String attributeValue) {
+                                                                final String attributeName, final String attributeValue) {
 
         val attributeKey = getAttributeKey(schemaArn, facetName, attributeName);
         return new ObjectAttributeRange().withAttributeKey(attributeKey)
-                .withRange(new TypedAttributeValueRange()
-                        .withStartValue(getTypedAttributeValue(attributeValue))
-                        .withEndValue(getTypedAttributeValue(attributeValue))
-                        .withStartMode(RangeMode.INCLUSIVE.toString())
-                        .withEndMode(RangeMode.INCLUSIVE.toString()));
+            .withRange(new TypedAttributeValueRange()
+                .withStartValue(getTypedAttributeValue(attributeValue))
+                .withEndValue(getTypedAttributeValue(attributeValue))
+                .withStartMode(RangeMode.INCLUSIVE.toString())
+                .withEndMode(RangeMode.INCLUSIVE.toString()));
     }
 
     /**

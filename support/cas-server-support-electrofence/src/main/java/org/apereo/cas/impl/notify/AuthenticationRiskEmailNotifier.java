@@ -1,10 +1,10 @@
 package org.apereo.cas.impl.notify;
 
-import lombok.val;
+import org.apereo.cas.util.io.CommunicationsManager;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.io.CommunicationsManager;
+import lombok.val;
 
 /**
  * This is {@link AuthenticationRiskEmailNotifier}.

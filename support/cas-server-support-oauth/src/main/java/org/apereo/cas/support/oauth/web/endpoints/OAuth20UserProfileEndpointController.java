@@ -1,9 +1,5 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -20,6 +16,10 @@ import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.HttpConstants;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -66,6 +66,19 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         this.userProfileViewRenderer = userProfileViewRenderer;
         this.userProfileDataCreator = userProfileDataCreator;
         this.expiredAccessTokenResponseEntity = buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+    }
+
+    /**
+     * Build unauthorized response entity.
+     *
+     * @param code the code
+     * @return the response entity
+     */
+    private static ResponseEntity buildUnauthorizedResponseEntity(final String code) {
+        val map = new LinkedMultiValueMap<String, String>(1);
+        map.add(OAuth20Constants.ERROR, code);
+        val value = OAuth20Utils.jsonify(map);
+        return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
     }
 
     /**
@@ -141,18 +154,5 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         }
         LOGGER.debug("[{}]: [{}]", OAuth20Constants.ACCESS_TOKEN, accessToken);
         return accessToken;
-    }
-
-    /**
-     * Build unauthorized response entity.
-     *
-     * @param code the code
-     * @return the response entity
-     */
-    private static ResponseEntity buildUnauthorizedResponseEntity(final String code) {
-        val map = new LinkedMultiValueMap<String, String>(1);
-        map.add(OAuth20Constants.ERROR, code);
-        val value = OAuth20Utils.jsonify(map);
-        return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
     }
 }

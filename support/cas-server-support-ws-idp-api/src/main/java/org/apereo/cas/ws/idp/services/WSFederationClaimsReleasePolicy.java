@@ -1,15 +1,15 @@
 package org.apereo.cas.ws.idp.services;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.ws.idp.WSFederationClaims;
 
 import com.google.common.collect.Maps;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.ws.idp.WSFederationClaims;
+import lombok.val;
 
 import java.util.HashMap;
 import java.util.Map;

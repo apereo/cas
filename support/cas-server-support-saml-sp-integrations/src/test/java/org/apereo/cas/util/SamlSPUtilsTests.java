@@ -1,18 +1,18 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+
+import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.AfterClass;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +39,12 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
     @BeforeClass
     public static void beforeClass() {
         METADATA_DIRECTORY = new FileSystemResource(FileUtils.getTempDirectoryPath());
+    }
+
+    @AfterClass
+    public static void shutdown() {
+        val cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[]{"crt", "key", "xml"}, false);
+        cols.forEach(FileUtils::deleteQuietly);
     }
 
     @Test
@@ -73,11 +79,5 @@ public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
         SamlSPUtils.saveService(service, servicesManager);
         SamlSPUtils.saveService(service, servicesManager);
         assertEquals(2, servicesManager.count());
-    }
-
-    @AfterClass
-    public static void shutdown() {
-        val cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[]{"crt", "key", "xml"}, false);
-        cols.forEach(FileUtils::deleteQuietly);
     }
 }

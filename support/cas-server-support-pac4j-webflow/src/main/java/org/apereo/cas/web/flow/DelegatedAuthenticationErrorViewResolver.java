@@ -1,8 +1,7 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
@@ -24,7 +23,7 @@ public class DelegatedAuthenticationErrorViewResolver implements ErrorViewResolv
     @Autowired
     @Qualifier("conventionErrorViewResolver")
     private ErrorViewResolver conventionErrorViewResolver;
-    
+
     @Override
     public ModelAndView resolveErrorView(final HttpServletRequest request,
                                          final HttpStatus status, final Map<String, Object> map) {

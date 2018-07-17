@@ -1,8 +1,9 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

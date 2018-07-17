@@ -1,10 +1,11 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.val;
-
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
+
+import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -12,7 +13,6 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.io.IOException;
-import lombok.SneakyThrows;
 
 
 /**

@@ -1,12 +1,13 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;

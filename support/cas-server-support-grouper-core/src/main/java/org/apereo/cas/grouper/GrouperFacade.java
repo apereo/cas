@@ -1,12 +1,12 @@
 package org.apereo.cas.grouper;
 
-import lombok.val;
+import org.apereo.cas.util.CollectionUtils;
 
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.CollectionUtils;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Collection;

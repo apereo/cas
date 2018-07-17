@@ -1,6 +1,5 @@
 package org.apereo.cas.support.openid.web.support;
 
-
 import lombok.extern.slf4j.Slf4j;
 
 /**

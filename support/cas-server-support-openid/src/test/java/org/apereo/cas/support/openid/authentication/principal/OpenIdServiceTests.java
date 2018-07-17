@@ -1,17 +1,17 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
-import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Test;
 import org.openid4java.association.Association;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -32,9 +32,8 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final String OPEN_ID_PREFIX_URL = "http://openid.ja-sig.org/battags";
     private static final String RETURN_TO_URL = "http://www.ja-sig.org/?service=fa";
-
-    private OpenIdService openIdService;
     private final MockHttpServletRequest request = new MockHttpServletRequest();
+    private OpenIdService openIdService;
     private Association association;
 
     @Before

@@ -1,9 +1,10 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;

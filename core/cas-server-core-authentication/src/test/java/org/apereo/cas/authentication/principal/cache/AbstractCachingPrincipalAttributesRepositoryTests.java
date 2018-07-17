@@ -31,10 +31,12 @@ import static org.mockito.Mockito.*;
  */
 @Slf4j
 public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
-
     private static final String MAIL = "mail";
-    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+
     protected IPersonAttributeDao dao;
+
+    private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
+
     private Map<String, List<Object>> attributes;
     private Principal principal;
 

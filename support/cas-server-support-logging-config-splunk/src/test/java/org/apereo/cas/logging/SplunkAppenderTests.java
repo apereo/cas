@@ -21,7 +21,7 @@ public class SplunkAppenderTests {
     public void verifyAction() {
         try {
             LOGGER.info("Testing splunk appender");
-        } catch (final Exception e){
+        } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
     }

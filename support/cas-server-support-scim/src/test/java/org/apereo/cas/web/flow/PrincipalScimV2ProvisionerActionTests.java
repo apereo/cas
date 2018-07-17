@@ -1,11 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.unboundid.scim2.common.types.Meta;
-import com.unboundid.scim2.common.types.Name;
-import com.unboundid.scim2.common.types.UserResource;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
@@ -16,6 +10,12 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unboundid.scim2.common.types.Meta;
+import com.unboundid.scim2.common.types.Name;
+import com.unboundid.scim2.common.types.UserResource;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ public class PrincipalScimV2ProvisionerActionTests {
         meta.setCreated(Calendar.getInstance());
         meta.setLocation(new URI("http://localhost:8218"));
         user.setMeta(meta);
-        
+
         val data = MAPPER.writeValueAsString(user);
         try (val webServer = new MockWebServer(8218,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {

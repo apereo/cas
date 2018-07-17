@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.swivel.web.flow;
 
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

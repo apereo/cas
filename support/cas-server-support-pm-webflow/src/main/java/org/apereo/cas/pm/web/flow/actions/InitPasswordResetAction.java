@@ -1,13 +1,13 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class InitPasswordResetAction extends AbstractAction {
     private final PasswordManagementService passwordManagementService;
-    
+
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val token = requestContext.getFlowScope().getString("token");

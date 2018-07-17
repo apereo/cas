@@ -29,127 +29,209 @@ public interface OAuth20Constants {
      * Authentication context reference values.
      */
     String ACR_VALUES = "acr_values";
-    
-    /** Base OAuth 2.0 url. */
+
+    /**
+     * Base OAuth 2.0 url.
+     */
     String BASE_OAUTH20_URL = "/oauth2.0";
 
-    /** The redirect uri. */
+    /**
+     * The redirect uri.
+     */
     String REDIRECT_URI = "redirect_uri";
 
-    /** The response type. */
+    /**
+     * The response type.
+     */
     String RESPONSE_TYPE = "response_type";
 
-    /** The grant type. */
+    /**
+     * The grant type.
+     */
     String GRANT_TYPE = "grant_type";
 
-    /** The client id. */
+    /**
+     * The client id.
+     */
     String CLIENT_ID = "client_id";
 
-    /** The client secret. */
+    /**
+     * The client secret.
+     */
     String SECRET = "secret";
 
-    /** The client username. */
+    /**
+     * The client username.
+     */
     String USERNAME = "username";
 
-    /** The client password. */
+    /**
+     * The client password.
+     */
     String PASSWORD = "password";
 
-    /** The client secret. */
+    /**
+     * The client secret.
+     */
     String CLIENT_SECRET = "client_secret";
 
-    /** The approval prompt. */
+    /**
+     * The approval prompt.
+     */
     String BYPASS_APPROVAL_PROMPT = "bypass_approval_prompt";
 
-    /** The scope request. */
+    /**
+     * The scope request.
+     */
     String SCOPE = "scope";
 
-    /** The code. */
+    /**
+     * The code.
+     */
     String CODE = "code";
 
-    /** The error. */
+    /**
+     * The error.
+     */
     String ERROR = "error";
 
-    /** The state. */
+    /**
+     * The state.
+     */
     String STATE = "state";
 
-    /** The access token. */
-    String TOKEN = "token";    
+    /**
+     * The access token.
+     */
+    String TOKEN = "token";
 
-    /** The access token. */
+    /**
+     * The access token.
+     */
     String ACCESS_TOKEN = "access_token";
 
-    /** The refresh token. */
+    /**
+     * The refresh token.
+     */
     String REFRESH_TOKEN = "refresh_token";
 
-    /** The bearer token. */
+    /**
+     * The bearer token.
+     */
     String BEARER_TOKEN = "Bearer";
 
-    /** The missing access token. */
+    /**
+     * The missing access token.
+     */
     String MISSING_ACCESS_TOKEN = "missing_accessToken";
 
-    /** The expired access token. */
+    /**
+     * The expired access token.
+     */
     String EXPIRED_ACCESS_TOKEN = "expired_accessToken";
 
-    /** The confirm view. */
+    /**
+     * The confirm view.
+     */
     String CONFIRM_VIEW = "oauthConfirmView";
 
-    /** The device code approval view. */
+    /**
+     * The device code approval view.
+     */
     String DEVICE_CODE_APPROVAL_VIEW = "oauthDeviceCodeApprovalView";
 
-    /** The device code approved view. */
+    /**
+     * The device code approved view.
+     */
     String DEVICE_CODE_APPROVED_VIEW = "oauthDeviceCodeApprovedView";
 
-    /** The error view. */
+    /**
+     * The error view.
+     */
     String ERROR_VIEW = "casServiceErrorView";
 
-    /** The invalid request. */
+    /**
+     * The invalid request.
+     */
     String INVALID_REQUEST = "invalid_request";
 
-    /** The invalid grant. */
+    /**
+     * The invalid grant.
+     */
     String INVALID_GRANT = "invalid_grant";
 
-    /** Access denied error. */
+    /**
+     * Access denied error.
+     */
     String ACCESS_DENIED = "access_denied";
 
-    /** Authz pending error. */
+    /**
+     * Authz pending error.
+     */
     String AUTHORIZATION_PENDING = "authorization_pending";
 
-    /** slow down error for when approval requests are too quick. */
+    /**
+     * slow down error for when approval requests are too quick.
+     */
     String SLOW_DOWN = "slow_down";
 
-    /** The authorize url. */
+    /**
+     * The authorize url.
+     */
     String AUTHORIZE_URL = "authorize";
 
-    /** The introspection url. */
+    /**
+     * The introspection url.
+     */
     String INTROSPECTION_URL = "introspect";
 
-    /** The callback authorize url. */
+    /**
+     * The callback authorize url.
+     */
     String CALLBACK_AUTHORIZE_URL = "callbackAuthorize";
 
-    /** The callback authorize url definition. */
+    /**
+     * The callback authorize url definition.
+     */
     String CALLBACK_AUTHORIZE_URL_DEFINITION = "callbackAuthorize.*";
 
-    /** The access token url. */
+    /**
+     * The access token url.
+     */
     String ACCESS_TOKEN_URL = "accessToken";
 
-    /** device authorization url. */
+    /**
+     * device authorization url.
+     */
     String DEVICE_AUTHZ_URL = "device";
 
-    /** The token url. */
+    /**
+     * The token url.
+     */
     String TOKEN_URL = "token";
 
-    /** The profile url. */
+    /**
+     * The profile url.
+     */
     String PROFILE_URL = "profile";
 
-    /** The remaining time in seconds before expiration with syntax : expires=3600... */
+    /**
+     * The remaining time in seconds before expiration with syntax : expires=3600...
+     */
     String EXPIRES_IN = "expires_in";
 
-    /** The nonce parameter. */
+    /**
+     * The nonce parameter.
+     */
     String NONCE = "nonce";
 
-    /** The token type parameter. */
+    /**
+     * The token type parameter.
+     */
     String TOKEN_TYPE = "token_type";
 
-    /** The bearer type. */
+    /**
+     * The bearer type.
+     */
     String TOKEN_TYPE_BEARER = "bearer";
 }

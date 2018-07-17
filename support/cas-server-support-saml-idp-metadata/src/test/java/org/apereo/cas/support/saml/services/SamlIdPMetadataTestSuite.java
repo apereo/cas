@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.Classpat
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.DynamicResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.GroovyResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolverTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

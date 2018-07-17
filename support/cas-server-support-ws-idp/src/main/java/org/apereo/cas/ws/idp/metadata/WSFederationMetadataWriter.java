@@ -1,9 +1,13 @@
 package org.apereo.cas.ws.idp.metadata;
 
-import lombok.val;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.util.CryptoUtils;
+import org.apereo.cas.ws.idp.WSFederationClaims;
+import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.fediz.core.util.CertsUtils;
 import org.apache.cxf.fediz.core.util.SignatureUtils;
@@ -13,10 +17,6 @@ import org.apache.wss4j.common.crypto.CryptoFactory;
 import org.apache.wss4j.common.util.DOM2Writer;
 import org.apache.xml.security.stax.impl.util.IDGenerator;
 import org.apache.xml.security.utils.Base64;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.util.CryptoUtils;
-import org.apereo.cas.ws.idp.WSFederationClaims;
-import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.jooq.lambda.Unchecked;
 import org.w3c.dom.Document;
 

@@ -1,10 +1,11 @@
 package org.apereo.cas.support.sms;
 
+import org.apereo.cas.util.io.SmsSender;
+
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.io.SmsSender;
 
 /**
  * This is {@link TwilioSmsSender}.
@@ -22,12 +23,12 @@ public class TwilioSmsSender implements SmsSender {
     public boolean send(final String from, final String to, final String message) {
         try {
             Message.creator(
-                    new PhoneNumber(to),
-                    new PhoneNumber(from),
-                    message).create();
+                new PhoneNumber(to),
+                new PhoneNumber(from),
+                message).create();
             return true;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);        
+            LOGGER.error(e.getMessage(), e);
         }
         return false;
     }

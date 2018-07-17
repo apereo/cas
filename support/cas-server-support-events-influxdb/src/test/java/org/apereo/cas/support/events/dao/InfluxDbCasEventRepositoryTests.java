@@ -1,7 +1,5 @@
 package org.apereo.cas.support.events.dao;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.category.InfluxDbCategory;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -12,6 +10,8 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;

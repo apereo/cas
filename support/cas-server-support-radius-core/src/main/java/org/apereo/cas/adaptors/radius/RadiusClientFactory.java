@@ -22,22 +22,18 @@ public class RadiusClientFactory implements Serializable {
 
     private static final int DEFAULT_SOCKET_TIMEOUT = 60;
     private static final long serialVersionUID = 8226097527127614276L;
-
     /**
      * The port to do accounting on.
      */
     private int accountingPort = RadiusServer.DEFAULT_PORT_ACCOUNTING;
-
     /**
      * The port to do authentication on.
      */
     private int authenticationPort = RadiusServer.DEFAULT_PORT_AUTHENTICATION;
-
     /**
      * Socket timeout in seconds.
      */
     private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
-
     /**
      * RADIUS server network address.
      */

@@ -1,5 +1,10 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.adaptors.duo.DuoUserAccount;
+import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.util.http.HttpClient;
+
 import com.duosecurity.client.Http;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -8,10 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.cas.adaptors.duo.DuoUserAccount;
-import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
-import org.apereo.cas.util.http.HttpClient;
 import org.springframework.http.HttpMethod;
 
 import java.net.URL;
@@ -44,6 +45,13 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     protected final DuoSecurityMultifactorProperties duoProperties;
 
     private final transient HttpClient httpClient;
+
+    private static String buildUrlHttpScheme(final String url) {
+        if (!url.startsWith("http")) {
+            return "https://" + url;
+        }
+        return url;
+    }
 
     @Override
     public boolean ping() {
@@ -137,13 +145,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             LOGGER.warn("Reaching Duo has failed with error: [{}]", e.getMessage(), e);
         }
         return account;
-    }
-
-    private static String buildUrlHttpScheme(final String url) {
-        if (!url.startsWith("http")) {
-            return "https://" + url;
-        }
-        return url;
     }
 
     /**

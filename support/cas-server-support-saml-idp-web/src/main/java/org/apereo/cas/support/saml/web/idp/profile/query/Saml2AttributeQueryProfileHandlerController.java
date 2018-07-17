@@ -1,9 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.query;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -22,6 +18,10 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
@@ -62,8 +62,8 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
                                                        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
                                                        final Service callbackService) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager,
-                webApplicationServiceFactory, metadataResolver, configBean,
-                responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
+            webApplicationServiceFactory, metadataResolver, configBean,
+            responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
         this.ticketRegistry = ticketRegistry;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.samlAttributeQueryTicketFactory = samlAttributeQueryTicketFactory;

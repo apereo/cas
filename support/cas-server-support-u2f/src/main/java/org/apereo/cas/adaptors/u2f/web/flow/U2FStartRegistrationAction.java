@@ -1,13 +1,13 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
-import lombok.val;
+import org.apereo.cas.adaptors.u2f.U2FRegistration;
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
+import org.apereo.cas.web.support.WebUtils;
 
 import com.yubico.u2f.U2F;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
-import org.apereo.cas.adaptors.u2f.U2FRegistration;
-import org.apereo.cas.web.support.WebUtils;
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

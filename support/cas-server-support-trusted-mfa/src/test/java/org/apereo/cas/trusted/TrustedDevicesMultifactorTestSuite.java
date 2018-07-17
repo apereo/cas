@@ -7,6 +7,7 @@ import org.apereo.cas.trusted.authentication.storage.fingerprint.ClientIpDeviceF
 import org.apereo.cas.trusted.authentication.storage.fingerprint.DefaultDeviceFingerprintStrategyTests;
 import org.apereo.cas.trusted.authentication.storage.fingerprint.UserAgentDeviceFingerprintComponentExtractorTests;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustActionTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

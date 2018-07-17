@@ -1,11 +1,10 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import lombok.val;
-
 import com.yubico.client.v2.ResponseStatus;
 import com.yubico.client.v2.YubicoClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 /**

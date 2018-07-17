@@ -1,10 +1,10 @@
 package org.apereo.cas.aup;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -23,7 +23,7 @@ import javax.sql.DataSource;
 @Slf4j
 public class JdbcAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1600024683199961892L;
-    
+
     private final transient JdbcTemplate jdbcTemplate;
     private final String tableName;
 

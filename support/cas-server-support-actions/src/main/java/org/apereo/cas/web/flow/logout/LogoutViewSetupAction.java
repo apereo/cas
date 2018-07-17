@@ -1,8 +1,9 @@
 package org.apereo.cas.web.flow.logout;
 
-import lombok.RequiredArgsConstructor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 

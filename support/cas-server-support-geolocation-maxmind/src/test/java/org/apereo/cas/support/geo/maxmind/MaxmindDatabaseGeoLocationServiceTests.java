@@ -1,7 +1,5 @@
 package org.apereo.cas.support.geo.maxmind;
 
-import lombok.val;
-
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
@@ -13,6 +11,7 @@ import com.maxmind.geoip2.record.MaxMind;
 import com.maxmind.geoip2.record.Postal;
 import com.maxmind.geoip2.record.RepresentedCountry;
 import com.maxmind.geoip2.record.Traits;
+import lombok.val;
 import org.junit.Test;
 
 import java.net.InetAddress;

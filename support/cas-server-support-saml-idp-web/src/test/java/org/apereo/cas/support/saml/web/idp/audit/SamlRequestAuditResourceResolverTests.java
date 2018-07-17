@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
 import lombok.val;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;

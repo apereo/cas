@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
@@ -19,6 +16,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -51,6 +51,10 @@ public class RadiusConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    public static Set<String> getClientIps(final RadiusClientProperties client) {
+        return StringUtils.commaDelimitedListToSet(StringUtils.trimAllWhitespace(client.getInetAddress()));
+    }
+
     @ConditionalOnMissingBean(name = "radiusPrincipalFactory")
     @Bean
     public PrincipalFactory radiusPrincipalFactory() {
@@ -70,10 +74,6 @@ public class RadiusConfiguration {
 
         val ips = getClientIps(client);
         return getSingleRadiusServer(client, server, ips.iterator().next());
-    }
-
-    public static Set<String> getClientIps(final RadiusClientProperties client) {
-        return StringUtils.commaDelimitedListToSet(StringUtils.trimAllWhitespace(client.getInetAddress()));
     }
 
     private JRadiusServerImpl getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {

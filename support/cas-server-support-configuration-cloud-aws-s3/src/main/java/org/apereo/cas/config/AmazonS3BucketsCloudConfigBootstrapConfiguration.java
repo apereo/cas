@@ -1,12 +1,13 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
+import org.apereo.cas.configuration.CasCoreConfigurationUtils;
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
-import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;

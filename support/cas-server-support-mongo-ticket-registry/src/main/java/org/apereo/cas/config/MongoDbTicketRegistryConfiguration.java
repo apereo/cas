@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -14,6 +11,9 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.util.CoreTicketUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -57,8 +57,8 @@ public class MongoDbTicketRegistryConfiguration {
             return new DefaultTicketRegistryCleaner(lockingStrategy, logoutManager, ticketRegistry);
         }
         LOGGER.debug("Ticket registry cleaner is not enabled. "
-                + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "
-                + "clean up tickets based on expiration and eviction policies.");
+            + "Expired tickets are not forcefully collected and cleaned by CAS. It is up to the ticket registry itself to "
+            + "clean up tickets based on expiration and eviction policies.");
         return NoOpTicketRegistryCleaner.getInstance();
     }
 

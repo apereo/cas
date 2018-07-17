@@ -1,11 +1,5 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
-import lombok.val;
-
-import com.google.common.base.Splitter;
-import jcifs.spnego.Authentication;
-import lombok.Synchronized;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
@@ -16,12 +10,17 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 
+import com.google.common.base.Splitter;
+import jcifs.spnego.Authentication;
+import lombok.Setter;
+import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.regex.Pattern;
-
-import lombok.Setter;
 
 /**
  * Implementation of an AuthenticationHandler for SPNEGO supports. This Handler

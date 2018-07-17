@@ -1,7 +1,8 @@
 package org.apereo.cas.web.report;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.SystemUtils;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
 

@@ -1,9 +1,10 @@
 package org.apereo.cas.support.wsfederation;
 
+import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.junit.Test;
 import org.opensaml.security.credential.Credential;
 import org.springframework.beans.factory.annotation.Autowired;

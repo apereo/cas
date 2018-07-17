@@ -1,9 +1,5 @@
-
 package org.apereo.cas.config;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -12,6 +8,10 @@ import org.apereo.cas.support.events.config.CasConfigurationDeletedEvent;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.ComposableFunction;
 import org.apereo.cas.util.io.PathWatcherService;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,12 +37,11 @@ import java.util.function.Consumer;
 public class CasConfigurationSupportUtilitiesConfiguration {
 
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file -> new CasConfigurationCreatedEvent(this, file.toPath());
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file -> new CasConfigurationModifiedEvent(this, file.toPath());
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationDeletedEvent = file -> new CasConfigurationDeletedEvent(this, file.toPath());
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     /**
      * The watch configuration.
@@ -53,13 +52,10 @@ public class CasConfigurationSupportUtilitiesConfiguration {
     public class CasCoreConfigurationWatchConfiguration implements InitializingBean, DisposableBean {
         @Autowired
         private ApplicationEventPublisher eventPublisher;
-
+        private final Consumer<AbstractCasEvent> publish = event -> eventPublisher.publishEvent(event);
         @Autowired
         @Qualifier("configurationPropertiesEnvironmentManager")
         private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
-
-        private final Consumer<AbstractCasEvent> publish = event -> eventPublisher.publishEvent(event);
-
         private PathWatcherService watcher;
 
         public void init() {

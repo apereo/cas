@@ -1,9 +1,5 @@
 package org.apereo.cas.web.view;
 
-import lombok.val;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CipherExecutor;
@@ -25,6 +21,10 @@ import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,7 +58,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"})
 @Slf4j
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
-    
+
     @Autowired
     @Qualifier("servicesManager")
     protected ServicesManager servicesManager;
@@ -77,7 +77,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         return new ServiceValidateController(

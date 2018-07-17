@@ -1,14 +1,14 @@
 package org.apereo.cas.support.sms;
 
-import lombok.val;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.io.SmsSender;
 
 import com.textmagic.sdk.RestClient;
 import com.textmagic.sdk.resource.instance.TMNewMessage;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.io.SmsSender;
 
 /**
  * This is {@link TextMagicSmsSender}.

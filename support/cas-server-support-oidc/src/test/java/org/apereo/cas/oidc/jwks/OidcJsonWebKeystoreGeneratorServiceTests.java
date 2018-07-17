@@ -1,9 +1,9 @@
 package org.apereo.cas.oidc.jwks;
 
-import lombok.val;
-
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.oidc.AbstractOidcTests;
+
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
 

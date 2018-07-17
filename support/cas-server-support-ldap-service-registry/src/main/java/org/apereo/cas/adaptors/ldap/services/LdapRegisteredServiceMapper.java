@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.services.RegisteredService;
+
 import org.ldaptive.LdapEntry;
 
 /**
@@ -25,7 +26,7 @@ public interface LdapRegisteredServiceMapper {
     /**
      * Map from registered service to ldap.
      *
-     * @param dn the dn
+     * @param dn  the dn
      * @param svc the svc
      * @return the ldap entry
      */
@@ -35,7 +36,7 @@ public interface LdapRegisteredServiceMapper {
      * Gets the dn for registered service.
      *
      * @param parentDn the parent dn
-     * @param svc the svc
+     * @param svc      the svc
      * @return the dn for registered service
      */
     String getDnForRegisteredService(String parentDn, RegisteredService svc);

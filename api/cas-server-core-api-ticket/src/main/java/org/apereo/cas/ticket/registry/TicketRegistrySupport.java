@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 

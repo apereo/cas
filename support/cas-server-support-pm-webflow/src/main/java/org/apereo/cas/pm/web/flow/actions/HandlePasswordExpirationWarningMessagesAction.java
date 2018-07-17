@@ -1,9 +1,10 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import lombok.val;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

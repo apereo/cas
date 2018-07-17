@@ -1,17 +1,17 @@
 package org.apereo.cas.interrupt;
 
-import lombok.val;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockWebServer;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.MockWebServer;
-import org.junit.Test;
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 

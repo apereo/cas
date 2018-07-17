@@ -1,15 +1,15 @@
 package org.apereo.cas.clouddirectory;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
+import org.apereo.cas.util.DateTimeUtils;
 
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
 import com.amazonaws.services.clouddirectory.model.ListIndexResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
-import org.apereo.cas.util.DateTimeUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;

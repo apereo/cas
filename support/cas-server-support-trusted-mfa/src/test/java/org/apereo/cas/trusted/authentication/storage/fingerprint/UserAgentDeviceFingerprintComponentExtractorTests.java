@@ -1,9 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
-import lombok.val;
-
 import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintComponentExtractor;
 import org.apereo.cas.util.HttpRequestUtils;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

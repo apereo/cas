@@ -1,8 +1,9 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import org.apache.commons.lang3.NotImplementedException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
+
+import org.apache.commons.lang3.NotImplementedException;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 import java.util.Collection;

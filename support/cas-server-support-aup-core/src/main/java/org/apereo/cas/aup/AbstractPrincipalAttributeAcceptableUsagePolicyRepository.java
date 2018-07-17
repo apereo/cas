@@ -1,15 +1,16 @@
 package org.apereo.cas.aup;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -27,7 +28,7 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
      * Ticket registry support.
      */
     protected final TicketRegistrySupport ticketRegistrySupport;
-    
+
     /**
      * Single-valued attribute in LDAP that describes whether the policy
      * has been accepted. Its value must match either TRUE/FALSE.
@@ -52,6 +53,7 @@ public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository 
      * Is usage policy accepted by user?
      * Looks into the attributes collected by the principal to find {@link #aupAttributeName}.
      * If the attribute contains {@code true}, then the policy is determined as accepted.
+     *
      * @param principal the principal
      * @return true if accepted, false otherwise.
      */

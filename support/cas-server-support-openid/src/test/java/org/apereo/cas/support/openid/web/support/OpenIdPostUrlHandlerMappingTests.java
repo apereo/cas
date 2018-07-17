@@ -1,9 +1,9 @@
 package org.apereo.cas.support.openid.web.support;
 
-import lombok.val;
+import org.apereo.cas.support.openid.AbstractOpenIdTests;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.openid.AbstractOpenIdTests;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -21,7 +21,7 @@ public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
     private static final String LOGIN_URL_PATH = "/login";
     @Autowired
     private OpenIdPostUrlHandlerMapping handlerMapping;
-    
+
     @Test
     public void verifyNoMatch() throws Exception {
         val request = new MockHttpServletRequest();

@@ -1,5 +1,7 @@
 package org.apereo.cas.cassandra;
 
+import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.HostDistance;
@@ -15,7 +17,6 @@ import com.datastax.driver.core.policies.TokenAwarePolicy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.Arrays;

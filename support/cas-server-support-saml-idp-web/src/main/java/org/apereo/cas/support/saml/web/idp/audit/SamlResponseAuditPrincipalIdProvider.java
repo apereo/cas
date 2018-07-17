@@ -1,9 +1,9 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
-import lombok.val;
-
 import org.apereo.cas.audit.spi.DefaultAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
+
+import lombok.val;
 import org.opensaml.saml.saml2.core.Response;
 
 /**

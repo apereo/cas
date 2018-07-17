@@ -1,7 +1,5 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import lombok.val;
-
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -9,8 +7,10 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
@@ -53,7 +53,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         profile.setId("client");
         val session = request.getSession(true);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
-        
+
         val response = new MockHttpServletResponse();
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());
         request.setParameter(OAuth20Constants.CLIENT_ID, "client");

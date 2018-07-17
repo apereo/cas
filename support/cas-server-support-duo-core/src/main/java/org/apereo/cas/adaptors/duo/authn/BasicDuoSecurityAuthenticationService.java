@@ -1,15 +1,15 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import lombok.val;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.util.http.HttpClient;
 
 import com.duosecurity.duoweb.DuoWeb;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
-import org.apereo.cas.util.http.HttpClient;
 import org.json.JSONObject;
 
 /**
@@ -31,7 +31,7 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
      * Creates the duo authentication service.
      *
      * @param duoProperties Duo authentication properties
-     * @param httpClient http client used to run the requests
+     * @param httpClient    http client used to run the requests
      */
     public BasicDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
         super(duoProperties, httpClient);
@@ -40,8 +40,8 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
     @Override
     public String signRequestToken(final String uid) {
         return DuoWeb.signRequest(duoProperties.getDuoIntegrationKey(),
-                duoProperties.getDuoSecretKey(),
-                duoProperties.getDuoApplicationKey(), uid);
+            duoProperties.getDuoSecretKey(),
+            duoProperties.getDuoApplicationKey(), uid);
     }
 
     @Override
@@ -77,8 +77,8 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
 
         LOGGER.debug("Calling DuoWeb.verifyResponse with signed request token '[{}]'", signedRequestToken);
         val result = DuoWeb.verifyResponse(duoProperties.getDuoIntegrationKey(),
-                duoProperties.getDuoSecretKey(),
-                duoProperties.getDuoApplicationKey(), signedRequestToken);
+            duoProperties.getDuoSecretKey(),
+            duoProperties.getDuoApplicationKey(), signedRequestToken);
         return Pair.of(Boolean.TRUE, result);
     }
 

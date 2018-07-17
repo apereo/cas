@@ -1,11 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
@@ -14,6 +8,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.CollectionUtils;
+
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -55,7 +55,7 @@ public class U2FJpaConfiguration {
     public HibernateJpaVendorAdapter jpaU2fVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-    
+
     @Bean
     public DataSource dataSourceU2f() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
@@ -69,13 +69,13 @@ public class U2FJpaConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean u2fEntityManagerFactory() {
         val bean =
-                JpaBeans.newHibernateEntityManagerFactoryBean(
-                        new JpaConfigDataHolder(
-                                jpaU2fVendorAdapter(),
-                                "jpaU2fRegistryContext",
-                                jpaU2fPackagesToScan(),
-                                dataSourceU2f()),
-                        casProperties.getAuthn().getMfa().getU2f().getJpa());
+            JpaBeans.newHibernateEntityManagerFactoryBean(
+                new JpaConfigDataHolder(
+                    jpaU2fVendorAdapter(),
+                    "jpaU2fRegistryContext",
+                    jpaU2fPackagesToScan(),
+                    dataSourceU2f()),
+                casProperties.getAuthn().getMfa().getU2f().getJpa());
 
         return bean;
     }
@@ -92,12 +92,12 @@ public class U2FJpaConfiguration {
     public U2FDeviceRepository u2fDeviceRepository() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         final LoadingCache<String, String> requestStorage =
-                Caffeine.newBuilder()
-                        .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
-                        .build(key -> StringUtils.EMPTY);
+            Caffeine.newBuilder()
+                .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
+                .build(key -> StringUtils.EMPTY);
         val repo = new U2FJpaDeviceRepository(requestStorage,
-                u2f.getExpireRegistrations(),
-                u2f.getExpireDevicesTimeUnit());
+            u2f.getExpireRegistrations(),
+            u2f.getExpireDevicesTimeUnit());
         repo.setCipherExecutor(this.u2fRegistrationRecordCipherExecutor);
         return repo;
     }

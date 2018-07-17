@@ -1,17 +1,5 @@
 package org.apereo.cas.ws.idp.services;
 
-import lombok.val;
-
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.cxf.binding.soap.SoapFault;
-import org.apache.cxf.fediz.core.exception.ProcessingException;
-import org.apache.cxf.rt.security.SecurityConstants;
-import org.apache.cxf.staxutils.W3CDOMStreamWriter;
-import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.apache.cxf.ws.security.trust.STSUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
@@ -19,6 +7,18 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
+
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.cxf.binding.soap.SoapFault;
+import org.apache.cxf.fediz.core.exception.ProcessingException;
+import org.apache.cxf.rt.security.SecurityConstants;
+import org.apache.cxf.staxutils.W3CDOMStreamWriter;
+import org.apache.cxf.ws.security.tokenstore.SecurityToken;
+import org.apache.cxf.ws.security.trust.STSUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.w3c.dom.Element;
 
@@ -40,16 +40,6 @@ import java.io.StringWriter;
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
     private final SecurityTokenServiceClientBuilder clientBuilder;
     private final CipherExecutor<String, String> credentialCipherExecutor;
-
-    @Override
-    public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
-                          final WSFederationRequest fedRequest, final HttpServletRequest request,
-                          final Assertion assertion) {
-        val sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
-        mapAttributesToRequestedClaims(service, sts, assertion);
-        val rpToken = requestSecurityTokenResponse(service, sts, assertion);
-        return serializeRelyingPartyToken(rpToken);
-    }
 
     @SneakyThrows
     private static String serializeRelyingPartyToken(final Element rpToken) {
@@ -101,6 +91,16 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
+                          final WSFederationRequest fedRequest, final HttpServletRequest request,
+                          final Assertion assertion) {
+        val sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
+        mapAttributesToRequestedClaims(service, sts, assertion);
+        val rpToken = requestSecurityTokenResponse(service, sts, assertion);
+        return serializeRelyingPartyToken(rpToken);
     }
 
     @SneakyThrows

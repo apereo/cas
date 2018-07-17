@@ -1,11 +1,11 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import jcifs.spnego.Authentication;
 import org.apereo.cas.support.spnego.MockJcifsAuthentication;
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 import org.apereo.cas.util.EncodingUtils;
+
+import jcifs.spnego.Authentication;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

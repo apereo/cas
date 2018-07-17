@@ -1,9 +1,10 @@
 package org.apereo.cas.support.oauth.web.audit;
 
-import lombok.val;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+
+import lombok.val;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 

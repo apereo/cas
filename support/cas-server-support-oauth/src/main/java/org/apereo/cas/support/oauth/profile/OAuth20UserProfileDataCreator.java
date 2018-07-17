@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.profile;
 
 import org.apereo.cas.ticket.accesstoken.AccessToken;
+
 import org.pac4j.core.context.J2EContext;
 
 import java.util.Map;
@@ -19,7 +20,7 @@ public interface OAuth20UserProfileDataCreator {
      * Create internal user profile data.
      *
      * @param accessToken oauth access token
-     * @param j2EContext request context
+     * @param j2EContext  request context
      * @return Map representing profile data
      */
     Map<String, Object> createFrom(AccessToken accessToken, J2EContext j2EContext);

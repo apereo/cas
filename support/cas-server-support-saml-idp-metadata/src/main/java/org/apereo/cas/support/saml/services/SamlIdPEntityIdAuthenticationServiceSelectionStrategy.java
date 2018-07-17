@@ -1,12 +1,12 @@
 package org.apereo.cas.support.saml.services;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jasig.cas.client.util.URIBuilder;
 import org.springframework.core.Ordered;
 
@@ -31,6 +31,19 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
         this.casServiceUrlPattern = "^".concat(casServerPrefix).concat(".*");
     }
 
+    /**
+     * Gets entity id as parameter.
+     *
+     * @param service the service
+     * @return the entity id as parameter
+     */
+    protected static Optional<URIBuilder.BasicNameValuePair> getEntityIdAsParameter(final Service service) {
+        val builder = new URIBuilder(service.getId());
+        val param = builder.getQueryParams().stream()
+            .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
+        return param;
+    }
+
     @Override
     public Service resolveServiceFrom(final Service service) {
         val entityId = getEntityIdAsParameter(service).get().getValue();
@@ -41,20 +54,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
     @Override
     public boolean supports(final Service service) {
         return service != null && service.getId().matches(this.casServiceUrlPattern)
-                && getEntityIdAsParameter(service).isPresent();
-    }
-
-    /**
-     * Gets entity id as parameter.
-     *
-     * @param service the service
-     * @return the entity id as parameter
-     */
-    protected static Optional<URIBuilder.BasicNameValuePair> getEntityIdAsParameter(final Service service) {
-        val builder = new URIBuilder(service.getId());
-        val param = builder.getQueryParams().stream()
-                .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
-        return param;
+            && getEntityIdAsParameter(service).isPresent();
     }
 
     @Override

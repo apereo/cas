@@ -1,12 +1,5 @@
 package org.apereo.cas.ws.idp.web;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
@@ -27,6 +20,13 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.cxf.ws.security.tokenstore.SecurityToken;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -98,16 +98,16 @@ public abstract class BaseWSFederationRequestController {
     protected final TicketRegistrySupport ticketRegistrySupport;
 
     public BaseWSFederationRequestController(
-            final ServicesManager servicesManager,
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            final CasConfigurationProperties casProperties,
-            final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
-            final HttpClient httpClient,
-            final SecurityTokenTicketFactory securityTokenTicketFactory,
-            final TicketRegistry ticketRegistry,
-            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-            final TicketRegistrySupport ticketRegistrySupport,
-            final Service callbackService) {
+        final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        final CasConfigurationProperties casProperties,
+        final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
+        final HttpClient httpClient,
+        final SecurityTokenTicketFactory securityTokenTicketFactory,
+        final TicketRegistry ticketRegistry,
+        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+        final TicketRegistrySupport ticketRegistrySupport,
+        final Service callbackService) {
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.casProperties = casProperties;
@@ -119,7 +119,7 @@ public abstract class BaseWSFederationRequestController {
         this.ticketRegistrySupport = ticketRegistrySupport;
         this.callbackService = callbackService;
     }
-    
+
     /**
      * Construct service url string.
      *
@@ -154,9 +154,9 @@ public abstract class BaseWSFederationRequestController {
 
             LOGGER.trace("Built service callback url [{}]", url);
             return org.jasig.cas.client.util.CommonUtils.constructServiceUrl(request, response,
-                    url.toString(), casProperties.getServer().getName(),
-                    CasProtocolConstants.PARAMETER_SERVICE,
-                    CasProtocolConstants.PARAMETER_TICKET, false);
+                url.toString(), casProperties.getServer().getName(),
+                CasProtocolConstants.PARAMETER_SERVICE,
+                CasProtocolConstants.PARAMETER_TICKET, false);
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
         }
@@ -174,9 +174,9 @@ public abstract class BaseWSFederationRequestController {
             val tgt = this.ticketRegistry.getTicket(cookieValue, TicketGrantingTicket.class);
             if (tgt != null) {
                 val sts = tgt.getDescendantTickets().stream()
-                        .filter(t -> t.startsWith(SecurityTokenTicket.PREFIX))
-                        .findFirst()
-                        .orElse(null);
+                    .filter(t -> t.startsWith(SecurityTokenTicket.PREFIX))
+                    .findFirst()
+                    .orElse(null);
                 if (StringUtils.isNotBlank(sts)) {
                     val stt = ticketRegistry.getTicket(sts, SecurityTokenTicket.class);
                     if (stt == null || stt.isExpired()) {

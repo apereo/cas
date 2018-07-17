@@ -53,6 +53,15 @@ public class CasConfigurationPropertiesEnvironmentManager {
     }
 
     /**
+     * Rebind cas configuration properties.
+     *
+     * @param applicationContext the application context
+     */
+    public void rebindCasConfigurationProperties(final ApplicationContext applicationContext) {
+        rebindCasConfigurationProperties(this.binder, applicationContext);
+    }
+
+    /**
      * Gets standalone profile configuration directory.
      *
      * @return the standalone profile configuration directory
@@ -93,12 +102,4 @@ public class CasConfigurationPropertiesEnvironmentManager {
         builder.save();
     }
 
-    /**
-     * Rebind cas configuration properties.
-     *
-     * @param applicationContext the application context
-     */
-    public void rebindCasConfigurationProperties(final ApplicationContext applicationContext) {
-        rebindCasConfigurationProperties(this.binder, applicationContext);
-    }
 }

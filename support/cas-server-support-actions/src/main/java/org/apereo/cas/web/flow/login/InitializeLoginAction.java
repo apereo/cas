@@ -1,8 +1,9 @@
 package org.apereo.cas.web.flow.login;
 
+import org.apereo.cas.services.ServicesManager;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.ServicesManager;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;

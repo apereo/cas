@@ -1,23 +1,23 @@
 package org.apereo.cas.adaptors.generic.remote;
 
-import lombok.val;
+import org.apereo.cas.authentication.AbstractAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
 
 import com.google.common.base.Splitter;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AbstractAuthenticationHandler;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.services.ServicesManager;
+
 import javax.security.auth.login.FailedLoginException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
-
-import lombok.Setter;
 
 /**
  * Checks if the remote address is in the range of allowed addresses.
@@ -48,27 +48,6 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         super(name, servicesManager, principalFactory, null);
     }
 
-    @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
-        val c = (RemoteAddressCredential) credential;
-        if (this.inetNetmask != null && this.inetNetworkRange != null) {
-            try {
-                val inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
-                if (containsAddress(this.inetNetworkRange, this.inetNetmask, inetAddress)) {
-                    return new DefaultAuthenticationHandlerExecutionResult(this, c, this.principalFactory.createPrincipal(c.getId()));
-                }
-            } catch (final UnknownHostException e) {
-                LOGGER.debug("Unknown host [{}]", c.getRemoteAddress());
-            }
-        }
-        throw new FailedLoginException(c.getRemoteAddress() + " not in allowed range.");
-    }
-
-    @Override
-    public boolean supports(final Credential credential) {
-        return credential instanceof RemoteAddressCredential;
-    }
-
     /**
      * Checks if a subnet contains a specific IP address.
      *
@@ -97,6 +76,27 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         }
         LOGGER.debug("[{}] is in [{}]/[{}]", ip, network, netmask);
         return true;
+    }
+
+    @Override
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
+        val c = (RemoteAddressCredential) credential;
+        if (this.inetNetmask != null && this.inetNetworkRange != null) {
+            try {
+                val inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
+                if (containsAddress(this.inetNetworkRange, this.inetNetmask, inetAddress)) {
+                    return new DefaultAuthenticationHandlerExecutionResult(this, c, this.principalFactory.createPrincipal(c.getId()));
+                }
+            } catch (final UnknownHostException e) {
+                LOGGER.debug("Unknown host [{}]", c.getRemoteAddress());
+            }
+        }
+        throw new FailedLoginException(c.getRemoteAddress() + " not in allowed range.");
+    }
+
+    @Override
+    public boolean supports(final Credential credential) {
+        return credential instanceof RemoteAddressCredential;
     }
 
     /**

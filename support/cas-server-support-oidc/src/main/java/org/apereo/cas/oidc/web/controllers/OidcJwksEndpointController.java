@@ -1,12 +1,5 @@
 package org.apereo.cas.oidc.web.controllers;
 
-import lombok.val;
-
-
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -19,6 +12,12 @@ import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -45,11 +44,10 @@ import java.nio.charset.StandardCharsets;
 public class OidcJwksEndpointController extends BaseOAuth20Controller {
 
 
-    @Autowired
-    private ResourceLoader resourceLoader;
-
     @NonNull
     private final Resource jwksFile;
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     public OidcJwksEndpointController(final ServicesManager servicesManager,
                                       final TicketRegistry ticketRegistry,
@@ -60,8 +58,8 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
                                       final CasConfigurationProperties casProperties,
                                       final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         super(servicesManager, ticketRegistry, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, scopeToAttributesFilter, 
-                casProperties, ticketGrantingTicketCookieGenerator);
+            webApplicationServiceServiceFactory, scopeToAttributesFilter,
+            casProperties, ticketGrantingTicketCookieGenerator);
         this.jwksFile = casProperties.getAuthn().getOidc().getJwksFile();
     }
 
@@ -82,15 +80,15 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
             val jsonWebKeySet = new JsonWebKeySet(jsonJwks);
 
             this.servicesManager.getAllServices()
-                    .stream()
-                    .filter(s -> s instanceof OidcRegisteredService && StringUtils.isNotBlank(((OidcRegisteredService) s).getJwks()))
-                    .forEach(
-                            Unchecked.consumer(s -> {
-                                val service = (OidcRegisteredService) s;
-                                val resource = this.resourceLoader.getResource(service.getJwks());
-                                val set = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
-                                set.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey);
-                            }));
+                .stream()
+                .filter(s -> s instanceof OidcRegisteredService && StringUtils.isNotBlank(((OidcRegisteredService) s).getJwks()))
+                .forEach(
+                    Unchecked.consumer(s -> {
+                        val service = (OidcRegisteredService) s;
+                        val resource = this.resourceLoader.getResource(service.getJwks());
+                        val set = new JsonWebKeySet(IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8));
+                        set.getJsonWebKeys().forEach(jsonWebKeySet::addJsonWebKey);
+                    }));
             val body = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.PUBLIC_ONLY);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             return new ResponseEntity<>(body, HttpStatus.OK);
