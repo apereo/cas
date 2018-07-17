@@ -25,6 +25,7 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,13 +54,15 @@ public class OAuth20Utils {
     /**
      * Write to the output this error.
      *
-     * @param error error message
-     * @return json-backed view.
+     * @param response the response
+     * @param error    error message
+     * @return json -backed view.
      */
-    public static ModelAndView writeError(final String error) {
+    public static ModelAndView writeError(final HttpServletResponse response, final String error) {
         val model = CollectionUtils.wrap(OAuth20Constants.ERROR, error);
         val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), (Map) model);
         mv.setStatus(HttpStatus.BAD_REQUEST);
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
         return mv;
     }
 

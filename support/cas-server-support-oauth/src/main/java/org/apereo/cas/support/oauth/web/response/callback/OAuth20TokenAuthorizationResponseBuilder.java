@@ -1,10 +1,9 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
-import lombok.val;
-
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
@@ -30,7 +29,7 @@ import java.util.List;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
 
     private final OAuth20TokenGenerator accessTokenGenerator;
@@ -43,10 +42,11 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
         val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
         val result = accessTokenGenerator.generate(holder);
-        val key = result.getAccessToken();
-        LOGGER.debug("Generated OAuth access token: [{}]", key);
-        return buildCallbackUrlResponseType(holder, redirectUri, key.get(),
-            new ArrayList<>(), result.getRefreshToken().get(), context);
+        val accessToken = result.getAccessToken().orElse(null);
+        val refreshToken = result.getRefreshToken().orElse(null);
+        LOGGER.debug("Generated OAuth access token: [{}]", accessToken);
+        return buildCallbackUrlResponseType(holder, redirectUri, accessToken,
+            new ArrayList<>(), refreshToken, context);
     }
 
 
@@ -68,8 +68,9 @@ public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20Authoriz
                                                 final List<NameValuePair> params,
                                                 final RefreshToken refreshToken,
                                                 final J2EContext context) throws Exception {
-        val state = holder.getAuthentication().getAttributes().get(OAuth20Constants.STATE).toString();
-        val nonce = holder.getAuthentication().getAttributes().get(OAuth20Constants.NONCE).toString();
+        val attributes = holder.getAuthentication().getAttributes();
+        val state = attributes.get(OAuth20Constants.STATE).toString();
+        val nonce = attributes.get(OAuth20Constants.NONCE).toString();
 
         val builder = new URIBuilder(redirectUri);
         val stringBuilder = new StringBuilder();
