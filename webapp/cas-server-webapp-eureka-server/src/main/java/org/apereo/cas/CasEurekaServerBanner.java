@@ -1,7 +1,8 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link CasEurekaServerBanner}.

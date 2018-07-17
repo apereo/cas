@@ -1,9 +1,13 @@
 package org.apereo.cas.config;
 
-import lombok.val;
+import org.apereo.cas.CasEmbeddedContainerUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.ResourceUtils;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
@@ -19,10 +23,6 @@ import org.apache.coyote.http2.Http2Protocol;
 import org.apache.tomcat.util.descriptor.web.LoginConfig;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
-import org.apereo.cas.CasEmbeddedContainerUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -65,6 +65,29 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
+        val field = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
+        ReflectionUtils.makeAccessible(field);
+        switch (protocol) {
+            case "AJP/2":
+                ReflectionUtils.setField(field, connector, new AjpNio2Protocol());
+                break;
+            case "AJP/1.3":
+                ReflectionUtils.setField(field, connector, new AjpNioProtocol());
+                break;
+            case "HTTP/2":
+                ReflectionUtils.setField(field, connector, new Http2Protocol());
+                break;
+            case "HTTP/1.2":
+                ReflectionUtils.setField(field, connector, new Http11Nio2Protocol());
+                break;
+            case "HTTP/1.1":
+            default:
+                ReflectionUtils.setField(field, connector, new Http11NioProtocol());
+                break;
+        }
+    }
 
     @ConditionalOnMissingBean(name = "casServletWebServerFactory")
     @Bean
@@ -258,29 +281,6 @@ public class CasEmbeddedContainerTomcatConfiguration {
             valve.setSslClientCertHeader(valveConfig.getSslClientCertHeader());
             valve.setSslSessionIdHeader(valveConfig.getSslSessionIdHeader());
             tomcat.addContextValves(valve);
-        }
-    }
-
-    private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
-        val field = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
-        ReflectionUtils.makeAccessible(field);
-        switch (protocol) {
-            case "AJP/2":
-                ReflectionUtils.setField(field, connector, new AjpNio2Protocol());
-                break;
-            case "AJP/1.3":
-                ReflectionUtils.setField(field, connector, new AjpNioProtocol());
-                break;
-            case "HTTP/2":
-                ReflectionUtils.setField(field, connector, new Http2Protocol());
-                break;
-            case "HTTP/1.2":
-                ReflectionUtils.setField(field, connector, new Http11Nio2Protocol());
-                break;
-            case "HTTP/1.1":
-            default:
-                ReflectionUtils.setField(field, connector, new Http11NioProtocol());
-                break;
         }
     }
 }

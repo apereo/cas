@@ -1,11 +1,13 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
+
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.server.Server;
 import org.springframework.core.env.Environment;
 
 import java.util.Formatter;
+
 /**
  * This is {@link CasJettyBanner}.
  *
