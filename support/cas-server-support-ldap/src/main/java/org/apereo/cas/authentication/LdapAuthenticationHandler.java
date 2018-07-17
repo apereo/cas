@@ -233,7 +233,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         /*
          * Use a set to ensure we ignore duplicates.
          */
-        val attributes = new HashSet<>();
+        val attributes = new HashSet<String>();
         LOGGER.debug("Initializing LDAP attribute configuration...");
         if (StringUtils.isNotBlank(this.principalIdAttribute)) {
             LOGGER.debug("Configured to retrieve principal id attribute [{}]", this.principalIdAttribute);
