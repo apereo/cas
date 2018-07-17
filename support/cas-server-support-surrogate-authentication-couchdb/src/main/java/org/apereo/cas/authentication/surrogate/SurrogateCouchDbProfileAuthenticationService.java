@@ -6,6 +6,7 @@ import org.apereo.cas.couchdb.core.CouchDbProfileDocument;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,11 +21,16 @@ import java.util.List;
  * @since 6.0.0
  */
 @Slf4j
-@AllArgsConstructor
 public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateAuthenticationService {
 
     private ProfileCouchDbRepository couchDb;
     private String surrogatePrincipalsAttribute;
+
+    public SurrogateCouchDbProfileAuthenticationService(final ProfileCouchDbRepository couchDb, final String surrogatePrincipalsAttribute, final ServicesManager servicesManager) {
+        super(servicesManager);
+        this.couchDb = couchDb;
+        this.surrogatePrincipalsAttribute = surrogatePrincipalsAttribute;
+    }
 
     @Override
     protected boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {

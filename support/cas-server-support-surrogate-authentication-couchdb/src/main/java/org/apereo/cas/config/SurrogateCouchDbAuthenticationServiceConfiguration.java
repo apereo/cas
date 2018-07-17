@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.SurrogateAuthorizationCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
+import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -14,6 +15,7 @@ import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -85,9 +87,9 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     public SurrogateAuthenticationService surrogateAuthenticationService() {
         val couchDb = casProperties.getAuthn().getSurrogate().getCouchDb();
         if (couchDb.isProfileBased()) {
-            return new SurrogateCouchDbProfileAuthenticationService(surrogateAuthorizationProfileCouchDbRepository(), couchDb.getSurrogatePrincipalsAttribute());
+            return new SurrogateCouchDbProfileAuthenticationService(surrogateAuthorizationProfileCouchDbRepository(), couchDb.getSurrogatePrincipalsAttribute(), servicesManager);
         } else {
-            return new SurrogateCouchDbAuthenticationService(surrogateAuthorizationCouchDbRepository());
+            return new SurrogateCouchDbAuthenticationService(surrogateAuthorizationCouchDbRepository(), servicesManager);
         }
     }
 }
