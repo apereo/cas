@@ -22,12 +22,9 @@ import java.util.Map;
 public class DistributedCacheObject<V extends Serializable> implements Serializable {
 
     private static final long serialVersionUID = -6776499291439952013L;
-
-    private Map<String, Object> properties = new LinkedHashMap<>();
-
     private final long timestamp;
-
     private final V value;
+    private Map<String, Object> properties = new LinkedHashMap<>();
 
     public DistributedCacheObject(final V value) {
         this(new Date().getTime(), value);
@@ -37,7 +34,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
         this.timestamp = timestamp;
         this.value = value;
     }
-    
+
     /**
      * Gets property.
      *

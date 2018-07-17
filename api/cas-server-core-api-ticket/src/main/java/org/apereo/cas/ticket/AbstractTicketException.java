@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.RootCasException;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Generic ticket exception. Top of the AbstractTicketException hierarchy.

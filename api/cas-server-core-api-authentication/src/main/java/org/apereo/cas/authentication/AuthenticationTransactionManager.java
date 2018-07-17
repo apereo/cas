@@ -20,7 +20,7 @@ public interface AuthenticationTransactionManager {
      */
     AuthenticationTransactionManager handle(AuthenticationTransaction authenticationTransaction,
                                             AuthenticationResultBuilder authenticationResultBuilder)
-                                            throws AuthenticationException;
+        throws AuthenticationException;
 
     /**
      * Gets authentication manager.

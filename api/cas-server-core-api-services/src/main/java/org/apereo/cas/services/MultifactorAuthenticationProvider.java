@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.Event;
 

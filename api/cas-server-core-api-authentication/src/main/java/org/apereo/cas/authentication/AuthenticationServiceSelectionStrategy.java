@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
+
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
@@ -21,7 +22,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 public interface AuthenticationServiceSelectionStrategy extends Serializable, Ordered {
-        
+
     /**
      * Resolves the real service from the provided service, if appropriate.
      *

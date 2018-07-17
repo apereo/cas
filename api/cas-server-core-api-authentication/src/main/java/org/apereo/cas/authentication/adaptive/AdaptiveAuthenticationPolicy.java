@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
  */
 @FunctionalInterface
 public interface AdaptiveAuthenticationPolicy {
-    
+
     /**
      * Apply the strategy to figure out whether this authentication attempt can proceed.
      *

@@ -1,11 +1,11 @@
 package org.apereo.cas.support.events.config;
 
-import lombok.val;
+import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.events.AbstractCasEvent;
+import lombok.val;
 
 import java.nio.file.Path;
 import java.util.regex.Pattern;
@@ -61,7 +61,7 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
         this.file = file;
         this.override = override;
     }
-    
+
     /**
      * Is eligible for context refresh ?
      *

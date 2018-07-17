@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.redis;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
-import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is {@link BaseRedisProperties}.

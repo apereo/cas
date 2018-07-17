@@ -51,7 +51,7 @@ public interface TicketState {
      * @return the ticket or null if it has no parent
      */
     TicketGrantingTicket getTicketGrantingTicket();
-    
+
     /**
      * Records the <i>previous</i> last time this ticket was used as well as
      * the last usage time. The ticket usage count is also incremented.
