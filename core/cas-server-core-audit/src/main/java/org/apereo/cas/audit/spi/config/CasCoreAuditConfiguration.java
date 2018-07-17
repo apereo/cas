@@ -1,7 +1,6 @@
 package org.apereo.cas.audit.spi.config;
 
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
@@ -220,8 +219,8 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")
     @Bean
     public AuditPrincipalIdProvider auditPrincipalIdProvider() {
-        val resolvers = applicationContext.getBeansOfType(AuditPrincipalIdProvider.class, false, true);
-        val providers = new ArrayList<>(resolvers.values());
+        final Map<String, AuditPrincipalIdProvider> resolvers = applicationContext.getBeansOfType(AuditPrincipalIdProvider.class, false, true);
+        final List<AuditPrincipalIdProvider> providers = new ArrayList<>(resolvers.values());
         AnnotationAwareOrderComparator.sort(providers);
         return new ChainingAuditPrincipalIdProvider(providers);
     }
