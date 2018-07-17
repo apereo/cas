@@ -2726,8 +2726,7 @@ The signing and encryption keys [are both JWKs](Configuration-Properties-Common.
 
 ## OAuth2
 
-Allows CAS to act as an OAuth2 provider. Here you can control how
-long various tokens issued by CAS should last, etc.
+Allows CAS to act as an OAuth2 provider. Here you can control how long various tokens issued by CAS should last, etc.
 
 To learn more about this topic, [please review this guide](OAuth-OpenId-Authentication.html).
 
@@ -2740,6 +2739,10 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.accessToken.releaseProtocolAttributes=true
 # cas.authn.oauth.accessToken.timeToKillInSeconds=7200
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
+
+# cas.authn.oauth.deviceToken.timeToKillInSeconds=2592000
+# cas.authn.oauth.deviceToken.refreshInterval=PT15S
+# cas.authn.oauth.deviceToken.userCodeLength=8
 
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
 

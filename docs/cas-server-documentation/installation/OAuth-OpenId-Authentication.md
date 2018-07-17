@@ -34,7 +34,8 @@ After enabling OAuth support, the following endpoints will be available:
 | `/oauth2.0/authorize`     | Authorize the user and start the CAS authentication flow.                   | `GET`
 | `/oauth2.0/accessToken`,`/oauth2.0/token`      | Get an access token in plain-text or JSON              | `POST`
 | `/oauth2.0/profile`       | Get the authenticated user profile in JSON via `access_token` parameter.    | `GET`
-| `/oauth2.0/introspect`    | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).
+| `/oauth2.0/introspect`    | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).  | `POST`
+| `/oauth2.0/device`        | Approve device user codes via the [device flow protocol](https://tools.ietf.org/html/draft-denniss-oauth-device-flow). | `POST`
 
 ## Response/Grant Types
 
@@ -87,7 +88,14 @@ when this previous access token is expired.
 
 | Endpoint                | Parameters                                               | Response
 |-------------------------|----------------------------------------------------------|---------------------------
-| `/oauth2.0/accessToken`   | `grant_type=refresh_token&client_id=ID`<br/>`&client_secret=SECRET&refresh_token=REFRESH_TOKEN` | The new access token.
+| `/oauth2.0/accessToken`   | `grant_type=refresh_token&client_id=<ID>`<br/>`&client_secret=SECRET&refresh_token=REFRESH_TOKEN` | The new access token.
+
+### Device Flow
+
+| Endpoint                | Parameters                                               | Response
+|-------------------------|----------------------------------------------------------|---------------------------
+| `/oauth2.0/accessToken`   | `response_type=device_code&client_id=<ID>` | Device authorization url, device code and user code.
+| `/oauth2.0/accessToken`   | `response_type=device_code&client_id=<ID>&code=<DEVICE_CODE>` | New access token once the user code is approved.
 
 ## Grant Type Selection
 

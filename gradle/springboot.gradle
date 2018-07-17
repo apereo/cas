@@ -2,18 +2,9 @@ apply plugin: "org.springframework.boot"
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
-/**
- * Make resources become reloadable.
- * Application’s static resources are loaded from their source location.
- */
-def webappResources = new File(project(":webapp").getProjectDir(), "resources")
-def externalizedTemplates = new File("/etc/cas/templates")
-
 sourceSets {
     bootRun {
         resources {
-            srcDir(webappResources)
-            srcDir(externalizedTemplates)
         }
     }
 }

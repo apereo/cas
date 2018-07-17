@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/couchdb/run-couchdb-server.sh
 
-gradleBuild="$gradleBuild testCouchDb coveralls -x javadoc -x check \
+gradleBuild="$gradleBuild testCouchDb coveralls -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

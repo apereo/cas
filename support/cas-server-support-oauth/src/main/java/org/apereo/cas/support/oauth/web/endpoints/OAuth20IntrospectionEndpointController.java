@@ -136,11 +136,11 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
     }
 
     /**
-     * Create introspection response o auth 20 introspection access token response.
+     * Create introspection response OAuth introspection access token response.
      *
      * @param service the service
      * @param ticket  the ticket
-     * @return the o auth 20 introspection access token response
+     * @return the OAuth introspection access token response
      */
     protected OAuth20IntrospectionAccessTokenResponse createIntrospectionResponse(final OAuthRegisteredService service, final AccessToken ticket) {
         val introspect = new OAuth20IntrospectionAccessTokenResponse();

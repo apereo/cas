@@ -9,6 +9,23 @@ package org.apereo.cas.support.oauth;
 public interface OAuth20Constants {
 
     /**
+     * Device code flow verification uri.
+     */
+    String DEVICE_VERIFICATION_URI = "verification_uri";
+    /**
+     * Device code flow user code.
+     */
+    String DEVICE_USER_CODE = "user_code";
+    /**
+     * Device code flow device code.
+     */
+    String DEVICE_CODE = "device_code";
+    /**
+     * Device code flow refresh interval.
+     */
+    String DEVICE_INTERVAL = "interval";
+
+    /**
      * Authentication context reference values.
      */
     String ACR_VALUES = "acr_values";
@@ -76,6 +93,12 @@ public interface OAuth20Constants {
     /** The confirm view. */
     String CONFIRM_VIEW = "oauthConfirmView";
 
+    /** The device code approval view. */
+    String DEVICE_CODE_APPROVAL_VIEW = "oauthDeviceCodeApprovalView";
+
+    /** The device code approved view. */
+    String DEVICE_CODE_APPROVED_VIEW = "oauthDeviceCodeApprovedView";
+
     /** The error view. */
     String ERROR_VIEW = "casServiceErrorView";
 
@@ -84,6 +107,15 @@ public interface OAuth20Constants {
 
     /** The invalid grant. */
     String INVALID_GRANT = "invalid_grant";
+
+    /** Access denied error. */
+    String ACCESS_DENIED = "access_denied";
+
+    /** Authz pending error. */
+    String AUTHORIZATION_PENDING = "authorization_pending";
+
+    /** slow down error for when approval requests are too quick. */
+    String SLOW_DOWN = "slow_down";
 
     /** The authorize url. */
     String AUTHORIZE_URL = "authorize";
@@ -99,7 +131,10 @@ public interface OAuth20Constants {
 
     /** The access token url. */
     String ACCESS_TOKEN_URL = "accessToken";
-    
+
+    /** device authorization url. */
+    String DEVICE_AUTHZ_URL = "device";
+
     /** The token url. */
     String TOKEN_URL = "token";
 

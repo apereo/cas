@@ -39,7 +39,7 @@ public class NexmoSmsSender implements SmsSender {
             if (results.isEmpty()) {
                 return true;
             }
-            results.forEach(res -> LOGGER.error("Text message submission has failed", res));
+            results.forEach(res -> LOGGER.error("Text message submission has failed: [{}]", res));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

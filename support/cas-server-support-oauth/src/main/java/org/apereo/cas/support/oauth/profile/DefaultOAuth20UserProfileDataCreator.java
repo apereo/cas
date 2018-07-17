@@ -1,9 +1,8 @@
 package org.apereo.cas.support.oauth.profile;
 
-import lombok.val;
-
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.ServicesManager;
@@ -24,18 +23,18 @@ import java.util.Map;
  * @since 5.3.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultOAuth20UserProfileDataCreator implements OAuth20UserProfileDataCreator {
 
     /**
      * The services manager.
      */
-    private ServicesManager servicesManager;
+    private final ServicesManager servicesManager;
 
     /**
      * The oauth2 scope to attributes filter.
      */
-    private OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
+    private final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
 
     @Override
     @Audit(action = "OAUTH2_USER_PROFILE_DATA",

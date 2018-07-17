@@ -8,7 +8,7 @@ package org.apereo.cas.util.junit;
  */
 public class RunningStandaloneCondition extends RunningContinuousIntegrationCondition {
     @Override
-    public boolean isSatisfied() {
+    public Boolean isSatisfied() {
         return !super.isSatisfied();
     }
 }
