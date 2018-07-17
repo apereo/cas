@@ -23,9 +23,9 @@ public abstract class AbstractServicesManagerTests {
 
 
     private static final String TEST = "test";
+    protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
     protected ServiceRegistry serviceRegistry;
     protected ServicesManager servicesManager;
-    protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
 
     public AbstractServicesManagerTests() {
         val r = new RegexRegisteredService();

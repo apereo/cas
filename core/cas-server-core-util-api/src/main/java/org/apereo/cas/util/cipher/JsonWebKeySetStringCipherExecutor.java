@@ -1,14 +1,14 @@
 package org.apereo.cas.util.cipher;
 
-import lombok.val;
+import org.apereo.cas.util.io.FileWatcherService;
 
 import com.google.common.base.Predicates;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.io.FileWatcherService;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.HttpsJwks;

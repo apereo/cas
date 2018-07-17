@@ -17,8 +17,8 @@ public interface RegisteredServiceReplicationStrategy {
     /**
      * Gets registered service from cache if any.
      *
-     * @param service            the service
-     * @param id                 the id
+     * @param service         the service
+     * @param id              the id
      * @param serviceRegistry the service registry dao
      * @return the registered service from cache if any
      */
@@ -30,8 +30,8 @@ public interface RegisteredServiceReplicationStrategy {
     /**
      * Gets registered service from cache if any.
      *
-     * @param service            the service
-     * @param id                 the id
+     * @param service         the service
+     * @param id              the id
      * @param serviceRegistry the service registry dao
      * @return the registered service from cache if any
      */
@@ -43,8 +43,8 @@ public interface RegisteredServiceReplicationStrategy {
     /**
      * Gets registered service from cache by predicate.
      *
-     * @param service            the service
-     * @param predicate          the predicate
+     * @param service         the service
+     * @param predicate       the predicate
      * @param serviceRegistry the service registry dao
      * @return the registered service from cache by predicate
      */
@@ -57,7 +57,7 @@ public interface RegisteredServiceReplicationStrategy {
     /**
      * Update loaded registered services from cache list.
      *
-     * @param services           the services
+     * @param services        the services
      * @param serviceRegistry the service registry dao
      * @return the list
      */

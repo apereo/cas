@@ -1,9 +1,10 @@
 package org.apereo.cas.ticket.proxy.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Dummy ProxyHandler that does nothing. Useful for Cas 1.0 compliance as CAS

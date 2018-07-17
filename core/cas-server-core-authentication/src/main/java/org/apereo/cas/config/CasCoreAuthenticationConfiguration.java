@@ -1,9 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
@@ -17,6 +13,10 @@ import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -47,16 +47,14 @@ public class CasCoreAuthenticationConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager")
-                                                                             final AuthenticationManager authenticationManager) {
+    public AuthenticationTransactionManager authenticationTransactionManager(@Qualifier("casAuthenticationManager") final AuthenticationManager authenticationManager) {
         return new DefaultAuthenticationTransactionManager(applicationEventPublisher, authenticationManager);
     }
 
     @ConditionalOnMissingBean(name = "casAuthenticationManager")
     @Autowired
     @Bean
-    public AuthenticationManager casAuthenticationManager(@Qualifier("authenticationEventExecutionPlan")
-                                                          final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
+    public AuthenticationManager casAuthenticationManager(@Qualifier("authenticationEventExecutionPlan") final AuthenticationEventExecutionPlan authenticationEventExecutionPlan) {
         return new PolicyBasedAuthenticationManager(
             authenticationEventExecutionPlan,
             casProperties.getPersonDirectory().isPrincipalResolutionFailureFatal(),

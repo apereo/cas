@@ -1,18 +1,19 @@
 package org.apereo.cas.ticket.support;
 
-import lombok.val;
+import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.TicketState;
+import lombok.val;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
@@ -29,10 +30,14 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = 205979491183779408L;
 
-    /** The time to kill in seconds. */
+    /**
+     * The time to kill in seconds.
+     */
     private long timeToKillInSeconds;
 
     private long timeInBetweenUsesInSeconds;

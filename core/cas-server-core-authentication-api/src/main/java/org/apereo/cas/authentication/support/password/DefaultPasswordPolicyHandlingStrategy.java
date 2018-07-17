@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.support.password;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.MessageDescriptor;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;

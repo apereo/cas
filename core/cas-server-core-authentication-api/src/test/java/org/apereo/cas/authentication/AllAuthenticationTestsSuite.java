@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolic
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicyTests;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtilsTests;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDaoTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

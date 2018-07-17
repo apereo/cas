@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication.handler.support.jaas;
 
-import lombok.val;
-
 import com.google.common.base.Splitter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.Subject;

@@ -1,13 +1,14 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.ArrayListMultimap;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
+
+import com.google.common.collect.ArrayListMultimap;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -49,7 +50,7 @@ public class AbstractRegisteredServiceTests {
     private static final String ATTR_2 = "attr2";
 
     private static final String ATTR_3 = "attr3";
-    
+
     private final AbstractRegisteredService r = new AbstractRegisteredService() {
         private static final long serialVersionUID = 1L;
 

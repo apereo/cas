@@ -1,9 +1,10 @@
 package org.apereo.cas.rest.factory;
 
+import org.apereo.cas.ticket.TicketGrantingTicket;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

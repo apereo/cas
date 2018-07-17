@@ -1,8 +1,9 @@
 package org.apereo.cas.util.junit;
 
+import org.apereo.cas.util.SocketUtils;
+
 import lombok.SneakyThrows;
 import lombok.val;
-import org.apereo.cas.util.SocketUtils;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Parameterized;

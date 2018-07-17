@@ -1,7 +1,5 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.qrcode.QRCodeWriter;
@@ -10,6 +8,7 @@ import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;

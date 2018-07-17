@@ -1,12 +1,13 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.web.support.ArgumentExtractor;
+
 import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestContextHolder;

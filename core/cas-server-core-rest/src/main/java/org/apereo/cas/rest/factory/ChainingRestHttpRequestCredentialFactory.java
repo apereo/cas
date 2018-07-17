@@ -1,9 +1,10 @@
 package org.apereo.cas.rest.factory;
 
+import org.apereo.cas.authentication.Credential;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Credential;
 import org.springframework.core.OrderComparator;
 import org.springframework.util.MultiValueMap;
 

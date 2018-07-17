@@ -1,8 +1,9 @@
 package org.apereo.cas.support.events.dao;
 
+import org.apereo.cas.support.events.CasEventRepository;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.support.events.CasEventRepository;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -39,40 +40,40 @@ public abstract class AbstractCasEventRepository implements CasEventRepository {
     @Override
     public Collection<CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
         return getEventsOfType(type)
-                .stream()
-                .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
-                .collect(Collectors.toSet());
+            .stream()
+            .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
+            .collect(Collectors.toSet());
     }
 
     @Override
     public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
         return getEventsForPrincipal(principal)
-                .stream()
-                .filter(event -> event.getType().equals(type))
-                .collect(Collectors.toSet());
+            .stream()
+            .filter(event -> event.getType().equals(type))
+            .collect(Collectors.toSet());
     }
 
     @Override
     public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
         return getEventsOfTypeForPrincipal(type, principal)
-                .stream()
-                .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
-                .collect(Collectors.toSet());
+            .stream()
+            .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
+            .collect(Collectors.toSet());
     }
 
     @Override
     public Collection<CasEvent> load(final ZonedDateTime dateTime) {
         return load().stream()
-                .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
-                .collect(Collectors.toSet());
+            .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
+            .collect(Collectors.toSet());
     }
-    
+
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
         return getEventsForPrincipal(id)
-                .stream()
-                .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
-                .collect(Collectors.toSet());
+            .stream()
+            .filter(e -> e.getCreationTime().isEqual(dateTime) || e.getCreationTime().isAfter(dateTime))
+            .collect(Collectors.toSet());
     }
 
     @Override

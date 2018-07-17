@@ -1,5 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.EncodingUtils;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,10 +16,6 @@ import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.util.EncodingUtils;
 
 import java.time.ZonedDateTime;
 

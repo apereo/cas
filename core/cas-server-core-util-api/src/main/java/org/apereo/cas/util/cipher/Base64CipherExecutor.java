@@ -1,14 +1,15 @@
 package org.apereo.cas.util.cipher;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A cipher executor that does compression/base64.

@@ -1,9 +1,8 @@
 package org.apereo.cas.util.io;
 
-import lombok.val;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 
 import java.io.Closeable;
@@ -27,13 +26,11 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 public class PathWatcherService implements Runnable, Closeable {
 
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
-
-    private Thread thread;
-
     private final WatchService watcher;
     private final Consumer<File> onCreate;
     private final Consumer<File> onModify;
     private final Consumer<File> onDelete;
+    private Thread thread;
 
     public PathWatcherService(final File watchablePath, final Consumer<File> onModify) {
         this(watchablePath.toPath(),

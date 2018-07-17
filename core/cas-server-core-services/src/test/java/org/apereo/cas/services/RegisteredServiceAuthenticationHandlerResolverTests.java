@@ -1,16 +1,16 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.util.CollectionUtils;
-import org.junit.Test;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;

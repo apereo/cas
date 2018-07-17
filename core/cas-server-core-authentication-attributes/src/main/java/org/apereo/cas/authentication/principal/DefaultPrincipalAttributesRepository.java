@@ -1,11 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+import lombok.val;
 
 import java.util.Map;
 

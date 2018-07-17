@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import lombok.val;
-
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

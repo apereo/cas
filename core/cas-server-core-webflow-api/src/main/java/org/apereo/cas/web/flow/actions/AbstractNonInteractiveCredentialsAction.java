@@ -1,12 +1,13 @@
 package org.apereo.cas.web.flow.actions;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -42,10 +43,10 @@ public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAu
     @Override
     protected void onError(final RequestContext requestContext) {
         val resolver = new MessageBuilder()
-                .error()
-                .code(BAD_X509_CREDENTIALS_MSG_CODE)
-                .defaultText(BAD_X509_CREDENTIALS_MSG_CODE)
-                .build();
+            .error()
+            .code(BAD_X509_CREDENTIALS_MSG_CODE)
+            .defaultText(BAD_X509_CREDENTIALS_MSG_CODE)
+            .build();
         requestContext.getMessageContext().addMessage(resolver);
     }
 

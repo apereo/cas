@@ -1,5 +1,8 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.ScriptingUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,8 +11,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
 
 import javax.persistence.Transient;
 import java.net.URI;
@@ -51,6 +52,13 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
 
     @Override
     @JsonIgnore
+    public void setServiceAccessAllowed(final boolean enabled) {
+        buildGroovyAccessStrategyInstanceIfNeeded();
+        this.groovyStrategyInstance.setServiceAccessAllowed(enabled);
+    }
+
+    @Override
+    @JsonIgnore
     public boolean isServiceAccessAllowedForSso() {
         buildGroovyAccessStrategyInstanceIfNeeded();
         return this.groovyStrategyInstance.isServiceAccessAllowedForSso();
@@ -68,13 +76,6 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
     public URI getUnauthorizedRedirectUrl() {
         buildGroovyAccessStrategyInstanceIfNeeded();
         return this.groovyStrategyInstance.getUnauthorizedRedirectUrl();
-    }
-
-    @Override
-    @JsonIgnore
-    public void setServiceAccessAllowed(final boolean enabled) {
-        buildGroovyAccessStrategyInstanceIfNeeded();
-        this.groovyStrategyInstance.setServiceAccessAllowed(enabled);
     }
 
     @Override

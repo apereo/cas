@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.mfa.DefaultMultifactorAuthenticationContextValidatorTests;
 import org.apereo.cas.authentication.mfa.DefaultMultifactorAuthenticationProviderBypassTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

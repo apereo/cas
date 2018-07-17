@@ -1,11 +1,10 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
-
-import lombok.extern.slf4j.Slf4j;
-import org.junit.Test;
 
 /**
  * @author Misagh Moayyed

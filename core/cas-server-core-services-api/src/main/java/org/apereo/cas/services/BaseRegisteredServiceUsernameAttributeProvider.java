@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -8,10 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
 import javax.persistence.PostLoad;

@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -26,11 +26,9 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     private static final String SCOTT = "scott";
     private static final String RUTGERS = "rutgers";
-
+    private final AcceptUsersAuthenticationHandler authenticationHandler;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
-    private final AcceptUsersAuthenticationHandler authenticationHandler;
 
     public AcceptUsersAuthenticationHandlerTests() {
         val users = new HashMap<String, String>();
@@ -63,8 +61,8 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyDoesntSupportBadUserCredentials() {
         try {
             assertFalse(this.authenticationHandler
-                    .supports(new HttpBasedServiceCredential(new URL(
-                            "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
+                .supports(new HttpBasedServiceCredential(new URL(
+                    "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
         } catch (final MalformedURLException e) {
             throw new AssertionError("Could not resolve URL.", e);
         }

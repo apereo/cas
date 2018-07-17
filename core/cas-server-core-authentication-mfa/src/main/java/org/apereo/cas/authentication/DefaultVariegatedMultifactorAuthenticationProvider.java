@@ -1,14 +1,14 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
+import lombok.val;
 
 import java.util.Arrays;
 import java.util.Collection;

@@ -1,11 +1,11 @@
 package org.apereo.cas.services.resource;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.io.File;
 

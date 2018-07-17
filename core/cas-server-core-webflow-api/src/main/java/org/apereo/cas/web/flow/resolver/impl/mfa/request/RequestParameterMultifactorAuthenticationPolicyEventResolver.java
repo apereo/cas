@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa.request;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -10,6 +7,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.util.CookieGenerator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +39,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver extend
                                                                         final MultifactorAuthenticationProviderSelector selector,
                                                                         final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, authenticationStrategies, selector, casProperties);
+            ticketRegistrySupport, warnCookieGenerator, authenticationStrategies, selector, casProperties);
         mfaRequestParameter = casProperties.getAuthn().getMfa().getRequestParameter();
     }
 

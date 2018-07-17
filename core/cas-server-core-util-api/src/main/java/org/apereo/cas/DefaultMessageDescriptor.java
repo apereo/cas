@@ -1,13 +1,13 @@
 package org.apereo.cas;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MessageDescriptor;
 
-import java.io.Serializable;
-
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.Serializable;
 
 /**
  * Simple parameterized message descriptor with a code that refers to a message bundle key and a default
@@ -22,7 +22,9 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class DefaultMessageDescriptor implements MessageDescriptor {
 
-    /** Serialization support. */
+    /**
+     * Serialization support.
+     */
     private static final long serialVersionUID = 1227390629186486032L;
 
     private String code;
@@ -39,5 +41,5 @@ public class DefaultMessageDescriptor implements MessageDescriptor {
     public DefaultMessageDescriptor(final String code) {
         this(code, code, null);
     }
-    
+
 }

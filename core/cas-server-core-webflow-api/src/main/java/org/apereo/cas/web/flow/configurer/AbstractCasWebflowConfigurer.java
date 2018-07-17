@@ -1,15 +1,16 @@
 package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.spel.SpringELExpressionParser;
@@ -81,30 +82,25 @@ import java.util.Map;
 @ToString(of = "name")
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
     /**
-     * The logout flow definition registry.
-     */
-    protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
-
-    /**
      * Flow builder services.
      */
     protected final FlowBuilderServices flowBuilderServices;
-
     /**
      * The Login flow definition registry.
      */
     protected final FlowDefinitionRegistry loginFlowDefinitionRegistry;
-
     /**
      * Application context.
      */
     protected final ApplicationContext applicationContext;
-
     /**
      * CAS Properties.
      */
     protected final CasConfigurationProperties casProperties;
-
+    /**
+     * The logout flow definition registry.
+     */
+    protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
     private int order;
 
     private String name = getClass().getSimpleName();

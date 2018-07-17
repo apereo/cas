@@ -1,7 +1,8 @@
 package org.apereo.cas.web.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
+
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

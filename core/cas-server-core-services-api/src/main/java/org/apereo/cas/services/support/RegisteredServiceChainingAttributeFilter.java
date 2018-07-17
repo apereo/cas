@@ -1,18 +1,20 @@
 package org.apereo.cas.services.support;
 
+import org.apereo.cas.services.RegisteredServiceAttributeFilter;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.springframework.core.OrderComparator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.ToString;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * The filter that chains other filters inside it.

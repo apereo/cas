@@ -19,24 +19,6 @@ import java.util.stream.Stream;
 @ToString
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
 
-    @Override
-    public <T extends Service> T createService(final String id, final Class<T> clazz) {
-        var service = createService(id);
-        if (!clazz.isAssignableFrom(service.getClass())) {
-            throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
-        }
-        return (T) service;
-    }
-
-    @Override
-    public <T extends Service> T createService(final HttpServletRequest request, final Class<T> clazz) {
-        var service = createService(request);
-        if (!clazz.isAssignableFrom(service.getClass())) {
-            throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
-        }
-        return (T) service;
-    }
-
     /**
      * Cleanup the url. Removes jsession ids and query strings.
      *
@@ -75,5 +57,23 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
             return param;
         }
         return null;
+    }
+
+    @Override
+    public <T extends Service> T createService(final String id, final Class<T> clazz) {
+        var service = createService(id);
+        if (!clazz.isAssignableFrom(service.getClass())) {
+            throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
+        }
+        return (T) service;
+    }
+
+    @Override
+    public <T extends Service> T createService(final HttpServletRequest request, final Class<T> clazz) {
+        var service = createService(request);
+        if (!clazz.isAssignableFrom(service.getClass())) {
+            throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
+        }
+        return (T) service;
     }
 }

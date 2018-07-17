@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.util.CollectionUtils;
+import lombok.val;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -27,32 +27,26 @@ import java.util.function.Predicate;
 public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     private static final long serialVersionUID = -8504842011648432398L;
-
-    /**
-     * Authenticated principal.
-     */
-    private Principal principal;
-
     /**
      * Credential metadata.
      */
     private final List<CredentialMetaData> credentials = new ArrayList<>();
-
     /**
      * Authentication metadata attributes.
      */
     private final Map<String, Object> attributes = new LinkedHashMap<>();
-
     /**
      * Map of handler names to authentication successes.
      */
     private final Map<String, AuthenticationHandlerExecutionResult> successes = new LinkedHashMap<>();
-
     /**
      * Map of handler names to authentication failures.
      */
     private final Map<String, Throwable> failures = new LinkedHashMap<>();
-
+    /**
+     * Authenticated principal.
+     */
+    private Principal principal;
     /**
      * Authentication date.
      */
@@ -74,6 +68,31 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public DefaultAuthenticationBuilder(final Principal p) {
         this();
         this.principal = p;
+    }
+
+    /**
+     * Creates a new builder initialized with data from the given authentication source.
+     *
+     * @param source Authentication source.
+     * @return New builder instance initialized with all fields in the given authentication source.
+     */
+    public static AuthenticationBuilder newInstance(final Authentication source) {
+        val builder = new DefaultAuthenticationBuilder(source.getPrincipal());
+        builder.setAuthenticationDate(source.getAuthenticationDate());
+        builder.setCredentials(source.getCredentials());
+        builder.setSuccesses(source.getSuccesses());
+        builder.setFailures(source.getFailures());
+        builder.setAttributes(source.getAttributes());
+        return builder;
+    }
+
+    /**
+     * Creates a new builder.
+     *
+     * @return New builder instance
+     */
+    public static AuthenticationBuilder newInstance() {
+        return new DefaultAuthenticationBuilder();
     }
 
     /**
@@ -260,30 +279,5 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     @Override
     public Authentication build() {
         return new DefaultAuthentication(this.authenticationDate, this.credentials, this.principal, this.attributes, this.successes, this.failures);
-    }
-
-    /**
-     * Creates a new builder initialized with data from the given authentication source.
-     *
-     * @param source Authentication source.
-     * @return New builder instance initialized with all fields in the given authentication source.
-     */
-    public static AuthenticationBuilder newInstance(final Authentication source) {
-        val builder = new DefaultAuthenticationBuilder(source.getPrincipal());
-        builder.setAuthenticationDate(source.getAuthenticationDate());
-        builder.setCredentials(source.getCredentials());
-        builder.setSuccesses(source.getSuccesses());
-        builder.setFailures(source.getFailures());
-        builder.setAttributes(source.getAttributes());
-        return builder;
-    }
-
-    /**
-     * Creates a new builder.
-     *
-     * @return New builder instance
-     */
-    public static AuthenticationBuilder newInstance() {
-        return new DefaultAuthenticationBuilder();
     }
 }

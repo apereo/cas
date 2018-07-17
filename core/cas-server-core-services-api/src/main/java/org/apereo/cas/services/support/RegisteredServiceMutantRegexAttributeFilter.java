@@ -1,12 +1,13 @@
 package org.apereo.cas.services.support;
 
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
+
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.RegexUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;

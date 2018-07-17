@@ -1,16 +1,16 @@
 package org.apereo.cas.ticket.proxy.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
-import org.junit.Test;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 

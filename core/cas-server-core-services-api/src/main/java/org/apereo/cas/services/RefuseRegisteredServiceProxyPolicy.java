@@ -8,6 +8,7 @@ import java.net.URL;
 
 /**
  * A proxy policy that disallows proxying.
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */

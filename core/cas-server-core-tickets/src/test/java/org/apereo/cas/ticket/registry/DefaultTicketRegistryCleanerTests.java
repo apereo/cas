@@ -1,8 +1,9 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.val;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

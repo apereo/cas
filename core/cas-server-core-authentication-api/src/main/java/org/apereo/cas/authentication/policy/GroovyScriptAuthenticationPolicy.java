@@ -1,12 +1,13 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ScriptingUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.io.ResourceLoader;
 
 import java.security.GeneralSecurityException;

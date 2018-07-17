@@ -1,7 +1,8 @@
 package org.apereo.cas.audit.spi;
 
-import lombok.Getter;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
+
+import lombok.Getter;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 

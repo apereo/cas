@@ -1,9 +1,5 @@
 package org.apereo.cas.services.replication;
 
-import lombok.val;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
@@ -11,6 +7,10 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.events.service.BaseCasRegisteredServiceEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.util.List;
@@ -106,7 +106,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
                                                                            final ServiceRegistry serviceRegistry) {
         val cachedServices = this.distributedCacheManager.getAll();
 
-        for (val entry: cachedServices) {
+        for (val entry : cachedServices) {
             val cachedService = entry.getValue();
             LOGGER.debug("Found cached service definition [{}] in the replication cache [{}]", cachedService, distributedCacheManager.getName());
 

@@ -1,9 +1,9 @@
 package org.apereo.cas.config.support;
 
-import lombok.val;
+import org.apereo.cas.CasEmbeddedValueResolver;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CasEmbeddedValueResolver;
+import lombok.val;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.format.support.DefaultFormattingConversionService;

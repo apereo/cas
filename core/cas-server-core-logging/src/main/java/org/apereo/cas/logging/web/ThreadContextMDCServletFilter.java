@@ -1,12 +1,12 @@
 package org.apereo.cas.logging.web;
 
-import lombok.val;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.slf4j.MDC;
 
 import javax.servlet.Filter;
@@ -33,6 +33,13 @@ public class ThreadContextMDCServletFilter implements Filter {
 
     private final TicketRegistrySupport ticketRegistrySupport;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+
+    private static void addContextAttribute(final String attributeName, final Object value) {
+        val result = value != null ? value.toString() : null;
+        if (StringUtils.isNotBlank(result)) {
+            MDC.put(attributeName, result);
+        }
+    }
 
     /**
      * Does nothing.
@@ -93,13 +100,6 @@ public class ThreadContextMDCServletFilter implements Filter {
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             MDC.clear();
-        }
-    }
-
-    private static void addContextAttribute(final String attributeName, final Object value) {
-        val result = value != null ? value.toString() : null;
-        if (StringUtils.isNotBlank(result)) {
-            MDC.put(attributeName, result);
         }
     }
 

@@ -1,12 +1,13 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Principal;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Principal;
 
 import java.time.ZonedDateTime;
 import java.util.List;

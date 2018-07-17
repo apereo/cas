@@ -1,16 +1,18 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ScriptingUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ScriptingUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
-import lombok.Setter;
 
 /**
  * Return a collection of allowed attributes for the principal, but additionally,
@@ -39,39 +40,6 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     private Map<String, Object> allowedAttributes = new TreeMap<>();
 
-    /**
-     * Gets the allowed attributes.
-     *
-     * @return the allowed attributes
-     */
-    public Map<String, Object> getAllowedAttributes() {
-        return new TreeMap<>(this.allowedAttributes);
-    }
-
-    @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
-        val resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        resolvedAttributes.putAll(attrs);
-        val attributesToRelease = new HashMap<String, Object>();
-        /*
-         * Map each entry in the allowed list into an array first
-         * by the original key, value and the original entry itself.
-         * Then process the array to populate the map for allowed attributes
-         */
-        this.allowedAttributes.entrySet().forEach(entry -> {
-            val attributeName = entry.getKey();
-            val mappedAttributes = CollectionUtils.wrap(entry.getValue());
-            LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
-            val attributeValue = resolvedAttributes.get(attributeName);
-            mappedAttributes.forEach(mapped -> {
-                val mappedAttributeName = mapped.toString();
-                LOGGER.debug("Mapping attribute [{}] to [{}] with value [{}]", attributeName, mappedAttributeName, attributeValue);
-                mapSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, resolvedAttributes, attributesToRelease);
-            });
-        });
-        return attributesToRelease;
-    }
-
     private static void mapSingleAttributeDefinition(final String attributeName, final String mappedAttributeName,
                                                      final Object attributeValue, final Map<String, Object> resolvedAttributes,
                                                      final Map<String, Object> attributesToRelease) {
@@ -90,8 +58,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                 attributesToRelease.put(mappedAttributeName, attributeValue);
             } else {
                 LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list. "
-                    + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
-                    + "will and can not be released without the presence of a value.", mappedAttributeName, attributeName,
+                        + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
+                        + "will and can not be released without the presence of a value.", mappedAttributeName, attributeName,
                     attributeName, mappedAttributeName);
             }
         }
@@ -132,6 +100,39 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     private static Object getGroovyAttributeValue(final String groovyScript, final Map<String, Object> resolvedAttributes) {
         val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
         return ScriptingUtils.executeGroovyShellScript(groovyScript, args, Object.class);
+    }
+
+    /**
+     * Gets the allowed attributes.
+     *
+     * @return the allowed attributes
+     */
+    public Map<String, Object> getAllowedAttributes() {
+        return new TreeMap<>(this.allowedAttributes);
+    }
+
+    @Override
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
+        val resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        resolvedAttributes.putAll(attrs);
+        val attributesToRelease = new HashMap<String, Object>();
+        /*
+         * Map each entry in the allowed list into an array first
+         * by the original key, value and the original entry itself.
+         * Then process the array to populate the map for allowed attributes
+         */
+        this.allowedAttributes.entrySet().forEach(entry -> {
+            val attributeName = entry.getKey();
+            val mappedAttributes = CollectionUtils.wrap(entry.getValue());
+            LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
+            val attributeValue = resolvedAttributes.get(attributeName);
+            mappedAttributes.forEach(mapped -> {
+                val mappedAttributeName = mapped.toString();
+                LOGGER.debug("Mapping attribute [{}] to [{}] with value [{}]", attributeName, mappedAttributeName, attributeValue);
+                mapSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, resolvedAttributes, attributesToRelease);
+            });
+        });
+        return attributesToRelease;
     }
 
 }

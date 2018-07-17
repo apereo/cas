@@ -1,19 +1,22 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.RegexUtils;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.RegexUtils;
-import java.net.URL;
-import lombok.ToString;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+
+import java.net.URL;
 
 /**
  * A proxy policy that only allows proxying to pgt urls
  * that match the specified regex pattern.
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
@@ -32,6 +35,7 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
      * Init the policy with the pgt url regex pattern that
      * will determine the urls allowed to receive the pgt.
      * The matching by default is done in a case insensitive manner.
+     *
      * @param pgtUrlPattern the pgt url pattern
      */
     @JsonCreator

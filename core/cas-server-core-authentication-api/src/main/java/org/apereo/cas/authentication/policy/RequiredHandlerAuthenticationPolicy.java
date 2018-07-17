@@ -1,11 +1,12 @@
 package org.apereo.cas.authentication.policy;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationPolicy;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationPolicy;
 
 /**
  * Authentication security policy that is satisfied iff a specified authentication handler successfully authenticates

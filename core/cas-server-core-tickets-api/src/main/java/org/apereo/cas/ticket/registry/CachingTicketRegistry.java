@@ -1,5 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Expiry;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -7,10 +12,6 @@ import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.Map;
 
@@ -51,23 +52,6 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
         this.logoutManager = logoutManager;
     }
 
-
-    /**
-     * The cached ticket removal listener.
-     */
-    public class CachedTicketRemovalListener implements RemovalListener<String, Ticket> {
-
-        @Override
-        public void onRemoval(final String key, final Ticket value, final RemovalCause cause) {
-            if (cause == RemovalCause.EXPIRED) {
-                LOGGER.warn("Received removal notification for ticket [{}] with cause [{}]. Cleaning...", key, cause);
-                if (value instanceof TicketGrantingTicket) {
-                    logoutManager.performLogout(TicketGrantingTicket.class.cast(value));
-                }
-            }
-        }
-    }
-
     /**
      * The cached ticket expiration policy.
      */
@@ -94,6 +78,22 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
         @Override
         public long expireAfterRead(final String key, final Ticket value, final long currentTime, final long currentDuration) {
             return getExpiration(value, currentDuration);
+        }
+    }
+
+    /**
+     * The cached ticket removal listener.
+     */
+    public class CachedTicketRemovalListener implements RemovalListener<String, Ticket> {
+
+        @Override
+        public void onRemoval(final String key, final Ticket value, final RemovalCause cause) {
+            if (cause == RemovalCause.EXPIRED) {
+                LOGGER.warn("Received removal notification for ticket [{}] with cause [{}]. Cleaning...", key, cause);
+                if (value instanceof TicketGrantingTicket) {
+                    logoutManager.performLogout(TicketGrantingTicket.class.cast(value));
+                }
+            }
         }
     }
 }

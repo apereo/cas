@@ -1,9 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
-
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -63,7 +61,7 @@ public class ResponseTests {
         attributes.put(TICKET_PARAM, "ST-12345");
         val response = DefaultResponse.getRedirectResponse(url, attributes);
         assertEquals("https://www.example.com Location: javascript: <script>alert(document.cookie)</script>?ticket=ST-12345",
-                response.getUrl());
+            response.getUrl());
     }
 
     @Test

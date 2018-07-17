@@ -1,15 +1,15 @@
 package org.apereo.cas.ticket;
 
-import lombok.val;
-
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.OrderComparator;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link DefaultTicketCatalog}.

@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import lombok.val;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

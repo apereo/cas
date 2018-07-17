@@ -1,12 +1,13 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.CasProtocolConstants;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apereo.cas.CasProtocolConstants;
 import org.springframework.context.annotation.Scope;
 
 import javax.servlet.http.HttpServletRequest;

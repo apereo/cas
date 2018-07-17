@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class CopyServletOutputStream extends ServletOutputStream {
     private static final int BUFFER_SIZE = 1024;
-    
+
     private final OutputStream outputStream;
     private final ByteArrayOutputStream copy;
 

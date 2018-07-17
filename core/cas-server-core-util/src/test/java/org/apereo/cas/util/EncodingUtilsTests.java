@@ -1,11 +1,11 @@
 package org.apereo.cas.util;
 
-import lombok.val;
+import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
+import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
-import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+import lombok.val;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
 import org.junit.Test;
@@ -25,6 +25,24 @@ import static org.junit.Assert.*;
  */
 @Slf4j
 public class EncodingUtilsTests {
+
+    @SneakyThrows
+    private static PrivateKey getPrivateKey() {
+        val factory = new PrivateKeyFactoryBean();
+        factory.setAlgorithm(RsaKeyUtil.RSA);
+        factory.setLocation(new ClassPathResource("keys/RSA2048Private.key"));
+        factory.setSingleton(false);
+        return factory.getObject();
+    }
+
+    @SneakyThrows
+    private static PublicKey getPublicKey() {
+        val factory = new PublicKeyFactoryBean();
+        factory.setAlgorithm(RsaKeyUtil.RSA);
+        factory.setResource(new ClassPathResource("keys/RSA2048Public.key"));
+        factory.setSingleton(false);
+        return factory.getObject();
+    }
 
     @Test
     public void verifyAesKeyForJwtSigning() {
@@ -62,23 +80,5 @@ public class EncodingUtilsTests {
         val found = EncodingUtils.encryptValueAsJwtRsaOeap256Aes256Sha512(getPublicKey(), value);
         val jwt = EncodingUtils.decryptJwtValue(getPrivateKey(), found);
         assertTrue(jwt.equals(value));
-    }
-
-    @SneakyThrows
-    private static PrivateKey getPrivateKey() {
-        val factory = new PrivateKeyFactoryBean();
-        factory.setAlgorithm(RsaKeyUtil.RSA);
-        factory.setLocation(new ClassPathResource("keys/RSA2048Private.key"));
-        factory.setSingleton(false);
-        return factory.getObject();
-    }
-
-    @SneakyThrows
-    private static PublicKey getPublicKey() {
-        val factory = new PublicKeyFactoryBean();
-        factory.setAlgorithm(RsaKeyUtil.RSA);
-        factory.setResource(new ClassPathResource("keys/RSA2048Public.key"));
-        factory.setSingleton(false);
-        return factory.getObject();
     }
 }

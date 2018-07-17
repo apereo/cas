@@ -1,11 +1,12 @@
 package org.apereo.cas.util.spring.boot;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.SystemUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.Banner;
 import org.springframework.core.env.Environment;
 

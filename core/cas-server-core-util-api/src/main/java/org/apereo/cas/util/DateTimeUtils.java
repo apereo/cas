@@ -52,7 +52,7 @@ public class DateTimeUtils {
                 result = null;
             }
         }
-        
+
         if (result == null) {
             try {
                 result = LocalDateTime.parse(value);

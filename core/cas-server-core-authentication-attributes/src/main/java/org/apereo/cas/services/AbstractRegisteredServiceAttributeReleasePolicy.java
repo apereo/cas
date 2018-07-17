@@ -1,5 +1,13 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,13 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import javax.persistence.PostLoad;
 import java.util.LinkedHashMap;

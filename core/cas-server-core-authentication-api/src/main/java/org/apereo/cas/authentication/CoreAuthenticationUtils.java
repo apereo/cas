@@ -1,6 +1,11 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
+import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
+import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
@@ -8,15 +13,10 @@ import com.google.common.collect.Multimap;
 import groovy.lang.GroovyClassLoader;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
-import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
-import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
-import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
-import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.CollectionUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.core.io.DefaultResourceLoader;
 

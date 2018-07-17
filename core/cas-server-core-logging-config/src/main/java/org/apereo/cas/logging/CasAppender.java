@@ -1,7 +1,6 @@
 package org.apereo.cas.logging;
 
 import lombok.val;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
@@ -40,6 +39,21 @@ public class CasAppender extends AbstractAppender {
         this.appenderRef = appenderRef;
     }
 
+    /**
+     * Create appender cas appender.
+     *
+     * @param name        the name
+     * @param appenderRef the appender ref
+     * @param config      the config
+     * @return the cas appender
+     */
+    @PluginFactory
+    public static CasAppender build(@PluginAttribute("name") final String name,
+                                    @PluginElement("AppenderRef") final AppenderRef appenderRef,
+                                    @PluginConfiguration final Configuration config) {
+        return new CasAppender(name, config, appenderRef);
+    }
+
     @Override
     public void append(final LogEvent logEvent) {
         val newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
@@ -54,20 +68,5 @@ public class CasAppender extends AbstractAppender {
         } else {
             LOGGER.warn("No log appender reference could be located in logging configuration.");
         }
-    }
-
-    /**
-     * Create appender cas appender.
-     *
-     * @param name        the name
-     * @param appenderRef the appender ref
-     * @param config      the config
-     * @return the cas appender
-     */
-    @PluginFactory
-    public static CasAppender build(@PluginAttribute("name") final String name,
-                                    @PluginElement("AppenderRef") final AppenderRef appenderRef,
-                                    @PluginConfiguration final Configuration config) {
-        return new CasAppender(name, config, appenderRef);
     }
 }

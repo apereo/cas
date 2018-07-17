@@ -1,8 +1,5 @@
 package org.apereo.cas;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -26,6 +23,9 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.util.MockOnlyOneTicketRegistry;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -46,6 +46,16 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    private static Service getService(final String name) {
+        val request = new MockHttpServletRequest();
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
+        return new WebApplicationServiceFactory().createService(request);
+    }
+
+    private static Service getService() {
+        return getService(CoreAuthenticationTestUtils.CONST_TEST_URL);
+    }
 
     @Test
     public void verifyBadCredentialsOnTicketGrantingTicketCreation() {
@@ -449,15 +459,5 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
             null, null, null,
             mock(AuditableExecution.class));
         cas.destroyTicketGrantingTicket(tgt.getId());
-    }
-
-    private static Service getService(final String name) {
-        val request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, name);
-        return new WebApplicationServiceFactory().createService(request);
-    }
-
-    private static Service getService() {
-        return getService(CoreAuthenticationTestUtils.CONST_TEST_URL);
     }
 }

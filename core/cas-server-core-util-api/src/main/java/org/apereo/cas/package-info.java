@@ -33,6 +33,7 @@
  * TGTs for the Service Ticket. TGTs and STs are stored in a cache until they
  * expire or are deleted. Various technologies can be plugged into the back end so
  * that the Ticket cache is shared among machines or persisted across a reboot.</p>
+ *
  * @since 3.0
  */
 package org.apereo.cas;

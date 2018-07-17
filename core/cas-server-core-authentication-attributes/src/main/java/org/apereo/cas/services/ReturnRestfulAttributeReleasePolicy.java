@@ -1,24 +1,25 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.http.HttpStatus;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
+
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * Return a collection of allowed attributes for the principal based on an external REST endpoint.

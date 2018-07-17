@@ -1,10 +1,5 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.services.RegisteredService;
@@ -12,6 +7,11 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -60,6 +60,29 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         this.cacheCredentialCipherExecutor = cacheCredentialCipherExecutor;
     }
 
+    private static void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
+                                                           final RegisteredService registeredService) {
+        LOGGER.debug("Sanitizing attribute names in preparation of the final validation response");
+
+        val attrs = attributes.keySet().stream()
+            .filter(getSanitizingAttributeNamePredicate())
+            .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
+            .collect(Collectors.toSet());
+        if (!attrs.isEmpty()) {
+            LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
+            attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
+            attrs.forEach(p -> {
+                val key = p.getKey();
+                LOGGER.debug("Sanitized attribute name to be [{}]", key);
+                attributes.put(key, p.getValue());
+            });
+        }
+    }
+
+    private static Predicate<String> getSanitizingAttributeNamePredicate() {
+        return s -> s.contains(":") || s.contains("@");
+    }
+
     /**
      * Encode and encrypt credential password using the public key
      * supplied by the service. The result is base64 encoded
@@ -78,7 +101,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
         if (cachedAttributesToEncode.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL)) {
             val value = cachedAttributesToEncode.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-            val decodedValue = this.cacheCredentialCipherExecutor.decode(value, new Object[] {});
+            val decodedValue = this.cacheCredentialCipherExecutor.decode(value, new Object[]{});
             cachedAttributesToEncode.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
             if (StringUtils.isNotBlank(decodedValue)) {
                 cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, decodedValue);
@@ -143,28 +166,5 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode, cipher, registeredService);
         encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode, cipher, registeredService);
         sanitizeAndTransformAttributeNames(attributes, registeredService);
-    }
-
-    private static void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
-                                                           final RegisteredService registeredService) {
-        LOGGER.debug("Sanitizing attribute names in preparation of the final validation response");
-
-        val attrs = attributes.keySet().stream()
-            .filter(getSanitizingAttributeNamePredicate())
-            .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
-            .collect(Collectors.toSet());
-        if (!attrs.isEmpty()) {
-            LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
-            attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
-            attrs.forEach(p -> {
-                val key = p.getKey();
-                LOGGER.debug("Sanitized attribute name to be [{}]", key);
-                attributes.put(key, p.getValue());
-            });
-        }
-    }
-
-    private static Predicate<String> getSanitizingAttributeNamePredicate() {
-        return s -> s.contains(":") || s.contains("@");
     }
 }

@@ -1,20 +1,21 @@
 package org.apereo.cas.web.flow.services;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import org.apereo.cas.services.RegisteredService;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.RegisteredService;
+import lombok.val;
 import org.springframework.util.StringUtils;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import lombok.Getter;
 
 /**
  * This is {@link DefaultRegisteredServiceUserInterfaceInfo}.
@@ -31,7 +32,9 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
 
     private static final long serialVersionUID = -2416684486715358748L;
 
-    /** the registered service. **/
+    /**
+     * the registered service.
+     **/
     protected final RegisteredService registeredService;
 
     /**

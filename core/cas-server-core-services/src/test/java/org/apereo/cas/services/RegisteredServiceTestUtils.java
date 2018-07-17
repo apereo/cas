@@ -1,10 +1,5 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
-import lombok.SneakyThrows;
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
@@ -23,6 +18,11 @@ import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesR
 import org.apereo.cas.services.RegisteredService.LogoutType;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.RandomUtils;
+
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.MalformedURLException;

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Default cookie value builder that simply returns the given cookie value
  * and does not perform any additional checks.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */

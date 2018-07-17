@@ -2,13 +2,13 @@ package org.apereo.cas;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.UUID;
-import lombok.Getter;
 
 /**
  * This is {@link StringBean}. Allows one to declare strings as Spring beans.

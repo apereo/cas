@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,11 +18,11 @@ import java.util.Map;
 @Slf4j
 public class NoOpProtocolAttributeEncoder implements ProtocolAttributeEncoder {
 
-    
+
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService service) {
-        LOGGER.warn("Attributes are not encoded via [{}]. Total of [{}] attributes will be returned for service [{}]", 
-                this.getClass().getSimpleName(), attributes.size(), service);
+        LOGGER.warn("Attributes are not encoded via [{}]. Total of [{}] attributes will be returned for service [{}]",
+            this.getClass().getSimpleName(), attributes.size(), service);
         return new HashMap<>(attributes);
     }
 }

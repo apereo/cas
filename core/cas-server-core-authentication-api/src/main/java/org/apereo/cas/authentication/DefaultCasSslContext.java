@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.http.ssl.SSLContexts;
-import org.apereo.cas.util.CollectionUtils;
 import org.springframework.core.io.Resource;
 
 import javax.net.ssl.KeyManager;

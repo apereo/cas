@@ -193,13 +193,13 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         return (Map) this.properties;
     }
 
+    public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
+        this.properties = (Map) properties;
+    }
+
     @Override
     public List<RegisteredServiceContact> getContacts() {
         return (List) this.contacts;
-    }
-
-    public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
-        this.properties = (Map) properties;
     }
 
     public void setContacts(final List<RegisteredServiceContact> contacts) {

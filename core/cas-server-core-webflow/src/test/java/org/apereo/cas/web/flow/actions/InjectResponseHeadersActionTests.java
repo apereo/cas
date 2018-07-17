@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow.actions;
 
-import lombok.val;
-
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
@@ -12,6 +10,8 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

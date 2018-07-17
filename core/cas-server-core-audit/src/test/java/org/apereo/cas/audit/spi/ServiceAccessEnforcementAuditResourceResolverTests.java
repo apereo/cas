@@ -1,8 +1,9 @@
 package org.apereo.cas.audit.spi;
 
-import lombok.val;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+
+import lombok.val;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
 

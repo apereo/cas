@@ -1,9 +1,8 @@
 package org.apereo.cas.monitor;
 
 import lombok.RequiredArgsConstructor;
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 

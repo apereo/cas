@@ -1,22 +1,20 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * Simple implementation of a {@link Principal} that exposes an unmodifiable

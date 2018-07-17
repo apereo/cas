@@ -1,11 +1,11 @@
 package org.apereo.cas.audit.spi;
 
-import lombok.val;
+import org.apereo.cas.audit.AuditableExecutionResult;
 
+import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 

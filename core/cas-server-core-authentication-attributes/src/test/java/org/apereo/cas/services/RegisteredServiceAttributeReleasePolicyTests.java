@@ -1,14 +1,15 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.ArrayListMultimap;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
+
+import com.google.common.collect.ArrayListMultimap;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Test;
