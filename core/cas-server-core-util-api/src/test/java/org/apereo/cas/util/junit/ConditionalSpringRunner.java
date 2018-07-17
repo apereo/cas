@@ -30,13 +30,11 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     protected boolean isTestMethodIgnored(final FrameworkMethod frameworkMethod) {
         var ignore = frameworkMethod.getDeclaringClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
-            val condition = ignore.condition().getDeclaredConstructor().newInstance();
-            return !isIgnoreConditionSatisfied(ignore, condition);
+            return !isIgnoreConditionSatisfied(ignore);
         }
         ignore = frameworkMethod.getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
-            val condition = ignore.condition().getDeclaredConstructor().newInstance();
-            return !isIgnoreConditionSatisfied(ignore, condition);
+            return !isIgnoreConditionSatisfied(ignore);
         }
         return super.isTestMethodIgnored(frameworkMethod);
     }
@@ -46,8 +44,8 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     protected Statement withBeforeClasses(final Statement statement) {
         val ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
-            val condition = ignore.condition().getDeclaredConstructor().newInstance();
-            if (!isIgnoreConditionSatisfied(ignore, condition)) {
+            if (!isIgnoreConditionSatisfied(ignore)) {
+                val condition = ignore.condition().getDeclaredConstructor().newInstance();
                 return new ConditionalIgnoreRule.IgnoreStatement(condition);
             }
         }
@@ -59,18 +57,25 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     protected Statement withAfterClasses(final Statement statement) {
         val ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
-            val condition = ignore.condition().getDeclaredConstructor().newInstance();
-            if (!isIgnoreConditionSatisfied(ignore, condition)) {
+            if (!isIgnoreConditionSatisfied(ignore)) {
+                val condition = ignore.condition().getDeclaredConstructor().newInstance();
                 return new ConditionalIgnoreRule.IgnoreStatement(condition);
             }
         }
         return super.withAfterClasses(statement);
     }
 
-    private boolean isIgnoreConditionSatisfied(final ConditionalIgnore ignore, final IgnoreCondition ignoreCondition) {
-        val satisfied = ignoreCondition.isSatisfied();
-        if (satisfied) {
+    private boolean isIgnoreConditionSatisfied(final ConditionalIgnore ignore) throws Exception {
+        if (ignore.condition() == null) {
             return !SocketUtils.isTcpPortAvailable(ignore.port());
+        }
+
+        val portRunning = !SocketUtils.isTcpPortAvailable(ignore.port());
+
+        val condition = ignore.condition().getDeclaredConstructor().newInstance();
+        val satisfied = condition.isSatisfied();
+        if (satisfied == null || satisfied) {
+            return portRunning;
         }
         return satisfied;
     }

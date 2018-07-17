@@ -13,5 +13,5 @@ public interface IgnoreCondition {
      *
      * @return the boolean
      */
-    boolean isSatisfied();
+    Boolean isSatisfied();
 }

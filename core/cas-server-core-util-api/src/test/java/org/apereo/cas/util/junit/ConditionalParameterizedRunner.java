@@ -34,13 +34,18 @@ public class ConditionalParameterizedRunner extends Parameterized {
         if (ignore == null) {
             return true;
         }
+        var shouldRun = false;
 
-        val condition = ignore.condition().getDeclaredConstructor().newInstance();
-        if (condition.isSatisfied()) {
-            if (ignore.port() > 0) {
-                return !SocketUtils.isTcpPortAvailable(ignore.port());
-            }
+        if (ignore.condition() == null) {
+            shouldRun = true;
+        } else {
+            val condition = ignore.condition().getDeclaredConstructor().newInstance();
+            shouldRun = condition.isSatisfied();
         }
-        return false;
+
+        if (shouldRun && ignore.port() > 0) {
+            shouldRun = !SocketUtils.isTcpPortAvailable(ignore.port());
+        }
+        return shouldRun;
     }
 }
