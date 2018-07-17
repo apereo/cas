@@ -62,6 +62,10 @@ public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
 
     @Override
     public String generateDeviceUserCode(final String providedCode) {
-        return DeviceUserCode.PREFIX + '-' + providedCode.toUpperCase();
+        val prefix = DeviceUserCode.PREFIX + '-';
+        if (providedCode.startsWith(prefix)) {
+            return providedCode;
+        }
+        return prefix + providedCode.toUpperCase();
     }
 }

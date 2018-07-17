@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
@@ -109,7 +110,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return OAuth20Utils.writeError(OAuth20Constants.INVALID_REQUEST);
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_REQUEST);
         }
 
         try {
@@ -121,16 +122,16 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             return generateAccessTokenResponse(request, response, requestHolder, context, tokenResult);
         } catch (final InvalidOAuth20DeviceTokenException e) {
             LOGGER.error("Could not identify and extract device token request for device token [{}]", e.getTicketId());
-            return OAuth20Utils.writeError(OAuth20Constants.ACCESS_DENIED);
+            return OAuth20Utils.writeError(response, OAuth20Constants.ACCESS_DENIED);
         } catch (final UnapprovedOAuth20DeviceUserCodeException e) {
             LOGGER.error("User code [{}] is not yet approved for the device token request", e.getTicketId());
-            return OAuth20Utils.writeError(OAuth20Constants.AUTHORIZATION_PENDING);
+            return OAuth20Utils.writeError(response, OAuth20Constants.AUTHORIZATION_PENDING);
         } catch (final ThrottledOAuth20DeviceUserCodeApprovalException e) {
             LOGGER.error("Check for device user code approval is too quick and is throttled. Requests must slow down");
-            return OAuth20Utils.writeError(OAuth20Constants.SLOW_DOWN);
+            return OAuth20Utils.writeError(response, OAuth20Constants.SLOW_DOWN);
         } catch (final Exception e) {
             LOGGER.error("Could not identify and extract access token request", e);
-            return OAuth20Utils.writeError(OAuth20Constants.INVALID_GRANT);
+            return OAuth20Utils.writeError(response, OAuth20Constants.INVALID_GRANT);
         }
     }
 
@@ -170,7 +171,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             .accessTokenTimeout(accessTokenExpirationPolicy.getTimeToLive())
             .deviceRefreshInterval(deviceRefreshInterval)
             .deviceTokenTimeout(deviceTokenExpirationPolicy.getTimeToLive())
-            .responseType(result.getResponseType().get())
+            .responseType(result.getResponseType().isPresent() ? result.getResponseType().get() : OAuth20ResponseTypes.NONE)
             .casProperties(casProperties)
             .generatedToken(result)
             .build();
