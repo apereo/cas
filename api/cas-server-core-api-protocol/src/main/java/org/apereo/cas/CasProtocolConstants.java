@@ -109,7 +109,7 @@ public interface CasProtocolConstants {
      * Constant representing the pgtUrl parameter in the request.
      */
     String PARAMETER_PROXY_GRANTING_TICKET_URL = "pgtUrl";
-    
+
     /* CAS Protocol Error Codes. **/
 
     /**
@@ -151,7 +151,7 @@ public interface CasProtocolConstants {
      * Constant representing logout.
      */
     String ENDPOINT_LOGOUT = "/logout";
-    
+
     /**
      * Constant representing proxy validate.
      */

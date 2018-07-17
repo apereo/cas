@@ -1,7 +1,8 @@
 package org.apereo.cas.authentication;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Principal;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 import java.util.List;

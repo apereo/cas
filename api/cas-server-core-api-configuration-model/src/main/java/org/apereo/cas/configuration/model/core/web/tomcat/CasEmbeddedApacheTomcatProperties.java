@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;

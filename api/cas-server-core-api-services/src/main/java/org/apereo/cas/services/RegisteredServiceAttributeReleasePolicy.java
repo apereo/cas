@@ -1,8 +1,9 @@
 package org.apereo.cas.services;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -71,8 +72,8 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable {
      * @param service         the service
      * @return the attributes
      */
-    default Map<String, Object> getConsentableAttributes(final Principal p, final Service selectedService, 
+    default Map<String, Object> getConsentableAttributes(final Principal p, final Service selectedService,
                                                          final RegisteredService service) {
-        return getAttributes(p, selectedService, service);    
+        return getAttributes(p, selectedService, service);
     }
 }

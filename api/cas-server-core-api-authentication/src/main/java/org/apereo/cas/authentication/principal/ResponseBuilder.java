@@ -1,7 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.Authentication;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;

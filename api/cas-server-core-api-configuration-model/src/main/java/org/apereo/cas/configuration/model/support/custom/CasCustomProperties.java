@@ -23,9 +23,9 @@ public class CasCustomProperties implements Serializable {
      * The settings should be available to CAS views and webflows
      * for altering UI and/or introducing custom behavior to any extended customized component
      * without introducing a new property namespace.
-     *
+     * <p>
      * An example would be:
-     *
+     * <p>
      * {@code cas.properties.[name]=[value]}
      */
     private Map<String, String> properties = new HashMap<>();

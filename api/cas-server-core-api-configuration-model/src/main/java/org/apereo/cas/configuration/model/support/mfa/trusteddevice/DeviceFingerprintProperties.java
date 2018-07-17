@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.support.mfa.trusteddevice;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;

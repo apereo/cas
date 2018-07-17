@@ -7,10 +7,12 @@ import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.util.concurrent.TimeUnit;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link U2FMultifactorProperties}.

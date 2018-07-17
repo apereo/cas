@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.HostProperties;
@@ -42,6 +40,9 @@ import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -179,7 +180,7 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MessageBundleProperties messageBundle = new MessageBundleProperties();
-    
+
     /**
      * Settings that control filtering of the incoming http requests.
      */

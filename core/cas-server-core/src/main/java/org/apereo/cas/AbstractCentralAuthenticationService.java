@@ -1,11 +1,5 @@
 package org.apereo.cas;
 
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.Synchronized;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -24,6 +18,13 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;

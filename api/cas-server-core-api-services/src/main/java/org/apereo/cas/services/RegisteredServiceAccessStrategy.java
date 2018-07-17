@@ -32,6 +32,15 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
     }
 
     /**
+     * Sets service access allowed.
+     *
+     * @param enabled the value
+     */
+    @JsonIgnore
+    default void setServiceAccessAllowed(final boolean enabled) {
+    }
+
+    /**
      * Assert that the service can participate in sso.
      *
      * @return true /false if service can participate in sso
@@ -89,16 +98,8 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
     }
 
     /**
-     * Sets service access allowed.
-     *
-     * @param enabled the value
-     */
-    @JsonIgnore
-    default void setServiceAccessAllowed(final boolean enabled) {
-    }
-
-    /**
      * Return the delegated authentication policy for this service.
+     *
      * @return authn policy
      */
     default RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
