@@ -1,9 +1,5 @@
 package org.apereo.cas.web.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -14,6 +10,10 @@ import org.apereo.cas.web.support.CookieValueManager;
 import org.apereo.cas.web.support.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.NoOpCookieValueManager;
 import org.apereo.cas.web.support.TGCCookieRetrievingCookieGenerator;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

@@ -1,9 +1,9 @@
 package org.apereo.cas.util.http;
 
-import lombok.val;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +25,9 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {
-                AopAutoConfiguration.class,
-                CasCoreUtilConfiguration.class})
+    classes = {
+        AopAutoConfiguration.class,
+        CasCoreUtilConfiguration.class})
 @EnableScheduling
 @Slf4j
 public class HttpClientMultiThreadedDownloaderTests {

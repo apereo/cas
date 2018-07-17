@@ -92,7 +92,7 @@ public class DynamicFlowModelBuilder implements FlowModelBuilder {
     public void setStates(final List<AbstractStateModel> states) {
         this.flowModel.setStates(new LinkedList<>(states));
     }
-    
+
     @Override
     public void dispose() throws FlowModelBuilderException {
         this.flowModel = null;

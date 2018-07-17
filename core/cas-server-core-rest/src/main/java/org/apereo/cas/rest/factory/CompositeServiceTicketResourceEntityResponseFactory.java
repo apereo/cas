@@ -1,11 +1,11 @@
 package org.apereo.cas.rest.factory;
 
-import lombok.val;
+import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.principal.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.principal.Service;
+import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.http.ResponseEntity;
 

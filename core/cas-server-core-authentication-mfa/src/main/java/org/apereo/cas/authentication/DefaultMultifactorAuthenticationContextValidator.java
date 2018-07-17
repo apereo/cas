@@ -1,15 +1,16 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
+import org.apereo.cas.util.CollectionUtils;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
-import org.apereo.cas.util.CollectionUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
 
@@ -33,6 +34,11 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
     private final String globalFailureMode;
     private final String mfaTrustedAuthnAttributeName;
     private final ConfigurableApplicationContext applicationContext;
+
+    private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(
+        final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
+        return providersArray.stream().filter(provider -> provider.getId().equals(requestedProvider)).findFirst();
+    }
 
     /**
      * {@inheritDoc}
@@ -135,11 +141,6 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
         contexts.forEach(context -> providers.removeIf(provider -> !provider.getId().equals(context)));
         LOGGER.debug("Found [{}] providers that may satisfy the context", providers.size());
         return providers;
-    }
-
-    private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(
-        final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
-        return providersArray.stream().filter(provider -> provider.getId().equals(requestedProvider)).findFirst();
     }
 
     private RegisteredServiceMultifactorPolicy.FailureModes getMultifactorFailureModeForService(final RegisteredService service) {

@@ -1,12 +1,12 @@
 package org.apereo.cas.web.flow.authentication;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;

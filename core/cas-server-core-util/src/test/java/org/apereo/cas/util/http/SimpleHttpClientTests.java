@@ -1,11 +1,11 @@
 package org.apereo.cas.util.http;
 
-import lombok.val;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
 
 import javax.net.ssl.SSLContext;
@@ -26,6 +26,26 @@ public class SimpleHttpClientTests {
 
     private static SimpleHttpClient getHttpClient() {
         return new SimpleHttpClientFactoryBean().getObject();
+    }
+
+    private static SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
+        val trm = new X509TrustManager() {
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+
+            @Override
+            public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
+            }
+
+            @Override
+            public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
+            }
+        };
+        val sc = SSLContext.getInstance("SSL");
+        sc.init(null, new TrustManager[]{trm}, null);
+        return new SSLConnectionSocketFactory(sc, new NoopHostnameVerifier());
     }
 
     @Test
@@ -52,25 +72,5 @@ public class SimpleHttpClientTests {
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(200, 403));
         val client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://wrong.host.badssl.com/"));
-    }
-
-    private static SSLConnectionSocketFactory getFriendlyToAllSSLSocketFactory() throws Exception {
-        val trm = new X509TrustManager() {
-            @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-
-            @Override
-            public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
-            }
-
-            @Override
-            public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
-            }
-        };
-        val sc = SSLContext.getInstance("SSL");
-        sc.init(null, new TrustManager[]{trm}, null);
-        return new SSLConnectionSocketFactory(sc, new NoopHostnameVerifier());
     }
 }

@@ -1,8 +1,7 @@
 package org.apereo.cas.services.util;
 
-import lombok.val;
-
 import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

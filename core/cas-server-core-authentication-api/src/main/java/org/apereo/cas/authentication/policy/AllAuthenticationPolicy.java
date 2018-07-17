@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Authentication security policy that is satisfied iff all given credentials are successfully authenticated.
@@ -19,7 +20,7 @@ public class AllAuthenticationPolicy implements AuthenticationPolicy {
         LOGGER.debug("Successful authentications: [{}], credentials: [{}]", authn.getSuccesses().keySet(), authn.getCredentials());
         if (authn.getSuccesses().size() != authn.getCredentials().size()) {
             LOGGER.warn("Number of successful authentications, [{}], does not match the number of provided credentials, [{}].",
-                    authn.getSuccesses().size(), authn.getCredentials().size());
+                authn.getSuccesses().size(), authn.getCredentials().size());
             return false;
         }
         LOGGER.debug("Authentication policy is satisfied.");

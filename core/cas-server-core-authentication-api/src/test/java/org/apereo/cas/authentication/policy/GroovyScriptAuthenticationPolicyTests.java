@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.val;
-
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

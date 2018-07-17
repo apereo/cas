@@ -1,8 +1,7 @@
 package org.apereo.cas.configuration;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;

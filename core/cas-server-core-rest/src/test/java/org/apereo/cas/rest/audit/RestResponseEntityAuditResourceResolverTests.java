@@ -1,9 +1,9 @@
 package org.apereo.cas.rest.audit;
 
-import lombok.val;
-
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+
+import lombok.val;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;

@@ -1,14 +1,14 @@
 package org.apereo.cas.ticket.support;
 
-import lombok.val;
+import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.RememberMeCredential;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketState;
+import lombok.val;
 
 /**
  * Delegates to different expiration policies depending on whether remember me
@@ -23,20 +23,6 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
 
 
     private static final long serialVersionUID = -2735975347698196127L;
-
-    /**
-     * Policy types.
-     */
-    public enum PolicyTypes {
-        /**
-         * Remember me policy type.
-         */
-        REMEMBER_ME,
-        /**
-         * Default policy type.
-         */
-        DEFAULT
-    }
 
     /**
      * Instantiates a new Remember me delegating expiration policy.
@@ -58,5 +44,19 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
             return PolicyTypes.DEFAULT.name();
         }
         return PolicyTypes.REMEMBER_ME.name();
+    }
+
+    /**
+     * Policy types.
+     */
+    public enum PolicyTypes {
+        /**
+         * Remember me policy type.
+         */
+        REMEMBER_ME,
+        /**
+         * Default policy type.
+         */
+        DEFAULT
     }
 }

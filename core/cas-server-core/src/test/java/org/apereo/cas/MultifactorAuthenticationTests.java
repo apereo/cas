@@ -1,7 +1,5 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -37,6 +35,9 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -106,6 +107,17 @@ public class MultifactorAuthenticationTests {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService cas;
 
+    private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
+        val userpass = new UsernamePasswordCredential();
+        userpass.setUsername(user);
+        userpass.setPassword(pass);
+        return userpass;
+    }
+
+    private static Service newService(final String id) {
+        return RegisteredServiceTestUtils.getService(id);
+    }
+
     @Test
     public void verifyAllowsAccessToNormalSecurityServiceWithPassword() {
         val ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials(ALICE, ALICE));
@@ -172,17 +184,6 @@ public class MultifactorAuthenticationTests {
         assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey(AcceptUsersAuthenticationHandler.class.getSimpleName()));
         assertTrue(assertion.getPrimaryAuthentication().getSuccesses().containsKey(TestOneTimePasswordAuthenticationHandler.class.getSimpleName()));
         assertTrue(assertion.getPrimaryAuthentication().getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-    }
-
-    private static UsernamePasswordCredential newUserPassCredentials(final String user, final String pass) {
-        val userpass = new UsernamePasswordCredential();
-        userpass.setUsername(user);
-        userpass.setPassword(pass);
-        return userpass;
-    }
-
-    private static Service newService(final String id) {
-        return RegisteredServiceTestUtils.getService(id);
     }
 
     private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws AuthenticationException {

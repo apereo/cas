@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket;
 
-import lombok.val;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,9 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Service;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -59,7 +59,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Lob
     @Column(name = "AUTHENTICATION", nullable = false, length = Integer.MAX_VALUE)
     private Authentication authentication;
-    
+
     /**
      * Service that produced a proxy-granting ticket.
      */
@@ -128,7 +128,21 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public TicketGrantingTicketImpl(final String id, final Authentication authentication, final ExpirationPolicy policy) {
         this(id, null, null, authentication, policy);
     }
-    
+
+    /**
+     * Normalize the path of a service by removing the query string and everything after a semi-colon.
+     *
+     * @param service the service to normalize
+     * @return the normalized path
+     */
+    private static String normalizePath(final Service service) {
+        var path = service.getId();
+        path = StringUtils.substringBefore(path, "?");
+        path = StringUtils.substringBefore(path, ";");
+        path = StringUtils.substringBefore(path, "#");
+        return path;
+    }
+
     /**
      * {@inheritDoc}
      * <p>The state of the ticket is affected by this operation and the
@@ -161,20 +175,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
             existingServices.stream().filter(existingService -> path.equals(normalizePath(existingService))).findFirst().ifPresent(existingServices::remove);
         }
         this.services.put(id, service);
-    }
-
-    /**
-     * Normalize the path of a service by removing the query string and everything after a semi-colon.
-     *
-     * @param service the service to normalize
-     * @return the normalized path
-     */
-    private static String normalizePath(final Service service) {
-        var path = service.getId();
-        path = StringUtils.substringBefore(path, "?");
-        path = StringUtils.substringBefore(path, ";");
-        path = StringUtils.substringBefore(path, "#");
-        return path;
     }
 
     /**

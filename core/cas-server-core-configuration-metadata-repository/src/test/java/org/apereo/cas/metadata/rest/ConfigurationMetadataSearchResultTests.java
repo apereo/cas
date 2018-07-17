@@ -1,8 +1,8 @@
 package org.apereo.cas.metadata.rest;
 
-import lombok.val;
-
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

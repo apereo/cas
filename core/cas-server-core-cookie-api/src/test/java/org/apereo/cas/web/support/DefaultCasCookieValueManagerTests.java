@@ -1,16 +1,13 @@
 package org.apereo.cas.web.support;
 
-import lombok.val;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import org.apereo.cas.CipherExecutor;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Test;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.OngoingStubbing;
@@ -18,6 +15,9 @@ import org.mockito.stubbing.OngoingStubbing;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Pattern;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Daniel Frett

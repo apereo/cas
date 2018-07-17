@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -20,6 +17,10 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
@@ -47,10 +48,8 @@ import java.util.stream.Collectors;
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver implements CasDelegatingWebflowEventResolver {
 
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
-
-    private CasWebflowEventResolver selectiveResolver;
-
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private CasWebflowEventResolver selectiveResolver;
 
     public InitialAuthenticationAttemptWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                             final CentralAuthenticationService centralAuthenticationService,

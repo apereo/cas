@@ -1,12 +1,13 @@
 package org.apereo.cas.ticket.support;
 
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.TicketState;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketState;
 
 import java.util.UUID;
 

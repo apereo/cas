@@ -1,19 +1,20 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.util.Map;
 import java.util.TreeMap;
-import lombok.ToString;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Determines the username for this registered service based on a principal attribute.
@@ -55,9 +56,9 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.debug("The selected username attribute [{}] was retrieved as a direct "
-                + "principal attribute and not through the attribute release policy for service [{}]. "
-                + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
-                + "is explicitly authorized for release via the service attribute release policy.",
+                    + "principal attribute and not through the attribute release policy for service [{}]. "
+                    + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
+                    + "is explicitly authorized for release via the service attribute release policy.",
                 this.usernameAttribute, service, this.usernameAttribute);
             val value = originalPrincipalAttributes.get(this.usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
@@ -70,7 +71,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         LOGGER.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].", service.getId(), principalId, principal.getId());
         return principalId.trim();
     }
-    
+
     /**
      * Gets principal attributes. Will attempt to locate the principal
      * attribute repository from the context if one is defined to use
