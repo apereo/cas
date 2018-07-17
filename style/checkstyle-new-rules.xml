@@ -123,6 +123,15 @@
         <module name="TypeName">
             <property name="severity" value="error"/>
         </module>
+        <module name="CustomImportOrder">
+            <property name="severity" value="error"/>
+            <property name="customImportOrderRules"
+                      value="SAME_PACKAGE(3)###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS###STANDARD_JAVA_PACKAGE###STATIC"/>
+            <property name="specialImportsRegExp" value="^javax\."/>
+            <property name="standardPackageRegExp" value="^java\."/>
+            <property name="sortImportsInGroupAlphabetically" value="true"/>
+            <property name="separateLineBetweenGroups" value="false"/>
+        </module>
         <module name="AvoidStarImport">
             <property name="severity" value="error"/>
             <property name="excludes"
@@ -310,7 +319,7 @@
         </module>
         <module name="MultipleStringLiterals">
             <property name="severity" value="info"/>
-            <property name="ignoreStringsRegexp" 
+            <property name="ignoreStringsRegexp"
                       value="(^&quot;&quot;$)|(^&quot;(no|false|\/|true|//|yes|default|\.|,|=|&amp;|\?|UTF-8|\*|\\|//)&quot;$)" />
         </module>
          -->
@@ -518,17 +527,6 @@
             <property name="format" value="\s*for\s*\((final\s+)*(?!val|var)\w+\s+\w+\s*:"/>
             <property name="message" value="Use lombok.val when declaring variable definitions for loops."/>
         </module>
-
-        <!-- enable when codebase is sufficiently compliant -->
-        <!--<module name="CustomImportOrder">-->
-            <!--<property name="severity" value="error"/>-->
-            <!--<property name="customImportOrderRules"-->
-                      <!--value="SAME_PACKAGE(3)###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS###STANDARD_JAVA_PACKAGE###STATIC"/>-->
-            <!--<property name="specialImportsRegExp" value="^javax\."/>-->
-            <!--<property name="standardPackageRegExp" value="^java\."/>-->
-            <!--<property name="sortImportsInGroupAlphabetically" value="true"/>-->
-            <!--<property name="separateLineBetweenGroups" value="false"/>-->
-        <!--</module>-->
     </module>
 
     <!-- Checker module checks -->
