@@ -36,8 +36,6 @@ public class AccessTokenGrantAuditableRequestExtractor extends BaseAuditableExec
             .orElseThrow((Supplier<RuntimeException>) () -> new UnsupportedOperationException("Access token request is not supported"))
             .extract(request, response);
 
-        val finalResult = AuditableExecutionResult.of(context);
-        finalResult.setExecutionResult(result);
-        return finalResult;
+        return AuditableExecutionResult.builder().executionResult(result).build();
     }
 }
