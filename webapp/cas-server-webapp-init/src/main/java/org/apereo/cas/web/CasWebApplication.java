@@ -1,9 +1,10 @@
 package org.apereo.cas.web;
 
-import lombok.NoArgsConstructor;
-import lombok.val;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+
+import lombok.NoArgsConstructor;
+import lombok.val;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;

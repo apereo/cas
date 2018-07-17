@@ -1,9 +1,9 @@
 package org.apereo.cas.web;
 
-import lombok.val;
+import org.apereo.cas.CasEmbeddedValueResolver;
 
 import lombok.ToString;
-import org.apereo.cas.CasEmbeddedValueResolver;
+import lombok.val;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
