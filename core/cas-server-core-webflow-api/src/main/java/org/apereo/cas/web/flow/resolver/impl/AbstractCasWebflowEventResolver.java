@@ -1,9 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -23,6 +19,11 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.context.ApplicationEventPublisher;
@@ -57,13 +58,39 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
-
+    /**
+     * The Authentication system support.
+     */
+    protected final AuthenticationSystemSupport authenticationSystemSupport;
+    /**
+     * The Central authentication service.
+     */
+    protected final CentralAuthenticationService centralAuthenticationService;
+    /**
+     * The Services manager.
+     */
+    protected final ServicesManager servicesManager;
+    /**
+     * Ticket registry support.
+     */
+    protected final TicketRegistrySupport ticketRegistrySupport;
+    /**
+     * Warn cookie generator.
+     */
+    protected final CookieGenerator warnCookieGenerator;
+    /**
+     * Extract the service specially in the event that it's proxied by a callback.
+     */
+    protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    /**
+     * The mfa selector.
+     */
+    protected final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
     /**
      * CAS event publisher.
      */
     @Autowired
     protected ApplicationEventPublisher eventPublisher;
-
     /**
      * The Application context.
      */
@@ -71,39 +98,23 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected ConfigurableApplicationContext applicationContext;
 
     /**
-     * The Authentication system support.
+     * Build event attribute map map.
+     *
+     * @param principal the principal
+     * @param service   the service
+     * @param provider  the provider
+     * @return the map
      */
-    protected final AuthenticationSystemSupport authenticationSystemSupport;
-
-    /**
-     * The Central authentication service.
-     */
-    protected final CentralAuthenticationService centralAuthenticationService;
-
-    /**
-     * The Services manager.
-     */
-    protected final ServicesManager servicesManager;
-
-    /**
-     * Ticket registry support.
-     */
-    protected final TicketRegistrySupport ticketRegistrySupport;
-
-    /**
-     * Warn cookie generator.
-     */
-    protected final CookieGenerator warnCookieGenerator;
-
-    /**
-     * Extract the service specially in the event that it's proxied by a callback.
-     */
-    protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
-    /**
-     * The mfa selector.
-     */
-    protected final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+    protected static Map<String, Object> buildEventAttributeMap(final Principal principal, final RegisteredService service,
+                                                                final MultifactorAuthenticationProvider provider) {
+        val map = new HashMap<String, Object>();
+        map.put(Principal.class.getName(), principal);
+        if (service != null) {
+            map.put(RegisteredService.class.getName(), service);
+        }
+        map.put(MultifactorAuthenticationProvider.class.getName(), provider);
+        return map;
+    }
 
     /**
      * New event based on the id, which contains an error attribute referring to the exception occurred.
@@ -136,7 +147,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
     protected Event newEvent(final String id, final AttributeMap attributes) {
         return new Event(this, id, attributes);
     }
-
 
     /**
      * Gets credential from context.
@@ -208,25 +218,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             def.getId(), def.getTargetStateId(), event.getId(), event.getAttributes());
         return event;
 
-    }
-
-    /**
-     * Build event attribute map map.
-     *
-     * @param principal the principal
-     * @param service   the service
-     * @param provider  the provider
-     * @return the map
-     */
-    protected static Map<String, Object> buildEventAttributeMap(final Principal principal, final RegisteredService service,
-                                                                final MultifactorAuthenticationProvider provider) {
-        val map = new HashMap<String, Object>();
-        map.put(Principal.class.getName(), principal);
-        if (service != null) {
-            map.put(RegisteredService.class.getName(), service);
-        }
-        map.put(MultifactorAuthenticationProvider.class.getName(), provider);
-        return map;
     }
 
     private Set<Event> resolveEventViaMultivaluedAttribute(final Principal principal,

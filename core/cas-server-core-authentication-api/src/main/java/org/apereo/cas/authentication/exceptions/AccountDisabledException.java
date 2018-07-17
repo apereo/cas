@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication.exceptions;
 
-import lombok.extern.slf4j.Slf4j;
-import javax.security.auth.login.AccountException;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.security.auth.login.AccountException;
 
 /**
  * Describes an authentication error condition where a user account has been administratively disabled.
@@ -14,7 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AccountDisabledException extends AccountException {
 
-    /** Serialization metadata. */
+    /**
+     * Serialization metadata.
+     */
     private static final long serialVersionUID = 7487835035108753209L;
 
     /**

@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow.configurer;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
@@ -19,6 +17,9 @@ import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;

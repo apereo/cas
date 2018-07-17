@@ -1,7 +1,6 @@
 package org.apereo.cas.logout;
 
 import lombok.val;
-
 import org.junit.Test;
 
 import java.net.URL;

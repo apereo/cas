@@ -1,8 +1,9 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.authentication.principal.Service;
+
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
 
 /**
  * Exception to alert that there was an error validating the ticket.
@@ -13,10 +14,14 @@ import org.apereo.cas.authentication.principal.Service;
 @Slf4j
 @Getter
 public abstract class AbstractTicketValidationException extends AbstractTicketException {
-    /** The code description. */
+    /**
+     * The code description.
+     */
     protected static final String CODE = "INVALID_TICKET";
 
-    /** Unique Serial ID. */
+    /**
+     * Unique Serial ID.
+     */
     private static final long serialVersionUID = 3257004341537093175L;
 
     private final Service service;
@@ -24,6 +29,7 @@ public abstract class AbstractTicketValidationException extends AbstractTicketEx
     /**
      * Constructs a AbstractTicketValidationException with the default exception code
      * and the original exception that was thrown.
+     *
      * @param service original service
      */
     public AbstractTicketValidationException(final Service service) {
@@ -33,7 +39,7 @@ public abstract class AbstractTicketValidationException extends AbstractTicketEx
     /**
      * Instantiates a new Ticket validation exception.
      *
-     * @param code the code
+     * @param code    the code
      * @param service the service
      * @since 4.1
      */

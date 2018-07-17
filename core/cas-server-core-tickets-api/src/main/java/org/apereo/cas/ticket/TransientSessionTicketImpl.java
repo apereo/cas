@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.authentication.principal.Service;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -9,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;

@@ -1,7 +1,5 @@
 package org.apereo.cas.util.io;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.category.MailCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -9,6 +7,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,8 +23,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

@@ -4,12 +4,13 @@ package org.apereo.cas.util.gen;
  * Interface to return a random String.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 public interface RandomStringGenerator {
 
-    /** The default length. */
+    /**
+     * The default length.
+     */
     int DEFAULT_LENGTH = 36;
 
     /**

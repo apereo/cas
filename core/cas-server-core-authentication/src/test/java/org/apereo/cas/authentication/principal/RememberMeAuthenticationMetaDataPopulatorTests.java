@@ -1,8 +1,5 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -15,6 +12,9 @@ import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -60,8 +60,8 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
         val meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         val builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal())
-                .addCredential(meta)
-                .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
+            .addCredential(meta)
+            .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
 
         if (this.p.supports(credential)) {
             this.p.populateAttributes(builder, DefaultAuthenticationTransaction.of(credential));

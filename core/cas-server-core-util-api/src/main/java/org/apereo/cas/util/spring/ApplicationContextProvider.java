@@ -26,6 +26,11 @@ public class ApplicationContextProvider implements ApplicationContextAware, Reso
         return CONTEXT;
     }
 
+    @Override
+    public void setApplicationContext(final ApplicationContext ctx) {
+        CONTEXT = ctx;
+    }
+
     /**
      * Register bean into application context.
      *
@@ -45,15 +50,6 @@ public class ApplicationContextProvider implements ApplicationContextAware, Reso
         return provider;
     }
 
-    @Override
-    public void setApplicationContext(final ApplicationContext ctx) {
-        CONTEXT = ctx;
-    }
-
-    public ConfigurableApplicationContext getConfigurableApplicationContext() {
-        return (ConfigurableApplicationContext) CONTEXT;
-    }
-
     /**
      * Gets resource loader.
      *
@@ -66,6 +62,10 @@ public class ApplicationContextProvider implements ApplicationContextAware, Reso
     @Override
     public void setResourceLoader(final org.springframework.core.io.ResourceLoader resourceLoader) {
         RESOURCE_LOADER = resourceLoader;
+    }
+
+    public ConfigurableApplicationContext getConfigurableApplicationContext() {
+        return (ConfigurableApplicationContext) CONTEXT;
     }
 
     public AutowireCapableBeanFactory getAutowireCapableBeanFactory() {

@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
+import org.apereo.cas.CasProtocolConstants;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CasProtocolConstants;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;

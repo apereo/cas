@@ -1,13 +1,14 @@
 package org.apereo.cas.util.cipher;
 
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.ResourceUtils;
+
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.ResourceUtils;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 
 import java.io.Serializable;

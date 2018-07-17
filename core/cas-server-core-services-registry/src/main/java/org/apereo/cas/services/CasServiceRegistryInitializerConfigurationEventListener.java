@@ -1,8 +1,9 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.EventListener;
 

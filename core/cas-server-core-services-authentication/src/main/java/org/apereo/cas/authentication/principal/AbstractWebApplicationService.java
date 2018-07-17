@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.validation.ValidationResponseType;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -8,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.validation.ValidationResponseType;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -44,7 +45,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @JsonProperty
     @Column
     private String id;
-    
+
     @JsonProperty
     @Column(nullable = false)
     private String originalUrl;

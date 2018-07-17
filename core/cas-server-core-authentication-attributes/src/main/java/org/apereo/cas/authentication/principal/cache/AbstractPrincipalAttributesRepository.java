@@ -1,15 +1,17 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
@@ -23,7 +25,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import lombok.Setter;
 
 /**
  * Parent class for retrieval principals attributes, provides operations
@@ -67,46 +68,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * are ignored and the source is always consulted.
      */
     protected MergingStrategy mergingStrategy;
-
-    /**
-     * Defines the merging strategy options.
-     */
-    public enum MergingStrategy {
-
-        /**
-         * Replace attributes.
-         */
-        REPLACE, /**
-         * Add attributes.
-         */
-        ADD, /**
-         * No merging.
-         */
-        NONE, /**
-         * Multivalued attributes.
-         */
-        MULTIVALUED;
-
-        /**
-         * Get attribute merger.
-         *
-         * @return the attribute merger
-         */
-        public IAttributeMerger getAttributeMerger() {
-            val name = this.name().toUpperCase();
-            switch(name.toUpperCase()) {
-                case "REPLACE":
-                    return new ReplacingAttributeAdder();
-                case "ADD":
-                    return new NoncollidingAttributeAdder();
-                case "MULTIVALUED":
-                    return new MultivaluedAttributeMerger();
-                default:
-                    return null;
-            }
-        }
-    }
-
     private transient IPersonAttributeDao attributeRepository;
 
     /**
@@ -128,17 +89,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         this.timeUnit = timeUnit;
     }
 
-    /**
-     * Convert person attributes to principal attributes.
-     *
-     * @param attributes person attributes
-     * @return principal attributes
-     */
-    protected Map<String, Object> convertPersonAttributesToPrincipalAttributes(final Map<String, List<Object>> attributes) {
-        return attributes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().size() == 1
-            ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
-    }
-
     /***
      * Convert principal attributes to person attributes.
      * @param p  the principal carrying attributes
@@ -157,6 +107,17 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             }
         });
         return convertedAttributes;
+    }
+
+    /**
+     * Convert person attributes to principal attributes.
+     *
+     * @param attributes person attributes
+     * @return principal attributes
+     */
+    protected Map<String, Object> convertPersonAttributesToPrincipalAttributes(final Map<String, List<Object>> attributes) {
+        return attributes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().size() == 1
+            ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
     }
 
     /**
@@ -209,8 +170,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
                 builder.append(e.getMessage());
             }
             LOGGER.error("The merging strategy [{}] for [{}] has failed to produce principal attributes because: [{}]. "
-                + "This usually is indicative of a bug and/or configuration mismatch. CAS will skip the merging process "
-                + "and will return the original collection of principal attributes [{}]", this.mergingStrategy, p.getId(),
+                    + "This usually is indicative of a bug and/or configuration mismatch. CAS will skip the merging process "
+                    + "and will return the original collection of principal attributes [{}]", this.mergingStrategy, p.getId(),
                 builder.toString(), principalAttributes);
             return convertAttributesToPrincipalAttributesAndCache(p, principalAttributes);
         }
@@ -259,6 +220,48 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             LOGGER.warn(e.getMessage(), e);
         }
         return this.attributeRepository;
+    }
+
+    /**
+     * Defines the merging strategy options.
+     */
+    public enum MergingStrategy {
+
+        /**
+         * Replace attributes.
+         */
+        REPLACE,
+        /**
+         * Add attributes.
+         */
+        ADD,
+        /**
+         * No merging.
+         */
+        NONE,
+        /**
+         * Multivalued attributes.
+         */
+        MULTIVALUED;
+
+        /**
+         * Get attribute merger.
+         *
+         * @return the attribute merger
+         */
+        public IAttributeMerger getAttributeMerger() {
+            val name = this.name().toUpperCase();
+            switch (name.toUpperCase()) {
+                case "REPLACE":
+                    return new ReplacingAttributeAdder();
+                case "ADD":
+                    return new NoncollidingAttributeAdder();
+                case "MULTIVALUED":
+                    return new MultivaluedAttributeMerger();
+                default:
+                    return null;
+            }
+        }
     }
 
 }

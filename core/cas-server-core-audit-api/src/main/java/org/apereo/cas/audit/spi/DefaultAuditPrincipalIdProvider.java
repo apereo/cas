@@ -1,8 +1,9 @@
 package org.apereo.cas.audit.spi;
 
-import lombok.Getter;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
+
+import lombok.Getter;
 
 /**
  * This is {@link DefaultAuditPrincipalIdProvider}.

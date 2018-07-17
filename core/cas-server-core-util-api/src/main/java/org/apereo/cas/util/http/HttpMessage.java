@@ -1,13 +1,15 @@
 package org.apereo.cas.util.http;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.EncodingUtils;
-import org.springframework.http.MediaType;
-import java.io.Serializable;
-import java.net.URL;
-import lombok.ToString;
+
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+
+import java.io.Serializable;
+import java.net.URL;
 
 /**
  * This is {@link HttpMessage}.
@@ -31,15 +33,12 @@ public class HttpMessage implements Serializable {
     private final URL url;
 
     private final String message;
-
-    private int responseCode;
-
     /**
      * Whether this message should be sent in an asynchronous fashion.
      * Default is true.
      **/
     private final boolean asynchronous;
-
+    private int responseCode;
     /**
      * The content type for this message once submitted.
      * Default is {@link MediaType#APPLICATION_FORM_URLENCODED}.

@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -38,8 +37,8 @@ public class UsernamePasswordCredentialTests {
     public void verifyEquals() {
         assertNotEquals(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(), null);
         assertFalse(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
-                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         assertTrue(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword().equals(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword()));
     }
 }

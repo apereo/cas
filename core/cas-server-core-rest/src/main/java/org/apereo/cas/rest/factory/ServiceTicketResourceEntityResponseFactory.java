@@ -2,6 +2,7 @@ package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
+
 import org.springframework.core.Ordered;
 import org.springframework.http.ResponseEntity;
 

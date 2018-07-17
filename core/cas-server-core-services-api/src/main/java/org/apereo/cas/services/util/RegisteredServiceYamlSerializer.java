@@ -1,10 +1,9 @@
 package org.apereo.cas.services.util;
 
-import lombok.val;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

@@ -1,12 +1,13 @@
 package org.apereo.cas.authentication.metadata;
 
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
 

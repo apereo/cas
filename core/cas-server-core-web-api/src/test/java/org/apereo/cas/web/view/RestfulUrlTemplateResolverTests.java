@@ -1,9 +1,9 @@
 package org.apereo.cas.web.view;
 
-import lombok.val;
-
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;

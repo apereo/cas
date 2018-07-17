@@ -1,15 +1,15 @@
 package org.apereo.cas.logout;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -34,6 +34,19 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
     private final boolean asynchronous;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
+    /**
+     * Service supports back channel single logout?
+     * Service must be found in the registry. enabled and logout type must not be {@link RegisteredService.LogoutType#NONE}.
+     *
+     * @param registeredService the registered service
+     * @return true, if support is available.
+     */
+    private static boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
+        return registeredService != null
+            && registeredService.getAccessStrategy().isServiceAccessAllowed()
+            && registeredService.getLogoutType() != RegisteredService.LogoutType.NONE;
+    }
 
     /**
      * Handle logout for slo service.
@@ -128,18 +141,5 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
             LOGGER.error(e.getMessage(), e);
         }
         return false;
-    }
-
-    /**
-     * Service supports back channel single logout?
-     * Service must be found in the registry. enabled and logout type must not be {@link RegisteredService.LogoutType#NONE}.
-     *
-     * @param registeredService the registered service
-     * @return true, if support is available.
-     */
-    private static boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
-        return registeredService != null
-            && registeredService.getAccessStrategy().isServiceAccessAllowed()
-            && registeredService.getLogoutType() != RegisteredService.LogoutType.NONE;
     }
 }

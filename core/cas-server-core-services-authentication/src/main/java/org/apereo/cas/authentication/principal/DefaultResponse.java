@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
+import org.apereo.cas.util.EncodingUtils;
 
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.EncodingUtils;
+import lombok.val;
 
 import java.util.Map;
 import java.util.regex.Pattern;

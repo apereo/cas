@@ -1,9 +1,10 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 
 /**
  * This is {@link BaseCasMvcEndpoint}.
