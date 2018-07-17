@@ -1,9 +1,8 @@
 package org.apereo.cas.util.serialization;
 
-import lombok.val;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
