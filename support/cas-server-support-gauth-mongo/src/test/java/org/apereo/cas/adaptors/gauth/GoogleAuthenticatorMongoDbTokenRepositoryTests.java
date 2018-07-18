@@ -105,8 +105,10 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests {
         val token = new GoogleAuthenticatorToken(1234, "casuser");
         repository.store(token);
         assertTrue(repository.exists("casuser", 1234));
+        assertEquals(1, repository.count("casuser"));
         val token2 = repository.get("casuser", 1234);
         assertTrue(token2.getId() > 0);
+        assertEquals(1, repository.count());
     }
 
     @Test

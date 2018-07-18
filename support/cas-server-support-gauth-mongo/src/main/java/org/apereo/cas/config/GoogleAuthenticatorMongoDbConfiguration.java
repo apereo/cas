@@ -50,7 +50,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
         val mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         val factory = new MongoDbConnectionFactory();
         val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        factory.createCollection(mongoTemplate, mongo.getTokenCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 

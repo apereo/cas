@@ -64,4 +64,19 @@ public interface OneTimeTokenRepository {
      * @param otp the otp
      */
     void remove(Integer otp);
+
+    /**
+     * Count tokens for user.
+     *
+     * @param uid the uid
+     * @return the long
+     */
+    long count(String uid);
+
+    /**
+     * Count all records.
+     *
+     * @return the long
+     */
+    long count();
 }

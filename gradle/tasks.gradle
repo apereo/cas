@@ -1,8 +1,6 @@
-import org.gradle.internal.logging.*
-import org.gradle.internal.logging.events.*
-
-import java.util.regex.Matcher
-import java.util.regex.Pattern
+import org.gradle.internal.logging.LoggingOutputInternal
+import org.gradle.internal.logging.events.OutputEvent
+import org.gradle.internal.logging.events.OutputEventListener
 
 tasks.withType(Javadoc) {
     def exceptions = []
@@ -29,10 +27,10 @@ task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest
     doFirst {
         manifest {
             attributes "Class-Path":
-                    configurations.runtime.files.collect {
-                        it.toURL().toString().replaceFirst("/file:/+/", "/")
-                    }
-                    .join(" ")
+            configurations.runtime.files.collect {
+                it.toURL().toString().replaceFirst("/file:/+/", "/")
+            }
+            .join(" ")
         }
     }
 }
@@ -82,6 +80,51 @@ task downloadDependencies {
                 config.files
             } catch (e) {
                 project.logger.info e.message
+            }
+        }
+    }
+}
+
+task outputSpotbugsReports(description: "Display Findbugs output") {
+    doLast {
+        printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)
+    }
+}
+
+def printSpotbugsReportToConsole(File file) {
+    logger.debug "Reviewing file $file"
+    if (file.exists()) {
+        logger.debug "Processing file $file"
+        def slurper = new XmlSlurper().parse(file)
+        def bugsFound = slurper.BugInstance.size()
+        if (bugsFound > 0) {
+            println "*********************************\nFound Spotbugs rule violation(s):\n"
+            slurper.BugInstance.each { bug ->
+                println "*********************************"
+                println "Bug (" + bug.@abbrev + "): " + bug.@type + " [" + bug.@priority + "-" + bug.@rank + "] @ category " + bug.@category
+                bug.Class.each { clz ->
+                    println "\tClass: " + clz.@classname 
+                    clz.SourceLine.each { line ->
+                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Source Path: [" + line.@sourcepath  + "], Source File: [" + line.@sourcefile + "]"
+                    }
+                }
+                println "\t----------------------METHOD-----------------------------"
+                bug.Method.each { md ->
+                    println "\tMethod: " + md.@name + " [static: " + md.@isStatic + "]"
+                    println "\tSignature: " + md.@signature
+                    md.SourceLine.each { line ->
+                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end
+                    }
+                }
+                println "\t-------------------SOURCE LINE---------------------------"
+                bug.SourceLine.each { line ->
+                    println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Class: [" + line.@classname + "]"
+                }
+            }
+            def msg = "\n$bugsFound Spotbugs rule violation(s) were found. See the report at: $file"
+            println msg
+            if (!Boolean.getBoolean("ignoreFindbugsFailures")) {
+                throw new GradleException(msg)
             }
         }
     }
