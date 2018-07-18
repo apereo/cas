@@ -100,6 +100,17 @@ public class CasCoreAuthenticationHandlersConfiguration {
         }
         h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(props.getCredentialCriteria()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(props.getPrincipalTransformation()));
+        final PasswordPolicyProperties passwordPolicy = props.getPasswordPolicy();
+        h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(props.getPasswordPolicy()));
+        if (passwordPolicy.isEnabled()) {
+            final PasswordPolicyConfiguration cfg = new PasswordPolicyConfiguration(passwordPolicy);
+            if (passwordPolicy.isAccountStateHandlingEnabled()) {
+                cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
+            } else {
+                LOGGER.debug("Handling account states is disabled via CAS configuration");
+            }
+            h.setPasswordPolicyConfiguration(cfg);
+        }
         return h;
     }
 

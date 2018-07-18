@@ -1,16 +1,17 @@
 package org.apereo.cas.authentication;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +83,13 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         if (!StringUtils.equals(credential.getPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
-        final List<MessageDescriptor> list = new ArrayList<>();
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), list);
+        final AuthenticationPasswordPolicyHandlingStrategy strategy = getPasswordPolicyHandlingStrategy();
+        if (StringUtils.isNotBlank(username) && strategy != null) {
+            LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
+            final Principal principal = this.principalFactory.createPrincipal(username);
+            final List<MessageDescriptor> messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
+            return createHandlerResult(credential, principal, messageList);
+        }
+        throw new FailedLoginException("Unable to authenticate " + credential.getId());
     }
 }
