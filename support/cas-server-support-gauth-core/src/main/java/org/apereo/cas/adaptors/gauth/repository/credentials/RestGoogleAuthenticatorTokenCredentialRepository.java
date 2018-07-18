@@ -10,6 +10,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -73,6 +74,23 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
     public void deleteAll() {
         val rest = gauth.getRest();
         restTemplate.delete(rest.getEndpointUrl());
+    }
+
+    @Override
+    public void delete(final String username) {
+        val rest = gauth.getRest();
+        val headers = new HttpHeaders();
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        headers.put("username", CollectionUtils.wrap(username));
+        val entity = new HttpEntity<>(headers);
+        restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.DELETE, entity, Long.class);
+    }
+
+    @Override
+    public long count() {
+        val rest = gauth.getRest();
+        val countUrl = StringUtils.appendIfMissing(rest.getEndpointUrl(), "/").concat("count");
+        return restTemplate.getForObject(countUrl, Long.class);
     }
 
     @Override

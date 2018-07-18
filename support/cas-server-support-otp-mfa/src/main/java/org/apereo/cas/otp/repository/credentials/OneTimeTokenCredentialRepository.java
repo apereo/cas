@@ -49,4 +49,18 @@ public interface OneTimeTokenCredentialRepository {
      * Delete all tokens in the repository.
      */
     void deleteAll();
+
+    /**
+     * Delete.
+     *
+     * @param username the username
+     */
+    void delete(String username);
+
+    /**
+     * Count all records.
+     *
+     * @return the long
+     */
+    long count();
 }

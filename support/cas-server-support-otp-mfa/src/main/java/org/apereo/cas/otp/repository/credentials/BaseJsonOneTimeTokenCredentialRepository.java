@@ -92,6 +92,27 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
         writeAccountsToJsonRepository(new TreeSet<>());
     }
 
+    @Override
+    public void delete(final String username) {
+        try {
+            val accounts = readAccountsFromJsonRepository();
+            accounts.removeIf(t -> t.getUsername().equalsIgnoreCase(username));
+            writeAccountsToJsonRepository(accounts);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public long count() {
+        try {
+            val accounts = readAccountsFromJsonRepository();
+            return accounts.size();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
     @SneakyThrows
     private void writeAccountsToJsonRepository(final TreeSet<OneTimeTokenAccount> accounts) {
         LOGGER.debug("Saving google authenticator accounts back to the JSON file at [{}]", this.location.getFile());
