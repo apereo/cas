@@ -64,6 +64,12 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     }
 
     @Override
+    public void removeAll() {
+        this.entityManager.createQuery("DELETE FROM "
+            + GoogleAuthenticatorToken.class.getSimpleName() + " r").executeUpdate();
+    }
+
+    @Override
     public void remove(final String uid, final Integer otp) {
         val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName()
             + " r WHERE r.userId = :userId and r.token = :token")
