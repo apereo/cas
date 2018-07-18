@@ -63,9 +63,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         val service = this.webApplicationServiceServiceFactory.createService(redirectUri);
         scopes.addAll(token.getScopes());
 
-        val generateRefreshToken = isAllowedToGenerateRefreshToken()
-            ? (registeredService != null && registeredService.isGenerateRefreshToken())
-            : false;
+        val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService != null && registeredService.isGenerateRefreshToken();
         return AccessTokenRequestDataHolder.builder()
             .scopes(scopes)
             .service(service)
@@ -74,7 +72,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .grantType(getGrantType())
             .generateRefreshToken(generateRefreshToken)
             .token(token)
-            .ticketGrantingTicket(token != null ? token.getTicketGrantingTicket() : null)
+            .ticketGrantingTicket(token.getTicketGrantingTicket())
             .build();
     }
 
