@@ -86,5 +86,9 @@ public class GoogleAuthenticatorJpaTokenRepositoryTests {
         val token = new GoogleAuthenticatorToken(1234, "casuser");
         repository.store(token);
         assertTrue(repository.exists("casuser", 1234));
+        repository.remove("casuser");
+        repository.remove(1234);
+        assertEquals(0, repository.count());
+        assertEquals(0, repository.count("casuser"));
     }
 }

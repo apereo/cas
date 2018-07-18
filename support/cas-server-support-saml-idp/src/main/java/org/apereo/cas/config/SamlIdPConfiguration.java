@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
@@ -353,11 +354,11 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
         plan.registerAuditResourceResolver("SAML2_RESPONSE_RESOURCE_RESOLVER", new SamlResponseAuditResourceResolver());
         plan.registerAuditActionResolver("SAML2_RESPONSE_ACTION_RESOLVER",
-            new DefaultAuditActionResolver("_CREATED", "_FAILED"));
+            new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
 
         plan.registerAuditResourceResolver("SAML2_REQUEST_RESOURCE_RESOLVER", new SamlRequestAuditResourceResolver());
         plan.registerAuditActionResolver("SAML2_REQUEST_ACTION_RESOLVER",
-            new DefaultAuditActionResolver("_CREATED", "_FAILED"));
+            new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
     }
 
     @Bean
