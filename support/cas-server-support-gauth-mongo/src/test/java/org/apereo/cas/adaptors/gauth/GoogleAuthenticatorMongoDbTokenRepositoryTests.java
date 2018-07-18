@@ -28,6 +28,7 @@ import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -100,13 +101,20 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests {
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
     private OneTimeTokenRepository repository;
 
+    @Before
+    public void initialize() {
+        repository.removeAll();
+    }
+
     @Test
     public void verifyTokenSave() {
         val token = new GoogleAuthenticatorToken(1234, "casuser");
         repository.store(token);
         assertTrue(repository.exists("casuser", 1234));
+        assertEquals(1, repository.count("casuser"));
         val token2 = repository.get("casuser", 1234);
         assertTrue(token2.getId() > 0);
+        assertEquals(1, repository.count());
     }
 
     @Test

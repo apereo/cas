@@ -58,4 +58,14 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
     public void deleteAll() {
         this.accounts.clear();
     }
+
+    @Override
+    public void delete(final String username) {
+        this.accounts.remove(username);
+    }
+
+    @Override
+    public long count() {
+        return this.accounts.size();
+    }
 }

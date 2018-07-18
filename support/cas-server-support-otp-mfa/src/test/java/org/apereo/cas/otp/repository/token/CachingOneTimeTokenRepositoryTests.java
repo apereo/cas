@@ -75,7 +75,13 @@ public class CachingOneTimeTokenRepositoryTests {
         val token = new OneTimeToken(1234, "casuser");
         repository.store(token);
         repository.store(token);
+        assertEquals(2, repository.count("casuser"));
         repository.clean();
         assertTrue(repository.exists("casuser", 1234));
+        repository.remove("casuser");
+        repository.remove(1234);
+        repository.remove("casuser", 1234);
+        assertNull(repository.get("casuser", 1234));
+        assertEquals(0, repository.count());
     }
 }

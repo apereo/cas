@@ -92,4 +92,19 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     public void deleteAll() {
         this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME).executeUpdate();
     }
+
+    @Override
+    public void delete(final String username) {
+        val count = this.entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE r.username= :username")
+            .setParameter("username", username)
+            .executeUpdate();
+        LOGGER.debug("Deleted [{}] record(s)", count);
+    }
+
+    @Override
+    public long count() {
+        val count = (Number) this.entityManager.createQuery("SELECT COUNT(r.username) FROM " + ENTITY_NAME + " r").getSingleResult();
+        LOGGER.debug("Counted [{}] record(s)", count);
+        return count.longValue();
+    }
 }

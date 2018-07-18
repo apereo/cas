@@ -31,10 +31,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
      * @param ticket the ticket
      * @return timeout
      */
-    private static long getTimeout(final Ticket ticket) {
-        val ttl = ticket.getExpirationPolicy().getTimeToLive().longValue();
+    private static Long getTimeout(final Ticket ticket) {
+        val ttl = ticket.getExpirationPolicy().getTimeToLive();
         if (ttl <= 0) {
-            return 1;
+            return 1L;
         }
         return ttl;
     }
@@ -74,7 +74,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             val redisKey = getTicketRedisKey(ticket.getId());
             val encodeTicket = encodeTicket(ticket);
             val timeout = getTimeout(ticket);
-            this.client.boundValueOps(redisKey).set(encodeTicket, timeout, TimeUnit.SECONDS);
+            this.client.boundValueOps(redisKey).set(encodeTicket, timeout.longValue(), TimeUnit.SECONDS);
         } catch (final Exception e) {
             LOGGER.error("Failed to add [{}]", ticket, e);
         }
@@ -122,7 +122,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Updating ticket [{}]", ticket);
             val encodeTicket = this.encodeTicket(ticket);
             val redisKey = getTicketRedisKey(ticket.getId());
-            this.client.boundValueOps(redisKey).set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
+            val timeout = getTimeout(ticket);
+            this.client.boundValueOps(redisKey).set(encodeTicket, timeout.longValue(), TimeUnit.SECONDS);
             return encodeTicket;
         } catch (final Exception e) {
             LOGGER.error("Failed to update [{}]", ticket, e);

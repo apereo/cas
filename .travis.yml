@@ -14,12 +14,18 @@ services:
 branches:
   only:
   - master
+# Enable once Travis CI fixed JDK setup
 #jdk:
-#- oraclejdk11
-#- oraclejdk10
+  #- oraclejdk11
+  #- oraclejdk10
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+# Remove once Travis CI fixes JDK setup
+before_script:
+- unset -v _JAVA_OPTIONS
+- wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+- source install-jdk.sh -F 10 -L BCL
 cache:
   bundler: false
   cargo: false
@@ -56,10 +62,6 @@ before_install:
 install: true
 script:
 - ./ci/script.sh
-before_script:
-- unset -v _JAVA_OPTIONS
-- wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
-- source install-jdk.sh -F 10 -L BCL
 after_script:
 - ./ci/stop.sh
 stages:

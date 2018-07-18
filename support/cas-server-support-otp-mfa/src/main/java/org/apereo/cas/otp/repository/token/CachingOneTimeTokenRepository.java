@@ -22,6 +22,11 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
     private final LoadingCache<String, Collection<OneTimeToken>> storage;
 
     @Override
+    public void removeAll() {
+        this.storage.invalidateAll();
+    }
+
+    @Override
     public void cleanInternal() {
         LOGGER.debug("Beginning to clean up the cache storage to remove expiring tokens");
         this.storage.cleanUp();
@@ -65,5 +70,43 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
             LOGGER.warn(e.getMessage(), e);
         }
         return null;
+    }
+
+    @Override
+    public void remove(final String uid, final Integer otp) {
+        val dataset = this.storage.asMap();
+        if (dataset.containsKey(uid)) {
+            val tokens = dataset.get(uid);
+            tokens.removeIf(t -> otp.equals(t.getId()));
+            this.storage.put(uid, tokens);
+            this.storage.refresh(uid);
+        }
+    }
+
+    @Override
+    public void remove(final String uid) {
+        this.storage.invalidate(uid);
+        this.storage.refresh(uid);
+    }
+
+    @Override
+    public void remove(final Integer otp) {
+        val dataset = this.storage.asMap();
+        dataset.values().forEach(tokens -> tokens.removeIf(t -> otp.equals(t.getId())));
+    }
+
+    @Override
+    public long count(final String uid) {
+        val tokens = this.storage.getIfPresent(uid);
+        LOGGER.debug("Found used tokens [{}]", tokens);
+        if (tokens != null) {
+            return tokens.size();
+        }
+        return 0;
+    }
+
+    @Override
+    public long count() {
+        return this.storage.estimatedSize();
     }
 }
