@@ -3045,7 +3045,7 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.mongo.writeConcern=NORMAL
 # cas.authn.mfa.u2f.mongo.authenticationDatabaseName=
 # cas.authn.mfa.u2f.mongo.replicaSet=
-# cas.authn.mfa.u2f.mongo.ssEnabled=false
+# cas.authn.mfa.u2f.mongo.sslEnabled=false
 # cas.authn.mfa.u2f.mongo.conns.lifetime=60000
 # cas.authn.mfa.u2f.mongo.conns.perHost=10
 ```
@@ -4085,7 +4085,7 @@ Store audit logs inside a MongoDb database.
 # cas.audit.mongo.writeConcern=NORMAL
 # cas.audit.mongo.authenticationDatabaseName=
 # cas.audit.mongo.replicaSet=
-# cas.audit.mongo.ssEnabled=false
+# cas.audit.mongo.sslEnabled=false
 # cas.audit.mongo.conns.lifetime=60000
 # cas.audit.mongo.conns.perHost=10
 ```
@@ -4210,7 +4210,7 @@ Decide how CAS should monitor the internal state of a MongoDb instance.
 # cas.monitor.mongo.writeConcern=NORMAL
 # cas.monitor.mongo.authenticationDatabaseName=
 # cas.monitor.mongo.replicaSet=
-# cas.monitor.mongo.ssEnabled=false
+# cas.monitor.mongo.sslEnabled=false
 # cas.monitor.mongo.conns.lifetime=60000
 # cas.monitor.mongo.conns.perHost=10
 ```
@@ -4607,7 +4607,7 @@ To learn more about this topic, [please review this guide](Mongo-Service-Managem
 # cas.serviceRegistry.mongo.writeConcern=NORMAL
 # cas.serviceRegistry.mongo.authenticationDatabaseName=
 # cas.serviceRegistry.mongo.replicaSet=
-# cas.serviceRegistry.mongo.ssEnabled=false
+# cas.serviceRegistry.mongo.sslEnabled=false
 # cas.serviceRegistry.mongo.conns.lifetime=60000
 # cas.serviceRegistry.mongo.conns.perHost=10
 ```
@@ -5085,7 +5085,7 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.clientUri=
 # cas.ticket.registry.mongo.authenticationDatabaseName=
 # cas.ticket.registry.mongo.replicaSet=
-# cas.ticket.registry.mongo.ssEnabled=false
+# cas.ticket.registry.mongo.sslEnabled=false
 
 # cas.ticket.registry.mongo.conns.lifetime=60000
 # cas.ticket.registry.mongo.conns.perHost=10
@@ -5538,7 +5538,7 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.mongo.writeConcern=NORMAL
 # cas.acceptableUsagePolicy.mongo.authenticationDatabaseName=
 # cas.acceptableUsagePolicy.mongo.replicaSet=
-# cas.acceptableUsagePolicy.mongo.ssEnabled=false
+# cas.acceptableUsagePolicy.mongo.sslEnabled=false
 # cas.acceptableUsagePolicy.mongo.conns.lifetime=60000
 # cas.acceptableUsagePolicy.mongo.conns.perHost=10
 ```
@@ -5660,7 +5660,7 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # cas.metrics.mongo.writeConcern=NORMAL
 # cas.metrics.mongo.authenticationDatabaseName=
 # cas.metrics.mongo.replicaSet=
-# cas.metrics.mongo.ssEnabled=false
+# cas.metrics.mongo.sslEnabled=false
 # cas.metrics.mongo.conns.lifetime=60000
 # cas.metrics.mongo.conns.perHost=10
 ```
@@ -5874,7 +5874,7 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.mongo.writeConcern=NORMAL
 # cas.consent.mongo.authenticationDatabaseName=
 # cas.consent.mongo.replicaSet=
-# cas.consent.mongo.ssEnabled=false
+# cas.consent.mongo.sslEnabled=false
 # cas.consent.mongo.conns.lifetime=60000
 # cas.consent.mongo.conns.perHost=10
 ```
