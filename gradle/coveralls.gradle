@@ -1,6 +1,0 @@
-
-
-
-def publishedProjects = subprojects.findAll { it.path != ':simulator' }
-
-

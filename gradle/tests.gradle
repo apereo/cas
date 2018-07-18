@@ -30,7 +30,7 @@ if (project.name =~ /couchdb/ && "COUCHDB".equalsIgnoreCase(rootProject.testCate
     }
 }
 
-if (project.name =~ /jpa/) {
+if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
     if ("MYSQL".equalsIgnoreCase(rootProject.testCategoryType)) {
         task testMySQL(type: Test) {
             useJUnit {

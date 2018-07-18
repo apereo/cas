@@ -81,7 +81,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOne
     @Override
     public void delete(final String username) {
         val query = new Query();
-        query.addCriteria(Criteria.where("username").is(true));
+        query.addCriteria(Criteria.where("username").is(username));
         this.mongoTemplate.remove(query, GoogleAuthenticatorAccount.class, this.collectionName);
     }
 
