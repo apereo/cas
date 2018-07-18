@@ -81,7 +81,5 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
-
-
     }
 }
