@@ -13,6 +13,7 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
@@ -86,6 +87,15 @@ public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
                     stateMap.put("entryActions", acts);
                 }
 
+                if (state instanceof ActionState) {
+                    acts = StreamSupport.stream(ActionState.class.cast(state).getActionList().spliterator(), false)
+                        .map(Object::toString)
+                        .collect(Collectors.toList());
+                    if (!acts.isEmpty()) {
+                        stateMap.put("actionList", acts);
+                    }
+                }
+                
                 if (state instanceof EndState) {
                     stateMap.put("isEndState", Boolean.TRUE);
                 }
