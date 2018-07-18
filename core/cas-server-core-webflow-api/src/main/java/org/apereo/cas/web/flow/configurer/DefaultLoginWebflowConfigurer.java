@@ -158,7 +158,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK);
-        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.STATE_ID_TICKET_GRANTING_TICKET_CHECK);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS);
     }
 
     /**
@@ -182,6 +182,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET,
             CasWebflowConstants.ACTION_ID_CREATE_TICKET_GRANTING_TICKET);
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS);
     }
 
     /**
