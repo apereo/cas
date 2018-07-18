@@ -14,9 +14,9 @@ services:
 branches:
   only:
   - master
-jdk:
+#jdk:
 #- oraclejdk11
-- oraclejdk10
+#- oraclejdk10
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -56,6 +56,10 @@ before_install:
 install: true
 script:
 - ./ci/script.sh
+before_script:
+- unset -v _JAVA_OPTIONS
+- wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+- source install-jdk.sh -F 10 -L BCL
 after_script:
 - ./ci/stop.sh
 stages:
