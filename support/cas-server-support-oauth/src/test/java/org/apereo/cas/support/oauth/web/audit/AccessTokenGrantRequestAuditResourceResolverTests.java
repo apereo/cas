@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.audit;
 
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -42,6 +43,10 @@ public class AccessTokenGrantRequestAuditResourceResolverTests {
             .token(token)
             .ticketGrantingTicket(token != null ? token.getTicketGrantingTicket() : null)
             .build();
-        assertTrue(r.resolveFrom(mock(JoinPoint.class), holder).length > 0);
+        val result = AuditableExecutionResult.builder()
+            .executionResult(holder)
+            .build();
+
+        assertTrue(r.resolveFrom(mock(JoinPoint.class), result).length > 0);
     }
 }
