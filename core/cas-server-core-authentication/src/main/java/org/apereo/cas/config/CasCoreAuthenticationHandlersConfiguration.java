@@ -94,6 +94,17 @@ public class CasCoreAuthenticationHandlersConfiguration {
         h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration());
         h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(props.getCredentialCriteria()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(props.getPrincipalTransformation()));
+        val passwordPolicy = props.getPasswordPolicy();
+        h.setPasswordPolicyHandlingStrategy(CoreAuthenticationUtils.newPasswordPolicyHandlingStrategy(passwordPolicy));
+        if (passwordPolicy.isEnabled()) {
+            val cfg = new PasswordPolicyConfiguration(passwordPolicy);
+            if (passwordPolicy.isAccountStateHandlingEnabled()) {
+                cfg.setAccountStateHandler((response, configuration) -> new ArrayList<>(0));
+            } else {
+                LOGGER.debug("Handling account states is disabled via CAS configuration");
+            }
+            h.setPasswordPolicyConfiguration(cfg);
+        }
         return h;
     }
 

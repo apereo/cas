@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.generic;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -56,4 +57,10 @@ public class AcceptAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
+
+    /**
+     * Password policy settings.
+     */
+    @NestedConfigurationProperty
+    private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 }
