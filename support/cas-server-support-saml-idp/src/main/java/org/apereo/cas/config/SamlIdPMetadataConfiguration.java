@@ -1,9 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
@@ -29,6 +25,11 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServ
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;

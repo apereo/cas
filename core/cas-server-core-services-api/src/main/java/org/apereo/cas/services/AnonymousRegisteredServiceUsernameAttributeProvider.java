@@ -1,17 +1,18 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.PersistentIdGenerator;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apereo.cas.authentication.principal.PersistentIdGenerator;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.apereo.cas.authentication.principal.Principal;
-import lombok.NoArgsConstructor;
 
 /**
  * Generates a persistent id as username for anonymous service access.

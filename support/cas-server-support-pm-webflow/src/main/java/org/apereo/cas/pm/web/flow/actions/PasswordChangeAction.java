@@ -1,10 +1,5 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.pm.InvalidPasswordException;
 import org.apereo.cas.pm.PasswordChangeBean;
@@ -12,6 +7,11 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -46,7 +46,7 @@ public class PasswordChangeAction extends AbstractAction {
         try {
             val c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
             val bean = requestContext.getFlowScope()
-                    .get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
+                .get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
 
             if (!passwordValidationService.isValid(c, bean)) {
                 return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
@@ -57,9 +57,9 @@ public class PasswordChangeAction extends AbstractAction {
             }
         } catch (final InvalidPasswordException e) {
             return getErrorEvent(requestContext,
-                    PASSWORD_VALIDATION_FAILURE_CODE + StringUtils.defaultIfBlank(e.getCode(), ""),
-                    StringUtils.defaultIfBlank(e.getValidationMessage(), DEFAULT_MESSAGE),
-                    e.getParams());
+                PASSWORD_VALIDATION_FAILURE_CODE + StringUtils.defaultIfBlank(e.getCode(), ""),
+                StringUtils.defaultIfBlank(e.getValidationMessage(), DEFAULT_MESSAGE),
+                e.getParams());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -68,7 +68,7 @@ public class PasswordChangeAction extends AbstractAction {
 
     private Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
         ctx.getMessageContext().addMessage(ERROR_MSG_BUILDER.code(code).
-                defaultText(message).args(params).build());
+            defaultText(message).args(params).build());
         return error();
     }
 }

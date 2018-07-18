@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.metadata.AuthenticationCredentialTypeMetaDataPopulator;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

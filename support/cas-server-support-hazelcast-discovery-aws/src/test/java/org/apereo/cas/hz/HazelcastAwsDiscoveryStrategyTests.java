@@ -1,8 +1,8 @@
 package org.apereo.cas.hz;
 
-import lombok.val;
-
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

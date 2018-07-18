@@ -1,10 +1,10 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Collection;
 import java.util.Map;

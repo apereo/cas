@@ -1,12 +1,5 @@
 package org.apereo.cas.oidc.config;
 
-import lombok.val;
-
-import com.github.benmanes.caffeine.cache.CacheLoader;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -63,9 +56,9 @@ import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
@@ -84,6 +77,13 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
@@ -125,6 +125,10 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionPlanConfigurer {
+
+    @Autowired
+    @Qualifier("accessTokenGrantAuditableRequestExtractor")
+    private AuditableExecution accessTokenGrantAuditableRequestExtractor;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -379,8 +383,8 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             accessTokenExpirationPolicy,
             deviceTokenExpirationPolicy,
-            accessTokenGrantRequestExtractors,
-            oauthTokenRequestValidators);
+            oauthTokenRequestValidators,
+            accessTokenGrantAuditableRequestExtractor);
     }
 
     @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")

@@ -1,10 +1,5 @@
 package org.apereo.cas.adaptors.swivel;
 
-import lombok.val;
-
-import com.swiveltechnologies.pinsafe.client.agent.AgentXmlRequest;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
@@ -12,6 +7,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
+
+import com.swiveltechnologies.pinsafe.client.agent.AgentXmlRequest;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
@@ -38,6 +38,28 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
                                        final SwivelMultifactorProperties swivelProperties) {
         super(name, servicesManager, principalFactory, null);
         this.swivelProperties = swivelProperties;
+    }
+
+    private static Map<String, String> createErrorCodeMap() {
+        val errorMap = new HashMap<String, String>();
+
+        errorMap.put("AGENT_ERROR_NO_OTC", "swivel.auth.otc.malformed");
+        errorMap.put("AGENT_ERROR_BAD_OTC", "swivel.auth.otc.malformed");
+
+        errorMap.put("AGENT_ERROR_NO_PIN", "swivel.auth.pin.notset");
+
+        errorMap.put("AGENT_ERROR_USER_LOCKED", "swivel.auth.user.locked");
+        errorMap.put("AGENT_ERROR_NO_SECURITY_STRINGS", "swivel.auth.user.locked");
+        errorMap.put("AGENT_ERROR_AGENT_ACCESS", "swivel.auth.user.notallowed");
+        errorMap.put("AGENT_ERROR_USER_NOT_IN_GROUP", "swivel.auth.user.notallowed");
+        errorMap.put("AGENT_ERROR_NO_USER_FOUND", "swivel.auth.user.unknown");
+        errorMap.put("AGENT_ERROR_NO_AUTH", "swivel.auth.user.unknown");
+        errorMap.put("AGENT_ERROR_USERNAME", "swivel.auth.user.unknown");
+
+        errorMap.put("AGENT_ERROR_SESSION", "swivel.server.session.error");
+        errorMap.put("AGENT_ERROR_GENERAL", SWIVEL_ERR_CODE_AUTHN_FAIL);
+
+        return errorMap;
     }
 
     @Override
@@ -113,27 +135,5 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
     @Override
     public boolean supports(final Credential credential) {
         return SwivelTokenCredential.class.isAssignableFrom(credential.getClass());
-    }
-
-    private static Map<String, String> createErrorCodeMap() {
-        val errorMap = new HashMap<String, String>();
-
-        errorMap.put("AGENT_ERROR_NO_OTC", "swivel.auth.otc.malformed");
-        errorMap.put("AGENT_ERROR_BAD_OTC", "swivel.auth.otc.malformed");
-
-        errorMap.put("AGENT_ERROR_NO_PIN", "swivel.auth.pin.notset");
-
-        errorMap.put("AGENT_ERROR_USER_LOCKED", "swivel.auth.user.locked");
-        errorMap.put("AGENT_ERROR_NO_SECURITY_STRINGS", "swivel.auth.user.locked");
-        errorMap.put("AGENT_ERROR_AGENT_ACCESS", "swivel.auth.user.notallowed");
-        errorMap.put("AGENT_ERROR_USER_NOT_IN_GROUP", "swivel.auth.user.notallowed");
-        errorMap.put("AGENT_ERROR_NO_USER_FOUND", "swivel.auth.user.unknown");
-        errorMap.put("AGENT_ERROR_NO_AUTH", "swivel.auth.user.unknown");
-        errorMap.put("AGENT_ERROR_USERNAME", "swivel.auth.user.unknown");
-
-        errorMap.put("AGENT_ERROR_SESSION", "swivel.server.session.error");
-        errorMap.put("AGENT_ERROR_GENERAL", SWIVEL_ERR_CODE_AUTHN_FAIL);
-
-        return errorMap;
     }
 }

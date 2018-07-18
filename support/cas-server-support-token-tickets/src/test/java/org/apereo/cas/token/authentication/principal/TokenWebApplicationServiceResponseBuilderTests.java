@@ -1,9 +1,5 @@
 package org.apereo.cas.token.authentication.principal;
 
-import lombok.val;
-
-import com.nimbusds.jwt.JWTParser;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
@@ -35,6 +31,10 @@ import org.apereo.cas.token.cipher.TokenTicketCipherExecutor;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+
+import com.nimbusds.jwt.JWTParser;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

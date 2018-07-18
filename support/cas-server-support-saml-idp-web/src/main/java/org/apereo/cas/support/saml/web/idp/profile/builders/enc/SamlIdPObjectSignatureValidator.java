@@ -1,11 +1,11 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlIdPUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
@@ -33,7 +33,7 @@ public class SamlIdPObjectSignatureValidator extends SamlObjectSignatureValidato
                                            final MetadataResolver casSamlIdPMetadataResolver,
                                            final CasConfigurationProperties casProperties) {
         super(overrideSignatureReferenceDigestMethods, overrideSignatureAlgorithms,
-                overrideBlackListedSignatureAlgorithms, overrideWhiteListedAlgorithms, casProperties);
+            overrideBlackListedSignatureAlgorithms, overrideWhiteListedAlgorithms, casProperties);
         this.casSamlIdPMetadataResolver = casSamlIdPMetadataResolver;
     }
 

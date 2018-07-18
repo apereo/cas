@@ -1,9 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
@@ -15,6 +11,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -143,6 +144,38 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             revocationChecker);
     }
 
+    /**
+     * Checks if critical extension oids contain the extension oid.
+     *
+     * @param certificate  the certificate
+     * @param extensionOid the extension oid
+     * @return true, if  critical
+     */
+    private static boolean isCritical(final X509Certificate certificate, final String extensionOid) {
+        val criticalOids = certificate.getCriticalExtensionOIDs();
+        if (criticalOids == null || criticalOids.isEmpty()) {
+            return false;
+        }
+        return criticalOids.contains(extensionOid);
+    }
+
+    /**
+     * Does principal name match pattern?
+     *
+     * @param principal the principal
+     * @param pattern   the pattern
+     * @return true, if successful
+     */
+    private static boolean doesNameMatchPattern(final Principal principal, final Pattern pattern) {
+        if (pattern != null) {
+            val name = principal.getName();
+            val result = pattern.matcher(name).matches();
+            LOGGER.debug("[{}] matches [{}] == [{}]", pattern.pattern(), name, result);
+            return result;
+        }
+        return true;
+    }
+
     @Override
     public boolean supports(final Credential credential) {
         return credential != null && X509CertificateCredential.class.isAssignableFrom(credential.getClass());
@@ -244,21 +277,6 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     }
 
     /**
-     * Checks if critical extension oids contain the extension oid.
-     *
-     * @param certificate  the certificate
-     * @param extensionOid the extension oid
-     * @return true, if  critical
-     */
-    private static boolean isCritical(final X509Certificate certificate, final String extensionOid) {
-        val criticalOids = certificate.getCriticalExtensionOIDs();
-        if (criticalOids == null || criticalOids.isEmpty()) {
-            return false;
-        }
-        return criticalOids.contains(extensionOid);
-    }
-
-    /**
      * Checks if is certificate allowed based no the pattern given.
      *
      * @param cert the cert
@@ -276,22 +294,5 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private boolean isCertificateFromTrustedIssuer(final X509Certificate cert) {
         return doesNameMatchPattern(cert.getIssuerDN(), this.regExTrustedIssuerDnPattern);
-    }
-
-    /**
-     * Does principal name match pattern?
-     *
-     * @param principal the principal
-     * @param pattern   the pattern
-     * @return true, if successful
-     */
-    private static boolean doesNameMatchPattern(final Principal principal, final Pattern pattern) {
-        if (pattern != null) {
-            val name = principal.getName();
-            val result = pattern.matcher(name).matches();
-            LOGGER.debug("[{}] matches [{}] == [{}]", pattern.pattern(), name, result);
-            return result;
-        }
-        return true;
     }
 }

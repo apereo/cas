@@ -1,14 +1,16 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.proxy.ProxyTicket;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import lombok.NoArgsConstructor;
 
 /**
  * The {@link ProxyTicketImpl} is a concrete implementation of the {@link ProxyTicket}.

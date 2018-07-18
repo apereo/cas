@@ -1,11 +1,10 @@
 package org.apereo.cas.services.support;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;

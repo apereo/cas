@@ -21,13 +21,13 @@ public class InMemoryServiceRegistryTests extends AbstractServiceRegistryTests {
         super(registeredServiceClass);
     }
 
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return new InMemoryServiceRegistry();
-    }
-
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
         return Arrays.asList(RegexRegisteredService.class);
+    }
+
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return new InMemoryServiceRegistry();
     }
 }

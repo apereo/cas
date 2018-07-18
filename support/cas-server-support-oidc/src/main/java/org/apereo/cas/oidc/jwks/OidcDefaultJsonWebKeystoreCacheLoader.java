@@ -1,10 +1,9 @@
 package org.apereo.cas.oidc.jwks;
 
-import lombok.val;
-
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -25,19 +24,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String, Optional<RsaJsonWebKey>> {
     private final Resource jwksFile;
-
-    @Override
-    public Optional<RsaJsonWebKey> load(final String issuer) {
-        val jwks = buildJsonWebKeySet();
-        if (!jwks.isPresent() || jwks.get().getJsonWebKeys().isEmpty()) {
-            return Optional.empty();
-        }
-        val key = getJsonSigningWebKeyFromJwks(jwks.get());
-        if (key == null) {
-            return Optional.empty();
-        }
-        return Optional.of(key);
-    }
 
     private static RsaJsonWebKey getJsonSigningWebKeyFromJwks(final JsonWebKeySet jwks) {
         if (jwks.getJsonWebKeys().isEmpty()) {
@@ -64,16 +50,6 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
         val json = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.debug("Retrieved JSON web key from [{}] as [{}]", resource, json);
         return buildJsonWebKeySet(json);
-    }
-
-    private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
-        val jsonWebKeySet = new JsonWebKeySet(json);
-        val webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
-        if (webKey == null || webKey.getPrivateKey() == null) {
-            LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated private key", webKey);
-            return null;
-        }
-        return jsonWebKeySet;
     }
 
     /**
@@ -114,5 +90,29 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
         }
         return Optional.empty();
     }
+
+    private static JsonWebKeySet buildJsonWebKeySet(final String json) throws Exception {
+        val jsonWebKeySet = new JsonWebKeySet(json);
+        val webKey = getJsonSigningWebKeyFromJwks(jsonWebKeySet);
+        if (webKey == null || webKey.getPrivateKey() == null) {
+            LOGGER.warn("JSON web key retrieved [{}] is not found or has no associated private key", webKey);
+            return null;
+        }
+        return jsonWebKeySet;
+    }
+
+    @Override
+    public Optional<RsaJsonWebKey> load(final String issuer) {
+        val jwks = buildJsonWebKeySet();
+        if (!jwks.isPresent() || jwks.get().getJsonWebKeys().isEmpty()) {
+            return Optional.empty();
+        }
+        val key = getJsonSigningWebKeyFromJwks(jwks.get());
+        if (key == null) {
+            return Optional.empty();
+        }
+        return Optional.of(key);
+    }
+
 
 }

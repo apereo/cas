@@ -1,30 +1,5 @@
 package org.apereo.cas.memcached.kryo;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.pool.KryoFactory;
-import com.esotericsoftware.kryo.serializers.DefaultSerializers;
-import de.javakaffee.kryoserializers.ArraysAsListSerializer;
-import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
-import de.javakaffee.kryoserializers.CollectionsEmptyMapSerializer;
-import de.javakaffee.kryoserializers.CollectionsEmptySetSerializer;
-import de.javakaffee.kryoserializers.DateSerializer;
-import de.javakaffee.kryoserializers.EnumMapSerializer;
-import de.javakaffee.kryoserializers.EnumSetSerializer;
-import de.javakaffee.kryoserializers.GregorianCalendarSerializer;
-import de.javakaffee.kryoserializers.RegexSerializer;
-import de.javakaffee.kryoserializers.URISerializer;
-import de.javakaffee.kryoserializers.UUIDSerializer;
-import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableListSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableMapSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableMultimapSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
-import de.javakaffee.kryoserializers.jodatime.JodaDateTimeSerializer;
-import de.javakaffee.kryoserializers.jodatime.JodaLocalDateSerializer;
-import de.javakaffee.kryoserializers.jodatime.JodaLocalDateTimeSerializer;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.DefaultAuthentication;
@@ -79,6 +54,32 @@ import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.pool.KryoFactory;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers;
+import de.javakaffee.kryoserializers.ArraysAsListSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptyMapSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptySetSerializer;
+import de.javakaffee.kryoserializers.DateSerializer;
+import de.javakaffee.kryoserializers.EnumMapSerializer;
+import de.javakaffee.kryoserializers.EnumSetSerializer;
+import de.javakaffee.kryoserializers.GregorianCalendarSerializer;
+import de.javakaffee.kryoserializers.RegexSerializer;
+import de.javakaffee.kryoserializers.URISerializer;
+import de.javakaffee.kryoserializers.UUIDSerializer;
+import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableListSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableMapSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableMultimapSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
+import de.javakaffee.kryoserializers.jodatime.JodaDateTimeSerializer;
+import de.javakaffee.kryoserializers.jodatime.JodaLocalDateSerializer;
+import de.javakaffee.kryoserializers.jodatime.JodaLocalDateTimeSerializer;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.objenesis.strategy.StdInstantiatorStrategy;
@@ -121,17 +122,12 @@ import java.util.regex.Pattern;
 @Setter
 public class CloseableKryoFactory implements KryoFactory {
 
-    private Collection<Class> classesToRegister = new ArrayList<>();
-
-    private boolean warnUnregisteredClasses = true;
-
-    private boolean registrationRequired;
-
-    private boolean replaceObjectsByReferences;
-
-    private boolean autoReset;
-
     private final CasKryoPool kryoPool;
+    private Collection<Class> classesToRegister = new ArrayList<>();
+    private boolean warnUnregisteredClasses = true;
+    private boolean registrationRequired;
+    private boolean replaceObjectsByReferences;
+    private boolean autoReset;
 
     public CloseableKryoFactory(final CasKryoPool kryoPool) {
         this.kryoPool = kryoPool;

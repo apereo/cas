@@ -1,7 +1,8 @@
 package org.apereo.cas.web;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Generates the warning cookie.

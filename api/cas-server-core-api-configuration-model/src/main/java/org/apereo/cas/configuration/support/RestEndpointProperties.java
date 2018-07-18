@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class RestEndpointProperties extends BaseRestEndpointProperties {
     private static final long serialVersionUID = 2687020856160473089L;
-    
+
     /**
      * HTTP method to use when contacting the rest endpoint.
      * Examples include {@code GET, POST}, etc.

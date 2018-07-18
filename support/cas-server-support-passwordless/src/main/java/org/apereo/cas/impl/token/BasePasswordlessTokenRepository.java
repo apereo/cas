@@ -1,11 +1,12 @@
 package org.apereo.cas.impl.token;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.util.gen.DefaultRandomNumberGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link BasePasswordlessTokenRepository}.

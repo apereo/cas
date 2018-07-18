@@ -1,9 +1,10 @@
 package org.apereo.cas.authentication.mfa;
 
-import lombok.val;
 import org.apereo.cas.authentication.DefaultVariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,6 +28,12 @@ public class DefaultVariegatedMultifactorAuthenticationProviderTests {
     private final MultifactorAuthenticationProvider mfaProvider1 = mock(MultifactorAuthenticationProvider.class);
     private final MultifactorAuthenticationProvider mfaProvider2 = mock(MultifactorAuthenticationProvider.class);
     private final RegisteredService registeredService = mock(RegisteredService.class);
+
+    private static MultifactorAuthenticationProvider createVariegatedProviderWith(final MultifactorAuthenticationProvider... providers) {
+        val provider = new DefaultVariegatedMultifactorAuthenticationProvider();
+        provider.addProviders(providers);
+        return provider;
+    }
 
     @Before
     public void initialize() {
@@ -79,11 +86,5 @@ public class DefaultVariegatedMultifactorAuthenticationProviderTests {
         assertTrue(variegatedProvider.matches(MFA_PROVIDER1_ID));
         assertTrue(variegatedProvider.matches(MFA_PROVIDER2_ID));
         assertTrue(!variegatedProvider.matches(MFA_PROVIDER_BOGUS));
-    }
-
-    private static MultifactorAuthenticationProvider createVariegatedProviderWith(final MultifactorAuthenticationProvider... providers) {
-        val provider = new DefaultVariegatedMultifactorAuthenticationProvider();
-        provider.addProviders(providers);
-        return provider;
     }
 }

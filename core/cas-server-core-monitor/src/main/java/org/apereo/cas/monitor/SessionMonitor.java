@@ -1,10 +1,10 @@
 package org.apereo.cas.monitor;
 
-import lombok.val;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.registry.TicketRegistry;
+import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 

@@ -1,8 +1,9 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,7 +32,7 @@ public class CasWebAppSecurityConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private SecurityProperties securityProperties;
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
     @ConditionalOnProperty(name = "cas.monitor.endpoints.enableEndpointSecurity", matchIfMissing = true)

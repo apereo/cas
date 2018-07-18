@@ -1,12 +1,11 @@
 package org.apereo.cas.memcached.kryo;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
 

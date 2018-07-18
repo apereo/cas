@@ -1,13 +1,12 @@
 package org.apereo.cas.util.http;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
 import com.github.axet.wget.SpeedInfo;
 import com.github.axet.wget.WGet;
 import com.github.axet.wget.info.DownloadInfo;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;
 

@@ -1,12 +1,8 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorJpaTokenRepository;
+import org.apereo.cas.adaptors.gauth.JpaGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -15,6 +11,10 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.CollectionUtils;
+
+import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -95,8 +95,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
-    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance")
-                                                                               final IGoogleAuthenticator googleAuthenticatorInstance,
+    public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance") final IGoogleAuthenticator googleAuthenticatorInstance,
                                                                                @Qualifier("googleAuthenticatorAccountCipherExecutor")
                                                                                final CipherExecutor googleAuthenticatorAccountCipherExecutor) {
         return new JpaGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor, googleAuthenticatorInstance);

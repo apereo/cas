@@ -1,13 +1,14 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
-import lombok.ToString;
-import lombok.Getter;
-import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link GeoLocationResponse} that represents a particular geo location

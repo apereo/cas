@@ -1,10 +1,5 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultResponse;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
@@ -18,8 +13,13 @@ import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.util.CompressionUtils;
-import org.junit.Test;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,6 +60,10 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     private ResponseBuilder<GoogleAccountsService> googleAccountsServiceResponseBuilder;
 
     private GoogleAccountsService googleAccountsService;
+
+    private static String encodeMessage(final String xmlString) {
+        return CompressionUtils.deflate(xmlString);
+    }
 
     public GoogleAccountsService getGoogleAccountsService() {
         val request = new MockHttpServletRequest();
@@ -106,10 +110,6 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
         }
         assertTrue(resp.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
 
-    }
-
-    private static String encodeMessage(final String xmlString) {
-        return CompressionUtils.deflate(xmlString);
     }
 
     @Test

@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
+import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,6 +32,16 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    private static SSLConnectionSocketFactory sslFactory(final Resource resource, final String password) {
+        return new SSLConnectionSocketFactory(new DefaultCasSslContext(resource,
+            password,
+            KeyStore.getDefaultType()).getSslContext());
+    }
+
+    private static SSLConnectionSocketFactory sslFactory() {
+        return sslFactory(RESOURCE, "changeit");
+    }
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() {
@@ -75,15 +85,5 @@ public class FileTrustStoreSslSocketFactoryTests {
         clientFactory.setSslSocketFactory(sslFactory());
         val client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("http://wikipedia.org"));
-    }
-
-    private static SSLConnectionSocketFactory sslFactory(final Resource resource, final String password) {
-        return new SSLConnectionSocketFactory(new DefaultCasSslContext(resource,
-                password,
-                KeyStore.getDefaultType()).getSslContext());
-    }
-
-    private static SSLConnectionSocketFactory sslFactory() {
-        return sslFactory(RESOURCE, "changeit");
     }
 }

@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CassandraAuthenticationHandler;
@@ -16,6 +13,9 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -62,13 +62,13 @@ public class CassandraAuthenticationConfiguration {
         val cassandra = casProperties.getAuthn().getCassandra();
         return new DefaultCassandraRepository(cassandra, cassandraSessionFactory);
     }
-    
+
     @Bean
     public AuthenticationHandler cassandraAuthenticationHandler() {
         val cassandra = casProperties.getAuthn().getCassandra();
         val handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager,
-                cassandraPrincipalFactory(),
-                cassandra.getOrder(), cassandra, cassandraRepository());
+            cassandraPrincipalFactory(),
+            cassandra.getOrder(), cassandra, cassandraRepository());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cassandra.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cassandra.getPasswordEncoder()));
         return handler;

@@ -1,10 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -15,6 +10,11 @@ import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPubl
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.services.replication.DefaultRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
+
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -39,7 +39,7 @@ public class CasServicesStreamingHazelcastConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
     private StringBean casRegisteredServiceStreamPublisherIdentifier;
@@ -54,11 +54,11 @@ public class CasServicesStreamingHazelcastConfiguration {
         val stream = casProperties.getServiceRegistry().getStream();
         return new DefaultRegisteredServiceReplicationStrategy(registeredServiceDistributedCacheManager(), stream);
     }
-    
+
     @Bean
     public CasRegisteredServiceStreamPublisher casRegisteredServiceStreamPublisher() {
         return new CasRegisteredServiceHazelcastStreamPublisher(registeredServiceDistributedCacheManager(),
-                casRegisteredServiceStreamPublisherIdentifier);
+            casRegisteredServiceStreamPublisherIdentifier);
     }
 
     @Bean
@@ -73,7 +73,7 @@ public class CasServicesStreamingHazelcastConfiguration {
             TimeUnit.MILLISECONDS.toSeconds(duration));
         val cfg = factory.build(hz, mapConfig);
         LOGGER.debug("Created hazelcast instance [{}] with publisher id [{}] to publish service definitions",
-                name, casRegisteredServiceStreamPublisherIdentifier);
+            name, casRegisteredServiceStreamPublisherIdentifier);
         return Hazelcast.newHazelcastInstance(cfg);
     }
 }

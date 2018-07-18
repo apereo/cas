@@ -1,9 +1,8 @@
 package org.apereo.cas.support.saml;
 
-import lombok.val;
-
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Element;

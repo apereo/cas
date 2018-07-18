@@ -1,9 +1,10 @@
 package org.apereo.cas.ticket.device;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketState;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * This is {@link DeviceToken}.

@@ -1,9 +1,13 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
@@ -11,10 +15,6 @@ import org.apache.ignite.IgniteState;
 import org.apache.ignite.Ignition;
 import org.apache.ignite.cache.query.ScanQuery;
 import org.apache.ignite.configuration.IgniteConfiguration;
-import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
-import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketDefinition;
 import org.springframework.beans.factory.DisposableBean;
 
 import javax.cache.Cache;

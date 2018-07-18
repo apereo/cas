@@ -1,9 +1,9 @@
 package org.apereo.cas;
 
-import lombok.val;
+import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;

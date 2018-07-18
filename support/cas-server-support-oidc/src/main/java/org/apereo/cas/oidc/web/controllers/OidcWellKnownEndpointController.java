@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.web.controllers;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -13,6 +12,8 @@ import org.apereo.cas.support.oauth.web.endpoints.BaseOAuth20Controller;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,8 +40,8 @@ public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
                                            final CasConfigurationProperties casProperties,
                                            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
         super(servicesManager, ticketRegistry, accessTokenFactory,
-                principalFactory, webApplicationServiceServiceFactory, 
-                scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
+            principalFactory, webApplicationServiceServiceFactory,
+            scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
         this.discovery = discovery;
     }
 

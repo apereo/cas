@@ -1,9 +1,5 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.Setter;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.AuthenticationAccountStateHandler;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -14,6 +10,11 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.support.password.PasswordExpiringWarningMessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.util.DateTimeUtils;
+
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;

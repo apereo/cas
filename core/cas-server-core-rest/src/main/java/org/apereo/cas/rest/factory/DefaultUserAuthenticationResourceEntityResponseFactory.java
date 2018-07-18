@@ -1,10 +1,11 @@
 package org.apereo.cas.rest.factory;
 
+import org.apereo.cas.authentication.AuthenticationResult;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

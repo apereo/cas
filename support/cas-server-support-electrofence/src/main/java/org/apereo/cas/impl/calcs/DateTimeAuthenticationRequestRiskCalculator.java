@@ -1,12 +1,12 @@
 package org.apereo.cas.impl.calcs;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -36,7 +36,7 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
                                         final RegisteredService service, final Collection<CasEvent> events) {
         val timestamp = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Filtering authentication events for timestamp [{}]", timestamp);
-        
+
         val hoursFromNow = timestamp.plusHours(windowInHours).getHour();
         val hoursBeforeNow = timestamp.minusHours(windowInHours).getHour();
 

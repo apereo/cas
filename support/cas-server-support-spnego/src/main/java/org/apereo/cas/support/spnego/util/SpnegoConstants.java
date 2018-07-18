@@ -9,21 +9,33 @@ package org.apereo.cas.support.spnego.util;
  */
 public interface SpnegoConstants {
 
-    /** The header authenticate. */
+    /**
+     * The header authenticate.
+     */
     String HEADER_AUTHENTICATE = "WWW-Authenticate";
 
-    /** The header authorization. */
+    /**
+     * The header authorization.
+     */
     String HEADER_AUTHORIZATION = "Authorization";
 
-    /** The negotiate. */
+    /**
+     * The negotiate.
+     */
     String NEGOTIATE = "Negotiate";
 
-    /** The spnego first time. */
+    /**
+     * The spnego first time.
+     */
     String SPNEGO_FIRST_TIME = "spnegoFirstTime";
 
-    /** The spnego credentials. */
+    /**
+     * The spnego credentials.
+     */
     String SPNEGO_CREDENTIALS = "spnegoCredentials";
 
-    /** The ntlm. */
+    /**
+     * The ntlm.
+     */
     String NTLM = "NTLM";
 }

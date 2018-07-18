@@ -1,11 +1,11 @@
 package org.apereo.cas.oidc.web.flow;
 
-import lombok.val;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ViewState;

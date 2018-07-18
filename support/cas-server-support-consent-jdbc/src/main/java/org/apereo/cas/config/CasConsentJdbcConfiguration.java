@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -10,6 +7,9 @@ import org.apereo.cas.consent.ConsentDecision;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.JpaConsentRepository;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -52,7 +52,7 @@ public class CasConsentJdbcConfiguration {
     public HibernateJpaVendorAdapter jpaConsentVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-    
+
     @Bean
     public DataSource dataSourceConsent() {
         return JpaBeans.newDataSource(casProperties.getConsent().getJpa());
@@ -67,20 +67,20 @@ public class CasConsentJdbcConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean consentEntityManagerFactory() {
         val bean =
-                JpaBeans.newHibernateEntityManagerFactoryBean(
-                        new JpaConfigDataHolder(
-                                jpaConsentVendorAdapter(),
-                                "jpaConsentContext",
-                                jpaConsentPackagesToScan(),
-                                dataSourceConsent()),
-                        casProperties.getConsent().getJpa());
+            JpaBeans.newHibernateEntityManagerFactoryBean(
+                new JpaConfigDataHolder(
+                    jpaConsentVendorAdapter(),
+                    "jpaConsentContext",
+                    jpaConsentPackagesToScan(),
+                    dataSourceConsent()),
+                casProperties.getConsent().getJpa());
         return bean;
     }
 
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerConsent(
-            @Qualifier("consentEntityManagerFactory") final EntityManagerFactory emf) {
+        @Qualifier("consentEntityManagerFactory") final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;

@@ -1,7 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
@@ -43,6 +41,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantType
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenGrantRequestAuditResourceResolver;
+import org.apereo.cas.support.oauth.web.audit.AccessTokenResponseAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -57,6 +56,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenAuthorizationCodeGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenClientCredentialsGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenDeviceCodeResponseRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantAuditableRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPasswordGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefreshTokenGrantRequestExtractor;
@@ -91,6 +91,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -223,7 +226,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return new OAuth20CallbackAuthorizeViewResolver() {
         };
     }
-
 
     @Bean
     public OAuth20CasClientRedirectActionBuilder defaultOAuthCasClientRedirectActionBuilder() {
@@ -358,20 +360,21 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
                 centralAuthenticationService, casProperties.getAuthn().getOauth(),
                 webApplicationServiceFactory);
 
+        val authenticationBuilder = oauthCasAuthenticationBuilder();
         final AccessTokenGrantRequestExtractor pswExt =
             new AccessTokenPasswordGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
-                oauthCasAuthenticationBuilder(), centralAuthenticationService,
+                authenticationBuilder, centralAuthenticationService,
                 casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
 
         final AccessTokenGrantRequestExtractor credsExt =
             new AccessTokenClientCredentialsGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
-                oauthCasAuthenticationBuilder(), centralAuthenticationService,
+                authenticationBuilder, centralAuthenticationService,
                 casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
 
         final AccessTokenGrantRequestExtractor deviceCodeExt =
             new AccessTokenDeviceCodeResponseRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
                 centralAuthenticationService, casProperties.getAuthn().getOauth(),
-                oauthCasAuthenticationBuilder(), registeredServiceAccessStrategyEnforcer);
+                authenticationBuilder, registeredServiceAccessStrategyEnforcer);
 
         return CollectionUtils.wrapList(authzCodeExt, refreshTokenExt, deviceCodeExt, pswExt, credsExt);
     }
@@ -409,9 +412,15 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             accessTokenExpirationPolicy(),
             deviceTokenExpirationPolicy(),
-            accessTokenGrantRequestExtractors(),
-            oauthTokenRequestValidators()
+            oauthTokenRequestValidators(),
+            accessTokenGrantAuditableRequestExtractor()
         );
+    }
+
+    @ConditionalOnMissingBean(name = "accessTokenGrantAuditableRequestExtractor")
+    @Bean
+    public AuditableExecution accessTokenGrantAuditableRequestExtractor() {
+        return new AccessTokenGrantAuditableRequestExtractor(accessTokenGrantRequestExtractors());
     }
 
     @ConditionalOnMissingBean(name = "deviceUserCodeApprovalEndpointController")
@@ -647,6 +656,11 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
             new DefaultAuditActionResolver("_CREATED", "_FAILED"));
         plan.registerAuditResourceResolver("OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER",
             new AccessTokenGrantRequestAuditResourceResolver());
+
+        plan.registerAuditActionResolver("OAUTH2_ACCESS_TOKEN_RESPONSE_ACTION_RESOLVER",
+            new DefaultAuditActionResolver("_CREATED", "_FAILED"));
+        plan.registerAuditResourceResolver("OAUTH2_ACCESS_TOKEN_RESPONSE_RESOURCE_RESOLVER",
+            new AccessTokenResponseAuditResourceResolver());
     }
 
     @Bean

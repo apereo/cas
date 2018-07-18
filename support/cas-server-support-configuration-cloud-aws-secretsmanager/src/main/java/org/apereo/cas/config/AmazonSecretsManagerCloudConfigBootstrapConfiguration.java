@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import lombok.val;
+import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
@@ -9,7 +9,7 @@ import com.amazonaws.services.secretsmanager.model.ListSecretsRequest;
 import com.amazonaws.services.secretsmanager.model.SecretListEntry;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
+import lombok.val;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;

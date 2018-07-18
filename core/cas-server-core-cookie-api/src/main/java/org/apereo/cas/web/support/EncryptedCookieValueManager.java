@@ -1,11 +1,11 @@
 package org.apereo.cas.web.support;
 
-import lombok.val;
+import org.apereo.cas.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CipherExecutor;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

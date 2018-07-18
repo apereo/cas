@@ -1,9 +1,9 @@
 package org.apereo.cas.util.services;
 
-import lombok.val;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -21,11 +21,11 @@ public class DefaultRegisteredServiceJsonSerializerTests {
     public void checkNullability() {
         val zer = new DefaultRegisteredServiceJsonSerializer();
         val json = "    {\n"
-                + "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n"
-                + "            \"serviceId\" : \"^https://xyz.*\",\n"
-                + "            \"name\" : \"XYZ\",\n"
-                + "            \"id\" : \"20161214\"\n"
-                + "    }";
+            + "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n"
+            + "            \"serviceId\" : \"^https://xyz.*\",\n"
+            + "            \"name\" : \"XYZ\",\n"
+            + "            \"id\" : \"20161214\"\n"
+            + "    }";
 
         val s = zer.from(json);
         assertNotNull(s);

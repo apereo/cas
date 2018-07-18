@@ -1,5 +1,9 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -9,9 +13,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;

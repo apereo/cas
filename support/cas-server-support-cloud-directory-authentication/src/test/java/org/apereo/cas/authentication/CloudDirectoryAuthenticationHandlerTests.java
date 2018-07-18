@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.clouddirectory.CloudDirectoryRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
-@TestPropertySource(locations = { "classpath:/clouddirectory.properties" })
+@TestPropertySource(locations = {"classpath:/clouddirectory.properties"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CloudDirectoryAuthenticationHandlerTests {
     @Autowired

@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import lombok.val;
-
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningStandaloneCondition;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 

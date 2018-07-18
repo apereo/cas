@@ -1,9 +1,5 @@
 package org.apereo.cas.support.oauth.web;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
@@ -18,6 +14,10 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointCont
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,6 +59,19 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("profileController")
     private OAuth20UserProfileEndpointController oAuth20ProfileController;
+
+    protected static Authentication getAuthentication(final Principal principal) {
+        val metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(principal.getId()));
+        val handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
+            metadata, principal, new ArrayList<>());
+
+        return DefaultAuthenticationBuilder.newInstance()
+            .setPrincipal(principal)
+            .addCredential(metadata)
+            .setAuthenticationDate(ZonedDateTime.now())
+            .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
+            .build();
+    }
 
     @Test
     public void verifyNoGivenAccessToken() throws Exception {
@@ -211,18 +224,5 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
         assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
         assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
-    }
-
-    protected static Authentication getAuthentication(final Principal principal) {
-        val metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(principal.getId()));
-        val handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
-            metadata, principal, new ArrayList<>());
-
-        return DefaultAuthenticationBuilder.newInstance()
-            .setPrincipal(principal)
-            .addCredential(metadata)
-            .setAuthenticationDate(ZonedDateTime.now())
-            .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
-            .build();
     }
 }

@@ -1,18 +1,19 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.ticket.BaseTicketSerializers;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
+import org.apereo.cas.ticket.TicketState;
+
 import com.google.common.collect.ImmutableSet;
 import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.ticket.BaseTicketSerializers;
-import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketDefinition;
 import org.bson.Document;
-import org.apereo.cas.ticket.TicketState;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.springframework.data.domain.Sort;
@@ -54,6 +55,35 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         LOGGER.info("Configured MongoDb Ticket Registry instance with available collections: [{}]", mongoTemplate.getCollectionNames());
     }
 
+    /**
+     * Calculate the time at which the ticket is eligible for automated deletion by MongoDb.
+     * Makes the assumption that the CAS server date and the Mongo server date are in sync.
+     */
+    private static Date getExpireAt(final Ticket ticket) {
+        val ttl = ticket instanceof TicketState
+            ? ticket.getExpirationPolicy().getTimeToLive((TicketState) ticket)
+            : ticket.getExpirationPolicy().getTimeToLive();
+
+        if (ttl < 1) {
+            return null;
+        }
+
+        return new Date(System.currentTimeMillis() + (ttl * 1000));
+    }
+
+    private static String serializeTicketForMongoDocument(final Ticket ticket) {
+        try {
+            return BaseTicketSerializers.serializeTicket(ticket);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    private static Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
+        return BaseTicketSerializers.deserializeTicket(holder.getJson(), holder.getType());
+    }
+
     private MongoCollection createTicketCollection(final TicketDefinition ticket, final MongoDbConnectionFactory factory) {
         val collectionName = ticket.getProperties().getStorageName();
         LOGGER.debug("Setting up MongoDb Ticket Registry instance [{}]", collectionName);
@@ -69,8 +99,9 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     /**
      * Remove any index with the same indexKey but differing indexOptions in anticipation of recreating it.
+     *
      * @param collection The collection to check the indexes of
-     * @param index The index to find
+     * @param index      The index to find
      */
     private void removeDifferingIndexIfAny(final MongoCollection collection, final Index index) {
         val indexes = (ListIndexesIterable<Document>) collection.listIndexes();
@@ -220,35 +251,6 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 return countTickets;
             })
             .sum();
-    }
-
-    /**
-     * Calculate the time at which the ticket is eligible for automated deletion by MongoDb.
-     * Makes the assumption that the CAS server date and the Mongo server date are in sync.
-     */
-    private static Date getExpireAt(final Ticket ticket) {
-        val ttl = ticket instanceof TicketState
-            ? ticket.getExpirationPolicy().getTimeToLive((TicketState) ticket)
-            : ticket.getExpirationPolicy().getTimeToLive();
-
-        if (ttl < 1) {
-            return null;
-        }
-
-        return new Date(System.currentTimeMillis() + (ttl * 1000));
-    }
-
-    private static String serializeTicketForMongoDocument(final Ticket ticket) {
-        try {
-            return BaseTicketSerializers.serializeTicket(ticket);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
-    private static Ticket deserializeTicketFromMongoDocument(final TicketHolder holder) {
-        return BaseTicketSerializers.deserializeTicket(holder.getJson(), holder.getType());
     }
 
     private TicketHolder buildTicketAsDocument(final Ticket ticket) {

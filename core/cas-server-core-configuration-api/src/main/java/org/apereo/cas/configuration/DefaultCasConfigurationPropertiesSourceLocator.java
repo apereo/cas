@@ -1,15 +1,15 @@
 package org.apereo.cas.configuration;
 
-import lombok.val;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
@@ -41,6 +41,24 @@ import java.util.stream.Collectors;
 public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
     private final CipherExecutor<String, String> configurationCipherExecutor;
     private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
+
+    private static Collection<File> scanForConfigurationFilesByPattern(final File config, final String regex) {
+        return FileUtils.listFiles(config, new RegexFileFilter(regex, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
+            .stream()
+            .sorted(Comparator.comparing(File::getName))
+            .collect(Collectors.toList());
+    }
+
+    private static String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
+        val propertyNames = profiles.stream().collect(Collectors.joining("|"));
+        val profiledProperties = profiles.stream()
+            .map(p -> String.format("application-%s", p))
+            .collect(Collectors.joining("|"));
+
+        val regex = String.format("(%s|%s|application)\\.(yml|properties)", propertyNames, profiledProperties);
+        LOGGER.debug("Looking for configuration files at [{}] that match the pattern [{}]", config, regex);
+        return regex;
+    }
 
     @Override
     public PropertySource<?> locate(final Environment environment, final ResourceLoader resourceLoader) {
@@ -124,26 +142,8 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         return new PropertiesPropertySource("embeddedYamlOverriddenProperties", props);
     }
 
-    private static Collection<File> scanForConfigurationFilesByPattern(final File config, final String regex) {
-        return FileUtils.listFiles(config, new RegexFileFilter(regex, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
-            .stream()
-            .sorted(Comparator.comparing(File::getName))
-            .collect(Collectors.toList());
-    }
-
     private Map<String, Object> decryptProperties(final Map properties) {
         return this.configurationCipherExecutor.decode(properties, new Object[]{});
-    }
-
-    private static String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
-        val propertyNames = profiles.stream().collect(Collectors.joining("|"));
-        val profiledProperties = profiles.stream()
-            .map(p -> String.format("application-%s", p))
-            .collect(Collectors.joining("|"));
-
-        val regex = String.format("(%s|%s|application)\\.(yml|properties)", propertyNames, profiledProperties);
-        LOGGER.debug("Looking for configuration files at [{}] that match the pattern [{}]", config, regex);
-        return regex;
     }
 
     private List<String> getApplicationProfiles(final Environment environment) {

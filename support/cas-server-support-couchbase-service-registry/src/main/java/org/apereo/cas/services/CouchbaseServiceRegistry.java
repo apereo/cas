@@ -1,6 +1,9 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.couchbase.client.java.document.RawJsonDocument;
 import com.couchbase.client.java.view.DefaultView;
@@ -9,10 +12,7 @@ import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.serialization.StringSerializer;
+import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.StringReader;

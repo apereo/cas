@@ -1,11 +1,11 @@
 package org.apereo.cas.tokens;
 
-import lombok.val;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.token.TokenConstants;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.token.TokenConstants;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;

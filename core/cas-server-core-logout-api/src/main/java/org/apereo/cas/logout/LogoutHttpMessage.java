@@ -1,9 +1,10 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.util.http.HttpMessage;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.http.HttpMessage;
 import org.springframework.http.MediaType;
 
 import java.net.URL;

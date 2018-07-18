@@ -1,10 +1,5 @@
 package org.apereo.cas.support.saml.authentication;
 
-import lombok.val;
-
-import lombok.Setter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
@@ -12,6 +7,11 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
+
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -32,19 +32,29 @@ import java.util.Map;
 @Setter
 public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
-    /** The Constant ATTRIBUTE_AUTHENTICATION_METHOD. */
+    /**
+     * The Constant ATTRIBUTE_AUTHENTICATION_METHOD.
+     */
     public static final String ATTRIBUTE_AUTHENTICATION_METHOD = "samlAuthenticationStatementAuthMethod";
 
-    /** The Constant AUTHN_METHOD_PASSWORD. */
+    /**
+     * The Constant AUTHN_METHOD_PASSWORD.
+     */
     public static final String AUTHN_METHOD_PASSWORD = "urn:oasis:names:tc:SAML:1.0:am:password";
 
-    /** The Constant AUTHN_METHOD_SSL_TLS_CLIENT. */
+    /**
+     * The Constant AUTHN_METHOD_SSL_TLS_CLIENT.
+     */
     public static final String AUTHN_METHOD_SSL_TLS_CLIENT = "urn:ietf:rfc:2246";
 
-    /** The Constant AUTHN_METHOD_X509_PUBLICKEY. */
+    /**
+     * The Constant AUTHN_METHOD_X509_PUBLICKEY.
+     */
     public static final String AUTHN_METHOD_X509_PUBLICKEY = "urn:oasis:names:tc:SAML:1.0:am:X509-PKI";
 
-    /** The Constant AUTHN_METHOD_UNSPECIFIED. */
+    /**
+     * The Constant AUTHN_METHOD_UNSPECIFIED.
+     */
     public static final String AUTHN_METHOD_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.0:am:unspecified";
 
     private final Map<String, String> authenticationMethods = new HashMap<>();

@@ -1,11 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Test;
 
 import java.io.File;

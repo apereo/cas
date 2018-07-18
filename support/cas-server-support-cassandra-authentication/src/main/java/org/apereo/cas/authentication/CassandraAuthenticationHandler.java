@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -43,8 +43,8 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
         val attributes = this.cassandraRepository.getUser(username);
 
         if (attributes == null || attributes.isEmpty()
-                || !attributes.containsKey(cassandraAuthenticationProperties.getUsernameAttribute())
-                || !attributes.containsKey(cassandraAuthenticationProperties.getPasswordAttribute())) {
+            || !attributes.containsKey(cassandraAuthenticationProperties.getUsernameAttribute())
+            || !attributes.containsKey(cassandraAuthenticationProperties.getPasswordAttribute())) {
             LOGGER.warn("Unable to find account [{}]: The account does not exist or it's missing username/password attributes", username);
             throw new AccountNotFoundException();
         }
@@ -56,6 +56,6 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
             throw new FailedLoginException();
         }
         return createHandlerResult(credential,
-                this.principalFactory.createPrincipal(username, attributes), new ArrayList<>());
+            this.principalFactory.createPrincipal(username, attributes), new ArrayList<>());
     }
 }

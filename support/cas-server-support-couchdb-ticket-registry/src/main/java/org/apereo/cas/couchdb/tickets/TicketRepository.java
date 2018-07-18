@@ -26,16 +26,18 @@ public class TicketRepository extends CouchDbRepositorySupport<TicketDocument> {
 
     /**
      * Delete tickets.
+     *
      * @param ticketDocuments tickets to be deleted.
      * @return number of tickets deleted
      */
     public long delete(final List<TicketDocument> ticketDocuments) {
         return (long) db.executeBulk(ticketDocuments.stream().map(BulkDeleteDocument::of)
-                .collect(Collectors.toList())).size();
+            .collect(Collectors.toList())).size();
     }
 
     /**
      * Gets current document revision.
+     *
      * @param id Document id to get revision.
      * @return current document revision.
      */

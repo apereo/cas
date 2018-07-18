@@ -1,8 +1,8 @@
 package org.apereo.cas.web;
 
-import lombok.val;
-
 import org.apereo.cas.CasEmbeddedContainerUtils;
+
+import lombok.val;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 

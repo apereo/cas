@@ -1,8 +1,5 @@
 package org.apereo.cas.oidc.web;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
@@ -10,6 +7,9 @@ import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.context.J2EContext;
 
 import java.util.HashSet;

@@ -1,15 +1,16 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.Element;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CertUtils;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
@@ -106,6 +107,62 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         this.throwOnFetchFailure = throwOnFetchFailure;
     }
 
+    /**
+     * Gets the distribution points.
+     *
+     * @param cert the cert
+     * @return the url distribution points
+     */
+    private static URI[] getDistributionPoints(final X509Certificate cert) {
+        try {
+            val points = new ExtensionReader(cert).readCRLDistributionPoints();
+            val urls = new ArrayList<URI>();
+            if (points != null) {
+                points.stream().map(DistributionPoint::getDistributionPoint).filter(Objects::nonNull).forEach(pointName -> {
+                    val nameSequence = ASN1Sequence.getInstance(pointName.getName());
+                    IntStream.range(0, nameSequence.size()).mapToObj(i -> GeneralName.getInstance(nameSequence.getObjectAt(i))).forEach(name -> {
+                        LOGGER.debug("Found CRL distribution point [{}].", name);
+                        try {
+                            addURL(urls, DERIA5String.getInstance(name.getName()).getString());
+                        } catch (final Exception e) {
+                            LOGGER.warn("[{}] not supported. String or GeneralNameList expected.", pointName);
+                        }
+                    });
+                });
+            }
+            return urls.toArray(new URI[0]);
+        } catch (final Exception e) {
+            LOGGER.error("Error reading CRLDistributionPoints extension field on [{}]", CertUtils.toString(cert), e);
+            return new URI[0];
+        }
+
+
+    }
+
+    /**
+     * Adds the url to the list.
+     * Build URI by components to facilitate proper encoding of querystring.
+     * e.g. http://example.com:8085/ca?action=crl&issuer=CN=CAS Test User CA
+     * <p>
+     * <p>If {@code uriString} is encoded, it will be decoded with {@code UTF-8}
+     * first before it's added to the list.</p>
+     *
+     * @param list      the list
+     * @param uriString the uri string
+     */
+    private static void addURL(final List<URI> list, final String uriString) {
+        try {
+            try {
+                val url = new URL(URLDecoder.decode(uriString, StandardCharsets.UTF_8.name()));
+                list.add(new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null));
+            } catch (final MalformedURLException e) {
+                list.add(new URI(uriString));
+            }
+        } catch (final Exception e) {
+            LOGGER.warn("[{}] is not a valid distribution point URI.", uriString);
+        }
+    }
+
     @Override
     @SneakyThrows
     protected List<X509CRL> getCRLs(final X509Certificate cert) {
@@ -167,62 +224,5 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         this.crlCache.put(new Element(id, crl.getEncoded()));
         return this.crlCache.get(id) != null;
 
-    }
-
-
-    /**
-     * Gets the distribution points.
-     *
-     * @param cert the cert
-     * @return the url distribution points
-     */
-    private static URI[] getDistributionPoints(final X509Certificate cert) {
-        try {
-            val points = new ExtensionReader(cert).readCRLDistributionPoints();
-            val urls = new ArrayList<URI>();
-            if (points != null) {
-                points.stream().map(DistributionPoint::getDistributionPoint).filter(Objects::nonNull).forEach(pointName -> {
-                    val nameSequence = ASN1Sequence.getInstance(pointName.getName());
-                    IntStream.range(0, nameSequence.size()).mapToObj(i -> GeneralName.getInstance(nameSequence.getObjectAt(i))).forEach(name -> {
-                        LOGGER.debug("Found CRL distribution point [{}].", name);
-                        try {
-                            addURL(urls, DERIA5String.getInstance(name.getName()).getString());
-                        } catch (final Exception e) {
-                            LOGGER.warn("[{}] not supported. String or GeneralNameList expected.", pointName);
-                        }
-                    });
-                });
-            }
-            return urls.toArray(new URI[0]);
-        } catch (final Exception e) {
-            LOGGER.error("Error reading CRLDistributionPoints extension field on [{}]", CertUtils.toString(cert), e);
-            return new URI[0];
-        }
-
-
-    }
-
-    /**
-     * Adds the url to the list.
-     * Build URI by components to facilitate proper encoding of querystring.
-     * e.g. http://example.com:8085/ca?action=crl&issuer=CN=CAS Test User CA
-     * <p>
-     * <p>If {@code uriString} is encoded, it will be decoded with {@code UTF-8}
-     * first before it's added to the list.</p>
-     *
-     * @param list      the list
-     * @param uriString the uri string
-     */
-    private static void addURL(final List<URI> list, final String uriString) {
-        try {
-            try {
-                val url = new URL(URLDecoder.decode(uriString, StandardCharsets.UTF_8.name()));
-                list.add(new URI(url.getProtocol(), url.getAuthority(), url.getPath(), url.getQuery(), null));
-            } catch (final MalformedURLException e) {
-                list.add(new URI(uriString));
-            }
-        } catch (final Exception e) {
-            LOGGER.warn("[{}] is not a valid distribution point URI.", uriString);
-        }
     }
 }

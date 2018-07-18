@@ -1,8 +1,5 @@
 package org.apereo.cas.support.rest;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
@@ -15,6 +12,9 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.EncodingUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
@@ -30,9 +30,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.io.StringWriter;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Unit tests for {@link RegisteredServiceResource}.
@@ -61,7 +60,7 @@ public class RegisteredServiceResourceTests {
     public void checkRegisteredServiceNoAuthn() throws Exception {
         runTest("memberOf", "something", "testfail:something", status().isUnauthorized());
     }
-    
+
     @Test
     public void checkRegisteredServiceNoAttributeValue() throws Exception {
         runTest("memberOf", null, "test:test", status().isForbidden());

@@ -1,14 +1,14 @@
 package org.apereo.cas.web.flow.actions;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -33,11 +33,11 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnit4.class)
 @Slf4j
 public class AuthenticationExceptionHandlerActionTests {
- 
+
     @Test
     public void handleAccountNotFoundExceptionByDefault() {
         val handler = new AuthenticationExceptionHandlerAction(
-                CollectionUtils.wrapSet(AccountLockedException.class, AccountNotFoundException.class)
+            CollectionUtils.wrapSet(AccountLockedException.class, AccountNotFoundException.class)
         );
         val req = getMockRequestContext();
 
@@ -71,12 +71,12 @@ public class AuthenticationExceptionHandlerActionTests {
         val id = handler.handle(new InvalidTicketException("TGT"), req);
         assertEquals("UNKNOWN", id);
     }
-    
+
     @Test
     public void handleUnsatisfiedAuthenticationPolicyExceptionByDefault() {
         val handler = new AuthenticationExceptionHandlerAction(
-                CollectionUtils.wrapSet(UnsatisfiedAuthenticationPolicyException.class,
-                        AccountNotFoundException.class)
+            CollectionUtils.wrapSet(UnsatisfiedAuthenticationPolicyException.class,
+                AccountNotFoundException.class)
         );
         val req = getMockRequestContext();
 

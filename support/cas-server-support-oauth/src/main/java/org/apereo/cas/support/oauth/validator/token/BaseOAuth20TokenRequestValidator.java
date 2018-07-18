@@ -1,14 +1,14 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import lombok.val;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.Pac4jUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -29,6 +29,24 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      * Access strategy enforcer.
      */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
+    /**
+     * Check the grant type against expected grant types.
+     *
+     * @param type          the current grant type
+     * @param expectedTypes the expected grant types
+     * @return whether the grant type is supported
+     */
+    private static boolean isGrantTypeSupported(final String type, final OAuth20GrantTypes... expectedTypes) {
+        LOGGER.debug("Grant type received: [{}]", type);
+        for (val expectedType : expectedTypes) {
+            if (OAuth20Utils.isGrantType(type, expectedType)) {
+                return true;
+            }
+        }
+        LOGGER.error("Unsupported grant type: [{}]", type);
+        return false;
+    }
 
     @Override
     public boolean validate(final J2EContext context) {
@@ -82,23 +100,5 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     public boolean supports(final J2EContext context) {
         val grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
-    }
-
-    /**
-     * Check the grant type against expected grant types.
-     *
-     * @param type          the current grant type
-     * @param expectedTypes the expected grant types
-     * @return whether the grant type is supported
-     */
-    private static boolean isGrantTypeSupported(final String type, final OAuth20GrantTypes... expectedTypes) {
-        LOGGER.debug("Grant type received: [{}]", type);
-        for (val expectedType : expectedTypes) {
-            if (OAuth20Utils.isGrantType(type, expectedType)) {
-                return true;
-            }
-        }
-        LOGGER.error("Unsupported grant type: [{}]", type);
-        return false;
     }
 }

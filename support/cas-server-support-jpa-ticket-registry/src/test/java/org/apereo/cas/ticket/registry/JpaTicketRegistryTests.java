@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -22,6 +21,8 @@ import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+
+import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,13 +82,13 @@ public class JpaTicketRegistryTests extends BaseSpringRunnableTicketRegistryTest
         super(useEncryption);
     }
 
-    @Override
-    protected TicketRegistry getNewTicketRegistry() {
-        return this.ticketRegistry;
-    }
-
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
         return Arrays.asList(false);
+    }
+
+    @Override
+    protected TicketRegistry getNewTicketRegistry() {
+        return this.ticketRegistry;
     }
 }

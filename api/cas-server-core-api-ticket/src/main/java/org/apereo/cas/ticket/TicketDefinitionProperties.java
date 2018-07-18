@@ -7,11 +7,11 @@ package org.apereo.cas.ticket;
  * Given each CAS module may decide to create many forms of tickets, this facility is specifically provided
  * to dynamically register ticket types and associated properties so modules that deal with registry functionality
  * wouldn't have to statically link to all modules and APIs.
- *
+ * <p>
  * Ticket definition properties are intended to be treated as generally as possible, so common settings
  * can be shared across all modules that may have similar needs. When adding additional properties, be careful
  * to not tie the setting to a specific technology or terminology, and opt for generality as much as possible.
- * 
+ *
  * @author Misagh Moayyed
  * @see TicketCatalog
  * @since 5.1.0
@@ -52,22 +52,10 @@ public interface TicketDefinitionProperties {
      * Describes how long may this ticket definition
      * exist in the underlying storage unit. For cache-based storage
      * services, this may translate to idle/max time-to-live, etc.
+     *
      * @return the long
      */
     long getStorageTimeout();
-
-    /**
-     * Sets store password if any.
-     *
-     * @param psw the password for the storage.
-     */
-    void setStoragePassword(String psw);
-
-    /**
-     * Describes the credential required to access the storage, if any.
-     * @return the psw
-     */
-    String getStoragePassword();
 
     /**
      * Sets cache timeout.
@@ -75,5 +63,19 @@ public interface TicketDefinitionProperties {
      * @param timeout the cache timeout
      */
     void setStorageTimeout(long timeout);
+
+    /**
+     * Describes the credential required to access the storage, if any.
+     *
+     * @return the psw
+     */
+    String getStoragePassword();
+
+    /**
+     * Sets store password if any.
+     *
+     * @param psw the password for the storage.
+     */
+    void setStoragePassword(String psw);
 
 }

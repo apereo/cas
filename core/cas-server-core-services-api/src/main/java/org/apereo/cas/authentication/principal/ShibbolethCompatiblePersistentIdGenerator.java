@@ -1,5 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,10 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

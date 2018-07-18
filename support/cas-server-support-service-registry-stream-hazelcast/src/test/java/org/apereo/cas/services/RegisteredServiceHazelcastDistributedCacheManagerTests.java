@@ -1,9 +1,5 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
@@ -12,9 +8,13 @@ import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPubl
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
-import org.junit.Test;
+
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
+import lombok.val;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
 

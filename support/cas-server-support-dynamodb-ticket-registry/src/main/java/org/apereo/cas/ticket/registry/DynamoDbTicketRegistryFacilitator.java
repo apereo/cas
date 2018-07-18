@@ -1,6 +1,9 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
@@ -20,11 +23,8 @@ import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
-import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
-import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.util.CollectionUtils;
 import org.jooq.lambda.Unchecked;
 
 import java.io.ByteArrayInputStream;
@@ -46,53 +46,20 @@ import java.util.stream.Collectors;
 @Getter
 @RequiredArgsConstructor
 public class DynamoDbTicketRegistryFacilitator {
-    /**
-     * Column names for tables holding tickets.
-     */
-    @Getter
-    public enum ColumnNames {
-
-        /**
-         * id column.
-         */
-        ID("id"),
-        /**
-         * prefix column.
-         */
-        PREFIX("prefix"),
-        /**
-         * creationTime column.
-         */
-        CREATION_TIME("creationTime"),
-        /**
-         * countOfUses column.
-         */
-        COUNT_OF_USES("countOfUses"),
-        /**
-         * timeToLive column.
-         */
-        TIME_TO_LIVE("timeToLive"),
-        /**
-         * timeToIdle column.
-         */
-        TIME_TO_IDLE("timeToIdle"),
-        /**
-         * encoded column.
-         */
-        ENCODED("encoded");
-
-        private final String columnName;
-
-        ColumnNames(final String columnName) {
-            this.columnName = columnName;
-        }
-    }
-
     private final TicketCatalog ticketCatalog;
-
     private final DynamoDbTicketRegistryProperties dynamoDbProperties;
-
     private final AmazonDynamoDB amazonDynamoDBClient;
+
+    private static Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
+        val bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).getB();
+        LOGGER.debug("Located binary encoding of ticket item [{}]. Transforming item into ticket object", returnItem);
+        try (val is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
+            return SerializationUtils.deserialize(is);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
 
     /**
      * Delete.
@@ -179,17 +146,6 @@ public class DynamoDbTicketRegistryFacilitator {
         return null;
     }
 
-    private static Ticket deserializeTicket(final Map<String, AttributeValue> returnItem) {
-        val bb = returnItem.get(ColumnNames.ENCODED.getColumnName()).getB();
-        LOGGER.debug("Located binary encoding of ticket item [{}]. Transforming item into ticket object", returnItem);
-        try (val is = new ByteArrayInputStream(bb.array(), bb.arrayOffset() + bb.position(), bb.remaining())) {
-            return SerializationUtils.deserialize(is);
-        } catch (final Exception e){
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
-    }
-
     /**
      * Put ticket.
      *
@@ -254,5 +210,47 @@ public class DynamoDbTicketRegistryFacilitator {
         values.put(ColumnNames.ENCODED.getColumnName(), new AttributeValue().withB(ByteBuffer.wrap(SerializationUtils.serialize(encTicket))));
         LOGGER.debug("Created attribute values [{}] based on provided ticket [{}]", values, encTicket.getId());
         return values;
+    }
+
+    /**
+     * Column names for tables holding tickets.
+     */
+    @Getter
+    public enum ColumnNames {
+
+        /**
+         * id column.
+         */
+        ID("id"),
+        /**
+         * prefix column.
+         */
+        PREFIX("prefix"),
+        /**
+         * creationTime column.
+         */
+        CREATION_TIME("creationTime"),
+        /**
+         * countOfUses column.
+         */
+        COUNT_OF_USES("countOfUses"),
+        /**
+         * timeToLive column.
+         */
+        TIME_TO_LIVE("timeToLive"),
+        /**
+         * timeToIdle column.
+         */
+        TIME_TO_IDLE("timeToIdle"),
+        /**
+         * encoded column.
+         */
+        ENCODED("encoded");
+
+        private final String columnName;
+
+        ColumnNames(final String columnName) {
+            this.columnName = columnName;
+        }
     }
 }

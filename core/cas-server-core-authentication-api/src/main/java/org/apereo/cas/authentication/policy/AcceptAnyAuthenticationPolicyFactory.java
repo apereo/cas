@@ -1,10 +1,11 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.services.ServiceContext;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Produces authentication policies that passively satisfy any given {@link Authentication}.

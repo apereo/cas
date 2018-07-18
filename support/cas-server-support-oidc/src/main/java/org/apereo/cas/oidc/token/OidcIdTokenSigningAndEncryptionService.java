@@ -1,12 +1,13 @@
 package org.apereo.cas.oidc.token;
 
+import org.apereo.cas.services.OidcRegisteredService;
+
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwk.RsaJsonWebKey;

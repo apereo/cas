@@ -1,9 +1,5 @@
 package org.apereo.cas.support.oauth.web;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -11,6 +7,10 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.code.OAuthCode;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -60,6 +60,15 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("authorizeController")
     private OAuth20AuthorizeEndpointController oAuth20AuthorizeEndpointController;
+
+    protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String name) {
+        val registeredServiceImpl = new OAuthRegisteredService();
+        registeredServiceImpl.setName(name);
+        registeredServiceImpl.setServiceId(serviceId);
+        registeredServiceImpl.setClientId(CLIENT_ID);
+        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(Arrays.asList(FIRST_NAME_ATTRIBUTE)));
+        return registeredServiceImpl;
+    }
 
     @Test
     public void verifyNoClientId() throws Exception {
@@ -463,15 +472,6 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val model = modelAndView.getModel();
         assertEquals(AUTHORIZE_URL, model.get("callbackUrl"));
         assertEquals(SERVICE_NAME, model.get("serviceName"));
-    }
-
-    protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String name) {
-        val registeredServiceImpl = new OAuthRegisteredService();
-        registeredServiceImpl.setName(name);
-        registeredServiceImpl.setServiceId(serviceId);
-        registeredServiceImpl.setClientId(CLIENT_ID);
-        registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(Arrays.asList(FIRST_NAME_ATTRIBUTE)));
-        return registeredServiceImpl;
     }
 
     @Override

@@ -1,15 +1,16 @@
 package org.apereo.cas.oidc.web;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.redirect.RedirectAction;
+
 /**
  * This is {@link OidcCasClientRedirectActionBuilder}.
  *
@@ -31,7 +32,7 @@ public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientR
             renew = false;
             gateway = true;
         } else if (prompts.contains(OidcConstants.PROMPT_LOGIN)
-                || oidcAuthorizationRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(context)) {
+            || oidcAuthorizationRequestSupport.isCasAuthenticationOldForMaxAgeAuthorizationRequest(context)) {
             renew = true;
         }
 

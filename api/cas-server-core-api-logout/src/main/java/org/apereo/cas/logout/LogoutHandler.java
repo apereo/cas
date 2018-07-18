@@ -1,6 +1,7 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.ticket.TicketGrantingTicket;
+
 import org.springframework.core.Ordered;
 
 /**

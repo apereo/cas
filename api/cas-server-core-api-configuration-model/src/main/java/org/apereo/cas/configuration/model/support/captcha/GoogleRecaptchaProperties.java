@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.captcha;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link GoogleRecaptchaProperties}.
@@ -47,9 +49,9 @@ public class GoogleRecaptchaProperties implements Serializable {
      * The google reCAPTCHA badge position (only if invisible is enabled).
      * Accepted values are:
      * <ul>
-     *     <li>{@code bottomright}: default value.</li>
-     *     <li>{@code bottomleft}</li>
-     *     <li>{@code inline}: allows to control the CSS.</li>
+     * <li>{@code bottomright}: default value.</li>
+     * <li>{@code bottomleft}</li>
+     * <li>{@code inline}: allows to control the CSS.</li>
      * </ul>
      */
     private String position = "bottomright";

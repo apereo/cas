@@ -1,10 +1,5 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
-
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
@@ -13,6 +8,11 @@ import org.apereo.cas.util.transforms.GroovyPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.NoOpPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.RegexPrincipalNameTransformer;
+
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link PrincipalNameTransformerUtils}.
@@ -37,7 +37,7 @@ public class PrincipalNameTransformerUtils {
             val t = new GroovyPrincipalNameTransformer(p.getGroovy().getLocation());
             chain.addTransformer(t);
         }
-        
+
         if (StringUtils.isNotBlank(p.getPattern())) {
             val t = new RegexPrincipalNameTransformer(p.getPattern());
             chain.addTransformer(t);

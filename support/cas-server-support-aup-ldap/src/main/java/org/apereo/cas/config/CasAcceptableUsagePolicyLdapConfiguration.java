@@ -1,13 +1,13 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.LdapAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LdapUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -41,7 +41,7 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
         val ldap = casProperties.getAcceptableUsagePolicy().getLdap();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport,
-                casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
-                connectionFactory, ldap.getSearchFilter(), ldap.getBaseDn());
+            casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
+            connectionFactory, ldap.getSearchFilter(), ldap.getBaseDn());
     }
 }

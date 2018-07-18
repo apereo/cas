@@ -1,8 +1,5 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
@@ -10,6 +7,9 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -35,14 +35,51 @@ import static org.mockito.Mockito.*;
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 @Slf4j
 public class PolicyBasedAuthenticationManagerTests {
-
     private static final String HANDLER_A = "HandlerA";
     private static final String HANDLER_B = "HandlerB";
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     private final AuthenticationTransaction transaction = DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(),
         mock(Credential.class), mock(Credential.class));
+
+    /**
+     * Creates a new mock authentication handler that either successfully validates all credentials or fails to
+     * validate all credentials.
+     *
+     * @param success True to authenticate all credentials, false to fail all credentials.
+     * @return New mock authentication handler instance.
+     * @throws Exception On errors.
+     */
+    private static AuthenticationHandler newMockHandler(final boolean success) throws Exception {
+        val name = "MockAuthenticationHandler" + UUID.randomUUID().toString();
+        return newMockHandler(name, success);
+    }
+
+    /**
+     * Creates a new named mock authentication handler that either successfully validates all credentials or fails to
+     * validate all credentials.
+     *
+     * @param name    Authentication handler name.
+     * @param success True to authenticate all credentials, false to fail all credentials.
+     * @return New mock authentication handler instance.
+     * @throws Exception On errors.
+     */
+    private static AuthenticationHandler newMockHandler(final String name, final boolean success) throws Exception {
+        val mock = mock(AuthenticationHandler.class);
+        when(mock.getName()).thenReturn(name);
+        when(mock.supports(any(Credential.class))).thenReturn(true);
+        if (success) {
+            val p = new DefaultPrincipalFactory().createPrincipal("nobody");
+
+            val result = new DefaultAuthenticationHandlerExecutionResult(mock, mock(CredentialMetaData.class), p);
+            when(mock.authenticate(any(Credential.class))).thenReturn(result);
+        } else {
+            when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());
+        }
+        return mock;
+    }
 
     @Test
     public void verifyAuthenticateAnySuccess() throws Exception {
@@ -183,43 +220,6 @@ public class PolicyBasedAuthenticationManagerTests {
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(1, auth.getFailures().size());
         assertEquals(2, auth.getCredentials().size());
-    }
-
-    /**
-     * Creates a new mock authentication handler that either successfully validates all credentials or fails to
-     * validate all credentials.
-     *
-     * @param success True to authenticate all credentials, false to fail all credentials.
-     * @return New mock authentication handler instance.
-     * @throws Exception On errors.
-     */
-    private static AuthenticationHandler newMockHandler(final boolean success) throws Exception {
-        val name = "MockAuthenticationHandler" + UUID.randomUUID().toString();
-        return newMockHandler(name, success);
-    }
-
-    /**
-     * Creates a new named mock authentication handler that either successfully validates all credentials or fails to
-     * validate all credentials.
-     *
-     * @param name    Authentication handler name.
-     * @param success True to authenticate all credentials, false to fail all credentials.
-     * @return New mock authentication handler instance.
-     * @throws Exception On errors.
-     */
-    private static AuthenticationHandler newMockHandler(final String name, final boolean success) throws Exception {
-        val mock = mock(AuthenticationHandler.class);
-        when(mock.getName()).thenReturn(name);
-        when(mock.supports(any(Credential.class))).thenReturn(true);
-        if (success) {
-            val p = new DefaultPrincipalFactory().createPrincipal("nobody");
-
-            val result = new DefaultAuthenticationHandlerExecutionResult(mock, mock(CredentialMetaData.class), p);
-            when(mock.authenticate(any(Credential.class))).thenReturn(result);
-        } else {
-            when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());
-        }
-        return mock;
     }
 
     private AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(final Map<AuthenticationHandler, PrincipalResolver> map) {

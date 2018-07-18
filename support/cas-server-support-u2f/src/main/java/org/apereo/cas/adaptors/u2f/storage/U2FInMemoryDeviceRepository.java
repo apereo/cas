@@ -1,11 +1,10 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import lombok.val;
-
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.List;
 import java.util.Map;

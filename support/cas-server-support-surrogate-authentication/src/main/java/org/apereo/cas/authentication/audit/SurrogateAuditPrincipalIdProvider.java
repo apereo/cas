@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.audit;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.DefaultAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * This is {@link SurrogateAuditPrincipalIdProvider}.

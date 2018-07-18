@@ -1,14 +1,14 @@
 package org.apereo.cas.consent;
 
-import lombok.val;
-
-import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -29,14 +29,6 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Override
-    @SneakyThrows
-    public LDAPConnection getConnection() {
-        return new LDAPConnection("localhost", LDAP_PORT,
-            casProperties.getConsent().getLdap().getBindDn(),
-            casProperties.getConsent().getLdap().getBindCredential());
-    }
-
     @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
@@ -46,5 +38,13 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
             localhost,
             new ClassPathResource("ldif/ldap-consent.ldif").getInputStream(),
             "ou=people,dc=example,dc=org");
+    }
+
+    @Override
+    @SneakyThrows
+    public LDAPConnection getConnection() {
+        return new LDAPConnection("localhost", LDAP_PORT,
+            casProperties.getConsent().getLdap().getBindDn(),
+            casProperties.getConsent().getLdap().getBindCredential());
     }
 }

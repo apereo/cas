@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.util.MockWebServer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.util.MockWebServer;
 import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;

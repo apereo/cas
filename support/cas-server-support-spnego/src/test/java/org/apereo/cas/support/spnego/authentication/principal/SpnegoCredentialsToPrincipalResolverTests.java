@@ -1,12 +1,13 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.junit.Test;
+
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.util.Optional;
 
@@ -33,8 +34,8 @@ public class SpnegoCredentialsToPrincipalResolverTests {
     public void verifyValidCredentials() {
         this.spnegoCredentials.setPrincipal(new DefaultPrincipalFactory().createPrincipal("test"));
         assertEquals("test", this.resolver.resolve(this.spnegoCredentials,
-                Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
-                    Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler())).getId());
+            Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler())).getId());
     }
 
     @Test

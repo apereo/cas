@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa.adaptive;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -19,6 +16,9 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
@@ -52,8 +52,8 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
                                                              final MultifactorAuthenticationProviderSelector selector,
                                                              final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService,
-                servicesManager, ticketRegistrySupport, warnCookieGenerator,
-                authenticationSelectionStrategies, selector);
+            servicesManager, ticketRegistrySupport, warnCookieGenerator,
+            authenticationSelectionStrategies, selector);
         this.timedMultifactor = casProperties.getAuthn().getAdaptive().getRequireTimedMultifactor();
     }
 
@@ -73,7 +73,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
         }
 
         val providerMap =
-                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
@@ -95,33 +95,33 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
         val now = LocalDateTime.now();
         val dow = DayOfWeek.from(now);
         val dayNamesForToday = Arrays.stream(TextStyle.values())
-                .map(style -> dow.getDisplayName(style, Locale.getDefault()))
-                .collect(Collectors.toList());
+            .map(style -> dow.getDisplayName(style, Locale.getDefault()))
+            .collect(Collectors.toList());
 
         val providerMap =
-                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         val timed = this.timedMultifactor.stream()
-                .filter(t -> {
-                    var providerEvent = false;
-                    if (!t.getOnDays().isEmpty()) {
-                        providerEvent = t.getOnDays().stream().filter(dayNamesForToday::contains).findAny().isPresent();
-                    }
-                    if (t.getOnOrAfterHour() >= 0) {
-                        providerEvent = now.getHour() >= t.getOnOrAfterHour();
-                    }
-                    if (t.getOnOrBeforeHour() >= 0) {
-                        providerEvent = now.getHour() <= t.getOnOrBeforeHour();
-                    }
-                    return providerEvent;
-                })
-                .findFirst()
-                .orElse(null);
+            .filter(t -> {
+                var providerEvent = false;
+                if (!t.getOnDays().isEmpty()) {
+                    providerEvent = t.getOnDays().stream().filter(dayNamesForToday::contains).findAny().isPresent();
+                }
+                if (t.getOnOrAfterHour() >= 0) {
+                    providerEvent = now.getHour() >= t.getOnOrAfterHour();
+                }
+                if (t.getOnOrBeforeHour() >= 0) {
+                    providerEvent = now.getHour() <= t.getOnOrBeforeHour();
+                }
+                return providerEvent;
+            })
+            .findFirst()
+            .orElse(null);
 
         if (timed != null) {
             val providerFound = resolveProvider(providerMap, timed.getProviderId());
             if (!providerFound.isPresent()) {
                 LOGGER.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] absent in the configuration.",
-                        timed.getProviderId(), service, timed.getProviderId());
+                    timed.getProviderId(), service, timed.getProviderId());
                 throw new AuthenticationException();
             }
             return buildEvent(context, service, authentication, providerFound.get());
@@ -134,9 +134,9 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
                                   final MultifactorAuthenticationProvider provider) {
         if (provider.isAvailable(service)) {
             LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                    provider, service.getName());
+                provider, service.getName());
             val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
-                    buildEventAttributeMap(authentication.getPrincipal(), service, provider));
+                buildEventAttributeMap(authentication.getPrincipal(), service, provider));
             return CollectionUtils.wrapSet(event);
         }
         LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);
@@ -144,8 +144,8 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
     }
 
     @Audit(action = "AUTHENTICATION_EVENT",
-            actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
-            resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+        resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);

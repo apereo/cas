@@ -1,9 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.soap;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
@@ -13,6 +9,10 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -46,7 +46,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
                                                      final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
                                                      final SamlObjectEncrypter samlObjectEncrypter) {
         super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory,
-                samlProfileSamlAssertionBuilder, saml2ResponseBuilder, samlObjectEncrypter);
+            samlProfileSamlAssertionBuilder, saml2ResponseBuilder, samlObjectEncrypter);
     }
 
 

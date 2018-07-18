@@ -1,11 +1,11 @@
 package org.apereo.cas.oidc.web;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.util.Pac4jUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.SecurityInterceptor;
 

@@ -1,11 +1,11 @@
 package org.apereo.cas.support.spnego;
 
-import java.security.Principal;
-
 import jcifs.spnego.Authentication;
 import jcifs.spnego.AuthenticationException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import java.security.Principal;
 
 /**
  * @author Marc-Antoine Garrigue

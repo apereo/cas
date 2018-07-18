@@ -1,7 +1,6 @@
 package org.apereo.cas.audit.spi;
 
 import lombok.val;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;

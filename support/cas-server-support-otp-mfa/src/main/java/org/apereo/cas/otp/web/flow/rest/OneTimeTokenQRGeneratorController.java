@@ -1,9 +1,9 @@
 package org.apereo.cas.otp.web.flow.rest;
 
-import lombok.val;
+import org.apereo.cas.util.QRUtils;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.QRUtils;
+import lombok.val;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

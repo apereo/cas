@@ -1,12 +1,11 @@
 package org.apereo.cas.configuration;
 
-import lombok.val;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
@@ -33,6 +32,34 @@ public class CasConfigurationPropertiesEnvironmentManager {
     private final ConfigurationPropertiesBindingPostProcessor binder;
 
     private final Environment environment;
+
+    /**
+     * Rebind cas configuration properties.
+     *
+     * @param binder             the binder
+     * @param applicationContext the application context
+     */
+    public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder,
+                                                        final ApplicationContext applicationContext) {
+
+        val map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
+        val name = map.keySet().iterator().next();
+        LOGGER.debug("Reloading CAS configuration via [{}]", name);
+        val e = applicationContext.getBean(name);
+        binder.postProcessBeforeInitialization(e, name);
+        val bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
+        applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
+        LOGGER.debug("Reloaded CAS configuration [{}]", name);
+    }
+
+    /**
+     * Rebind cas configuration properties.
+     *
+     * @param applicationContext the application context
+     */
+    public void rebindCasConfigurationProperties(final ApplicationContext applicationContext) {
+        rebindCasConfigurationProperties(this.binder, applicationContext);
+    }
 
     /**
      * Gets standalone profile configuration directory.
@@ -75,31 +102,4 @@ public class CasConfigurationPropertiesEnvironmentManager {
         builder.save();
     }
 
-    /**
-     * Rebind cas configuration properties.
-     *
-     * @param applicationContext the application context
-     */
-    public void rebindCasConfigurationProperties(final ApplicationContext applicationContext) {
-        rebindCasConfigurationProperties(this.binder, applicationContext);
-    }
-
-    /**
-     * Rebind cas configuration properties.
-     *
-     * @param binder             the binder
-     * @param applicationContext the application context
-     */
-    public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder,
-                                                        final ApplicationContext applicationContext) {
-
-        val map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
-        val name = map.keySet().iterator().next();
-        LOGGER.debug("Reloading CAS configuration via [{}]", name);
-        val e = applicationContext.getBean(name);
-        binder.postProcessBeforeInitialization(e, name);
-        val bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
-        applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
-        LOGGER.debug("Reloaded CAS configuration [{}]", name);
-    }
 }
