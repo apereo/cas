@@ -84,7 +84,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             throw new FailedLoginException();
         }
         val strategy = getPasswordPolicyHandlingStrategy();
-        if (org.apache.commons.lang3.StringUtils.isNotBlank(username) && strategy != null) {
+        if (strategy != null && StringUtils.isNotBlank(username)) {
             LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
             val principal = this.principalFactory.createPrincipal(username);
             val messageList = strategy.handle(principal, getPasswordPolicyConfiguration());

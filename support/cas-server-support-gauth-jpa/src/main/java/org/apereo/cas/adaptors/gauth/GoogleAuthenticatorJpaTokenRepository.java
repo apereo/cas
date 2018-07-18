@@ -36,7 +36,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public void cleanInternal() {
         val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName()
-            + " r where r.issuedDateTime>= :expired")
+            + " r WHERE r.issuedDateTime>= :expired")
             .setParameter("expired", LocalDateTime.now().minusSeconds(this.expireTokensInSeconds))
             .executeUpdate();
         LOGGER.debug("Deleted [{}] expired previously used token record(s)", count);
@@ -52,7 +52,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
         try {
             val r =
                 this.entityManager.createQuery("SELECT r FROM " + GoogleAuthenticatorToken.class.getSimpleName()
-                    + " r where r.userId = :userId and r.token = :token", GoogleAuthenticatorToken.class)
+                    + " r WHERE r.userId = :userId and r.token = :token", GoogleAuthenticatorToken.class)
                     .setParameter("userId", uid)
                     .setParameter("token", otp)
                     .getSingleResult();
@@ -66,7 +66,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     @Override
     public void remove(final String uid, final Integer otp) {
         val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName()
-            + " r where r.userId = :userId and r.token = :token")
+            + " r WHERE r.userId = :userId and r.token = :token")
             .setParameter("userId", uid)
             .setParameter("token", otp)
             .executeUpdate();
@@ -75,7 +75,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
 
     @Override
     public void remove(final String uid) {
-        val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName() + " r where r.userId= :userId")
+        val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
             .setParameter("userId", uid)
             .executeUpdate();
         LOGGER.debug("Deleted [{}] token record(s)", count);
@@ -83,9 +83,26 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
 
     @Override
     public void remove(final Integer otp) {
-        val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName() + " r where r.token= :token")
+        val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.token= :token")
             .setParameter("token", otp)
             .executeUpdate();
         LOGGER.debug("Deleted [{}] token record(s)", count);
+    }
+
+    @Override
+    public long count(final String uid) {
+        val count = (Number) this.entityManager.createQuery("SELECT COUNT(r.userId) FROM "
+            + GoogleAuthenticatorToken.class.getSimpleName() + " r WHERE r.userId= :userId")
+            .setParameter("userId", uid)
+            .getSingleResult();
+        LOGGER.debug("Counted [{}] token record(s) for [{}]", count, uid);
+        return count.longValue();
+    }
+
+    @Override
+    public long count() {
+        val count = (Number) this.entityManager.createQuery("SELECT COUNT(r.userId) FROM " + GoogleAuthenticatorToken.class.getSimpleName() + " r").getSingleResult();
+        LOGGER.debug("Counted [{}] token record(s)", count);
+        return count.longValue();
     }
 }
