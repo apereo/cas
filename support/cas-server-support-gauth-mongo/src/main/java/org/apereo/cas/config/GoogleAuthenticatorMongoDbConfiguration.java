@@ -49,7 +49,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
         final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
         final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        factory.createCollection(mongoTemplate, mongo.getTokenCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
 
