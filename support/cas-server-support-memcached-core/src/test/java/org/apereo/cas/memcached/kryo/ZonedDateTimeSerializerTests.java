@@ -3,8 +3,6 @@ package org.apereo.cas.memcached.kryo;
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import lombok.val;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -15,7 +13,6 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(JUnit4.class)
 public class ZonedDateTimeSerializerTests {
 
     @Test
