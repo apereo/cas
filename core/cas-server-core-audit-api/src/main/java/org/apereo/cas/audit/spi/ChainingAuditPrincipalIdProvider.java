@@ -1,12 +1,11 @@
 package org.apereo.cas.audit.spi;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,10 +16,11 @@ import java.util.List;
  */
 @Getter
 @Slf4j
+@RequiredArgsConstructor
 public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvider {
     private int order = Integer.MAX_VALUE;
 
-    private List<AuditPrincipalIdProvider> providers = new ArrayList<>();
+    private final List<AuditPrincipalIdProvider> providers;
 
     /**
      * Add provider.
@@ -31,9 +31,17 @@ public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvide
         providers.add(provider);
     }
 
+    /**
+     * Add providers.
+     *
+     * @param provider the provider
+     */
+    public void addProviders(final List<AuditPrincipalIdProvider> provider) {
+        providers.addAll(provider);
+    }
+
     @Override
     public String getPrincipalIdFrom(final Authentication authentication, final Object resultValue, final Exception exception) {
-        AnnotationAwareOrderComparator.sort(this.providers);
         final AuditPrincipalIdProvider result = providers.stream()
             .filter(p -> p.supports(authentication, resultValue, exception))
             .findFirst()
