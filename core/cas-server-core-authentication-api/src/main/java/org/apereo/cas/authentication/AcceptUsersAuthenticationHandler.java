@@ -84,7 +84,7 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             throw new FailedLoginException();
         }
         final AuthenticationPasswordPolicyHandlingStrategy strategy = getPasswordPolicyHandlingStrategy();
-        if (StringUtils.isNotBlank(username) && strategy != null) {
+        if (strategy != null && StringUtils.isNotBlank(username)) {
             LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
             final Principal principal = this.principalFactory.createPrincipal(username);
             final List<MessageDescriptor> messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
