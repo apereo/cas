@@ -55,4 +55,37 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
             LOGGER.warn(e.getMessage(), e);
         }
     }
+
+    @Override
+    public void remove(final String uid, final Integer otp) {
+        try {
+            val query = new Query();
+            query.addCriteria(Criteria.where("userId").is(uid).and("token").is(otp));
+            this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void remove(final String uid) {
+        try {
+            val query = new Query();
+            query.addCriteria(Criteria.where("userId").is(uid));
+            this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void remove(final Integer otp) {
+        try {
+            val query = new Query();
+            query.addCriteria(Criteria.where("token").is(otp));
+            this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+    }
 }

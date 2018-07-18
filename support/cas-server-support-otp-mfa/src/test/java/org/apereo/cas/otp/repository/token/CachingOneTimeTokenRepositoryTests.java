@@ -77,5 +77,9 @@ public class CachingOneTimeTokenRepositoryTests {
         repository.store(token);
         repository.clean();
         assertTrue(repository.exists("casuser", 1234));
+        repository.remove("casuser");
+        repository.remove(1234);
+        repository.remove("casuser", 1234);
+        assertNull(repository.get("casuser", 1234));
     }
 }
