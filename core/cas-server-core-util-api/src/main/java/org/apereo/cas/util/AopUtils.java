@@ -10,7 +10,6 @@ import org.aspectj.lang.JoinPoint;
  *
  * @author Marvin S. Addison
  * @since 3.4
- *
  */
 @Slf4j
 @UtilityClass

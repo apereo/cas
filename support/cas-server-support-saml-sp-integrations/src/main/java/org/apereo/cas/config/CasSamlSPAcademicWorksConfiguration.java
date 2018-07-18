@@ -1,8 +1,9 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasSamlSPAcademicWorksConfiguration extends BaseCasSamlSPConfiguration {
-    
+
     @Override
     protected AbstractSamlSPProperties getServiceProvider() {
         return casProperties.getSamlSp().getAcademicWorks();

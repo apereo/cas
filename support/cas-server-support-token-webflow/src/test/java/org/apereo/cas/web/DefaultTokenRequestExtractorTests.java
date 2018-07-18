@@ -1,9 +1,9 @@
 package org.apereo.cas.web;
 
-import lombok.val;
+import org.apereo.cas.token.TokenConstants;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.token.TokenConstants;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 

@@ -1,16 +1,17 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.DateTimeUtils;
+import lombok.val;
+
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import lombok.Getter;
 
 /**
  * The {@link TimeBasedRegisteredServiceAccessStrategy} is responsible for
@@ -42,7 +43,7 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
     public TimeBasedRegisteredServiceAccessStrategy(final boolean enabled, final boolean ssoEnabled) {
         super(enabled, ssoEnabled);
     }
-    
+
     @Override
     public boolean isServiceAccessAllowed() {
         if (!doesStartingTimeAllowServiceAccess()) {

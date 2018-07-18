@@ -1,10 +1,11 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 import javax.servlet.http.HttpServletRequest;

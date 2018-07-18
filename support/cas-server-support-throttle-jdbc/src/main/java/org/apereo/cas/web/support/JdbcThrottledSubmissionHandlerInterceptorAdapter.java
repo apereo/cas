@@ -1,9 +1,9 @@
 package org.apereo.cas.web.support;
 
-import lombok.val;
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.jdbc.core.JdbcTemplate;
 

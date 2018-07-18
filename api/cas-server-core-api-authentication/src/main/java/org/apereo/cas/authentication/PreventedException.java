@@ -27,7 +27,7 @@ public class PreventedException extends Exception {
      * Creates a new instance with an explanatory message and the exception that prevented authentication.
      *
      * @param message Descriptive error message.
-     * @param cause Error that prevented authentication.
+     * @param cause   Error that prevented authentication.
      */
     public PreventedException(final String message, final Throwable cause) {
         super(message, cause);

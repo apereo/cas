@@ -1,5 +1,7 @@
 package org.apereo.cas.mongo;
 
+import org.apereo.cas.util.DateTimeUtils;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -9,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.bson.BsonReader;
 import org.bson.BsonTimestamp;

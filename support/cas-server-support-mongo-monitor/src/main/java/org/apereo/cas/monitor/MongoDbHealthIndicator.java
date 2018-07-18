@@ -1,8 +1,7 @@
 package org.apereo.cas.monitor;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;

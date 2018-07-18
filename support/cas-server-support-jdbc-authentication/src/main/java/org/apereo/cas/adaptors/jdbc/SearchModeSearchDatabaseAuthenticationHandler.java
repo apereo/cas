@@ -1,13 +1,13 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.dao.DataAccessException;
 
 import javax.security.auth.login.FailedLoginException;
@@ -28,7 +28,7 @@ import java.util.ArrayList;
  */
 @Slf4j
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
-    
+
     private final String fieldUser;
     private final String fieldPassword;
     private final String tableUsers;
@@ -45,7 +45,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+        throws GeneralSecurityException, PreventedException {
 
         val sql = "SELECT COUNT('x') FROM ".concat(this.tableUsers).concat(" WHERE ").concat(this.fieldUser)
             .concat(" = ? AND ").concat(this.fieldPassword).concat("= ?");

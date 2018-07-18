@@ -1,0 +1,73 @@
+<code_scheme name="Default copy" version="173">
+  <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999" />
+  <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
+    <value>
+      <package name="java.io" withSubpackages="false" static="false" />
+      <package name="                       java.net" withSubpackages="false" static="false" />
+      <package name="                       java.lang.Math" withSubpackages="false" static="false" />
+      <package name="                       org.junit.Assert" withSubpackages="false" static="false" />
+      <package name="                       org.mockito.Mockito" withSubpackages="false" static="false" />
+      <package name="                       org.mockito.Matchers" withSubpackages="false" static="false" />
+      <package name="                       org.springframework.test.web.servlet.request.MockMvcRequestBuilders" withSubpackages="false" static="false" />
+      <package name="                       org.springframework.test.web.servlet.result.MockMvcResultMatchers" withSubpackages="false" static="false" />
+      <package name="                       org.springframework.test.web.client.ExpectedCount" withSubpackages="false" static="false" />
+      <package name="                       org.springframework.test.web.client.match.MockRestRequestMatchers" withSubpackages="false" static="false" />
+      <package name="                       org.springframework.test.web.client.response.MockRestResponseCreators" withSubpackages="false" static="false" />
+      <package name="                       java.nio.file.StandardWatchEventKinds" withSubpackages="false" static="false" />
+    </value>
+  </option>
+  <option name="IMPORT_LAYOUT_TABLE">
+    <value>
+      <package name="" withSubpackages="true" static="false" />
+      <package name="javax" withSubpackages="true" static="false" />
+      <package name="java" withSubpackages="true" static="false" />
+      <package name="" withSubpackages="true" static="true" />
+      <package name="" withSubpackages="true" static="false" />
+    </value>
+  </option>
+  <option name="RIGHT_MARGIN" value="280" />
+  <JavaCodeStyleSettings>
+    <option name="GENERATE_FINAL_LOCALS" value="true" />
+    <option name="GENERATE_FINAL_PARAMETERS" value="true" />
+    <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999" />
+    <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="999" />
+    <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
+      <value>
+        <package name="org.junit.Assert" withSubpackages="true" static="true" />
+        <package name="org.springframework.test.web.servlet.request.MockMvcRequestBuilders" withSubpackages="true" static="true" />
+        <package name="org.springframework.test.web.servlet.result.MockMvcResultMatchers" withSubpackages="true" static="true" />
+        <package name="org.mockito.ArgumentMatchers" withSubpackages="true" static="true" />
+        <package name="org.hamcrest.Matchers" withSubpackages="true" static="true" />
+        <package name="org.mockito.Mockito" withSubpackages="true" static="true" />
+      </value>
+    </option>
+    <option name="IMPORT_LAYOUT_TABLE">
+      <value>
+        <package name="org.apereo.cas" withSubpackages="true" static="false" />
+        <emptyLine />
+        <package name="" withSubpackages="true" static="false" />
+        <emptyLine />
+        <package name="javax" withSubpackages="true" static="false" />
+        <package name="java" withSubpackages="true" static="false" />
+        <emptyLine />
+        <package name="" withSubpackages="true" static="true" />
+      </value>
+    </option>
+  </JavaCodeStyleSettings>
+  <MarkdownNavigatorCodeStyleSettings>
+    <option name="RIGHT_MARGIN" value="72" />
+  </MarkdownNavigatorCodeStyleSettings>
+  <editorconfig>
+    <option name="ENABLED" value="false" />
+  </editorconfig>
+  <codeStyleSettings language="JAVA">
+    <option name="RIGHT_MARGIN" value="190" />
+    <option name="IF_BRACE_FORCE" value="3" />
+    <option name="DOWHILE_BRACE_FORCE" value="3" />
+    <option name="WHILE_BRACE_FORCE" value="3" />
+    <option name="FOR_BRACE_FORCE" value="3" />
+    <indentOptions>
+      <option name="CONTINUATION_INDENT_SIZE" value="4" />
+    </indentOptions>
+  </codeStyleSettings>
+</code_scheme>

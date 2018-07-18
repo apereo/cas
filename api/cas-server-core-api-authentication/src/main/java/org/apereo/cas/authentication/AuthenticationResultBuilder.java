@@ -51,7 +51,7 @@ public interface AuthenticationResultBuilder extends Serializable {
      * Build authentication result.
      *
      * @param principalElectionStrategy a principalElectionStrategy to use
-     * @param service the service
+     * @param service                   the service
      * @return the authentication result
      */
     AuthenticationResult build(PrincipalElectionStrategy principalElectionStrategy, Service service);

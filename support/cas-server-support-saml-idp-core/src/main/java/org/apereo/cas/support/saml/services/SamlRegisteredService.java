@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.RegexRegisteredService;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -7,8 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import javax.persistence.CollectionTable;
@@ -101,10 +102,10 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private String metadataCriteriaRoles = SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME;
 
-    @Column(name="mdCriteriaRmEmptyEntities")
+    @Column(name = "mdCriteriaRmEmptyEntities")
     private boolean metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
 
-    @Column(name="mdCriteriaRmRolelessEntities")
+    @Column(name = "mdCriteriaRmRolelessEntities")
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
 
     @Column

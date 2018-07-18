@@ -1,14 +1,15 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.authentication.Credential;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.Credential;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * This is {@link YubiKeyCredential}.
@@ -33,7 +34,7 @@ public class YubiKeyCredential implements Credential {
     public String getId() {
         return this.token;
     }
-    
+
     public boolean isValid() {
         return StringUtils.isNotBlank(this.token);
     }

@@ -1,11 +1,12 @@
 package org.apereo.cas.audit.spi;
 
+import org.apereo.cas.audit.AuditPrincipalIdProvider;
+import org.apereo.cas.authentication.Authentication;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.audit.AuditPrincipalIdProvider;
-import org.apereo.cas.authentication.Authentication;
 
 import java.util.List;
 
@@ -19,9 +20,8 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvider {
-    private int order = Integer.MAX_VALUE;
-
     private final List<AuditPrincipalIdProvider> providers;
+    private int order = Integer.MAX_VALUE;
 
     /**
      * Add provider.

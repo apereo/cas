@@ -6,11 +6,13 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchPropert
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
-import java.time.temporal.ChronoUnit;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
+import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link ConsentProperties}.

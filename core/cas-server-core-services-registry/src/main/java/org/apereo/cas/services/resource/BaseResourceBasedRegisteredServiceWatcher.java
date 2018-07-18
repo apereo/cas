@@ -1,8 +1,9 @@
 package org.apereo.cas.services.resource;
 
+import org.apereo.cas.services.RegisteredService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.RegisteredService;
 
 import java.io.File;
 import java.util.function.Consumer;

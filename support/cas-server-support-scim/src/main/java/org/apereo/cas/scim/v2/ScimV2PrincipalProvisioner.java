@@ -1,16 +1,16 @@
 package org.apereo.cas.scim.v2;
 
-import lombok.val;
+import org.apereo.cas.api.PrincipalProvisioner;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
 
 import com.unboundid.scim2.client.ScimService;
 import com.unboundid.scim2.common.types.UserResource;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.api.PrincipalProvisioner;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
@@ -36,7 +36,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
         val config = new ClientConfig();
         val connectorProvider = new ApacheConnectorProvider();
         config.connectorProvider(connectorProvider);
-        
+
         val client = ClientBuilder.newClient(config);
 
         if (StringUtils.isNotBlank(oauthToken)) {

@@ -8,6 +8,7 @@
  * ServiceRegistryReloader.</p>
  * <p>CAS itself is protected by a group of interceptors found in the
  * subpackage advice.</p>
+ *
  * @since 3.0
  */
 package org.apereo.cas.services;

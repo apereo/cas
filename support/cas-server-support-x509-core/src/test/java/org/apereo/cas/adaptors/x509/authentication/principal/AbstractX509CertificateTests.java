@@ -1,9 +1,10 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
+
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Marvin S. Addison

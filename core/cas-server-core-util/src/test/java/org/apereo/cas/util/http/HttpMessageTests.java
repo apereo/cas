@@ -1,14 +1,13 @@
 package org.apereo.cas.util.http;
 
-import static org.junit.Assert.*;
-
-import java.net.URL;
-
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
+import java.net.URL;
+
+import static org.junit.Assert.*;
+
 /**
- *
  * @author Francesco Cina
  * @since 4.1
  */

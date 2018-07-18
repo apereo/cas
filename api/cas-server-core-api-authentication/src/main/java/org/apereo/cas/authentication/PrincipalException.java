@@ -14,19 +14,22 @@ import java.util.Map;
 @Slf4j
 public class PrincipalException extends AuthenticationException {
 
-    /** Serialization metadata. */
+    /**
+     * Serialization metadata.
+     */
     private static final long serialVersionUID = -6590363469748313596L;
 
     /**
      * Creates a new instance.
-     * @param message Error message.
-     * @param handlerErrors Map of handler names to errors.
+     *
+     * @param message          Error message.
+     * @param handlerErrors    Map of handler names to errors.
      * @param handlerSuccesses Map of handler names to authentication successes.
      */
     public PrincipalException(
-            final String message,
-            final Map<String, Throwable> handlerErrors,
-            final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
+        final String message,
+        final Map<String, Throwable> handlerErrors,
+        final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
         super(message, handlerErrors, handlerSuccesses);
     }
 }

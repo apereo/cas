@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
 
 /**
  * Common properties for all cookie configs.

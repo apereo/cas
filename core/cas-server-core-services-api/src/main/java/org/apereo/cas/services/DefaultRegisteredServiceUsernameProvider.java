@@ -1,13 +1,15 @@
 package org.apereo.cas.services;
 
-import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Resolves the username for the service to be the default principal id.
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */

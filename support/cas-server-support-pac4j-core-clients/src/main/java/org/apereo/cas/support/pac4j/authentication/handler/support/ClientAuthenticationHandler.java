@@ -1,8 +1,5 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
@@ -12,6 +9,9 @@ import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractP
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.exception.HttpAction;
 

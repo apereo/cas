@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
-import lombok.RequiredArgsConstructor;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.LinkedHashMap;

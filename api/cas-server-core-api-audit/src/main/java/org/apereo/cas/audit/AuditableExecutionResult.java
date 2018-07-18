@@ -1,9 +1,5 @@
 package org.apereo.cas.audit;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
@@ -11,9 +7,16 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.val;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
+
 
 /**
  * This is {@link AuditableExecutionResult}.
@@ -74,6 +77,24 @@ public class AuditableExecutionResult {
     @Builder.Default
     private Map<String, Object> properties = new TreeMap<>();
 
+    /**
+     * Of auditable execution result.
+     *
+     * @param context the context
+     * @return the auditable execution result
+     */
+    public static AuditableExecutionResult of(final AuditableContext context) {
+        val builder = AuditableExecutionResult.builder();
+        context.getTicketGrantingTicket().ifPresent(builder::ticketGrantingTicket);
+        context.getAuthentication().ifPresent(builder::authentication);
+        context.getAuthenticationResult().ifPresent(builder::authenticationResult);
+        context.getRegisteredService().ifPresent(builder::registeredService);
+        context.getService().ifPresent(builder::service);
+        context.getServiceTicket().ifPresent(builder::serviceTicket);
+        builder.properties(context.getProperties());
+        return builder.build();
+    }
+
     public boolean isExecutionFailure() {
         return getException().isPresent();
     }
@@ -95,94 +116,6 @@ public class AuditableExecutionResult {
      */
     public void addProperty(final String name, final Object value) {
         this.properties.put(name, value);
-    }
-
-    /**
-     * Factory method to create a result.
-     *
-     * @param e                 the exception
-     * @param authentication    the authentication
-     * @param service           the service
-     * @param registeredService the registered service
-     * @return the auditable execution result
-     */
-    public static AuditableExecutionResult of(final RuntimeException e, final Authentication authentication,
-                                              final Service service, final RegisteredService registeredService) {
-        return AuditableExecutionResult.builder()
-            .registeredService(registeredService)
-            .authentication(authentication)
-            .service(service)
-            .exception(e)
-            .build();
-    }
-
-    /**
-     * Factory method to create a result.
-     *
-     * @param authentication    the authentication
-     * @param service           the service
-     * @param registeredService the registered service
-     * @return the auditable execution result
-     */
-    public static AuditableExecutionResult of(final Authentication authentication,
-                                              final Service service, final RegisteredService registeredService) {
-        return AuditableExecutionResult.builder()
-            .registeredService(registeredService)
-            .service(service)
-            .authentication(authentication)
-            .build();
-    }
-
-    /**
-     * Of auditable execution result.
-     *
-     * @param serviceTicket        the service ticket
-     * @param authenticationResult the authentication result
-     * @param registeredService    the registered service
-     * @return the auditable execution result
-     */
-    public static AuditableExecutionResult of(final ServiceTicket serviceTicket, final AuthenticationResult authenticationResult,
-                                              final RegisteredService registeredService) {
-        return AuditableExecutionResult.builder()
-            .registeredService(registeredService)
-            .serviceTicket(serviceTicket)
-            .authenticationResult(authenticationResult)
-            .build();
-    }
-
-    /**
-     * Of auditable execution result.
-     *
-     * @param service              the service
-     * @param registeredService    the registered service
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @return the auditable execution result
-     */
-    public static AuditableExecutionResult of(final Service service, final RegisteredService registeredService, final TicketGrantingTicket ticketGrantingTicket) {
-        return AuditableExecutionResult.builder()
-            .registeredService(registeredService)
-            .service(service)
-            .ticketGrantingTicket(ticketGrantingTicket)
-            .build();
-    }
-    
-    /**
-     * Of auditable execution result.
-     *
-     * @param context the context
-     * @return the auditable execution result
-     */
-    public static AuditableExecutionResult of(final AuditableContext context) {
-        return AuditableExecutionResult.builder()
-            .registeredService(context.getRegisteredService().orElseGet(null))
-            .ticketGrantingTicket(context.getTicketGrantingTicket().orElseGet(null))
-            .authentication(context.getAuthentication().orElseGet(null))
-            .authenticationResult(context.getAuthenticationResult().orElseGet(null))
-            .service(context.getService().orElseGet(null))
-            .serviceTicket(context.getServiceTicket().orElseGet(null))
-            .serviceTicket(context.getServiceTicket().orElseGet(null))
-            .properties(context.getProperties())
-            .build();
     }
 
     /**

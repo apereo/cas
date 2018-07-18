@@ -8,7 +8,6 @@ import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 @Slf4j

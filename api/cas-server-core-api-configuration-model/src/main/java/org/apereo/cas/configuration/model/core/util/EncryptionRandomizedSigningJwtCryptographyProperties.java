@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.core.util;
 
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * Common properties for all cryptography related configs.

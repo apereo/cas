@@ -1,9 +1,9 @@
 package org.apereo.cas.token;
 
-import lombok.val;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import com.nimbusds.jwt.JWTParser;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 

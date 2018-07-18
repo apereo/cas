@@ -1,9 +1,8 @@
 package org.apereo.cas.memcached.kryo;
 
-import lombok.val;
-
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;

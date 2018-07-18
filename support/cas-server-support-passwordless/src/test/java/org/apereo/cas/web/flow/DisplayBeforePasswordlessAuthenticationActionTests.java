@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

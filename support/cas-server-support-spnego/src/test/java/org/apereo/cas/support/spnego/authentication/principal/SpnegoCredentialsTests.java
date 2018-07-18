@@ -1,9 +1,9 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import lombok.val;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -20,13 +20,13 @@ public class SpnegoCredentialsTests {
 
     @Test
     public void verifyToStringWithNoPrincipal() {
-        val credentials = new SpnegoCredential(new byte[] {});
+        val credentials = new SpnegoCredential(new byte[]{});
         assertTrue(credentials.getId().contains("unknown"));
     }
 
     @Test
     public void verifyToStringWithPrincipal() {
-        val credentials = new SpnegoCredential(new byte[] {});
+        val credentials = new SpnegoCredential(new byte[]{});
         val principal = new DefaultPrincipalFactory().createPrincipal("test");
         credentials.setPrincipal(principal);
         assertEquals("test", credentials.getId());
@@ -37,11 +37,11 @@ public class SpnegoCredentialsTests {
      */
     @Test
     public void verifyCredentialsHashSafelyWithoutPrincipal() {
-        val credential = new SpnegoCredential(new byte[] {});
+        val credential = new SpnegoCredential(new byte[]{});
         val set = new HashSet<SpnegoCredential>();
         try {
             set.add(credential);
-        } catch(final Exception e) {
+        } catch (final Exception e) {
             throw new AssertionError(e.getMessage());
         }
     }
@@ -50,8 +50,8 @@ public class SpnegoCredentialsTests {
      * Make sure that when the Principal becomes populated / changes we return a new hash
      */
     @Test
-    public void verifyPrincipalAffectsHash(){
-        val credential = new SpnegoCredential(new byte[] {});
+    public void verifyPrincipalAffectsHash() {
+        val credential = new SpnegoCredential(new byte[]{});
         val hash1 = credential.hashCode();
         val principal = new DefaultPrincipalFactory().createPrincipal("test");
         credential.setPrincipal(principal);

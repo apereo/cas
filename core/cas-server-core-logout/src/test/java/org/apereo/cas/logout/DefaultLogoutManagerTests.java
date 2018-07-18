@@ -1,9 +1,5 @@
 package org.apereo.cas.logout;
 
-import lombok.val;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
@@ -19,14 +15,17 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
-import org.junit.Test;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 
 import java.net.URL;
 import java.util.HashMap;
@@ -63,6 +62,23 @@ public class DefaultLogoutManagerTests {
 
     public DefaultLogoutManagerTests() {
         MockitoAnnotations.initMocks(this);
+    }
+
+    @SneakyThrows
+    public static AbstractRegisteredService getRegisteredService(final String id) {
+        val s = new RegexRegisteredService();
+        s.setServiceId(id);
+        s.setName("Test registered service " + id);
+        s.setDescription("Registered service description");
+        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
+        s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
+        return s;
+    }
+
+    public static AbstractWebApplicationService getService(final String url) {
+        val request = new MockHttpServletRequest();
+        request.addParameter("service", url);
+        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
 
     @Before
@@ -166,22 +182,5 @@ public class DefaultLogoutManagerTests {
         this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
-    }
-
-    @SneakyThrows
-    public static AbstractRegisteredService getRegisteredService(final String id) {
-        val s = new RegexRegisteredService();
-        s.setServiceId(id);
-        s.setName("Test registered service " + id);
-        s.setDescription("Registered service description");
-        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
-        return s;
-    }
-
-    public static AbstractWebApplicationService getService(final String url) {
-        val request = new MockHttpServletRequest();
-        request.addParameter("service", url);
-        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
 }

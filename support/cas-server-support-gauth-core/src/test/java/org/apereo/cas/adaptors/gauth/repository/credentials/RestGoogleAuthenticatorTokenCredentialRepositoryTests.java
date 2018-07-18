@@ -1,18 +1,18 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
-import lombok.val;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
+import org.apereo.cas.util.MockWebServer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
-import org.apereo.cas.util.MockWebServer;
-import org.junit.Test;
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -81,7 +81,5 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
-
-
     }
 }

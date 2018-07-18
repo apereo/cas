@@ -1,12 +1,12 @@
 package org.apereo.cas.hz;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastAwsDiscoveryProperties;
 
 import com.hazelcast.aws.AwsDiscoveryStrategyFactory;
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastAwsDiscoveryProperties;
+import lombok.val;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;

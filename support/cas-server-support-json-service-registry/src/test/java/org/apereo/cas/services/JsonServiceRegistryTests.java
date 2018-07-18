@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -33,6 +33,11 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
         super(registeredServiceClass);
     }
 
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
+    }
+
     @Override
     @SneakyThrows
     public void initializeServiceRegistry() {
@@ -41,11 +46,6 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy());
         super.initializeServiceRegistry();
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(RegexRegisteredService.class);
     }
 
     @Test

@@ -1,13 +1,13 @@
 package org.apereo.cas.web.pac4j;
 
-import lombok.val;
-
-import com.google.common.collect.Maps;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import com.google.common.collect.Maps;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 
 import javax.servlet.http.HttpSession;

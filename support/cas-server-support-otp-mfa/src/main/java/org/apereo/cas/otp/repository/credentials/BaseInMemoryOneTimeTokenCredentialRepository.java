@@ -1,10 +1,10 @@
 package org.apereo.cas.otp.repository.credentials;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.List;
 import java.util.Map;
@@ -57,5 +57,15 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
     @Override
     public void deleteAll() {
         this.accounts.clear();
+    }
+
+    @Override
+    public void delete(final String username) {
+        this.accounts.remove(username);
+    }
+
+    @Override
+    public long count() {
+        return this.accounts.size();
     }
 }

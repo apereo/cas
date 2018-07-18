@@ -1,12 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
-import lombok.val;
-
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
@@ -22,6 +15,13 @@ import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerCon
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
@@ -75,6 +75,27 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
     }
 
     /**
+     * Build authentication context pair pair.
+     *
+     * @param request      the request
+     * @param authnRequest the authn request
+     * @return the pair
+     */
+    protected static Pair<AuthnRequest, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
+                                                                                       final AuthnRequest authnRequest) {
+        val messageContext = bindRelayStateParameter(request);
+        return Pair.of(authnRequest, messageContext);
+    }
+
+    private static MessageContext<SAMLObject> bindRelayStateParameter(final HttpServletRequest request) {
+        val messageContext = new MessageContext<SAMLObject>();
+        val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
+        LOGGER.debug("Relay state is [{}]", relayState);
+        SAMLBindingSupport.setRelayState(messageContext, relayState);
+        return messageContext;
+    }
+
+    /**
      * Handle callback profile request.
      *
      * @param response the response
@@ -102,27 +123,6 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
         val assertion = validateRequestAndBuildCasAssertion(response, request, authenticationContext);
         val binding = determineProfileBinding(authenticationContext, assertion);
         buildSamlResponse(response, request, authenticationContext, assertion, binding);
-    }
-
-    /**
-     * Build authentication context pair pair.
-     *
-     * @param request      the request
-     * @param authnRequest the authn request
-     * @return the pair
-     */
-    protected static Pair<AuthnRequest, MessageContext> buildAuthenticationContextPair(final HttpServletRequest request,
-                                                                                       final AuthnRequest authnRequest) {
-        val messageContext = bindRelayStateParameter(request);
-        return Pair.of(authnRequest, messageContext);
-    }
-
-    private static MessageContext<SAMLObject> bindRelayStateParameter(final HttpServletRequest request) {
-        val messageContext = new MessageContext<SAMLObject>();
-        val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-        LOGGER.debug("Relay state is [{}]", relayState);
-        SAMLBindingSupport.setRelayState(messageContext, relayState);
-        return messageContext;
     }
 
     private Assertion validateRequestAndBuildCasAssertion(final HttpServletResponse response,

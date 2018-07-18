@@ -28,6 +28,16 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_TGT_VALID = "valid";
 
     /**
+     * The transition state 'interruptSkipped'.
+     */
+    String TRANSITION_ID_INTERRUPT_SKIPPED = "interruptSkipped";
+
+    /**
+     * The transition state 'interruptRequired'.
+     */
+    String TRANSITION_ID_INTERRUPT_REQUIRED = "interruptRequired";
+
+    /**
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";

@@ -1,6 +1,7 @@
 package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.authentication.Credential;
+
 import org.springframework.core.Ordered;
 import org.springframework.util.MultiValueMap;
 

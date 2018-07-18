@@ -1,10 +1,10 @@
 package org.apereo.cas.shell.commands.properties;
 
-import lombok.val;
+import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;

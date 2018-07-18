@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.InvalidTicketExceptionTests;
 import org.apereo.cas.ticket.ServiceTicketImplTests;
 import org.apereo.cas.ticket.TicketGrantingTicketImplTests;
@@ -15,6 +14,8 @@ import org.apereo.cas.ticket.support.RememberMeDelegatingExpirationPolicyTests;
 import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicyTests;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicyTests;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicyTests;
+
+import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

@@ -1,14 +1,13 @@
 package org.apereo.cas.gua.impl;
 
-import lombok.val;
-
-import com.google.common.io.ByteSource;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+
+import com.google.common.io.ByteSource;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.ReturnAttributes;
@@ -50,13 +49,13 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
     private Response<SearchResult> searchForId(final String id) throws LdapException {
         val gua = casProperties.getAuthn().getGua();
         val filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getSearchFilter(),
-                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                CollectionUtils.wrap(id));
+            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+            CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(
-                LdapUtils.newLdaptiveConnectionFactory(gua.getLdap()),
-                gua.getLdap().getBaseDn(), filter,
-                new String[]{gua.getLdap().getImageAttribute()},
-                ReturnAttributes.ALL_USER.value());
+            LdapUtils.newLdaptiveConnectionFactory(gua.getLdap()),
+            gua.getLdap().getBaseDn(), filter,
+            new String[]{gua.getLdap().getImageAttribute()},
+            ReturnAttributes.ALL_USER.value());
     }
 
 }

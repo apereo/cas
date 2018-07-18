@@ -1,5 +1,11 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
+import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
+import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
+import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
+import org.apereo.cas.util.CollectionUtils;
+
 import com.google.common.collect.ArrayListMultimap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,11 +13,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
-import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
-import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
-import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
-import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
-import org.apereo.cas.util.CollectionUtils;
 import org.joda.time.DateTimeUtils;
 import org.jooq.lambda.Unchecked;
 import org.junit.After;
@@ -59,9 +60,8 @@ public abstract class AbstractServiceRegistryTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private ServiceRegistry serviceRegistry;
-
     private final Class<? extends RegisteredService> registeredServiceClass;
+    private ServiceRegistry serviceRegistry;
 
     @Before
     public void setUp() {
@@ -208,7 +208,7 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
-       val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
+        val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
         val r2 = this.serviceRegistry.save(r);
         val r3 = this.serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);

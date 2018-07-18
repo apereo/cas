@@ -11,6 +11,7 @@ import java.util.TimeZone;
 
 /**
  * A fast date format based on the ISO-8601 standard.
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
@@ -19,9 +20,11 @@ public class ISOStandardDateFormat extends FastDateFormat {
 
     private static final long serialVersionUID = 9196017562782775535L;
 
-    /** The ISO date format used by this formatter. */
+    /**
+     * The ISO date format used by this formatter.
+     */
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-    
+
     /**
      * Instantiates a new ISO standard date format
      * based on the format {@link #DATE_FORMAT}.
@@ -30,7 +33,7 @@ public class ISOStandardDateFormat extends FastDateFormat {
         super(DATE_FORMAT, TimeZone.getDefault(), Locale.getDefault());
     }
 
-    
+
     /**
      * Gets the current date and time
      * formatted by the pattern specified.

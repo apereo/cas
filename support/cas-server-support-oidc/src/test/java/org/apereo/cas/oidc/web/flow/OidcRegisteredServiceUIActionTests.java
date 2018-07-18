@@ -1,11 +1,11 @@
 package org.apereo.cas.oidc.web.flow;
 
-import lombok.val;
-
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.webflow.test.MockRequestContext;
 

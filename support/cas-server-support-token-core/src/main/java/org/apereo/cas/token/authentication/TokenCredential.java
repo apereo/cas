@@ -1,10 +1,11 @@
 package org.apereo.cas.token.authentication;
 
+import org.apereo.cas.authentication.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.Service;
+
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.BasicIdentifiableCredential;
-import org.apereo.cas.authentication.principal.Service;
 
 /**
  * This is {@link TokenCredential} that represents the user credentials in form of an encrypted token.
@@ -23,8 +24,9 @@ public class TokenCredential extends BasicIdentifiableCredential {
 
     /**
      * Instantiates a new Token credential.
-     * @param tokenId    the token
-     * @param service  the service
+     *
+     * @param tokenId the token
+     * @param service the service
      */
     public TokenCredential(final String tokenId, final Service service) {
         super(tokenId);

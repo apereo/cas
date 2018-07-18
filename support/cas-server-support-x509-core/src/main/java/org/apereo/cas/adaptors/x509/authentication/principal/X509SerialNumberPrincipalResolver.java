@@ -1,12 +1,13 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+
 import java.security.cert.X509Certificate;
 
 /**

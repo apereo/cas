@@ -1,11 +1,12 @@
 package org.apereo.cas.ticket.artifact;
 
+import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link SamlArtifactTicketExpirationPolicy}.

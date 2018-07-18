@@ -39,13 +39,26 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Lob
     @Column(name = "property_values")
     private HashSet<String> values = new HashSet<>();
-    
+
     @Override
     public Set<String> getValues() {
         if (this.values == null) {
             this.values = new HashSet<>();
         }
         return this.values;
+    }
+
+    /**
+     * Sets values.
+     *
+     * @param values the values
+     */
+    public void setValues(final Set<String> values) {
+        getValues().clear();
+        if (values == null) {
+            return;
+        }
+        getValues().addAll(values);
     }
 
     @Override
@@ -60,19 +73,6 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Override
     public boolean contains(final String value) {
         return this.values.contains(value);
-    }
-
-    /**
-     * Sets values.
-     *
-     * @param values the values
-     */
-    public void setValues(final Set<String> values) {
-        getValues().clear();
-        if (values == null) {
-            return;
-        }
-        getValues().addAll(values);
     }
 
     /**

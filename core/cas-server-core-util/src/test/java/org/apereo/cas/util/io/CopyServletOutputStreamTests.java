@@ -1,7 +1,6 @@
 package org.apereo.cas.util.io;
 
 import lombok.val;
-
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;

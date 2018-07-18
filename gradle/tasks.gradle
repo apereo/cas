@@ -1,8 +1,6 @@
-import org.gradle.internal.logging.*
-import org.gradle.internal.logging.events.*
-
-import java.util.regex.Matcher
-import java.util.regex.Pattern
+import org.gradle.internal.logging.LoggingOutputInternal
+import org.gradle.internal.logging.events.OutputEvent
+import org.gradle.internal.logging.events.OutputEventListener
 
 tasks.withType(Javadoc) {
     def exceptions = []
@@ -29,10 +27,10 @@ task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest
     doFirst {
         manifest {
             attributes "Class-Path":
-                    configurations.runtime.files.collect {
-                        it.toURL().toString().replaceFirst("/file:/+/", "/")
-                    }
-                    .join(" ")
+            configurations.runtime.files.collect {
+                it.toURL().toString().replaceFirst("/file:/+/", "/")
+            }
+            .join(" ")
         }
     }
 }
@@ -87,62 +85,53 @@ task downloadDependencies {
     }
 }
 
+task outputSpotbugsReports(description: "Display Findbugs output") {
+    doLast {
+        printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)
+    }
+}
+
+def printSpotbugsReportToConsole(File file) {
+    logger.debug "Reviewing file $file"
+    if (file.exists()) {
+        logger.debug "Processing file $file"
+        def slurper = new XmlSlurper().parse(file)
+        def bugsFound = slurper.BugInstance.size()
+        if (bugsFound > 0) {
+            println "*********************************\nFound Spotbugs rule violation(s):\n"
+            slurper.BugInstance.each { bug ->
+                println "*********************************"
+                println "Bug (" + bug.@abbrev + "): " + bug.@type + " [" + bug.@priority + "-" + bug.@rank + "] @ category " + bug.@category
+                bug.Class.each { clz ->
+                    println "\tClass: " + clz.@classname 
+                    clz.SourceLine.each { line ->
+                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Source Path: [" + line.@sourcepath  + "], Source File: [" + line.@sourcefile + "]"
+                    }
+                }
+                println "\t----------------------METHOD-----------------------------"
+                bug.Method.each { md ->
+                    println "\tMethod: " + md.@name + " [static: " + md.@isStatic + "]"
+                    println "\tSignature: " + md.@signature
+                    md.SourceLine.each { line ->
+                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end
+                    }
+                }
+                println "\t-------------------SOURCE LINE---------------------------"
+                bug.SourceLine.each { line ->
+                    println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Class: [" + line.@classname + "]"
+                }
+            }
+            def msg = "\n$bugsFound Spotbugs rule violation(s) were found. See the report at: $file"
+            println msg
+            if (!Boolean.getBoolean("ignoreFindbugsFailures")) {
+                throw new GradleException(msg)
+            }
+        }
+    }
+}
+
 gradle.buildFinished { buildResult ->
     cleanLogs
 }
 
 clean.dependsOn("cleanLogs")
-
-/**
- * Execute Checkstyle on all modified files
- * from: https://ebaytech.berlin/checkstyle-on-changed-files-with-gradle-1619e49dbe4e
- *
- * Use for new style changes whwere we do not want to make the full codebasw compliant immediately.
- */
-if (!Boolean.getBoolean("skipCheckstyle")) {
-    task checkstyleNewRules(type: Checkstyle) {
-        def changedFiles = getChangedFiles()
-        include changedFiles
-        configFile new File(rootDir, "style/checkstyle-rules.xml")
-        configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
-        ignoreFailures false
-        showViolations true
-    }
-    tasks.check.dependsOn checkstyleNewRules
-}
-
-/**
- * Get all files that are changed but not deleted nor renamed.
- * Compares to master or the specified target branch.
- *
- * @return list of all changed files
- */
-def getChangedFiles() {
-    // Get the target and source branch
-    def ghprbTargetBranch = System.getenv("ghprbTargetBranch")
-    def ghprbSourceBranch = System.getenv("ghprbSourceBranch")
-
-    // Compare to master if no branch specified
-    def targetBranch = ghprbTargetBranch ? "origin/${ghprbTargetBranch}" : "master"
-    def sourceBranch = ghprbSourceBranch ? "origin/${ghprbSourceBranch}" : ""
-
-    // Get list of all changed files including status
-    def systemOutStream = new ByteArrayOutputStream()
-    def command = "git diff --name-status --diff-filter=dr $targetBranch $sourceBranch"
-    command.execute().waitForProcessOutput(systemOutStream, System.err)
-    def allFiles = systemOutStream.toString().trim().split('\n')
-    systemOutStream.close()
-
-    // Remove the status prefix
-    Pattern statusPattern = Pattern.compile("(\\w)\\t+(.+)")
-    List<String> files = new ArrayList<>()
-    for (file in allFiles) {
-        Matcher matcher = statusPattern.matcher(file)
-        if (matcher.find()) {
-            files.add(matcher.group(2))
-        }
-    }
-
-    // Return the list of touched files
-    files
-}

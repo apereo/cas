@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.http.auth.BasicUserPrincipal;
 
 import javax.security.auth.Subject;
@@ -21,8 +20,8 @@ import java.util.Map;
 @Slf4j
 public class MockLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
-     private Subject subject;
-     
+    private Subject subject;
+
     @Override
     public void initialize(final Subject subject, final CallbackHandler handler, final Map<String, ?> arg2,
                            final Map<String, ?> arg3) {
@@ -32,7 +31,7 @@ public class MockLoginModule implements LoginModule {
 
     @Override
     public boolean login() throws LoginException {
-        val callbacks = new Callback[] {new NameCallback("f"), new PasswordCallback("f", false)};
+        val callbacks = new Callback[]{new NameCallback("f"), new PasswordCallback("f", false)};
         try {
             this.callbackHandler.handle(callbacks);
         } catch (final Exception e) {

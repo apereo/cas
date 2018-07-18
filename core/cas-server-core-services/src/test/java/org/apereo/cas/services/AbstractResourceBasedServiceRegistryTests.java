@@ -1,11 +1,12 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.category.FileSystemCategory;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomUtils;
-import org.apereo.cas.category.FileSystemCategory;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -33,6 +34,11 @@ public abstract class AbstractResourceBasedServiceRegistryTests extends Abstract
         super(registeredServiceClass);
     }
 
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
+    }
+
     @Override
     @SneakyThrows
     public void tearDownServiceRegistry() {
@@ -51,10 +57,5 @@ public abstract class AbstractResourceBasedServiceRegistryTests extends Abstract
     @Override
     public ServiceRegistry getNewServiceRegistry() {
         return this.dao;
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(RegexRegisteredService.class);
     }
 }

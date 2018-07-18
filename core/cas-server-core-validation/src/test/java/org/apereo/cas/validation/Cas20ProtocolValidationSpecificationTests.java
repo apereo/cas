@@ -1,8 +1,7 @@
 package org.apereo.cas.validation;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -42,24 +41,24 @@ public class Cas20ProtocolValidationSpecificationTests {
     @Test
     public void verifySatisfiesSpecOfTrue() {
         assertTrue(new Cas20ProtocolValidationSpecification(true).isSatisfiedBy(CoreValidationTestUtils.getAssertion(true),
-                new MockHttpServletRequest()));
+            new MockHttpServletRequest()));
     }
 
     @Test
     public void verifyNotSatisfiesSpecOfTrue() {
         assertFalse(new Cas20ProtocolValidationSpecification(true).isSatisfiedBy(CoreValidationTestUtils.getAssertion(false),
-                new MockHttpServletRequest()));
+            new MockHttpServletRequest()));
     }
 
     @Test
     public void verifySatisfiesSpecOfFalse() {
         assertTrue(new Cas20ProtocolValidationSpecification(false).isSatisfiedBy(CoreValidationTestUtils.getAssertion(true),
-                new MockHttpServletRequest()));
+            new MockHttpServletRequest()));
     }
 
     @Test
     public void verifySatisfiesSpecOfFalse2() {
         assertTrue(new Cas20ProtocolValidationSpecification(false).isSatisfiedBy(CoreValidationTestUtils.getAssertion(false),
-                new MockHttpServletRequest()));
+            new MockHttpServletRequest()));
     }
 }

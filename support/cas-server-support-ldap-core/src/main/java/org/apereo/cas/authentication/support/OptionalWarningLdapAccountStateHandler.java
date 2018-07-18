@@ -1,16 +1,17 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
-import org.ldaptive.auth.AccountState;
-import org.ldaptive.auth.AuthenticationResponse;
-import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.ldaptive.auth.AccountState;
+import org.ldaptive.auth.AuthenticationResponse;
+
+import java.util.List;
 
 /**
  * The component supports both opt-in and opt-out warnings on a per-user basis.
@@ -28,7 +29,7 @@ public class OptionalWarningLdapAccountStateHandler extends DefaultLdapAccountSt
     private String warningAttributeValue;
 
     private boolean displayWarningOnMatch;
-    
+
     @Override
     protected void handleWarning(final AccountState.Warning warning, final AuthenticationResponse response,
                                  final PasswordPolicyConfiguration configuration, final List<MessageDescriptor> messages) {

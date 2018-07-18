@@ -1,12 +1,12 @@
 package org.apereo.cas.services.publisher;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.services.RegisteredService;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.ApplicationEvent;
 
 import java.util.Date;
@@ -28,6 +28,7 @@ public class CasRegisteredServiceHazelcastStreamPublisher extends BaseCasRegiste
         super(publisherId);
         this.distributedCacheManager = instance;
     }
+
     @Override
     protected void handleCasRegisteredServiceDeletedEvent(final RegisteredService service, final ApplicationEvent event) {
         val item = getCacheObject(service, event);

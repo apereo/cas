@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication.exceptions;
 
-import lombok.extern.slf4j.Slf4j;
-import javax.security.auth.login.CredentialExpiredException;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import javax.security.auth.login.CredentialExpiredException;
 
 /**
  * Describes an authentication error condition where a user account's password must change before login.
@@ -14,7 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AccountPasswordMustChangeException extends CredentialExpiredException {
 
-    /** Serialization metadata. */
+    /**
+     * Serialization metadata.
+     */
     private static final long serialVersionUID = 7487835035108753209L;
 
     /**

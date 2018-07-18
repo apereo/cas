@@ -1,10 +1,9 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.net.InetAddress;
 import java.net.URL;

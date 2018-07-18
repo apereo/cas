@@ -23,6 +23,8 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -34,7 +36,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.Arrays;
 import java.util.Collection;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link CouchbaseTicketRegistryTests}.

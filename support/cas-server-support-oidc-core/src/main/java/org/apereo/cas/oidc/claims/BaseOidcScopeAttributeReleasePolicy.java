@@ -1,6 +1,11 @@
 package org.apereo.cas.oidc.claims;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
+import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.collect.Maps;
@@ -9,13 +14,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
-import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -63,7 +63,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         val allowedClaims = new LinkedHashSet<String>(getAllowedAttributes());
         allowedClaims.retainAll(supportedClaims);
         LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
-            + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
+                + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
             getAllowedAttributes(), getScopeName(), supportedClaims, allowedClaims);
         allowedClaims.stream()
             .map(claim -> mapClaimToAttribute(claim, resolvedAttributes))

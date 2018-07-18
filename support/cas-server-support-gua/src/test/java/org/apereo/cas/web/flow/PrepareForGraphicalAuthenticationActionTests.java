@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
 import lombok.val;
-
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;

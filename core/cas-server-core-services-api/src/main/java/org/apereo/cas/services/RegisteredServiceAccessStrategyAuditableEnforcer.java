@@ -1,10 +1,11 @@
 package org.apereo.cas.services;
 
-import lombok.val;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
 import org.apereo.cas.authentication.PrincipalException;
+
+import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 
 /**
@@ -37,7 +38,11 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         if (providedService.isPresent() && providedRegisteredService.isPresent() && ticketGrantingTicket.isPresent()) {
             val registeredService = providedRegisteredService.get();
             val service = providedService.get();
-            val result = AuditableExecutionResult.of(service, registeredService, ticketGrantingTicket.get());
+            val result = AuditableExecutionResult.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .ticketGrantingTicket(ticketGrantingTicket.get())
+                .build();
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService,
@@ -49,16 +54,22 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             return result;
         }
 
-        val authentication = context.getAuthentication();
-        if (providedService.isPresent() && providedRegisteredService.isPresent() && authentication.isPresent()) {
+        val providedAuthn = context.getAuthentication();
+        if (providedService.isPresent() && providedRegisteredService.isPresent() && providedAuthn.isPresent()) {
             val registeredService = providedRegisteredService.get();
             val service = providedService.get();
-            val result = AuditableExecutionResult.of(authentication.get(), service, registeredService);
+            val authentication = providedAuthn.get();
+
+            val result = AuditableExecutionResult.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .authentication(authentication)
+                .build();
 
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService,
-                    authentication.get(),
+                    authentication,
                     context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
             } catch (final PrincipalException e) {
                 result.setException(e);

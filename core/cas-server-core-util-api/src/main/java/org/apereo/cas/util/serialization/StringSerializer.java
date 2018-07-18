@@ -1,8 +1,8 @@
 package org.apereo.cas.util.serialization;
 
-import lombok.val;
-
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 
 import java.io.File;
 import java.io.InputStream;
@@ -15,6 +15,7 @@ import java.util.Collection;
 
 /**
  * Interface to define operations needed to map objects from/to  clobs.
+ *
  * @author Misagh Moayyed
  * @param <T> the type parameter
  * @since 4.1.0

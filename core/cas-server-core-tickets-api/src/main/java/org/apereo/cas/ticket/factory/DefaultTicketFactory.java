@@ -1,10 +1,11 @@
 package org.apereo.cas.ticket.factory;
 
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
+
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketFactory;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * This is {@link SurrogateAuthenticationMetaDataPopulator}.

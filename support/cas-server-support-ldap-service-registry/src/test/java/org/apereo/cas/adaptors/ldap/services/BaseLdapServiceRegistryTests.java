@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
@@ -9,6 +8,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+
+import lombok.extern.slf4j.Slf4j;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -44,13 +45,13 @@ public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegist
         super(registeredServiceClass);
     }
 
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.dao;
-    }
-
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
         return Arrays.asList(RegexRegisteredService.class, OAuthRegisteredService.class, SamlRegisteredService.class);
+    }
+
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return this.dao;
     }
 }

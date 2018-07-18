@@ -1,7 +1,6 @@
 package org.apereo.cas.web.report;
 
 import lombok.val;
-
 import org.junit.Test;
 import org.springframework.boot.actuate.info.Info;
 

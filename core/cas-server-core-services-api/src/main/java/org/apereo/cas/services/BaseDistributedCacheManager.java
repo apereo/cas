@@ -1,8 +1,9 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.DistributedCacheObject;
+
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 

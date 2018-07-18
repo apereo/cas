@@ -1,18 +1,19 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Principal;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.Principal;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * Contains information about a successful authentication produced by an {@link AuthenticationHandler}.

@@ -1,13 +1,13 @@
 package org.apereo.cas.digest.util;
 
-import lombok.val;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.impl.auth.DigestScheme;
-import org.apereo.cas.util.RandomUtils;
 
 import java.time.ZonedDateTime;
 
@@ -68,8 +68,8 @@ public class DigestAuthenticationUtils {
             stringBuilder.append("qop=").append(authMethod).append(',');
         }
         return stringBuilder.append("nonce=\"").append(nonce)
-                .append("\",opaque=\"").append(createOpaque(realm, nonce))
-                .append('"')
-                .toString();
+            .append("\",opaque=\"").append(createOpaque(realm, nonce))
+            .append('"')
+            .toString();
     }
 }

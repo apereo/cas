@@ -1,11 +1,12 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Service;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Service;
 
 /**
  * The {@link DefaultAuthenticationResult} represents a concrete implementation of {@link AuthenticationResult}.
@@ -22,9 +23,7 @@ import org.apereo.cas.authentication.principal.Service;
 @RequiredArgsConstructor
 public class DefaultAuthenticationResult implements AuthenticationResult {
     private static final long serialVersionUID = 8454900425245262824L;
-
-    private boolean credentialProvided;
-
     private final Authentication authentication;
     private final Service service;
+    private boolean credentialProvided;
 }

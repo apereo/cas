@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.authentication.Credential;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.Serializable;
 

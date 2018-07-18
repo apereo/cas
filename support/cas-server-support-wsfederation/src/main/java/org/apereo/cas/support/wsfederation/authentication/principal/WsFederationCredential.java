@@ -1,18 +1,19 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
-import lombok.val;
+import org.apereo.cas.authentication.Credential;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Credential;
+import lombok.val;
+
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * This class represents the basic elements of the WsFederation token.
@@ -47,7 +48,7 @@ public class WsFederationCredential implements Credential {
     private ZonedDateTime retrievedOn;
 
     private Map<String, List<Object>> attributes;
-    
+
     /**
      * isValid validates the credential.
      *

@@ -1,8 +1,5 @@
 package org.apereo.cas.aup;
 
-import lombok.val;
-
-import com.unboundid.ldap.sdk.LDAPConnection;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.category.LdapCategory;
@@ -30,13 +27,17 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.apereo.cas.web.support.WebUtils;
+
+import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.SneakyThrows;
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,8 +51,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
-
-import lombok.SneakyThrows;
 
 import static org.junit.Assert.*;
 
@@ -105,6 +104,15 @@ public class LdapAcceptableUsagePolicyRepositoryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    @BeforeClass
+    @SneakyThrows
+    public static void bootstrap() {
+        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
+        LdapIntegrationTestsOperations.populateEntries(localhost,
+            new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), "ou=people,dc=example,dc=org");
+    }
+
     @Test
     public void verifyAction() {
         val context = new MockRequestContext();
@@ -118,14 +126,5 @@ public class LdapAcceptableUsagePolicyRepositoryTests {
 
         assertFalse(acceptableUsagePolicyRepository.verify(context, c).getLeft());
         assertTrue(acceptableUsagePolicyRepository.submit(context, c));
-    }
-
-    @BeforeClass
-    @SneakyThrows
-    public static void bootstrap() {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
-        val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
-        LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), "ou=people,dc=example,dc=org");
     }
 }

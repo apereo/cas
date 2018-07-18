@@ -1,13 +1,14 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
+import org.apereo.cas.authentication.Credential;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Credential;
 import lombok.ToString;
-import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link RadiusTokenCredential}.

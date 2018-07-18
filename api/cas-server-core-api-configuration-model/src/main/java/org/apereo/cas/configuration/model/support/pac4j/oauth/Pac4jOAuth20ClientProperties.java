@@ -1,11 +1,13 @@
 package org.apereo.cas.configuration.model.support.pac4j.oauth;
 
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.util.Map;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Map;
 
 /**
  * This is {@link Pac4jOAuth20ClientProperties}.

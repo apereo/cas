@@ -1,12 +1,13 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.ScriptingUtils;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
 
 import java.util.Map;
 
