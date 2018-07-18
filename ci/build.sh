@@ -42,6 +42,7 @@ else
 
     if [ $retVal == 0 ]; then
         echo "Gradle build finished successfully."
+        exit 0
     else
         echo "Gradle build did NOT finish successfully."
         exit $retVal
