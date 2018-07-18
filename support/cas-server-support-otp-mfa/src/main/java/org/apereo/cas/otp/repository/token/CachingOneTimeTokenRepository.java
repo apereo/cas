@@ -89,4 +89,19 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
         val dataset = this.storage.asMap();
         dataset.values().forEach(tokens -> tokens.removeIf(t -> otp.equals(t.getId())));
     }
+
+    @Override
+    public long count(final String uid) {
+        val tokens = this.storage.getIfPresent(uid);
+        LOGGER.debug("Found used tokens [{}]", tokens);
+        if (tokens != null) {
+            return tokens.size();
+        }
+        return 0;
+    }
+
+    @Override
+    public long count() {
+        return this.storage.estimatedSize();
+    }
 }
