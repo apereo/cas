@@ -66,4 +66,27 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
         }
         return null;
     }
+
+    @Override
+    public void remove(final String uid, final Integer otp) {
+        val dataset = this.storage.asMap();
+        if (dataset.containsKey(uid)) {
+            val tokens = dataset.get(uid);
+            tokens.removeIf(t -> otp.equals(t.getId()));
+            this.storage.put(uid, tokens);
+            this.storage.refresh(uid);
+        }
+    }
+
+    @Override
+    public void remove(final String uid) {
+        this.storage.invalidate(uid);
+        this.storage.refresh(uid);
+    }
+
+    @Override
+    public void remove(final Integer otp) {
+        val dataset = this.storage.asMap();
+        dataset.values().forEach(tokens -> tokens.removeIf(t -> otp.equals(t.getId())));
+    }
 }

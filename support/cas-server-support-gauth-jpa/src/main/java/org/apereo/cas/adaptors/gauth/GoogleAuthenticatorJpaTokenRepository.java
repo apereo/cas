@@ -24,9 +24,8 @@ import java.time.LocalDateTime;
 @Transactional(transactionManager = "transactionManagerGoogleAuthenticator")
 @Slf4j
 public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepository {
-
-
     private final long expireTokensInSeconds;
+
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private transient EntityManager entityManager;
 
@@ -62,5 +61,31 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
             LOGGER.debug("No record could be found for google authenticator id [{}]", uid);
         }
         return null;
+    }
+
+    @Override
+    public void remove(final String uid, final Integer otp) {
+        val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName()
+            + " r where r.userId = :userId and r.token = :token")
+            .setParameter("userId", uid)
+            .setParameter("token", otp)
+            .executeUpdate();
+        LOGGER.debug("Deleted [{}] token record(s)", count);
+    }
+
+    @Override
+    public void remove(final String uid) {
+        val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName() + " r where r.userId= :userId")
+            .setParameter("userId", uid)
+            .executeUpdate();
+        LOGGER.debug("Deleted [{}] token record(s)", count);
+    }
+
+    @Override
+    public void remove(final Integer otp) {
+        val count = this.entityManager.createQuery("DELETE FROM " + GoogleAuthenticatorToken.class.getSimpleName() + " r where r.token= :token")
+            .setParameter("token", otp)
+            .executeUpdate();
+        LOGGER.debug("Deleted [{}] token record(s)", count);
     }
 }
