@@ -66,6 +66,11 @@ public interface OneTimeTokenRepository {
     void remove(Integer otp);
 
     /**
+     * Remove all.
+     */
+    void removeAll();
+
+    /**
      * Count tokens for user.
      *
      * @param uid the uid

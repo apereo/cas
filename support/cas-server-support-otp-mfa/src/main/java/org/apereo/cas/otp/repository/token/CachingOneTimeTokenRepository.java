@@ -22,6 +22,11 @@ public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
     private final LoadingCache<String, Collection<OneTimeToken>> storage;
 
     @Override
+    public void removeAll() {
+        this.storage.invalidateAll();
+    }
+
+    @Override
     public void cleanInternal() {
         LOGGER.debug("Beginning to clean up the cache storage to remove expiring tokens");
         this.storage.cleanUp();

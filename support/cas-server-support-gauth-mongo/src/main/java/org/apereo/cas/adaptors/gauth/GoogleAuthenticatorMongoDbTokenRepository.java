@@ -46,6 +46,17 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     }
 
     @Override
+    public void removeAll() {
+        try {
+            val query = new Query();
+            query.addCriteria(Criteria.where("userId").exists(true));
+            this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
+        }
+    }
+
+    @Override
     protected void cleanInternal() {
         try {
             val query = new Query();
