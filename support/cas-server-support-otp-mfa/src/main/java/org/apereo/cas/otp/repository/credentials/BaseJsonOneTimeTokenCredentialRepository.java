@@ -111,6 +111,7 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+        return 0;
     }
 
     @SneakyThrows

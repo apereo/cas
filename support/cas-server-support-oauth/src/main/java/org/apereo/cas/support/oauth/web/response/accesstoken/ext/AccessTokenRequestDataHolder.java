@@ -40,12 +40,14 @@ public class AccessTokenRequestDataHolder {
 
     private TicketGrantingTicket ticketGrantingTicket;
 
-    private OAuth20GrantTypes grantType;
+    @Builder.Default
+    private OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
 
     @Builder.Default
     private Set<String> scopes = new LinkedHashSet<>();
 
-    private OAuth20ResponseTypes responseType;
+    @Builder.Default
+    private OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;
 
     private String deviceCode;
 }
