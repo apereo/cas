@@ -65,7 +65,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      */
     @PostConstruct
     public void afterPropertiesSet() {
-        this.thresholdRate = this.failureThreshold / this.failureRangeInSeconds;
+        this.thresholdRate = ((double) this.failureThreshold) / this.failureRangeInSeconds;
         LOGGER.debug("Calculated threshold rate as [{}]", this.thresholdRate);
     }
 
