@@ -800,6 +800,17 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final ActionState actionStateId, final EvaluateAction... actions) {
+        addActionsToActionStateExecutionListAt(flow, actionStateId.getId(), 0, actions);
+    }
+
+    /**
      * Append actions to action state execution list.
      *
      * @param flow          the flow
