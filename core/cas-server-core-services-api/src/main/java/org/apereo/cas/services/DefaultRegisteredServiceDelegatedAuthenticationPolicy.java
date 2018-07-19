@@ -33,7 +33,7 @@ public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements Re
     @Override
     @JsonIgnore
     public boolean isProviderAllowed(final String provider, final RegisteredService registeredService) {
-        if (this.allowedProviders != null && this.allowedProviders.isEmpty()) {
+        if (this.allowedProviders == null || this.allowedProviders.isEmpty()) {
             LOGGER.warn("Registered service [{}] does not define any authorized/supported delegated authentication providers. "
                 + "It is STRONGLY recommended that you authorize and assign providers to the service definition. "
                 + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
