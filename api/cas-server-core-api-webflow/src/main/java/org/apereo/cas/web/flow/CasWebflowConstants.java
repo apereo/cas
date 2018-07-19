@@ -412,6 +412,16 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
 
     /**
+     * Transition id 'mustAcceptUsagePolicy'.
+     */
+    String TRANSITION_ID_AUP_MUST_ACCEPT = "mustAcceptUsagePolicy";
+
+    /**
+     * Transition id 'acceptedUsagePolicy'.
+     */
+    String TRANSITION_ID_AUP_ACCEPTED = "acceptedUsagePolicy";
+
+    /**
      * State id 'doLogout'.
      */
     String STATE_ID_DO_LOGOUT = "doLogout";

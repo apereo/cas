@@ -22,12 +22,6 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 @RequiredArgsConstructor
 public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
-
-    /**
-     * Event id to signal the policy needs to be accepted.
-     **/
-    protected static final String EVENT_ID_MUST_ACCEPT = "mustAccept";
-
     private final AcceptableUsagePolicyRepository repository;
 
     /**
@@ -36,28 +30,18 @@ public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
      * @param context        the context
      * @param credential     the credential
      * @param messageContext the message context
-     * @return success if policy is accepted. {@link #EVENT_ID_MUST_ACCEPT} otherwise.
+     * @return success if policy is accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
      */
     private Event verify(final RequestContext context, final Credential credential, final MessageContext messageContext) {
         val res = repository.verify(context, credential);
-        context.getFlowScope().put("principal", res.getValue());
-        if (res.getKey()) {
-            return success();
-        }
-        return accept();
+        WebUtils.putPrincipal(context, res.getValue());
+        return res.getKey()
+            ? new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED)
+            : new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
     }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         return verify(requestContext, WebUtils.getCredential(requestContext), requestContext.getMessageContext());
-    }
-
-    /**
-     * Accept event signaled by id {@link #EVENT_ID_MUST_ACCEPT}.
-     *
-     * @return the event
-     */
-    protected Event accept() {
-        return new EventFactorySupport().event(this, EVENT_ID_MUST_ACCEPT);
     }
 }

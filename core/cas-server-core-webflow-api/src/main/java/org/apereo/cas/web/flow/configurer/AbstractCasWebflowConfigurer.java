@@ -795,6 +795,31 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param actionStateId the action state id
      * @param actions       the actions
      */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final ActionState actionStateId, final String... actions) {
+        prependActionsToActionStateExecutionList(flow, actionStateId.getId(), actions);
+    }
+
+    /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final String... actions) {
+        val evalActions = Arrays.stream(actions)
+            .map(this::createEvaluateAction)
+            .toArray(EvaluateAction[]::new);
+        addActionsToActionStateExecutionListAt(flow, actionStateId, 0, evalActions);
+    }
+
+    /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
     public void prependActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final EvaluateAction... actions) {
         addActionsToActionStateExecutionListAt(flow, actionStateId, 0, actions);
     }

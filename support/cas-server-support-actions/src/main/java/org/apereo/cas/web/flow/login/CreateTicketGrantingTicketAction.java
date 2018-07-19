@@ -86,8 +86,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
 
         LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
-        val authenticationResult =
-            this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
+        val authenticationResult = this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
         val authentication = buildFinalAuthentication(authenticationResult);
         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         val tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
