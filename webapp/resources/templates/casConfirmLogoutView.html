@@ -14,13 +14,12 @@
     <div layout:fragment="content">
         <div class="alert alert-info">
             <h2 th:utext="#{screen.logout.confirm.header}">Do you want to log out completely?</h2>
-            <p th:utext="#{screen.logout.confirm.text}">An application may have redirected you to the Central
+            <p th:remove="tag" th:utext="#{screen.logout.confirm.text}">An application may have redirected you to the Central
                 Authentication Service \
                 to completely log you out and destroy your single sign-on session. If you choose to log out, you will be
                 asked again \
                 to provide your credentials and re-autheticate once you attempt to access an application.
-            <p>
-            <p><br>Do you want to proceed?</p>
+            </p>
 
             <div align="center">
                 <form method="post" id="fm1">
