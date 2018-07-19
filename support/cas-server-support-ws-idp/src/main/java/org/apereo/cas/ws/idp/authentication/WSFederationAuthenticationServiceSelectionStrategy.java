@@ -46,6 +46,10 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
 
     private static Optional<NameValuePair> getReplyAsParameter(final Service service) {
         try {
+            if (service == null) {
+                return Optional.empty();
+            }
+
             val builder = new URIBuilder(service.getId());
             final Optional param = builder.getQueryParams()
                 .stream()
@@ -60,8 +64,9 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
 
     @Override
     public Service resolveServiceFrom(final Service service) {
-        if (service != null) {
-            val serviceReply = getReplyAsParameter(service).get().getValue();
+        val replyParamRes = getReplyAsParameter(service);
+        if (replyParamRes.isPresent()) {
+            val serviceReply = replyParamRes.get().getValue();
             LOGGER.debug("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
             return this.webApplicationServiceFactory.createService(serviceReply);
         }
