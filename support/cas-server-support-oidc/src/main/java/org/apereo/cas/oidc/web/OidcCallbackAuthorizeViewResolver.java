@@ -31,7 +31,8 @@ public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthori
     public ModelAndView resolve(final J2EContext ctx, final ProfileManager manager, final String url) {
         val prompt = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
         if (prompt.contains(OidcConstants.PROMPT_NONE)) {
-            if (manager.get(true) != null) {
+            val result = manager.get(true);
+            if (result.isPresent()) {
                 return new ModelAndView(url);
             }
             val model = new HashMap<String, String>();
