@@ -63,14 +63,12 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
 
         val ticketCreateState = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
-        prependActionsToActionStateExecutionList(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, getInquireInterruptAction());
+        prependActionsToActionStateExecutionList(flow, ticketCreateState, getInquireInterruptAction());
         createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, VIEW_ID_INTERRUPT_VIEW);
     }
 
-
     private void createTransitionStateForMultifactorSubflows(final Flow flow) {
-        val providerMap =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         providerMap.forEach((k, v) -> {
             if (containsSubflowState(flow, v.getId())) {
                 val state = getState(flow, v.getId(), SubflowState.class);
