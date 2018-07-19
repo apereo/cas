@@ -16,9 +16,11 @@
             
             <div class="card-body">
                 <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}" th:if="${delegatedAuthenticationProviderDominant == null}">Login with:</h3>
-                <h3 class="card-title" th:utext="#{screen.welcome.label.navto}" th:if="${delegatedAuthenticationProviderDominant != null}">
-                    Navigating to authentication provider...
-                </h3>
+                <div class="card-title" th:if="${delegatedAuthenticationProviderDominant != null}">
+                    <div class="alert alert-success" role="alert">
+                        <span th:utext="#{screen.welcome.label.navto}" />
+                    </div>
+                </div>
                 <div class="card-text" th:style="'display:' + ${delegatedAuthenticationProviderDominant != null ? 'none' : 'block'}">
                     <ul>
                         <li th:each="entry: ${delegatedAuthenticationProviderUrls}" th:switch="${entry.type}">
@@ -57,9 +59,11 @@
 
             <div class="card-body">
                 <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}" th:if="${delegatedAuthenticationProviderDominant == null}">Login with:</h3>
-                <h3 class="card-title" th:utext="#{screen.welcome.label.navto}" th:if="${delegatedAuthenticationProviderDominant != null}">
-                    Navigating to authentication provider...
-                </h3>
+                <div class="card-title" th:if="${delegatedAuthenticationProviderDominant != null}">
+                    <div class="alert alert-info">
+                        <span th:utext="#{screen.welcome.label.navto}" />
+                    </div>
+                </div>
 
                 <div class="card-text" th:style="'display:' + ${delegatedAuthenticationProviderDominant != null ? 'none' : 'block'}">
                     <ul>

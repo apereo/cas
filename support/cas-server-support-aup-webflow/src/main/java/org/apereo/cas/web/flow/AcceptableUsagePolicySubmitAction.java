@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -32,7 +33,7 @@ public class AcceptableUsagePolicySubmitAction extends AbstractAction {
      */
     public Event submit(final RequestContext context, final Credential credential, final MessageContext messageContext) {
         if (repository.submit(context, credential)) {
-            return success();
+            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUP_ACCEPTED);
         }
         return error();
     }
