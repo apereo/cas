@@ -15,9 +15,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
-
-import java.util.ArrayList;
 
 /**
  * This is {@link InterruptWebflowConfigurer}.
@@ -66,14 +63,10 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
 
         val ticketCreateState = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
-        val currentActions = new ArrayList<Action>();
-        ticketCreateState.getActionList().forEach(currentActions::add);
-        currentActions.forEach(a -> ticketCreateState.getActionList().remove(a));
-        currentActions.add(0, getInquireInterruptAction());
-        ticketCreateState.getActionList().addAll(currentActions.toArray(new Action[] {}));
-
+        prependActionsToActionStateExecutionList(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, getInquireInterruptAction());
         createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, VIEW_ID_INTERRUPT_VIEW);
     }
+
 
     private void createTransitionStateForMultifactorSubflows(final Flow flow) {
         val providerMap =

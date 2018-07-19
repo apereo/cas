@@ -788,4 +788,44 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         }
     }
 
+    /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final EvaluateAction... actions) {
+        addActionsToActionStateExecutionListAt(flow, actionStateId, 0, actions);
+    }
+
+    /**
+     * Append actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void appendActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final EvaluateAction... actions) {
+        addActionsToActionStateExecutionListAt(flow, actionStateId, Integer.MAX_VALUE, actions);
+    }
+
+    /**
+     * Add actions to action state execution list at.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param position      the position
+     * @param actions       the actions
+     */
+    public void addActionsToActionStateExecutionListAt(final Flow flow, final String actionStateId, final int position, final EvaluateAction... actions) {
+        val actionState = getState(flow, actionStateId, ActionState.class);
+        val currentActions = new ArrayList<Action>();
+        val actionList = actionState.getActionList();
+        actionList.forEach(currentActions::add);
+        val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
+        currentActions.forEach(actionList::remove);
+        Arrays.stream(actions).forEach(a -> currentActions.add(index, a));
+        actionList.addAll(currentActions.toArray(new Action[]{}));
+    }
 }
