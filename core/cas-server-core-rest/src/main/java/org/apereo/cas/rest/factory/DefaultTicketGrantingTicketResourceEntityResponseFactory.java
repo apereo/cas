@@ -60,7 +60,8 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
     }
 
     private boolean isDefaultContentType(final HttpServletRequest request) {
-        val accept = request.getHeader(HttpHeaders.ACCEPT) == null ? null : request.getHeader(HttpHeaders.ACCEPT).trim();
+        val header = request.getHeader(HttpHeaders.ACCEPT);
+        val accept = StringUtils.defaultString(header);
         return StringUtils.isBlank(accept) || accept.startsWith(MediaType.ALL_VALUE) || accept.startsWith(MediaType.TEXT_HTML_VALUE);
     }
 
