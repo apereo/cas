@@ -1,23 +1,21 @@
-package org.apereo.cas.support.saml;
+package org.apereo.cas.audit;
 
+import org.apereo.cas.category.MySQLCategory;
 import org.apereo.cas.category.PostgresCategory;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.experimental.categories.Category;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * The {@link SamlRegisteredServiceJpaPostgresTests} handles test cases for {@link SamlRegisteredService}.
+ * This is {@link CasSupportPostgresJdbcAuditConfigurationTests}.
  *
  * @author Misagh Moayyed
- * @since 6.0.0
+ * @since 5.3.0
  */
-@Slf4j
-@TestPropertySource(locations = "classpath:samlpostgres.properties")
+@TestPropertySource(locations = "classpath:auditmysql.properties")
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
 @Category(PostgresCategory.class)
-public class SamlRegisteredServiceJpaPostgresTests extends SamlRegisteredServiceJpaTests {
+public class CasSupportPostgresJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
 }

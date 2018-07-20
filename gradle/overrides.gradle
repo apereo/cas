@@ -27,7 +27,7 @@ ext["caffeinVersion"] = "2.6.2"
 ext["couchbaseVersion"] = "2.6.0"
 ext["mysqlVersion"] = "8.0.11"
 ext["postgresqlVersion"] = "42.2.4"
-ext["mariaDbVersion"] = "2.2.5"
+ext["mariaDbVersion"] = "2.2.6"
 ext["jtdsVersion"] = "1.3.1"
 ext["mssqlServerVersion"] = "6.4.0.jre8"
 
