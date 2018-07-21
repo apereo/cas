@@ -1,7 +1,7 @@
 package org.apereo.cas.shell.commands.saml;
 
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.locator.DefaultSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -55,10 +55,10 @@ public class GenerateSamlIdPMetadataCommand {
         @ShellOption(value = {"force"},
             help = "Force metadata generation, disregarding anything that might already be available at the specified location") final boolean force) {
 
-        val locator = new DefaultSamlIdPMetadataLocator(new File(metadataLocation));
+        val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation));
         val writer = new DefaultSamlIdPCertificateAndKeyWriter();
-        val generator = new FileSystemSamlIdPMetadataGenerator(entityId, this.resourceLoader,
-            serverPrefix, scope, locator, writer);
+        val generator = new FileSystemSamlIdPMetadataGenerator(locator, writer, entityId, this.resourceLoader,
+            serverPrefix, scope);
 
         val generateMetadata = FunctionUtils.doIf(locator.exists(),
             () -> Boolean.TRUE,

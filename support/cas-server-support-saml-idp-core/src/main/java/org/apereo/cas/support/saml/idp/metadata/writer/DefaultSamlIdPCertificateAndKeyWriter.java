@@ -52,7 +52,6 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
     public void writeCertificateAndKey(final Writer privateKeyWriter, final Writer certificateWriter) {
         val keypair = generateKeyPair();
         val certificate = generateCertificate(keypair);
-
         try (val keyOut = new JcaPEMWriter(privateKeyWriter)) {
             keyOut.writeObject(keypair.getPrivate());
             keyOut.flush();

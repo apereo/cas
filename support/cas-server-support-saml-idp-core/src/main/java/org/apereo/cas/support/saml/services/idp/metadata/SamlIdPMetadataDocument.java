@@ -1,0 +1,60 @@
+package org.apereo.cas.support.saml.services.idp.metadata;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Lob;
+import javax.persistence.Table;
+
+/**
+ * This is {@link SamlIdPMetadataDocument}.
+ *
+ * @author Misagh Moayyed
+ * @since 5.2.0
+ */
+@Entity
+@Table(name = "SamlIdPMetadataDocument")
+@Document
+@Slf4j
+@Getter
+@Setter
+public class SamlIdPMetadataDocument {
+
+    @javax.persistence.Id
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
+    @GenericGenerator(name = "native", strategy = "native")
+    private long id = -1;
+
+    @Lob
+    @Column(name = "metadata", length = Integer.MAX_VALUE)
+    private String metadata;
+
+    @Lob
+    @Column(name = "signingCertificate", length = Integer.MAX_VALUE)
+    private String signingCertificate;
+
+    @Lob
+    @Column(name = "signingKey", length = Integer.MAX_VALUE)
+    private String signingKey;
+
+    @Lob
+    @Column(name = "encryptionCertificate", length = Integer.MAX_VALUE)
+    private String encryptionCertificate;
+
+    @Lob
+    @Column(name = "encryptionKey", length = Integer.MAX_VALUE)
+    private String encryptionKey;
+
+    public SamlIdPMetadataDocument() {
+        setId(System.currentTimeMillis());
+    }
+}

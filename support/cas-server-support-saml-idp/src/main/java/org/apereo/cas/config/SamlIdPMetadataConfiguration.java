@@ -6,7 +6,7 @@ import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.locator.DefaultSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
@@ -97,7 +97,7 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataController samlIdPMetadataController() {
-        return new SamlIdPMetadataController(samlIdPMetadataGenerator(), samlMetadataLocator());
+        return new SamlIdPMetadataController(samlIdPMetadataGenerator(), samlIdPMetadataLocator());
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
@@ -105,9 +105,10 @@ public class SamlIdPMetadataConfiguration {
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new FileSystemSamlIdPMetadataGenerator(idp.getEntityId(), this.resourceLoader,
-            casProperties.getServer().getPrefix(), idp.getScope(),
-            samlMetadataLocator(), samlSelfSignedCertificateWriter());
+        return new FileSystemSamlIdPMetadataGenerator(samlIdPMetadataLocator(),
+            samlSelfSignedCertificateWriter(),
+            idp.getEntityId(), this.resourceLoader,
+            casProperties.getServer().getPrefix(), idp.getScope());
     }
 
     @ConditionalOnMissingBean(name = "samlSelfSignedCertificateWriter")
@@ -121,12 +122,12 @@ public class SamlIdPMetadataConfiguration {
         return generator;
     }
 
-    @ConditionalOnMissingBean(name = "samlMetadataLocator")
+    @ConditionalOnMissingBean(name = "samlIdPMetadataLocator")
     @Bean
     @SneakyThrows
-    public SamlIdPMetadataLocator samlMetadataLocator() {
+    public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new DefaultSamlIdPMetadataLocator(idp.getMetadata().getLocation());
+        return new FileSystemSamlIdPMetadataLocator(idp.getMetadata().getLocation());
     }
 
     @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")
