@@ -27,7 +27,7 @@ import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.idp.metadata.locator.DefaultSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -180,8 +180,8 @@ public abstract class BaseSamlIdPConfigurationTests {
     @TestConfiguration
     public static class SamlIdPMetadataTestConfiguration {
         @Bean
-        public SamlIdPMetadataLocator samlMetadataLocator() {
-            return new DefaultSamlIdPMetadataLocator(METADATA_DIRECTORY);
+        public SamlIdPMetadataLocator samlIdPMetadataLocator() {
+            return new FileSystemSamlIdPMetadataLocator(METADATA_DIRECTORY);
         }
     }
 }

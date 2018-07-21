@@ -17,4 +17,5 @@ public interface SamlIdPCertificateAndKeyWriter {
      * @param certificateWriter the certificate writer
      */
     void writeCertificateAndKey(Writer privateKeyWriter, Writer certificateWriter);
+
 }

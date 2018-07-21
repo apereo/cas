@@ -9,18 +9,18 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 
 /**
- * This is {@link DefaultSamlIdPMetadataLocator}.
+ * This is {@link FileSystemSamlIdPMetadataLocator}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DefaultSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
+public class FileSystemSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
     private final File metadataLocation;
 
     @SneakyThrows
-    public DefaultSamlIdPMetadataLocator(final Resource metadataResource) {
+    public FileSystemSamlIdPMetadataLocator(final Resource metadataResource) {
         this.metadataLocation = metadataResource.getFile();
     }
 
