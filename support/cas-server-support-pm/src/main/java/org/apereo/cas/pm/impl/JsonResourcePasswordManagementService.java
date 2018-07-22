@@ -50,19 +50,20 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         readAccountsFromJsonResource();
     }
 
-    @SneakyThrows
     private void readAccountsFromJsonResource() {
         try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
             final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<>() {
             };
             this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
     @Override
     public boolean changeInternal(@NonNull final Credential credential, @NonNull final PasswordChangeBean bean) {
         val c = (UsernamePasswordCredential) credential;
-        if (StringUtils.isBlank(c.getPassword()) || StringUtils.isBlank(bean.getPassword())) {
+        if (StringUtils.isBlank(bean.getPassword())) {
             LOGGER.error("Password cannot be blank");
             return false;
         }
