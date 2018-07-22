@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
-    private static final String SELECT_QUERY = "SELECT r from YubiKeyAccount r ";
+    private static final String SELECT_QUERY = "SELECT r from " + YubiKeyAccount.class.getSimpleName() + " r ";
 
     @PersistenceContext(unitName = "yubiKeyEntityManagerFactory")
     private transient EntityManager entityManager;
@@ -83,5 +83,19 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             LOGGER.debug(e.getMessage(), e);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void delete(final String uid) {
+        val count = this.entityManager.createQuery("DELETE FROM " + YubiKeyAccount.class.getSimpleName()
+            + " r WHERE r.username= :username")
+            .setParameter("username", uid)
+            .executeUpdate();
+        LOGGER.debug("Deleted [{}] record(s)", count);
+    }
+
+    @Override
+    public void deleteAll() {
+        this.entityManager.createQuery("DELETE FROM " + YubiKeyAccount.class.getSimpleName()).executeUpdate();
     }
 }

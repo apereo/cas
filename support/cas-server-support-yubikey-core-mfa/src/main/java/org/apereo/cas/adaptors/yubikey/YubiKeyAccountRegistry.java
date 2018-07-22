@@ -72,4 +72,18 @@ public interface YubiKeyAccountRegistry {
      * @return the cipher executor
      */
     CipherExecutor<Serializable, String> getCipherExecutor();
+
+    /**
+     * Delete.
+     *
+     * @param uid the uid
+     */
+    default void delete(final String uid) {
+    }
+
+    /**
+     * Delete all.
+     */
+    default void deleteAll() {
+    }
 }
