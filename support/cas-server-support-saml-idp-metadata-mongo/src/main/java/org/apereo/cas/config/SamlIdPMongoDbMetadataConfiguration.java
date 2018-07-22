@@ -16,7 +16,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
@@ -29,9 +28,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SamlIdPMongoDbMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
-
-    @Autowired
-    private ResourceLoader resourceLoader;
 
     @Autowired
     private CasConfigurationProperties casProperties;

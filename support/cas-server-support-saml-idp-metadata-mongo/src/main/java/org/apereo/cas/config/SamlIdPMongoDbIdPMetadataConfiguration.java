@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataCipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataLocator;
@@ -77,7 +76,7 @@ public class SamlIdPMongoDbIdPMetadataConfiguration implements SamlRegisteredSer
         return mongoTemplate;
     }
 
-    @Bean
+    @Bean(initMethod = "generate")
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();

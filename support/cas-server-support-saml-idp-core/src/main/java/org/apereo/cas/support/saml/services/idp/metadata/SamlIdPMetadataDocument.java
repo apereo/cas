@@ -19,7 +19,7 @@ import java.math.BigInteger;
  * This is {@link SamlIdPMetadataDocument}.
  *
  * @author Misagh Moayyed
- * @since 5.2.0
+ * @since 6.0.0
  */
 @Entity
 @Table(name = "SamlIdPMetadataDocument")
@@ -33,6 +33,7 @@ public class SamlIdPMetadataDocument {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
+    @Column(name = "id", columnDefinition = "BIGINT")
     private BigInteger id = BigInteger.valueOf(-1);
 
     @Lob

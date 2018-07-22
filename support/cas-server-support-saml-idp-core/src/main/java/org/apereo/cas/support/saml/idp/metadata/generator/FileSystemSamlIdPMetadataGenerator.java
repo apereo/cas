@@ -30,7 +30,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
 
     @Override
     @SneakyThrows
-    protected void buildSelfSignedEncryptionCert() {
+    public void buildSelfSignedEncryptionCert() {
         val encCert = this.samlIdPMetadataLocator.getEncryptionCertificate().getFile();
         val encKey = this.samlIdPMetadataLocator.getEncryptionKey().getFile();
         writeCertificateAndKey(encCert, encKey);
@@ -38,7 +38,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
 
     @Override
     @SneakyThrows
-    protected void buildSelfSignedSigningCert() {
+    public void buildSelfSignedSigningCert() {
         val signingCert = this.samlIdPMetadataLocator.getSigningCertificate().getFile();
         val signingKey = this.samlIdPMetadataLocator.getSigningKey().getFile();
         writeCertificateAndKey(signingCert, signingKey);
@@ -62,5 +62,14 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
              val certWriter = Files.newBufferedWriter(certificate.toPath(), StandardCharsets.UTF_8)) {
             this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
         }
+    }
+
+    /**
+     * Initializes a new Generate saml metadata.
+     */
+    @SneakyThrows
+    public void initialize() {
+        samlIdPMetadataLocator.initialize();
+        generate();
     }
 }

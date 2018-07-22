@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.SamlIdPJpaMetadataConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.SamlIdPJpaMetadataConfiguration,\
+  org.apereo.cas.config.SamlIdPJpaIdPMetadataConfiguration
