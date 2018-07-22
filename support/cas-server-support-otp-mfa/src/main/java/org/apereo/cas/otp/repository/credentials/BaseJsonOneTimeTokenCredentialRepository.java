@@ -12,6 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -112,6 +114,16 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
             LOGGER.error(e.getMessage(), e);
         }
         return 0;
+    }
+
+    @Override
+    public Collection<OneTimeTokenAccount> load() {
+        try {
+            return readAccountsFromJsonRepository();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
     }
 
     @SneakyThrows
