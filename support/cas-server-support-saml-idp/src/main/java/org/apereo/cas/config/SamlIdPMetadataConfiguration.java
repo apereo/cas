@@ -84,7 +84,7 @@ public class SamlIdPMetadataConfiguration {
     @DependsOn("samlIdPMetadataGenerator")
     @SneakyThrows
     @Autowired
-    public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
+    public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlIdPMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.getMetadata(), openSamlConfigBean);
         resolver.setParserPool(this.openSamlConfigBean.getParserPool());

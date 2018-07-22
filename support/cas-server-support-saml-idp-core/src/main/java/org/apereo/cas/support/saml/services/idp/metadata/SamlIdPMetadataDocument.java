@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import java.math.BigInteger;
 
 /**
  * This is {@link SamlIdPMetadataDocument}.
@@ -32,7 +33,7 @@ public class SamlIdPMetadataDocument {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id = -1;
+    private BigInteger id = BigInteger.valueOf(-1);
 
     @Lob
     @Column(name = "metadata", length = Integer.MAX_VALUE)
@@ -55,6 +56,6 @@ public class SamlIdPMetadataDocument {
     private String encryptionKey;
 
     public SamlIdPMetadataDocument() {
-        setId(System.currentTimeMillis());
+        setId(BigInteger.valueOf(System.currentTimeMillis()));
     }
 }
