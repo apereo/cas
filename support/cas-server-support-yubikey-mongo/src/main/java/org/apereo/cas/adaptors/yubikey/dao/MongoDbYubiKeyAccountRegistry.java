@@ -68,4 +68,16 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         }
         return Optional.empty();
     }
+
+    @Override
+    public void delete(final String uid) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("username").is(uid));
+        this.mongoTemplate.remove(query, YubiKeyAccount.class, this.collectionName);
+    }
+
+    @Override
+    public void deleteAll() {
+        this.mongoTemplate.remove(new Query(), YubiKeyAccount.class, this.collectionName);
+    }
 }

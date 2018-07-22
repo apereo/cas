@@ -49,6 +49,7 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `multifactor-trusted-devices`  | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine.
 | `attribute-consent`  | Manage and control [attribute consent decisions](../integration/Attribute-Release-Consent.html).
 | `gauth-credential-repository`  | Manage and control [Google Authenticator account records](GoogleAuthenticator-Authentication.html).
+| `yubikey-account-repository`  | Manage and control [Google Authenticator account records](YubiKey-Authentication.html).
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>status</code>, <code>health</code> and <code>configuration-metadata</code>.
@@ -90,6 +91,14 @@ A `GET` operation produces a list of all consent decisions.
 A `DELETE` operation with a record key id will attempt to remove and revoke the registered device (i.e. `attribute-consent/{principal}/{id}`).
 
 ### Google Authenticator Accounts
+
+A `GET` operation produces a list of all account records.
+A `DELETE` operation will delete all account records.
+
+A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user.
+A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
+
+### YubiKey Accounts
 
 A `GET` operation produces a list of all account records.
 A `DELETE` operation will delete all account records.
