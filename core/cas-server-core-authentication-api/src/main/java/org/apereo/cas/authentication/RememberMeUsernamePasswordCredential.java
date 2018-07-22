@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * Handles both remember me services and username and password.
@@ -17,10 +18,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class RememberMeUsernamePasswordCredential extends UsernamePasswordCredential implements RememberMeCredential {
-    /**
-     * Unique Id for serialization.
-     */
     private static final long serialVersionUID = -6710007659431302397L;
 
     private boolean rememberMe;
