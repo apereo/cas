@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Configuration properties class mongodb service registry.
@@ -29,6 +30,7 @@ public class MongoDbSamlMetadataProperties extends SingleCollectionMongoDbProper
     /**
      * Crypto settings that sign/encrypt the metadata records.
      */
+    @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public MongoDbSamlMetadataProperties() {

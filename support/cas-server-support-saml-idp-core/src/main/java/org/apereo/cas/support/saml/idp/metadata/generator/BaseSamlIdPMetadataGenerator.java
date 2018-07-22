@@ -52,7 +52,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         initialize();
     }
 
@@ -80,15 +80,12 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
 
     /**
      * Build self signed encryption cert.
-     *
-     * @throws Exception the exception
      */
-    protected abstract void buildSelfSignedEncryptionCert() throws Exception;
+    protected abstract void buildSelfSignedEncryptionCert();
 
     /**
      * Build self signed signing cert.
      */
-    @SneakyThrows
     protected abstract void buildSelfSignedSigningCert();
 
     /**

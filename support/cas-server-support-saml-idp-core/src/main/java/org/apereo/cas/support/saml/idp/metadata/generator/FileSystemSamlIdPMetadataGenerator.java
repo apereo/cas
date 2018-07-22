@@ -29,14 +29,15 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
     }
 
     @Override
-    protected void buildSelfSignedEncryptionCert() throws Exception {
+    @SneakyThrows
+    protected void buildSelfSignedEncryptionCert() {
         val encCert = this.samlIdPMetadataLocator.getEncryptionCertificate().getFile();
         val encKey = this.samlIdPMetadataLocator.getEncryptionKey().getFile();
         writeCertificateAndKey(encCert, encKey);
     }
 
-    @SneakyThrows
     @Override
+    @SneakyThrows
     protected void buildSelfSignedSigningCert() {
         val signingCert = this.samlIdPMetadataLocator.getSigningCertificate().getFile();
         val signingKey = this.samlIdPMetadataLocator.getSigningKey().getFile();
