@@ -45,7 +45,7 @@ public class MongoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
 
     @Override
     @SneakyThrows
-    protected void buildSelfSignedEncryptionCert() {
+    public void buildSelfSignedEncryptionCert() {
         try (val certWriter = new StringWriter(); val keyWriter = new StringWriter()) {
             this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
             val encryptionKey = metadataCipherExecutor.encode(keyWriter.toString());
@@ -56,7 +56,7 @@ public class MongoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
 
     @Override
     @SneakyThrows
-    protected void buildSelfSignedSigningCert() {
+    public void buildSelfSignedSigningCert() {
         try (val certWriter = new StringWriter(); val keyWriter = new StringWriter()) {
             this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
             val signingKey = metadataCipherExecutor.encode(keyWriter.toString());
