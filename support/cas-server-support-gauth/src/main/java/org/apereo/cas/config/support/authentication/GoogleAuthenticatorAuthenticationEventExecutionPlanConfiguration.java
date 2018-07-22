@@ -4,6 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorTokenCredential;
+import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorTokenCredentialRepositoryEndpoint;
 import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.RestGoogleAuthenticatorTokenCredentialRepository;
@@ -35,6 +36,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -156,6 +158,12 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 new RestTemplate(), gauth, googleAuthenticatorAccountCipherExecutor());
         }
         return new InMemoryGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor(), googleAuthenticatorInstance());
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public GoogleAuthenticatorTokenCredentialRepositoryEndpoint googleAuthenticatorTokenCredentialRepositoryEndpoint() {
+        return new GoogleAuthenticatorTokenCredentialRepositoryEndpoint(googleAuthenticatorAccountRegistry());
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorAccountCipherExecutor")

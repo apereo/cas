@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -57,6 +59,22 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
             LOGGER.debug(e.getMessage(), e);
         }
         return null;
+    }
+
+    @Override
+    public Collection<OneTimeTokenAccount> load() {
+        try {
+            val results = new ArrayList<OneTimeTokenAccount>();
+            val r = this.entityManager.createQuery("SELECT r FROM " + ENTITY_NAME + " r", GoogleAuthenticatorAccount.class).getResultList();
+            r.forEach(account -> {
+                this.entityManager.detach(account);
+                results.add(decode(account));
+            });
+            return results;
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return new ArrayList<>();
     }
 
     @Override

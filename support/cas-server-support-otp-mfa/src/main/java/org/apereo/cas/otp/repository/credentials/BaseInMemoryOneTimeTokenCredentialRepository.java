@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,5 +68,10 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
     @Override
     public long count() {
         return this.accounts.size();
+    }
+
+    @Override
+    public Collection<OneTimeTokenAccount> load() {
+        return accounts.values();
     }
 }

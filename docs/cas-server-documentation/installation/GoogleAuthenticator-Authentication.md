@@ -104,9 +104,10 @@ The behavior is only activated when an endpoint url is provided.
 
 | Method    | Headers             | Expected Response     | Behavior
 |-----------|------------------------------------------------------------------------------------
-| `GET`     | `username`          | `200`. Secret key of the account in the body. | Fetch user record
+| `GET`     | `username`          | `200`. Account record in the body for the user. | Fetch user record
+| `GET`     | N/A                 | `200`. Account records currently registered. | Fetch all records
 | `DELETE`  | N/A                 | `200`. | Delete all records.
-| `DELETE`  | `username`          | `200`. Count of deleted records. | Delete all records assigned to user
+| `DELETE`  | `username`          | `200`. Count deleted records. | Delete all records assigned to user
 | `POST`    | `username`, `validationCode`, `secretKey`, `scratchCodes` | `200`. `true/false` in the body. | Save user record
 
 The following endpoints need also be available:

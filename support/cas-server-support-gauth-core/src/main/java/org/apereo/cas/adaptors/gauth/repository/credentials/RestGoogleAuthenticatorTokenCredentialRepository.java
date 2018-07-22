@@ -18,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +43,21 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
         this.googleAuthenticator = googleAuthenticator;
         this.restTemplate = restTemplate;
         this.gauth = gauth;
+    }
+
+    @Override
+    public Collection<OneTimeTokenAccount> load() {
+        val rest = gauth.getRest();
+        val headers = new HttpHeaders();
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+
+        val entity = new HttpEntity<>(headers);
+        val result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, List.class);
+        if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
+            val results = (List<GoogleAuthenticatorAccount>) result.getBody();
+            return results.stream().map(this::decode).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
     @Override
