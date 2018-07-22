@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -14,7 +13,6 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class SurrogateAuditPrincipalIdProvider extends DefaultAuditPrincipalIdProvider {
 
     @Override

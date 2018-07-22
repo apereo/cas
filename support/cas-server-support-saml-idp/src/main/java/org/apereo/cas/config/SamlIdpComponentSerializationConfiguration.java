@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketExpirationPolicy;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicy;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlIdpComponentSerializationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SamlIdpComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
     @Override
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {

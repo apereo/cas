@@ -8,7 +8,6 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -37,7 +36,6 @@ import java.util.Collection;
 @EnableScheduling
 @TestPropertySource(locations = {"classpath:/svc-redis.properties"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @Category(RedisCategory.class)
 public class RedisServiceRegistryTests extends AbstractServiceRegistryTests {
     private static RedisServer REDIS_SERVER;

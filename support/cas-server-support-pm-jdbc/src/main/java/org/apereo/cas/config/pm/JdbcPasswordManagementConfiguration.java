@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,7 +23,6 @@ import javax.sql.DataSource;
  */
 @Configuration("jdbcPasswordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class JdbcPasswordManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

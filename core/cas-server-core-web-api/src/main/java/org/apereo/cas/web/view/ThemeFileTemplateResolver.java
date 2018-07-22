@@ -5,7 +5,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.IEngineConfiguration;
@@ -20,7 +19,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @RequiredArgsConstructor
 @Getter
 public class ThemeFileTemplateResolver extends FileTemplateResolver {

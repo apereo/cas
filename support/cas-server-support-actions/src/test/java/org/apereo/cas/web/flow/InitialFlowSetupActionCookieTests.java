@@ -13,7 +13,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -40,7 +39,6 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @Import(CasSupportActionsConfiguration.class)
-@Slf4j
 public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String CONST_CONTEXT_PATH = "/test";

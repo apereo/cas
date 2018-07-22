@@ -10,7 +10,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -30,7 +29,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 @NoArgsConstructor

@@ -3,7 +3,6 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -15,7 +14,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 public class UnrecognizableServiceForServiceTicketValidationExceptionTests {
     private final Service service = RegisteredServiceTestUtils.getService();
 

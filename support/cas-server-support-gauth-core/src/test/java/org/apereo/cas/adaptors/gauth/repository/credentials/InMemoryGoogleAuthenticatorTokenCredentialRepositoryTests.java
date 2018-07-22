@@ -6,7 +6,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +28,6 @@ import static org.junit.Assert.*;
     AopAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Slf4j
 public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
     private IGoogleAuthenticator google;
 

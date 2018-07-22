@@ -26,7 +26,6 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.SchedulingUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,7 +85,6 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Category(MongoDbCategory.class)
-@Slf4j
 public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Autowired

@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
@@ -27,7 +26,6 @@ import javax.sql.DataSource;
  */
 @Configuration("casAcceptableUsagePolicyJdbcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasAcceptableUsagePolicyJdbcConfiguration {
 
     @Autowired

@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.infinispan.Cache;
@@ -27,7 +26,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("infinispanTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class InfinispanTicketRegistryConfiguration {
 
     @Autowired

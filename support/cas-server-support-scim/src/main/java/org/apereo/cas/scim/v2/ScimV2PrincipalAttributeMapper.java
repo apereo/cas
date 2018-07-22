@@ -9,7 +9,6 @@ import com.unboundid.scim2.common.types.Email;
 import com.unboundid.scim2.common.types.Name;
 import com.unboundid.scim2.common.types.PhoneNumber;
 import com.unboundid.scim2.common.types.UserResource;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -18,7 +17,6 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class ScimV2PrincipalAttributeMapper {
 
     /**

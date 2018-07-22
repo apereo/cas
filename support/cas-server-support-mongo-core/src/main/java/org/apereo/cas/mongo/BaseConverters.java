@@ -7,7 +7,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.mongodb.DBObject;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -37,7 +36,6 @@ import java.util.Date;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 @NoArgsConstructor
 public abstract class BaseConverters {
 

@@ -4,7 +4,6 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @Getter
 public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
 

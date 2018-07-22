@@ -20,7 +20,6 @@ import org.apereo.cas.web.support.WebUtils;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +51,6 @@ import static org.junit.Assert.*;
     TokenAuthenticationConfiguration.class,
     TokenAuthenticationWebflowConfiguration.class
 })
-@Slf4j
 public class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServiceTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
     private static final String SIGNING_SECRET = RANDOM_STRING_GENERATOR.getNewString(256);

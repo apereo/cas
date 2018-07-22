@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Simple container for holding a service principal and its corresponding registered service.
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @Getter
 @EqualsAndHashCode
 @ToString

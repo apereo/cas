@@ -2,7 +2,6 @@ package org.apereo.cas.util.http;
 
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +28,6 @@ import static org.junit.Assert.*;
         AopAutoConfiguration.class,
         CasCoreUtilConfiguration.class})
 @EnableScheduling
-@Slf4j
 public class HttpClientMultiThreadedDownloaderTests {
     @Autowired
     private ResourceLoader resourceLoader;

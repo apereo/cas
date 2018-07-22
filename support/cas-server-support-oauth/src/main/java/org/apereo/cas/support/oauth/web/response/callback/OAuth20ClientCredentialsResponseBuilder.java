@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerat
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.ticket.ExpirationPolicy;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.J2EContext;
 
@@ -18,7 +17,6 @@ import org.pac4j.core.context.J2EContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class OAuth20ClientCredentialsResponseBuilder extends OAuth20ResourceOwnerCredentialsResponseBuilder {
 
     public OAuth20ClientCredentialsResponseBuilder(final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,

@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.CoreAttributesTestUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +18,6 @@ import static org.junit.Assert.*;
  * @since 5.1.0
  */
 @RunWith(JUnit4.class)
-@Slf4j
 public class ScriptedRegisteredServiceAttributeReleasePolicyTests {
 
     @Test

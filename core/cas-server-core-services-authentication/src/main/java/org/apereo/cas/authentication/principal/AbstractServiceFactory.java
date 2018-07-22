@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +14,6 @@ import java.util.stream.Stream;
  * @since 4.2
  */
 @SuppressWarnings("TypeParameterShadowing")
-@Slf4j
 @ToString
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
 

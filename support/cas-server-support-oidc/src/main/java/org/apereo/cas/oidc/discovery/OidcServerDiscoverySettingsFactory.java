@@ -3,7 +3,6 @@ package org.apereo.cas.oidc.discovery;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.FactoryBean;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServerDiscoverySettings> {
     private final CasConfigurationProperties casProperties;

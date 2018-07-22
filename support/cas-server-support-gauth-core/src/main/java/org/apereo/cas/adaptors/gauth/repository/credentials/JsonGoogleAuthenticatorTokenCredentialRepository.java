@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.BaseJsonOneTimeTokenCredentialRepository;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
 
@@ -15,7 +14,6 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseJsonOneTimeTokenCredentialRepository {
     private final IGoogleAuthenticator googleAuthenticator;
 

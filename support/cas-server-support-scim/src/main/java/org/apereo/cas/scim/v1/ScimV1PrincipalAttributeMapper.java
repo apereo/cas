@@ -8,7 +8,6 @@ import org.apereo.cas.util.CollectionUtils;
 import com.unboundid.scim.data.Entry;
 import com.unboundid.scim.data.Name;
 import com.unboundid.scim.data.UserResource;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -17,7 +16,6 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class ScimV1PrincipalAttributeMapper {
 
     /**

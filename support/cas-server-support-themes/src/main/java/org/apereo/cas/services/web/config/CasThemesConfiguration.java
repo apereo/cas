@@ -14,7 +14,6 @@ import org.apereo.cas.services.web.ThemeViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,7 +53,6 @@ import java.util.Set;
 @Configuration("casThemesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Import(ThymeleafAutoConfiguration.class)
-@Slf4j
 public class CasThemesConfiguration {
 
     @Autowired

@@ -2,7 +2,6 @@ package org.apereo.cas.util.http;
 
 import lombok.Setter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
@@ -51,7 +50,6 @@ import java.util.stream.IntStream;
  * @author Jerome Leleu
  * @since 4.1.0
  */
-@Slf4j
 @Setter
 public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient>, DisposableBean {
 

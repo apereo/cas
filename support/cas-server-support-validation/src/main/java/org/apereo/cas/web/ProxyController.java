@@ -11,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.context.ApplicationContext;
@@ -39,7 +38,6 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @Setter
 @Getter
 @RequiredArgsConstructor

@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.persistence.Column;
@@ -39,7 +38,6 @@ import java.time.ZonedDateTime;
 @MappedSuperclass
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Setter

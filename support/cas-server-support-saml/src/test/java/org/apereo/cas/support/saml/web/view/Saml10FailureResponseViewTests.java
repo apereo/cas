@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +23,6 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.1
  */
-@Slf4j
 public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
     private Saml10FailureResponseView view;

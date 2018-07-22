@@ -24,7 +24,6 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -68,7 +67,6 @@ import java.util.Collection;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class},
     properties = {"cas.ticket.registry.couchbase.password=password", "cas.ticket.registry.couchbase.bucket=testbucket"})
-@Slf4j
 public class CouchbaseTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Rule

@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.radius;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
 
 import java.io.Serializable;
@@ -15,7 +14,6 @@ import java.net.InetAddress;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @ToString
 @AllArgsConstructor
 public class RadiusClientFactory implements Serializable {

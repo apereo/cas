@@ -8,7 +8,6 @@ import org.apereo.cas.util.MockWebServer;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.u2f.data.DeviceRegistration;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -39,7 +38,6 @@ import java.util.List;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @TestPropertySource(properties = "cas.authn.mfa.u2f.rest.url=http://localhost:9196")
 public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     private static final ObjectMapper MAPPER = new ObjectMapper()

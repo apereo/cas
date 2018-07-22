@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.After;
 import org.junit.Before;
@@ -48,7 +47,6 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     DatabaseAuthenticationTestConfiguration.class
 })
-@Slf4j
 @DirtiesContext
 public class QueryDatabaseAuthenticationHandlerTests {
 

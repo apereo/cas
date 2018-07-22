@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.After;
 import org.junit.Before;
@@ -43,7 +42,6 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     DatabaseAuthenticationTestConfiguration.class
 })
-@Slf4j
 @DirtiesContext
 public class NamedQueryDatabaseAuthenticationHandlerTests {
     @Rule

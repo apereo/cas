@@ -2,7 +2,6 @@ package org.apereo.cas.support.x509.rest;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,7 +25,6 @@ import static org.junit.Assert.*;
  * @since 5.1.0
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
-@Slf4j
 public class X509RestHttpRequestCredentialFactoryTests {
 
     @Rule

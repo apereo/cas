@@ -4,7 +4,6 @@ import org.apereo.cas.category.MySQLCategory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.experimental.categories.Category;
 import org.springframework.test.context.TestPropertySource;
 
@@ -14,7 +13,6 @@ import org.springframework.test.context.TestPropertySource;
  * @author battags
  * @since 3.1.0
  */
-@Slf4j
 @TestPropertySource(locations = "classpath:svcregmysql.properties")
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 3306)
 @Category(MySQLCategory.class)

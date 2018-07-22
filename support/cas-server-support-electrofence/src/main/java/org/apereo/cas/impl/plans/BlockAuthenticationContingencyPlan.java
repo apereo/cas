@@ -5,7 +5,6 @@ import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class BlockAuthenticationContingencyPlan extends BaseAuthenticationRiskContingencyPlan {
     /**
      * Block authentication event.

@@ -8,7 +8,6 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @Setter
 @Getter
 public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRiskNotifier {

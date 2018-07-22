@@ -4,7 +4,6 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.ResourceLoader;
@@ -19,7 +18,6 @@ import java.nio.file.Files;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
     public FileSystemSamlIdPMetadataGenerator(final SamlIdPMetadataLocator samlIdPMetadataLocator,
                                               final SamlIdPCertificateAndKeyWriter samlIdPCertificateAndKeyWriter,

@@ -4,7 +4,6 @@ import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.filters.CsrfPreventionFilter;
 import org.apache.catalina.filters.RemoteAddrFilter;
@@ -28,7 +27,6 @@ import org.springframework.http.HttpStatus;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 @ImportAutoConfiguration(CasEmbeddedContainerTomcatConfiguration.class)
-@Slf4j
 public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -17,7 +17,6 @@ import org.apereo.cas.util.http.HttpMessage;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +37,6 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @RunWith(JUnit4.class)
-@Slf4j
 public class DefaultLogoutManagerTests {
     private static final String ID = "id";
     private static final String URL = "http://www.github.com";

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -21,7 +20,6 @@ import java.util.List;
  * @since 5.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @ToString
 @Getter
 @NoArgsConstructor

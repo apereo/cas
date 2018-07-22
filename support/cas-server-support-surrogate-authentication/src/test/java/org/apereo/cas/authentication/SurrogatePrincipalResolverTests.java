@@ -2,7 +2,6 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,7 +20,6 @@ import static org.junit.Assert.*;
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
-@Slf4j
 public class SurrogatePrincipalResolverTests {
 
     @Rule

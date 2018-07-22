@@ -3,7 +3,6 @@ package org.apereo.cas.api;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 
@@ -13,7 +12,6 @@ import java.math.BigDecimal;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString
 @RequiredArgsConstructor
 @Getter
