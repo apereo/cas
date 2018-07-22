@@ -67,8 +67,7 @@ public class PasswordChangeAction extends AbstractAction {
     }
 
     private Event getErrorEvent(final RequestContext ctx, final String code, final String message, final Object... params) {
-        ctx.getMessageContext().addMessage(ERROR_MSG_BUILDER.code(code).
-            defaultText(message).args(params).build());
+        ctx.getMessageContext().addMessage(ERROR_MSG_BUILDER.code(code).defaultText(message).args(params).build());
         return error();
     }
 }
