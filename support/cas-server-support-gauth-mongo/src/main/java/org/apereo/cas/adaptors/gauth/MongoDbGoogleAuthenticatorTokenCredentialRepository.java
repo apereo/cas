@@ -14,7 +14,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.persistence.NoResultException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link MongoDbGoogleAuthenticatorTokenCredentialRepository}.
@@ -52,6 +55,20 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOne
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
         }
         return null;
+    }
+
+    @Override
+    public Collection<OneTimeTokenAccount> load() {
+        try {
+            val r = this.mongoTemplate.findAll(GoogleAuthenticatorAccount.class, this.collectionName);
+            return r.stream()
+                .map(this::decode)
+                .collect(Collectors.toList());
+
+        } catch (final Exception e) {
+            LOGGER.error("No record could be found for google authenticator", e);
+        }
+        return new ArrayList<>();
     }
 
     @Override
