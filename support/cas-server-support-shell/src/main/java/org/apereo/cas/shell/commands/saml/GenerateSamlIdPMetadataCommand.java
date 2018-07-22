@@ -57,8 +57,7 @@ public class GenerateSamlIdPMetadataCommand {
 
         val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation));
         val writer = new DefaultSamlIdPCertificateAndKeyWriter();
-        val generator = new FileSystemSamlIdPMetadataGenerator(locator, writer, entityId, this.resourceLoader,
-            serverPrefix, scope);
+        val generator = new FileSystemSamlIdPMetadataGenerator(locator, writer, entityId, this.resourceLoader, serverPrefix, scope);
 
         val generateMetadata = FunctionUtils.doIf(locator.exists(),
             () -> Boolean.TRUE,

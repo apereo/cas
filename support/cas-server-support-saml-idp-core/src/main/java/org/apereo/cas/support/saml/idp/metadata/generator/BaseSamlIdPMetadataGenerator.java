@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.ResourceLoader;
 
 import java.io.StringWriter;
@@ -23,7 +22,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @RequiredArgsConstructor
-public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGenerator, InitializingBean {
+public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGenerator {
     private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
     private static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
 
@@ -42,20 +41,6 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     private final String casServerPrefix;
     private final String scope;
 
-    /**
-     * Initializes a new Generate saml metadata.
-     */
-    @SneakyThrows
-    public void initialize() {
-        samlIdPMetadataLocator.initialize();
-        generate();
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        initialize();
-    }
-
     @Override
     @SneakyThrows
     public void generate() {
@@ -63,10 +48,10 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         if (!samlIdPMetadataLocator.exists()) {
             LOGGER.info("Metadata does not exist. Creating...");
 
-            LOGGER.info("Creating self-sign certificate for signing...");
+            LOGGER.info("Creating self-signed certificate for signing...");
             buildSelfSignedSigningCert();
 
-            LOGGER.info("Creating self-sign certificate for encryption...");
+            LOGGER.info("Creating self-signed certificate for encryption...");
             buildSelfSignedEncryptionCert();
 
             LOGGER.info("Creating metadata...");
@@ -81,12 +66,12 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     /**
      * Build self signed encryption cert.
      */
-    protected abstract void buildSelfSignedEncryptionCert();
+    public abstract void buildSelfSignedEncryptionCert();
 
     /**
      * Build self signed signing cert.
      */
-    protected abstract void buildSelfSignedSigningCert();
+    public abstract void buildSelfSignedSigningCert();
 
     /**
      * Build metadata generator parameters by passing the encryption,
