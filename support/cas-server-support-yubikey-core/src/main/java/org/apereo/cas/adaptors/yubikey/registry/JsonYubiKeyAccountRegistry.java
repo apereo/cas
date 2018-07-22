@@ -60,4 +60,20 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
         }
         return false;
     }
+
+    @Override
+    @SneakyThrows
+    public void delete(final String uid) {
+        this.devices.remove(uid);
+        val file = jsonResource.getFile();
+        MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
+    }
+
+    @Override
+    @SneakyThrows
+    public void deleteAll() {
+        this.devices.clear();
+        val file = jsonResource.getFile();
+        MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
+    }
 }

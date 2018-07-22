@@ -10,6 +10,7 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.yubikey.registry.JsonYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.registry.YubiKeyAccountRegistryEndpoint;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountCheckRegistrationAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAction;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -32,6 +33,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -163,6 +165,12 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         val registry = new OpenYubiKeyAccountRegistry(new DefaultYubiKeyAccountValidator(yubicoClient()));
         registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
         return registry;
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public YubiKeyAccountRegistryEndpoint yubiKeyAccountRegistryEndpoint() {
+        return new YubiKeyAccountRegistryEndpoint(yubiKeyAccountRegistry());
     }
 
     @Bean
