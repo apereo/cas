@@ -169,6 +169,22 @@ The metadata location in the registration record above simply needs to be specif
 
 To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-jpa).
 
+### Identity Provider Metadata
+
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via JPA. Artifacts such as the metadata, signing and encryption keys, etc are kept
+inside a database table that would have the following structure:
+
+| Field                     | Description
+|---------------------------|---------------------------------------------------
+| `id`                      | The identifier of the record.
+| `signingCertificate`      | The signing certificate.
+| `signingKey`              | The signing key.
+| `encryptionCertificate`   | The encryption certificate.
+| `encryptionKey`           | The encryption key.
+| `metadata`                | The SAML2 identity provider metadata.
+
+To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-jpa).
+
 ## Groovy
 
 A metadata location for a SAML service definition may  point to an external Groovy script, allowing the script to programmatically determine and build the metadata resolution machinery to be added to the collection of the existing resolvers. 
