@@ -11,6 +11,7 @@ import lombok.val;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -45,7 +46,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
