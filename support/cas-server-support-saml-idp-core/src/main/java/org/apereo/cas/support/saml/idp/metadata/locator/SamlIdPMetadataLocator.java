@@ -47,7 +47,7 @@ public interface SamlIdPMetadataLocator {
     /**
      * Initialize.
      */
-    void initialize();
+    default void initialize() {}
 
     /**
      * Metadata exists?
