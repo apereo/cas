@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link BaseCasMvcEndpoint}.
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 public abstract class BaseCasMvcEndpoint {

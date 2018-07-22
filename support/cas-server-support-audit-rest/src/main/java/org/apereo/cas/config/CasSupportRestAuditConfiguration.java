@@ -4,7 +4,6 @@ import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.RestAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casSupportRestAuditConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasSupportRestAuditConfiguration {
 
     @Autowired

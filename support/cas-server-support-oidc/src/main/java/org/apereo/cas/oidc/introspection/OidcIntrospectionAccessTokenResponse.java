@@ -3,7 +3,6 @@ package org.apereo.cas.oidc.introspection;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link OidcIntrospectionAccessTokenResponse}.
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 @Setter
 public class OidcIntrospectionAccessTokenResponse {

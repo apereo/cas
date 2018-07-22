@@ -10,7 +10,6 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
 import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -33,7 +32,6 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("coreWsSecurityIdentityProviderWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @AutoConfigureAfter(CasCoreWebflowConfiguration.class)
 public class CoreWsSecurityIdentityProviderWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 

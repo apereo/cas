@@ -8,7 +8,6 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -38,7 +37,6 @@ import static org.mockito.Mockito.*;
 @DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
 @TestPropertySource(properties = "cas.sso.createSsoCookieOnRenewAuthn=false")
-@Slf4j
 public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";

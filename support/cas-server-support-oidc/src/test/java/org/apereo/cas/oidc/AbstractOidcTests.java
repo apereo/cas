@@ -40,7 +40,6 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
@@ -102,7 +101,6 @@ import java.util.Optional;
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
     OidcConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class})
-@Slf4j
 @DirtiesContext
 @Category(FileSystemCategory.class)
 @TestPropertySource(properties = {

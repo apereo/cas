@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.messaging.context.MessageContext;
@@ -26,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public abstract class BaseSamlResponseEncoder {
     /**

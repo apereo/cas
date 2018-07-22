@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.services.idp.metadata;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -24,7 +23,6 @@ import java.math.BigInteger;
 @Entity
 @Table(name = "SamlIdPMetadataDocument")
 @Document
-@Slf4j
 @Getter
 @Setter
 public class SamlIdPMetadataDocument {

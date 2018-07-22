@@ -1,7 +1,6 @@
 package org.apereo.cas.web;
 
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.2.0
  */
 @Controller
-@Slf4j
 @Setter
 public abstract class AbstractDelegateController implements ApplicationContextAware {
 

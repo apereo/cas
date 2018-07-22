@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.policy;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.security.GeneralSecurityException;
 
 
@@ -11,7 +9,6 @@ import java.security.GeneralSecurityException;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
-@Slf4j
 public class DenyRevocationPolicy implements RevocationPolicy<Void> {
 
     /**

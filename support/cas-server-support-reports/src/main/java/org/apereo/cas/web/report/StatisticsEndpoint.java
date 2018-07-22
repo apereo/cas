@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -22,7 +21,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Scott Battaglia
  * @since 3.3.5
  */
-@Slf4j
 @Endpoint(id = "statistics", enableByDefault = false)
 public class StatisticsEndpoint extends BaseCasMvcEndpoint {
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);

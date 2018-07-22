@@ -7,7 +7,6 @@ import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import org.springframework.test.context.TestPropertySource;
  * @since 5.3.0
  */
 @TestPropertySource(locations = "classpath:/ldapconsentci.properties")
-@Slf4j
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 10389;

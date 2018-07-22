@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -32,7 +31,6 @@ import java.util.Map;
 @Inheritance
 @DiscriminatorColumn(name = "service_type", length = 50, discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'simple'")
 @Table(name = "WebApplicationServices")
-@Slf4j
 @ToString
 @Getter
 @Setter

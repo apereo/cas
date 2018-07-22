@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.action;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -16,6 +15,5 @@ import org.junit.runners.Suite;
     SurrogateSelectionActionTests.class,
     SurrogateAuthorizationActionTests.class
 })
-@Slf4j
 public class SurrogateTestSuite {
 }

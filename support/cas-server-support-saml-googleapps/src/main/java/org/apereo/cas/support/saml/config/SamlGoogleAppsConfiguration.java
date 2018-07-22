@@ -12,7 +12,6 @@ import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServic
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,7 +32,6 @@ import java.util.Collection;
  */
 @Configuration("samlGoogleAppsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
 
     @Autowired

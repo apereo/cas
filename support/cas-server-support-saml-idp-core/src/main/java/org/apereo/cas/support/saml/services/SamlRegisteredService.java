@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import javax.persistence.CollectionTable;
@@ -29,7 +28,6 @@ import java.util.TreeMap;
  */
 @Entity
 @DiscriminatorValue("saml")
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 @Setter

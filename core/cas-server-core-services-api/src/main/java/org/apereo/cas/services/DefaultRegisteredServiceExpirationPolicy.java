@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +18,6 @@ import java.time.LocalDateTime;
  * @since 5.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @ToString
 @Getter
 @Setter

@@ -3,7 +3,6 @@ package org.apereo.cas.interrupt.webflow;
 import org.apereo.cas.interrupt.InterruptResponse;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -12,7 +11,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @UtilityClass
 public class InterruptUtils {
     /**

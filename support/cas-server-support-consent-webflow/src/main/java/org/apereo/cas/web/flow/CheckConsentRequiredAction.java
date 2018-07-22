@@ -9,7 +9,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -22,7 +21,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class CheckConsentRequiredAction extends AbstractConsentAction {
     /**
      * Indicates that webflow should proceed with consent.

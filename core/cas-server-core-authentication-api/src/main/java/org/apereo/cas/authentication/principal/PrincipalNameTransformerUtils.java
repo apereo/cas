@@ -10,7 +10,6 @@ import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.RegexPrincipalNameTransformer;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -20,7 +19,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @UtilityClass
 public class PrincipalNameTransformerUtils {
 

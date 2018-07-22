@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.util.RegexUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.cryptacular.util.CertUtil;
 import org.junit.Test;
@@ -39,7 +38,6 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
-@Slf4j
 @RequiredArgsConstructor
 public class X509CredentialsAuthenticationHandlerTests {
 

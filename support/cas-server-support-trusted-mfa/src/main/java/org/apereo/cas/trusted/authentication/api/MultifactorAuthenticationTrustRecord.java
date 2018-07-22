@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -31,7 +30,6 @@ import java.time.temporal.ChronoUnit;
 @Entity
 @Table(name = "MultifactorAuthenticationTrustRecord")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @ToString
 @Getter
 @Setter

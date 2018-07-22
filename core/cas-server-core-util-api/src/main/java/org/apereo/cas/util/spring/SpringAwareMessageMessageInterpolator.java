@@ -1,7 +1,6 @@
 package org.apereo.cas.util.spring;
 
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
 import org.springframework.context.NoSuchMessageException;
@@ -17,7 +16,6 @@ import java.util.Locale;
  * @author Scott Battaglia
  * @since 3.4
  */
-@Slf4j
 @Setter
 public class SpringAwareMessageMessageInterpolator implements MessageInterpolator, MessageSourceAware {
 

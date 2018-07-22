@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
@@ -26,7 +25,6 @@ import java.util.ArrayList;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     public BindModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,

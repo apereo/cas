@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.util.RegexUtils;
 
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.regex.Pattern;
@@ -15,7 +14,6 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Setter
 public class RegexPrincipalNameTransformer implements PrincipalNameTransformer {
 

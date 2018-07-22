@@ -9,7 +9,6 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +26,6 @@ import org.springframework.context.annotation.Configuration;
 @RequiresModule(name = "cas-server-support-couchdb-service-registry")
 @Configuration("couchDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
     @Autowired

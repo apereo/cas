@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Error condition arising at ticket creation or validation time when a ticketing operation relying on authentication
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @Getter
 public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketException {
 

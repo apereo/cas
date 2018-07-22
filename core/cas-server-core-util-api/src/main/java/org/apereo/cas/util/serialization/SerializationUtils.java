@@ -4,7 +4,6 @@ import org.apereo.cas.CipherExecutor;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.ByteArrayInputStream;
@@ -23,7 +22,6 @@ import java.io.Serializable;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
-@Slf4j
 @UtilityClass
 public class SerializationUtils {
 

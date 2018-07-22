@@ -21,7 +21,6 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +35,6 @@ import java.util.HashSet;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
 
     /**

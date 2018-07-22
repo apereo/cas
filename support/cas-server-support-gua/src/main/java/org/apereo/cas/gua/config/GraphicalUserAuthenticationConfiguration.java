@@ -13,7 +13,6 @@ import org.apereo.cas.web.flow.DisplayUserGraphicsBeforeAuthenticationAction;
 import org.apereo.cas.web.flow.GraphicalUserAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.PrepareForGraphicalAuthenticationAction;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
@@ -38,7 +37,6 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("graphicalUserAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired

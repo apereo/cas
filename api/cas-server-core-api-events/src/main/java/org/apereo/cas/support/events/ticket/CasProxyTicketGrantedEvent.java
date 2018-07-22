@@ -5,7 +5,6 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing granting of a
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 @ToString
 public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
 

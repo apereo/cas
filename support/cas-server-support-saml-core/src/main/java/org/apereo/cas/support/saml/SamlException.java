@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml;
 
 import org.apereo.cas.authentication.RootCasException;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Represents the root SAML exception.
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public class SamlException extends RootCasException {
     /**
      * Code description.

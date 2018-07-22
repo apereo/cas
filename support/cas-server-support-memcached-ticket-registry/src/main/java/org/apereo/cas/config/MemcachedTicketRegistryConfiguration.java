@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.spy.memcached.transcoders.Transcoder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("memcachedConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class MemcachedTicketRegistryConfiguration {
 
     @Autowired

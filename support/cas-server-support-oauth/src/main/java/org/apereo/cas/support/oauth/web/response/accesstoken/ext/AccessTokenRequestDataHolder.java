@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -22,7 +21,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString
 @Getter
 @Builder

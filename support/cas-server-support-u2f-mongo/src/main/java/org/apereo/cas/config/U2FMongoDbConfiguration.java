@@ -8,7 +8,6 @@ import org.apereo.cas.mongo.MongoDbConnectionFactory;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("u2fMongoDbConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class U2FMongoDbConfiguration {
 
     @Autowired

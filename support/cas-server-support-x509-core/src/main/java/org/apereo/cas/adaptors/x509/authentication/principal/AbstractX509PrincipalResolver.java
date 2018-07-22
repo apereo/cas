@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.security.cert.X509Certificate;
@@ -19,7 +18,6 @@ import java.util.Optional;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @NoArgsConstructor
 public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {

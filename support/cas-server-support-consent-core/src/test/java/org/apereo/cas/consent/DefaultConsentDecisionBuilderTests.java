@@ -8,7 +8,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +33,6 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class})
-@Slf4j
 public class DefaultConsentDecisionBuilderTests {
 
     @Autowired

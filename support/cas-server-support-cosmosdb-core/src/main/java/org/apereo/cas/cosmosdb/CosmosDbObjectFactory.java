@@ -12,7 +12,6 @@ import com.microsoft.azure.spring.data.documentdb.core.convert.MappingDocumentDb
 import com.microsoft.azure.spring.data.documentdb.core.mapping.DocumentDbMappingContext;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.domain.EntityScanner;
@@ -25,7 +24,6 @@ import org.springframework.data.annotation.Persistent;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class CosmosDbObjectFactory {
     private static final String USER_AGENT_SUFFIX = "spring-boot-starter/0.2.0";

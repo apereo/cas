@@ -7,7 +7,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTimeUtils;
@@ -30,7 +29,6 @@ import static org.junit.Assert.*;
  */
 @RunWith(JUnit4.class)
 @DirtiesContext
-@Slf4j
 public class TicketGrantingTicketExpirationPolicyTests {
 
     private static final long HARD_TIMEOUT = 2;

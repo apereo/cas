@@ -12,7 +12,6 @@ import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,7 +34,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @RunWith(SpringRunner.class)
-@Slf4j
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,

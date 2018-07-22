@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link SamlAttributeQueryTicketExpirationPolicy}.
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
  * @since 5.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @NoArgsConstructor
 public class SamlAttributeQueryTicketExpirationPolicy extends HardTimeoutExpirationPolicy {
 

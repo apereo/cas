@@ -13,7 +13,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -23,7 +22,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.2.1
  */
-@Slf4j
 public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     private final RememberMeAuthenticationMetaDataPopulator p = new RememberMeAuthenticationMetaDataPopulator();

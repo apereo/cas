@@ -3,7 +3,6 @@ package org.apereo.cas.util.gen;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.nio.charset.StandardCharsets;
@@ -18,7 +17,6 @@ import java.security.SecureRandom;
  * @author Timur Duehr
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 public abstract class AbstractRandomStringGenerator implements RandomStringGenerator {
     /**

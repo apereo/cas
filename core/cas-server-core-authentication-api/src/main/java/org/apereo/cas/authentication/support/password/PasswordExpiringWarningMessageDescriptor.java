@@ -2,8 +2,6 @@ package org.apereo.cas.authentication.support.password;
 
 import org.apereo.cas.DefaultMessageDescriptor;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.Serializable;
 
 /**
@@ -13,7 +11,6 @@ import java.io.Serializable;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 public class PasswordExpiringWarningMessageDescriptor extends DefaultMessageDescriptor {
     /**
      * Serialization version marker.

@@ -11,7 +11,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 
@@ -24,7 +23,6 @@ import java.net.URL;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 @Getter
 @Setter
 @NoArgsConstructor

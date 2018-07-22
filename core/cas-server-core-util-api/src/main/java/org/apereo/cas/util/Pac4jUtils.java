@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.core.context.J2EContext;
@@ -21,7 +20,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @UtilityClass
 public class Pac4jUtils {
     /**

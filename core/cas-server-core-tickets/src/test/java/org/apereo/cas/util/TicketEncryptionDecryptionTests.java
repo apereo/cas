@@ -8,7 +8,6 @@ import org.apereo.cas.util.cipher.BaseBinaryCipherExecutor;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import com.google.common.io.ByteSource;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -20,7 +19,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public class TicketEncryptionDecryptionTests {
 
     private final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("casuser");

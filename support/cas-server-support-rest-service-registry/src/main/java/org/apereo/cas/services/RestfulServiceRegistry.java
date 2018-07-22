@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
@@ -20,7 +19,6 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class RestfulServiceRegistry extends AbstractServiceRegistry {
     private final transient RestTemplate restTemplate;

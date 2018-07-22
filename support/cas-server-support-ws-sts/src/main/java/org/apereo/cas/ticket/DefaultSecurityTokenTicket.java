@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
@@ -26,7 +25,6 @@ import javax.persistence.Table;
 @Table(name = "SECURITYTOKENTICKET")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(SecurityTokenTicket.PREFIX)
-@Slf4j
 @NoArgsConstructor
 public class DefaultSecurityTokenTicket extends AbstractTicket implements SecurityTokenTicket {
 

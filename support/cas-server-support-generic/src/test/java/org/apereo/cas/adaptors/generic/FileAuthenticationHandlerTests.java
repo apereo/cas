@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Rule;
@@ -26,7 +25,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class FileAuthenticationHandlerTests {
 
     @Rule

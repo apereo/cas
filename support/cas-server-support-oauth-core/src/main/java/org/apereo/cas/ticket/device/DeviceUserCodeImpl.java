@@ -5,7 +5,6 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -18,7 +17,6 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue(DeviceUserCode.PREFIX)
-@Slf4j
 @NoArgsConstructor(force = true)
 @Getter
 public class DeviceUserCodeImpl extends AbstractTicket implements DeviceUserCode {

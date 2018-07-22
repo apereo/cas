@@ -5,7 +5,6 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +25,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 @RunWith(Parameterized.class)
 public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
     public JsonServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {

@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 
 /**
@@ -14,7 +13,6 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Setter
 @Getter
 public class DefaultAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {

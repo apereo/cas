@@ -4,7 +4,6 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -16,7 +15,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public abstract class AbstractCasEventRepositoryTests {
 
     @Test

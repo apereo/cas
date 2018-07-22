@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
@@ -16,7 +15,6 @@ import javax.sql.DataSource;
  * @author Scott Battaglia
  * @since 3.0.0.3
  */
-@Slf4j
 public abstract class AbstractJdbcUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private final JdbcTemplate jdbcTemplate;

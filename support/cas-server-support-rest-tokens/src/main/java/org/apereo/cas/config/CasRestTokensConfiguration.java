@@ -11,7 +11,6 @@ import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.tokens.JWTServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.tokens.JWTTicketGrantingTicketResourceEntityResponseFactory;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casRestTokensConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasRestTokensConfiguration implements ServiceTicketResourceEntityResponseFactoryConfigurer {
     @Autowired
     @Qualifier("centralAuthenticationService")

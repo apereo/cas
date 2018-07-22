@@ -5,7 +5,6 @@ import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.InfluxDbCasEventRepository;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +18,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casEventsInfluxDbRepositoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasEventsInfluxDbRepositoryConfiguration {
 
     @Autowired

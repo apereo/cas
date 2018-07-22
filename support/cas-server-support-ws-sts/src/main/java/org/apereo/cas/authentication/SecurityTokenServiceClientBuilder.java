@@ -5,7 +5,6 @@ import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.BusFactory;
@@ -21,7 +20,6 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class SecurityTokenServiceClientBuilder {
     private final WsFederationProperties wsFederationProperties;

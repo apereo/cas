@@ -6,7 +6,6 @@ import org.apereo.cas.ticket.TicketState;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.UUID;
@@ -20,7 +19,6 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 @Getter
 @Setter
 @EqualsAndHashCode

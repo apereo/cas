@@ -6,7 +6,6 @@ import org.apereo.cas.otp.repository.credentials.BaseInMemoryOneTimeTokenCredent
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -15,7 +14,6 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Getter
 public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseInMemoryOneTimeTokenCredentialRepository {
     private final IGoogleAuthenticator googleAuthenticator;
