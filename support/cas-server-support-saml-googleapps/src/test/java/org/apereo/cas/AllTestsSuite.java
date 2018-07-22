@@ -4,7 +4,6 @@ import org.apereo.cas.support.saml.authentication.GoogleAppsSamlAuthenticationRe
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactoryTests;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -20,6 +19,5 @@ import org.junit.runners.Suite;
     GoogleAccountsServiceTests.class,
     GoogleAccountsServiceFactoryTests.class
 })
-@Slf4j
 public class AllTestsSuite {
 }

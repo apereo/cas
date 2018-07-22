@@ -1,6 +1,5 @@
 package org.apereo.cas.monitor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@Slf4j
 public class EhCacheHealthIndicator extends AbstractCacheHealthIndicator {
 
     /**

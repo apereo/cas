@@ -23,7 +23,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -69,7 +68,6 @@ import org.springframework.test.context.junit4.SpringRunner;
     CasCoreServicesConfiguration.class})
 @TestPropertySource(locations = {"classpath:/x509.properties"})
 @EnableScheduling
-@Slf4j
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests implements InitializingBean {
 
     private static final int LDAP_PORT = 1389;

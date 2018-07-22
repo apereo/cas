@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
 
@@ -22,7 +21,6 @@ import org.opensaml.saml.common.SAMLObject;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQueryTicketFactory {
 

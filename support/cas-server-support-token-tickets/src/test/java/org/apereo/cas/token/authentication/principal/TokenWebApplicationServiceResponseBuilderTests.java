@@ -33,7 +33,6 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
 import com.nimbusds.jwt.JWTParser;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,7 +87,6 @@ import static org.junit.Assert.*;
 })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@Slf4j
 @TestPropertySource(locations = "classpath:tokentests.properties")
 public class TokenWebApplicationServiceResponseBuilderTests {
 

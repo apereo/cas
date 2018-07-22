@@ -5,7 +5,6 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
@@ -33,7 +32,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Category(InfluxDbCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)

@@ -3,8 +3,6 @@ package org.apereo.cas.authentication.exceptions;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +12,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 public class UnresolvedPrincipalException extends PrincipalException {
 
     /**

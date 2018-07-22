@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
@@ -19,7 +18,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 @RequiredArgsConstructor
 public class AcceptableUsagePolicyVerifyAction extends AbstractAction {
     private final AcceptableUsagePolicyRepository repository;

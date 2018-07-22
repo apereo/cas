@@ -18,7 +18,6 @@ import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.SetAction;
@@ -41,7 +40,6 @@ import javax.security.auth.login.FailedLoginException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     /**

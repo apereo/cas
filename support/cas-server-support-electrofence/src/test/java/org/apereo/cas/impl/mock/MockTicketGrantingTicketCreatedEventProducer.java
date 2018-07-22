@@ -8,7 +8,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,7 +26,6 @@ import java.util.stream.IntStream;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @NoArgsConstructor
 public class MockTicketGrantingTicketCreatedEventProducer {
 

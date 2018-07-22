@@ -5,7 +5,6 @@ import org.apereo.cas.config.MongoDbEventsConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
@@ -26,7 +25,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 @Category(MongoDbCategory.class)
 @SpringBootTest(classes = {MongoDbEventsConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/mongoevents.properties"})
-@Slf4j
 public class MongoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @ClassRule

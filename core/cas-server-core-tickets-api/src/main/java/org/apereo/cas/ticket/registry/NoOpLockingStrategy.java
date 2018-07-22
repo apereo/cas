@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link NoOpLockingStrategy} that does absolutely nothing
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class NoOpLockingStrategy implements LockingStrategy {
     @Override
     public boolean acquire() {

@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.checker.AbstractCR
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.util.crypto.CertUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,7 +19,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
-@Slf4j
 public abstract class AbstractCRLRevocationCheckerTests {
 
     /**

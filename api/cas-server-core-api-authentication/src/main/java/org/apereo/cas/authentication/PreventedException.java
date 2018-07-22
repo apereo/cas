@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Describes an error condition where authentication was prevented for some reason, e.g. communication
@@ -9,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 public class PreventedException extends Exception {
 
     private static final long serialVersionUID = 4702274165911620708L;

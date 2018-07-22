@@ -1,6 +1,5 @@
 package org.apereo.cas.rest;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link BadRestRequestException}.
@@ -8,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class BadRestRequestException extends IllegalArgumentException {
     private static final long serialVersionUID = 6852720596988243487L;
 

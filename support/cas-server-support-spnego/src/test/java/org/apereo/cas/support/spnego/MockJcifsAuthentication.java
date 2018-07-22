@@ -1,7 +1,6 @@
 package org.apereo.cas.support.spnego;
 
 import jcifs.spnego.Authentication;
-import lombok.extern.slf4j.Slf4j;
 
 import java.security.Principal;
 
@@ -10,7 +9,6 @@ import java.security.Principal;
  * @author Arnaud Lesueur
  * @since 4.2.0
  */
-@Slf4j
 public class MockJcifsAuthentication extends Authentication {
 
     private Principal principal;

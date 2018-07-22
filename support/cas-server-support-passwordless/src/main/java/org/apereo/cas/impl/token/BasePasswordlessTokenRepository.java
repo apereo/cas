@@ -6,7 +6,6 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link BasePasswordlessTokenRepository}.
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @RequiredArgsConstructor
 @Getter
 public abstract class BasePasswordlessTokenRepository implements PasswordlessTokenRepository {

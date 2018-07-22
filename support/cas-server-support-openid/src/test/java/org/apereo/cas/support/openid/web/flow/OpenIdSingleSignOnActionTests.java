@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
     @Autowired

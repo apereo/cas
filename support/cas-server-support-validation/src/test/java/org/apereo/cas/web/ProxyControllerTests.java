@@ -10,7 +10,6 @@ import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,6 @@ import static org.junit.Assert.*;
 @Import({ProxyControllerTests.ProxyTestConfiguration.class,
     CasProtocolViewsConfiguration.class,
     CasValidationConfiguration.class})
-@Slf4j
 public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
 
     @Autowired

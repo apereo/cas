@@ -23,7 +23,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
@@ -66,7 +65,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     RefreshAutoConfiguration.class
 })
 @TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
-@Slf4j
 public abstract class AbstractDynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @ClassRule

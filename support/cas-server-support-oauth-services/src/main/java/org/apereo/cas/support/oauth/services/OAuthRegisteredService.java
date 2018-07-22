@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -25,7 +24,6 @@ import java.util.HashSet;
  */
 @Entity
 @DiscriminatorValue("oauth")
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 @Setter

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
-import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.Unchecked;
 
 import java.io.IOException;
@@ -19,7 +18,6 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class X509CertificateCredentialJsonSerializer extends JsonSerializer<X509CertificateCredential> {
 
     @Override

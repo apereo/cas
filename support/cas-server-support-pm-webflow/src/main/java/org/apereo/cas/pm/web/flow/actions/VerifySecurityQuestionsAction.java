@@ -5,7 +5,6 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -19,7 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class VerifySecurityQuestionsAction extends AbstractAction {
     private final PasswordManagementService passwordManagementService;

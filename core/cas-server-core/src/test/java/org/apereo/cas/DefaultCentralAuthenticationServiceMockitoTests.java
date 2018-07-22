@@ -61,7 +61,6 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Rule;
@@ -112,7 +111,6 @@ import static org.mockito.Mockito.*;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class
 })
-@Slf4j
 public class DefaultCentralAuthenticationServiceMockitoTests {
 
     private static final String TGT_ID = "tgt-id";

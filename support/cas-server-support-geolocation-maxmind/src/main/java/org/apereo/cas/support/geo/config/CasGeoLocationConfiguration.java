@@ -8,7 +8,6 @@ import org.apereo.cas.support.geo.maxmind.MaxmindDatabaseGeoLocationService;
 import com.maxmind.db.CHMCache;
 import com.maxmind.geoip2.DatabaseReader;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,7 +25,6 @@ import java.io.IOException;
  */
 @Configuration("casGeoLocationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasGeoLocationConfiguration {
 
     @Autowired

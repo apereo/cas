@@ -4,7 +4,6 @@ import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoA
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredentialsTests;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredentialsToPrincipalResolverTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -20,6 +19,5 @@ import org.junit.runners.Suite;
     SpnegoCredentialsTests.class,
     SpnegoCredentialsToPrincipalResolverTests.class
 })
-@Slf4j
 public class AllTestsSuite {
 }

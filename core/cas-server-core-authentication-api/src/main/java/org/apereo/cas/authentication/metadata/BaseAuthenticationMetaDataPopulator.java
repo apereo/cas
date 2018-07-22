@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 
 /**
@@ -14,7 +13,6 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString
 @Getter
 @AllArgsConstructor

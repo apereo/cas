@@ -4,7 +4,6 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import com.google.common.base.Splitter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -19,7 +18,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
     private static final char COOKIE_FIELD_SEPARATOR = '@';
     private static final int COOKIE_FIELDS_LENGTH = 3;

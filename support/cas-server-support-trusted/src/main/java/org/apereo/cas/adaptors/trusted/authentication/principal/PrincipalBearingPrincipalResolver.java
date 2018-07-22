@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Optional;
@@ -20,7 +19,6 @@ import java.util.Optional;
  * @author Andrew Petro
  * @since 3.0.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @NoArgsConstructor
 public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {

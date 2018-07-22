@@ -2,7 +2,6 @@ package org.apereo.cas.support.openid.web.support;
 
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 public class OpenIdPostUrlHandlerMappingTests extends AbstractOpenIdTests {
 
     private static final String LOGIN_URL_PATH = "/login";

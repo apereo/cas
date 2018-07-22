@@ -16,7 +16,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
@@ -55,7 +54,6 @@ import java.util.List;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     TokenCoreConfiguration.class
 })
-@Slf4j
 public abstract class BaseJWTTokenTicketBuilderTests {
 
     @Autowired

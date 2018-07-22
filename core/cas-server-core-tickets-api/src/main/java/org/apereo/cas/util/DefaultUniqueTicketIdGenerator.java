@@ -7,7 +7,6 @@ import org.apereo.cas.util.gen.NumericGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @Setter
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 

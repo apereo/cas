@@ -5,7 +5,6 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing granting of a
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-@Slf4j
 @ToString
 public class CasServiceTicketGrantedEvent extends AbstractCasEvent {
 

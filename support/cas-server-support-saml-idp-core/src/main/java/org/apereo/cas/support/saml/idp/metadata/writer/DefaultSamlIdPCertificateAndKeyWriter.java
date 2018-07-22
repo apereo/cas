@@ -5,7 +5,6 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERSequence;
@@ -36,7 +35,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @NoArgsConstructor
 @Setter
 public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificateAndKeyWriter {

@@ -2,7 +2,6 @@ package org.apereo.cas.trusted.authentication;
 
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link MultifactorAuthenticationTrustCipherExecutor}.
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class MultifactorAuthenticationTrustCipherExecutor extends BaseStringCipherExecutor {
     public MultifactorAuthenticationTrustCipherExecutor(final String secretKeyEncryption,
                                                         final String secretKeySigning,

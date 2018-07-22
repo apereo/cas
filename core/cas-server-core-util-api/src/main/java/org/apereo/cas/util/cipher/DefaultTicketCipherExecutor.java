@@ -1,6 +1,5 @@
 package org.apereo.cas.util.cipher;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link DefaultTicketCipherExecutor} that handles the encryption
@@ -9,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class DefaultTicketCipherExecutor extends BaseBinaryCipherExecutor {
     public DefaultTicketCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
                                        final String secretKeyAlg, final int signingKeySize,

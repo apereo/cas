@@ -2,7 +2,6 @@ package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.support.events.CasEventRepository;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.ZonedDateTime;
@@ -15,7 +14,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public abstract class AbstractCasEventRepository implements CasEventRepository {
 
     /**

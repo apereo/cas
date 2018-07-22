@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -45,7 +44,6 @@ import org.springframework.scheduling.annotation.EnableAsync;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
-@Slf4j
 @NoArgsConstructor
 public class CasCommandLineShellApplication {
 

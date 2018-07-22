@@ -8,7 +8,6 @@ import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.consent.JpaConsentRepository;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,7 +35,6 @@ import java.util.List;
 @Configuration("casConsentJdbcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-@Slf4j
 public class CasConsentJdbcConfiguration {
 
     @Autowired

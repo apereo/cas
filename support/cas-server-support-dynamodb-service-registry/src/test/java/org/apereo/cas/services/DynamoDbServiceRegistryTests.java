@@ -8,7 +8,6 @@ import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -35,7 +34,6 @@ import java.util.Collection;
     CasCoreAuthenticationMetadataConfiguration.class,
     RefreshAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:/dynamodb-serviceregistry.properties")
-@Slf4j
 @Category(DynamoDbCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {

@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -12,7 +11,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.4.4
  */
-@Slf4j
 public class ResponseTests {
 
     private static final String TICKET_PARAM = "ticket";

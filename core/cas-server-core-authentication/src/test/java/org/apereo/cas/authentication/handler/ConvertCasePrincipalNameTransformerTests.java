@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.handler;
 import org.apereo.cas.util.transforms.ConvertCasePrincipalNameTransformer;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -15,7 +14,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class ConvertCasePrincipalNameTransformerTests {
 
     @Test

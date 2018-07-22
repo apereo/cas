@@ -20,7 +20,6 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.ZoneOffset;
@@ -36,7 +35,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 @Getter
 @EqualsAndHashCode(of = {"id"})
 public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {

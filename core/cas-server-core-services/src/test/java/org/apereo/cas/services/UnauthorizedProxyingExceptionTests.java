@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -10,7 +9,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Slf4j
 public class UnauthorizedProxyingExceptionTests {
 
     private static final String MESSAGE = "GG";

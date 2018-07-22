@@ -1,7 +1,6 @@
 package org.apereo.cas.util.gen;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.stream.IntStream;
@@ -13,7 +12,6 @@ import java.util.stream.IntStream;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @NoArgsConstructor
 public class DefaultRandomStringGenerator extends AbstractRandomStringGenerator {
 

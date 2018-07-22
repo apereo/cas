@@ -11,7 +11,6 @@ import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFact
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 5.3.0
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
-@Slf4j
 @DirtiesContext
 public class UserAuthenticationResourceTests {
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/users";

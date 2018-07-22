@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.ticket.ExpirationPolicy;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.web.servlet.View;
@@ -22,7 +21,6 @@ import org.springframework.web.servlet.View;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20AuthorizationResponseBuilder {
     private final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;

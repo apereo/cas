@@ -2,7 +2,6 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.RootCasException;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Generic ticket exception. Top of the AbstractTicketException hierarchy.
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Scott Battaglia
  * @since 4.2.0
  */
-@Slf4j
 public abstract class AbstractTicketException extends RootCasException {
     private static final long serialVersionUID = -5128676415951733624L;
 

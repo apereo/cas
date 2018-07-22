@@ -81,7 +81,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -123,7 +122,6 @@ import java.util.stream.Stream;
  */
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionPlanConfigurer {
 
     @Autowired

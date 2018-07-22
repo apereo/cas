@@ -15,7 +15,6 @@ import com.yubico.u2f.data.messages.SignRequestData;
 import com.yubico.u2f.data.messages.SignResponse;
 import com.yubico.u2f.exceptions.DeviceCompromisedException;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -24,7 +23,6 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final U2F u2f = new U2F();

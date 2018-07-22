@@ -30,7 +30,6 @@ import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -59,7 +58,6 @@ import java.util.stream.Collectors;
  */
 @Configuration("passwordlessAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class PasswordlessAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     @Qualifier("communicationsManager")

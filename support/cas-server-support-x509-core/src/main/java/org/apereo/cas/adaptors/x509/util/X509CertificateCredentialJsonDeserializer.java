@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.InputStreamResource;
 
@@ -23,7 +22,6 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class X509CertificateCredentialJsonDeserializer extends JsonDeserializer<X509CertificateCredential> {
 
     @Override

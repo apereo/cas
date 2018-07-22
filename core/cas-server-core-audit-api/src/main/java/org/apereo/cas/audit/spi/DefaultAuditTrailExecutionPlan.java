@@ -3,7 +3,6 @@ package org.apereo.cas.audit.spi;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @Getter
 public class DefaultAuditTrailExecutionPlan implements AuditTrailExecutionPlan {
     private List<AuditTrailManager> auditTrailManagers = new ArrayList<>();

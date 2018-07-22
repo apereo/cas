@@ -7,7 +7,6 @@ import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Arrays;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @NoArgsConstructor
 @Getter
 public class DefaultVariegatedMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements VariegatedMultifactorAuthenticationProvider {

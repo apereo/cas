@@ -9,7 +9,6 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.HashMap;
@@ -23,7 +22,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @UtilityClass
 public class MultifactorAuthenticationTestUtils {
     public static Principal getPrincipal(final String id) {

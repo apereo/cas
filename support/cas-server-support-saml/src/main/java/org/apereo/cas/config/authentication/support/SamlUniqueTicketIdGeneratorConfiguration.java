@@ -7,7 +7,6 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.UniqueTicketIdGeneratorConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import java.util.Collection;
  */
 @Configuration("samlUniqueTicketIdGeneratorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SamlUniqueTicketIdGeneratorConfiguration implements UniqueTicketIdGeneratorConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;

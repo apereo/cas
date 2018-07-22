@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.pac4j.core.profile.UserProfile;
 
 /**
@@ -17,7 +16,6 @@ import org.pac4j.core.profile.UserProfile;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@Slf4j
 @ToString
 @Setter
 @Getter

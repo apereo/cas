@@ -21,7 +21,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +40,6 @@ import java.util.Collection;
  * @since 5.2.0
  */
 @RunWith(ConditionalParameterizedRunner.class)
-@Slf4j
 @SpringBootTest(classes = {
     ActiveMQAutoConfiguration.class,
     JmsAutoConfiguration.class,

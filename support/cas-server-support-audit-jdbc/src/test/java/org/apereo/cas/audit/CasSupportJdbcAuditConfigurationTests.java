@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -40,7 +39,6 @@ import static org.junit.Assert.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = "cas.audit.jdbc.asynchronous=false")
-@Slf4j
 public class CasSupportJdbcAuditConfigurationTests {
 
     @Autowired

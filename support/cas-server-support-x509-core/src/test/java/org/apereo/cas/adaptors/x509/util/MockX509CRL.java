@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.x509.util;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.security.auth.x500.X500Principal;
@@ -23,7 +22,6 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
-@Slf4j
 @ToString
 @Getter
 @RequiredArgsConstructor

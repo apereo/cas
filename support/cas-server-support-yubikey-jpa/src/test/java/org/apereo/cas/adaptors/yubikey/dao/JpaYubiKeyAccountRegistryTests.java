@@ -25,7 +25,6 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +77,6 @@ import static org.junit.Assert.*;
         RefreshAutoConfiguration.class
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @TestPropertySource(locations = {"classpath:/yubikey-jpa.properties"})
 public class JpaYubiKeyAccountRegistryTests {
     private static final String BAD_TOKEN = "123456";

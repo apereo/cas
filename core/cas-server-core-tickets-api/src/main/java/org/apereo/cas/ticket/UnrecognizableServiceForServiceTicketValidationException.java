@@ -2,7 +2,6 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.principal.Service;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * An exception that may be thrown during service ticket validation
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 public class UnrecognizableServiceForServiceTicketValidationException extends AbstractTicketValidationException {
     /**
      * The code description.

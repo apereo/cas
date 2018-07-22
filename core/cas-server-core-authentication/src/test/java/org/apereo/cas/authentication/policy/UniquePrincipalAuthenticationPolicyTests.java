@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,7 +45,6 @@ import static org.junit.Assert.*;
     CasCoreTicketCatalogConfiguration.class
 })
 @DirtiesContext
-@Slf4j
 public class UniquePrincipalAuthenticationPolicyTests {
 
     @Rule

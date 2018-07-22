@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.LdapPasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementService;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ldapPasswordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class LdapPasswordManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

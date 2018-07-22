@@ -2,7 +2,6 @@ package org.apereo.cas;
 
 import org.apereo.cas.web.support.JdbcThrottledSubmissionHandlerInterceptorAdapterTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -16,6 +15,5 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses(
     JdbcThrottledSubmissionHandlerInterceptorAdapterTests.class
 )
-@Slf4j
 public class AllTestsSuite {
 }

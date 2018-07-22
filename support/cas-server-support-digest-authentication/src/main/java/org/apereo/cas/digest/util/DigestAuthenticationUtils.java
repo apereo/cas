@@ -3,7 +3,6 @@ package org.apereo.cas.digest.util;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +16,6 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @UtilityClass
 public class DigestAuthenticationUtils {
 

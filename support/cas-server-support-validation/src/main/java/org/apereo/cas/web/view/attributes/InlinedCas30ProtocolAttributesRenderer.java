@@ -1,6 +1,5 @@
 package org.apereo.cas.web.view.attributes;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -9,7 +8,6 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class InlinedCas30ProtocolAttributesRenderer extends DefaultCas30ProtocolAttributesRenderer {
 
     @Override

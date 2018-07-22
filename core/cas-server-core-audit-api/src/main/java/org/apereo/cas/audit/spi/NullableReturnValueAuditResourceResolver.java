@@ -1,7 +1,6 @@
 package org.apereo.cas.audit.spi;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -17,7 +16,6 @@ import java.util.Date;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class NullableReturnValueAuditResourceResolver implements AuditResourceResolver {
     private final AuditResourceResolver delegate;

@@ -3,7 +3,6 @@ package org.apereo.cas.support.events.authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.support.events.AbstractCasEvent;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link CasAuthenticationTransactionStartedEvent}.
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class CasAuthenticationTransactionStartedEvent extends AbstractCasEvent {
     private static final long serialVersionUID = -1862937393590213811L;
 

@@ -12,7 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -32,7 +31,6 @@ import javax.persistence.Table;
 @Table(name = "SAML2_ATTRIBUTE_QUERY_TICKETS")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(SamlAttributeQueryTicket.PREFIX)
-@Slf4j
 @Getter
 @NoArgsConstructor
 @Setter

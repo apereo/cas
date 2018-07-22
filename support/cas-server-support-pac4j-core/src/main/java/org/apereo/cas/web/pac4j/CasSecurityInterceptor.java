@@ -2,7 +2,6 @@ package org.apereo.cas.web.pac4j;
 
 import org.apereo.cas.CasProtocolConstants;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.config.Config;
@@ -24,7 +23,6 @@ import java.util.List;
  * @author Arnold Bergner
  * @since 5.2.0
  */
-@Slf4j
 public class CasSecurityInterceptor extends SecurityInterceptor {
 
     public CasSecurityInterceptor(final Config config, final String clients) {

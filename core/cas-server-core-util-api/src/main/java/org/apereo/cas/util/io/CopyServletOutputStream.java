@@ -1,7 +1,5 @@
 package org.apereo.cas.util.io;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import java.io.ByteArrayOutputStream;
@@ -15,7 +13,6 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class CopyServletOutputStream extends ServletOutputStream {
     private static final int BUFFER_SIZE = 1024;
 

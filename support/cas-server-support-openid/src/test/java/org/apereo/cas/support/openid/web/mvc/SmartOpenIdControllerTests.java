@@ -2,7 +2,6 @@ package org.apereo.cas.support.openid.web.mvc;
 
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import static org.junit.Assert.*;
  * @author Frederic Esnault
  * @since 3.0.0
  */
-@Slf4j
 public class SmartOpenIdControllerTests extends AbstractOpenIdTests {
 
     private static final String OPENID_MODE_PARAM = "openid.mode";

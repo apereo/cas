@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.FastDateFormat;
 
 import java.time.Instant;
@@ -15,7 +14,6 @@ import java.util.TimeZone;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class ISOStandardDateFormat extends FastDateFormat {
 
     private static final long serialVersionUID = 9196017562782775535L;

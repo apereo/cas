@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -21,7 +20,6 @@ import org.springframework.stereotype.Controller;
  * @since 3.5.0
  */
 @Controller
-@Slf4j
 @RequiredArgsConstructor
 public abstract class BaseOAuth20Controller {
 

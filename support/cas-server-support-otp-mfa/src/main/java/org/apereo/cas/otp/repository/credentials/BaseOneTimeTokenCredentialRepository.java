@@ -4,7 +4,6 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -13,7 +12,6 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTokenCredentialRepository {
     /**

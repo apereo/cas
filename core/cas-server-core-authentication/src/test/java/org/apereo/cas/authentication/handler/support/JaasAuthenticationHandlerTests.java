@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHand
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
@@ -26,7 +25,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class JaasAuthenticationHandlerTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();

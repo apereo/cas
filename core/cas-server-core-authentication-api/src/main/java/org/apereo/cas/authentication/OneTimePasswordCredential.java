@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Describes a one-time-password credential that contains an optional unique identifier and required password.
@@ -19,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true, exclude = {"password"})

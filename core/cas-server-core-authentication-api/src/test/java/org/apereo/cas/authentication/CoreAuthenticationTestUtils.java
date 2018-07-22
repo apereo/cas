@@ -11,7 +11,6 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
@@ -30,7 +29,6 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0.2
  */
-@Slf4j
 @UtilityClass
 public class CoreAuthenticationTestUtils {
 

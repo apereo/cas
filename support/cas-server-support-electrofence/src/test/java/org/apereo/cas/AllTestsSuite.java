@@ -7,7 +7,6 @@ import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculatorTes
 import org.apereo.cas.impl.notify.AuthenticationRiskEmailNotifierTests;
 import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifierTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -26,6 +25,5 @@ import org.junit.runners.Suite;
     AuthenticationRiskEmailNotifierTests.class,
     AuthenticationRiskSmsNotifierTests.class
 })
-@Slf4j
 public class AllTestsSuite {
 }

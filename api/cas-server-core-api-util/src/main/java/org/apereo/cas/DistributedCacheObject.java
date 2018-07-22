@@ -2,7 +2,6 @@ package org.apereo.cas;
 
 import lombok.Getter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
@@ -16,7 +15,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @ToString
 @Getter
 public class DistributedCacheObject<V extends Serializable> implements Serializable {

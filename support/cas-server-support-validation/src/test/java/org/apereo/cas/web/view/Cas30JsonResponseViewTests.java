@@ -9,7 +9,6 @@ import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer
 import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 import org.apereo.cas.web.view.json.CasJsonServiceResponse;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -24,7 +23,6 @@ import java.util.Map;
  * @since 4.0.0
  */
 @DirtiesContext
-@Slf4j
 public class Cas30JsonResponseViewTests extends Cas30ResponseViewTests {
     @Override
     protected AbstractCasView getCasViewToRender(final ProtocolAttributeEncoder encoder, final View viewDelegated) {

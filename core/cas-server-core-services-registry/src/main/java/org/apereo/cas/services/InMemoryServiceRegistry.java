@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 @ToString
 @Setter
 @NoArgsConstructor

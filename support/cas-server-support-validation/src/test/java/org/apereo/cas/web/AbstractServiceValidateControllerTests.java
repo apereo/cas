@@ -17,7 +17,6 @@ import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +36,6 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @Import({CasProtocolViewsConfiguration.class, CasValidationConfiguration.class, ThymeleafAutoConfiguration.class})
-@Slf4j
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
     protected static final String SUCCESS = "Success";
     protected static final Service SERVICE = RegisteredServiceTestUtils.getService();

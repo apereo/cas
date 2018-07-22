@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.test.context.TestConfiguration;
 
@@ -18,7 +17,6 @@ import java.util.HashMap;
  * @since 5.1.0
  */
 @TestConfiguration("CasMultifactorTestAuthenticationEventExecutionPlanConfiguration")
-@Slf4j
 public class CasMultifactorTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {

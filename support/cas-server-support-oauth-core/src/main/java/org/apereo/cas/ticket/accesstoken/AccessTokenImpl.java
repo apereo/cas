@@ -7,7 +7,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuthCodeImpl;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -21,7 +20,6 @@ import java.util.Collection;
  */
 @Entity
 @DiscriminatorValue(AccessToken.PREFIX)
-@Slf4j
 @NoArgsConstructor
 public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
 

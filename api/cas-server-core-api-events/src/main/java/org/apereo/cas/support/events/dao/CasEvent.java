@@ -6,7 +6,6 @@ import org.apereo.cas.util.DateTimeUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
@@ -35,7 +34,6 @@ import java.util.Map;
  */
 @Entity
 @Table(name = "CasEvent")
-@Slf4j
 @ToString
 @Getter
 @Setter

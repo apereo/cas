@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,6 @@ import static org.junit.Assert.*;
  */
 @TestPropertySource(locations = {"classpath:/x509.properties"})
 @Import(value = {X509AuthenticationWebflowConfiguration.class, X509AuthenticationConfiguration.class})
-@Slf4j
 public class X509CertificateCredentialsNonInteractiveActionTests extends AbstractX509CertificateTests {
 
     @Autowired

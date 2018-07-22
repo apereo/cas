@@ -6,7 +6,6 @@ import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,7 +22,6 @@ import org.springframework.session.hazelcast.config.annotation.web.http.EnableHa
 @Configuration("hazelcastSessionConfiguration")
 @EnableHazelcastHttpSession
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class HazelcastSessionConfiguration {
 
     @Autowired

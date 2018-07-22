@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 
@@ -15,7 +14,6 @@ import java.net.URL;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@Slf4j
 @ToString
 @Getter
 @Setter

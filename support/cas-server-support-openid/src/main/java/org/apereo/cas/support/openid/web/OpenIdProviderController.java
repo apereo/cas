@@ -3,7 +3,6 @@ package org.apereo.cas.support.openid.web;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.1
  */
 @Controller("openIdProviderController")
-@Slf4j
 public class OpenIdProviderController {
 
     @Autowired

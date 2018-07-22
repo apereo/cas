@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,7 +31,6 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Import(CasSupportActionsConfiguration.class)
-@Slf4j
 public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String SERVICE_PARAM = "service";

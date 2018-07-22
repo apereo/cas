@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -13,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @NoArgsConstructor
 public class U2FMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 

@@ -7,7 +7,6 @@ import com.authy.api.Hash;
 import com.authy.api.User;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -19,7 +18,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class AuthyAuthenticationRegistrationWebflowAction extends AbstractAction {
     private final AuthyClientInstance instance;

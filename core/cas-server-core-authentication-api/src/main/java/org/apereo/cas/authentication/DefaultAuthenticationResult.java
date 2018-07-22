@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * The {@link DefaultAuthenticationResult} represents a concrete implementation of {@link AuthenticationResult}.
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 @ToString
 @Setter
 @Getter

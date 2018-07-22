@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.SamlRegisteredServiceTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicyTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -28,7 +27,6 @@ import org.junit.runners.Suite;
     PatternMatchingEntityIdAttributeReleasePolicyTests.class,
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class
 })
-@Slf4j
 public class AllTestsSuite {
 }
 

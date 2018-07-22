@@ -32,7 +32,6 @@ import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilt
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilterTests;
 import org.apereo.cas.util.services.DefaultRegisteredServiceJsonSerializerTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -77,6 +76,5 @@ import org.junit.runners.Suite;
     UnauthorizedServiceExceptionTests.class,
     UnauthorizedSsoServiceExceptionTests.class,
     DefaultRegisteredServiceJsonSerializerTests.class})
-@Slf4j
 public class AllServicesTestsSuite {
 }

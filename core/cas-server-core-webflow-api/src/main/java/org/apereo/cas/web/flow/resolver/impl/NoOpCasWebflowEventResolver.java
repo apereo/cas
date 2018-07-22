@@ -7,7 +7,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -20,7 +19,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class NoOpCasWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     public NoOpCasWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,

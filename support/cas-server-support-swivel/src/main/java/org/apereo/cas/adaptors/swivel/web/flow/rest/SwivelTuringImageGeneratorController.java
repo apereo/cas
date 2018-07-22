@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorPropertie
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +23,6 @@ import java.net.URL;
  * @since 5.2.0
  */
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 public class SwivelTuringImageGeneratorController {
     private final SwivelMultifactorProperties swivel;

@@ -18,7 +18,6 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -68,7 +67,6 @@ import static org.junit.Assert.*;
         RefreshAutoConfiguration.class})
 @EnableScheduling
 @TestPropertySource(locations = {"classpath:/mongo.properties"})
-@Slf4j
 public class MongoDbAuthenticationHandlerTests {
 
     @ClassRule

@@ -1,6 +1,5 @@
 package org.apereo.cas.monitor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.ehcache.Cache;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +12,6 @@ import java.util.Formatter;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@Slf4j
 public class EhCacheStatistics implements CacheStatistics {
 
     private static final double TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE = 1048510.0;

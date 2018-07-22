@@ -12,7 +12,6 @@ import org.apereo.cas.util.MockWebServer;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,7 +43,6 @@ import static org.junit.Assert.*;
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class})
-@Slf4j
 @TestPropertySource(properties = "cas.authn.mfa.trusted.rest.url=http://localhost:9297")
 public class RestMultifactorAuthenticationTrustStorageTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

@@ -6,7 +6,6 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -19,7 +18,6 @@ import org.springframework.test.context.TestPropertySource;
  * @since 4.1
  */
 @TestPropertySource(locations = {"classpath:/spnego.properties", "classpath:/spnego-ldap-ci.properties"})
-@Slf4j
 @Category(LdapCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests

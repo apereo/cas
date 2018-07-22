@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastA
 
 import com.hazelcast.aws.AwsDiscoveryStrategyFactory;
 import com.hazelcast.config.DiscoveryStrategyConfig;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
 
@@ -17,7 +16,6 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class HazelcastAwsDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
     @Override

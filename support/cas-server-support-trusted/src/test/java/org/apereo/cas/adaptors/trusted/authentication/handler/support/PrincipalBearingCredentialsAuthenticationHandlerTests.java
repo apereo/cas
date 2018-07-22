@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearing
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -14,7 +13,6 @@ import static org.junit.Assert.*;
  * @author Andrew Petro
  * @since 3.0.0
  */
-@Slf4j
 public class PrincipalBearingCredentialsAuthenticationHandlerTests {
 
     private final PrincipalBearingCredentialsAuthenticationHandler handler = new PrincipalBearingCredentialsAuthenticationHandler("", null, null);

@@ -11,7 +11,6 @@ import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
@@ -24,7 +23,6 @@ import java.security.GeneralSecurityException;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private final TicketRegistry ticketRegistry;

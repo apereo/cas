@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -24,7 +23,6 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id"})

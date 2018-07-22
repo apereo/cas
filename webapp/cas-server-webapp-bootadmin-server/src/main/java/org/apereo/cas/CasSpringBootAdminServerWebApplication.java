@@ -2,7 +2,6 @@ package org.apereo.cas;
 
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
@@ -40,7 +39,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
     DataSourceTransactionManagerAutoConfiguration.class,
     RedisRepositoriesAutoConfiguration.class})
 @EnableAdminServer
-@Slf4j
 @NoArgsConstructor
 public class CasSpringBootAdminServerWebApplication {
 

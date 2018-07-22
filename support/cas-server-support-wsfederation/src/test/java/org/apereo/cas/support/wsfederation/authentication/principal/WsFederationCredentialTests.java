@@ -2,7 +2,6 @@ package org.apereo.cas.support.wsfederation.authentication.principal;
 
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +18,6 @@ import static org.junit.Assert.*;
  * @author John Gasper
  * @since 4.2.0
  */
-@Slf4j
 public class WsFederationCredentialTests extends AbstractWsFederationTests {
 
     private static final String ISSUER = "http://adfs.example.com/adfs/services/trust";

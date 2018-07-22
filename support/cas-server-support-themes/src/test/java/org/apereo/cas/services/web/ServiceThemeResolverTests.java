@@ -19,7 +19,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.HttpRequestUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,7 +59,6 @@ import static org.mockito.Mockito.*;
     ThymeleafAutoConfiguration.class,
     RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/castheme.properties"})
-@Slf4j
 public class ServiceThemeResolverTests {
 
     private static final String MOZILLA = "Mozilla";

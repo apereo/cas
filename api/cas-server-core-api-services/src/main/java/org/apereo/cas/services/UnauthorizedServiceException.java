@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Exception that is thrown when an Unauthorized Service attempts to use CAS.
@@ -9,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @Getter
 public class UnauthorizedServiceException extends RuntimeException {
 

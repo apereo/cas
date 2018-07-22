@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link TokenCredential} that represents the user credentials in form of an encrypted token.
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 public class TokenCredential extends BasicIdentifiableCredential {

@@ -8,8 +8,6 @@ import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -22,7 +20,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction extends BasePrincipalFromNonInteractiveCredentialsAction {
     public PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialWebflowEventResolver,
                                                                          final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,

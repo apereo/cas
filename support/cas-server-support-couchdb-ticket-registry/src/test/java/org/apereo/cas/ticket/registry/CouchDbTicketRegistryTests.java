@@ -26,7 +26,6 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -72,7 +71,6 @@ import java.util.Collection;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class},
     properties = {"org.ektorp.support.AutoUpdateViewOnChange=true", "cas.ticket.registry.couchDb.username=", "cas.ticket.registry.couchDb.password="})
-@Slf4j
 @Category(CouchDbCategory.class)
 public class CouchDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 

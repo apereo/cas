@@ -8,7 +8,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,6 @@ import static org.junit.Assert.*;
  */
 @DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
-@Slf4j
 public class AuthenticationViaFormActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String TEST = "test";

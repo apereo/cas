@@ -13,7 +13,6 @@ import com.amazonaws.services.clouddirectory.model.RangeMode;
 import com.amazonaws.services.clouddirectory.model.TypedAttributeValue;
 import com.amazonaws.services.clouddirectory.model.TypedAttributeValueRange;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -22,7 +21,6 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @UtilityClass
 public class CloudDirectoryUtils {
 

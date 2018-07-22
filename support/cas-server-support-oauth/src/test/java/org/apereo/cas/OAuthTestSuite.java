@@ -22,7 +22,6 @@ import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenSovereignExpirationPoli
 import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicyTests;
 import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenSovereignExpirationPolicyTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -56,6 +55,5 @@ import org.junit.runners.Suite;
     AccessTokenGrantRequestAuditResourceResolverTests.class,
     OAuth20UserProfileDataAuditResourceResolverTests.class
 })
-@Slf4j
 public class OAuthTestSuite {
 }

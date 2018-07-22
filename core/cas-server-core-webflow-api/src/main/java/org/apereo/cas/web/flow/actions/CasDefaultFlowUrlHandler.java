@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
@@ -20,7 +19,6 @@ import java.util.stream.Stream;
  * @author Scott Battaglia
  * @since 3.4
  */
-@Slf4j
 @Setter
 public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 

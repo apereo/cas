@@ -7,7 +7,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import com.google.common.collect.ArrayListMultimap;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -23,7 +22,6 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.12
  */
-@Slf4j
 @Setter
 public class AbstractRegisteredServiceTests {
 

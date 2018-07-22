@@ -8,7 +8,6 @@ import org.apereo.cas.support.openid.web.mvc.SmartOpenIdControllerTests;
 import org.apereo.cas.support.openid.web.support.DefaultOpenIdUserNameExtractorTests;
 import org.apereo.cas.support.openid.web.support.OpenIdPostUrlHandlerMappingTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -30,6 +29,5 @@ import org.junit.runners.Suite;
     OpenIdServiceFactoryTests.class,
     OpenIdServiceTests.class
 })
-@Slf4j
 public class AllTestsSuite {
 }

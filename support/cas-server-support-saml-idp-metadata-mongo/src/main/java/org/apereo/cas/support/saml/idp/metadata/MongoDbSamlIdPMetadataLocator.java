@@ -5,7 +5,6 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -22,7 +21,6 @@ import java.nio.charset.StandardCharsets;
  * @since 6.0.0
  */
 @RequiredArgsConstructor
-@Slf4j
 public class MongoDbSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
     private final transient MongoTemplate mongoTemplate;
     private final String collectionName;

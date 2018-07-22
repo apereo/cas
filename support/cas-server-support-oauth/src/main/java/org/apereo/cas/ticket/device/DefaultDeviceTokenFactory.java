@@ -8,7 +8,6 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -18,7 +17,6 @@ import org.apache.commons.lang3.RandomStringUtils;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class DefaultDeviceTokenFactory implements DeviceTokenFactory {
     private static final int USER_CODE_LENGTH = 8;

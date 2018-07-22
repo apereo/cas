@@ -3,7 +3,6 @@ package org.apereo.cas.util.crypto;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -27,7 +26,6 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
-@Slf4j
 @UtilityClass
 public class CertUtils {
 

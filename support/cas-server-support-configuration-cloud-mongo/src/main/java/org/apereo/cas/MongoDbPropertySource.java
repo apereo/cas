@@ -1,6 +1,5 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.data.mongodb.core.MongoOperations;
 
@@ -12,7 +11,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperations> {
 
     private final List<MongoDbProperty> list;

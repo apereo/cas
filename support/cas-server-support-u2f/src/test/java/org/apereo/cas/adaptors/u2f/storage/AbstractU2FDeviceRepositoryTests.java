@@ -4,7 +4,6 @@ import org.apereo.cas.util.crypto.CertUtils;
 
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -20,7 +19,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @DirtiesContext
 public abstract class AbstractU2FDeviceRepositoryTests {
 

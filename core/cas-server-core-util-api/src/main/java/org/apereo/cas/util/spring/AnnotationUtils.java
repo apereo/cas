@@ -2,7 +2,6 @@ package org.apereo.cas.util.spring;
 
 import com.google.common.base.Predicates;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.type.StandardMethodMetadata;
@@ -19,7 +18,6 @@ import java.util.function.Predicate;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @UtilityClass
 public class AnnotationUtils {
 

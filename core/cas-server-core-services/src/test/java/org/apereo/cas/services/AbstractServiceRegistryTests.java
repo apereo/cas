@@ -10,7 +10,6 @@ import com.google.common.collect.ArrayListMultimap;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.joda.time.DateTimeUtils;
@@ -45,7 +44,6 @@ import static org.junit.Assert.*;
  * @author Timur Duehr
  * @since 5.3.0
  */
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 public abstract class AbstractServiceRegistryTests {

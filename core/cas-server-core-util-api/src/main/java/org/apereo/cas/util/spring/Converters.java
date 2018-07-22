@@ -1,7 +1,6 @@
 package org.apereo.cas.util.spring;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.convert.converter.Converter;
 
 import java.time.ZonedDateTime;
@@ -12,7 +11,6 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @NoArgsConstructor
 public class Converters {
 

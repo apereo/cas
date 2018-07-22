@@ -15,7 +15,6 @@ import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicyTests
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicyTests;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicyTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -41,6 +40,5 @@ import org.junit.runners.Suite;
     DistributedTicketRegistryTests.class,
     Cas10ProxyHandlerTests.class,
     Cas20ProxyHandlerTests.class})
-@Slf4j
 public class AllTestsSuite {
 }

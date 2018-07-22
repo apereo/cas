@@ -4,7 +4,6 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing single sign on session establishment
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-@Slf4j
 @ToString
 public class CasProxyGrantingTicketCreatedEvent extends AbstractCasEvent {
 

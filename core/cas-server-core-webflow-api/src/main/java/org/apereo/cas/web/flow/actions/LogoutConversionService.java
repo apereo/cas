@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.actions;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.binding.convert.service.DefaultConversionService;
 
 /**
@@ -9,7 +8,6 @@ import org.springframework.binding.convert.service.DefaultConversionService;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@Slf4j
 public class LogoutConversionService extends DefaultConversionService {
 
     /**

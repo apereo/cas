@@ -4,7 +4,6 @@ import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.RestServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpStatus;
 import org.junit.runner.RunWith;
@@ -41,7 +40,6 @@ import java.util.Collection;
 },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @EnableAutoConfiguration(exclude = {
     CasCoreServicesConfiguration.class,
     MetricsAutoConfiguration.class

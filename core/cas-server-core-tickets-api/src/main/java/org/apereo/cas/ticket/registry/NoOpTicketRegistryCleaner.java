@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link NoOpTicketRegistryCleaner} that simply disables support for ticket cleanup.
@@ -9,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @NoArgsConstructor
 public class NoOpTicketRegistryCleaner implements TicketRegistryCleaner {
 

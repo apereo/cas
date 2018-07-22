@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Objects;
@@ -17,7 +16,6 @@ import java.util.stream.Stream;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {

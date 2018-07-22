@@ -4,7 +4,6 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import static org.junit.Assert.*;
  */
 @TestPropertySource(locations = {"classpath:/core.properties"})
 @Import(CasSupportActionsConfiguration.class)
-@Slf4j
 public class InitialFlowSetupActionTests extends AbstractCentralAuthenticationServiceTests {
     @Autowired
     @Qualifier("initialFlowSetupAction")

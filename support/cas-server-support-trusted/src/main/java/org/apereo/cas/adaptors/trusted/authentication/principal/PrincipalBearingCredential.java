@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Credential that bear the fully resolved and authenticated Principal, or an
@@ -25,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Andrew Petro
  * @since 3.0.0
  */
-@Slf4j
 @Getter
 @ToString(callSuper = true)
 public class PrincipalBearingCredential extends AbstractCredential {

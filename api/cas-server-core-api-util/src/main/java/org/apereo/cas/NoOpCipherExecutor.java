@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * No-Op cipher executor that does nothing for encryption/decryption.
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Dmitriy Kopylenko
  * @since 4.1
  */
-@Slf4j
 @Getter
 class NoOpCipherExecutor<I, O> implements CipherExecutor<I, O> {
 

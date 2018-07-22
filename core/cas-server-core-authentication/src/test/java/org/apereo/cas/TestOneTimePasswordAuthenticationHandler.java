@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult
 import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
@@ -21,7 +20,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private final Map<String, String> credentialMap;

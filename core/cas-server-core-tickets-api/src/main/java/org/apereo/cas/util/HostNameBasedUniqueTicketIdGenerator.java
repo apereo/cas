@@ -2,7 +2,6 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -22,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
 
 

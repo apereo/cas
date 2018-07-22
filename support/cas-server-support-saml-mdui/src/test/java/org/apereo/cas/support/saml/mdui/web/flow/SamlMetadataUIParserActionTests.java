@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +35,6 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @Import({SamlMetadataUIConfiguration.class, SamlMetadataUIWebflowConfiguration.class})
 @TestPropertySource(properties = {"cas.samlMetadataUi.resources=classpath:sample-metadata.xml::classpath:inc-md-pub.pem"})
-@Slf4j
 public class SamlMetadataUIParserActionTests extends AbstractOpenSamlTests {
 
     @Autowired

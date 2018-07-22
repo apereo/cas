@@ -5,7 +5,6 @@ import org.apereo.cas.support.events.dao.CasEvent;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -20,7 +19,6 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @ToString
 @RequiredArgsConstructor
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {

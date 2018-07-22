@@ -3,7 +3,6 @@ package org.apereo.cas.services;
 import org.apereo.cas.category.CosmosDbCategory;
 import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -34,7 +33,6 @@ import static org.junit.Assert.*;
     classes = {RefreshAutoConfiguration.class, CosmosDbServiceRegistryConfiguration.class})
 @IfProfileValue(name = "cosmosDbEnabled", value = "true")
 @TestPropertySource(locations = {"classpath:/cosmosdb.properties"})
-@Slf4j
 public class CosmosDbServiceRegistryTests {
 
     @ClassRule

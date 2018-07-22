@@ -7,7 +7,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -16,7 +15,6 @@ import lombok.val;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 public class SimpleWebApplicationServiceSerializer extends Serializer<SimpleWebApplicationServiceImpl> {
 
     @Override

@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.util;
 
 import org.apereo.cas.oidc.OidcConstants;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.pac4j.core.context.WebContext;
@@ -16,7 +15,6 @@ import static org.mockito.Mockito.*;
  * @author David Rodriguez
  * @since 5.1.0
  */
-@Slf4j
 public class OidcAuthorizationRequestSupportTests {
 
     @Test

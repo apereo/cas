@@ -6,7 +6,6 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCR
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -28,7 +27,6 @@ import java.util.Collection;
  * @since 3.4.6
  */
 @RunWith(Parameterized.class)
-@Slf4j
 public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
     /**
      * Instance under test.

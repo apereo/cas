@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +23,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Import(JpaServiceRegistryConfiguration.class)
 public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 

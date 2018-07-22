@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -31,7 +30,6 @@ import javax.persistence.Table;
 @Table(name = "SAML2_ARTIFACTS")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(SamlArtifactTicket.PREFIX)
-@Slf4j
 @Getter
 @NoArgsConstructor
 public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifactTicket {

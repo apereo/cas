@@ -12,7 +12,6 @@ import org.apereo.cas.ticket.device.DeviceUserCodeImpl;
 import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicy;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenImpl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,7 +23,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casOAuthComponentSerializationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasOAuthComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
 
     @Override

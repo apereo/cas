@@ -4,7 +4,6 @@ import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrat
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.context.ApplicationEventPublisher;
@@ -20,7 +19,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @RunWith(Parameterized.class)
 public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
 

@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20Client
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -24,7 +23,6 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
-@Slf4j
 public class DelegatedClientFactoryTests {
 
     @Test

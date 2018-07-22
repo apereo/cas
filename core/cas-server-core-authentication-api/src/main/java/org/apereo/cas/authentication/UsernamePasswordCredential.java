@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.Size;
 
@@ -17,7 +16,6 @@ import javax.validation.constraints.Size;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 @ToString(exclude = {"password"})
 @Getter
 @Setter

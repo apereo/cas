@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.generic;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -17,7 +16,6 @@ import java.util.Map;
  * @since 5.3.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @Getter
 @Setter
 public class CasUserAccount implements Serializable {

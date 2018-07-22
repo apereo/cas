@@ -22,7 +22,6 @@ import org.apereo.cas.config.CasRestAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Rule;
@@ -86,7 +85,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @EnableScheduling
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@Slf4j
 public class RestAuthenticationHandlerTests {
 
     @Rule

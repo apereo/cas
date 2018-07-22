@@ -7,7 +7,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
 
@@ -22,7 +21,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 @EqualsAndHashCode(callSuper = true)
 @Getter
 public class WebApplicationServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {

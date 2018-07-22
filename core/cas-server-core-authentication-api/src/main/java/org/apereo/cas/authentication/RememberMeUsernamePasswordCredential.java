@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Handles both remember me services and username and password.
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Scott Battaglia
  * @since 3.2.1
  */
-@Slf4j
 @Setter
 @Getter
 @NoArgsConstructor

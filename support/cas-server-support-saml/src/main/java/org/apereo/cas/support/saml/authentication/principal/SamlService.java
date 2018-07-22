@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -24,7 +23,6 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("saml")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @Getter
 @NoArgsConstructor
 public class SamlService extends AbstractWebApplicationService {

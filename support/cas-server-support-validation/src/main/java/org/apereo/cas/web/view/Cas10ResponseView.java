@@ -5,8 +5,6 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -19,7 +17,6 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class Cas10ResponseView extends AbstractCasView {
 
     public Cas10ResponseView(final boolean successResponse,

@@ -7,7 +7,6 @@ import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 
@@ -35,7 +34,6 @@ import java.nio.file.Path;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Getter
 public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
 

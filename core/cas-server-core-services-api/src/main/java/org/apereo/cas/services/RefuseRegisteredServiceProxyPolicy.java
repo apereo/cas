@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 
@@ -12,7 +11,6 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 @EqualsAndHashCode
 public class RefuseRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 

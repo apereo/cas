@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -37,7 +36,6 @@ import org.springframework.cloud.config.server.EnableConfigServer;
     RedisRepositoriesAutoConfiguration.class
 })
 @EnableConfigServer
-@Slf4j
 @NoArgsConstructor
 public class CasConfigurationServerWebApplication {
 

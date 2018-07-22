@@ -1,7 +1,5 @@
 package org.apereo.cas.web.support;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -12,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 public class NoOpCookieValueManager implements CookieValueManager {
 
     @Override

@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.handler.support;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.auth.BasicUserPrincipal;
 
@@ -17,7 +16,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 public class MockLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
     private Subject subject;

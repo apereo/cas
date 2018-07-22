@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.time.ZoneOffset;
@@ -23,7 +22,6 @@ import java.time.temporal.ChronoUnit;
  * @since 5.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
@@ -84,7 +82,6 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
      * by this policy, the parent ticket's expiration policy is not consulted, making the RT independent.
      */
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-    @Slf4j
     @NoArgsConstructor
     @EqualsAndHashCode(callSuper = true)
     public static class OAuthRefreshTokenSovereignExpirationPolicy extends OAuthRefreshTokenExpirationPolicy {

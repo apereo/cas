@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,6 @@ import java.util.Collection;
     CasCoreServicesConfiguration.class
 })
 @DirtiesContext
-@Slf4j
 public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("jpaServiceRegistry")

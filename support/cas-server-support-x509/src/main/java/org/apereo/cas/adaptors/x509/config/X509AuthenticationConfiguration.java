@@ -29,7 +29,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.ehcache.Cache;
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +54,6 @@ import java.util.stream.Collectors;
  */
 @Configuration("x509AuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class X509AuthenticationConfiguration {
 
     private static final int HEX = 16;

@@ -12,7 +12,6 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
@@ -37,7 +36,6 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("samlMetadataUIWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired

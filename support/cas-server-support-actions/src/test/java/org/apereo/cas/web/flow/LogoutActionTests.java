@@ -11,7 +11,6 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
@@ -33,7 +32,6 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String COOKIE_TGC_ID = "CASTGC";

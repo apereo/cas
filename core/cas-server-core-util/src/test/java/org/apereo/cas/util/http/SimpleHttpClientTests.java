@@ -2,7 +2,6 @@ package org.apereo.cas.util.http;
 
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -21,7 +20,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 public class SimpleHttpClientTests {
 
     private static SimpleHttpClient getHttpClient() {

@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.SamlSPUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public abstract class BaseCasSamlSPConfiguration implements InitializingBean {
     /**
      * CAS properties.

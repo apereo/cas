@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,6 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private final RestAuthenticationApi api;

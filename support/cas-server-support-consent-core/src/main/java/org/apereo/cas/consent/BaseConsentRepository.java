@@ -8,7 +8,6 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.ArrayList;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Setter
 @RequiredArgsConstructor
 @AllArgsConstructor

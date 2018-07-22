@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.DefaultCasSslContext;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.junit.Before;
@@ -19,7 +18,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
     private static final ClassPathResource TRUST_STORE = new ClassPathResource("truststore.jks");
     private static final String TRUST_STORE_PSW = "changeit";

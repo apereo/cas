@@ -16,7 +16,6 @@ import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,6 @@ import static org.junit.Assert.*;
  * @since 3.5.2
  */
 
-@Slf4j
 public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();

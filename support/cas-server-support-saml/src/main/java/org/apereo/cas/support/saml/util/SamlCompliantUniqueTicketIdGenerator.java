@@ -5,7 +5,6 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RandomUtils;
 
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.common.binding.artifact.AbstractSAMLArtifact;
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
@@ -22,7 +21,6 @@ import java.security.SecureRandom;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @Setter
 public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 

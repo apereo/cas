@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 
 /**
@@ -10,7 +9,6 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @UtilityClass
 public class PrincipalFactoryUtils {
 

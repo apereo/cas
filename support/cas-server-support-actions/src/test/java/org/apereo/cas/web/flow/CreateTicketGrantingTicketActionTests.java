@@ -14,7 +14,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +41,6 @@ import static org.mockito.Mockito.*;
  */
 @DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
-@Slf4j
 public class CreateTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTests {
     @Autowired
     @Qualifier("createTicketGrantingTicketAction")
