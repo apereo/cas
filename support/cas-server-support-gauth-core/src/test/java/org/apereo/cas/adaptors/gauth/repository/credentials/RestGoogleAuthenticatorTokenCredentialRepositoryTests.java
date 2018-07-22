@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +37,6 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Slf4j
 public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

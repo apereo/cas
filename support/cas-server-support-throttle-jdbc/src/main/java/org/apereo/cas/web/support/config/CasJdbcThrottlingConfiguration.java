@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.web.support.JdbcThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import javax.sql.DataSource;
  */
 @Configuration("casJdbcThrottlingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasJdbcThrottlingConfiguration {
 
     @Autowired

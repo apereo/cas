@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -23,7 +22,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "RegisteredServiceImplContact")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @ToString
 @Getter
 @Setter

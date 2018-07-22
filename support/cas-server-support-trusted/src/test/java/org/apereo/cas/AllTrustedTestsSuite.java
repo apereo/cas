@@ -7,7 +7,6 @@ import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestHeaderNonInt
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -26,6 +25,5 @@ import org.junit.runners.Suite;
     PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests.class,
     PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests.class
 })
-@Slf4j
 public class AllTrustedTestsSuite {
 }

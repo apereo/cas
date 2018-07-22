@@ -8,7 +8,6 @@ import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +29,6 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CasConsentJdbcConfiguration.class, RefreshAutoConfiguration.class})
-@Slf4j
 public class JpaConsentRepositoryTests {
 
     private static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());

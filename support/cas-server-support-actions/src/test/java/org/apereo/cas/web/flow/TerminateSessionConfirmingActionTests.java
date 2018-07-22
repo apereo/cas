@@ -5,7 +5,6 @@ import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.logout.TerminateSessionAction;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ import static org.junit.Assert.*;
  */
 @DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
-@Slf4j
 @TestPropertySource(properties = {"cas.tgc.crypto.enabled=false", "cas.logout.confirmLogout=true"})
 public class TerminateSessionConfirmingActionTests extends AbstractCentralAuthenticationServiceTests {
     @Autowired

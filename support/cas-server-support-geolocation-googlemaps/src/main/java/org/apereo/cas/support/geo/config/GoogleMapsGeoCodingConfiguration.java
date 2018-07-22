@@ -7,7 +7,6 @@ import org.apereo.cas.support.geo.google.GoogleMapsGeoLocationService;
 
 import com.google.maps.GaeRequestHandler;
 import com.google.maps.GeoApiContext;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("casGeoLocationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class GoogleMapsGeoCodingConfiguration {
 
     @Autowired

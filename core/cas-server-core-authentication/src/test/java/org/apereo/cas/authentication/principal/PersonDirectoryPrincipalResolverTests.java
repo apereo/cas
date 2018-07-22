@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolve
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Rule;
@@ -27,7 +26,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public class PersonDirectoryPrincipalResolverTests {
 
     private static final String ATTR_1 = "attr1";

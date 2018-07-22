@@ -17,7 +17,6 @@ import org.apereo.cas.services.ServicesManager;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectoryClientBuilder;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,7 +35,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("cloudDirectoryAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CloudDirectoryAuthenticationConfiguration {
 
     @Autowired

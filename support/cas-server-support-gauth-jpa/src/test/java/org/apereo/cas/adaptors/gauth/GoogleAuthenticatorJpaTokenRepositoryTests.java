@@ -23,7 +23,6 @@ import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthentic
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,7 +73,6 @@ import static org.junit.Assert.*;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@Slf4j
 public class GoogleAuthenticatorJpaTokenRepositoryTests {
 
     @Autowired

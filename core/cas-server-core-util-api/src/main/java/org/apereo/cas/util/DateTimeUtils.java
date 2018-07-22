@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
@@ -26,7 +25,6 @@ import java.util.concurrent.TimeUnit;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
-@Slf4j
 @UtilityClass
 public class DateTimeUtils {
 

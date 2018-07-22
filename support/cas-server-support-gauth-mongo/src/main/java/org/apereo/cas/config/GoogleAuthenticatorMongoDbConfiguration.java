@@ -9,7 +9,6 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +31,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
-@Slf4j
 public class GoogleAuthenticatorMongoDbConfiguration {
 
     @Autowired

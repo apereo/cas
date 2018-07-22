@@ -2,7 +2,6 @@ package org.apereo.cas.monitor;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Formatter;
@@ -13,7 +12,6 @@ import java.util.Formatter;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@Slf4j
 @Getter
 @AllArgsConstructor
 public class SimpleCacheStatistics implements CacheStatistics {

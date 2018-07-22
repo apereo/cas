@@ -6,7 +6,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,7 +17,6 @@ import java.util.function.Predicate;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @Getter
 @Setter
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {

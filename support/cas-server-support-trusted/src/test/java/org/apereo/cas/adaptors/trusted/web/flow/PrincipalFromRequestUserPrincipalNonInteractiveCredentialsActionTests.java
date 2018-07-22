@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.trusted.web.flow;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.adaptors.trusted.config.TrustedAuthenticationConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import static org.junit.Assert.*;
  * @since 3.0.5
  */
 @Import(TrustedAuthenticationConfiguration.class)
-@Slf4j
 public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests extends AbstractCentralAuthenticationServiceTests {
 
     @Autowired

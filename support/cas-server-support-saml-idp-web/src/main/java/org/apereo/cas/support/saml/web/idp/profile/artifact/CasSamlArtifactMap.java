@@ -7,7 +7,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.binding.artifact.impl.BasicSAMLArtifactMap;
@@ -20,7 +19,6 @@ import java.io.IOException;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
 

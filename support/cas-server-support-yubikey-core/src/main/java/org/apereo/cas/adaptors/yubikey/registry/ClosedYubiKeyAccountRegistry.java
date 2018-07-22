@@ -3,8 +3,6 @@ package org.apereo.cas.adaptors.yubikey.registry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -15,7 +13,6 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public ClosedYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator) {
         super(accountValidator);

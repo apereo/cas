@@ -10,7 +10,6 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +40,6 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class})
-@Slf4j
 @DirtiesContext
 public class DefaultConsentEngineTests {
 

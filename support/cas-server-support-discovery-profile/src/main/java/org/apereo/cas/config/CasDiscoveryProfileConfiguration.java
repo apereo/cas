@@ -6,7 +6,6 @@ import org.apereo.cas.discovery.CasServerDiscoveryProfileEndpoint;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.core.client.Clients;
@@ -30,7 +29,6 @@ import java.util.Set;
  */
 @Configuration("casDiscoveryProfileConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasDiscoveryProfileConfiguration {
 
     @Autowired

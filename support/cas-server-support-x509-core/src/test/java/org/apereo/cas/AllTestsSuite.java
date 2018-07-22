@@ -11,7 +11,6 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternat
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrincipalResolverTests;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolverTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -34,6 +33,5 @@ import org.junit.runners.Suite;
     ThresholdExpiredCRLRevocationPolicyTests.class,
     X509CredentialsAuthenticationHandlerTests.class,
     CRLDistributionPointRevocationCheckerTests.class})
-@Slf4j
 public class AllTestsSuite {
 }

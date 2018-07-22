@@ -18,7 +18,6 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +34,6 @@ import java.util.List;
  * @since 5.2.0
  */
 @TestConfiguration("casRegisteredServicesTestConfiguration")
-@Slf4j
 public class CasRegisteredServicesTestConfiguration {
 
     @Bean

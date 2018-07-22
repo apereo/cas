@@ -10,7 +10,6 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -44,7 +43,6 @@ import java.util.stream.Collectors;
 @Configuration("jpaServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-@Slf4j
 public class JpaServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
     @Autowired

@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Slf4j
 @UtilityClass
 public class CoreValidationTestUtils {
 

@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.AbstractAction;
@@ -23,7 +22,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private final Action saml2ClientLogoutAction;
 

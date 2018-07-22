@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -17,7 +16,6 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor

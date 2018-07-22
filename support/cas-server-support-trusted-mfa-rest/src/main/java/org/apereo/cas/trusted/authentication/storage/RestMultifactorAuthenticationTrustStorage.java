@@ -5,7 +5,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
@@ -25,7 +24,6 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
     private final RestTemplate restTemplate;

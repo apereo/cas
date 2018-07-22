@@ -5,7 +5,6 @@ import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.services.RegisteredServiceRepository;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -33,7 +32,6 @@ import java.util.Collection;
         "cas.serviceRegistry.couchDb.username=",
         "cas.serviceRegistry.couchDb.password="
     })
-@Slf4j
 @Category(CouchDbCategory.class)
 public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 

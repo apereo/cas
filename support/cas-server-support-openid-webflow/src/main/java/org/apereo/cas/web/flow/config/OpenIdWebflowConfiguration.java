@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.OpenIdWebflowConfigurer;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,7 +25,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Configuration("openIdWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class OpenIdWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired

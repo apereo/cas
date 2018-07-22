@@ -10,7 +10,6 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("dynamoDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class DynamoDbServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;

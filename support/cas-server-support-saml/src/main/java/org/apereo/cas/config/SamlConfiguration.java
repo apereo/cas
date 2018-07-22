@@ -20,7 +20,6 @@ import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,6 @@ import java.nio.charset.StandardCharsets;
  */
 @Configuration("samlConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SamlConfiguration {
 
     @Autowired

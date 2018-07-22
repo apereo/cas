@@ -23,7 +23,6 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,7 +71,6 @@ import static org.junit.Assert.*;
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class})
 @EnableScheduling
-@Slf4j
 public class DefaultCasAttributeEncoderTests {
 
     private Map<String, Object> attributes;

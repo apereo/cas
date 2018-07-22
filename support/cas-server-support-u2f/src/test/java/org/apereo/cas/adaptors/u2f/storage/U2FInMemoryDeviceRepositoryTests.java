@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,7 +25,6 @@ import org.springframework.test.context.junit4.SpringRunner;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class U2FInMemoryDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")

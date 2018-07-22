@@ -7,7 +7,6 @@ import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyW
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,7 +21,6 @@ import java.io.StringWriter;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 public class MongoDbSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
     private final transient MongoTemplate mongoTemplate;
     private final String collectionName;

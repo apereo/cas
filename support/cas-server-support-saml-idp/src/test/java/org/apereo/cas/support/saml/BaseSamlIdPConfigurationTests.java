@@ -39,7 +39,6 @@ import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
@@ -102,7 +101,6 @@ import static org.mockito.Mockito.*;
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class})
-@Slf4j
 public abstract class BaseSamlIdPConfigurationTests {
     protected static FileSystemResource METADATA_DIRECTORY;
 

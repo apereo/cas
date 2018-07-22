@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -24,7 +23,6 @@ import java.util.Collection;
  */
 @Configuration("openIdServiceFactoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class OpenIdServiceFactoryConfiguration implements ServiceFactoryConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;

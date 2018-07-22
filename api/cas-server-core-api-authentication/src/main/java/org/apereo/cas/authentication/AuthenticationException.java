@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +14,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @Getter
 public class AuthenticationException extends RuntimeException {
 

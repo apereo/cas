@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.AbstractCasEvent;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link CasRiskBasedAuthenticationMitigationStartedEvent}.
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class CasRiskBasedAuthenticationMitigationStartedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 123568299766263298L;

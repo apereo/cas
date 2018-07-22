@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11FaultResponseBuilder;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -17,7 +16,6 @@ import org.opensaml.saml.saml2.core.Assertion;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class SamlProfileAttributeQueryFaultResponseBuilder extends SamlProfileSamlSoap11FaultResponseBuilder {
     private static final long serialVersionUID = -5582616946993706815L;
 

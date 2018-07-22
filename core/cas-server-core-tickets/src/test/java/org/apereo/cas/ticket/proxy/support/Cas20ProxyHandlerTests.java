@@ -7,7 +7,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +22,6 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class Cas20ProxyHandlerTests {
 
     private Cas20ProxyHandler handler;

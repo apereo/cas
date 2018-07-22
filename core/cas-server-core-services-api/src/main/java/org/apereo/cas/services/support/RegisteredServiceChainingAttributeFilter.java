@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.OrderComparator;
 
@@ -22,7 +21,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString
 @Setter
 @NoArgsConstructor

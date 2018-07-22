@@ -9,7 +9,6 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
@@ -27,7 +26,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class ServiceTicketImplTests {
 
     private static final String ST_ID = "stest1";

@@ -3,7 +3,6 @@ package org.apereo.cas.support.events.service;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link CasRegisteredServiceSavedEvent} that is signaled
@@ -12,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Slf4j
 @ToString
 public class CasRegisteredServiceSavedEvent extends BaseCasRegisteredServiceEvent {
 

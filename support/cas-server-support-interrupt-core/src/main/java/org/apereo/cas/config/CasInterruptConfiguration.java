@@ -8,7 +8,6 @@ import org.apereo.cas.interrupt.JsonResourceInterruptInquirer;
 import org.apereo.cas.interrupt.RegexAttributeInterruptInquirer;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casInterruptConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasInterruptConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -5,7 +5,6 @@ import org.apereo.cas.util.EncodingUtils;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.io.Serializable;
@@ -17,7 +16,6 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.1
  */
-@Slf4j
 @Getter
 @NoArgsConstructor
 public class Base64CipherExecutor extends AbstractCipherExecutor<Serializable, String> {

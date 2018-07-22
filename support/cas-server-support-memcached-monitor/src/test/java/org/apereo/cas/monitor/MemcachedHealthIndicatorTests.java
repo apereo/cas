@@ -4,7 +4,6 @@ import org.apereo.cas.category.MemcachedCategory;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.monitor.config.MemcachedMonitorConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -36,7 +35,6 @@ import static org.junit.Assert.*;
 })
 @TestPropertySource(locations = {"classpath:/monitor.properties"})
 @DirtiesContext
-@Slf4j
 @Category(MemcachedCategory.class)
 public class MemcachedHealthIndicatorTests {
 

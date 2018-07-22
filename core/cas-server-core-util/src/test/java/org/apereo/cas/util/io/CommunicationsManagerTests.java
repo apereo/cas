@@ -8,7 +8,6 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -42,7 +41,6 @@ import static org.mockito.Mockito.*;
 @Category(MailCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 25000)
 @TestPropertySource(locations = "classpath:cas-mail.properties")
-@Slf4j
 public class CommunicationsManagerTests {
 
     @ClassRule

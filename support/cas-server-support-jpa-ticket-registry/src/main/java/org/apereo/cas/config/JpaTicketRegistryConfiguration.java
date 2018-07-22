@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.registry.support.LockingStrategy;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.InetAddressUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -48,7 +47,6 @@ import java.util.stream.Collectors;
 @Configuration("jpaTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-@Slf4j
 public class JpaTicketRegistryConfiguration {
 
     @Autowired

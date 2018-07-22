@@ -22,7 +22,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +69,6 @@ import java.util.Collection;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-@Slf4j
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
 public class JpaTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 

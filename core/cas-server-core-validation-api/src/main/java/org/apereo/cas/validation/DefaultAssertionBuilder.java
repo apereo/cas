@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 public class DefaultAssertionBuilder {
     /**

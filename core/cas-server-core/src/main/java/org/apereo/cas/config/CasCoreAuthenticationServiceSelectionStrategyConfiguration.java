@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfi
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,7 +16,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreAuthenticationServiceSelectionStrategyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasCoreAuthenticationServiceSelectionStrategyConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
 
 

@@ -7,7 +7,6 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -45,7 +44,6 @@ import java.util.Collection;
 @TestPropertySource(locations = {"classpath:/redis.properties"})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@Slf4j
 public class RedisTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     private static RedisServer REDIS_SERVER;

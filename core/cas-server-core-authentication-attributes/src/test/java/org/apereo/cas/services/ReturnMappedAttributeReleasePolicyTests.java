@@ -5,7 +5,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
@@ -28,7 +27,6 @@ import static org.mockito.Mockito.*;
  * @since 5.0.0
  */
 @RunWith(JUnit4.class)
-@Slf4j
 public class ReturnMappedAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnMappedAttributeReleasePolicy.json");

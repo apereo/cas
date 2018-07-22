@@ -8,7 +8,6 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -45,7 +44,6 @@ import java.time.ZonedDateTime;
 @Configuration("casCoreUtilConfiguration")
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableScheduling
-@Slf4j
 public class CasCoreUtilConfiguration implements InitializingBean {
 
     @Autowired

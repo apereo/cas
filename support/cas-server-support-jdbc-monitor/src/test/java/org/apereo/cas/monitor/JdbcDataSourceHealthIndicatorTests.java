@@ -3,7 +3,6 @@ package org.apereo.cas.monitor;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +32,6 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class JdbcDataSourceHealthIndicatorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 

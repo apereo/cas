@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -23,7 +22,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class GenericSuccessViewActionTests {
 
     @Test

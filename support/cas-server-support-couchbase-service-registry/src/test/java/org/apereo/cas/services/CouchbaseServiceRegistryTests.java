@@ -5,7 +5,6 @@ import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -31,7 +30,6 @@ import java.util.Collection;
         "cas.serviceRegistry.couchbase.password=password",
         "cas.serviceRegistry.couchbase.bucket=testbucket"
     })
-@Slf4j
 @Category(CouchbaseCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @RunWith(Parameterized.class)

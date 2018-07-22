@@ -6,7 +6,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import com.yubico.u2f.U2F;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -18,7 +17,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class U2FStartRegistrationAction extends AbstractAction {
 
 

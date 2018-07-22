@@ -7,7 +7,6 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.imageio.ImageIO;
@@ -25,7 +24,6 @@ import java.util.stream.IntStream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @UtilityClass
 public class QRUtils {
 

@@ -8,7 +8,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20ConsentApprovalViewResolver;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.J2EContext;
 
@@ -21,7 +20,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
 
     public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties) {

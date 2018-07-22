@@ -2,7 +2,6 @@ package org.apereo.cas.otp.web.flow.rest;
 
 import org.apereo.cas.util.QRUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 @RestController
-@Slf4j
 public class OneTimeTokenQRGeneratorController {
 
     /**

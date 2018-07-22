@@ -7,7 +7,6 @@ import org.apereo.cas.util.io.SmsSender;
 
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.sns.AmazonSNSClient;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("amazonSimpleNotificationServiceSmsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class AmazonSimpleNotificationServiceSmsConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

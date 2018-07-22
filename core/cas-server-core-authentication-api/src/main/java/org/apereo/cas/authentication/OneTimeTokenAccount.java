@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 
 import javax.persistence.CollectionTable;
@@ -36,7 +35,6 @@ import java.util.List;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @ToString
 @Getter
 @Setter

@@ -26,7 +26,6 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -82,7 +81,6 @@ import static org.junit.Assert.*;
         RefreshAutoConfiguration.class
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @TestPropertySource(locations = {"classpath:/yubikey-mongo.properties"})
 public class MongoDbYubiKeyAccountRegistryTests {
 

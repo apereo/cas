@@ -2,7 +2,6 @@ package org.apereo.cas.support.saml.util;
 
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -14,7 +13,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.4.3
  */
-@Slf4j
 public class SamlCompliantUniqueTicketIdGeneratorTests extends AbstractOpenSamlTests {
 
     @Test

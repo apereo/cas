@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolve
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.Test;
@@ -37,7 +36,6 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {CasPersonDirectoryConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/ldappersondir.properties"})
 @DirtiesContext
-@Slf4j
 public class PersonDirectoryPrincipalResolverLdaptiveTests {
     @Autowired
     @Qualifier("attributeRepository")
