@@ -1,6 +1,5 @@
 package org.apereo.cas.audit;
 
-import org.apereo.cas.category.MySQLCategory;
 import org.apereo.cas.category.PostgresCategory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;

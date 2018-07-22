@@ -12,7 +12,6 @@ import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -36,6 +35,5 @@ import org.junit.runners.Suite;
     OidcServiceJsonWebKeystoreCacheLoaderTests.class,
     OidcAuthorizationRequestSupportTests.class
 })
-@Slf4j
 public class OidcTestSuite {
 }
