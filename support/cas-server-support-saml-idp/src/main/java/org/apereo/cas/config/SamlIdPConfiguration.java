@@ -125,8 +125,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     private UrlValidator urlValidator;
 
     @Autowired
-    @Qualifier("samlMetadataLocator")
-    private SamlIdPMetadataLocator samlMetadataLocator;
+    @Qualifier("samlIdPMetadataLocator")
+    private SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
@@ -307,7 +307,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
             this.casSamlIdPMetadataResolver,
             casProperties,
-            this.samlMetadataLocator);
+            this.samlIdPMetadataLocator);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryFaultResponseBuilder")
