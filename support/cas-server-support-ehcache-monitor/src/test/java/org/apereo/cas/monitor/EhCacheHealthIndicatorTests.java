@@ -11,7 +11,6 @@ import org.apereo.cas.monitor.config.EhCacheMonitorConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +44,6 @@ import static org.junit.Assert.*;
     CasCoreHttpConfiguration.class
 })
 @TestPropertySource(locations = {"classpath:/ehcache.properties"})
-@Slf4j
 public class EhCacheHealthIndicatorTests {
 
     @Autowired

@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * AlwaysExpiresExpirationPolicy always answers true when asked if a Ticket is
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.2
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {

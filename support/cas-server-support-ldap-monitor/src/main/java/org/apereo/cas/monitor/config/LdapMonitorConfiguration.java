@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.monitor.PooledLdapConnectionFactoryHealthIndicator;
 import org.apereo.cas.util.LdapUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.pool.SearchValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import java.util.concurrent.ExecutorService;
  */
 @Configuration("ldapMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class LdapMonitorConfiguration {
 
     @Autowired

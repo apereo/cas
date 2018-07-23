@@ -5,7 +5,6 @@ import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -24,7 +23,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.5
  */
-@Slf4j
 @Endpoint(id = "status")
 public class StatusEndpoint extends BaseCasMvcEndpoint {
     private final HealthEndpoint healthEndpoint;

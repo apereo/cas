@@ -12,7 +12,6 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import org.hamcrest.CustomMatcher;
 import org.junit.Before;
 import org.junit.Rule;
@@ -61,7 +60,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
     CasCoreTicketCatalogConfiguration.class
 })
 @DirtiesContext
-@Slf4j
 public class RestfulAuthenticationPolicyTests {
     private static final String URI = "http://rest.endpoint.com";
 

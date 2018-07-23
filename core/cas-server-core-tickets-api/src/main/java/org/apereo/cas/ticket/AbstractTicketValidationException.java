@@ -3,7 +3,6 @@ package org.apereo.cas.ticket;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Exception to alert that there was an error validating the ticket.
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Scott Battaglia
  * @since 4.2.0
  */
-@Slf4j
 @Getter
 public abstract class AbstractTicketValidationException extends AbstractTicketException {
     /**

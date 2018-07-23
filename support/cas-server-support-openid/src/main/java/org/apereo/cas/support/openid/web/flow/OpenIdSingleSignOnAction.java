@@ -14,7 +14,6 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
@@ -28,7 +27,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
     private final TicketRegistrySupport ticketRegistrySupport;

@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
@@ -22,7 +21,6 @@ import java.util.Collection;
  * @since 4.0.0
  */
 @RunWith(Parameterized.class)
-@Slf4j
 public class X509SubjectPrincipalResolverTests {
 
     private final X509SubjectPrincipalResolver resolver;

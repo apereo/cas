@@ -26,7 +26,6 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.SchedulingUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,7 +85,6 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Category(MongoDbCategory.class)
-@Slf4j
 public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Autowired
@@ -103,6 +101,8 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
         registry.save("uid", "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
         val s = registry.get("uid");
         assertEquals("secret", s.getSecretKey());
+        val c = registry.load();
+        assertFalse(c.isEmpty());
     }
 
     @Test

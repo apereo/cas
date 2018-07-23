@@ -6,7 +6,6 @@ import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.web.support.MongoDbThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casMongoDbThrottlingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasMongoDbThrottlingConfiguration {
 
     @Autowired

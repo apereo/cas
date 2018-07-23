@@ -2,7 +2,6 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.principal.Service;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Exception thrown when a ST has already granted a PGT and is asked to do so again.
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class InvalidProxyGrantingTicketForServiceTicketException extends AbstractTicketValidationException {
     private static final long serialVersionUID = 2120177571513373134L;
 

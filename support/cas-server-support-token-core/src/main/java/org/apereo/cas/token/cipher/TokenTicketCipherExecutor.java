@@ -2,7 +2,6 @@ package org.apereo.cas.token.cipher;
 
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link TokenTicketCipherExecutor}.
@@ -10,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class TokenTicketCipherExecutor extends BaseStringCipherExecutor {
     public TokenTicketCipherExecutor() {
         this(null, null, null, false, false);

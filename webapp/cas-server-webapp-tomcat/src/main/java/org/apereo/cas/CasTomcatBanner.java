@@ -2,7 +2,6 @@ package org.apereo.cas;
 
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.util.ServerInfo;
 import org.springframework.core.env.Environment;
 
@@ -14,7 +13,6 @@ import java.util.Formatter;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class CasTomcatBanner extends AbstractCasBanner {
     @Override
     protected void injectEnvironmentInfoIntoBanner(final Formatter formatter, final Environment environment,

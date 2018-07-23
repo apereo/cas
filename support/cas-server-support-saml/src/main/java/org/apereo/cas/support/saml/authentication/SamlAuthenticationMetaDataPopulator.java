@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulato
 
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
@@ -27,7 +26,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @Setter
 public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {

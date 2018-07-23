@@ -5,7 +5,6 @@ import org.apereo.cas.web.view.ChainingTemplateViewResolver;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolver;
 import org.apereo.cas.web.view.ThemeFileTemplateResolver;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
@@ -27,7 +26,6 @@ import org.thymeleaf.templateresolver.FileTemplateResolver;
  */
 @Configuration("casCoreWebViewsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasCoreViewsConfiguration {
 
     @Autowired

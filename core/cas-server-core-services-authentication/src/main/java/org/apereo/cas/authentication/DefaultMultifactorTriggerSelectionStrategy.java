@@ -9,7 +9,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
 
@@ -31,7 +30,6 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
  * @author Daniel Frett
  * @since 5.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
     private final MultifactorAuthenticationProperties mfaProperties;

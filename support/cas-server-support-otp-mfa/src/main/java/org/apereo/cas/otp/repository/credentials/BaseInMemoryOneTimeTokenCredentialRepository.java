@@ -3,9 +3,9 @@ package org.apereo.cas.otp.repository.credentials;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
 
     private final Map<String, OneTimeTokenAccount> accounts;
@@ -67,5 +66,10 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
     @Override
     public long count() {
         return this.accounts.size();
+    }
+
+    @Override
+    public Collection<OneTimeTokenAccount> load() {
+        return accounts.values();
     }
 }

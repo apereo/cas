@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Optional;
@@ -21,7 +20,6 @@ import java.util.Optional;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @ToString
 @RequiredArgsConstructor
 public class ProxyingPrincipalResolver implements PrincipalResolver {

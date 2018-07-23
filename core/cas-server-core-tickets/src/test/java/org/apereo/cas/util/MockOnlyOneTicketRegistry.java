@@ -3,8 +3,6 @@ package org.apereo.cas.util;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.Collection;
 
 /**
@@ -13,7 +11,6 @@ import java.util.Collection;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@Slf4j
 public class MockOnlyOneTicketRegistry implements TicketRegistry {
 
     private Ticket ticket;

@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulato
 import org.apereo.cas.authentication.principal.ClientCredential;
 
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -17,7 +16,6 @@ import lombok.val;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@Slf4j
 @ToString(callSuper = true)
 public class ClientAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 

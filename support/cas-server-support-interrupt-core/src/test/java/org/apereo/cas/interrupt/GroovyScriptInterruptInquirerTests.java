@@ -2,7 +2,6 @@ package org.apereo.cas.interrupt;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -15,7 +14,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class GroovyScriptInterruptInquirerTests {
     @Test
     public void verifyResponseCanBeFoundFromGroovy() {

@@ -36,7 +36,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
@@ -88,7 +87,6 @@ import static org.junit.Assert.*;
     CasCoreValidationConfiguration.class,
     CasCoreWebConfiguration.class})
 @TestPropertySource(locations = {"classpath:/core.properties"}, properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
-@Slf4j
 public class MultifactorAuthenticationTests {
 
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");

@@ -8,7 +8,6 @@ import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
@@ -27,7 +26,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class RestPasswordManagementService extends BasePasswordManagementService {
 
     private final transient RestTemplate restTemplate;

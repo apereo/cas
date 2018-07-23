@@ -46,7 +46,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
@@ -78,7 +77,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("samlIdPConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
 
     @Autowired
@@ -125,8 +123,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     private UrlValidator urlValidator;
 
     @Autowired
-    @Qualifier("samlMetadataLocator")
-    private SamlIdPMetadataLocator samlMetadataLocator;
+    @Qualifier("samlIdPMetadataLocator")
+    private SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
@@ -307,7 +305,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
             this.casSamlIdPMetadataResolver,
             casProperties,
-            this.samlMetadataLocator);
+            this.samlIdPMetadataLocator);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryFaultResponseBuilder")

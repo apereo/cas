@@ -5,7 +5,6 @@ import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -26,7 +25,6 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Endpoint(id = "configuration-metadata", enableByDefault = false)
 @RequiredArgsConstructor
 public class CasConfigurationMetadataServerEndpoint {

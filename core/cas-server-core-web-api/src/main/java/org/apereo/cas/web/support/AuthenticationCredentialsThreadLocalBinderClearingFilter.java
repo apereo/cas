@@ -2,8 +2,6 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 
-import lombok.extern.slf4j.Slf4j;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -19,7 +17,6 @@ import java.io.IOException;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Slf4j
 public class AuthenticationCredentialsThreadLocalBinderClearingFilter implements Filter {
 
     @Override

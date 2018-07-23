@@ -112,6 +112,23 @@ SAML metadata for registered service provider must be fetched from MongoDb data 
 
 To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-mongodb).
 
+### Identity Provider Metadata
+
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via MongoDb. Artifacts such as the metadata, signing and encryption keys, etc are kept
+inside a MongoDb collection taught to CAS via settings as a single document that would have the following structure:
+
+```json
+{
+    "signingCertificate": "...",
+    "signingKey": "...",
+    "encryptionCertificate": "...",
+    "encryptionKey": "...",
+    "metadata": ""
+}
+```
+
+To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-mongodb).
+
 ## JPA
 
 Metadata documents may also be stored in and fetched from a relational database instance. This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined table  (i.e. `SamlMetadataDocument`) whose connection information is taught to CAS via settings and is automatically generated.  The outline of the table is as follows:
@@ -149,6 +166,22 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
 The metadata location in the registration record above simply needs to be specified as <code>jdbc://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from JDBC data sources defined in CAS configuration. 
 </p></div>
+
+To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-jpa).
+
+### Identity Provider Metadata
+
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via JPA. Artifacts such as the metadata, signing and encryption keys, etc are kept
+inside a database table that would have the following structure:
+
+| Field                     | Description
+|---------------------------|---------------------------------------------------
+| `id`                      | The identifier of the record.
+| `signingCertificate`      | The signing certificate.
+| `signingKey`              | The signing key.
+| `encryptionCertificate`   | The encryption certificate.
+| `encryptionKey`           | The encryption key.
+| `metadata`                | The SAML2 identity provider metadata.
 
 To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-jpa).
 

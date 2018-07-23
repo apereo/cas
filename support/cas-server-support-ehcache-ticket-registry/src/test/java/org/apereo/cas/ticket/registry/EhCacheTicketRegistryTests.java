@@ -22,7 +22,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.ehcache.distribution.CacheReplicator;
 import org.junit.runner.RunWith;
@@ -70,7 +69,6 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
-@Slf4j
 public class EhCacheTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired

@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.Size;
 
@@ -17,7 +16,6 @@ import javax.validation.constraints.Size;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 @ToString(exclude = {"password"})
 @Getter
 @Setter
@@ -25,12 +23,11 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class UsernamePasswordCredential implements Credential {
-
     /**
      * Authentication attribute name for password.
      **/
     public static final String AUTHENTICATION_ATTRIBUTE_PASSWORD = "credential";
-
+    
     private static final long serialVersionUID = -700605081472810939L;
 
     @Size(min = 1, message = "required.username")

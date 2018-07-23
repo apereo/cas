@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.adaptive.geo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Set;
@@ -17,7 +16,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @ToString
 @Getter
 @Setter

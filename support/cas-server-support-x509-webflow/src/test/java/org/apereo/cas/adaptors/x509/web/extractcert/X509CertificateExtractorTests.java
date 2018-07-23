@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.x509.web.extractcert;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,7 +15,6 @@ import java.security.cert.X509Certificate;
  * @author Hal Deadman
  * @since 5.3.0
  */
-@Slf4j
 public class X509CertificateExtractorTests extends AbstractX509CertificateTests {
 
     private static final String[] CERTIFICATE_LINES = new String[]{

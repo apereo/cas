@@ -4,7 +4,6 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 
 import lombok.Getter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.nio.file.Path;
@@ -16,7 +15,6 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 public class CasConfigurationModifiedEvent extends AbstractCasEvent {

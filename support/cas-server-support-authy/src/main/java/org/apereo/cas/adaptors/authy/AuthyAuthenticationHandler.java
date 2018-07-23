@@ -10,7 +10,6 @@ import org.apereo.cas.web.support.WebUtils;
 import com.authy.api.Token;
 import com.authy.api.User;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
@@ -25,7 +24,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final boolean forceVerification;

@@ -21,6 +21,9 @@
         <Logger name="org.opensaml" level="off" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
+        <Logger name="org.hibernate" level="off" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
         <Logger name="PROTOCOL_MESSAGE" level="off" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>

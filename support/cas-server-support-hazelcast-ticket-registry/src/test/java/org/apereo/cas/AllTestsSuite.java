@@ -3,7 +3,6 @@ package org.apereo.cas;
 import org.apereo.cas.ticket.registry.DefaultHazelcastInstanceConfigurationTests;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistryTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -15,6 +14,5 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({DefaultHazelcastInstanceConfigurationTests.class, HazelcastTicketRegistryTests.class})
-@Slf4j
 public class AllTestsSuite {
 }

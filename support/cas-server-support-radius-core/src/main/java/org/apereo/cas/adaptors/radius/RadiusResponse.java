@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.radius;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import net.jradius.packet.attribute.RadiusAttribute;
 
 import java.util.List;
@@ -16,7 +15,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 public class RadiusResponse {

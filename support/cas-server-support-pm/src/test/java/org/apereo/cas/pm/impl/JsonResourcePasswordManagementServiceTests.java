@@ -22,7 +22,6 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +61,6 @@ import static org.junit.Assert.*;
     CasCoreUtilConfiguration.class,
     PasswordManagementConfiguration.class})
 @TestPropertySource(locations = {"classpath:/pm.properties"})
-@Slf4j
 public class JsonResourcePasswordManagementServiceTests {
 
     @Autowired

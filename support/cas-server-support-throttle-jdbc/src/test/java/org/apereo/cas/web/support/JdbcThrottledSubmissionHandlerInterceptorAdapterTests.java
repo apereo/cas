@@ -28,7 +28,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.support.config.CasJdbcThrottlingConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -79,7 +78,6 @@ import javax.servlet.http.HttpServletResponse;
     CasRegisteredServicesTestConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @TestPropertySource(locations = {"classpath:/casthrottle.properties"})
-@Slf4j
 public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends
     AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 

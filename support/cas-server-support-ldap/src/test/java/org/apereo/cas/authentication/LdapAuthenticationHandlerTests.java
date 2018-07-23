@@ -17,7 +17,6 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.Rule;
@@ -64,7 +63,6 @@ import static org.junit.Assert.*;
     CasCoreServicesConfiguration.class,
     LdapAuthenticationConfiguration.class})
 @TestPropertySource(locations = {"classpath:/ldapauthn.properties"})
-@Slf4j
 public class LdapAuthenticationHandlerTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();

@@ -8,7 +8,6 @@ import org.apereo.cas.trusted.config.MongoDbMultifactorAuthenticationTrustConfig
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -40,7 +39,6 @@ import static org.junit.Assert.*;
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class})
-@Slf4j
 @TestPropertySource(locations = "classpath:trustedmongo.properties")
 public class MongoDbMultifactorAuthenticationTrustStorageTests {
 

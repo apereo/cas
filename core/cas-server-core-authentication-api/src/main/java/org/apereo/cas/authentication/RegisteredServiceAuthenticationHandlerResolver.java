@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentials
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -20,7 +20,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RegisteredServiceAuthenticationHandlerResolver implements AuthenticationHandlerResolver {
 
     /**

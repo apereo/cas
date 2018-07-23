@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 @ToString
 @RequiredArgsConstructor
 @EqualsAndHashCode

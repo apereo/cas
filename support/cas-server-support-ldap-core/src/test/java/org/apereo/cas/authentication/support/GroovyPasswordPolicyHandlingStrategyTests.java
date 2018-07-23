@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandli
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +28,6 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@Slf4j
 public class GroovyPasswordPolicyHandlingStrategyTests {
 
     @Test

@@ -3,7 +3,6 @@ package org.apereo.cas.consent;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -24,7 +23,6 @@ import java.time.temporal.ChronoUnit;
  */
 @Entity
 @Table(name = "ConsentDecision")
-@Slf4j
 @ToString
 @Getter
 @Setter

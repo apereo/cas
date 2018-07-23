@@ -25,7 +25,6 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.SchedulingUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Rule;
@@ -84,7 +83,6 @@ import static org.junit.Assert.*;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-@Slf4j
 public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -103,6 +101,8 @@ public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests {
         registry.save("uid", "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
         val s = registry.get("uid");
         assertEquals("secret", s.getSecretKey());
+        val c = registry.load();
+        assertFalse(c.isEmpty());
     }
 
     @Test

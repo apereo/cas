@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
@@ -45,7 +44,6 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     DatabaseAuthenticationTestConfiguration.class
 })
-@Slf4j
 @DirtiesContext
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 

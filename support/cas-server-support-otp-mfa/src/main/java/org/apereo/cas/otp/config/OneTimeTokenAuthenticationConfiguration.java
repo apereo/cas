@@ -115,7 +115,5 @@ public class OneTimeTokenAuthenticationConfiguration {
             });
         return new CachingOneTimeTokenRepository(storage);
     }
-
-
 }
 

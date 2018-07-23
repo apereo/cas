@@ -1,7 +1,5 @@
 package org.apereo.cas.util.gen;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -11,7 +9,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class DefaultLongNumericGenerator implements LongNumericGenerator {
 
     /**

@@ -38,7 +38,6 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -107,7 +106,6 @@ import static org.junit.Assert.*;
     CasCoreUtilConfiguration.class})
 @TestPropertySource(locations = {"classpath:/rest.properties"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class RestSamlRegisteredServiceMetadataResolverTests {
 
     @ClassRule

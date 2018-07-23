@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * AbstractTicketException to alert that a Ticket was not found or that it is expired.
@@ -9,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @Getter
 public class InvalidTicketException extends AbstractTicketException {
 

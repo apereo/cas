@@ -7,7 +7,6 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGran
 import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlanConfigurer;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -34,7 +33,6 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @Configuration("oauthThrottleConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingExecutionPlanConfigurer {

@@ -27,7 +27,7 @@ import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.saml.idp.metadata.locator.DefaultSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -39,7 +39,6 @@ import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.Assertion;
@@ -102,7 +101,6 @@ import static org.mockito.Mockito.*;
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class})
-@Slf4j
 public abstract class BaseSamlIdPConfigurationTests {
     protected static FileSystemResource METADATA_DIRECTORY;
 
@@ -180,8 +178,8 @@ public abstract class BaseSamlIdPConfigurationTests {
     @TestConfiguration
     public static class SamlIdPMetadataTestConfiguration {
         @Bean
-        public SamlIdPMetadataLocator samlMetadataLocator() {
-            return new DefaultSamlIdPMetadataLocator(METADATA_DIRECTORY);
+        public SamlIdPMetadataLocator samlIdPMetadataLocator() {
+            return new FileSystemSamlIdPMetadataLocator(METADATA_DIRECTORY);
         }
     }
 }

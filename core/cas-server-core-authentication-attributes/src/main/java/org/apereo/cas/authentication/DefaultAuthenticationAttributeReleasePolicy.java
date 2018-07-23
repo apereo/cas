@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import java.util.Collection;
@@ -16,7 +15,6 @@ import java.util.Set;
  * @author Daniel Frett
  * @since 5.2.0
  */
-@Slf4j
 @Setter
 public class DefaultAuthenticationAttributeReleasePolicy implements AuthenticationAttributeReleasePolicy {
 

@@ -8,7 +8,6 @@ import org.apereo.cas.support.saml.web.support.WebUtilTests;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseViewTests;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseViewTests;
 
-import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -28,6 +27,5 @@ import org.junit.runners.Suite;
     Saml10FailureResponseViewTests.class,
     Saml10SuccessResponseViewTests.class
 })
-@Slf4j
 public class AllTestsSuite {
 }

@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -17,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 @ToString
 @Getter
 @Setter

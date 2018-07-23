@@ -6,7 +6,6 @@ import org.apereo.cas.adaptors.x509.util.MockX509CRL;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,7 +28,6 @@ import java.util.Collection;
  * @since 3.4.7
  */
 @RunWith(Parameterized.class)
-@Slf4j
 @RequiredArgsConstructor
 public class ThresholdExpiredCRLRevocationPolicyTests {
     /**

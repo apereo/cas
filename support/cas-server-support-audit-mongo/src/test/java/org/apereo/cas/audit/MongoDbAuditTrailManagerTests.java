@@ -8,7 +8,6 @@ import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.DateTimeUtils;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.junit.ClassRule;
@@ -43,7 +42,6 @@ import static org.junit.Assert.*;
         CasCoreWebConfiguration.class})
 @TestPropertySource(locations = {"classpath:/mongoaudit.properties"})
 @Category(MongoDbCategory.class)
-@Slf4j
 public class MongoDbAuditTrailManagerTests {
 
     @ClassRule

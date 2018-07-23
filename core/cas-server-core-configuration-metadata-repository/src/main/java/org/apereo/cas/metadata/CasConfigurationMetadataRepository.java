@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
@@ -22,7 +21,6 @@ import java.util.Arrays;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 public class CasConfigurationMetadataRepository {
     private final ConfigurationMetadataRepository repository;
