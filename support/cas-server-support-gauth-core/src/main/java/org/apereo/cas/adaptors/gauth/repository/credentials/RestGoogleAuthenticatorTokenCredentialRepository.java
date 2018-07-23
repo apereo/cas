@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.gauth.repository.credentials;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -35,10 +35,10 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
 
     private final IGoogleAuthenticator googleAuthenticator;
     private final transient RestTemplate restTemplate;
-    private final GAuthMultifactorProperties gauth;
+    private final GoogleAuthenticatorMultifactorProperties gauth;
 
     public RestGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator, final RestTemplate restTemplate,
-                                                            final GAuthMultifactorProperties gauth, final CipherExecutor<String, String> tokenCredentialCipher) {
+                                                            final GoogleAuthenticatorMultifactorProperties gauth, final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher);
         this.googleAuthenticator = googleAuthenticator;
         this.restTemplate = restTemplate;
