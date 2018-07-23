@@ -15,7 +15,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serializable;
 
 /**
- * This is {@link GAuthMultifactorProperties}.
+ * This is {@link GoogleAuthenticatorMultifactorProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -23,7 +23,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-gauth")
 @Getter
 @Setter
-public class GAuthMultifactorProperties extends BaseMultifactorProviderProperties {
+public class GoogleAuthenticatorMultifactorProperties extends BaseMultifactorProviderProperties {
 
     /**
      * Provider id by default.
@@ -84,6 +84,11 @@ public class GAuthMultifactorProperties extends BaseMultifactorProviderPropertie
     private Rest rest = new Rest();
 
     /**
+     * Indicates whether this provider should support trusted devices.
+     */
+    private boolean trustedDeviceEnabled;
+
+    /**
      * Crypto settings that sign/encrypt the records.
      */
     @NestedConfigurationProperty
@@ -95,7 +100,7 @@ public class GAuthMultifactorProperties extends BaseMultifactorProviderPropertie
     @NestedConfigurationProperty
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT1M", "PT1M");
 
-    public GAuthMultifactorProperties() {
+    public GoogleAuthenticatorMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
     }
 

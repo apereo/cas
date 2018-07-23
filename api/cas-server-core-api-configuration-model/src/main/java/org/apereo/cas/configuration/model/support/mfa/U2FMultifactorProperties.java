@@ -78,6 +78,11 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     private Rest rest = new Rest();
 
     /**
+     * Indicates whether this provider should support trusted devices.
+     */
+    private boolean trustedDeviceEnabled;
+
+    /**
      * Clean up expired records via a background cleaner process.
      */
     @NestedConfigurationProperty

@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.gauth.repository.credentials;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.util.MockWebServer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +50,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifyCreate() {
-        val gauth = new GAuthMultifactorProperties();
+        val gauth = new GoogleAuthenticatorMultifactorProperties();
         val repo =
             new RestGoogleAuthenticatorTokenCredentialRepository(google, new RestTemplate(),
                 gauth,
@@ -61,7 +61,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifyGet() throws Exception {
-        val gauth = new GAuthMultifactorProperties();
+        val gauth = new GoogleAuthenticatorMultifactorProperties();
         gauth.getRest().setEndpointUrl("http://localhost:9295");
         val repo =
             new RestGoogleAuthenticatorTokenCredentialRepository(google, new RestTemplate(),
