@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(locations = "classpath:auditmysql.properties")
+@TestPropertySource(locations = "classpath:auditpostgres.properties")
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
 @Category(PostgresCategory.class)
 public class CasSupportPostgresJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
