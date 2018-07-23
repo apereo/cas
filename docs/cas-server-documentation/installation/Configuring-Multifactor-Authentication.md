@@ -28,9 +28,9 @@ The following multifactor providers are supported by CAS.
 | WiKID                 | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
 | Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html).
 | FIDO U2F              | `mfa-u2f`       | [See this guide](FIDO-U2F-Authentication.html).
+| CAS Simple            | `mfa-simple`    | [See this guide](Simple-Multifactor-Authentication.html).
 | Swivel Secure         | `mfa-swivel`    | [See this guide](SwivelSecure-Authentication.html).
 | Custom                | Custom          | [See this guide](Custom-MFA-Authentication.html).
-
 
 ## Triggers
 
