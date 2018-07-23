@@ -11,9 +11,14 @@
 
     <action-state id="initializeLoginForm">
         <evaluate expression="initializeLoginAction" />
+        <transition on="success" to="sendSimpleToken"/>
+    </action-state>
+
+    <action-state id="sendSimpleToken">
+        <evaluate expression="mfaSimpleMultifactorSendTokenAction" />
         <transition on="success" to="viewLoginForm"/>
     </action-state>
-    
+
     <view-state id="viewLoginForm" view="casSimpleMfaLoginView" model="credential">
         <binder>
             <binding property="token" required="true"/>
@@ -28,9 +33,8 @@
     <action-state id="realSubmit">
         <evaluate expression="oneTimeTokenAuthenticationWebflowAction" />
         <transition on="success" to="success" />
-        <transition on="error" to="initializeLoginForm" />
+        <transition on="error" to="viewLoginForm" />
     </action-state>
 
     <end-state id="success" />
-
 </flow>
