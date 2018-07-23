@@ -88,6 +88,7 @@ layout: null
         *   [RSA/Radius](/$version/installation/RADIUS-Authentication.html)
         *   [Google Authenticator](/$version/installation/GoogleAuthenticator-Authentication.html)
         *   [Authy](/$version/installation/AuthyAuthenticator-Authentication.html)
+        *   [Simple](/$version/installation/Simple-Multifactor-Authentication.html)
         *   [FIDO U2F](/$version/installation/FIDO-U2F-Authentication.html)
         *   [Swivel Secure](/$version/installation/SwivelSecure-Authentication.html)
         *   [Custom](/$version/installation/Custom-MFA-Authentication.html)
