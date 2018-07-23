@@ -55,6 +55,7 @@ public class CommunicationsManager {
                 return email(text, from, subject, to.get().toString(), cc, bcc);
             }
         }
+        LOGGER.debug("Email attribute [{}] cannot be found or no configuration for email provider is defined", attribute);
         return false;
     }
 
@@ -134,6 +135,7 @@ public class CommunicationsManager {
                 return sms(from, to.get().toString(), text);
             }
         }
+        LOGGER.debug("Phone attribute [{}] cannot be found or no configuration for sms provider is defined", attribute);
         return false;
     }
 
@@ -160,13 +162,16 @@ public class CommunicationsManager {
 
     /**
      * Validate.
+     *
+     * @return true, if email or sms providers are defined for CAS.
      */
-    public void validate() {
+    public boolean validate() {
         if (!isMailSenderDefined()) {
             LOGGER.warn("CAS is unable to send email given no settings are defined to account for email servers, etc");
         }
         if (!isSmsSenderDefined()) {
             LOGGER.warn("CAS is unable to send sms messages given no settings are defined to account for sms providers, etc");
         }
+        return isMailSenderDefined() || isSmsSenderDefined();
     }
 }

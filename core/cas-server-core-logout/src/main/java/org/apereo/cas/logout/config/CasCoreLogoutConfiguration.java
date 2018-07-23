@@ -43,7 +43,6 @@ import java.util.List;
 @Slf4j
 public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer {
 
-
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;

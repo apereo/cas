@@ -62,8 +62,7 @@ public abstract class BaseRequestMultifactorAuthenticationPolicyEventResolver ex
         if (values != null && !values.isEmpty()) {
             LOGGER.debug("Received request as [{}]", values);
 
-            val providerMap =
-                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
             if (providerMap == null || providerMap.isEmpty()) {
                 LOGGER.error("No multifactor authentication providers are available in the application context to satisfy [{}]", values);
                 throw new AuthenticationException();

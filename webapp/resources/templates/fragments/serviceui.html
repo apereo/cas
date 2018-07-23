@@ -45,13 +45,13 @@
     <div th:unless="${serviceUIMetadata}">
         <table>
             <tr>
+                <td id="servicedesc">
+                    <h5 th:text="${registeredService.name}">Registered Service Name</h5>
+                    <p th:text="${registeredService.description}">Registered Service Description</p>
+                </td>
                 <td>
                     <img th:src="${registeredService.logo}" th:if="${registeredService.logo}"/>
                     <img th:src="@{images/webapp.png}" th:unless="${registeredService.logo}"/>
-                </td>
-                <td id="servicedesc">
-                    <h2 th:text="${registeredService.name}">Registered Service Name</h2>
-                    <p th:text="${registeredService.description}">Registered Service Description</p>
                 </td>
             </tr>
         </table>
