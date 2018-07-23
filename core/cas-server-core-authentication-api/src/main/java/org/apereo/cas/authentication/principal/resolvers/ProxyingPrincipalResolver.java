@@ -1,13 +1,13 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Optional;
@@ -20,7 +20,6 @@ import java.util.Optional;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @ToString
 @RequiredArgsConstructor
 public class ProxyingPrincipalResolver implements PrincipalResolver {

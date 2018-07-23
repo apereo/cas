@@ -1,10 +1,10 @@
 package org.apereo.cas.web.report;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
+
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -16,7 +16,6 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Endpoint(id = "registered-services", enableByDefault = false)
 public class RegisteredServicesEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;

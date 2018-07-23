@@ -1,19 +1,18 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.metadata.CacheCredentialsMetaDataPopulator;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
  * Tests for {@link CacheCredentialsMetaDataPopulator}.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 public class CacheCredentialsMetaDataPopulatorTests {
 
     @Test
@@ -26,7 +25,7 @@ public class CacheCredentialsMetaDataPopulatorTests {
         val authn = builder.build();
         assertTrue(authn.getAttributes().containsKey(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD));
         assertTrue(authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD)
-                .equals(c.getPassword()));
+            .equals(c.getPassword()));
     }
 
 

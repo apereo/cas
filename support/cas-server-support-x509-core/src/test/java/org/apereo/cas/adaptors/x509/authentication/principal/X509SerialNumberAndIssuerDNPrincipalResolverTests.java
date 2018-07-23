@@ -1,24 +1,22 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.val;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 
-import static org.junit.Assert.*;
+import lombok.val;
+import org.junit.Test;
 
 import java.security.cert.X509Certificate;
 import java.util.Optional;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * @author Scott Battaglia
  * @author Jan Van der Velpen
  * @since 3.0.0.6
  */
-@Slf4j
 public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX509CertificateTests {
 
     private final X509SerialNumberAndIssuerDNPrincipalResolver resolver =

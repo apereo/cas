@@ -1,9 +1,5 @@
 package org.apereo.cas.mock;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -14,6 +10,10 @@ import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -23,7 +23,6 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"id"})
@@ -36,10 +35,9 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     private final ZonedDateTime created;
 
     private final Service service;
-
+    private final TicketGrantingTicket parent;
     private ExpirationPolicy expiration = new NeverExpiresExpirationPolicy();
     private boolean expired;
-    private final TicketGrantingTicket parent;
 
     public MockServiceTicket(final String id, final Service service, final TicketGrantingTicket parent) {
         this.service = service;

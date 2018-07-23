@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,7 +26,6 @@ import org.springframework.test.context.junit4.SpringRunner;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @TestPropertySource(properties = "cas.authn.mfa.u2f.groovy.location=classpath:U2FDeviceRepository.groovy")
 public class U2FGroovyResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
 

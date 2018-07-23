@@ -1,8 +1,6 @@
 package org.apereo.cas.validation;
 
 import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -12,7 +10,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class Cas10ProtocolValidationSpecificationTests {
 
     @Test
@@ -42,25 +39,25 @@ public class Cas10ProtocolValidationSpecificationTests {
     @Test
     public void verifySatisfiesSpecOfTrue() {
         assertTrue(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(CoreValidationTestUtils.getAssertion(true),
-                new MockHttpServletRequest()));
+            new MockHttpServletRequest()));
     }
 
     @Test
     public void verifyNotSatisfiesSpecOfTrue() {
         assertFalse(new Cas10ProtocolValidationSpecification(true).isSatisfiedBy(CoreValidationTestUtils.getAssertion(false),
-                new MockHttpServletRequest()));
+            new MockHttpServletRequest()));
     }
 
     @Test
     public void verifySatisfiesSpecOfFalse() {
         assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(CoreValidationTestUtils.getAssertion(true),
-                new MockHttpServletRequest()));
+            new MockHttpServletRequest()));
     }
 
     @Test
     public void verifySatisfiesSpecOfFalse2() {
         assertTrue(new Cas10ProtocolValidationSpecification(false).isSatisfiedBy(CoreValidationTestUtils.getAssertion(false),
-                new MockHttpServletRequest()));
+            new MockHttpServletRequest()));
     }
 
 }

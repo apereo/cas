@@ -1,15 +1,14 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import lombok.val;
-
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yubico.u2f.data.DeviceRegistration;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yubico.u2f.data.DeviceRegistration;
+import lombok.val;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -39,7 +38,6 @@ import java.util.List;
     RefreshAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @TestPropertySource(properties = "cas.authn.mfa.u2f.rest.url=http://localhost:9196")
 public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     private static final ObjectMapper MAPPER = new ObjectMapper()
@@ -51,11 +49,6 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository u2fDeviceRepository;
-
-    @Override
-    protected U2FDeviceRepository getDeviceRepository() {
-        return this.u2fDeviceRepository;
-    }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -72,6 +65,11 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     @AfterClass
     public static void afterClass() {
         WEB_SERVER.close();
+    }
+
+    @Override
+    protected U2FDeviceRepository getDeviceRepository() {
+        return this.u2fDeviceRepository;
     }
 
     @Override

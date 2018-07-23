@@ -1,13 +1,12 @@
 package org.apereo.cas;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
+
+import lombok.val;
 
 import java.util.Map;
 
@@ -19,7 +18,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class CoreAttributesTestUtils {
 
     public static final String CONST_USERNAME = "test";

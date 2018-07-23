@@ -1,10 +1,12 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Getter;
 
 /**
  * A deny rule to refuse all service from receiving attributes, whether default or not.

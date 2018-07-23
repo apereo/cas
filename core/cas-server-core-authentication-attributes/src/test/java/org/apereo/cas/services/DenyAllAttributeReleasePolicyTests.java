@@ -1,9 +1,7 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,7 +17,6 @@ import static org.junit.Assert.*;
  * @since 5.0.0
  */
 @RunWith(JUnit4.class)
-@Slf4j
 public class DenyAllAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "denyAllAttributeReleasePolicy.json");

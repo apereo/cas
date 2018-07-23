@@ -1,13 +1,12 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.MongoDbAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -26,7 +25,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration("casAcceptableUsagePolicyMongoDbConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.acceptableUsagePolicy", name = "enabled", havingValue = "true", matchIfMissing = true)
-@Slf4j
 public class CasAcceptableUsagePolicyMongoDbConfiguration {
 
     @Autowired
@@ -51,8 +49,8 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         val mongo = casProperties.getAcceptableUsagePolicy().getMongo();
         return new MongoDbAcceptableUsagePolicyRepository(ticketRegistrySupport,
-                casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
-                mongoAcceptableUsagePolicyTemplate(),
-                mongo.getCollection());
+            casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
+            mongoAcceptableUsagePolicyTemplate(),
+            mongo.getCollection());
     }
 }

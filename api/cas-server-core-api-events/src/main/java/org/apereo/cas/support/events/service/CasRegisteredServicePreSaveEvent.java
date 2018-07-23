@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
+
 import lombok.ToString;
 
 /**
@@ -11,7 +11,6 @@ import lombok.ToString;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString
 public class CasRegisteredServicePreSaveEvent extends BaseCasRegisteredServiceEvent {
 

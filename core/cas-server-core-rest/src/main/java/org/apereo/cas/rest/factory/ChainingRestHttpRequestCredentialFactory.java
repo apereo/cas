@@ -1,9 +1,9 @@
 package org.apereo.cas.rest.factory;
 
+import org.apereo.cas.authentication.Credential;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Credential;
 import org.springframework.core.OrderComparator;
 import org.springframework.util.MultiValueMap;
 
@@ -17,7 +17,6 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {

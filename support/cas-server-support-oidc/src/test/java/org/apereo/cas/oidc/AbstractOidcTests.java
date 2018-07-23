@@ -1,10 +1,5 @@
 package org.apereo.cas.oidc;
 
-import lombok.val;
-
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apereo.cas.category.FileSystemCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -43,6 +38,10 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
+
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.val;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.RsaJsonWebKey;
@@ -102,7 +101,6 @@ import java.util.Optional;
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
     OidcConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class})
-@Slf4j
 @DirtiesContext
 @Category(FileSystemCategory.class)
 @TestPropertySource(properties = {

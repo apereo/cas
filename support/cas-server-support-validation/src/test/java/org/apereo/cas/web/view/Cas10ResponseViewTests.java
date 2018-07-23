@@ -1,13 +1,12 @@
 package org.apereo.cas.web.view;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -24,7 +23,6 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 public class Cas10ResponseViewTests {
 
     private Map<String, Object> model;
@@ -35,15 +33,15 @@ public class Cas10ResponseViewTests {
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication("someothername"));
         this.model.put("assertion", new DefaultAssertionBuilder(
-                CoreAuthenticationTestUtils.getAuthentication()).with(list).with(
-                CoreAuthenticationTestUtils.getService("TestService")).with(true).build());
+            CoreAuthenticationTestUtils.getAuthentication()).with(list).with(
+            CoreAuthenticationTestUtils.getService("TestService")).with(true).build());
     }
 
     @Test
     public void verifySuccessView() throws Exception {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(true, null,
-                null, null, null);
+            null, null, null);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("yes\ntest\n", response.getContentAsString());
     }
@@ -52,7 +50,7 @@ public class Cas10ResponseViewTests {
     public void verifyFailureView() throws Exception {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(false, null,
-                null, null, null);
+            null, null, null);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("no\n\n", response.getContentAsString());
     }

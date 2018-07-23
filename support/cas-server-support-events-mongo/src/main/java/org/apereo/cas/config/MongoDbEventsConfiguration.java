@@ -1,12 +1,11 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.mongo.MongoDbCasEventRepository;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -24,7 +23,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("mongoDbEventsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class MongoDbEventsConfiguration {
 
     @Autowired
@@ -50,7 +48,7 @@ public class MongoDbEventsConfiguration {
     public CasEventRepository casEventRepository() {
         val mongo = casProperties.getEvents().getMongo();
         return new MongoDbCasEventRepository(
-                mongoEventsTemplate(),
-                mongo.getCollection());
+            mongoEventsTemplate(),
+            mongo.getCollection());
     }
 }

@@ -22,6 +22,7 @@ import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
+
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
@@ -32,8 +33,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link AbstractDynamoDbTicketRegistryTests}.
@@ -66,26 +65,23 @@ import lombok.extern.slf4j.Slf4j;
     RefreshAutoConfiguration.class
 })
 @TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
-@Slf4j
 public abstract class AbstractDynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
-    @Autowired
-    @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
-
     static {
         System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
         System.setProperty("aws.secretKey", "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");
     }
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
 
     public AbstractDynamoDbTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);

@@ -1,15 +1,16 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
@@ -18,8 +19,6 @@ import org.ldaptive.SearchResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import lombok.ToString;
 
 /**
  * Implementation of the ServiceRegistry interface which stores the services in a LDAP Directory.

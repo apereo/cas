@@ -1,11 +1,10 @@
 package org.apereo.cas.web.flow.actions;
 
-import lombok.val;
+import org.apereo.cas.util.EncodingUtils;
 
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.EncodingUtils;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
@@ -20,7 +19,6 @@ import java.util.stream.Stream;
  * @author Scott Battaglia
  * @since 3.4
  */
-@Slf4j
 @Setter
 public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
@@ -35,6 +33,14 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
      * Flow execution parameter name.
      */
     private String flowExecutionKeyParameter = DEFAULT_FLOW_EXECUTION_KEY_PARAMETER;
+
+    private static Stream<String> encodeMultiParameter(final String key, final String[] values, final String encoding) {
+        return Stream.of(values).map(value -> encodeSingleParameter(key, value, encoding));
+    }
+
+    private static String encodeSingleParameter(final String key, final String value, final String encoding) {
+        return EncodingUtils.urlEncode(key, encoding) + '=' + EncodingUtils.urlEncode(value, encoding);
+    }
 
     /**
      * Get the flow execution key.
@@ -62,13 +68,5 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     @Override
     public String createFlowDefinitionUrl(final String flowId, final AttributeMap input, final HttpServletRequest request) {
         return request.getRequestURI() + (request.getQueryString() != null ? '?' + request.getQueryString() : StringUtils.EMPTY);
-    }
-
-    private static Stream<String> encodeMultiParameter(final String key, final String[] values, final String encoding) {
-        return Stream.of(values).map(value -> encodeSingleParameter(key, value, encoding));
-    }
-
-    private static String encodeSingleParameter(final String key, final String value, final String encoding) {
-        return EncodingUtils.urlEncode(key, encoding) + '=' + EncodingUtils.urlEncode(value, encoding);
     }
 }

@@ -1,8 +1,5 @@
 package org.apereo.cas.support.saml;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -10,8 +7,10 @@ import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.annotation.Import;
 
 import java.util.Arrays;
@@ -24,7 +23,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Import(JpaServiceRegistryConfiguration.class)
 public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 

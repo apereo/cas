@@ -1,14 +1,14 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import org.apereo.cas.authentication.AbstractCredential;
+import org.apereo.cas.authentication.principal.Principal;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AbstractCredential;
-import org.apereo.cas.authentication.principal.Principal;
 
 /**
  * Credential that bear the fully resolved and authenticated Principal, or an
@@ -24,15 +24,18 @@ import org.apereo.cas.authentication.principal.Principal;
  * @author Andrew Petro
  * @since 3.0.0
  */
-@Slf4j
 @Getter
 @ToString(callSuper = true)
 public class PrincipalBearingCredential extends AbstractCredential {
 
-    /** Serialization version marker. */
+    /**
+     * Serialization version marker.
+     */
     private static final long serialVersionUID = 8866786438439775669L;
 
-    /** The trusted principal. */
+    /**
+     * The trusted principal.
+     */
     private Principal principal;
 
     /**
@@ -44,7 +47,7 @@ public class PrincipalBearingCredential extends AbstractCredential {
     public PrincipalBearingCredential(@NonNull @JsonProperty("principal") final Principal principal) {
         this.principal = principal;
     }
-    
+
     @JsonIgnore
     @Override
     public String getId() {

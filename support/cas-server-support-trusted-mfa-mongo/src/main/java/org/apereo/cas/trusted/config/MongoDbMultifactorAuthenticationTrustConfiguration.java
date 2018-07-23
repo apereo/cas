@@ -1,13 +1,12 @@
 package org.apereo.cas.trusted.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MongoDbMultifactorAuthenticationTrustStorage;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,7 +24,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("mongoDbMultifactorAuthenticationTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class MongoDbMultifactorAuthenticationTrustConfiguration {
 
     @Autowired
@@ -40,7 +38,7 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     public PersistenceExceptionTranslationPostProcessor persistenceMfaTrustedAuthnExceptionTranslationPostProcessor() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
-    
+
     @RefreshScope
     @Bean
     public MongoTemplate mongoMfaTrustedAuthnTemplate() {
@@ -57,9 +55,9 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
         val mongodb = casProperties.getAuthn().getMfa().getTrusted().getMongo();
         val m =
-                new MongoDbMultifactorAuthenticationTrustStorage(
-                        mongodb.getCollection(),
-                        mongoMfaTrustedAuthnTemplate());
+            new MongoDbMultifactorAuthenticationTrustStorage(
+                mongodb.getCollection(),
+                mongoMfaTrustedAuthnTemplate());
         m.setCipherExecutor(this.mfaTrustCipherExecutor);
         return m;
     }

@@ -1,6 +1,7 @@
 package org.apereo.cas.dynamodb;
 
-import lombok.val;
+import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
+import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
@@ -12,9 +13,8 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
-import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 
 import java.net.InetAddress;
 

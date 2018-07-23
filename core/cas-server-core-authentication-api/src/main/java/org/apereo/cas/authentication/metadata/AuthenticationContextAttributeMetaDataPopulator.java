@@ -1,8 +1,5 @@
 package org.apereo.cas.authentication.metadata;
 
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -10,13 +7,15 @@ import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
 /**
  * This is {@link AuthenticationContextAttributeMetaDataPopulator}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @RequiredArgsConstructor
 public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {

@@ -1,13 +1,13 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -35,17 +35,17 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
                         final SamlRegisteredService service) {
         if (StringUtils.isNotBlank(service.getRequiredAuthenticationContextClass())) {
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
-                    service.getRequiredAuthenticationContextClass(),
-                    service.getName());
+                service.getRequiredAuthenticationContextClass(),
+                service.getName());
             return service.getRequiredAuthenticationContextClass();
         }
 
         val defClass = StringUtils.defaultIfBlank(
-                casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAuthenticationContextClass(),
-                AuthnContext.PPT_AUTHN_CTX);
+            casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAuthenticationContextClass(),
+            AuthnContext.PPT_AUTHN_CTX);
 
         val requestedAuthnContext = (authnRequest instanceof AuthnRequest)
-                ? AuthnRequest.class.cast(authnRequest).getRequestedAuthnContext() : null;
+            ? AuthnRequest.class.cast(authnRequest).getRequestedAuthnContext() : null;
         if (requestedAuthnContext == null) {
             LOGGER.debug("No specific authN context is requested. Returning [{}]", defClass);
             return defClass;
@@ -57,7 +57,7 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
         }
 
         val finalCtx = StringUtils.defaultIfBlank(getAuthenticationContextByAssertion(assertion,
-                requestedAuthnContext, authnContextClassRefs), defClass);
+            requestedAuthnContext, authnContextClassRefs), defClass);
         LOGGER.debug("Returning authN context [{}]", finalCtx);
         return finalCtx;
     }

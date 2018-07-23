@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa.adaptive;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -19,6 +16,9 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.web.util.CookieGenerator;
@@ -41,18 +41,28 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
 
     public AdaptiveMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                 final CentralAuthenticationService centralAuthenticationService,
-                                                                final ServicesManager servicesManager, 
+                                                                final ServicesManager servicesManager,
                                                                 final TicketRegistrySupport ticketRegistrySupport,
                                                                 final CookieGenerator warnCookieGenerator,
                                                                 final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                                 final MultifactorAuthenticationProviderSelector selector,
-                                                                final CasConfigurationProperties casProperties, 
+                                                                final CasConfigurationProperties casProperties,
                                                                 final GeoLocationService geoLocationService) {
-        super(authenticationSystemSupport, centralAuthenticationService, 
-                servicesManager, ticketRegistrySupport, warnCookieGenerator,
-                authenticationSelectionStrategies, selector);
+        super(authenticationSystemSupport, centralAuthenticationService,
+            servicesManager, ticketRegistrySupport, warnCookieGenerator,
+            authenticationSelectionStrategies, selector);
         this.multifactorMap = casProperties.getAuthn().getAdaptive().getRequireMultifactor();
         this.geoLocationService = geoLocationService;
+    }
+
+    private static boolean checkUserAgentOrClientIp(final String clientIp, final String agent, final String mfaMethod, final String pattern) {
+        if (agent.matches(pattern) || clientIp.matches(pattern)) {
+            LOGGER.debug("Current user agent [{}] at [{}] matches the provided pattern [{}] for "
+                    + "adaptive authentication and is required to use [{}]",
+                agent, clientIp, pattern, mfaMethod);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -64,25 +74,25 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             LOGGER.debug("No service or authentication is available to determine event for principal");
             return null;
         }
-        
+
         if (multifactorMap == null || multifactorMap.isEmpty()) {
             LOGGER.debug("Adaptive authentication is not configured to require multifactor authentication");
             return null;
         }
-        
+
         val providerMap =
-                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
-        
+
         val providerFound = checkRequireMultifactorProvidersForRequest(context, service, authentication);
         if (providerFound != null && !providerFound.isEmpty()) {
             LOGGER.warn("Found multifactor authentication providers [{}] required for this authentication event", providerFound);
             return providerFound;
         }
-        
+
         return null;
     }
 
@@ -94,7 +104,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
 
         val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(context);
         val providerMap =
-                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         val entries = multifactorMap.entrySet();
         for (final Map.Entry entry : entries) {
             val mfaMethod = entry.getKey().toString();
@@ -104,7 +114,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
 
             if (!providerFound.isPresent()) {
                 LOGGER.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] is absent in the configuration.",
-                            mfaMethod, pattern, mfaMethod);
+                    mfaMethod, pattern, mfaMethod);
                 throw new AuthenticationException();
             }
 
@@ -127,8 +137,8 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
                 val address = loc.build();
                 if (address.matches(pattern)) {
                     LOGGER.debug("Current address [{}] at [{}] matches the provided pattern [{}] for "
-                                    + "adaptive authentication and is required to use [{}]",
-                            address, clientIp, pattern, mfaMethod);
+                            + "adaptive authentication and is required to use [{}]",
+                        address, clientIp, pattern, mfaMethod);
                     return true;
                 }
             }
@@ -136,33 +146,23 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
         return false;
     }
 
-    private static boolean checkUserAgentOrClientIp(final String clientIp, final String agent, final String mfaMethod, final String pattern) {
-        if (agent.matches(pattern) || clientIp.matches(pattern)) {
-            LOGGER.debug("Current user agent [{}] at [{}] matches the provided pattern [{}] for "
-                         + "adaptive authentication and is required to use [{}]",
-                        agent, clientIp, pattern, mfaMethod);
-            return true;
-        }
-        return false;
-    }
-
-    private Set<Event> buildEvent(final RequestContext context, final RegisteredService service, 
-                                  final Authentication authentication, 
+    private Set<Event> buildEvent(final RequestContext context, final RegisteredService service,
+                                  final Authentication authentication,
                                   final MultifactorAuthenticationProvider provider) {
         if (provider.isAvailable(service)) {
             LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                    provider, service.getName());
+                provider, service.getName());
             val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
-                    buildEventAttributeMap(authentication.getPrincipal(), service, provider));
+                buildEventAttributeMap(authentication.getPrincipal(), service, provider));
             return CollectionUtils.wrapSet(event);
         }
         LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);
         return null;
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT", 
-            actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
-            resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+    @Audit(action = "AUTHENTICATION_EVENT",
+        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+        resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);

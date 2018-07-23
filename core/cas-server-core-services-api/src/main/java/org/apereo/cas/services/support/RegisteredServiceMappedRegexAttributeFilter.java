@@ -1,15 +1,15 @@
 package org.apereo.cas.services.support;
 
-import lombok.val;
+import org.apereo.cas.services.RegisteredServiceAttributeFilter;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.RegisteredServiceAttributeFilter;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.RegexUtils;
+import lombok.val;
 
 import java.util.Collection;
 import java.util.HashMap;

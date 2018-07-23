@@ -1,8 +1,6 @@
 package org.apereo.cas.services;
 
 import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -14,7 +12,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class ServiceRegistryInitializerTests {
 
     @Test

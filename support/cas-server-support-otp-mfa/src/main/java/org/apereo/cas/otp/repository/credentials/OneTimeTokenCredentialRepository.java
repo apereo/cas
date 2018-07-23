@@ -2,6 +2,7 @@ package org.apereo.cas.otp.repository.credentials;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -18,6 +19,13 @@ public interface OneTimeTokenCredentialRepository {
      * @return the secret
      */
     OneTimeTokenAccount get(String username);
+
+    /**
+     * Load all accounts into collection.
+     *
+     * @return the collection
+     */
+    Collection<OneTimeTokenAccount> load();
 
     /**
      * Save.
@@ -49,4 +57,18 @@ public interface OneTimeTokenCredentialRepository {
      * Delete all tokens in the repository.
      */
     void deleteAll();
+
+    /**
+     * Delete.
+     *
+     * @param username the username
+     */
+    void delete(String username);
+
+    /**
+     * Count all records.
+     *
+     * @return the long
+     */
+    long count();
 }

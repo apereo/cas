@@ -1,12 +1,12 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,7 +18,6 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 @ToString
 @Setter
 @NoArgsConstructor

@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.support.RequiresModule;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public class AuthenticationExceptionsProperties implements Serializable {
 
     /**
      * Define custom exceptions that can then be mapped to message bundles for custom error handling.
-     *
+     * <p>
      * By default CAS is configured to recognize and handle a number
      * of exceptions for during authentication. Each exception has the specific message bundle
      * mapping so that a specific message could be presented to end users on the login form.

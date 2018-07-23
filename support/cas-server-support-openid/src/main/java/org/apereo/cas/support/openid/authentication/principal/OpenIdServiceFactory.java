@@ -1,12 +1,11 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.AbstractServiceFactory;
+import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.AbstractServiceFactory;
-import org.apereo.cas.support.openid.OpenIdProtocolConstants;
+import lombok.val;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
 public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> {

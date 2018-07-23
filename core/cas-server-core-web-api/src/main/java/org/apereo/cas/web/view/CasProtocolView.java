@@ -1,6 +1,5 @@
 package org.apereo.cas.web.view;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.context.ApplicationContext;
@@ -15,7 +14,6 @@ import java.util.Locale;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class CasProtocolView extends ThymeleafView {
 
     /**

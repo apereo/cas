@@ -28,10 +28,6 @@ public enum ConsentReminderOptions {
         this.value = value;
     }
 
-    public int getValue() {
-        return value;
-    }
-
     /**
      * Value of consent options.
      *
@@ -43,5 +39,9 @@ public enum ConsentReminderOptions {
             .filter(v -> v.getValue() == value)
             .findFirst()
             .orElseThrow(IllegalArgumentException::new);
+    }
+
+    public int getValue() {
+        return value;
     }
 }

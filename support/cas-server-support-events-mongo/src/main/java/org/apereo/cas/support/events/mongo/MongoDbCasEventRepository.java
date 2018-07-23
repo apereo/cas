@@ -1,17 +1,17 @@
 package org.apereo.cas.support.events.mongo;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
+
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
 import java.time.ZonedDateTime;
 import java.util.Collection;
-import lombok.ToString;
 
 /**
  * This is {@link MongoDbCasEventRepository} that stores event data into a mongodb database.
@@ -19,7 +19,6 @@ import lombok.ToString;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @ToString
 @RequiredArgsConstructor
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {

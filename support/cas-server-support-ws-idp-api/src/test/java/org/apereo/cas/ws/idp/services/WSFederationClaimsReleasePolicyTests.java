@@ -1,12 +1,11 @@
 package org.apereo.cas.ws.idp.services;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -17,16 +16,15 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class WSFederationClaimsReleasePolicyTests {
 
     @Test
     public void verifyAttributeReleaseNone() {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
-                CollectionUtils.wrap("uid", "casuser", "cn", "CAS"));
+            CollectionUtils.wrap("uid", "casuser", "cn", "CAS"));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("uid", "casuser", "cn", "CAS", "givenName", "CAS User"));
+            CollectionUtils.wrap("uid", "casuser", "cn", "CAS", "givenName", "CAS User"));
         val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
         assertTrue(results.isEmpty());
     }
@@ -35,9 +33,9 @@ public class WSFederationClaimsReleasePolicyTests {
     public void verifyAttributeRelease() {
         val service = RegisteredServiceTestUtils.getRegisteredService("verifyAttributeRelease");
         val policy = new WSFederationClaimsReleasePolicy(
-                CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn", WSFederationClaims.EMAIL_ADDRESS.name(), "email"));
+            CollectionUtils.wrap(WSFederationClaims.COMMON_NAME.name(), "cn", WSFederationClaims.EMAIL_ADDRESS.name(), "email"));
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("cn", "casuser", "email", "cas@example.org"));
+            CollectionUtils.wrap("cn", "casuser", "email", "cas@example.org"));
         val results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
         assertSame(2, results.size());
         assertTrue(results.containsKey(WSFederationClaims.COMMON_NAME.getUri()));

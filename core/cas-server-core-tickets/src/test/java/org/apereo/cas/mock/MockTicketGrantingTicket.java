@@ -1,9 +1,5 @@
 package org.apereo.cas.mock;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -22,6 +18,10 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.val;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -35,7 +35,6 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 @Getter
 @EqualsAndHashCode(of = {"id"})
 public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {
@@ -49,14 +48,10 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     private final Authentication authentication;
 
     private final ZonedDateTime created;
-
-    private int usageCount;
-
-    private boolean expired;
-
     private final Map<String, Service> services = new HashMap<>();
-
     private final Map<String, Service> proxyGrantingTickets = new HashMap<>();
+    private int usageCount;
+    private boolean expired;
 
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");

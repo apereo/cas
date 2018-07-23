@@ -1,15 +1,16 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import lombok.Getter;
 
 /**
  * Class to represent that this service wants to use SAML. We use this in
@@ -22,7 +23,6 @@ import lombok.Getter;
 @Entity
 @DiscriminatorValue("saml")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @Getter
 @NoArgsConstructor
 public class SamlService extends AbstractWebApplicationService {
@@ -38,10 +38,10 @@ public class SamlService extends AbstractWebApplicationService {
     /**
      * Instantiates a new SAML service.
      *
-     * @param id the service id
+     * @param id          the service id
      * @param originalUrl the original url
-     * @param artifactId the artifact id
-     * @param requestId the request id
+     * @param artifactId  the artifact id
+     * @param requestId   the request id
      */
     @JsonCreator
     protected SamlService(@JsonProperty("id") final String id, @JsonProperty("originalUrl") final String originalUrl,

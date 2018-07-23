@@ -1,10 +1,5 @@
 package org.apereo.cas.ticket.artifact;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -14,6 +9,10 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
 
 /**
@@ -22,10 +21,9 @@ import org.opensaml.saml.common.SAMLObject;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFactory {
-    
+
     /**
      * ExpirationPolicy for refresh tokens.
      */
@@ -40,7 +38,7 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
      * The Web application service factory.
      */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-    
+
     @Override
     @SneakyThrows
     public SamlArtifactTicket create(final String artifactId,
@@ -49,10 +47,10 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
                                      final String relyingParty, final SAMLObject samlObject) {
         try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
             val codeId = createTicketIdFor(artifactId);
-            
+
             val service = this.webApplicationServiceFactory.createService(relyingParty);
             final SamlArtifactTicket at = new SamlArtifactTicketImpl(codeId, service, authentication,
-                    this.expirationPolicy, ticketGrantingTicket, issuer, relyingParty, w.toString());
+                this.expirationPolicy, ticketGrantingTicket, issuer, relyingParty, w.toString());
             if (ticketGrantingTicket != null) {
                 ticketGrantingTicket.getDescendantTickets().add(at.getId());
             }

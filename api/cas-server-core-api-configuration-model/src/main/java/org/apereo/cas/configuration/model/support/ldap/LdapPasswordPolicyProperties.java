@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link LdapPasswordPolicyProperties}.
@@ -16,7 +17,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 @RequiresModule(name = "cas-server-support-ldap")
 public class LdapPasswordPolicyProperties extends PasswordPolicyProperties {
     private static final long serialVersionUID = -1878237508646993100L;
-    
+
     /**
      * An implementation of a policy class that knows how to handle LDAP responses.
      * The class must be an implementation of {@code org.ldaptive.auth.AuthenticationResponseHandler}.

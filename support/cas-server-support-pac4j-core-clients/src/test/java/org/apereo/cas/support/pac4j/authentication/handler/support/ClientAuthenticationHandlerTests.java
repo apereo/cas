@@ -1,14 +1,13 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.val;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.pac4j.core.client.Clients;
 import org.pac4j.oauth.client.FacebookClient;
@@ -35,7 +34,6 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
-@Slf4j
 public class ClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";

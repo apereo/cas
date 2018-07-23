@@ -13,5 +13,6 @@ public interface ComponentSerializationPlanConfigurator {
      *
      * @param plan the plan
      */
-    default void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {}
+    default void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
+    }
 }

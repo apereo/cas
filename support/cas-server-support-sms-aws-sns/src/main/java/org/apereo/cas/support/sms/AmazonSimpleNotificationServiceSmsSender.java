@@ -1,15 +1,15 @@
 package org.apereo.cas.support.sms;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
+import org.apereo.cas.util.io.SmsSender;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.amazonaws.services.sns.model.PublishRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
-import org.apereo.cas.util.io.SmsSender;
 
 import java.util.HashMap;
 

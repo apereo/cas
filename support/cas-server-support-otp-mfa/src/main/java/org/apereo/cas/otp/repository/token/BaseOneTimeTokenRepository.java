@@ -1,8 +1,8 @@
 package org.apereo.cas.otp.repository.token;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
-import lombok.ToString;
 
 /**
  * This is {@link BaseOneTimeTokenRepository}.

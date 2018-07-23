@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.impl.token.InMemoryPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

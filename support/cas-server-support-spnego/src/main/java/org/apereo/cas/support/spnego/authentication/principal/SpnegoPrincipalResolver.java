@@ -1,16 +1,15 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
-import lombok.val;
-
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
-import org.apereo.services.persondir.IPersonAttributeDao;
+
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.util.Optional;
 
@@ -22,7 +21,6 @@ import java.util.Optional;
  * @author Marc-Antoine Garrigue
  * @since 3.1
  */
-@Slf4j
 @ToString(callSuper = true)
 @NoArgsConstructor
 public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {

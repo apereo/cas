@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.services;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

@@ -28,6 +28,16 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_TGT_VALID = "valid";
 
     /**
+     * The transition state 'interruptSkipped'.
+     */
+    String TRANSITION_ID_INTERRUPT_SKIPPED = "interruptSkipped";
+
+    /**
+     * The transition state 'interruptRequired'.
+     */
+    String TRANSITION_ID_INTERRUPT_REQUIRED = "interruptRequired";
+
+    /**
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
@@ -400,6 +410,16 @@ public interface CasWebflowConstants {
      * Transition id 'resetPassword'.
      */
     String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
+
+    /**
+     * Transition id 'mustAcceptUsagePolicy'.
+     */
+    String TRANSITION_ID_AUP_MUST_ACCEPT = "mustAcceptUsagePolicy";
+
+    /**
+     * Transition id 'acceptedUsagePolicy'.
+     */
+    String TRANSITION_ID_AUP_ACCEPTED = "acceptedUsagePolicy";
 
     /**
      * State id 'doLogout'.

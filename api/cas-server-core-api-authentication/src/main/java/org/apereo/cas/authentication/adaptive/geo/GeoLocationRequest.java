@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import lombok.Getter;
 
 /**
  * This is {@link GeoLocationRequest}.
@@ -14,7 +13,6 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @ToString
 @Getter
 @NoArgsConstructor

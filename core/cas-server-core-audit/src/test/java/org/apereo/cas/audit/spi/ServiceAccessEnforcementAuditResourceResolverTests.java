@@ -1,9 +1,9 @@
 package org.apereo.cas.audit.spi;
 
-import lombok.val;
-
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+
+import lombok.val;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
 
@@ -20,10 +20,11 @@ public class ServiceAccessEnforcementAuditResourceResolverTests {
     @Test
     public void verifyAction() {
         val r = new ServiceAccessEnforcementAuditResourceResolver();
-        val result = AuditableExecutionResult.of(
-            CoreAuthenticationTestUtils.getAuthentication(),
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val result = AuditableExecutionResult.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .authentication(CoreAuthenticationTestUtils.getAuthentication())
+            .build();
         val outcome = r.resolveFrom(mock(JoinPoint.class), result);
         assertTrue(outcome.length > 0);
     }

@@ -1,16 +1,12 @@
 package org.apereo.cas.config;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.locator.DefaultSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
@@ -29,6 +25,11 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServ
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataController;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,7 @@ public class SamlIdPMetadataConfiguration {
     @DependsOn("samlIdPMetadataGenerator")
     @SneakyThrows
     @Autowired
-    public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
+    public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlIdPMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.getMetadata(), openSamlConfigBean);
         resolver.setParserPool(this.openSamlConfigBean.getParserPool());
@@ -96,17 +97,18 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataController samlIdPMetadataController() {
-        return new SamlIdPMetadataController(samlIdPMetadataGenerator(), samlMetadataLocator());
+        return new SamlIdPMetadataController(samlIdPMetadataGenerator(), samlIdPMetadataLocator());
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
-    @Bean
+    @Bean(initMethod = "initialize")
     @SneakyThrows
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new FileSystemSamlIdPMetadataGenerator(idp.getEntityId(), this.resourceLoader,
-            casProperties.getServer().getPrefix(), idp.getScope(),
-            samlMetadataLocator(), samlSelfSignedCertificateWriter());
+        return new FileSystemSamlIdPMetadataGenerator(samlIdPMetadataLocator(),
+            samlSelfSignedCertificateWriter(),
+            idp.getEntityId(), this.resourceLoader,
+            casProperties.getServer().getPrefix(), idp.getScope());
     }
 
     @ConditionalOnMissingBean(name = "samlSelfSignedCertificateWriter")
@@ -120,12 +122,12 @@ public class SamlIdPMetadataConfiguration {
         return generator;
     }
 
-    @ConditionalOnMissingBean(name = "samlMetadataLocator")
+    @ConditionalOnMissingBean(name = "samlIdPMetadataLocator")
     @Bean
     @SneakyThrows
-    public SamlIdPMetadataLocator samlMetadataLocator() {
+    public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new DefaultSamlIdPMetadataLocator(idp.getMetadata().getLocation());
+        return new FileSystemSamlIdPMetadataLocator(idp.getMetadata().getLocation());
     }
 
     @ConditionalOnMissingBean(name = "chainingMetadataResolverCacheLoader")

@@ -14,8 +14,8 @@ ext {
 
     publishingRelease = publishReleases && rootProject.sonatypeUsername != null && rootProject.sonatypePassword != null
     /*
-    Open the Git repository in the current directory.
-    Get commit id of HEAD.
+        Open the Git repository in the current directory.
+        Get commit id of HEAD.
      */
     git = org.ajoberstar.grgit.Grgit.open(dir: file('.').canonicalPath)
     def gitHead = git.head()
@@ -237,7 +237,9 @@ subprojects {
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
     [compileTestJava, compileJava].each {
-        it.options.fork = true
+        it.options.fork = false
+        it.options.incremental = false
+        
         def casCompilerArgs = ["-parameters"]
 
         if (!rootProject.skipErrorProneCompiler) {
@@ -317,7 +319,7 @@ subprojects {
         spotbugs {
             toolVersion = "${findbugsVersion}"
             sourceSets = [sourceSets.main]
-            ignoreFailures = Boolean.getBoolean("ignoreFindbugsFailures")
+            ignoreFailures = true
             reportsDir = file("$project.buildDir/findbugsReports")
             effort = "max"
             reportLevel = "low"
@@ -327,9 +329,10 @@ subprojects {
 
         [spotbugsMain, spotbugsTest].each {
             it.reports {
-                xml.enabled = false
-                html.enabled = true
+                xml.enabled = true
+                html.enabled = false
             }
+            it.finalizedBy outputSpotbugsReports
         }
     }
 

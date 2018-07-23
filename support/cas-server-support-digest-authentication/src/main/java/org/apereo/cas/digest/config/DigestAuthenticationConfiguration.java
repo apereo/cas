@@ -1,8 +1,5 @@
 package org.apereo.cas.digest.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.digest.DefaultDigestHashedCredentialRetriever;
@@ -14,6 +11,8 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -35,7 +34,6 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("digestAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class DigestAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
@@ -72,8 +70,7 @@ public class DigestAuthenticationConfiguration implements CasWebflowExecutionPla
 
     @Autowired
     @Bean
-    public Action digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever")
-                                         final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
+    public Action digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever") final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
         return new DigestAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
             serviceTicketRequestWebflowEventResolver,
             adaptiveAuthenticationPolicy,

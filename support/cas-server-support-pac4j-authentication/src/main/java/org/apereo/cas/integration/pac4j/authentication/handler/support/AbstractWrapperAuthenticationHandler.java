@@ -1,10 +1,5 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
-import lombok.val;
-
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -12,6 +7,11 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.Pac4jUtils;
+
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -25,9 +25,9 @@ import java.security.GeneralSecurityException;
 /**
  * Abstract pac4j authentication handler which uses a pac4j authenticator and profile creator.
  *
- * @author Jerome Leleu
  * @param <I> the type parameter
  * @param <C> the type parameter
+ * @author Jerome Leleu
  * @since 4.2.0
  */
 @Slf4j
@@ -42,6 +42,16 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
 
     public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
+    }
+
+    /**
+     * Gets the web context from the current thread-bound object.
+     *
+     * @return the web context
+     */
+    protected static WebContext getWebContext() {
+        return Pac4jUtils.getPac4jJ2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
+            HttpRequestUtils.getHttpServletResponseFromRequestAttributes());
     }
 
     @Override
@@ -67,16 +77,6 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             LOGGER.error("Failed to validate credentials", e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());
         }
-    }
-
-    /**
-     * Gets the web context from the current thread-bound object.
-     *
-     * @return the web context
-     */
-    protected static WebContext getWebContext() {
-        return Pac4jUtils.getPac4jJ2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
-            HttpRequestUtils.getHttpServletResponseFromRequestAttributes());
     }
 
     /**

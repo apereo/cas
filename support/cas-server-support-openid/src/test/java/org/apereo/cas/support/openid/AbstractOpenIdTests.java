@@ -1,6 +1,5 @@
 package org.apereo.cas.support.openid;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -34,6 +33,7 @@ import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+
 import org.junit.runner.RunWith;
 import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,6 @@ import org.springframework.test.context.junit4.SpringRunner;
     OpenIdAuthenticationEventExecutionPlanConfiguration.class,
     ThymeleafAutoConfiguration.class
 })
-@Slf4j
 public class AbstractOpenIdTests {
 
     @Autowired

@@ -1,9 +1,9 @@
 package org.apereo.cas.support.events.jpa;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.JpaEventsConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -21,11 +21,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {JpaEventsConfiguration.class,
-        AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class})
+    AopAutoConfiguration.class,
+    RefreshAutoConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@Slf4j
 public class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @Autowired

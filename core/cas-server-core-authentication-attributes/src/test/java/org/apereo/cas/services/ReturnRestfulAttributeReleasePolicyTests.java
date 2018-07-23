@@ -1,13 +1,12 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -27,7 +26,6 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @RunWith(JUnit4.class)
-@Slf4j
 public class ReturnRestfulAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "verifySerializeAReturnAllowedAttributeReleasePolicyToJson.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

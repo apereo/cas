@@ -1,15 +1,15 @@
 package org.apereo.cas.impl.account;
 
-import lombok.val;
+import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.api.PasswordlessUserAccountStore;
+import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
+import org.apereo.cas.util.HttpUtils;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.api.PasswordlessUserAccount;
-import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
-import org.apereo.cas.util.HttpUtils;
+import lombok.val;
 
 import java.util.HashMap;
 import java.util.Optional;

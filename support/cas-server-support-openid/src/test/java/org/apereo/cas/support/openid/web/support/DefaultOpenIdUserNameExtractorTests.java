@@ -1,7 +1,7 @@
 package org.apereo.cas.support.openid.web.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
+
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,7 +11,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 public class DefaultOpenIdUserNameExtractorTests extends AbstractOpenIdTests {
 
     @Autowired
@@ -20,18 +19,18 @@ public class DefaultOpenIdUserNameExtractorTests extends AbstractOpenIdTests {
     @Test
     public void verifyExtractionSuccessful() {
         assertEquals("scootman28", this.extractor
-                .extractLocalUsernameFromUri("http://test.com/scootman28"));
+            .extractLocalUsernameFromUri("http://test.com/scootman28"));
     }
 
     @Test
     public void verifyExtractionFailed() {
         assertNull(this.extractor
-                .extractLocalUsernameFromUri("test.com"));
+            .extractLocalUsernameFromUri("test.com"));
     }
 
     @Test
     public void verifyNull() {
         assertNull(this.extractor
-                .extractLocalUsernameFromUri(null));
+            .extractLocalUsernameFromUri(null));
     }
 }

@@ -1,11 +1,10 @@
 package org.apereo.cas.adaptors.ldap;
 
-import lombok.val;
-
-import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.LdapTestUtils;
 import org.apereo.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
+
+import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.val;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class LdapIntegrationTestsOperations {
     private static Map<Integer, InMemoryTestLdapDirectoryServer> DIRECTORY_MAP = new HashMap<>();
 

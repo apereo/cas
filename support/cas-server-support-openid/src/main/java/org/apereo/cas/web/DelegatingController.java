@@ -1,16 +1,16 @@
 package org.apereo.cas.web;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
+
+import lombok.Setter;
+import lombok.val;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import lombok.Setter;
 
 /**
  * Delegating controller.
@@ -20,7 +20,6 @@ import lombok.Setter;
  * @author Frederic Esnault
  * @since 3.5
  */
-@Slf4j
 @Setter
 public class DelegatingController extends AbstractController {
 

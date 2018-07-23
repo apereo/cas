@@ -1,11 +1,11 @@
 package org.apereo.cas.support.oauth.web;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter {
     /**
@@ -45,7 +44,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
         if (isDeviceTokenRequest(request, response)) {
             return requiresAuthenticationAuthorizeInterceptor.preHandle(request, response, handler);
         }
-        
+
         if (isAuthorizationRequest(request, response)) {
             return requiresAuthenticationAuthorizeInterceptor.preHandle(request, response, handler);
         }

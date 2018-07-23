@@ -1,10 +1,9 @@
 package org.apereo.cas.interrupt.webflow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
+
+import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -13,7 +12,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class InterruptSingleSignOnParticipationStrategy extends DefaultSingleSignOnParticipationStrategy {
     public InterruptSingleSignOnParticipationStrategy(final ServicesManager servicesManager, final boolean createSsoOnRenewedAuthn,
                                                       final boolean renewEnabled) {

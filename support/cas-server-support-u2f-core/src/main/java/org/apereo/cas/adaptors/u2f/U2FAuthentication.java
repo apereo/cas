@@ -1,10 +1,10 @@
 package org.apereo.cas.adaptors.u2f;
 
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import java.io.Serializable;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * This is {@link U2FAuthentication}.
@@ -12,7 +12,6 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode

@@ -1,9 +1,9 @@
 package org.apereo.cas.support.events.ticket;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+
 import lombok.ToString;
 
 /**
@@ -13,7 +13,6 @@ import lombok.ToString;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 @ToString
 public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
 
@@ -26,9 +25,9 @@ public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
     /**
      * Instantiates a new Cas proxy ticket granted event.
      *
-     * @param source               the source
+     * @param source              the source
      * @param proxyGrantingTicket the ticket granting ticket
-     * @param proxyTicket        the service ticket
+     * @param proxyTicket         the service ticket
      */
     public CasProxyTicketGrantedEvent(final Object source, final ProxyGrantingTicket proxyGrantingTicket, final ProxyTicket proxyTicket) {
         super(source);

@@ -1,11 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
+
 import org.junit.ClassRule;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -35,7 +35,6 @@ import java.util.Collection;
     CasCoreTicketCatalogConfiguration.class
 })
 @TestPropertySource(locations = {"classpath:/memcached.properties"})
-@Slf4j
 @Category(CouchbaseCategory.class)
 public class MemcachedTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 

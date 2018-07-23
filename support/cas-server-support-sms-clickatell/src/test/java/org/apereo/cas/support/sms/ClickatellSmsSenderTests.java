@@ -1,14 +1,14 @@
 package org.apereo.cas.support.sms;
 
-import lombok.val;
-
 import org.apereo.cas.config.ClickatellSmsConfiguration;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

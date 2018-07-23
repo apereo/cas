@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+
 import java.security.cert.X509Certificate;
 
 /**
@@ -15,7 +15,6 @@ import java.security.cert.X509Certificate;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @RequiredArgsConstructor
 public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalResolver {

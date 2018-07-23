@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
+
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -26,7 +26,6 @@ import java.util.Collection;
     RefreshAutoConfiguration.class
 })
 @TestPropertySource(locations = {"classpath:/mongoservices.properties"})
-@Slf4j
 @RunWith(Parameterized.class)
 @Category(MongoDbCategory.class)
 public class MongoDbServiceRegistryCloudTests extends AbstractServiceRegistryTests {
@@ -39,13 +38,13 @@ public class MongoDbServiceRegistryCloudTests extends AbstractServiceRegistryTes
         super(registeredServiceClass);
     }
 
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.serviceRegistry;
-    }
-
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
         return Arrays.asList(RegexRegisteredService.class);
+    }
+
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return this.serviceRegistry;
     }
 }

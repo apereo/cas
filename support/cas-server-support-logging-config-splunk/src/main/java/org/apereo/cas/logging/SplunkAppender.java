@@ -1,9 +1,8 @@
 package org.apereo.cas.logging;
 
-import lombok.val;
-
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
@@ -36,6 +35,21 @@ public class SplunkAppender extends AbstractAppender {
         this.appenderRef = appenderRef;
     }
 
+    /**
+     * Create appender.
+     *
+     * @param name        the name
+     * @param appenderRef the appender ref
+     * @param config      the config
+     * @return the appender
+     */
+    @PluginFactory
+    public static SplunkAppender build(@PluginAttribute("name") final String name,
+                                       @PluginElement("AppenderRef") final AppenderRef appenderRef,
+                                       @PluginConfiguration final Configuration config) {
+        return new SplunkAppender(name, config, appenderRef);
+    }
+
     @Override
     public void append(final LogEvent logEvent) {
         val newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
@@ -50,20 +64,5 @@ public class SplunkAppender extends AbstractAppender {
         } else {
             LOGGER.warn("No Splunk log appender reference could be located in logging configuration.");
         }
-    }
-
-    /**
-     * Create appender.
-     *
-     * @param name        the name
-     * @param appenderRef the appender ref
-     * @param config      the config
-     * @return the appender
-     */
-    @PluginFactory
-    public static SplunkAppender build(@PluginAttribute("name") final String name,
-                                       @PluginElement("AppenderRef") final AppenderRef appenderRef,
-                                       @PluginConfiguration final Configuration config) {
-        return new SplunkAppender(name, config, appenderRef);
     }
 }

@@ -1,14 +1,5 @@
 package org.apereo.cas.adaptors.u2f;
 
-import lombok.val;
-
-import com.yubico.u2f.U2F;
-import com.yubico.u2f.data.DeviceRegistration;
-import com.yubico.u2f.data.messages.SignRequestData;
-import com.yubico.u2f.data.messages.SignResponse;
-import com.yubico.u2f.exceptions.DeviceCompromisedException;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -18,13 +9,20 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 
+import com.yubico.u2f.U2F;
+import com.yubico.u2f.data.DeviceRegistration;
+import com.yubico.u2f.data.messages.SignRequestData;
+import com.yubico.u2f.data.messages.SignResponse;
+import com.yubico.u2f.exceptions.DeviceCompromisedException;
+import lombok.SneakyThrows;
+import lombok.val;
+
 /**
  * This is {@link U2FAuthenticationHandler}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final U2F u2f = new U2F();

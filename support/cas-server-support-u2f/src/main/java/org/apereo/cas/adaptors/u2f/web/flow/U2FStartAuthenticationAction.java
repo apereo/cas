@@ -1,12 +1,11 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
-import lombok.val;
-
-import com.yubico.u2f.U2F;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.u2f.U2FAuthentication;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.web.support.WebUtils;
+
+import com.yubico.u2f.U2F;
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -17,7 +16,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class U2FStartAuthenticationAction extends AbstractAction {
 
     private final U2F u2f = new U2F();

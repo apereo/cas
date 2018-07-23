@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.radius;
 
-import lombok.val;
-
-import net.jradius.dictionary.Attr_ClientId;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
+import net.jradius.dictionary.Attr_ClientId;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

@@ -1,14 +1,14 @@
 package org.apereo.cas.digest;
 
+import org.apereo.cas.authentication.AbstractCredential;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AbstractCredential;
-import lombok.Getter;
 
 /**
  * This is {@link DigestCredential}.
@@ -16,7 +16,6 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 @Setter
@@ -35,7 +34,7 @@ public class DigestCredential extends AbstractCredential {
     /**
      * Instantiates a new Basic identifiable credential.
      *
-     * @param id   the id
+     * @param id    the id
      * @param realm the realm
      * @param hash  the hash
      */
@@ -46,5 +45,5 @@ public class DigestCredential extends AbstractCredential {
         this.hash = hash;
         this.id = id;
     }
-    
+
 }

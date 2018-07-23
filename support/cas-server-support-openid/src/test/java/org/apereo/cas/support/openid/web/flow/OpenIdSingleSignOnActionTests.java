@@ -1,8 +1,5 @@
 package org.apereo.cas.support.openid.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
@@ -12,6 +9,8 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,7 +27,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
     @Autowired
@@ -42,8 +40,8 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
     public void verifyNoTgt() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
-                new MockServletContext(), new MockHttpServletRequest(),
-                new MockHttpServletResponse()));
+            new MockServletContext(), new MockHttpServletRequest(),
+            new MockHttpServletResponse()));
         assertEquals("error", this.action.execute(context).getId());
     }
 
@@ -52,8 +50,8 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
-                new MockServletContext(), request,
-                new MockHttpServletResponse()));
+            new MockServletContext(), request,
+            new MockHttpServletResponse()));
         val event = this.action.execute(context);
 
         assertNotNull(event);
@@ -74,8 +72,8 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, "tgtId");
 
         context.setExternalContext(new ServletExternalContext(
-                new MockServletContext(), request,
-                new MockHttpServletResponse()));
+            new MockServletContext(), request,
+            new MockHttpServletResponse()));
         assertEquals("error", this.action.execute(context).getId());
     }
 
@@ -85,7 +83,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         val request = new MockHttpServletRequest();
         val authentication = CoreAuthenticationTestUtils.getAuthentication("scootman28");
         final TicketGrantingTicket t = new TicketGrantingTicketImpl("TGT-11", authentication,
-                new NeverExpiresExpirationPolicy());
+            new NeverExpiresExpirationPolicy());
 
         this.ticketRegistry.addTicket(t);
 

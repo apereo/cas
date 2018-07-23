@@ -1,8 +1,6 @@
 package org.apereo.cas.authentication.support;
 
 import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -19,7 +17,6 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
-@Slf4j
 public class RejectResultCodeLdapPasswordPolicyHandlingStrategyTests {
 
     @Test
@@ -31,7 +28,7 @@ public class RejectResultCodeLdapPasswordPolicyHandlingStrategyTests {
 
         when(res.getResult()).thenReturn(false);
         assertFalse(s.supports(res));
-        
+
         when(res.getResult()).thenReturn(true);
         assertFalse(s.supports(res));
     }

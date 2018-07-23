@@ -1,13 +1,13 @@
 package org.apereo.cas.oidc.discovery;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import java.util.List;
 
@@ -17,43 +17,32 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Getter
 @Setter
 public class OidcServerDiscoverySettings {
 
-    @JsonProperty("scopes_supported")
-    private List<String> scopesSupported;
-
-    @JsonProperty("response_types_supported")
-    private List<String> responseTypesSupported;
-
-    @JsonProperty("subject_types_supported")
-    private List<String> subjectTypesSupported;
-
-    @JsonProperty("claim_types_supported")
-    private List<String> claimTypesSupported;
-
-    @JsonProperty("claims_supported")
-    private List<String> claimsSupported;
-
-    @JsonProperty("grant_types_supported")
-    private List<String> grantTypesSupported;
-
-    @JsonProperty("id_token_signing_alg_values_supported")
-    private List<String> idTokenSigningAlgValuesSupported;
-
-    @JsonProperty("introspection_endpoint_auth_methods_supported")
-    private List<String> introspectionSupportedAuthenticationMethods;
-
     @JsonIgnore
     private final CasConfigurationProperties casProperties;
-
     @JsonProperty
     private final String issuer;
-
     @JsonIgnore
     private final String serverPrefix;
+    @JsonProperty("scopes_supported")
+    private List<String> scopesSupported;
+    @JsonProperty("response_types_supported")
+    private List<String> responseTypesSupported;
+    @JsonProperty("subject_types_supported")
+    private List<String> subjectTypesSupported;
+    @JsonProperty("claim_types_supported")
+    private List<String> claimTypesSupported;
+    @JsonProperty("claims_supported")
+    private List<String> claimsSupported;
+    @JsonProperty("grant_types_supported")
+    private List<String> grantTypesSupported;
+    @JsonProperty("id_token_signing_alg_values_supported")
+    private List<String> idTokenSigningAlgValuesSupported;
+    @JsonProperty("introspection_endpoint_auth_methods_supported")
+    private List<String> introspectionSupportedAuthenticationMethods;
 
     public OidcServerDiscoverySettings(final CasConfigurationProperties casProperties, final String issuer) {
         this.issuer = issuer;

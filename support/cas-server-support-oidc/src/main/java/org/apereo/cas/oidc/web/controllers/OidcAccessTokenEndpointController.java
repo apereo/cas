@@ -1,6 +1,6 @@
 package org.apereo.cas.oidc.web.controllers;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -11,13 +11,13 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.token.OAuth20TokenRequestValidator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
-import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,7 +32,6 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpointController {
 
     public OidcAccessTokenEndpointController(final ServicesManager servicesManager,
@@ -47,8 +46,8 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
                                              final CookieRetrievingCookieGenerator cookieGenerator,
                                              final ExpirationPolicy accessTokenExpirationPolicy,
                                              final ExpirationPolicy deviceTokenExpirationPolicy,
-                                             final Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors,
-                                             final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators) {
+                                             final Collection<OAuth20TokenRequestValidator> accessTokenGrantRequestValidators,
+                                             final AuditableExecution accessTokenGrantAuditableRequestExtractor) {
         super(servicesManager,
             ticketRegistry,
             accessTokenFactory,
@@ -61,8 +60,8 @@ public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpoin
             cookieGenerator,
             accessTokenExpirationPolicy,
             deviceTokenExpirationPolicy,
-            accessTokenGrantRequestExtractors,
-            accessTokenGrantRequestValidators);
+            accessTokenGrantRequestValidators,
+            accessTokenGrantAuditableRequestExtractor);
     }
 
     @PostMapping(value = {'/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,

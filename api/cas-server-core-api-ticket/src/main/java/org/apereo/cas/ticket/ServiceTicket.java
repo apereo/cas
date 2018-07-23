@@ -1,9 +1,10 @@
 package org.apereo.cas.ticket;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * Interface for a Service Ticket. A service ticket is used to grant access to a

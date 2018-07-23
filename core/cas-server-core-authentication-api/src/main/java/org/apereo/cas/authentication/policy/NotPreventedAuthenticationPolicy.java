@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PreventedException;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Authentication policy that defines success as at least one authentication success and no authentication attempts

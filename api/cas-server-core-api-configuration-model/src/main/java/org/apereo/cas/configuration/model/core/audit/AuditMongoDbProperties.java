@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.core.audit;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link AuditMongoDbProperties}.

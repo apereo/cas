@@ -1,9 +1,10 @@
 package org.apereo.cas.rest.factory;
 
+import org.apereo.cas.ticket.TicketGrantingTicket;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -59,7 +60,8 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
     }
 
     private boolean isDefaultContentType(final HttpServletRequest request) {
-        val accept = request.getHeader(HttpHeaders.ACCEPT) == null ? null : request.getHeader(HttpHeaders.ACCEPT).trim();
+        val header = request.getHeader(HttpHeaders.ACCEPT);
+        val accept = StringUtils.defaultString(header);
         return StringUtils.isBlank(accept) || accept.startsWith(MediaType.ALL_VALUE) || accept.startsWith(MediaType.TEXT_HTML_VALUE);
     }
 

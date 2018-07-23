@@ -1,10 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.ldap;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.AbstractX509LdapTests;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
@@ -27,8 +22,12 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
-import org.junit.Test;
+
+import lombok.val;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
 import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +68,6 @@ import org.springframework.test.context.junit4.SpringRunner;
     CasCoreServicesConfiguration.class})
 @TestPropertySource(locations = {"classpath:/x509.properties"})
 @EnableScheduling
-@Slf4j
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests implements InitializingBean {
 
     private static final int LDAP_PORT = 1389;
@@ -81,15 +79,15 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Override
-    public void afterPropertiesSet() {
-        SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-    }
-
     @BeforeClass
     public static void bootstrapTests() throws Exception {
         initDirectoryServer(LDAP_PORT);
         AbstractX509LdapTests.bootstrap(LDAP_PORT);
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
     }
 
     @Test

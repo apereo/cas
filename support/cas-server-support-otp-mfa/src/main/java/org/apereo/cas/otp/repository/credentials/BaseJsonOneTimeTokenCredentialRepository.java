@@ -1,17 +1,19 @@
 package org.apereo.cas.otp.repository.credentials;
 
-import lombok.val;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -90,6 +92,38 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
     @Override
     public void deleteAll() {
         writeAccountsToJsonRepository(new TreeSet<>());
+    }
+
+    @Override
+    public void delete(final String username) {
+        try {
+            val accounts = readAccountsFromJsonRepository();
+            accounts.removeIf(t -> t.getUsername().equalsIgnoreCase(username));
+            writeAccountsToJsonRepository(accounts);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public long count() {
+        try {
+            val accounts = readAccountsFromJsonRepository();
+            return accounts.size();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return 0;
+    }
+
+    @Override
+    public Collection<OneTimeTokenAccount> load() {
+        try {
+            return readAccountsFromJsonRepository();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return new ArrayList<>();
     }
 
     @SneakyThrows

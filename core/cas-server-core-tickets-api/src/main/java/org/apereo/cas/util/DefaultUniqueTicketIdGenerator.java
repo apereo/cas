@@ -1,15 +1,14 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
 import org.apereo.cas.util.gen.NumericGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
+
 import lombok.Setter;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
@@ -22,7 +21,6 @@ import lombok.Setter;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @Setter
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
@@ -92,11 +90,12 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
         setSuffix(suffix);
     }
 
-    /**                                  
+    /**
      * Due to a bug in mod-auth-cas and possibly other clients in the way tickets are parsed,
      * the ticket id body is sanitized to remove the character "_", replacing it with "-" instead.
      * This might be revisited in the future and removed, once at least mod-auth-cas fixes
      * the issue.
+     *
      * @param prefix The prefix we want attached to the ticket.
      * @return the ticket id
      */

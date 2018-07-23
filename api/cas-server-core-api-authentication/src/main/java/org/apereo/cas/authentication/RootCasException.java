@@ -1,9 +1,7 @@
 package org.apereo.cas.authentication;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 /**
@@ -14,7 +12,6 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Slf4j
 @ToString
 @RequiredArgsConstructor
 public abstract class RootCasException extends RuntimeException {

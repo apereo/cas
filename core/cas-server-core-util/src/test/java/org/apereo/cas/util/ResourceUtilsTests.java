@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
 import lombok.val;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.core.io.ClassPathResource;

@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.metadata;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
+
 
 /**
  * This is {@link AuthenticationCredentialTypeMetaDataPopulator}.
@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.Credential;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class AuthenticationCredentialTypeMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {

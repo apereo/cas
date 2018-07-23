@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
@@ -21,6 +18,9 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -37,7 +37,7 @@ import java.util.Set;
 @Slf4j
 public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-    
+
     private final AuthenticationRiskEvaluator authenticationRiskEvaluator;
     private final AuthenticationRiskMitigator authenticationRiskMitigator;
     private final double threshold;
@@ -51,7 +51,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
                                                        final AuthenticationRiskMitigator authenticationRiskMitigator,
                                                        final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
-                authenticationSelectionStrategies, selector);
+            authenticationSelectionStrategies, selector);
         this.authenticationRiskEvaluator = authenticationRiskEvaluator;
         this.authenticationRiskMitigator = authenticationRiskMitigator;
         threshold = casProperties.getAuthn().getAdaptive().getRisk().getThreshold();
@@ -83,7 +83,7 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
                                                          final RegisteredService service) {
 
         this.eventPublisher.publishEvent(new CasRiskBasedAuthenticationEvaluationStartedEvent(this, authentication, service));
-        
+
         LOGGER.debug("Evaluating possible suspicious authentication attempt for [{}]", authentication.getPrincipal());
         val score = authenticationRiskEvaluator.eval(authentication, service, request);
 
@@ -91,14 +91,14 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
             this.eventPublisher.publishEvent(new CasRiskyAuthenticationDetectedEvent(this, authentication, service, score));
 
             LOGGER.debug("Calculated risk score [{}] for authentication request by [{}] is above the risk threshold [{}].",
-                    score.getScore(),
-                    authentication.getPrincipal(),
-                    threshold);
+                score.getScore(),
+                authentication.getPrincipal(),
+                threshold);
 
             this.eventPublisher.publishEvent(new CasRiskBasedAuthenticationMitigationStartedEvent(this, authentication, service, score));
             val res = authenticationRiskMitigator.mitigate(authentication, service, score, request);
             this.eventPublisher.publishEvent(new CasRiskyAuthenticationMitigatedEvent(this, authentication, service, res));
-            
+
             return CollectionUtils.wrapSet(res.getResult());
         }
 

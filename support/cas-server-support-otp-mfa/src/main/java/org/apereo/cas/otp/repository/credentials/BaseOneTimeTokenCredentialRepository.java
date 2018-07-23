@@ -1,11 +1,10 @@
 package org.apereo.cas.otp.repository.credentials;
 
-import lombok.val;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 
 /**
  * This is {@link BaseOneTimeTokenCredentialRepository}.
@@ -13,7 +12,6 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTokenCredentialRepository {
     /**

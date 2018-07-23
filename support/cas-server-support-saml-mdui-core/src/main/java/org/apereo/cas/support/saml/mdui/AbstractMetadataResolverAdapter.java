@@ -1,11 +1,13 @@
 package org.apereo.cas.support.saml.mdui;
 
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
+
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -23,8 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import lombok.Setter;
 
 /**
  * This is {@link AbstractMetadataResolverAdapter} that encapsulates
@@ -53,8 +53,6 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     protected OpenSamlConfigBean configBean;
 
     private ChainingMetadataResolver metadataResolver;
-
-    private final Object lock = new Object();
 
     /**
      * Instantiates a new abstract metadata resolver adapter.

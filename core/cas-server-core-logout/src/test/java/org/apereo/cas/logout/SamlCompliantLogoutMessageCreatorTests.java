@@ -1,9 +1,8 @@
 package org.apereo.cas.logout;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -21,7 +20,6 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @RunWith(JUnit4.class)
-@Slf4j
 public class SamlCompliantLogoutMessageCreatorTests {
     public static final String CONST_TEST_URL = "https://google.com";
 
@@ -42,10 +40,10 @@ public class SamlCompliantLogoutMessageCreatorTests {
 
         val is = new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8));
         val document = builder.parse(is);
-        
+
         val list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");
         assertEquals(1, list.getLength());
-        
+
         assertEquals(list.item(0).getTextContent(), request.getTicketId());
     }
 }

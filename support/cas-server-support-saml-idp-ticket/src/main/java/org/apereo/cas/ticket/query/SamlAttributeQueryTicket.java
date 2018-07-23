@@ -21,7 +21,7 @@ public interface SamlAttributeQueryTicket extends ServiceTicket {
      * @return the relying party id
      */
     String getRelyingParty();
-    
+
     /**
      * Gets saml object.
      *

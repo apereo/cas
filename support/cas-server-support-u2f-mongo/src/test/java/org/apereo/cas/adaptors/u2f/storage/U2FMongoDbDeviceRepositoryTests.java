@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FMongoDbConfiguration;
+
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
@@ -15,8 +16,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * This is {@link U2FMongoDbDeviceRepositoryTests}.
  *
@@ -25,11 +24,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Category(MongoDbCategory.class)
 @SpringBootTest(classes = {U2FConfiguration.class,
-        U2FMongoDbConfiguration.class,
-        AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class})
+    U2FMongoDbConfiguration.class,
+    AopAutoConfiguration.class,
+    RefreshAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:/mongou2f.properties")
-@Slf4j
 public class U2FMongoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
 
     @ClassRule

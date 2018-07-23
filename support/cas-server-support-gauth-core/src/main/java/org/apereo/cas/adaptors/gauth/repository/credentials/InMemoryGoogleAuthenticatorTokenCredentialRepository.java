@@ -1,13 +1,12 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
-import lombok.val;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.otp.repository.credentials.BaseInMemoryOneTimeTokenCredentialRepository;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.otp.repository.credentials.BaseInMemoryOneTimeTokenCredentialRepository;
-import org.apereo.cas.authentication.OneTimeTokenAccount;
+import lombok.val;
 
 /**
  * This is {@link InMemoryGoogleAuthenticatorTokenCredentialRepository}.
@@ -15,7 +14,6 @@ import org.apereo.cas.authentication.OneTimeTokenAccount;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Getter
 public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseInMemoryOneTimeTokenCredentialRepository {
     private final IGoogleAuthenticator googleAuthenticator;

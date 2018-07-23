@@ -1,10 +1,10 @@
 package org.apereo.cas.discovery;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
+
+import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Endpoint(id = "discovery-profile")
 public class CasServerDiscoveryProfileEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;

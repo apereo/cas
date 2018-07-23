@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -25,7 +24,6 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "RegexRegisteredServiceProperty")
-@Slf4j
 @EqualsAndHashCode
 public class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
     private static final long serialVersionUID = 1349556364689133211L;
@@ -39,13 +37,26 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Lob
     @Column(name = "property_values")
     private HashSet<String> values = new HashSet<>();
-    
+
     @Override
     public Set<String> getValues() {
         if (this.values == null) {
             this.values = new HashSet<>();
         }
         return this.values;
+    }
+
+    /**
+     * Sets values.
+     *
+     * @param values the values
+     */
+    public void setValues(final Set<String> values) {
+        getValues().clear();
+        if (values == null) {
+            return;
+        }
+        getValues().addAll(values);
     }
 
     @Override
@@ -60,19 +71,6 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Override
     public boolean contains(final String value) {
         return this.values.contains(value);
-    }
-
-    /**
-     * Sets values.
-     *
-     * @param values the values
-     */
-    public void setValues(final Set<String> values) {
-        getValues().clear();
-        if (values == null) {
-            return;
-        }
-        getValues().addAll(values);
     }
 
     /**

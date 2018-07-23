@@ -1,14 +1,14 @@
 package org.apereo.cas.support.saml.mdui;
 
-import lombok.val;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
@@ -61,6 +61,24 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         this.uiInfo = uiInfo;
     }
 
+    /**
+     * Gets string values from the list of mdui objects.
+     *
+     * @param items the items
+     * @return the string values
+     */
+    private static Collection<String> getStringValues(final List<?> items) {
+        val list = new ArrayList<String>();
+        items.forEach(d -> {
+            if (d instanceof XSURI) {
+                list.add(((XSURI) d).getValue());
+            } else if (d instanceof XSString) {
+                list.add(((XSString) d).getValue());
+            }
+        });
+        return list;
+    }
+
     @Override
     public Collection<String> getDescriptions() {
         if (this.uiInfo != null) {
@@ -104,24 +122,6 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         if (this.uiInfo != null) {
             list.addAll(this.uiInfo.getLogos().stream().map(l -> new Logo(l.getURL(), l.getHeight(), l.getWidth())).collect(Collectors.toList()));
         }
-        return list;
-    }
-
-    /**
-     * Gets string values from the list of mdui objects.
-     *
-     * @param items the items
-     * @return the string values
-     */
-    private static Collection<String> getStringValues(final List<?> items) {
-        val list = new ArrayList<String>();
-        items.forEach(d -> {
-            if (d instanceof XSURI) {
-                list.add(((XSURI) d).getValue());
-            } else if (d instanceof XSString) {
-                list.add(((XSString) d).getValue());
-            }
-        });
         return list;
     }
 

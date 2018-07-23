@@ -1,10 +1,10 @@
 package org.apereo.cas.rest.factory;
 
+import org.apereo.cas.authentication.AuthenticationResult;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class DefaultUserAuthenticationResourceEntityResponseFactory implements UserAuthenticationResourceEntityResponseFactory {
 
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();

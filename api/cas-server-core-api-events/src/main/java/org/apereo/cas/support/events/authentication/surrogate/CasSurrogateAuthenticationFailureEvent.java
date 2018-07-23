@@ -1,10 +1,10 @@
 package org.apereo.cas.support.events.authentication.surrogate;
 
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.events.AbstractCasEvent;
+
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * This is {@link CasSurrogateAuthenticationFailureEvent}.
@@ -12,7 +12,6 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 public class CasSurrogateAuthenticationFailureEvent extends AbstractCasEvent {

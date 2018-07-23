@@ -1,9 +1,5 @@
 package org.apereo.cas.pm.rest;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -11,6 +7,9 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,7 +26,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class RestPasswordManagementService extends BasePasswordManagementService {
 
     private final transient RestTemplate restTemplate;

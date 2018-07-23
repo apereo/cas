@@ -23,6 +23,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -34,7 +35,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.Arrays;
 import java.util.Collection;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link CouchbaseTicketRegistryTests}.
@@ -67,7 +67,6 @@ import lombok.extern.slf4j.Slf4j;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class},
     properties = {"cas.ticket.registry.couchbase.password=password", "cas.ticket.registry.couchbase.bucket=testbucket"})
-@Slf4j
 public class CouchbaseTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Rule

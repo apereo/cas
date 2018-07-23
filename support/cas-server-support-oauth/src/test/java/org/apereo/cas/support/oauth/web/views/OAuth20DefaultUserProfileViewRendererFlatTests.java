@@ -1,11 +1,10 @@
 package org.apereo.cas.support.oauth.web.views;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.hjson.JsonValue;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,6 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @TestPropertySource(properties = "cas.authn.oauth.userProfileViewType=FLAT")
-@Slf4j
 public class OAuth20DefaultUserProfileViewRendererFlatTests extends AbstractOAuth20Tests {
 
     @Autowired
@@ -34,9 +32,9 @@ public class OAuth20DefaultUserProfileViewRendererFlatTests extends AbstractOAut
     @Test
     public void verifyNestedOption() {
         final Map map = CollectionUtils.wrap(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "cas",
-                OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, 
-                CollectionUtils.wrap("email", "cas@example.org", "name", "Test"),
-                "something", CollectionUtils.wrapList("something"));
+            OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES,
+            CollectionUtils.wrap("email", "cas@example.org", "name", "Test"),
+            "something", CollectionUtils.wrapList("something"));
         val json = oauthUserProfileViewRenderer.render(map, mock(AccessToken.class));
         val value = JsonValue.readJSON(json).asObject();
         assertNotNull(value.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));

@@ -2,11 +2,9 @@ package org.apereo.cas.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
-
-import lombok.ToString;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * This is {@link BasicIdentifiableCredential}, a simple credential implementation
@@ -16,7 +14,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Slf4j
 @ToString
 @Getter
 @Setter

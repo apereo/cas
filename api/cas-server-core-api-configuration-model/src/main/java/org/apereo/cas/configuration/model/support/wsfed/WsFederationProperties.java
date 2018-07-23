@@ -1,8 +1,9 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;

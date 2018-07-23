@@ -1,12 +1,13 @@
 package org.apereo.cas.audit.spi;
 
+import org.apereo.cas.audit.AuditPrincipalIdProvider;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.audit.AuditPrincipalIdProvider;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 

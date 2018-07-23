@@ -1,7 +1,6 @@
 package org.apereo.cas.web.view;
 
 import lombok.val;
-
 import org.junit.Test;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.StringTemplateResolver;

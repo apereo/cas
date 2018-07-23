@@ -1,7 +1,6 @@
 package org.apereo.cas.digest;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.Map;
@@ -12,7 +11,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class DefaultDigestHashedCredentialRetriever implements DigestHashedCredentialRetriever {
 

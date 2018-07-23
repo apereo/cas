@@ -1,8 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
 import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,7 +16,6 @@ import org.opensaml.saml.saml2.core.LogoutRequest;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {

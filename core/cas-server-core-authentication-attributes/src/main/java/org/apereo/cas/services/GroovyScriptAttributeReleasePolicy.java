@@ -1,18 +1,18 @@
 package org.apereo.cas.services;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link GroovyScriptAttributeReleasePolicy} that attempts to release attributes

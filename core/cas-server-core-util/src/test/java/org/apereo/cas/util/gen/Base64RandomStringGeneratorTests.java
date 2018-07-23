@@ -1,8 +1,6 @@
 package org.apereo.cas.util.gen;
 
 import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -13,7 +11,6 @@ import static org.junit.Assert.*;
  * @author Timur Duehr
  * @since 5.2.0
  */
-@Slf4j
 public class Base64RandomStringGeneratorTests {
 
     private static final int LENGTH = 36;

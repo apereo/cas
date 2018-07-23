@@ -1,8 +1,5 @@
 package org.apereo.cas.web;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -19,8 +16,10 @@ import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.StaticApplicationContext;
@@ -37,7 +36,6 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @Import({CasProtocolViewsConfiguration.class, CasValidationConfiguration.class, ThymeleafAutoConfiguration.class})
-@Slf4j
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
     protected static final String SUCCESS = "Success";
     protected static final Service SERVICE = RegisteredServiceTestUtils.getService();
@@ -72,7 +70,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     @Test
     public void verifyEmptyParams() throws Exception {
         assertNotNull(this.serviceValidateController.handleRequestInternal(
-                new MockHttpServletRequest(), new MockHttpServletResponse()).getModel().get("code"));
+            new MockHttpServletRequest(), new MockHttpServletResponse()).getModel().get("code"));
     }
 
     @Test
@@ -111,20 +109,20 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     @Test
     public void verifyValidServiceTicketInvalidSpec() throws Exception {
         assertFalse(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
-                new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
+            new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
     }
 
 
     @Test
     public void verifyRenewSpecFailsCorrectly() throws Exception {
         assertFalse(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
-                new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
+            new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
     }
 
     @Test
     public void verifyInvalidServiceTicket() throws Exception {
         val ctx = CoreAuthenticationTestUtils
-                .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
+            .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
@@ -136,7 +134,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
 
         assertFalse(this.serviceValidateController.handleRequestInternal(request,
-                new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
+            new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
     }
 
 
@@ -216,9 +214,9 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     public void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
         this.serviceValidateController.addValidationSpecification(new MockValidationSpecification(false));
         assertFalse(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
-                new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
+            new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
     }
-    
+
     /*
         CAS10 Proxying Tests.
      */
@@ -237,7 +235,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         assertTrue(this.serviceValidateController.handleRequestInternal(request,
-                new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
+            new MockHttpServletResponse()).getView().toString().contains(SUCCESS));
     }
 
     @Test
@@ -261,7 +259,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         assertTrue(this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse())
-                .getView().toString().contains(SUCCESS));
+            .getView().toString().contains(SUCCESS));
     }
 
     @Test

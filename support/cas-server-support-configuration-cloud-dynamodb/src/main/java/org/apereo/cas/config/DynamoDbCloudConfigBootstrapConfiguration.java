@@ -1,6 +1,6 @@
 package org.apereo.cas.config;
 
-import lombok.val;
+import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
@@ -19,8 +19,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -44,45 +44,6 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
     private static final String TABLE_NAME = "DynamoDbCasProperties";
 
     private static final long PROVISIONED_THROUGHPUT = 10;
-
-    @Getter
-    private enum ColumnNames {
-
-        ID("id"), NAME("name"), VALUE("value");
-
-        private final String columnName;
-
-        ColumnNames(final String columnName) {
-            this.columnName = columnName;
-        }
-    }
-
-    @Override
-    public PropertySource<?> locate(final Environment environment) {
-        val props = new Properties();
-
-        try {
-            val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-            val amazonDynamoDBClient = builder.build(AmazonDynamoDBClient.builder(), AmazonDynamoDB.class);
-            val preventTableCreationOnStartup = builder.getSetting("preventTableCreationOnStartup", Boolean.class);
-            if (!preventTableCreationOnStartup) {
-                createSettingsTable(amazonDynamoDBClient, false);
-            }
-            val scan = new ScanRequest(TABLE_NAME);
-            LOGGER.debug("Scanning table with request [{}]", scan);
-            val result = amazonDynamoDBClient.scan(scan);
-            LOGGER.debug("Scanned table with result [{}]", scan);
-
-            result.getItems()
-                .stream()
-                .map(DynamoDbCloudConfigBootstrapConfiguration::retrieveSetting)
-                .forEach(p -> props.put(p.getKey(), p.getValue()));
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-
-        return new PropertiesPropertySource(getClass().getSimpleName(), props);
-    }
 
     private static Pair<String, Object> retrieveSetting(final Map<String, AttributeValue> entry) {
         val name = entry.get(ColumnNames.NAME.getColumnName()).getS();
@@ -116,5 +77,44 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
             .withKeySchema(new KeySchemaElement(name, KeyType.HASH))
             .withProvisionedThroughput(new ProvisionedThroughput(PROVISIONED_THROUGHPUT, PROVISIONED_THROUGHPUT))
             .withTableName(TABLE_NAME);
+    }
+
+    @Override
+    public PropertySource<?> locate(final Environment environment) {
+        val props = new Properties();
+
+        try {
+            val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
+            val amazonDynamoDBClient = builder.build(AmazonDynamoDBClient.builder(), AmazonDynamoDB.class);
+            val preventTableCreationOnStartup = builder.getSetting("preventTableCreationOnStartup", Boolean.class);
+            if (!preventTableCreationOnStartup) {
+                createSettingsTable(amazonDynamoDBClient, false);
+            }
+            val scan = new ScanRequest(TABLE_NAME);
+            LOGGER.debug("Scanning table with request [{}]", scan);
+            val result = amazonDynamoDBClient.scan(scan);
+            LOGGER.debug("Scanned table with result [{}]", scan);
+
+            result.getItems()
+                .stream()
+                .map(DynamoDbCloudConfigBootstrapConfiguration::retrieveSetting)
+                .forEach(p -> props.put(p.getKey(), p.getValue()));
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+
+        return new PropertiesPropertySource(getClass().getSimpleName(), props);
+    }
+
+    @Getter
+    private enum ColumnNames {
+
+        ID("id"), NAME("name"), VALUE("value");
+
+        private final String columnName;
+
+        ColumnNames(final String columnName) {
+            this.columnName = columnName;
+        }
     }
 }

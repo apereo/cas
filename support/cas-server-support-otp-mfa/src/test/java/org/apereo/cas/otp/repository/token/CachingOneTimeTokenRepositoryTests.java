@@ -1,7 +1,5 @@
 package org.apereo.cas.otp.repository.token;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -23,6 +21,8 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.config.OneTimeTokenAuthenticationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +75,13 @@ public class CachingOneTimeTokenRepositoryTests {
         val token = new OneTimeToken(1234, "casuser");
         repository.store(token);
         repository.store(token);
+        assertEquals(2, repository.count("casuser"));
         repository.clean();
         assertTrue(repository.exists("casuser", 1234));
+        repository.remove("casuser");
+        repository.remove(1234);
+        repository.remove("casuser", 1234);
+        assertNull(repository.get("casuser", 1234));
+        assertEquals(0, repository.count());
     }
 }

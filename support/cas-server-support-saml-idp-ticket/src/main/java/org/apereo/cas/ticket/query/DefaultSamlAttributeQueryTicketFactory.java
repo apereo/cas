@@ -1,10 +1,5 @@
 package org.apereo.cas.ticket.query;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -13,6 +8,10 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
 
 
@@ -22,7 +21,6 @@ import org.opensaml.saml.common.SAMLObject;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQueryTicketFactory {
 
@@ -40,7 +38,7 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
      * The opensaml config bean.
      */
     protected final OpenSamlConfigBean configBean;
-    
+
     @Override
     @SneakyThrows
     public SamlAttributeQueryTicket create(final String id, final SAMLObject samlObject,
@@ -48,8 +46,8 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
         try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
             val codeId = createTicketIdFor(id);
             val service = this.webApplicationServiceFactory.createService(relyingParty);
-            final SamlAttributeQueryTicket at = new SamlAttributeQueryTicketImpl(codeId, service, this.expirationPolicy, 
-                    relyingParty, w.toString(), ticketGrantingTicket);
+            final SamlAttributeQueryTicket at = new SamlAttributeQueryTicketImpl(codeId, service, this.expirationPolicy,
+                relyingParty, w.toString(), ticketGrantingTicket);
             if (ticketGrantingTicket != null) {
                 ticketGrantingTicket.getDescendantTickets().add(at.getId());
             }

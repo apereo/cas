@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -21,12 +20,11 @@ import static org.junit.Assert.*;
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
-@Slf4j
 public class SurrogatePrincipalResolverTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-    
+
     @Test
     public void verifyResolverDefault() {
         val resolver = new SurrogatePrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());
@@ -52,7 +50,7 @@ public class SurrogatePrincipalResolverTests {
         thrown.expect(IllegalArgumentException.class);
         resolver.resolve(credential);
     }
-    
+
     @Test
     public void verifyResolverSurrogate() {
         val resolver = new SurrogatePrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository());

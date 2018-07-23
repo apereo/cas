@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
+
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -17,7 +17,6 @@ import java.util.Map;
  * @since 5.2.0
  */
 @TestConfiguration("casPersonDirectoryTestConfiguration")
-@Slf4j
 public class CasPersonDirectoryTestConfiguration {
     @Bean
     public List<IPersonAttributeDao> attributeRepositories() {
@@ -27,9 +26,9 @@ public class CasPersonDirectoryTestConfiguration {
     @Bean
     public IPersonAttributeDao attributeRepository() {
         final Map<String, List<Object>> attrs =
-                CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
-                        "eduPersonAffiliation", CollectionUtils.wrap("developer"),
-                        "groupMembership", CollectionUtils.wrap("adopters"));
+            CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
+                "eduPersonAffiliation", CollectionUtils.wrap("developer"),
+                "groupMembership", CollectionUtils.wrap("adopters"));
         return new StubPersonAttributeDao(attrs);
     }
 }

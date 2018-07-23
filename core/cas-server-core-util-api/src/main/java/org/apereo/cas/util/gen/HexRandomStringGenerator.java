@@ -1,8 +1,8 @@
 package org.apereo.cas.util.gen;
 
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.EncodingUtils;
+
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link HexRandomStringGenerator}.
@@ -10,10 +10,8 @@ import org.apereo.cas.util.EncodingUtils;
  * length of the random part.
  *
  * @author Timur Duehr
-
  * @since 5.2.0
  */
-@Slf4j
 @NoArgsConstructor
 public class HexRandomStringGenerator extends AbstractRandomStringGenerator {
 

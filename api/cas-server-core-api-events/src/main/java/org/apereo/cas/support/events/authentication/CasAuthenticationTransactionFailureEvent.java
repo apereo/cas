@@ -1,11 +1,12 @@
 package org.apereo.cas.support.events.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.support.events.AbstractCasEvent;
+
+import lombok.Getter;
+
 import java.util.Collection;
 import java.util.Map;
-import lombok.Getter;
 
 /**
  * This is {@link CasAuthenticationTransactionFailureEvent}.
@@ -13,7 +14,6 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Getter
 public class CasAuthenticationTransactionFailureEvent extends AbstractCasEvent {
 

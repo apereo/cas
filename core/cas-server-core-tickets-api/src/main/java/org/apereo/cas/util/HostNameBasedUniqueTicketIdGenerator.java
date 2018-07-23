@@ -1,8 +1,8 @@
 package org.apereo.cas.util;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * An implementation of {@link UniqueTicketIdGenerator} that is able auto-configure
@@ -21,7 +21,6 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
 
 

@@ -1,9 +1,5 @@
 package org.apereo.cas.authentication.mfa;
 
-import lombok.val;
-
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
@@ -11,6 +7,9 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.experimental.UtilityClass;
+import lombok.val;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +22,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @UtilityClass
 public class MultifactorAuthenticationTestUtils {
     public static Principal getPrincipal(final String id) {

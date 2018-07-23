@@ -1,6 +1,11 @@
 package org.apereo.cas.pm.impl;
 
-import lombok.val;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.pm.BasePasswordManagementService;
+import org.apereo.cas.pm.PasswordChangeBean;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,13 +14,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
-import org.apereo.cas.pm.BasePasswordManagementService;
-import org.apereo.cas.pm.PasswordChangeBean;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
@@ -50,19 +50,20 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         readAccountsFromJsonResource();
     }
 
-    @SneakyThrows
     private void readAccountsFromJsonResource() {
         try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
             final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<>() {
             };
             this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
     @Override
     public boolean changeInternal(@NonNull final Credential credential, @NonNull final PasswordChangeBean bean) {
         val c = (UsernamePasswordCredential) credential;
-        if (StringUtils.isBlank(c.getPassword()) || StringUtils.isBlank(bean.getPassword())) {
+        if (StringUtils.isBlank(bean.getPassword())) {
             LOGGER.error("Password cannot be blank");
             return false;
         }

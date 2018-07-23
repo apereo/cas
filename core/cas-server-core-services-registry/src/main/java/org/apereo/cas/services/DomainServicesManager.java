@@ -1,9 +1,10 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.RegexUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.RegexUtils;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;

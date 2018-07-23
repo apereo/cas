@@ -1,8 +1,8 @@
 package org.apereo.cas.logout;
 
-import java.util.List;
-
 import org.apereo.cas.ticket.TicketGrantingTicket;
+
+import java.util.List;
 
 /**
  * A logout manager handles the Single Log Out process.

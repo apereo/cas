@@ -1,9 +1,9 @@
 package org.apereo.cas.logout;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.http.HttpMessage;
+
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 
 import java.net.URL;
@@ -15,7 +15,6 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 @Setter
 public class LogoutHttpMessage extends HttpMessage {
 

@@ -1,11 +1,10 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
+
+import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -21,7 +20,6 @@ import static java.util.stream.Collectors.toList;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     private final String collectionName;
@@ -33,7 +31,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }
-    
+
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (getAccountValidator().isValid(uid, token)) {
@@ -67,5 +65,17 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             return Optional.of(new YubiKeyAccount(account.getId(), getCipherExecutor().decode(account.getPublicId()), account.getUsername()));
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void delete(final String uid) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("username").is(uid));
+        this.mongoTemplate.remove(query, YubiKeyAccount.class, this.collectionName);
+    }
+
+    @Override
+    public void deleteAll() {
+        this.mongoTemplate.remove(new Query(), YubiKeyAccount.class, this.collectionName);
     }
 }

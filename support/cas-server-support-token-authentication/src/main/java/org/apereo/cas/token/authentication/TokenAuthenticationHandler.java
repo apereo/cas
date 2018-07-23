@@ -1,15 +1,5 @@
 package org.apereo.cas.token.authentication;
 
-import lombok.val;
-
-import com.nimbusds.jose.Algorithm;
-import com.nimbusds.jose.EncryptionMethod;
-import com.nimbusds.jose.JWEAlgorithm;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.util.Base64;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -21,6 +11,16 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+
+import com.nimbusds.jose.Algorithm;
+import com.nimbusds.jose.EncryptionMethod;
+import com.nimbusds.jose.JWEAlgorithm;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.util.Base64;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
@@ -47,6 +47,21 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
     public TokenAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                       final PrincipalNameTransformer principalNameTransformer) {
         super(name, servicesManager, principalFactory, null, principalNameTransformer);
+    }
+
+    private static <T extends Algorithm> T findAlgorithmFamily(final Set<Algorithm> family,
+                                                               final String alg, final Class<T> clazz) {
+        val result = family
+            .stream()
+            .filter(l -> l.getName().equalsIgnoreCase(alg))
+            .findFirst()
+            .get();
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [" + result
+                + " is of type " + result.getClass()
+                + " when we were expecting " + clazz);
+        }
+        return (T) result;
     }
 
     @Override
@@ -121,21 +136,6 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             service.getServiceId(),
             RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName());
         return null;
-    }
-
-    private static <T extends Algorithm> T findAlgorithmFamily(final Set<Algorithm> family,
-                                                               final String alg, final Class<T> clazz) {
-        val result = family
-            .stream()
-            .filter(l -> l.getName().equalsIgnoreCase(alg))
-            .findFirst()
-            .get();
-        if (!clazz.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Result [" + result
-                + " is of type " + result.getClass()
-                + " when we were expecting " + clazz);
-        }
-        return (T) result;
     }
 
     /**

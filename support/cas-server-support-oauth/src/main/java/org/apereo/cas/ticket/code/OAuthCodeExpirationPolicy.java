@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket.code;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * This is {@link OAuthCodeExpirationPolicy}.
@@ -11,8 +11,7 @@ import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS)
-@Slf4j
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class OAuthCodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
     private static final long serialVersionUID = -8383186621682727360L;
 

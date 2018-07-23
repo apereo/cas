@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
+
+import lombok.val;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -21,7 +20,6 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 public class ChainingPrincipalResolverTests {
 
     private final PrincipalFactory principalFactory = PrincipalFactoryUtils.newPrincipalFactory();

@@ -1,11 +1,10 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link MongoDbProperty}.
@@ -14,7 +13,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @Document
-@Slf4j
 @Getter
 @Setter
 public class MongoDbProperty {

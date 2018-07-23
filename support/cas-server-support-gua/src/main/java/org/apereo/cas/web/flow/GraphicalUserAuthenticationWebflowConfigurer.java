@@ -1,10 +1,9 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -17,7 +16,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /**
      * Transition to obtain username.
@@ -52,7 +50,7 @@ public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWeb
             createTransitionForState(viewStateGfx, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_ACCEPT_GUA);
 
             val acceptState = createActionState(flow, STATE_ID_ACCEPT_GUA,
-                    createEvaluateAction("acceptUserGraphicsForAuthenticationAction"));
+                createEvaluateAction("acceptUserGraphicsForAuthenticationAction"));
             createStateDefaultTransition(acceptState, targetStateId);
         }
     }

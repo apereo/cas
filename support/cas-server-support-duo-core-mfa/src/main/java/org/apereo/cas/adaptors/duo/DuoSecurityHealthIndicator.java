@@ -1,12 +1,11 @@
 package org.apereo.cas.adaptors.duo;
 
-import lombok.val;
+import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
+import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
-import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
+import lombok.val;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 
@@ -17,7 +16,6 @@ import org.springframework.boot.actuate.health.Health;
  * @since 5.3.0
  */
 @RequiredArgsConstructor
-@Slf4j
 public class DuoSecurityHealthIndicator extends AbstractHealthIndicator {
     private final VariegatedMultifactorAuthenticationProvider duoMultifactorAuthenticationProvider;
 

@@ -1,12 +1,11 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.util.EncodingUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.apereo.cas.util.EncodingUtils;
 
 /**
  * This is {@link DefaultSecurityTokenTicketFactory}.
@@ -14,10 +13,9 @@ import org.apereo.cas.util.EncodingUtils;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFactory {
-    
+
     private final UniqueTicketIdGenerator ticketUniqueTicketIdGenerator;
     private final ExpirationPolicy expirationPolicy;
 

@@ -1,18 +1,18 @@
 package org.apereo.cas.adaptors.fortress;
 
-import lombok.val;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.GlobalErrIds;
 import org.apache.directory.fortress.core.PasswordException;
 import org.apache.directory.fortress.core.model.Session;
 import org.apache.directory.fortress.core.model.User;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
