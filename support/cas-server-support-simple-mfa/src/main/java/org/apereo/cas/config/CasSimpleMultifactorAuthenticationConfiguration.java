@@ -1,14 +1,22 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationTicketFactory;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.mfa.simple.web.flow.CasSimpleMultifactorWebflowConfigurer;
+import org.apereo.cas.mfa.simple.web.flow.CasSimpleSendTokenAction;
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -19,9 +27,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationConfiguration}.
@@ -31,9 +41,18 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Configuration("casSimpleMultifactorAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableScheduling
 public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
+
+    @Autowired
+    @Qualifier("communicationsManager")
+    private CommunicationsManager communicationsManager;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -61,9 +80,33 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
             mfaSimpleAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
+    @ConditionalOnMissingBean(name = "mfaSimpleMultifactorSendTokenAction")
+    @Bean
+    public Action mfaSimpleMultifactorSendTokenAction() {
+        val simple = casProperties.getAuthn().getMfa().getSimple();
+        if (!communicationsManager.validate()) {
+            throw new BeanCreationException("Unable to submit tokens since no communication strategy is defined");
+        }
+        return new CasSimpleSendTokenAction(ticketRegistry, communicationsManager,
+            casSimpleMultifactorAuthenticationTicketFactory(), simple);
+    }
+
     @Override
     public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
         plan.registerWebflowConfigurer(mfaSimpleMultifactorWebflowConfigurer());
+    }
+
+    @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketExpirationPolicy")
+    @Bean
+    public ExpirationPolicy casSimpleMultifactorAuthenticationTicketExpirationPolicy() {
+        val simple = casProperties.getAuthn().getMfa().getSimple();
+        return new HardTimeoutExpirationPolicy(simple.getTimeToKillInSeconds());
+    }
+
+    @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationTicketFactory")
+    @Bean
+    public TransientSessionTicketFactory casSimpleMultifactorAuthenticationTicketFactory() {
+        return new CasSimpleMultifactorAuthenticationTicketFactory(casSimpleMultifactorAuthenticationTicketExpirationPolicy());
     }
 
     /**
