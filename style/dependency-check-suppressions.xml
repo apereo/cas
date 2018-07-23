@@ -10,6 +10,15 @@
         <cve>CVE-2010-1622</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2017-9735</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2007-1651</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-13742</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2014-0225</cve>
     </suppress>
     <suppress>
