@@ -1,15 +1,15 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
-import lombok.val;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
-import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import lombok.val;
 
 import javax.persistence.NoResultException;
 import java.io.Serializable;

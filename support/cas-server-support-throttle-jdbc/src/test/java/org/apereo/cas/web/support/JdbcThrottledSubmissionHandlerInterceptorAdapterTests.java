@@ -1,9 +1,5 @@
 package org.apereo.cas.web.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -31,6 +27,9 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.support.config.CasJdbcThrottlingConfiguration;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.runner.RunWith;
@@ -79,13 +78,19 @@ import javax.servlet.http.HttpServletResponse;
     CasRegisteredServicesTestConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @TestPropertySource(locations = {"classpath:/casthrottle.properties"})
-@Slf4j
 public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends
     AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
     @Qualifier("casAuthenticationManager")
     private AuthenticationManager authenticationManager;
+
+    private static UsernamePasswordCredential badCredentials(final String username) {
+        val credentials = new UsernamePasswordCredential();
+        credentials.setUsername(username);
+        credentials.setPassword("badpassword");
+        return credentials;
+    }
 
     @Override
     protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
@@ -109,12 +114,5 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends
             return response;
         }
         throw new AssertionError("Expected AbstractAuthenticationException");
-    }
-
-    private static UsernamePasswordCredential badCredentials(final String username) {
-        val credentials = new UsernamePasswordCredential();
-        credentials.setUsername(username);
-        credentials.setPassword("badpassword");
-        return credentials;
     }
 }

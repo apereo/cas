@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.junit.Before;
@@ -29,16 +28,14 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
-
     private static final String MAIL = "mail";
-    protected IPersonAttributeDao dao;
 
-    private Map<String, List<Object>> attributes;
+    protected IPersonAttributeDao dao;
 
     private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
+    private Map<String, List<Object>> attributes;
     private Principal principal;
 
     @Before

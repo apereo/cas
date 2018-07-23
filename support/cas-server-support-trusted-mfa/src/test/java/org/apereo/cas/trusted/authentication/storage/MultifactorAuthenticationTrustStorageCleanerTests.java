@@ -1,8 +1,8 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.val;
-
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
+
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;

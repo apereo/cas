@@ -1,9 +1,7 @@
 package org.apereo.cas.pm.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -14,6 +12,9 @@ import org.apereo.cas.pm.impl.GroovyResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
 import org.apereo.cas.util.io.CommunicationsManager;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.inspektr.audit.spi.support.BooleanAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.FirstParameterAuditResourceResolver;
 import org.springframework.beans.factory.InitializingBean;
@@ -113,7 +114,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
         plan.registerAuditActionResolver("CHANGE_PASSWORD_ACTION_RESOLVER",
-            new BooleanAuditActionResolver("_SUCCESS", "_FAILED"));
+            new BooleanAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
         plan.registerAuditResourceResolver("CHANGE_PASSWORD_RESOURCE_RESOLVER",
             new FirstParameterAuditResourceResolver());
     }

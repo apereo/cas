@@ -1,18 +1,18 @@
 package org.apereo.cas.ticket.support;
 
-import lombok.val;
+import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.TicketState;
+import lombok.NoArgsConstructor;
+import lombok.val;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import lombok.NoArgsConstructor;
 
 /**
  * Ticket expiration policy based on a hard timeout from ticket creation time rather than the
@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
  * @since 3.1.2
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {

@@ -1,9 +1,9 @@
 package org.apereo.cas.support.wsfederation;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
+
+import lombok.Setter;
+import lombok.val;
 import org.junit.Test;
 import org.opensaml.security.credential.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,6 @@ import static org.junit.Assert.*;
  * @author John Gasper
  * @since 4.2.0
  */
-@Slf4j
 @Setter
 public class WsFederationHelperTests extends AbstractWsFederationTests {
     private static final String GOOD_TOKEN = "goodToken";

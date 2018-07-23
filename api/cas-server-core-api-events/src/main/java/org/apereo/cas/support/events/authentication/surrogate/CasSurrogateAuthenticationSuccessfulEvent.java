@@ -1,8 +1,8 @@
 package org.apereo.cas.support.events.authentication.surrogate;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.events.AbstractCasEvent;
+
 import lombok.Getter;
 
 /**
@@ -11,7 +11,6 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 public class CasSurrogateAuthenticationSuccessfulEvent extends AbstractCasEvent {
 

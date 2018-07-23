@@ -1,13 +1,13 @@
 package org.apereo.cas.impl.calcs;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.util.HttpRequestUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -22,7 +22,7 @@ import java.util.Collection;
 @Slf4j
 public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
 
-    
+
     public UserAgentAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository) {
         super(casEventRepository);
     }

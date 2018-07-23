@@ -1,17 +1,16 @@
 package org.apereo.cas.monitor.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import net.spy.memcached.MemcachedClientIF;
-import net.spy.memcached.transcoders.Transcoder;
-import org.apache.commons.pool2.ObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactory;
 import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.monitor.MemcachedHealthIndicator;
+
+import lombok.val;
+import net.spy.memcached.MemcachedClientIF;
+import net.spy.memcached.transcoders.Transcoder;
+import org.apache.commons.pool2.ObjectPool;
+import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -27,7 +26,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("memcachedMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class MemcachedMonitorConfiguration {
 
     @Autowired

@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.category.DynamoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -28,7 +26,9 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningStandaloneCondition;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@ConditionalIgnore(condition = RunningStandaloneCondition.class, port = 8000)
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 8000)
 @TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
 @SpringBootTest(classes = {
     DynamoDbTicketRegistryConfiguration.class,

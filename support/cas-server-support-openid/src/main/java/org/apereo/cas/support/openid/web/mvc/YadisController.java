@@ -1,10 +1,9 @@
 package org.apereo.cas.support.openid.web.mvc;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+
+import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
@@ -21,9 +20,7 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 @Controller("yadisController")
-@Slf4j
 public class YadisController {
-
 
 
     @Autowired

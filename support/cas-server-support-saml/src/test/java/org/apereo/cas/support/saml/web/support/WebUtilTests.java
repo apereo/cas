@@ -1,13 +1,12 @@
 package org.apereo.cas.support.saml.web.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -20,7 +19,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 public class WebUtilTests {
 
     @Test

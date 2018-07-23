@@ -1,10 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.ticket.Ticket;
+
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import org.apereo.cas.ticket.Ticket;
 
 /**
  * Interface for a registry that stores tickets. The underlying registry can be
@@ -76,7 +76,7 @@ public interface TicketRegistry {
     default Stream<Ticket> getTickets(final Predicate<Ticket> predicate) {
         return getTicketsStream().filter(predicate);
     }
-    
+
     /**
      * Update the received ticket.
      *
@@ -107,5 +107,5 @@ public interface TicketRegistry {
     default Stream<Ticket> getTicketsStream() {
         return getTickets().stream();
     }
-    
+
 }

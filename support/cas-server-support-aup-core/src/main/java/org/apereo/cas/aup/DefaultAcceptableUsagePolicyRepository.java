@@ -1,14 +1,13 @@
 package org.apereo.cas.aup;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Map;
@@ -20,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
 
     private static final long serialVersionUID = -3059445754626980894L;

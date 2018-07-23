@@ -1,8 +1,5 @@
 package org.apereo.cas.support.saml.web.view;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -20,8 +17,10 @@ import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -42,13 +41,12 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.1
  */
-@Slf4j
 public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     private static final String TEST_VALUE = "testValue";
     private static final String TEST_ATTRIBUTE = "testAttribute";
     private static final String PRINCIPAL_ID = "testPrincipal";
-    
+
     private Saml10SuccessResponseView response;
 
     @Before

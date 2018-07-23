@@ -1,19 +1,18 @@
 package org.apereo.cas.services;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.val;
+
 import javax.persistence.Transient;
 import java.util.Set;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link GroovyRegisteredServiceMultifactorPolicy}.
@@ -21,7 +20,6 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @Getter
 @Setter
 @NoArgsConstructor

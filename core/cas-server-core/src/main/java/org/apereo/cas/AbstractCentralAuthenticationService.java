@@ -1,11 +1,5 @@
 package org.apereo.cas;
 
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.Synchronized;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -24,6 +18,13 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
@@ -50,7 +51,6 @@ import java.util.stream.Collectors;
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable, ApplicationEventPublisherAware {
 
     private static final long serialVersionUID = -7572316677901391166L;
-
     /**
      * Application event publisher.
      */
@@ -102,6 +102,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * since the access strategy is not usually managed as a Spring bean.
      */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
 
     /**
      * Publish CAS events.

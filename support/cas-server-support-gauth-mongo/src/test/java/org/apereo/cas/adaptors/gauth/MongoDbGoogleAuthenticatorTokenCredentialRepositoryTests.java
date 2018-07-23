@@ -1,8 +1,5 @@
 package org.apereo.cas.adaptors.gauth;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -28,6 +25,8 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.SchedulingUtils;
+
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -86,7 +85,6 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Category(MongoDbCategory.class)
-@Slf4j
 public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Autowired
@@ -103,6 +101,8 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
         registry.save("uid", "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
         val s = registry.get("uid");
         assertEquals("secret", s.getSecretKey());
+        val c = registry.load();
+        assertFalse(c.isEmpty());
     }
 
     @Test

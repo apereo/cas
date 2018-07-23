@@ -1,8 +1,8 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.storage.fingerprint.ClientIpDeviceFingerprintComponentExtractorTests;
 import org.apereo.cas.trusted.authentication.storage.fingerprint.UserAgentDeviceFingerprintComponentExtractorTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -19,6 +19,5 @@ import org.junit.runners.Suite;
     JsonMultifactorAuthenticationTrustStorageTests.class,
     ClientIpDeviceFingerprintComponentExtractorTests.class
 })
-@Slf4j
 public class MultifactorAuthenticationTrustedSuite {
 }

@@ -1,17 +1,16 @@
 package org.apereo.cas.impl.mock;
 
-import lombok.val;
-
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
+
+import lombok.NoArgsConstructor;
+import lombok.val;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -27,7 +26,6 @@ import java.util.stream.IntStream;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @NoArgsConstructor
 public class MockTicketGrantingTicketCreatedEventProducer {
 

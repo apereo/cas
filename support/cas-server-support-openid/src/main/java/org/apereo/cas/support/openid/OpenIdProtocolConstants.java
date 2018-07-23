@@ -1,7 +1,6 @@
 package org.apereo.cas.support.openid;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * OpenID constants.
@@ -9,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Jerome Leleu
  * @since 4.1.0
  */
-@Slf4j
 @UtilityClass
 public class OpenIdProtocolConstants {
     /**
@@ -57,7 +55,9 @@ public class OpenIdProtocolConstants {
      */
     public static final String ASSOCIATE = "associate";
 
-    /** Check authentication constant. */
+    /**
+     * Check authentication constant.
+     */
     public static final String CHECK_AUTHENTICATION = "check_authentication";
 
 }

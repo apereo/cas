@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
@@ -20,6 +17,8 @@ import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
@@ -35,7 +34,6 @@ import java.util.List;
  * @since 5.2.0
  */
 @TestConfiguration("casRegisteredServicesTestConfiguration")
-@Slf4j
 public class CasRegisteredServicesTestConfiguration {
 
     @Bean
@@ -72,11 +70,11 @@ public class CasRegisteredServicesTestConfiguration {
         svc4.setEvaluationOrder(20);
         svc4.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         final HashSet handlers = CollectionUtils.wrapHashSet(AcceptUsersAuthenticationHandler.class.getSimpleName(),
-                TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
+            TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
         svc4.setRequiredHandlers(handlers);
         svc4.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         l.add(svc4);
-        
+
         val svc5 = RegisteredServiceTestUtils.getRegisteredService("(https://)*google.com$");
         svc5.setEvaluationOrder(1);
         svc5.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
@@ -104,10 +102,10 @@ public class CasRegisteredServicesTestConfiguration {
         svc7.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc7.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         l.add(svc7);
-        
+
         val svc8 = RegisteredServiceTestUtils.getRegisteredService("^TestServiceAttributeForAuthzFails");
         svc8.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(CollectionUtils.wrap("cn", CollectionUtils.wrapSet("cnValue"),
-                "givenName", CollectionUtils.wrapSet("gnameValue"))));
+            "givenName", CollectionUtils.wrapSet("gnameValue"))));
         svc8.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         l.add(svc8);
 
@@ -182,7 +180,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc20.setAttributeReleasePolicy(attrPolicy);
         svc20.setEvaluationOrder(88);
         l.add(svc20);
-        
+
         val svc21 = RegisteredServiceTestUtils.getRegisteredService("jwtservice");
         svc21.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc21.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
@@ -191,7 +189,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc21.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.getPropertyName(), prop);
         svc21.setEvaluationOrder(2000);
         l.add(svc21);
-        
+
         return l;
     }
 

@@ -1,8 +1,5 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -10,6 +7,8 @@ import org.apereo.cas.trusted.config.JdbcMultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
+
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -46,7 +45,6 @@ import static org.junit.Assert.*;
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
-@Slf4j
 public class JpaMultifactorAuthenticationTrustStorageTests {
     private static final String PRINCIPAL = "principal";
     private static final String PRINCIPAL2 = "principal2";
@@ -100,7 +98,7 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
     public void verifyStoreAndRetrieve() {
         // create record
         val original =
-                MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
+            MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT);
         mfaTrustEngine.set(original);
         val records = mfaTrustEngine.get(PRINCIPAL);
         assertEquals(1, records.size());

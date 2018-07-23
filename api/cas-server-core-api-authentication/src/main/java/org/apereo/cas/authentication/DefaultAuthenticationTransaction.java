@@ -1,13 +1,13 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Service;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.authentication.principal.Service;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Slf4j
 @Getter
 @RequiredArgsConstructor
 @ToString
@@ -61,6 +60,22 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
     }
 
     /**
+     * Sanitize credentials set. It's important to keep the order of
+     * the credentials in the final set as they were presented.
+     *
+     * @param credentials the credentials
+     * @return the set
+     */
+    private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
+        if (credentials != null && credentials.length > 0) {
+            return Arrays.stream(credentials)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+        return new HashSet<>(0);
+    }
+
+    /**
      * Gets the first (primary) credential in the chain.
      *
      * @return the credential
@@ -77,22 +92,6 @@ public class DefaultAuthenticationTransaction implements AuthenticationTransacti
      */
     public boolean hasCredentialOfType(final Class<? extends Credential> type) {
         return credentials.stream().anyMatch(type::isInstance);
-    }
-
-    /**
-     * Sanitize credentials set. It's important to keep the order of
-     * the credentials in the final set as they were presented.
-     *
-     * @param credentials the credentials
-     * @return the set
-     */
-    private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
-        if (credentials != null && credentials.length > 0) {
-            return Arrays.stream(credentials)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        }
-        return new HashSet<>(0);
     }
 }
 

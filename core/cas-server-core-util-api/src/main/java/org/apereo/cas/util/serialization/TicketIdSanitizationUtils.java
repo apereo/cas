@@ -1,13 +1,12 @@
 package org.apereo.cas.util.serialization;
 
-import lombok.val;
-
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.InetAddressUtils;
+
+import lombok.experimental.UtilityClass;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Pattern;
 
@@ -18,7 +17,6 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @UtilityClass
 public class TicketIdSanitizationUtils {
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile("(?:(?:" + TicketGrantingTicket.PREFIX + '|'

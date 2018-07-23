@@ -1,14 +1,15 @@
 package org.apereo.cas.support.saml.util;
 
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.gen.HexRandomStringGenerator;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.gen.HexRandomStringGenerator;
 import org.jdom.Document;
 import org.jdom.input.DOMBuilder;
 import org.jdom.input.SAXBuilder;
@@ -77,120 +78,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * The Config bean.
      */
     protected OpenSamlConfigBean configBean;
-
-    /**
-     * Create a new SAML object.
-     *
-     * @param <T>        the generic type
-     * @param objectType the object type
-     * @return the t
-     */
-    @SneakyThrows
-    public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
-        val qName = getSamlObjectQName(objectType);
-        val builder = (SAMLObjectBuilder<T>)
-            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject(qName));
-    }
-
-    /**
-     * New soap object t.
-     *
-     * @param <T>        the type parameter
-     * @param objectType the object type
-     * @return the t
-     */
-    @SneakyThrows
-    public <T extends SOAPObject> T newSoapObject(final Class<T> objectType) {
-        val qName = getSamlObjectQName(objectType);
-        val builder = (SOAPObjectBuilder<T>)
-            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-        if (builder == null) {
-            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
-        }
-        return objectType.cast(builder.buildObject(qName));
-    }
-
-    /**
-     * Gets saml object QName.
-     *
-     * @param objectType the object type
-     * @return the saml object QName
-     */
-    public QName getSamlObjectQName(final Class objectType) {
-        try {
-            val f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
-            return (QName) f.get(null);
-        } catch (final NoSuchFieldException e) {
-            throw new IllegalStateException("Cannot find field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
-        } catch (final IllegalAccessException e) {
-            throw new IllegalStateException("Cannot access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
-        }
-    }
-
-    /**
-     * New attribute value.
-     *
-     * @param value       the value
-     * @param elementName the element name
-     * @return the xS string
-     */
-    protected XMLObject newAttributeValue(final Object value, final QName elementName) {
-        //final XSStringBuilder attrValueBuilder = new XSStringBuilder();
-        val attrValueBuilder = new XSAnyBuilder();
-        val stringValue = attrValueBuilder.buildObject(elementName);
-        stringValue.setTextContent(value.toString());
-        return stringValue;
-    }
-
-    /**
-     * Generate a secure random id.
-     *
-     * @return the secure id string
-     */
-    public String generateSecureRandomId() {
-        try {
-            val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
-            val hex = random.getNewString();
-            if (StringUtils.isBlank(hex)) {
-                throw new IllegalArgumentException("Could not generate a secure random id based on " + random.getAlgorithm());
-            }
-            return '_' + hex;
-        } catch (final Exception e) {
-            throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.", e);
-        }
-    }
-
-    /**
-     * Add attribute values to saml attribute.
-     *
-     * @param attributeName      the attribute name
-     * @param attributeValue     the attribute value
-     * @param attributeList      the attribute list
-     * @param defaultElementName the default element name
-     */
-    protected void addAttributeValuesToSamlAttribute(final String attributeName,
-                                                     final Object attributeValue,
-                                                     final List<XMLObject> attributeList,
-                                                     final QName defaultElementName) {
-        if (attributeValue == null) {
-            LOGGER.debug("Skipping over SAML attribute [{}] since it has no value", attributeName);
-            return;
-        }
-
-        LOGGER.debug("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, attributeValue);
-        if (attributeValue instanceof Collection<?>) {
-            val c = (Collection<?>) attributeValue;
-            LOGGER.debug("Generating multi-valued SAML attribute [{}] with values [{}]", attributeName, c);
-            c.stream().map(value -> newAttributeValue(value, defaultElementName)).forEach(attributeList::add);
-        } else {
-            LOGGER.debug("Generating SAML attribute [{}] with value [{}]", attributeName, attributeValue);
-            attributeList.add(newAttributeValue(attributeValue, defaultElementName));
-        }
-    }
 
     /**
      * Sign SAML response.
@@ -353,10 +240,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         }
     }
 
-    public OpenSamlConfigBean getConfigBean() {
-        return configBean;
-    }
-
     /**
      * Convert to a jdom element.
      *
@@ -365,6 +248,124 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      */
     private static org.jdom.Element toJdom(final Element e) {
         return new DOMBuilder().build(e);
+    }
+
+    /**
+     * Create a new SAML object.
+     *
+     * @param <T>        the generic type
+     * @param objectType the object type
+     * @return the t
+     */
+    @SneakyThrows
+    public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
+        val qName = getSamlObjectQName(objectType);
+        val builder = (SAMLObjectBuilder<T>)
+            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+        if (builder == null) {
+            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
+        }
+        return objectType.cast(builder.buildObject(qName));
+    }
+
+    /**
+     * New soap object t.
+     *
+     * @param <T>        the type parameter
+     * @param objectType the object type
+     * @return the t
+     */
+    @SneakyThrows
+    public <T extends SOAPObject> T newSoapObject(final Class<T> objectType) {
+        val qName = getSamlObjectQName(objectType);
+        val builder = (SOAPObjectBuilder<T>)
+            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+        if (builder == null) {
+            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
+        }
+        return objectType.cast(builder.buildObject(qName));
+    }
+
+    /**
+     * Gets saml object QName.
+     *
+     * @param objectType the object type
+     * @return the saml object QName
+     */
+    public QName getSamlObjectQName(final Class objectType) {
+        try {
+            val f = objectType.getField(DEFAULT_ELEMENT_NAME_FIELD);
+            return (QName) f.get(null);
+        } catch (final NoSuchFieldException e) {
+            throw new IllegalStateException("Cannot find field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
+        } catch (final IllegalAccessException e) {
+            throw new IllegalStateException("Cannot access field " + objectType.getName() + '.' + DEFAULT_ELEMENT_NAME_FIELD, e);
+        }
+    }
+
+    /**
+     * New attribute value.
+     *
+     * @param value       the value
+     * @param elementName the element name
+     * @return the xS string
+     */
+    protected XMLObject newAttributeValue(final Object value, final QName elementName) {
+        //final XSStringBuilder attrValueBuilder = new XSStringBuilder();
+        val attrValueBuilder = new XSAnyBuilder();
+        val stringValue = attrValueBuilder.buildObject(elementName);
+        stringValue.setTextContent(value.toString());
+        return stringValue;
+    }
+
+    /**
+     * Generate a secure random id.
+     *
+     * @return the secure id string
+     */
+    public String generateSecureRandomId() {
+        try {
+            val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
+            val hex = random.getNewString();
+            if (StringUtils.isBlank(hex)) {
+                throw new IllegalArgumentException("Could not generate a secure random id based on " + random.getAlgorithm());
+            }
+            return '_' + hex;
+        } catch (final Exception e) {
+            throw new IllegalStateException("Cannot create secure random ID generator for SAML message IDs.", e);
+        }
+    }
+
+    /**
+     * Add attribute values to saml attribute.
+     *
+     * @param attributeName      the attribute name
+     * @param attributeValue     the attribute value
+     * @param attributeList      the attribute list
+     * @param defaultElementName the default element name
+     */
+    protected void addAttributeValuesToSamlAttribute(final String attributeName,
+                                                     final Object attributeValue,
+                                                     final List<XMLObject> attributeList,
+                                                     final QName defaultElementName) {
+        if (attributeValue == null) {
+            LOGGER.debug("Skipping over SAML attribute [{}] since it has no value", attributeName);
+            return;
+        }
+
+        LOGGER.debug("Attempting to generate SAML attribute [{}] with value(s) [{}]", attributeName, attributeValue);
+        if (attributeValue instanceof Collection<?>) {
+            val c = (Collection<?>) attributeValue;
+            LOGGER.debug("Generating multi-valued SAML attribute [{}] with values [{}]", attributeName, c);
+            c.stream().map(value -> newAttributeValue(value, defaultElementName)).forEach(attributeList::add);
+        } else {
+            LOGGER.debug("Generating SAML attribute [{}] with value [{}]", attributeName, attributeValue);
+            attributeList.add(newAttributeValue(attributeValue, defaultElementName));
+        }
+    }
+
+    public OpenSamlConfigBean getConfigBean() {
+        return configBean;
     }
 }
 

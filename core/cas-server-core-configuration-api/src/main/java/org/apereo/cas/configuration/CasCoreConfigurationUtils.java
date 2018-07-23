@@ -1,8 +1,7 @@
 package org.apereo.cas.configuration;
 
-import lombok.val;
-
 import lombok.experimental.UtilityClass;
+import lombok.val;
 import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.io.Resource;

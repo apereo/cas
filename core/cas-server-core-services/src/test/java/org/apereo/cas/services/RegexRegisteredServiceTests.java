@@ -1,9 +1,7 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +21,6 @@ import static org.junit.Assert.*;
  * @since 3.4.0
  */
 @RunWith(Parameterized.class)
-@Slf4j
 public class RegexRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "regexRegisteredService.json");
@@ -99,16 +96,16 @@ public class RegexRegisteredServiceTests {
         });
     }
 
-    @Test
-    public void verifyMatches() {
-        val testService = serviceToMatch == null ? null : RegisteredServiceTestUtils.getService(serviceToMatch);
-        assertEquals(expected, service.matches(testService));
-    }
-
     private static RegexRegisteredService newService(final String id) {
         val service = new RegexRegisteredService();
         service.setServiceId(id);
         return service;
+    }
+
+    @Test
+    public void verifyMatches() {
+        val testService = serviceToMatch == null ? null : RegisteredServiceTestUtils.getService(serviceToMatch);
+        assertEquals(expected, service.matches(testService));
     }
 
     @Test

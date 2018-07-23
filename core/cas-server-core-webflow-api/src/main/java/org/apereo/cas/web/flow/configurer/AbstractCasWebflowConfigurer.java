@@ -1,15 +1,16 @@
 package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.spel.SpringELExpressionParser;
@@ -81,30 +82,25 @@ import java.util.Map;
 @ToString(of = "name")
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
     /**
-     * The logout flow definition registry.
-     */
-    protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
-
-    /**
      * Flow builder services.
      */
     protected final FlowBuilderServices flowBuilderServices;
-
     /**
      * The Login flow definition registry.
      */
     protected final FlowDefinitionRegistry loginFlowDefinitionRegistry;
-
     /**
      * Application context.
      */
     protected final ApplicationContext applicationContext;
-
     /**
      * CAS Properties.
      */
     protected final CasConfigurationProperties casProperties;
-
+    /**
+     * The logout flow definition registry.
+     */
+    protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
     private int order;
 
     private String name = getClass().getSimpleName();
@@ -792,4 +788,80 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         }
     }
 
+    /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final ActionState actionStateId, final String... actions) {
+        prependActionsToActionStateExecutionList(flow, actionStateId.getId(), actions);
+    }
+
+    /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final String... actions) {
+        val evalActions = Arrays.stream(actions)
+            .map(this::createEvaluateAction)
+            .toArray(EvaluateAction[]::new);
+        addActionsToActionStateExecutionListAt(flow, actionStateId, 0, evalActions);
+    }
+
+    /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final EvaluateAction... actions) {
+        addActionsToActionStateExecutionListAt(flow, actionStateId, 0, actions);
+    }
+
+    /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final ActionState actionStateId, final EvaluateAction... actions) {
+        addActionsToActionStateExecutionListAt(flow, actionStateId.getId(), 0, actions);
+    }
+
+    /**
+     * Append actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void appendActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final EvaluateAction... actions) {
+        addActionsToActionStateExecutionListAt(flow, actionStateId, Integer.MAX_VALUE, actions);
+    }
+
+    /**
+     * Add actions to action state execution list at.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param position      the position
+     * @param actions       the actions
+     */
+    public void addActionsToActionStateExecutionListAt(final Flow flow, final String actionStateId, final int position, final EvaluateAction... actions) {
+        val actionState = getState(flow, actionStateId, ActionState.class);
+        val currentActions = new ArrayList<Action>();
+        val actionList = actionState.getActionList();
+        actionList.forEach(currentActions::add);
+        val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
+        currentActions.forEach(actionList::remove);
+        Arrays.stream(actions).forEach(a -> currentActions.add(index, a));
+        actionList.addAll(currentActions.toArray(new Action[]{}));
+    }
 }

@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -22,6 +21,7 @@ import org.apereo.cas.config.MongoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.MongoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+
 import org.junit.Before;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -72,7 +72,6 @@ import java.util.Collection;
 @EnableScheduling
 @TestPropertySource(locations = {"classpath:/mongoregistry.properties"})
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-@Slf4j
 public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired

@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,6 @@ import java.util.List;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerServiceReg")
-@Slf4j
 @ToString
 public class JpaServiceRegistry extends AbstractServiceRegistry {
     private static final String ENTITY_NAME = AbstractRegisteredService.class.getSimpleName();

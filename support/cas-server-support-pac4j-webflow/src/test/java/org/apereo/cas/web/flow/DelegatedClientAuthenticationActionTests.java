@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
@@ -40,6 +37,8 @@ import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.pac4j.SessionStoreCookieSerializer;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+
+import lombok.val;
 import org.junit.Test;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
@@ -72,7 +71,6 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
-@Slf4j
 public class DelegatedClientAuthenticationActionTests {
 
     private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";

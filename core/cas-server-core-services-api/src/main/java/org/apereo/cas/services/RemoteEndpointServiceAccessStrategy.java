@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.HttpUtils;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,8 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
+import lombok.val;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;

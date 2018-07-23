@@ -1,11 +1,10 @@
 package org.apereo.cas.support.util;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import java.util.Properties;
 import lombok.NoArgsConstructor;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Properties;
 
 /**
  * This is {@link CryptoUtils}.
@@ -13,7 +12,6 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @NoArgsConstructor
 public class CryptoUtils {
 

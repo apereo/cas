@@ -1,15 +1,16 @@
 package org.apereo.cas.ticket.refreshtoken;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuthCodeImpl;
+
+import lombok.NoArgsConstructor;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.util.Collection;
-import lombok.NoArgsConstructor;
 
 /**
  * An OAuth refresh token implementation.
@@ -19,7 +20,6 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @DiscriminatorValue(RefreshToken.PREFIX)
-@Slf4j
 @NoArgsConstructor
 public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
 

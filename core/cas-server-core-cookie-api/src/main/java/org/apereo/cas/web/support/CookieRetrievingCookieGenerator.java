@@ -1,11 +1,12 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.util.CollectionUtils;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.RememberMeCredential;
-import org.apereo.cas.util.CollectionUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 

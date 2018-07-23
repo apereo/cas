@@ -1,13 +1,12 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.junit.Rule;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,6 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     DatabaseAuthenticationTestConfiguration.class
 })
-@Slf4j
 @DirtiesContext
 public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
@@ -49,6 +47,10 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     @Autowired
     @Qualifier("dataSource")
     private DataSource dataSource;
+
+    private static String getSqlInsertStatementToCreateUserAccount(final int i) {
+        return String.format("insert into cassearchusers (username, password) values('%s', '%s');", "user" + i, "psw" + i);
+    }
 
     @Before
     public void initialize() throws Exception {
@@ -75,20 +77,6 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         c.close();
     }
 
-    private static String getSqlInsertStatementToCreateUserAccount(final int i) {
-        return String.format("insert into cassearchusers (username, password) values('%s', '%s');", "user" + i, "psw" + i);
-    }
-
-    @Entity(name = "cassearchusers")
-    public static class UsersTable {
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private Long id;
-
-        private String username;
-        private String password;
-    }
-
     @Test
     public void verifyNotFoundUser() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
@@ -109,5 +97,15 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
     public void verifyMultipleUsersFound() throws Exception {
         val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "psw0");
         assertNotNull(this.handler.authenticate(c));
+    }
+
+    @Entity(name = "cassearchusers")
+    public static class UsersTable {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private Long id;
+
+        private String username;
+        private String password;
     }
 }

@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
+
 import java.io.Serializable;
 
 /**

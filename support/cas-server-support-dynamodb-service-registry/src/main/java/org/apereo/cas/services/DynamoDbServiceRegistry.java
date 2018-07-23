@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import java.util.List;
 
@@ -14,7 +13,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
     private final DynamoDbServiceRegistryFacilitator dbTableService;

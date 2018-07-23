@@ -1,10 +1,10 @@
 package org.apereo.cas.monitor;
 
-import lombok.val;
-
 import org.apereo.cas.category.MemcachedCategory;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.monitor.config.MemcachedMonitorConfiguration;
+
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,8 +19,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
-
-import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.Assert.*;
 
@@ -37,7 +35,6 @@ import static org.junit.Assert.*;
 })
 @TestPropertySource(locations = {"classpath:/monitor.properties"})
 @DirtiesContext
-@Slf4j
 @Category(MemcachedCategory.class)
 public class MemcachedHealthIndicatorTests {
 

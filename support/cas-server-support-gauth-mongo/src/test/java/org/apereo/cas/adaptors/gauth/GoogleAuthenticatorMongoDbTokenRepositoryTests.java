@@ -1,8 +1,5 @@
 package org.apereo.cas.adaptors.gauth;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -28,6 +25,9 @@ import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthentic
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.SchedulingUtils;
+
+import lombok.val;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -47,7 +47,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 
 import static org.junit.Assert.*;
 
@@ -88,7 +87,6 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-@Slf4j
 public class GoogleAuthenticatorMongoDbTokenRepositoryTests {
 
     @ClassRule
@@ -101,13 +99,20 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests {
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
     private OneTimeTokenRepository repository;
 
+    @Before
+    public void initialize() {
+        repository.removeAll();
+    }
+
     @Test
     public void verifyTokenSave() {
         val token = new GoogleAuthenticatorToken(1234, "casuser");
         repository.store(token);
         assertTrue(repository.exists("casuser", 1234));
+        assertEquals(1, repository.count("casuser"));
         val token2 = repository.get("casuser", 1234);
         assertTrue(token2.getId() > 0);
+        assertEquals(1, repository.count());
     }
 
     @Test

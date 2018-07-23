@@ -1,9 +1,10 @@
 package org.apereo.cas.web.flow.configurer.plan;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;

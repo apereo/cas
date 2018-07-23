@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -11,9 +8,11 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+
+import lombok.val;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -28,21 +27,15 @@ import static org.mockito.Mockito.*;
  * @author Dmitriy Kopylenko
  * @since 3.5.0
  */
-@Slf4j
 public class ServiceAuthorizationCheckTests {
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private ServiceAuthorizationCheck serviceAuthorizationCheck;
-
     private final WebApplicationService authorizedService = mock(WebApplicationService.class);
-
     private final WebApplicationService unauthorizedService = mock(WebApplicationService.class);
-
     private final WebApplicationService undefinedService = mock(WebApplicationService.class);
-
     private final ServicesManager servicesManager = mock(ServicesManager.class);
+    private ServiceAuthorizationCheck serviceAuthorizationCheck;
 
     @Before
     public void setUpMocks() {
@@ -53,14 +46,14 @@ public class ServiceAuthorizationCheckTests {
         val list = new ArrayList<RegisteredService>();
         list.add(authorizedRegisteredService);
         list.add(unauthorizedRegisteredService);
-        
+
         when(this.servicesManager.findServiceBy(this.authorizedService)).thenReturn(authorizedRegisteredService);
         when(this.servicesManager.findServiceBy(this.unauthorizedService)).thenReturn(unauthorizedRegisteredService);
         when(this.servicesManager.findServiceBy(this.undefinedService)).thenReturn(null);
         when(this.servicesManager.getAllServices()).thenReturn(list);
-        
-        this.serviceAuthorizationCheck = new ServiceAuthorizationCheck(this.servicesManager, 
-                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+
+        this.serviceAuthorizationCheck = new ServiceAuthorizationCheck(this.servicesManager,
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
     }
 
     @Test

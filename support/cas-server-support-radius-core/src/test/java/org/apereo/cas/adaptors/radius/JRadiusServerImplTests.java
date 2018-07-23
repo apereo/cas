@@ -1,8 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
 import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
 import net.jradius.exception.TimeoutException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -21,24 +19,23 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class JRadiusServerImplTests {
     private static final int ACCOUNTING_PORT = 6940;
     private static final int AUTHENTICATION_PORT = 6939;
     private static final String INET_ADDRESS = "130.211.138.166";
     private static final String SECRET = "3SJRWyo1pOBa47M";
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Test
     public void verifyAuthenticationSuccess() throws Exception {
         val server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
-                new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, INET_ADDRESS, SECRET));
+            new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, INET_ADDRESS, SECRET));
         val response = server.authenticate("casuser", "Mellon");
         assertEquals(2, response.getCode());
         assertFalse(response.getAttributes().isEmpty());
@@ -48,7 +45,7 @@ public class JRadiusServerImplTests {
     @Test
     public void verifyAuthenticationFails() throws Exception {
         val server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
-                new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, INET_ADDRESS, SECRET));
+            new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, INET_ADDRESS, SECRET));
         val response = server.authenticate("casuser", "badpsw");
         assertNull(response);
     }
@@ -57,8 +54,8 @@ public class JRadiusServerImplTests {
     public void verifyBadSecret() throws Exception {
         thrown.expect(TimeoutException.class);
         val server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
-                new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1,
-                        INET_ADDRESS, "xyz"));
+            new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, 1,
+                INET_ADDRESS, "xyz"));
         server.authenticate("xyz", "xyz");
     }
 
@@ -66,8 +63,8 @@ public class JRadiusServerImplTests {
     public void verifyBadPorts() throws Exception {
         thrown.expect(TimeoutException.class);
         val server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
-                new RadiusClientFactory(1234, 4567, 1,
-                        INET_ADDRESS, "xyz"));
+            new RadiusClientFactory(1234, 4567, 1,
+                INET_ADDRESS, "xyz"));
         server.authenticate("xyz", "xyz");
     }
 
@@ -75,8 +72,8 @@ public class JRadiusServerImplTests {
     public void verifyBadAddress() throws Exception {
         thrown.expect(TimeoutException.class);
         val server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
-                new RadiusClientFactory(1234, 4567, 1,
-                        "131.211.138.166", "1234"));
+            new RadiusClientFactory(1234, 4567, 1,
+                "131.211.138.166", "1234"));
         server.authenticate("xyz", "xyz");
     }
 }

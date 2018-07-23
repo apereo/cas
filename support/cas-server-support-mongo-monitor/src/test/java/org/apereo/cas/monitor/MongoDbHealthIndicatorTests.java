@@ -1,8 +1,5 @@
 package org.apereo.cas.monitor;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -24,6 +21,8 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.monitor.config.MongoDbMonitoringConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
+
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -73,7 +72,6 @@ import static org.junit.Assert.*;
     CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(locations = "classpath:mongomonitor.properties")
-@Slf4j
 public class MongoDbHealthIndicatorTests {
 
     @ClassRule

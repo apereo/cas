@@ -1,9 +1,8 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CoreAttributesTestUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -19,7 +18,6 @@ import static org.junit.Assert.*;
  * @since 5.1.0
  */
 @RunWith(JUnit4.class)
-@Slf4j
 public class ScriptedRegisteredServiceAttributeReleasePolicyTests {
 
     @Test
@@ -27,7 +25,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicyTests {
         val p = new ScriptedRegisteredServiceAttributeReleasePolicy();
         p.setScriptFile("groovy { return attributes }");
         val principal = CoreAttributesTestUtils.getPrincipal("cas",
-                Collections.singletonMap("attribute", "value"));
+            Collections.singletonMap("attribute", "value"));
         val attrs = p.getAttributes(principal,
             CoreAttributesTestUtils.getService(),
             CoreAttributesTestUtils.getRegisteredService());

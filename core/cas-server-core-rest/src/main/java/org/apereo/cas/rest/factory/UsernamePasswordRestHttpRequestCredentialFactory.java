@@ -1,12 +1,12 @@
 package org.apereo.cas.rest.factory;
 
-import lombok.val;
-
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;

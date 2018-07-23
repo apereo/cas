@@ -1,12 +1,11 @@
 package org.apereo.cas.support.saml;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.config.ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,6 @@ import static org.junit.Assert.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration.class})
 @TestPropertySource(properties = "cas.authn.shibIdp.serverUrl=https://idp.example.com")
-@Slf4j
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
 
     @Autowired

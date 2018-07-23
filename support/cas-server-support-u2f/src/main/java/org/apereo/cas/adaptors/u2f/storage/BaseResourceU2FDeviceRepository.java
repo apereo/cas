@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import lombok.val;
+import org.apereo.cas.util.DateTimeUtils;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.DateTimeUtils;
+import lombok.val;
 
 import javax.mail.AuthenticationFailedException;
 import java.time.LocalDate;
@@ -42,6 +42,19 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
         this.expirationTimeUnit = expirationTimeUnit;
     }
 
+    private static List<U2FDeviceRegistration> getU2fDeviceRegistrations(final String username, final Collection<DeviceRegistration> devices) {
+        return devices
+            .stream()
+            .map(d -> {
+                val current = new U2FDeviceRegistration();
+                current.setUsername(username);
+                current.setRecord(d.toJson());
+                current.setCreatedDate(LocalDate.now());
+                return current;
+            })
+            .collect(Collectors.toList());
+    }
+
     @Override
     public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
         try {
@@ -75,7 +88,6 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
         return new ArrayList<>(0);
     }
 
-
     @Override
     @SneakyThrows
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
@@ -85,19 +97,6 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             throw new AuthenticationFailedException("Failed to authenticate U2F device because "
                 + "no matching record was found. Is device registered?");
         }
-    }
-
-    private static List<U2FDeviceRegistration> getU2fDeviceRegistrations(final String username, final Collection<DeviceRegistration> devices) {
-        return devices
-            .stream()
-            .map(d -> {
-                val current = new U2FDeviceRegistration();
-                current.setUsername(username);
-                current.setRecord(d.toJson());
-                current.setCreatedDate(LocalDate.now());
-                return current;
-            })
-            .collect(Collectors.toList());
     }
 
     @Override

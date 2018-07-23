@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.authentication.Authentication;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -8,9 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.authentication.Authentication;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -38,7 +38,6 @@ import java.time.ZonedDateTime;
 @MappedSuperclass
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Setter

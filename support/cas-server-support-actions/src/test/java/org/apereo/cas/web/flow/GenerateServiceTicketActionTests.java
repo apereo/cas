@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -10,8 +7,10 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -32,7 +31,6 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Import(CasSupportActionsConfiguration.class)
-@Slf4j
 public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String SERVICE_PARAM = "service";
@@ -46,8 +44,8 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     @Before
     public void onSetUp() {
         val authnResult = getAuthenticationSystemSupport()
-                        .handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
-                                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            .handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
         this.ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(authnResult);
         getTicketRegistry().addTicket(this.ticketGrantingTicket);
@@ -60,7 +58,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, this.ticketGrantingTicket.getId());
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
-                new MockServletContext(), request, new MockHttpServletResponse()));
+            new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE_PARAM);
         request.setCookies(new Cookie("TGT", this.ticketGrantingTicket.getId()));
 
@@ -87,7 +85,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     public void verifyTicketGrantingTicketNoTgt() throws Exception {
         val context = new MockRequestContext();
         context.getFlowScope().put(SERVICE_PARAM, RegisteredServiceTestUtils.getService());
-        
+
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE_PARAM);
@@ -111,7 +109,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
         getTicketRegistry().updateTicket(this.ticketGrantingTicket);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }
-    
+
     @Test
     public void verifyTicketGrantingTicketNotTgtButGateway() throws Exception {
         val context = new MockRequestContext();

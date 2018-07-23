@@ -42,4 +42,46 @@ public interface OneTimeTokenRepository {
      * @return the one time token
      */
     OneTimeToken get(String uid, Integer opt);
+
+    /**
+     * Remove the token.
+     *
+     * @param uid the uid
+     * @param otp the otp
+     */
+    void remove(String uid, Integer otp);
+
+    /**
+     * Remove tokens for user.
+     *
+     * @param uid the uid
+     */
+    void remove(String uid);
+
+    /**
+     * Remove otp.
+     *
+     * @param otp the otp
+     */
+    void remove(Integer otp);
+
+    /**
+     * Remove all.
+     */
+    void removeAll();
+
+    /**
+     * Count tokens for user.
+     *
+     * @param uid the uid
+     * @return the long
+     */
+    long count(String uid);
+
+    /**
+     * Count all records.
+     *
+     * @return the long
+     */
+    long count();
 }

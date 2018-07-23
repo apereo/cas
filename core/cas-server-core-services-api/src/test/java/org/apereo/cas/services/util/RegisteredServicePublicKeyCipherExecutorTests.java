@@ -1,12 +1,11 @@
 package org.apereo.cas.services.util;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
+
+import lombok.val;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -21,12 +20,11 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class RegisteredServicePublicKeyCipherExecutorTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-    
+
     @Test
     public void verifyCipherUnableToEncodeForStringIsTooLong() {
         val svc = getService("classpath:keys/RSA1024Public.key");
@@ -50,6 +48,6 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
         svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));
         return svc;
     }
-    
-   
+
+
 }

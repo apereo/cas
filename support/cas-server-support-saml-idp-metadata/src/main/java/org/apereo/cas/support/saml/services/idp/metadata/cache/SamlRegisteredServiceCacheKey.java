@@ -1,13 +1,13 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
-import lombok.val;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.DigestUtils;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.DigestUtils;
+import lombok.val;
 
 import java.io.Serializable;
 

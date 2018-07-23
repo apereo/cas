@@ -1,6 +1,10 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.ScriptingUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -8,12 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -36,6 +36,11 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     private static final long serialVersionUID = 5823989148794052951L;
 
     private String groovyScript;
+
+    private static Object getGroovyAttributeValue(final Principal principal, final String script) {
+        val args = CollectionUtils.wrap("attributes", principal.getAttributes(), "id", principal.getId(), "logger", LOGGER);
+        return ScriptingUtils.executeGroovyShellScript(script, (Map) args, Object.class);
+    }
 
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
@@ -81,11 +86,6 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
         }
         LOGGER.warn("Groovy script [{}] returned no value for username attribute. Fallback to default [{}]", this.groovyScript, principal.getId());
         return principal.getId();
-    }
-
-    private static Object getGroovyAttributeValue(final Principal principal, final String script) {
-        val args = CollectionUtils.wrap("attributes", principal.getAttributes(), "id", principal.getId(), "logger", LOGGER);
-        return ScriptingUtils.executeGroovyShellScript(script, (Map) args, Object.class);
     }
 
 }

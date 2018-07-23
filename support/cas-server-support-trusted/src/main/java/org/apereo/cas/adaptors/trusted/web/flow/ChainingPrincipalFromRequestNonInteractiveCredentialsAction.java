@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +19,6 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class ChainingPrincipalFromRequestNonInteractiveCredentialsAction extends BasePrincipalFromNonInteractiveCredentialsAction {
 
 

@@ -1,10 +1,9 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -18,7 +17,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String SPNEGO = "spnego";
@@ -26,7 +24,7 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String SPNEGO_NEGOTIATE = "negociateSpnego";
     private static final String EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
-    public SpengoWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
+    public SpengoWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                    final ApplicationContext applicationContext,
                                    final CasConfigurationProperties casProperties) {
@@ -74,7 +72,7 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createEvaluateSpnegoClientAction(final Flow flow) {
         val evaluateClientRequest = createActionState(flow, EVALUATE_SPNEGO_CLIENT,
-                createEvaluateAction(casProperties.getAuthn().getSpnego().getHostNameClientActionStrategy()));
+            createEvaluateAction(casProperties.getAuthn().getSpnego().getHostNameClientActionStrategy()));
         evaluateClientRequest.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_YES, START_SPNEGO_AUTHENTICATE));
         evaluateClientRequest.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
     }

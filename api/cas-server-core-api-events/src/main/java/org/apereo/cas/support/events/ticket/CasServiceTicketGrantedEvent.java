@@ -1,9 +1,9 @@
 package org.apereo.cas.support.events.ticket;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+
 import lombok.ToString;
 
 /**
@@ -13,7 +13,6 @@ import lombok.ToString;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
-@Slf4j
 @ToString
 public class CasServiceTicketGrantedEvent extends AbstractCasEvent {
 

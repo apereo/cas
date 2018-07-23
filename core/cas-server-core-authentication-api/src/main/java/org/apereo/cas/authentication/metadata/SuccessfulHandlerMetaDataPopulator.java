@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.metadata;
 
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.ToString;
 
 import java.util.HashSet;
 
@@ -20,7 +20,6 @@ import java.util.HashSet;
  * @author Alaa Nassef
  * @since 4.0.0
  */
-@Slf4j
 @ToString(callSuper = true)
 public class SuccessfulHandlerMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 

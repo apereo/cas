@@ -1,7 +1,8 @@
 package org.apereo.cas.support.wsfederation.web;
 
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 
 import java.util.Map;
 

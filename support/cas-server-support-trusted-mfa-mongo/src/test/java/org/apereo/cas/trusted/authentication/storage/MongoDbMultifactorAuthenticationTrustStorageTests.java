@@ -1,7 +1,5 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.val;
-
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -9,6 +7,8 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.config.MongoDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
+
+import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,7 +22,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.LocalDateTime;
-import lombok.extern.slf4j.Slf4j;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -40,7 +39,6 @@ import static org.junit.Assert.*;
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class})
-@Slf4j
 @TestPropertySource(locations = "classpath:trustedmongo.properties")
 public class MongoDbMultifactorAuthenticationTrustStorageTests {
 

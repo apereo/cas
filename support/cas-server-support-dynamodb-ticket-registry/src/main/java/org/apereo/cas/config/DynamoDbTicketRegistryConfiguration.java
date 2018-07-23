@@ -1,10 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -12,6 +7,10 @@ import org.apereo.cas.ticket.registry.DynamoDbTicketRegistry;
 import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryFacilitator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
+
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
+import lombok.SneakyThrows;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,7 +26,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("dynamoDbTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class DynamoDbTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

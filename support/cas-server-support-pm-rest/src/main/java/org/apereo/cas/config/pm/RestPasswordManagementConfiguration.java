@@ -1,10 +1,10 @@
 package org.apereo.cas.config.pm;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.rest.RestPasswordManagementService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,7 +21,6 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration("restPasswordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class RestPasswordManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -34,8 +33,8 @@ public class RestPasswordManagementConfiguration {
     @Bean
     public PasswordManagementService passwordChangeService() {
         return new RestPasswordManagementService(passwordManagementCipherExecutor,
-                casProperties.getServer().getPrefix(),
-                new RestTemplate(),
-                casProperties.getAuthn().getPm());
+            casProperties.getServer().getPrefix(),
+            new RestTemplate(),
+            casProperties.getAuthn().getPm());
     }
 }

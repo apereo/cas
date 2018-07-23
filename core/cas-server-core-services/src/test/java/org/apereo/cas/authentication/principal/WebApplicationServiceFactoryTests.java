@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -17,7 +16,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public class WebApplicationServiceFactoryTests {
 
     @Test

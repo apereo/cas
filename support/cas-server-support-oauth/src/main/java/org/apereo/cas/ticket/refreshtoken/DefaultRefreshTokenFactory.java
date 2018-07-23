@@ -1,9 +1,5 @@
 package org.apereo.cas.ticket.refreshtoken;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -13,6 +9,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import java.util.Collection;
 
 /**
@@ -21,7 +20,6 @@ import java.util.Collection;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
 

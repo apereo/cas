@@ -1,20 +1,19 @@
 package org.apereo.cas.ticket;
 
-import lombok.val;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Before;
 import org.junit.rules.ExpectedException;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
@@ -27,29 +26,25 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class ServiceTicketImplTests {
 
     private static final String ST_ID = "stest1";
     private static final File ST_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "st.json");
     private static final String ID = "test";
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
     private final TicketGrantingTicketImpl tgt = new TicketGrantingTicketImpl(ID,
-            CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
     private final DefaultUniqueTicketIdGenerator idGenerator = new DefaultUniqueTicketIdGenerator();
-
     private ObjectMapper mapper;
 
     @Before
     public void initialize() {
         // needed in order to serialize ZonedDateTime class
         mapper = Jackson2ObjectMapperBuilder.json()
-                .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
-                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-                .build();
+            .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
+            .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .build();
         mapper.findAndRegisterModules();
     }
 
@@ -107,7 +102,7 @@ public class ServiceTicketImplTests {
     public void verifyTicketNeverExpires() {
         val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         val s = t.grantServiceTicket(idGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                CoreAuthenticationTestUtils.getService(), new NeverExpiresExpirationPolicy(),
+            CoreAuthenticationTestUtils.getService(), new NeverExpiresExpirationPolicy(),
             false, true);
         t.markTicketExpired();
         assertFalse(s.isExpired());
@@ -117,7 +112,7 @@ public class ServiceTicketImplTests {
     public void verifyIsExpiredFalse() {
         val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         val s = t.grantServiceTicket(idGenerator.getNewTicketId(ServiceTicket.PREFIX), CoreAuthenticationTestUtils.getService(),
-                new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
+            new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
 
         assertFalse(s.isExpired());
     }
@@ -127,9 +122,9 @@ public class ServiceTicketImplTests {
         val a = CoreAuthenticationTestUtils.getAuthentication();
         val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         val s = t.grantServiceTicket(idGenerator.getNewTicketId(ServiceTicket.PREFIX), CoreAuthenticationTestUtils.getService(),
-                new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
+            new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
         val t1 = s.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a,
-                new NeverExpiresExpirationPolicy());
+            new NeverExpiresExpirationPolicy());
 
         assertEquals(a, t1.getAuthentication());
     }
@@ -139,7 +134,7 @@ public class ServiceTicketImplTests {
         val a = CoreAuthenticationTestUtils.getAuthentication();
         val t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         val s = t.grantServiceTicket(idGenerator.getNewTicketId(ServiceTicket.PREFIX), CoreAuthenticationTestUtils.getService(),
-                new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
+            new MultiTimeUseOrTimeoutExpirationPolicy(1, 5000), false, true);
         s.grantProxyGrantingTicket(idGenerator.getNewTicketId(TicketGrantingTicket.PREFIX), a, new NeverExpiresExpirationPolicy());
 
         this.thrown.expect(Exception.class);

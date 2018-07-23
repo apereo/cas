@@ -18,7 +18,7 @@ public interface SingleLogoutServiceMessageHandler {
      * Handle logout for slo service.
      *
      * @param singleLogoutService the service
-     * @param ticketId the ticket id
+     * @param ticketId            the ticket id
      * @return the logout request
      */
     Collection<LogoutRequest> handle(WebApplicationService singleLogoutService, String ticketId);

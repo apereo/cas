@@ -1,6 +1,6 @@
 package org.apereo.cas.util.ldap.uboundid;
 
-import lombok.val;
+import org.apereo.cas.util.LdapTestUtils;
 
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
@@ -13,8 +13,8 @@ import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustStoreTrustManager;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apereo.cas.util.LdapTestUtils;
 import org.ldaptive.LdapEntry;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.ClassPathResource;

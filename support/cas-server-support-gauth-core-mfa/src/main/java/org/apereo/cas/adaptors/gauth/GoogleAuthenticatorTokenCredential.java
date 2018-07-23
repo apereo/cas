@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.gauth;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.NoArgsConstructor;
 import org.apereo.cas.authentication.OneTimeTokenCredential;
+
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link GoogleAuthenticatorTokenCredential}.
@@ -10,7 +10,6 @@ import org.apereo.cas.authentication.OneTimeTokenCredential;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @NoArgsConstructor
 public class GoogleAuthenticatorTokenCredential extends OneTimeTokenCredential {
 

@@ -1,7 +1,5 @@
 package org.apereo.cas.audit;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -9,6 +7,8 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportCouchbaseAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.util.DateTimeUtils;
+
+import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -44,7 +44,6 @@ import static org.junit.Assert.*;
     "cas.audit.couchbase.asynchronous=false"
 })
 @Category(CouchbaseCategory.class)
-@Slf4j
 public class CouchbaseAuditTrailManagerTests {
 
     @ClassRule

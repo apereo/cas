@@ -1,18 +1,20 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
+
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Setter;
 
 /**
  * Abstract class to define common attribute encoding operations.

@@ -1,14 +1,13 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Rule;
 import org.junit.Test;
@@ -27,7 +26,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public class PersonDirectoryPrincipalResolverTests {
 
     private static final String ATTR_1 = "attr1";
@@ -53,7 +51,7 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyNoAttributesWithPrincipal() {
         val resolver = new PersonDirectoryPrincipalResolver(CoreAuthenticationTestUtils.getAttributeRepository(),
-                CoreAuthenticationTestUtils.CONST_USERNAME);
+            CoreAuthenticationTestUtils.CONST_USERNAME);
         val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val p = resolver.resolve(c, null);
         assertNotNull(p);
@@ -79,8 +77,8 @@ public class PersonDirectoryPrincipalResolverTests {
         attributes.put("cn", "originalCN");
         attributes.put(ATTR_1, "value1");
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                Optional.of(CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, attributes)),
-                Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, attributes)),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertEquals(p.getAttributes().size(), CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
         assertTrue(p.getAttributes().containsKey(ATTR_1));
         assertTrue(p.getAttributes().containsKey("cn"));
@@ -94,8 +92,8 @@ public class PersonDirectoryPrincipalResolverTests {
         val chain = new ChainingPrincipalResolver();
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver));
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                Optional.of(CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, Collections.singletonMap(ATTR_1, "value"))),
-                Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(CoreAuthenticationTestUtils.getPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME, Collections.singletonMap(ATTR_1, "value"))),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertEquals(p.getAttributes().size(), CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);
         assertTrue(p.getAttributes().containsKey(ATTR_1));
     }
@@ -103,16 +101,16 @@ public class PersonDirectoryPrincipalResolverTests {
     @Test
     public void verifyChainingResolverOverwritePrincipal() {
         val resolver = new PersonDirectoryPrincipalResolver(
-                CoreAuthenticationTestUtils.getAttributeRepository());
+            CoreAuthenticationTestUtils.getAttributeRepository());
         val resolver2 = new PersonDirectoryPrincipalResolver(
-                new StubPersonAttributeDao(Collections.singletonMap("principal", CollectionUtils.wrap("changedPrincipal"))), "principal");
+            new StubPersonAttributeDao(Collections.singletonMap("principal", CollectionUtils.wrap("changedPrincipal"))), "principal");
 
         val chain = new ChainingPrincipalResolver();
         chain.setChain(Arrays.asList(new EchoingPrincipalResolver(), resolver, resolver2));
 
         val p = chain.resolve(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
-                Optional.of(CoreAuthenticationTestUtils.getPrincipal("somethingelse", Collections.singletonMap(ATTR_1, "value"))),
-                Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(CoreAuthenticationTestUtils.getPrincipal("somethingelse", Collections.singletonMap(ATTR_1, "value"))),
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);
         assertEquals("changedPrincipal", p.getId());
         assertEquals(p.getAttributes().size(), CoreAuthenticationTestUtils.getAttributeRepository().getPossibleUserAttributeNames().size() + 1);

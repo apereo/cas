@@ -1,13 +1,13 @@
 package org.apereo.cas.interrupt.webflow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+
+import lombok.val;
 import org.springframework.context.ApplicationContext;
+import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -21,15 +21,15 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String INTERRUPT_VIEW_ID = "casInterruptView";
-    
+
     private static final String VIEW_ID_INTERRUPT_VIEW = "interruptView";
-    
+
     private static final String STATE_ID_INQUIRE_INTERRUPT_ACTION = "inquireInterruptAction";
     private static final String STATE_ID_FINALIZE_INTERRUPT_ACTION = "finalizeInterruptFlowAction";
     private static final String STATE_ID_PREPARE_INTERRUPT_VIEW_ACTION = "prepareInterruptViewAction";
+    private static final String STATE_ID_FINISHED_INTERRUPT = "finishedInterrupt";
 
     public InterruptWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                       final FlowDefinitionRegistry flowDefinitionRegistry,
@@ -55,15 +55,18 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
         val state = getState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS, ViewState.class);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
     }
-    
+
     private void createTransitionStateToInterrupt(final Flow flow) {
         val submit = getRealSubmissionState(flow);
         createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
+
+        val ticketCreateState = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
+        prependActionsToActionStateExecutionList(flow, ticketCreateState, getInquireInterruptAction());
+        createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, VIEW_ID_INTERRUPT_VIEW);
     }
 
     private void createTransitionStateForMultifactorSubflows(final Flow flow) {
-        val providerMap =
-                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         providerMap.forEach((k, v) -> {
             if (containsSubflowState(flow, v.getId())) {
                 val state = getState(flow, v.getId(), SubflowState.class);
@@ -71,7 +74,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
             }
         });
     }
-    
+
     private ActionState getRealSubmissionState(final Flow flow) {
         return getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
     }
@@ -83,20 +86,26 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         val finalizeInterrupt = createActionState(flow, STATE_ID_FINALIZE_INTERRUPT_ACTION,
-                createEvaluateAction(STATE_ID_FINALIZE_INTERRUPT_ACTION));
+            createEvaluateAction(STATE_ID_FINALIZE_INTERRUPT_ACTION));
         createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_SUCCESS, target);
-        createTransitionForState(finalizeInterrupt, CasWebflowConstants.TRANSITION_ID_NO, "finishedInterrupt");
-        createEndState(flow, "finishedInterrupt");
+        createTransitionForState(finalizeInterrupt, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, STATE_ID_FINISHED_INTERRUPT);
+        createEndState(flow, STATE_ID_FINISHED_INTERRUPT);
     }
 
     private void createInquireActionState(final Flow flow) {
-        val actionState = createActionState(flow, STATE_ID_INQUIRE_INTERRUPT_ACTION, createEvaluateAction(STATE_ID_INQUIRE_INTERRUPT_ACTION));
+        val inquireState = createActionState(flow, STATE_ID_INQUIRE_INTERRUPT_ACTION, getInquireInterruptAction());
 
         val target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
-        val noInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_NO, target);
-        actionState.getTransitionSet().add(noInterruptTransition);
 
-        val yesInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_YES, VIEW_ID_INTERRUPT_VIEW);
-        actionState.getTransitionSet().add(yesInterruptTransition);
+        val noInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, target);
+        val transitionSet = inquireState.getTransitionSet();
+        transitionSet.add(noInterruptTransition);
+
+        val yesInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED, VIEW_ID_INTERRUPT_VIEW);
+        transitionSet.add(yesInterruptTransition);
+    }
+
+    private EvaluateAction getInquireInterruptAction() {
+        return createEvaluateAction(STATE_ID_INQUIRE_INTERRUPT_ACTION);
     }
 }

@@ -1,12 +1,15 @@
 package org.apereo.cas.support.events.dao;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.util.DateTimeUtils;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -22,9 +25,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.ToString;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link CasEvent}, which represents a single event stored in the events repository.
@@ -34,7 +34,6 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "CasEvent")
-@Slf4j
 @ToString
 @Getter
 @Setter

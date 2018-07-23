@@ -1,13 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.util.crypto.CertUtils;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;

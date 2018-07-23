@@ -1,8 +1,5 @@
 package org.apereo.cas.trusted.config;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -10,6 +7,8 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JpaMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,7 +35,6 @@ import java.util.List;
 @Configuration("jdbcMultifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-@Slf4j
 public class JdbcMultifactorAuthnTrustConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -44,13 +42,13 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Autowired
     @Qualifier("mfaTrustCipherExecutor")
     private CipherExecutor mfaTrustCipherExecutor;
-    
+
     @RefreshScope
     @Bean
     public HibernateJpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-    
+
     @Bean
     public DataSource dataSourceMfaTrustedAuthn() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getTrusted().getJpa());
@@ -65,13 +63,13 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean mfaTrustedAuthnEntityManagerFactory() {
         val bean =
-                JpaBeans.newHibernateEntityManagerFactoryBean(
-                        new JpaConfigDataHolder(
-                                jpaMfaTrustedAuthnVendorAdapter(),
-                                "jpaMfaTrustedAuthnContext",
-                                jpaMfaTrustedAuthnPackagesToScan(),
-                                dataSourceMfaTrustedAuthn()),
-                        casProperties.getAuthn().getMfa().getTrusted().getJpa());
+            JpaBeans.newHibernateEntityManagerFactoryBean(
+                new JpaConfigDataHolder(
+                    jpaMfaTrustedAuthnVendorAdapter(),
+                    "jpaMfaTrustedAuthnContext",
+                    jpaMfaTrustedAuthnPackagesToScan(),
+                    dataSourceMfaTrustedAuthn()),
+                casProperties.getAuthn().getMfa().getTrusted().getJpa());
 
         return bean;
     }
@@ -79,7 +77,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerMfaAuthnTrust(
-            @Qualifier("mfaTrustedAuthnEntityManagerFactory") final EntityManagerFactory emf) {
+        @Qualifier("mfaTrustedAuthnEntityManagerFactory") final EntityManagerFactory emf) {
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;

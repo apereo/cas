@@ -1,12 +1,11 @@
 package org.apereo.cas.support.saml.idp.metadata.writer;
 
-import lombok.val;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.RandomUtils;
+import lombok.val;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.DERSequence;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -36,7 +35,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @NoArgsConstructor
 @Setter
 public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificateAndKeyWriter {
@@ -52,7 +50,6 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
     public void writeCertificateAndKey(final Writer privateKeyWriter, final Writer certificateWriter) {
         val keypair = generateKeyPair();
         val certificate = generateCertificate(keypair);
-
         try (val keyOut = new JcaPEMWriter(privateKeyWriter)) {
             keyOut.writeObject(keypair.getPrivate());
             keyOut.flush();

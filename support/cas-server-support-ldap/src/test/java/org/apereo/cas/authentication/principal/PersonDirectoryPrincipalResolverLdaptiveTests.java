@@ -1,8 +1,5 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -10,6 +7,8 @@ import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolv
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +36,6 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {CasPersonDirectoryConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/ldappersondir.properties"})
 @DirtiesContext
-@Slf4j
 public class PersonDirectoryPrincipalResolverLdaptiveTests {
     @Autowired
     @Qualifier("attributeRepository")
@@ -63,7 +61,7 @@ public class PersonDirectoryPrincipalResolverLdaptiveTests {
         attributes.put("a2", "v2");
         val p = chain.resolve(new UsernamePasswordCredential("castest1", "castest1"),
             Optional.of(CoreAuthenticationTestUtils.getPrincipal("castest1", attributes)),
-                Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
+            Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);
         assertTrue(p.getAttributes().containsKey("givenName"));
         assertTrue(p.getAttributes().containsKey("a1"));

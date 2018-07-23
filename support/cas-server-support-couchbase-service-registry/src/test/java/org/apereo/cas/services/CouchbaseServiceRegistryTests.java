@@ -1,10 +1,10 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -30,7 +30,6 @@ import java.util.Collection;
         "cas.serviceRegistry.couchbase.password=password",
         "cas.serviceRegistry.couchbase.bucket=testbucket"
     })
-@Slf4j
 @Category(CouchbaseCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @RunWith(Parameterized.class)
@@ -44,13 +43,13 @@ public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests 
         super(registeredServiceClass);
     }
 
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.serviceRegistry;
-    }
-
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
         return Arrays.asList(RegexRegisteredService.class);
+    }
+
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return this.serviceRegistry;
     }
 }

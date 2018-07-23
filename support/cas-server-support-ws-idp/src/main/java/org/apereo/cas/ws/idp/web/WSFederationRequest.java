@@ -1,14 +1,13 @@
 package org.apereo.cas.ws.idp.web;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ws.idp.WSFederationConstants;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString
 @Getter
 @Setter

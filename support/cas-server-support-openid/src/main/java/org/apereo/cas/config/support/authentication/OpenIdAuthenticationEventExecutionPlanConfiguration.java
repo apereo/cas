@@ -1,8 +1,5 @@
 package org.apereo.cas.config.support.authentication;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -12,6 +9,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.authentication.handler.support.OpenIdCredentialsAuthenticationHandler;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdPrincipalResolver;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,7 +28,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("openIdAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("servicesManager")
@@ -38,14 +36,14 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-    
+
     @Bean
     public AuthenticationHandler openIdCredentialsAuthenticationHandler() {
         val openid = casProperties.getAuthn().getOpenid();
@@ -55,8 +53,8 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public OpenIdPrincipalResolver openIdPrincipalResolver() {
         val r = new OpenIdPrincipalResolver(attributeRepository, openidPrincipalFactory(),
-                casProperties.getAuthn().getOpenid().getPrincipal().isReturnNull(),
-                casProperties.getAuthn().getOpenid().getPrincipal().getPrincipalAttribute());
+            casProperties.getAuthn().getOpenid().getPrincipal().isReturnNull(),
+            casProperties.getAuthn().getOpenid().getPrincipal().getPrincipalAttribute());
         return r;
     }
 

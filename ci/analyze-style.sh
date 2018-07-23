@@ -32,11 +32,7 @@ echo -e "Installing NPM...\n"
 
 gradleBuild="$gradleBuild check -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
-
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-    gradleBuild="$gradleBuild -DshowStandardStreams=true "
-fi
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel -DshowStandardStreams=true "
 
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."

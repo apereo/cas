@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -20,6 +19,7 @@ import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
 import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.StatusEndpoint;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,7 +41,6 @@ import org.springframework.core.io.ResourceLoader;
  */
 @Configuration("casReportsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasReportsConfiguration {
 
     @Autowired
@@ -96,26 +95,6 @@ public class CasReportsConfiguration {
         return new AuditLogEndpoint(auditTrailExecutionPlan.getIfAvailable(), casProperties);
     }
 
-
-    /**
-     * This this {@link StatusEndpointConfiguration}.
-     *
-     * @author Misagh Moayyed
-     * @since 6.0.0
-     */
-    @Configuration("statusEndpointConfiguration")
-    public static class StatusEndpointConfiguration {
-        @Autowired
-        private CasConfigurationProperties casProperties;
-
-        @Autowired
-        @Bean
-        @ConditionalOnEnabledEndpoint
-        public StatusEndpoint statusEndpoint(final HealthEndpoint healthEndpoint) {
-            return new StatusEndpoint(casProperties, healthEndpoint);
-        }
-    }
-
     @Bean
     @ConditionalOnEnabledEndpoint
     public LoggingConfigurationEndpoint loggingConfigurationEndpoint() {
@@ -159,5 +138,24 @@ public class CasReportsConfiguration {
             authenticationSystemSupport,
             webApplicationServiceFactory,
             principalFactory);
+    }
+
+    /**
+     * This this {@link StatusEndpointConfiguration}.
+     *
+     * @author Misagh Moayyed
+     * @since 6.0.0
+     */
+    @Configuration("statusEndpointConfiguration")
+    public static class StatusEndpointConfiguration {
+        @Autowired
+        private CasConfigurationProperties casProperties;
+
+        @Autowired
+        @Bean
+        @ConditionalOnEnabledEndpoint
+        public StatusEndpoint statusEndpoint(final HealthEndpoint healthEndpoint) {
+            return new StatusEndpoint(casProperties, healthEndpoint);
+        }
     }
 }

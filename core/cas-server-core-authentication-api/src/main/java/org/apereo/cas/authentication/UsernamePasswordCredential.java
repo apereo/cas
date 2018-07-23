@@ -2,14 +2,12 @@ package org.apereo.cas.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.ToString;
 
 import javax.validation.constraints.Size;
-
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * Credential for authenticating with a username and password.
@@ -18,20 +16,18 @@ import lombok.Getter;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
-@ToString(exclude = { "password" })
+@ToString(exclude = {"password"})
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 public class UsernamePasswordCredential implements Credential {
-
     /**
      * Authentication attribute name for password.
      **/
     public static final String AUTHENTICATION_ATTRIBUTE_PASSWORD = "credential";
-
+    
     private static final long serialVersionUID = -700605081472810939L;
 
     @Size(min = 1, message = "required.username")

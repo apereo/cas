@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import com.github.lalyos.jfiglet.FigletFont;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
@@ -15,7 +14,6 @@ import java.io.PrintStream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @UtilityClass
 public class AsciiArtUtils {
     private static final String ANSI_RESET = "\u001B[0m";

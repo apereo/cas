@@ -1,9 +1,7 @@
 package org.apereo.cas.audit.spi.config;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
+import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
@@ -22,6 +20,10 @@ import org.apereo.cas.audit.spi.TicketAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.TicketValidationResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -57,8 +59,6 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigurer, AuditTrailRecordResolutionPlanConfigurer {
-
-    private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -132,19 +132,20 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     @ConditionalOnMissingBean(name = "authenticationActionResolver")
     @Bean
     public AuditActionResolver authenticationActionResolver() {
-        return new DefaultAuditActionResolver("_SUCCESS", AUDIT_ACTION_SUFFIX_FAILED);
+        return new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS,
+            AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED);
     }
 
     @ConditionalOnMissingBean(name = "ticketCreationActionResolver")
     @Bean
     public AuditActionResolver ticketCreationActionResolver() {
-        return new DefaultAuditActionResolver("_CREATED", "_NOT_CREATED");
+        return new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, "_NOT_CREATED");
     }
 
     @ConditionalOnMissingBean(name = "ticketValidationActionResolver")
     @Bean
     public AuditActionResolver ticketValidationActionResolver() {
-        return new DefaultAuditActionResolver("D", AUDIT_ACTION_SUFFIX_FAILED);
+        return new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED);
     }
 
     @ConditionalOnMissingBean(name = "returnValueResourceResolver")
@@ -253,11 +254,11 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
         plan.registerAuditActionResolver("GRANT_PROXY_TICKET_RESOLVER", cResolver);
         plan.registerAuditActionResolver("CREATE_TICKET_GRANTING_TICKET_RESOLVER", cResolver);
 
-        val authResolver = new DefaultAuditActionResolver("_TRIGGERED", StringUtils.EMPTY);
+        val authResolver = new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY);
         plan.registerAuditActionResolver("AUTHENTICATION_EVENT_ACTION_RESOLVER", authResolver);
         plan.registerAuditActionResolver("VALIDATE_SERVICE_TICKET_RESOLVER", ticketValidationActionResolver());
 
-        val serviceAccessResolver = new DefaultAuditActionResolver("_TRIGGERED", StringUtils.EMPTY);
+        val serviceAccessResolver = new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_TRIGGERED, StringUtils.EMPTY);
         plan.registerAuditActionResolver("SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER", serviceAccessResolver);
 
         /*

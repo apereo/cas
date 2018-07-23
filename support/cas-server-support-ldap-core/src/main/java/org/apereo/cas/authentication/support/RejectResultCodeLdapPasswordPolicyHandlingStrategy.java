@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.RequiredArgsConstructor;
 import org.ldaptive.auth.AuthenticationResponse;
 
 import java.util.Collection;
@@ -15,7 +15,6 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class RejectResultCodeLdapPasswordPolicyHandlingStrategy extends RejectResultCodePasswordPolicyHandlingStrategy<AuthenticationResponse> {
     @Override

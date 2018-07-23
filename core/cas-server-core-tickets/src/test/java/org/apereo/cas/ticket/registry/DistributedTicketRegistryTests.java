@@ -1,8 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -12,19 +9,22 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+
+import lombok.Setter;
+import lombok.val;
+import org.junit.Before;
 import org.junit.Test;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
 import static org.junit.Assert.*;
-import lombok.Setter;
-import org.junit.Before;
 
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 @Setter
 public class DistributedTicketRegistryTests {
 

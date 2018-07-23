@@ -1,12 +1,13 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+
+import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
+
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
@@ -26,7 +27,6 @@ import java.util.HashMap;
  * @author Jan Van der Velpen
  * @since 3.1
  */
-@Slf4j
 @ToString(callSuper = true)
 public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509PrincipalResolver {
 

@@ -1764,8 +1764,8 @@ configured via the static authentication handler, and <strong>MUST</strong> be r
 prior to production rollouts.</p></div>
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.accept`.
-
-Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.accept`.
+Password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) under the configuration key `cas.authn.accept.passwordPolicy`.
+Password encoding settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.accept`.
 
 ```properties
 # cas.authn.accept.users=
@@ -2388,11 +2388,23 @@ A given attribute that is to be encoded in the final SAML response may contain a
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
 under the configuration key `cas.authn.samlIdp.metadata.jpa`.
 
+ ```properties
+ # cas.authn.samlIdp.metadata.jpa.idpMetadataEnabled=true
+ ```
+ 
+ The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.jpa`.
+ 
 #### SAML Metadata MongoDb
 
  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
  under the configuration key `cas.authn.samlIdp.metadata`.
  
+ ```properties
+ # cas.authn.samlIdp.metadata.mongo.idpMetadataCollection=saml-idp-metadata
+ ```
+ 
+ The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.mongo`.
+
  #### SAML Metadata REST
  
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 

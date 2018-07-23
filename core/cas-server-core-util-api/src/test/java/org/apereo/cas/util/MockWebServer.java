@@ -1,8 +1,7 @@
 package org.apereo.cas.util;
 
-import lombok.val;
-
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -122,12 +121,11 @@ public class MockWebServer implements AutoCloseable {
          * Response buffer size.
          */
         private static final int BUFFER_SIZE = 2048;
-
-        private boolean running;
         private final ServerSocket serverSocket;
         private final Resource resource;
         private final String contentType;
         private final Function<Socket, Object> functionToExecute;
+        private boolean running;
 
         /**
          * Creates a request-handling worker that listens for requests on the
@@ -151,6 +149,10 @@ public class MockWebServer implements AutoCloseable {
             this.resource = null;
             this.contentType = null;
             this.running = true;
+        }
+
+        private static byte[] header(final String name, final Object value) {
+            return String.format("%s: %s\r\n", name, value).getBytes(StandardCharsets.UTF_8);
         }
 
         @Override
@@ -200,10 +202,6 @@ public class MockWebServer implements AutoCloseable {
                 }
                 LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getFilename(), resource.contentLength());
             }
-        }
-
-        private static byte[] header(final String name, final Object value) {
-            return String.format("%s: %s\r\n", name, value).getBytes(StandardCharsets.UTF_8);
         }
     }
 }

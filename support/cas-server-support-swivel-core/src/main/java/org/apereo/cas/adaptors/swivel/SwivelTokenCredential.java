@@ -1,13 +1,13 @@
 package org.apereo.cas.adaptors.swivel;
 
+import org.apereo.cas.authentication.Credential;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Credential;
 import lombok.ToString;
-import lombok.Getter;
 
 /**
  * This is {@link SwivelTokenCredential}.
@@ -15,7 +15,6 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @ToString
 @Getter
 @Setter

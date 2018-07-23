@@ -1,12 +1,11 @@
 package org.apereo.cas.consent;
 
-import lombok.val;
+import org.apereo.cas.util.ResourceUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.ResourceUtils;
+import lombok.val;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
@@ -22,7 +21,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class JsonConsentRepository extends BaseConsentRepository {
     private static final long serialVersionUID = -402728417464783825L;
 

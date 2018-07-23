@@ -1,14 +1,14 @@
 package org.apereo.cas.util.spring;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.NoSuchMessageException;
-import org.springframework.context.i18n.LocaleContextHolder;
+import lombok.Setter;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.context.i18n.LocaleContextHolder;
+
 import javax.validation.MessageInterpolator;
 import javax.validation.Validation;
 import java.util.Locale;
-import lombok.Setter;
 
 /**
  * Configures the {@link javax.validation.Validator} to check the Spring Messages.
@@ -16,7 +16,6 @@ import lombok.Setter;
  * @author Scott Battaglia
  * @since 3.4
  */
-@Slf4j
 @Setter
 public class SpringAwareMessageMessageInterpolator implements MessageInterpolator, MessageSourceAware {
 

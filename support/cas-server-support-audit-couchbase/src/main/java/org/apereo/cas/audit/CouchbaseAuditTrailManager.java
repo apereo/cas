@@ -1,5 +1,10 @@
 package org.apereo.cas.audit;
 
+import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.serialization.StringSerializer;
+
 import com.couchbase.client.java.document.StringDocument;
 import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.query.N1qlQuery;
@@ -8,12 +13,7 @@ import com.couchbase.client.java.view.View;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 
@@ -37,7 +37,6 @@ import static com.couchbase.client.java.query.dsl.Expression.x;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Slf4j
 @Setter
 @RequiredArgsConstructor
 public class CouchbaseAuditTrailManager implements AuditTrailManager {

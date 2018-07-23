@@ -1,11 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.val;
-
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
-import com.amazonaws.services.clouddirectory.AmazonCloudDirectoryClientBuilder;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CloudDirectoryAuthenticationHandler;
@@ -19,6 +13,11 @@ import org.apereo.cas.clouddirectory.CloudDirectoryRepository;
 import org.apereo.cas.clouddirectory.DefaultCloudDirectoryRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
+import com.amazonaws.services.clouddirectory.AmazonCloudDirectoryClientBuilder;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,7 +35,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("cloudDirectoryAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CloudDirectoryAuthenticationConfiguration {
 
     @Autowired

@@ -1,17 +1,17 @@
 package org.apereo.cas.memcached;
 
-import lombok.val;
+import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
+import org.apereo.cas.memcached.kryo.CasKryoPool;
+import org.apereo.cas.memcached.kryo.CasKryoTranscoder;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.spy.memcached.transcoders.SerializingTranscoder;
 import net.spy.memcached.transcoders.Transcoder;
 import net.spy.memcached.transcoders.WhalinTranscoder;
 import net.spy.memcached.transcoders.WhalinV1Transcoder;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
-import org.apereo.cas.memcached.kryo.CasKryoPool;
-import org.apereo.cas.memcached.kryo.CasKryoTranscoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -64,9 +64,9 @@ public class MemcachedUtils {
             case "kryo":
             default:
                 val kryoPool = new CasKryoPool(kryoSerializableClasses, true,
-                        memcachedProperties.isKryoRegistrationRequired(),
-                        memcachedProperties.isKryoObjectsByReference(),
-                        memcachedProperties.isKryoAutoReset());
+                    memcachedProperties.isKryoRegistrationRequired(),
+                    memcachedProperties.isKryoObjectsByReference(),
+                    memcachedProperties.isKryoAutoReset());
                 val kryo = new CasKryoTranscoder(kryoPool);
                 LOGGER.debug("Creating memcached transcoder [{}]", kryo.getClass().getName());
                 return kryo;

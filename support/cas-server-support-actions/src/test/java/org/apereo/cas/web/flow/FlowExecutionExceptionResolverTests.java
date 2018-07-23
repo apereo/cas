@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
+
+import lombok.val;
 import org.apereo.spring.webflow.plugin.ClientFlowExecutionRepositoryException;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

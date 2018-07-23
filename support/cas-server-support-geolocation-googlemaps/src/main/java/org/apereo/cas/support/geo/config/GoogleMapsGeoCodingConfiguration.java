@@ -1,15 +1,14 @@
 package org.apereo.cas.support.geo.config;
 
-import lombok.val;
-
-import com.google.maps.GaeRequestHandler;
-import com.google.maps.GeoApiContext;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.geo.google.GoogleMapsGeoLocationService;
+
+import com.google.maps.GaeRequestHandler;
+import com.google.maps.GeoApiContext;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,7 +26,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("casGeoLocationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class GoogleMapsGeoCodingConfiguration {
 
     @Autowired

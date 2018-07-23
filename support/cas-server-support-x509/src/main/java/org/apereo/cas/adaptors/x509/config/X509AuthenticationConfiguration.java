@@ -1,9 +1,5 @@
 package org.apereo.cas.adaptors.x509.config;
 
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import net.sf.ehcache.Cache;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
@@ -32,6 +28,10 @@ import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
+
+import lombok.val;
+import net.sf.ehcache.Cache;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,7 +54,6 @@ import java.util.stream.Collectors;
  */
 @Configuration("x509AuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class X509AuthenticationConfiguration {
 
     private static final int HEX = 16;

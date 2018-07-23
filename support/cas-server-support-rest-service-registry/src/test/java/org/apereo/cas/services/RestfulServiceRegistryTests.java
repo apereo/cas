@@ -1,11 +1,11 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.http.HttpStatus;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.RestServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.http.HttpStatus;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,6 @@ import java.util.Collection;
 },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @EnableAutoConfiguration(exclude = {
     CasCoreServicesConfiguration.class,
     MetricsAutoConfiguration.class
@@ -56,14 +55,14 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
         super(registeredServiceClass);
     }
 
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.dao;
-    }
-
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
         return Arrays.asList(RegexRegisteredService.class);
+    }
+
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return this.dao;
     }
 
     @RestController("servicesController")

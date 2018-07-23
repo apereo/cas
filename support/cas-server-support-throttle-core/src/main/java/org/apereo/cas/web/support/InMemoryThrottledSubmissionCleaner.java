@@ -1,9 +1,7 @@
 package org.apereo.cas.web.support;
 
-import lombok.val;
-
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
@@ -12,7 +10,6 @@ import org.springframework.scheduling.annotation.Scheduled;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class InMemoryThrottledSubmissionCleaner implements Runnable {
     private final AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan;

@@ -1,13 +1,13 @@
 package org.apereo.cas.web.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import javax.servlet.http.HttpServletRequest;
+
 import lombok.NoArgsConstructor;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link CookieUtils}.
@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @NoArgsConstructor
 public class CookieUtils {
 

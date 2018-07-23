@@ -1,8 +1,8 @@
 package org.apereo.cas.support.events.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.support.events.AbstractCasEvent;
+
 
 /**
  * This is {@link CasAuthenticationTransactionCompletedEvent}.
@@ -10,7 +10,6 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class CasAuthenticationTransactionCompletedEvent extends AbstractCasEvent {
     private static final long serialVersionUID = -1862538693590213844L;
 

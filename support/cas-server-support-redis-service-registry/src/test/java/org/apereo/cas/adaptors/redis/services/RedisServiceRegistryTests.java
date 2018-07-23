@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.redis.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.category.RedisCategory;
 import org.apereo.cas.config.RedisServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -8,6 +7,7 @@ import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -36,7 +36,6 @@ import java.util.Collection;
 @EnableScheduling
 @TestPropertySource(locations = {"classpath:/svc-redis.properties"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @Category(RedisCategory.class)
 public class RedisServiceRegistryTests extends AbstractServiceRegistryTests {
     private static RedisServer REDIS_SERVER;
@@ -47,11 +46,6 @@ public class RedisServiceRegistryTests extends AbstractServiceRegistryTests {
 
     public RedisServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
         super(registeredServiceClass);
-    }
-
-    @Override
-    public ServiceRegistry getNewServiceRegistry() {
-        return this.dao;
     }
 
     @BeforeClass
@@ -68,5 +62,10 @@ public class RedisServiceRegistryTests extends AbstractServiceRegistryTests {
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
         return Arrays.asList(RegexRegisteredService.class);
+    }
+
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
+        return this.dao;
     }
 }

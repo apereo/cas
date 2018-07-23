@@ -1,5 +1,9 @@
 package org.apereo.cas.mongo;
 
+import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.CollectionUtils;
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
@@ -11,9 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.ssl.SSLContexts;
-import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
-import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.CollectionUtils;
 import org.bson.BSON;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.springframework.beans.factory.BeanCreationException;
@@ -84,11 +85,6 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.CacheBuilderConverter());
         converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());
-
-        /*
-        converters.add(new BaseConverters.ZonedDateTimeToStringConverter());
-        converters.add(new BaseConverters.StringToZonedDateTimeConverter());
-        */
         converters.add(new BaseConverters.BsonTimestampToStringConverter());
         converters.add(new BaseConverters.ZonedDateTimeToDateConverter());
         converters.add(new BaseConverters.DateToZonedDateTimeConverter());
@@ -272,7 +268,7 @@ public class MongoDbConnectionFactory {
         clientOptions.codecRegistry(codecRegistry);
         return clientOptions.build();
     }
-    
+
     private MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {

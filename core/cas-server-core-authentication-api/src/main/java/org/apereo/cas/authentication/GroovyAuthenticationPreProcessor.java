@@ -1,10 +1,11 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.util.ScriptingUtils;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.ScriptingUtils;
 import org.springframework.core.io.Resource;
 
 /**
@@ -18,9 +19,8 @@ import org.springframework.core.io.Resource;
 @RequiredArgsConstructor
 @Slf4j
 public class GroovyAuthenticationPreProcessor implements AuthenticationPreProcessor {
-    private int order;
-
     private final transient Resource groovyResource;
+    private int order;
 
     @Override
     public boolean process(final AuthenticationTransaction transaction) throws AuthenticationException {

@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.adaptive;
 
-import lombok.val;
-
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.util.HttpRequestUtils;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
@@ -82,7 +82,7 @@ public class DefaultAdaptiveAuthenticationPolicyTests {
 
         val geoRequest = new GeoLocationRequest(51.5, -0.118);
         val props = new AdaptiveAuthenticationProperties();
-       
+
         val service = mock(GeoLocationService.class);
         val response = new GeoLocationResponse();
         response.setLatitude(Double.valueOf(geoRequest.getLatitude()));

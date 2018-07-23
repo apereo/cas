@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow.client;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.RegexUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -22,7 +21,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 public class SpnegoKnownClientSystemsFilterActionTests {
 
     private static final String ALTERNATE_REMOTE_IP = "74.125.136.102";
@@ -30,7 +28,7 @@ public class SpnegoKnownClientSystemsFilterActionTests {
     @Test
     public void ensureRemoteIpShouldBeChecked() {
         val action =
-        new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"), "", 0);
+            new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern("^192\\.158\\..+"), "", 0);
 
         val ctx = new MockRequestContext();
         val req = new MockHttpServletRequest();

@@ -1,14 +1,14 @@
 package org.apereo.cas.audit.entity;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.ZonedDateTime;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link AuditTrailEntity} that represents the audit table.
@@ -18,7 +18,6 @@ import lombok.Setter;
  * @since 4.2.0
  */
 @Entity(name = "COM_AUDIT_TRAIL")
-@Slf4j
 @Getter
 @Setter
 public class AuditTrailEntity {
@@ -51,7 +50,7 @@ public class AuditTrailEntity {
     @Column(name = "APPLIC_CD")
     private String applicationCode;
 
-    @Column(name = "AUD_DATE", nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(name = "AUD_DATE", nullable = false)
     private ZonedDateTime recordDate;
 
     public AuditTrailEntity() {

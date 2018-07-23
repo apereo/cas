@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.Authentication;
@@ -16,8 +13,10 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -42,7 +41,6 @@ import static org.mockito.Mockito.*;
  */
 @DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
-@Slf4j
 public class CreateTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTests {
     @Autowired
     @Qualifier("createTicketGrantingTicketAction")

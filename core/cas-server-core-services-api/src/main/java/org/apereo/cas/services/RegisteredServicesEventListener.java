@@ -1,14 +1,13 @@
 package org.apereo.cas.services;
 
-import lombok.val;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.util.io.CommunicationsManager;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.event.EventListener;
 
 /**
@@ -17,7 +16,6 @@ import org.springframework.context.event.EventListener;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class RegisteredServicesEventListener {
     private final ServicesManager servicesManager;
@@ -51,21 +49,21 @@ public class RegisteredServicesEventListener {
         if (communicationsManager.isMailSenderDefined()) {
             val message = String.format(mail.getText(), serviceName);
             contacts
-                    .stream()
-                    .filter(c -> StringUtils.isNotBlank(c.getEmail()))
-                    .forEach(c -> communicationsManager.email(message, 
-                            mail.getFrom(), 
-                            mail.getSubject(), 
-                            c.getEmail(),
-                            mail.getCc(),
-                            mail.getBcc()));
+                .stream()
+                .filter(c -> StringUtils.isNotBlank(c.getEmail()))
+                .forEach(c -> communicationsManager.email(message,
+                    mail.getFrom(),
+                    mail.getSubject(),
+                    c.getEmail(),
+                    mail.getCc(),
+                    mail.getBcc()));
         }
         if (communicationsManager.isSmsSenderDefined()) {
             val message = String.format(sms.getText(), serviceName);
             contacts
-                    .stream()
-                    .filter(c -> StringUtils.isNotBlank(c.getPhone()))
-                    .forEach(c -> communicationsManager.sms(sms.getFrom(), c.getPhone(), message));
+                .stream()
+                .filter(c -> StringUtils.isNotBlank(c.getPhone()))
+                .forEach(c -> communicationsManager.sms(sms.getFrom(), c.getPhone(), message));
         }
 
         servicesManager.load();

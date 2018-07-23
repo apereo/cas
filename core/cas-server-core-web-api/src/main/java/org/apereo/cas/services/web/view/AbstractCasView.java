@@ -1,10 +1,5 @@
 package org.apereo.cas.services.web.view;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
@@ -17,6 +12,12 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.view.AbstractView;
 
 import java.time.ZonedDateTime;
@@ -63,6 +64,22 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
+    /**
+     * Convert attribute values to multi valued objects.
+     *
+     * @param attributes the attributes
+     * @return the map of attributes to return
+     */
+    private static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
+        val entries = attributes.entrySet();
+        return entries.stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+            val value = entry.getValue();
+            if (value instanceof Collection || value instanceof Map || value instanceof Object[] || value instanceof Iterator || value instanceof Enumeration) {
+                return value;
+            }
+            return CollectionUtils.wrap(value);
+        }));
+    }
 
     /**
      * Gets the assertion from the model.
@@ -232,23 +249,6 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected boolean isAssertionBackedByNewLogin(final Map<String, Object> model) {
         return getAssertionFrom(model).isFromNewLogin();
-    }
-
-    /**
-     * Convert attribute values to multi valued objects.
-     *
-     * @param attributes the attributes
-     * @return the map of attributes to return
-     */
-    private static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
-        val entries = attributes.entrySet();
-        return entries.stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-            val value = entry.getValue();
-            if (value instanceof Collection || value instanceof Map || value instanceof Object[] || value instanceof Iterator || value instanceof Enumeration) {
-                return value;
-            }
-            return CollectionUtils.wrap(value);
-        }));
     }
 
     /**

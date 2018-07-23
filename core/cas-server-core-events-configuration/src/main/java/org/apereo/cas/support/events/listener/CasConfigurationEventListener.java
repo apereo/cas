@@ -1,11 +1,11 @@
 package org.apereo.cas.support.events.listener;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
@@ -26,17 +26,14 @@ import java.util.Collection;
 @Slf4j
 public class CasConfigurationEventListener {
 
+    private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
-
     @Autowired
     private ObjectProvider<ContextRefresher> contextRefresher;
-
     @Autowired
     private ApplicationContext applicationContext;
-    
-    private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
-    
+
     public CasConfigurationEventListener(final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
         this.configurationPropertiesEnvironmentManager = configurationPropertiesEnvironmentManager;
     }
@@ -78,7 +75,7 @@ public class CasConfigurationEventListener {
             } finally {
                 rebind();
                 LOGGER.info("CAS finished rebinding configuration with new settings [{}]",
-                        ObjectUtils.defaultIfNull(keys, new ArrayList<>(0)));
+                    ObjectUtils.defaultIfNull(keys, new ArrayList<>(0)));
             }
         }
     }

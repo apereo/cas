@@ -1,17 +1,17 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.val;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketCatalog;
-import org.apereo.cas.ticket.TicketDefinition;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -74,7 +74,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         element.setTimeToLive(aliveValue);
         val cache = getTicketCacheFor(metadata);
         LOGGER.debug("Adding ticket [{}] to the cache [{}] to live [{}] seconds and stay idle for [{}] seconds",
-                ticket.getId(), cache.getName(), aliveValue, idleValue);
+            ticket.getId(), cache.getName(), aliveValue, idleValue);
         cache.put(element);
     }
 
@@ -103,13 +103,13 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long deleteAll() {
         return ticketCatalog.findAll().stream()
-                .map(this::getTicketCacheFor)
-                .filter(Objects::nonNull)
-                .mapToLong(instance -> {
-                    val size = instance.getSize();
-                    instance.removeAll();
-                    return size;
-                }).sum();
+            .map(this::getTicketCacheFor)
+            .filter(Objects::nonNull)
+            .mapToLong(instance -> {
+                val size = instance.getSize();
+                instance.removeAll();
+                return size;
+            }).sum();
     }
 
     @Override
@@ -153,11 +153,11 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream()
-                .map(this::getTicketCacheFor)
-                .flatMap(map -> getAllExpired(map).values().stream())
-                .map(e -> (Ticket) e.getObjectValue())
-                .map(this::decodeTicket)
-                .collect(Collectors.toSet());
+            .map(this::getTicketCacheFor)
+            .flatMap(map -> getAllExpired(map).values().stream())
+            .map(e -> (Ticket) e.getObjectValue())
+            .map(this::decodeTicket)
+            .collect(Collectors.toSet());
     }
 
     @Override

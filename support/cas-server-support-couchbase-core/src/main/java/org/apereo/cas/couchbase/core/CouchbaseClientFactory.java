@@ -1,7 +1,5 @@
 package org.apereo.cas.couchbase.core;
 
-import lombok.val;
-
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
@@ -16,6 +14,7 @@ import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -43,26 +42,21 @@ import java.util.stream.Collectors;
 public class CouchbaseClientFactory {
     private static final long DEFAULT_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(15);
 
-    private Cluster cluster;
-
-    private Bucket bucket;
-    private final Collection<View> views;
-    private final Set<String> nodes;
-
-    /* The name of the bucket, will use the default getBucket unless otherwise specified. */
-    private String bucketName = "default";
-
-    /* Password for the bucket if any. */
-    private String bucketPassword = StringUtils.EMPTY;
-
-    /* Design document and views to create in the bucket, if any. */
-    private final String designDocument;
-
-    private long timeout = DEFAULT_TIMEOUT_MILLIS;
-
     static {
         System.setProperty("com.couchbase.queryEnabled", "true");
     }
+
+    private final Collection<View> views;
+    private final Set<String> nodes;
+    /* Design document and views to create in the bucket, if any. */
+    private final String designDocument;
+    private Cluster cluster;
+    private Bucket bucket;
+    /* The name of the bucket, will use the default getBucket unless otherwise specified. */
+    private String bucketName = "default";
+    /* Password for the bucket if any. */
+    private String bucketPassword = StringUtils.EMPTY;
+    private long timeout = DEFAULT_TIMEOUT_MILLIS;
 
     /**
      * Instantiates a new Couchbase client factory.

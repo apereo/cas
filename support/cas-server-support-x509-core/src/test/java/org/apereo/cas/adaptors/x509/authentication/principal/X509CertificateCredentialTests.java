@@ -1,11 +1,10 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.val;
+import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import org.junit.Test;
 
 import java.io.File;
@@ -18,7 +17,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.
  */
-@Slf4j
 public class X509CertificateCredentialTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "x509CertificateCredential.json");

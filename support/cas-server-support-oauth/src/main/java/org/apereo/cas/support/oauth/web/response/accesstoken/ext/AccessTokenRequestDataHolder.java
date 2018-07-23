@@ -1,9 +1,5 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -11,6 +7,10 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -21,7 +21,6 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString
 @Getter
 @Builder
@@ -39,12 +38,14 @@ public class AccessTokenRequestDataHolder {
 
     private TicketGrantingTicket ticketGrantingTicket;
 
-    private OAuth20GrantTypes grantType;
+    @Builder.Default
+    private OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
 
     @Builder.Default
     private Set<String> scopes = new LinkedHashSet<>();
 
-    private OAuth20ResponseTypes responseType;
+    @Builder.Default
+    private OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;
 
     private String deviceCode;
 }

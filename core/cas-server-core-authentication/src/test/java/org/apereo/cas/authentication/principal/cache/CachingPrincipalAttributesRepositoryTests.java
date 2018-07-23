@@ -1,9 +1,7 @@
 package org.apereo.cas.authentication.principal.cache;
 
-import lombok.val;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -15,10 +13,10 @@ import static org.junit.Assert.*;
 
 /**
  * Handles tests for {@link CachingPrincipalAttributesRepository}.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "cachingPrincipalAttributesRepository.json");

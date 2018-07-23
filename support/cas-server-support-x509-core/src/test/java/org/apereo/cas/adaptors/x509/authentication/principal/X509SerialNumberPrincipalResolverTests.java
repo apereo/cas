@@ -1,11 +1,10 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+
+import lombok.val;
 import org.junit.Test;
 
 import java.math.BigInteger;
@@ -20,7 +19,6 @@ import static org.mockito.Mockito.*;
  * @author Jan Van der Velpen
  * @since 3.0.0.6
  */
-@Slf4j
 public class X509SerialNumberPrincipalResolverTests extends AbstractX509CertificateTests {
 
     private final X509SerialNumberPrincipalResolver resolver = new X509SerialNumberPrincipalResolver();

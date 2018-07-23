@@ -1,14 +1,13 @@
 package org.apereo.cas.trusted.authentication.api;
 
-import lombok.val;
+import org.apereo.cas.util.jpa.SkippingNanoSecondsLocalDateTimeConverter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.jpa.SkippingNanoSecondsLocalDateTimeConverter;
+import lombok.val;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -31,7 +30,6 @@ import java.time.temporal.ChronoUnit;
 @Entity
 @Table(name = "MultifactorAuthenticationTrustRecord")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @ToString
 @Getter
 @Setter

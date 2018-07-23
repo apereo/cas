@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.Principal;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.apereo.cas.authentication.principal.Principal;
+import lombok.val;
 
 import java.util.Collection;
 

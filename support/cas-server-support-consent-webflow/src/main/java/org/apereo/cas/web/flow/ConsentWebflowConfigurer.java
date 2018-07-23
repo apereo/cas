@@ -1,11 +1,10 @@
 package org.apereo.cas.web.flow;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -22,7 +21,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class ConsentWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String VIEW_ID_CONSENT_VIEW = "casConsentView";
     private static final String STATE_ID_CONSENT_CONFIRM = "confirmAttributeConsent";

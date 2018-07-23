@@ -6,14 +6,17 @@ package org.apereo.cas.authentication;
  *
  * @author Scott Battaglia
  * @since 3.2.1
- *
  */
 public interface RememberMeCredential extends Credential {
 
-    /** Authentication attribute name for remember-me. **/
+    /**
+     * Authentication attribute name for remember-me.
+     **/
     String AUTHENTICATION_ATTRIBUTE_REMEMBER_ME = "org.apereo.cas.authentication.principal.REMEMBER_ME";
 
-    /** Request parameter name. **/
+    /**
+     * Request parameter name.
+     **/
     String REQUEST_PARAMETER_REMEMBER_ME = "rememberMe";
 
     /**

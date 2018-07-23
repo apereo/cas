@@ -1,15 +1,14 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.MockJcifsAuthentication;
 import org.apereo.cas.support.spnego.MockUnsuccessfulJcifsAuthentication;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import java.security.GeneralSecurityException;
@@ -22,7 +21,6 @@ import static org.mockito.Mockito.*;
  * @author Arnaud Lesueur
  * @since 4.2.0
  */
-@Slf4j
 public class JcifsSpnegoAuthenticationHandlerTests {
 
     private static final String USERNAME = "Username";

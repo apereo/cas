@@ -1,9 +1,5 @@
 package org.apereo.cas.adaptors.rest;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -11,6 +7,9 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -28,7 +27,6 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private final RestAuthenticationApi api;

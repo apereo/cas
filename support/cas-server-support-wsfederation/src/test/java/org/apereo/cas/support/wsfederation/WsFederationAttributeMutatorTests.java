@@ -1,6 +1,5 @@
 package org.apereo.cas.support.wsfederation;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
 
@@ -13,10 +12,10 @@ import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link WsFederationAttributeMutator}.
+ *
  * @author John Gasper
  * @since 4.2.0
  */
-@Slf4j
 public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
 
     private static final String UPN_PARAM = "upn";
@@ -28,7 +27,7 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
         val values = new ArrayList<Object>();
         values.add("test@example.com");
         attributes.put(UPN_PARAM, values);
-        
+
         val instance = new WsFederationAttributeMutatorImpl();
         instance.modifyAttributes(attributes);
 

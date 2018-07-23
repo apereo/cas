@@ -1,8 +1,5 @@
 package org.apereo.cas.ticket.artifact;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;
@@ -10,6 +7,11 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -17,7 +19,6 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import lombok.Getter;
 
 /**
  * This is {@link SamlArtifactTicketImpl}.
@@ -29,7 +30,6 @@ import lombok.Getter;
 @Table(name = "SAML2_ARTIFACTS")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(SamlArtifactTicket.PREFIX)
-@Slf4j
 @Getter
 @NoArgsConstructor
 public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifactTicket {
@@ -65,7 +65,7 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
     @Lob
     @Column(name = "AUTHENTICATION", nullable = false, length = Integer.MAX_VALUE)
     private Authentication authentication;
-    
+
 
     /**
      * Constructs a new OAuth code with unique id for a service and authentication.
@@ -95,7 +95,7 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
     public boolean isFromNewLogin() {
         return true;
     }
-    
+
     @Override
     public boolean isValidFor(final Service serviceToValidate) {
         update();

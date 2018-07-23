@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -22,7 +22,6 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
-@Slf4j
 @SpringBootTest(classes = {
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class

@@ -1,10 +1,8 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -14,11 +12,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @ToString
 public abstract class AbstractCredential implements Credential, CredentialMetaData {
 
-    /** Serialization version marker. */
+    /**
+     * Serialization version marker.
+     */
     private static final long serialVersionUID = 8196868021183513898L;
 
     @Override

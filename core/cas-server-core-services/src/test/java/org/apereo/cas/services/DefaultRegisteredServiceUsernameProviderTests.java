@@ -1,11 +1,10 @@
 package org.apereo.cas.services;
 
-import lombok.val;
+import org.apereo.cas.authentication.principal.Principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.junit.Test;
 
@@ -19,7 +18,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class DefaultRegisteredServiceUsernameProviderTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultRegisteredServiceUsernameProvider.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -31,7 +29,7 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         val principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
         val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
-                RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
+            RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
         assertEquals(id, principal.getId().toUpperCase());
     }
 
@@ -42,17 +40,17 @@ public class DefaultRegisteredServiceUsernameProviderTests {
         val principal = mock(Principal.class);
         when(principal.getId()).thenReturn("id");
         val id = provider.resolveUsername(principal, RegisteredServiceTestUtils.getService(),
-                RegisteredServiceTestUtils.getRegisteredService("id"));
+            RegisteredServiceTestUtils.getRegisteredService("id"));
         assertEquals(id, principal.getId());
     }
 
     @Test
     public void verifyEquality() {
         val provider =
-                new DefaultRegisteredServiceUsernameProvider();
+            new DefaultRegisteredServiceUsernameProvider();
 
         val provider2 =
-                new DefaultRegisteredServiceUsernameProvider();
+            new DefaultRegisteredServiceUsernameProvider();
 
         assertEquals(provider, provider2);
     }

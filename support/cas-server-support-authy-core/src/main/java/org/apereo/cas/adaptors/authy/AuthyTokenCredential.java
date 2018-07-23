@@ -1,13 +1,13 @@
 package org.apereo.cas.adaptors.authy;
 
+import org.apereo.cas.authentication.Credential;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Credential;
 
 /**
  * This is {@link AuthyTokenCredential}.
@@ -15,7 +15,6 @@ import org.apereo.cas.authentication.Credential;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @ToString
 @Getter
 @Setter

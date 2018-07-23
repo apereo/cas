@@ -44,39 +44,31 @@ public class JRadiusServerImpl implements RadiusServer {
 
     private static final long serialVersionUID = -7122734096722096617L;
 
-    /**
-     * RADIUS protocol.
-     */
-    private final RadiusProtocol protocol;
-
-    /**
-     * Produces RADIUS client instances for authentication.
-     */
-    private final RadiusClientFactory radiusClientFactory;
-
-    /**
-     * Number of times to retry authentication when no response is received.
-     */
-    private int retries = DEFAULT_RETRY_COUNT;
-
-    private final String nasIpAddress;
-
-    private final String nasIpv6Address;
-
-    private long nasPort = -1;
-
-    private long nasPortId = -1;
-
-    private final String nasIdentifier;
-
-    private long nasRealPort = -1;
-
-    private long nasPortType = -1;
-
     static {
         AttributeFactory.loadAttributeDictionary("net.jradius.dictionary.AttributeDictionaryImpl");
         Security.addProvider(new BouncyCastleProvider());
     }
+
+    /**
+     * RADIUS protocol.
+     */
+    private final RadiusProtocol protocol;
+    /**
+     * Produces RADIUS client instances for authentication.
+     */
+    private final RadiusClientFactory radiusClientFactory;
+    private final String nasIpAddress;
+
+    private final String nasIpv6Address;
+    private final String nasIdentifier;
+    /**
+     * Number of times to retry authentication when no response is received.
+     */
+    private int retries = DEFAULT_RETRY_COUNT;
+    private long nasPort = -1;
+    private long nasPortId = -1;
+    private long nasRealPort = -1;
+    private long nasPortType = -1;
 
     /**
      * Instantiates a new J radius server.

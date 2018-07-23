@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket.device;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.ticket.Ticket;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
  * This is {@link DeviceUserCode}.

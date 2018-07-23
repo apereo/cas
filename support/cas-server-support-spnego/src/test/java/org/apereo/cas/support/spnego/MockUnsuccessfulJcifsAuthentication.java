@@ -1,11 +1,10 @@
 package org.apereo.cas.support.spnego;
 
-import java.security.Principal;
-
 import jcifs.spnego.Authentication;
 import jcifs.spnego.AuthenticationException;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
+import java.security.Principal;
 
 /**
  * @author Marc-Antoine Garrigue
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
  * @author Sven Rieckhoff
  * @since 5.2.0
  */
-@Slf4j
 @AllArgsConstructor
 public class MockUnsuccessfulJcifsAuthentication extends Authentication {
 

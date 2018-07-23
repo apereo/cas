@@ -1,11 +1,11 @@
 package org.apereo.cas.support.saml.util;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RandomUtils;
+
+import lombok.Setter;
+import lombok.val;
 import org.opensaml.saml.common.binding.artifact.AbstractSAMLArtifact;
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
@@ -21,7 +21,6 @@ import java.security.SecureRandom;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @Setter
 public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
@@ -39,16 +38,14 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      * SAML defines the source id as the server name.
      */
     private final byte[] sourceIdDigest;
-
-    /**
-     * Flag to indicate SAML2 compliance. Default is SAML1.1.
-     */
-    private boolean saml2compliant;
-
     /**
      * Random generator to construct the AssertionHandle.
      */
     private final SecureRandom random;
+    /**
+     * Flag to indicate SAML2 compliance. Default is SAML1.1.
+     */
+    private boolean saml2compliant;
 
     /**
      * Instantiates a new SAML compliant unique ticket id generator.

@@ -1,5 +1,14 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.BasicCredentialMetaData;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
+
 import jcifs.Config;
 import jcifs.UniAddress;
 import jcifs.netbios.NbtAddress;
@@ -13,14 +22,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -44,15 +45,12 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
     private static final int NTLM_TOKEN_TYPE_THREE = 3;
 
     private static final String DEFAULT_DOMAIN_CONTROLLER = Config.getProperty("jcifs.smb.client.domain");
-
-    private boolean loadBalance = true;
-
     /**
      * Sets domain controller. Will default if none is defined or passed.
      */
     private final String domainController;
-
     private final String includePattern;
+    private boolean loadBalance = true;
 
     public NtlmAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                      final boolean loadBalance, final String domainController, final String includePattern) {

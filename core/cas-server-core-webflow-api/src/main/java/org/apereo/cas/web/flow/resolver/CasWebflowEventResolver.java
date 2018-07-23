@@ -21,7 +21,7 @@ public interface CasWebflowEventResolver {
      * @return the event
      */
     Set<Event> resolve(RequestContext context);
-    
+
     /**
      * Resolve single event.
      *
@@ -32,6 +32,7 @@ public interface CasWebflowEventResolver {
 
     /**
      * Define the name of this even resolver.
+     *
      * @return name of the resolver.
      */
     default String getName() {

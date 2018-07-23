@@ -1,7 +1,6 @@
 package org.apereo.cas.web.pac4j;
 
 import lombok.val;
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;

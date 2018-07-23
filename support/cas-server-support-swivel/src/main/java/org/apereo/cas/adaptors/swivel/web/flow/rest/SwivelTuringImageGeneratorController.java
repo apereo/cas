@@ -1,13 +1,12 @@
 package org.apereo.cas.adaptors.swivel.web.flow.rest;
 
-import lombok.RequiredArgsConstructor;
-import lombok.val;
+import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +23,6 @@ import java.net.URL;
  * @since 5.2.0
  */
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 public class SwivelTuringImageGeneratorController {
     private final SwivelMultifactorProperties swivel;

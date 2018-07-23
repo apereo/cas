@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication;
 
-import lombok.val;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Test;
 
 import java.io.File;
@@ -18,7 +17,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class HttpBasedServiceCredentialTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "httpBasedServiceCredential.json");
@@ -28,8 +26,8 @@ public class HttpBasedServiceCredentialTests {
 
     @Test
     public void verifyProperUrl() {
-        assertEquals(CoreAuthenticationTestUtils.CONST_GOOD_URL, 
-                CoreAuthenticationTestUtils.getHttpBasedServiceCredentials().getCallbackUrl().toExternalForm());
+        assertEquals(CoreAuthenticationTestUtils.CONST_GOOD_URL,
+            CoreAuthenticationTestUtils.getHttpBasedServiceCredentials().getCallbackUrl().toExternalForm());
     }
 
     @Test
@@ -62,7 +60,7 @@ public class HttpBasedServiceCredentialTests {
     @Test
     public void verifySerializeAnHttpBasedServiceCredentialToJson() throws IOException {
         val credentialMetaDataWritten =
-                new HttpBasedServiceCredential(new URL(CNN_URL),
+            new HttpBasedServiceCredential(new URL(CNN_URL),
                 RegisteredServiceTestUtils.getRegisteredService(SOME_APP_URL));
 
         MAPPER.writeValue(JSON_FILE, credentialMetaDataWritten);

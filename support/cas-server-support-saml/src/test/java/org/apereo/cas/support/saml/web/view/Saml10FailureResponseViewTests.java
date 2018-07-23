@@ -1,14 +1,13 @@
 package org.apereo.cas.support.saml.web.view;
 
-import lombok.val;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
-import org.junit.Test;
+
+import lombok.val;
 import org.junit.Before;
+import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -24,7 +23,6 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.1
  */
-@Slf4j
 public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
     private Saml10FailureResponseView view;
@@ -34,8 +32,8 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
         val builder = new Saml10ObjectBuilder(this.configBean);
         view = new Saml10FailureResponseView(null, null, "attribute",
-                builder, new DefaultArgumentExtractor(new SamlServiceFactory(new Saml10ObjectBuilder(configBean))),
-                StandardCharsets.UTF_8.name(), 0, 30, null);
+            builder, new DefaultArgumentExtractor(new SamlServiceFactory(new Saml10ObjectBuilder(configBean))),
+            StandardCharsets.UTF_8.name(), 0, 30, null);
     }
 
     @Test
@@ -46,7 +44,7 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
         val description = "Validation failed";
         this.view.renderMergedOutputModel(
-                Collections.singletonMap("description", description), request, response);
+            Collections.singletonMap("description", description), request, response);
 
         val responseText = response.getContentAsString();
         assertTrue(responseText.contains("Status"));
