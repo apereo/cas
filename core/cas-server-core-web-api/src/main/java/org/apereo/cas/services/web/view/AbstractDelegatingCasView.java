@@ -27,7 +27,7 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     /**
      * View to delegate.
      */
-    protected View view;
+    protected final View view;
 
     public AbstractDelegatingCasView(final boolean successResponse,
                                      final ProtocolAttributeEncoder protocolAttributeEncoder,

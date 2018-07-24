@@ -8,6 +8,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 
+import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -31,8 +32,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttributeEncoder {
-
-
     private final CipherExecutor<String, String> cacheCredentialCipherExecutor;
 
     /**
@@ -68,19 +67,40 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
             .filter(getSanitizingAttributeNamePredicate())
             .map(s -> Pair.of(EncodingUtils.hexEncode(s.getBytes(StandardCharsets.UTF_8)), attributes.get(s)))
             .collect(Collectors.toSet());
+
         if (!attrs.isEmpty()) {
             LOGGER.warn("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs);
             attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
             attrs.forEach(p -> {
                 val key = p.getKey();
                 LOGGER.debug("Sanitized attribute name to be [{}]", key);
-                attributes.put(key, p.getValue());
+                attributes.put(key, transformAttributeValueIfNecessary(p.getValue()));
             });
         }
     }
 
+    private static void sanitizeAndTransformAttributeValues(final Map<String, Object> attributes,
+                                                            final RegisteredService registeredService) {
+        LOGGER.debug("Sanitizing attribute values in preparation of the final validation response");
+        attributes.entrySet()
+            .stream()
+            .filter(entry -> getBinaryAttributeValuePredicate().test(entry.getValue()))
+            .forEach(entry -> attributes.put(entry.getKey(), transformAttributeValueIfNecessary(entry.getValue())));
+    }
+
+    private static Object transformAttributeValueIfNecessary(final Object attributeValue) {
+        if (getBinaryAttributeValuePredicate().test(attributeValue)) {
+            return EncodingUtils.hexEncode((byte[]) attributeValue);
+        }
+        return attributeValue;
+    }
+
     private static Predicate<String> getSanitizingAttributeNamePredicate() {
         return s -> s.contains(":") || s.contains("@");
+    }
+
+    private static Predicate<Object> getBinaryAttributeValuePredicate() {
+        return Predicates.instanceOf(byte[].class);
     }
 
     /**
@@ -166,5 +186,6 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode, cipher, registeredService);
         encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode, cipher, registeredService);
         sanitizeAndTransformAttributeNames(attributes, registeredService);
+        sanitizeAndTransformAttributeValues(attributes, registeredService);
     }
 }
