@@ -117,7 +117,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
 
         try (val connection = createConnection()) {
             val searchOperation = new SearchOperation(connection);
-            this.searchRequest.getSearchFilter().setParameter(0, remoteHostName);
+            this.searchRequest.getSearchFilter().setParameter("host", remoteHostName);
 
             LOGGER.debug("Using search filter [{}] on baseDn [{}]",
                 this.searchRequest.getSearchFilter().format(),

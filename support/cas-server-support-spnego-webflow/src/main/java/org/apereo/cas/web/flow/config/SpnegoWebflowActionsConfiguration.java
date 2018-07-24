@@ -1,5 +1,8 @@
 package org.apereo.cas.web.flow.config;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -13,7 +16,6 @@ import org.apereo.cas.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
-import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,9 +25,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.webflow.execution.Action;
 
-import java.util.ArrayList;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import lombok.val;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link SpnegoWebflowActionsConfiguration}.
@@ -96,8 +97,7 @@ public class SpnegoWebflowActionsConfiguration {
     public Action ldapSpnegoClientAction() {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(spnegoProperties.getLdap());
-        val filter = LdapUtils.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter(),
-            "host", new ArrayList<>(0));
+        val filter = LdapUtils.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter());
 
         val searchRequest = LdapUtils.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
         return new LdapSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
