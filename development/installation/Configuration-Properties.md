@@ -1950,13 +1950,15 @@ strategies when collecting principal attributes:
 # cas.authn.wsfed[0].identityProviderUrl=https://adfs.example.org/adfs/ls/
 # cas.authn.wsfed[0].identityProviderIdentifier=https://adfs.example.org/adfs/services/trust
 # cas.authn.wsfed[0].relyingPartyIdentifier=urn:cas:localhost
-# cas.authn.wsfed[0].attributesType=WSFED
 # cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.crt
-# cas.authn.wsfed[0].tolerance=10000
 # cas.authn.wsfed[0].identityAttribute=upn
+
+# cas.authn.wsfed[0].attributesType=WSFED
+# cas.authn.wsfed[0].tolerance=10000
 # cas.authn.wsfed[0].attributeResolverEnabled=true
 # cas.authn.wsfed[0].autoRedirect=true
 # cas.authn.wsfed[0].name=
+# cas.authn.wsfed[0].attributeMutatorScript.location=file:/etc/cas/config/wsfed-attr.groovy
 
 # cas.authn.wsfed[0].principal.principalAttribute=
 # cas.authn.wsfed[0].principal.returnNull=false
