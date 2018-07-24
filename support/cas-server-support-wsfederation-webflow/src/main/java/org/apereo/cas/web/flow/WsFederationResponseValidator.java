@@ -82,10 +82,13 @@ public class WsFederationResponseValidator {
             }
 
             if (credential != null && credential.isValid(rpId, configuration.getIdentityProviderIdentifier(), configuration.getTolerance())) {
-                LOGGER.debug("Validated assertion for the created credential successfully");
+                val currentAttributes = credential.getAttributes();
+                LOGGER.debug("Validated assertion for the created credential successfully and located attributes [{}]", currentAttributes);
                 if (configuration.getAttributeMutator() != null) {
                     LOGGER.debug("Modifying credential attributes based on [{}]", configuration.getAttributeMutator().getClass().getSimpleName());
-                    configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
+                    val attributes = configuration.getAttributeMutator().modifyAttributes(currentAttributes);
+                    LOGGER.debug("Finalized credential attributes are [{}]", attributes);
+                    credential.setAttributes(attributes);
                 }
             } else {
                 LOGGER.error("SAML assertions are blank or no longer valid based on RP identifier [{}] and identity provider identifier [{}]",
