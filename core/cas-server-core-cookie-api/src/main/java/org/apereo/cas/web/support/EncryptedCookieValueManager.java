@@ -24,7 +24,7 @@ public class EncryptedCookieValueManager implements CookieValueManager {
     /**
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */
-    private final CipherExecutor<Serializable, Serializable> cipherExecutor;
+    private final transient CipherExecutor<Serializable, Serializable> cipherExecutor;
 
     @Override
     public final String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
