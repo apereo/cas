@@ -41,6 +41,9 @@ public class PrincipalAttributesProperties implements Serializable {
     /**
      * Indicates the global cache expiration period, once attributes
      * are fetched from the underlying attribute repository.
+     * A zero or negative value indicates that no attribute caching
+     * should take place where attributes must always be fetched
+     * from the source.
      */
     private int expirationTime = 30;
 

@@ -20,6 +20,7 @@ import java.io.Serializable;
 @Slf4j
 @RequiredArgsConstructor
 public class EncryptedCookieValueManager implements CookieValueManager {
+    private static final long serialVersionUID = 6362136147071376270L;
     /**
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */

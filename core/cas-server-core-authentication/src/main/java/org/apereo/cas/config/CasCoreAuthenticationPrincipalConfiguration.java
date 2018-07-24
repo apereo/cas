@@ -96,7 +96,8 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     public PrincipalAttributesRepository globalPrincipalAttributeRepository() {
         val props = casProperties.getAuthn().getAttributeRepository();
         val cacheTime = props.getExpirationTime();
-        if (cacheTime < 0) {
+        if (cacheTime <= 0) {
+            LOGGER.warn("Caching for the global principal attribute repository is disabled");
             return new DefaultPrincipalAttributesRepository();
         }
         return new CachingPrincipalAttributesRepository(props.getExpirationTimeUnit().toUpperCase(), cacheTime);
