@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation;
 
+import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;

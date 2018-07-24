@@ -1,5 +1,7 @@
 package org.apereo.cas.support.wsfederation;
 
+import org.apereo.cas.support.wsfederation.attributes.WsFederationAttributeMutator;
+
 import lombok.val;
 import org.junit.Test;
 
@@ -41,7 +43,7 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
         private static final long serialVersionUID = -1858140387002752668L;
 
         @Override
-        public void modifyAttributes(final Map<String, List<Object>> attributes) {
+        public Map<String, List<Object>> modifyAttributes(final Map<String, List<Object>> attributes) {
             List<Object> values = new ArrayList<>();
             values.add("newtest");
             attributes.put("test", values);
@@ -49,6 +51,7 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
             values = new ArrayList<>();
             values.add("testing");
             attributes.put(UPN_PARAM, values);
+            return attributes;
         }
     }
 }

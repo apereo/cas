@@ -65,32 +65,34 @@ in ADFS to use the `certificate.crt` file for encryption.
 
 ## Modifying ADFS Claims
 
-The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but
-before they are inserted into the CAS user principal. For this to happen, you need
-to put together an implementation of `WsFederationAttributeMutator` that changes and manipulates ADFS claims:
+The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but before they are inserted into the CAS user principal.
+The manipulation of the attributes is carried out using an *attribute mutator* where its logic may be implemented inside a Groovy script and whose
+path is taught to CAS via settings.
 
-```java
-package org.apereo.cas.support.wsfederation;
+The script may take on the following form:
 
-@Configuration("myWsFedConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MyWsFedConfiguration {
+```groovy
+import org.apereo.cas.*
+import java.util.*
+import org.apereo.cas.authentication.*
 
-  @Bean
-  public WsFederationAttributeMutator wsfedAttributeMutator() {
-      return new WsFederationAttributeMutatorImpl(...);
-  }
-}
-
-public class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
-    public void modifyAttributes(...) {
-        ...
-    }
+def Map run(final Object... args) {
+    def attributes = args[0]
+    def logger = args[1]
+    logger.warn("Mutating attributes {}", attributes)
+    return [upn: ["CASUser"]]
 }
 ```
 
-Finally, ensure that the attributes sent from ADFS are available and mapped in
-your `attributeRepository` configuration.
+The parameters passed to the script are as follows:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `attributes`          | A current `Map` of attributes provided from ADFS.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+Note that the execution result of the script *MUST* ensure that attributes are collected into a `Map`
+where the attribute name, the key, is a simple `String` and the attribute value is transformed into a collection.
 
 ## Handling CAS Logout
 
