@@ -13,6 +13,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 
 /**
  * Extends CookieGenerator to allow you to retrieve a value from a request.
@@ -25,9 +26,10 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 @Setter
-public class CookieRetrievingCookieGenerator extends CookieGenerator {
+public class CookieRetrievingCookieGenerator extends CookieGenerator implements Serializable {
 
     private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
+    private static final long serialVersionUID = -4926982428809856313L;
 
     /**
      * The maximum age the cookie should be remembered for.

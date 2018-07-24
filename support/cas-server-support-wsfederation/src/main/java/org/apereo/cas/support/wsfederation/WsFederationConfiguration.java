@@ -37,22 +37,33 @@ public class WsFederationConfiguration implements Serializable {
     private static final long serialVersionUID = 2310859477512242659L;
 
     private static final String QUERYSTRING = "?wa=wsignin1.0&wtrealm=%s&wctx=%s";
+
     private transient Resource encryptionPrivateKey;
     private transient Resource encryptionCertificate;
+
     private String encryptionPrivateKeyPassword;
     private String identityAttribute;
     private String identityProviderIdentifier;
     private String identityProviderUrl;
+
     private transient List<Resource> signingCertificateResources = new ArrayList<>();
+
     private String relyingPartyIdentifier;
+
     private long tolerance;
+
     private boolean autoRedirect;
+
     private WsFedPrincipalResolutionAttributesType attributesType;
+
     private WsFederationAttributeMutator attributeMutator;
+
     private transient List<Credential> signingWallet;
+
     private String name;
     private String id = UUID.randomUUID().toString();
-    private CookieRetrievingCookieGenerator cookieGenerator;
+
+    private transient CookieRetrievingCookieGenerator cookieGenerator;
 
     /**
      * getSigningCredential loads up an X509Credential from a file.

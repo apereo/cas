@@ -310,10 +310,14 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     @Bean
     @ConditionalOnMissingBean(name = "cachingAttributeRepository")
     public IPersonAttributeDao cachingAttributeRepository() {
+        val props = casProperties.getAuthn().getAttributeRepository();
+        if (props.getExpirationTime() <= 0) {
+            LOGGER.warn("Attribute repository caching is disabled");
+            return aggregatingAttributeRepository();
+        }
+
         val impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
-
-        val props = casProperties.getAuthn().getAttributeRepository();
         final Cache graphs = Caffeine.newBuilder()
             .maximumSize(props.getMaximumCacheSize())
             .expireAfterWrite(props.getExpirationTime(), TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase()))
@@ -321,8 +325,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         impl.setUserInfoCache(graphs.asMap());
         impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
 
-        LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)",
-            props.getExpirationTime());
+        LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)", props.getExpirationTime());
         return impl;
     }
 

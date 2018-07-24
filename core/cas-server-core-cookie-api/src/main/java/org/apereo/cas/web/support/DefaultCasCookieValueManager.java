@@ -21,6 +21,7 @@ import java.io.Serializable;
 public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
     private static final char COOKIE_FIELD_SEPARATOR = '@';
     private static final int COOKIE_FIELDS_LENGTH = 3;
+    private static final long serialVersionUID = -2696352696382374584L;
 
     public DefaultCasCookieValueManager(final CipherExecutor<Serializable, Serializable> cipherExecutor) {
         super(cipherExecutor);
