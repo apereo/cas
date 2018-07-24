@@ -57,6 +57,9 @@ public class CollectionUtils {
     @SneakyThrows
     public static <T extends Collection> T toCollection(final Object obj, final Class<T> clazz) {
         val results = toCollection(obj);
+        if (clazz.isInterface()) {
+            throw new IllegalArgumentException("Cannot accept an interface " + clazz.getSimpleName() + " to create a new object instance");
+        }
         val col = clazz.getDeclaredConstructor().newInstance();
         col.addAll(results);
         return col;

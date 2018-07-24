@@ -1,4 +1,4 @@
-package org.apereo.cas.support.wsfederation;
+package org.apereo.cas.support.wsfederation.attributes;
 
 import java.io.Serializable;
 import java.util.List;
@@ -18,6 +18,16 @@ public interface WsFederationAttributeMutator extends Serializable {
      * are assigned to the credential.
      *
      * @param attributes the attribute returned by the IdP.
+     * @return the map
      */
-    void modifyAttributes(Map<String, List<Object>> attributes);
+    Map<String, List<Object>> modifyAttributes(Map<String, List<Object>> attributes);
+
+    /**
+     * NoOp ws federation attribute mutator.
+     *
+     * @return the ws federation attribute mutator
+     */
+    static WsFederationAttributeMutator noOp() {
+        return (WsFederationAttributeMutator) attributes -> attributes;
+    }
 }

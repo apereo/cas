@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.wsfed;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +34,7 @@ public class WsFederationDelegationProperties implements Serializable {
      * The entity id or the identifier of the Wsfed instance.
      */
     @RequiredProperty
-    private String identityProviderIdentifier = "https://adfs.example.org/adfs/services/trust";
+    private String identityProviderIdentifier = "http://adfs.example.org/adfs/services/trust";
 
     /**
      * Wsfed identity provider url.
@@ -91,6 +92,7 @@ public class WsFederationDelegationProperties implements Serializable {
      */
     private String encryptionPrivateKeyPassword = "NONE";
 
+
     /**
      * Principal resolution settings.
      */
@@ -103,8 +105,23 @@ public class WsFederationDelegationProperties implements Serializable {
     private String name;
 
     /**
+     * Path to attribute mutator groovy script
+     * that allows one to modify wsfed attributes before
+     * establishing a final principal.
+     */
+    private Groovy attributeMutatorScript = new Groovy();
+
+    /**
      * Signing/encryption settings related to managing the cookie that is used to keep track of the session.
      */
     @NestedConfigurationProperty
     private WsFederationDelegatedCookieProperties cookie = new WsFederationDelegatedCookieProperties();
+
+    @RequiresModule(name = "cas-server-support-wsfederation-webflow", automated = true)
+    @Getter
+    @Setter
+    public static class Groovy extends SpringResourceProperties {
+
+        private static final long serialVersionUID = 8079027843747126083L;
+    }
 }
