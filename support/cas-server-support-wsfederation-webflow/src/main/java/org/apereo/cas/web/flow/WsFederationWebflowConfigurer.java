@@ -43,6 +43,7 @@ public class WsFederationWebflowConfigurer extends AbstractCasWebflowConfigurer 
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_PROCEED, currentStartState);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_STOP, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
+            createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_STOP_WEBFLOW);
             registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
             setStartState(flow, actionState);
         }
