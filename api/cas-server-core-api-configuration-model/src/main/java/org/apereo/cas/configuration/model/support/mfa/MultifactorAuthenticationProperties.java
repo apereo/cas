@@ -189,7 +189,13 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * Activate and configure a multifactor authentication provider via Google Authenticator.
      */
     @NestedConfigurationProperty
-    private GAuthMultifactorProperties gauth = new GAuthMultifactorProperties();
+    private GoogleAuthenticatorMultifactorProperties gauth = new GoogleAuthenticatorMultifactorProperties();
+
+    /**
+     * Activate and configure a multifactor authentication provider via CAS itself.
+     */
+    @NestedConfigurationProperty
+    private CasSimpleMultifactorProperties simple = new CasSimpleMultifactorProperties();
 
     /**
      * Activate and configure a multifactor authentication provider via Duo Security.

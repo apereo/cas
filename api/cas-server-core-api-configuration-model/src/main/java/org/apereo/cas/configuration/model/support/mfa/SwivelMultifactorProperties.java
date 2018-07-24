@@ -47,6 +47,11 @@ public class SwivelMultifactorProperties extends BaseMultifactorProviderProperti
      */
     private boolean ignoreSslErrors;
 
+    /**
+     * Indicates whether this provider should support trusted devices.
+     */
+    private boolean trustedDeviceEnabled;
+
     public SwivelMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
     }

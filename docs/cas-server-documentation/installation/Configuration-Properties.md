@@ -2090,6 +2090,22 @@ This section controls how that process should behave.
 # cas.authn.mfa.trusted.cleaner.enabled=true
 ```
 
+### Simple Multifactor Authentication
+
+To learn more about this topic, [please review this guide](Simple-Multifactor-Authentication.html).
+
+```properties
+# cas.authn.mfa.simple.name=
+# cas.authn.mfa.simple.timeToKillInSeconds=30
+```
+
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.authn.mfa.simple`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.mfa.simple`.
+
+Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass)
+under the configuration key `cas.authn.mfa.simple`.
+
 ### Google Authenticator
 
 To learn more about this topic, [please review this guide](GoogleAuthenticator-Authentication.html).
