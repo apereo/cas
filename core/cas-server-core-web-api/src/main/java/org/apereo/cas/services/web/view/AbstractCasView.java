@@ -72,13 +72,14 @@ public abstract class AbstractCasView extends AbstractView {
      */
     private static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
         val entries = attributes.entrySet();
-        return entries.stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-            val value = entry.getValue();
-            if (value instanceof Collection || value instanceof Map || value instanceof Object[] || value instanceof Iterator || value instanceof Enumeration) {
-                return value;
-            }
-            return CollectionUtils.wrap(value);
-        }));
+        return entries.stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                val value = entry.getValue();
+                if (value instanceof Collection || value instanceof Map || value instanceof Object[] || value instanceof Iterator || value instanceof Enumeration) {
+                    return value;
+                }
+                return CollectionUtils.wrap(value);
+            }));
     }
 
     /**
