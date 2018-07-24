@@ -90,7 +90,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
     private static Object transformAttributeValueIfNecessary(final Object attributeValue) {
         if (getBinaryAttributeValuePredicate().test(attributeValue)) {
-            return EncodingUtils.hexEncode((byte[]) attributeValue);
+            return EncodingUtils.encodeBase64((byte[]) attributeValue);
         }
         return attributeValue;
     }
