@@ -2438,7 +2438,7 @@ under the configuration key `cas.authn.samlIdp.metadata.jpa`.
  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
  under the configuration key `cas.authn.samlIdp.metadata`.
  
- #### SAML Metadata REST
+#### SAML Metadata REST
  
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
 under the configuration key `cas.authn.samlIdp.metadata.rest`.
@@ -2479,6 +2479,7 @@ under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
 # cas.authn.samlIdp.response.defaultAuthenticationContextClass=
 # cas.authn.samlIdp.response.defaultAttributeNameFormat=uri
 # cas.authn.samlIdp.response.signError=false
+# cas.authn.samlIdp.response.skewAllowance=5
 # cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
 ```
