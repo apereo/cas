@@ -3225,6 +3225,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
+# cas.authn.samlIdp.response.skewAllowance=5
 
 # cas.authn.samlIdp.algs.overrideSignatureCanonicalizationAlgorithm=
 # cas.authn.samlIdp.algs.overrideDataEncryptionAlgorithms=
