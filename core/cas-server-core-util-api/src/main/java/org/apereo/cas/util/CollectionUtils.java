@@ -311,8 +311,12 @@ public class CollectionUtils {
                     list.add((T) it.next());
                 }
             } else if (source.getClass().isArray()) {
-                val elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
-                list.addAll((List) elements);
+                if (source.getClass().isAssignableFrom(byte[].class)) {
+                    list.add(source);
+                } else {
+                    val elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
+                    list.addAll((List) elements);
+                }
             } else {
                 list.add(source);
             }

@@ -150,7 +150,12 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                     LOGGER.debug("Found principal attribute value [{}]; removing [{}] from attribute map.", extractedPrincipalId, this.principalAttributeName);
                 }
             } else {
-                convertedAttributes.put(key, values.size() == 1 ? CollectionUtils.firstElement(values).get().toString() : values);
+                if (values.size() == 1) {
+                    val value = CollectionUtils.firstElement(values).get();
+                    convertedAttributes.put(key, value);
+                } else {
+                    convertedAttributes.put(key, values);
+                }
             }
         });
         return Pair.of(principalId[0], convertedAttributes);
