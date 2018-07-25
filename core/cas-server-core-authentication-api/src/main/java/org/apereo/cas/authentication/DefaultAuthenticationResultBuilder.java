@@ -70,7 +70,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
             LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
 
-            authenticationBuilder.addSuccesses(authn.getSuccesses())
+            authenticationBuilder
+                .addSuccesses(authn.getSuccesses())
                 .addFailures(authn.getFailures())
                 .addCredentials(authn.getCredentials());
         });

@@ -327,7 +327,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             val finalAuthentication = builder.build();
 
-            val audit = AuditableContext.builder().service(selectedService)
+            val audit = AuditableContext.builder()
+                .service(selectedService)
                 .authentication(finalAuthentication)
                 .registeredService(registeredService)
                 .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)

@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 
@@ -23,6 +24,7 @@ public class CasPersonDirectoryTestConfiguration {
         return CollectionUtils.wrap(attributeRepository());
     }
 
+    @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean
     public IPersonAttributeDao attributeRepository() {
         final Map<String, List<Object>> attrs =

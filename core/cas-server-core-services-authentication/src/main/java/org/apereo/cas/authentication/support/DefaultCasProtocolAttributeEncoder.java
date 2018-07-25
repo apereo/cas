@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import com.google.common.base.Predicates;
@@ -84,8 +85,12 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         LOGGER.debug("Sanitizing attribute values in preparation of the final validation response");
         attributes.entrySet()
             .stream()
-            .filter(entry -> getBinaryAttributeValuePredicate().test(entry.getValue()))
-            .forEach(entry -> attributes.put(entry.getKey(), transformAttributeValueIfNecessary(entry.getValue())));
+            .forEach(entry -> {
+                val values = CollectionUtils.toCollection(entry.getValue());
+                values.stream()
+                    .filter(v -> getBinaryAttributeValuePredicate().test(v))
+                    .forEach(v -> attributes.put(entry.getKey(), transformAttributeValueIfNecessary(v)));
+            });
     }
 
     private static Object transformAttributeValueIfNecessary(final Object attributeValue) {

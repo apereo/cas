@@ -82,6 +82,7 @@ public class CasRegisteredServicesTestConfiguration {
         val policy1 = new ReturnAllowedAttributeReleasePolicy();
         policy1.setAuthorizedToReleaseCredentialPassword(true);
         policy1.setAuthorizedToReleaseProxyGrantingTicket(true);
+        policy1.setAllowedAttributes(CollectionUtils.wrap("binaryAttribute"));
         svc5.setAttributeReleasePolicy(policy1);
         svc5.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         svc5.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
