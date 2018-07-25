@@ -1,8 +1,5 @@
 package org.apereo.cas.web.flow.config;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -15,6 +12,8 @@ import org.apereo.cas.web.flow.client.HostNameSpnegoKnownClientSystemsFilterActi
 import org.apereo.cas.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,7 +23,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.webflow.execution.Action;
 
-import lombok.val;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link SpnegoWebflowActionsConfiguration}.
