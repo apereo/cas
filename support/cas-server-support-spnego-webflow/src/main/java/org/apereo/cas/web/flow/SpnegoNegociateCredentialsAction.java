@@ -86,10 +86,6 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
         this.mixedModeAuthentication = mixedModeAuthenticationEnabled;
 
         this.supportedBrowser = supportedBrowser;
-        this.supportedBrowser.add("MSIE");
-        this.supportedBrowser.add("Trident");
-        this.supportedBrowser.add("Firefox");
-        this.supportedBrowser.add("AppleWebKit");
     }
 
     @Override
