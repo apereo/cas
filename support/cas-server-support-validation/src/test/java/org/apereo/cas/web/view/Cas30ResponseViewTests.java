@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
@@ -25,10 +26,15 @@ import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -44,6 +50,7 @@ import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -57,6 +64,7 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"})
 @Slf4j
+@Import(Cas30ResponseViewTests.AttributeRepositoryTestConfiguration.class)
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
 
     @Autowired
@@ -82,7 +90,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
         return new ServiceValidateController(
             getValidationSpecification(),
-            getAuthenticationSystemSupport(), getServicesManager(),
+            getAuthenticationSystemSupport(),
+            getServicesManager(),
             getCentralAuthenticationService(),
             getProxyHandler(),
             getArgumentExtractor(),
@@ -185,5 +194,26 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
         val cipherData = cipher.doFinal(cred64);
         return new String(cipherData, StandardCharsets.UTF_8);
+    }
+
+    @Test
+    public void verifyViewBinaryAttributes() throws Exception {
+        val attributes = renderView();
+        assertTrue(attributes.containsKey("binaryAttribute"));
+        val binaryAttr = attributes.get("binaryAttribute");
+        assertEquals("binaryAttributeValue", EncodingUtils.decodeBase64ToString(binaryAttr.toString()));
+    }
+
+    @TestConfiguration
+    public static class AttributeRepositoryTestConfiguration {
+        @Bean
+        public IPersonAttributeDao attributeRepository() {
+            final Map<String, List<Object>> attrs =
+                CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
+                    "eduPersonAffiliation", CollectionUtils.wrap("developer"),
+                    "groupMembership", CollectionUtils.wrap("adopters"),
+                    "binaryAttribute", CollectionUtils.wrap("binaryAttributeValue".getBytes(StandardCharsets.UTF_8)));
+            return new StubPersonAttributeDao(attrs);
+        }
     }
 }

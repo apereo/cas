@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -49,13 +50,19 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
         val idAttribute = this.configuration.getIdentityAttribute();
         if (attributes.containsKey(idAttribute)) {
             LOGGER.debug("Extracting principal id from attribute [{}]", this.configuration.getIdentityAttribute());
-            val idAttributeAsList = attributes.get(this.configuration.getIdentityAttribute());
+            val idAttributeAsList = CollectionUtils.toCollection(attributes.get(this.configuration.getIdentityAttribute()));
             if (idAttributeAsList.size() > 1) {
                 LOGGER.warn("Found multiple values for id attribute [{}].", idAttribute);
+            } else {
+                LOGGER.debug("Found principal id attribute as [{}]", idAttributeAsList);
             }
-            val principalId = idAttributeAsList.get(0).toString();
-            LOGGER.debug("Principal Id extracted from credentials: [{}]", principalId);
-            return principalId;
+            
+            val result = CollectionUtils.firstElement(idAttributeAsList);
+            if (result.isPresent()) {
+                val principalId = result.get().toString();
+                LOGGER.debug("Principal Id extracted from credentials: [{}]", principalId);
+                return principalId;
+            }
         }
         LOGGER.warn("Credential attributes do not include an attribute for [{}]. "
             + "This will prohibit CAS to construct a meaningful authenticated principal. "

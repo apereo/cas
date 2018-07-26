@@ -908,9 +908,9 @@ You will also need to ensure `grouper.client.properties` is available on the cla
 with the following configured properties:
 
 ```properties
-grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
-grouperClient.webService.login = banderson
-grouperClient.webService.password = password
+# grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
+# grouperClient.webService.login = banderson
+# grouperClient.webService.password = password
 ```
 
 ### Couchbase
@@ -1114,6 +1114,29 @@ Adaptive authentication can also react to specific times in order to trigger mul
 # cas.authn.adaptive.requireTimedMultifactor[0].onOrAfterHour=20
 # cas.authn.adaptive.requireTimedMultifactor[0].onOrBeforeHour=7
 # cas.authn.adaptive.requireTimedMultifactor[0].onDays=Saturday,Sunday
+```
+
+### IP Address Intelligence
+
+Examine the client IP address via the following strategies.
+
+#### REST Adaptive Authentication
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.adaptive.ipIntel.rest`.
+
+#### Groovy Adaptive Authentication
+
+```properties
+# cas.authn.adaptive.ipIntel.groovy.location=file:/etc/cas/config/GroovyIPAddressIntelligenceService.groovy
+```
+
+#### BlackDot Adaptive Authentication
+
+```properties
+# cas.authn.adaptive.ipIntel.blackDot.url=http://check.getipintel.net/check.php?ip=%s
+# cas.authn.adaptive.ipIntel.blackDot.emailAddress=
+# cas.authn.adaptive.ipIntel.blackDot.mode=DYNA_LIST
 ```
 
 ## Surrogate Authentication
@@ -1950,13 +1973,15 @@ strategies when collecting principal attributes:
 # cas.authn.wsfed[0].identityProviderUrl=https://adfs.example.org/adfs/ls/
 # cas.authn.wsfed[0].identityProviderIdentifier=https://adfs.example.org/adfs/services/trust
 # cas.authn.wsfed[0].relyingPartyIdentifier=urn:cas:localhost
-# cas.authn.wsfed[0].attributesType=WSFED
 # cas.authn.wsfed[0].signingCertificateResources=classpath:adfs-signing.crt
-# cas.authn.wsfed[0].tolerance=10000
 # cas.authn.wsfed[0].identityAttribute=upn
+
+# cas.authn.wsfed[0].attributesType=WSFED
+# cas.authn.wsfed[0].tolerance=10000
 # cas.authn.wsfed[0].attributeResolverEnabled=true
 # cas.authn.wsfed[0].autoRedirect=true
 # cas.authn.wsfed[0].name=
+# cas.authn.wsfed[0].attributeMutatorScript.location=file:/etc/cas/config/wsfed-attr.groovy
 
 # cas.authn.wsfed[0].principal.principalAttribute=
 # cas.authn.wsfed[0].principal.returnNull=false
@@ -2089,6 +2114,22 @@ This section controls how that process should behave.
 # cas.authn.mfa.trusted.cleaner.schedule.repeatInterval=60000
 # cas.authn.mfa.trusted.cleaner.enabled=true
 ```
+
+### Simple Multifactor Authentication
+
+To learn more about this topic, [please review this guide](Simple-Multifactor-Authentication.html).
+
+```properties
+# cas.authn.mfa.simple.name=
+# cas.authn.mfa.simple.timeToKillInSeconds=30
+```
+
+Email notifications settings for this feature are available [here](Configuration-Properties-Common.html#email-notifications) 
+under the configuration key `cas.authn.mfa.simple`. SMS notifications settings for this feature are 
+available [here](Configuration-Properties-Common.html#sms-notifications) under the configuration key `cas.authn.mfa.simple`.
+
+Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass)
+under the configuration key `cas.authn.mfa.simple`.
 
 ### Google Authenticator
 

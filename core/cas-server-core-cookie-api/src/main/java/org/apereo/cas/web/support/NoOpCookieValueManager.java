@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class NoOpCookieValueManager implements CookieValueManager {
 
+    private static final long serialVersionUID = -8464839674747772197L;
+
     @Override
     public String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
         return givenCookieValue;
