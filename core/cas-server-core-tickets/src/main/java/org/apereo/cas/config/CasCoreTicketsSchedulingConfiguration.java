@@ -87,7 +87,11 @@ public class CasCoreTicketsSchedulingConfiguration {
         @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.startDelay:PT30S}",
                 fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeatInterval:PT120S}")
         public void run() {
-            this.ticketRegistryCleaner.clean();
+            try {
+                this.ticketRegistryCleaner.clean();
+            } catch (final Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
         }
     }
 }
