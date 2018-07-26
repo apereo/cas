@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.adaptive;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.util.HttpRequestUtils;
 
@@ -11,6 +12,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -35,8 +37,8 @@ public class DefaultAdaptiveAuthenticationPolicyTests {
         val props = new AdaptiveAuthenticationProperties();
         props.setRejectIpAddresses("185\\.86.+");
         val service = mock(GeoLocationService.class);
-        val p = new DefaultAdaptiveAuthenticationPolicy(service, props);
-        assertFalse(p.apply(USER_AGENT, new GeoLocationRequest(51.5, -0.118)));
+        val p = new DefaultAdaptiveAuthenticationPolicy(service, IPAddressIntelligenceService.banned(), props);
+        assertFalse(p.apply(new MockRequestContext(), USER_AGENT, new GeoLocationRequest(51.5, -0.118)));
     }
 
     @Test
@@ -50,8 +52,8 @@ public class DefaultAdaptiveAuthenticationPolicyTests {
         val props = new AdaptiveAuthenticationProperties();
         props.setRejectBrowsers("Mozilla/5.0.+");
         val service = mock(GeoLocationService.class);
-        val p = new DefaultAdaptiveAuthenticationPolicy(service, props);
-        assertFalse(p.apply(USER_AGENT, new GeoLocationRequest(51.5, -0.118)));
+        val p = new DefaultAdaptiveAuthenticationPolicy(service, IPAddressIntelligenceService.allowed(), props);
+        assertFalse(p.apply(new MockRequestContext(), USER_AGENT, new GeoLocationRequest(51.5, -0.118)));
     }
 
     @Test
@@ -71,8 +73,8 @@ public class DefaultAdaptiveAuthenticationPolicyTests {
         response.setLatitude(Double.valueOf(geoRequest.getLatitude()));
         response.setLongitude(Double.valueOf(geoRequest.getLongitude()));
         when(service.locate(anyString(), any())).thenReturn(response);
-        val p = new DefaultAdaptiveAuthenticationPolicy(service, props);
-        assertFalse(p.apply(USER_AGENT, geoRequest));
+        val p = new DefaultAdaptiveAuthenticationPolicy(service, IPAddressIntelligenceService.allowed(), props);
+        assertFalse(p.apply(new MockRequestContext(), USER_AGENT, geoRequest));
     }
 
     @Test
@@ -88,15 +90,15 @@ public class DefaultAdaptiveAuthenticationPolicyTests {
         response.setLatitude(Double.valueOf(geoRequest.getLatitude()));
         response.setLongitude(Double.valueOf(geoRequest.getLongitude()));
         when(service.locate(anyString(), any())).thenReturn(response);
-        val p = new DefaultAdaptiveAuthenticationPolicy(service, props);
-        assertTrue(p.apply(USER_AGENT, geoRequest));
+        val p = new DefaultAdaptiveAuthenticationPolicy(service, IPAddressIntelligenceService.allowed(), props);
+        assertTrue(p.apply(new MockRequestContext(), USER_AGENT, geoRequest));
     }
 
     @Test
     public void verifyActionWithNoClientInfo() {
         val props = new AdaptiveAuthenticationProperties();
         val service = mock(GeoLocationService.class);
-        val p = new DefaultAdaptiveAuthenticationPolicy(service, props);
-        assertTrue(p.apply("something", new GeoLocationRequest()));
+        val p = new DefaultAdaptiveAuthenticationPolicy(service, IPAddressIntelligenceService.allowed(), props);
+        assertTrue(p.apply(new MockRequestContext(), "something", new GeoLocationRequest()));
     }
 }

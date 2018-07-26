@@ -462,7 +462,7 @@ public class DelegatedClientFactory {
         LOGGER.debug("Building generic OpenID Connect client...");
         val generic = getOidcConfigurationForClient(oidc.getGeneric(), OidcConfiguration.class);
         val oc = new OidcClient(generic);
-        configureClient(oc, oidc.getKeycloak());
+        configureClient(oc, oidc.getGeneric());
         return oc;
     }
 
