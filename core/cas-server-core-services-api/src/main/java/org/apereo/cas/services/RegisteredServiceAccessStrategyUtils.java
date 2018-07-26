@@ -65,10 +65,6 @@ public class RegisteredServiceAccessStrategyUtils {
         }
     }
 
-    public static boolean ensureServiceIsNotExpired(final RegisteredService registeredService) {
-        return getRegisteredServiceExpirationPolicyPredicate().test(registeredService);
-    }
-
     /**
      * Ensure service access is allowed.
      *
@@ -77,6 +73,16 @@ public class RegisteredServiceAccessStrategyUtils {
      */
     public static void ensureServiceAccessIsAllowed(final Service service, final RegisteredService registeredService) {
         ensureServiceAccessIsAllowed(service.getId(), registeredService);
+    }
+
+    /**
+     * Ensure service is not expired.
+     *
+     * @param registeredService the service
+     * @return boolean - true if service is not expired
+     */
+    public static boolean ensureServiceIsNotExpired(final RegisteredService registeredService) {
+        return getRegisteredServiceExpirationPolicyPredicate().test(registeredService);
     }
 
     /**
