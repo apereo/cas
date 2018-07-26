@@ -17,7 +17,10 @@ import java.util.regex.Pattern;
  */
 @RequiredArgsConstructor
 public abstract class BaseIPAddressIntelligenceService implements IPAddressIntelligenceService {
-    private final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties;
+    /**
+     * Adaptive authentication settings.
+     */
+    protected final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties;
 
     private boolean isClientIpAddressRejected(final String clientIp) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectIpAddresses())
