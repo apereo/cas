@@ -89,7 +89,7 @@ public class CasCoreTicketsSchedulingConfiguration {
         public void run() {
             try {
                 this.ticketRegistryCleaner.clean();
-            } catch (RuntimeException e) {
+            } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
