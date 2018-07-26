@@ -908,9 +908,9 @@ You will also need to ensure `grouper.client.properties` is available on the cla
 with the following configured properties:
 
 ```properties
-grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
-grouperClient.webService.login = banderson
-grouperClient.webService.password = password
+# grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
+# grouperClient.webService.login = banderson
+# grouperClient.webService.password = password
 ```
 
 ### Couchbase
@@ -1114,6 +1114,29 @@ Adaptive authentication can also react to specific times in order to trigger mul
 # cas.authn.adaptive.requireTimedMultifactor[0].onOrAfterHour=20
 # cas.authn.adaptive.requireTimedMultifactor[0].onOrBeforeHour=7
 # cas.authn.adaptive.requireTimedMultifactor[0].onDays=Saturday,Sunday
+```
+
+### IP Address Intelligence
+
+Examine the client IP address via the following strategies.
+
+#### REST Adaptive Authentication
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
+under the configuration key `cas.authn.adaptive.ipIntel.rest`.
+
+#### Groovy Adaptive Authentication
+
+```properties
+# cas.authn.adaptive.ipIntel.groovy.location=file:/etc/cas/config/GroovyIPAddressIntelligenceService.groovy
+```
+
+#### BlackDot Adaptive Authentication
+
+```properties
+# cas.authn.adaptive.ipIntel.blackDot.url=http://check.getipintel.net/check.php?ip=%s
+# cas.authn.adaptive.ipIntel.blackDot.emailAddress=
+# cas.authn.adaptive.ipIntel.blackDot.mode=DYNA_LIST
 ```
 
 ## Surrogate Authentication
