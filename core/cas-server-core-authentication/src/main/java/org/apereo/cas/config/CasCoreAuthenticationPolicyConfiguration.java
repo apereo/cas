@@ -6,7 +6,9 @@ import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.DefaultAdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceService;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
+import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceService;
 import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
@@ -20,6 +22,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -110,6 +113,18 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @Bean
     @RefreshScope
     public IPAddressIntelligenceService ipAddressIntelligenceService() {
+        val adaptive = casProperties.getAuthn().getAdaptive();
+        val intel = adaptive.getIpIntel();
+
+        if (StringUtils.isNotBlank(intel.getRest().getUrl())) {
+            return new RestfulIPAddressIntelligenceService(adaptive);
+        }
+        if (intel.getGroovy().getLocation() != null) {
+            return new GroovyIPAddressIntelligenceService(adaptive);
+        }
+        if (StringUtils.isNotBlank(intel.getBlackDot().getEmailAddress())) {
+            return new RestfulIPAddressIntelligenceService(adaptive);
+        }
         return IPAddressIntelligenceService.allowed();
     }
 }

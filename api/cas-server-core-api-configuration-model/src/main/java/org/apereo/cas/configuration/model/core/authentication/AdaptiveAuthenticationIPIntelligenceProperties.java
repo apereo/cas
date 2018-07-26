@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
+import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -27,16 +29,30 @@ public class AdaptiveAuthenticationIPIntelligenceProperties implements Serializa
     private Rest rest = new Rest();
 
     /**
+     * Fetch IP diagnostic information via Groovy.
+     */
+    private Groovy groovy = new Groovy();
+
+    /**
      * Fetch IP diagnostic information via <a href="getipintel.net">IP Intel</a>.
      */
     private BlackDot blackDot = new BlackDot();
 
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
+    @Getter
+    @Setter
+    public static class Groovy extends SpringResourceProperties {
+        private static final long serialVersionUID = 8079027843747126083L;
+    }
+
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = 3659099897056632608L;
     }
 
+    @RequiresModule(name = "cas-server-core-authentication", automated = true)
     @Getter
     @Setter
     public static class BlackDot implements Serializable {
@@ -50,6 +66,7 @@ public class AdaptiveAuthenticationIPIntelligenceProperties implements Serializa
         /**
          * Include your contact information so you can be notified if a problem arise or if there are core changes.
          */
+        @RequiredProperty
         private String emailAddress;
 
         /**

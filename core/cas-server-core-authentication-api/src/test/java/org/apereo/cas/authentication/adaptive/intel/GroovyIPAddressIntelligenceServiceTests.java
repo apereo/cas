@@ -19,7 +19,9 @@ public class GroovyIPAddressIntelligenceServiceTests {
     @Test
     public void verifyOperation() {
         val script = new ClassPathResource("GroovyIPAddressIntelligenceService.groovy");
-        val service = new GroovyIPAddressIntelligenceService(new AdaptiveAuthenticationProperties(), script);
+        val props = new AdaptiveAuthenticationProperties();
+        props.getIpIntel().getGroovy().setLocation(script);
+        val service = new GroovyIPAddressIntelligenceService(props);
         val response = service.examine(new MockRequestContext(), "1.2.3.4");
         assertTrue(response.isBanned());
     }
