@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * This is {@link IPAddressIntelligenceResponse}.
@@ -43,6 +45,12 @@ public class IPAddressIntelligenceResponse implements Serializable {
 
     private double score;
 
+    /**
+     * Properties.
+     */
+    @Builder.Default
+    private Map<String, Object> properties = new TreeMap<>();
+
     @Builder.Default
     private IPAddressIntelligenceStatus status = IPAddressIntelligenceStatus.ALLOWED;
 
@@ -50,10 +58,19 @@ public class IPAddressIntelligenceResponse implements Serializable {
         return status == IPAddressIntelligenceStatus.BANNED;
     }
 
+    public boolean isRanked() {
+        return status == IPAddressIntelligenceStatus.RANKED;
+    }
+
     public boolean isAllowed() {
         return status == IPAddressIntelligenceStatus.ALLOWED;
     }
 
+    /**
+     * Allowed ip address intelligence response.
+     *
+     * @return the ip address intelligence response
+     */
     public static IPAddressIntelligenceResponse allowed() {
         return builder()
             .status(IPAddressIntelligenceStatus.ALLOWED)
@@ -61,6 +78,11 @@ public class IPAddressIntelligenceResponse implements Serializable {
             .build();
     }
 
+    /**
+     * Banned ip address intelligence response.
+     *
+     * @return the ip address intelligence response
+     */
     public static IPAddressIntelligenceResponse banned() {
         return builder()
             .status(IPAddressIntelligenceStatus.BANNED)

@@ -37,12 +37,11 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
             return true;
         }
         val clientIp = clientInfo.getClientIpAddress();
-        LOGGER.debug("Located client IP address as [{}]", clientIp);
-        val ipResult = ipAddressIntelligenceService.examine(requestContext, clientIp);
-        if (ipResult.isBanned()) {
+        if (isIpAddressRejected(requestContext, clientIp)) {
             LOGGER.warn("Client IP [{}] is rejected for authentication", clientIp);
             return false;
         }
+
         if (isUserAgentRejected(userAgent)) {
             LOGGER.warn("User agent [{}] is rejected for authentication", userAgent);
             return false;
@@ -64,7 +63,7 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
         LOGGER.debug("Adaptive authentication policy has authorized client [{}] to proceed.", clientIp);
         return true;
     }
-    
+
     private boolean isGeoLocationCountryRejected(final GeoLocationResponse finalLoc) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectCountries())
             && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectCountries()).matcher(finalLoc.build()).find();
@@ -73,5 +72,23 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
     private boolean isUserAgentRejected(final String userAgent) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectBrowsers())
             && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectBrowsers()).matcher(userAgent).find();
+    }
+
+    private boolean isIpAddressRejected(final RequestContext requestContext, final String clientIp) {
+        LOGGER.debug("Located client IP address as [{}]", clientIp);
+        val ipResult = ipAddressIntelligenceService.examine(requestContext, clientIp);
+        if (ipResult.isBanned()) {
+            LOGGER.warn("Client IP [{}] is banned", clientIp);
+            return true;
+        }
+        if (ipResult.isRanked()) {
+            val threshold = adaptiveAuthenticationProperties.getRisk().getThreshold();
+            if (ipResult.getScore() >= threshold) {
+                LOGGER.warn("Client IP [{}] is rejected for authentication because intelligence score [{}] is higher than the configured risk threshold",
+                    clientIp, ipResult.getScore(), threshold);
+                return true;
+            }
+        }
+        return false;
     }
 }
