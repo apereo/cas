@@ -49,7 +49,7 @@ public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
      *
      * @return the well known discovery configuration
      */
-    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = OidcConstants.FULL_WELL_KNOWN_URL, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration() {
         return new ResponseEntity(this.discovery, HttpStatus.OK);
     }
@@ -59,7 +59,7 @@ public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
      *
      * @return the well known discovery configuration
      */
-    @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known/openid-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = OidcConstants.FULL_WELL_KNOWN_URL + "/openid-configuration", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcServerDiscoverySettings> getWellKnownOpenIdDiscoveryConfiguration() {
         return getWellKnownDiscoveryConfiguration();
     }
