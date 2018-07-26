@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 public class TimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeoutExpirationPolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final long TIMEOUT = 1;
 
     private ExpirationPolicy expirationPolicy;

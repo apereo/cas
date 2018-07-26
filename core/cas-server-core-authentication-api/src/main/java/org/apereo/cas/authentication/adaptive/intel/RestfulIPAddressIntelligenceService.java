@@ -53,6 +53,6 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return IPAddressIntelligenceResponse.allowed();
+        return IPAddressIntelligenceResponse.banned();
     }
 }
