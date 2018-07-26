@@ -26,13 +26,8 @@ import java.io.IOException;
 @Configuration("casGeoLocationMaxmindConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasGeoLocationMaxmindConfiguration {
-
-    private CasConfigurationProperties casProperties;
-
     @Autowired
-    public CasGeoLocationConfiguration(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-    }
+    private CasConfigurationProperties casProperties;
 
     @Bean
     @RefreshScope
