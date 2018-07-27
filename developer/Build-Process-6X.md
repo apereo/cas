@@ -51,7 +51,7 @@ When done, you may build the codebase via the following command:
 The following commandline boolean flags are supported by the build:
 
 | Flag                              | Description
-|-----------------------------------+------------------------------------------------------------------+
+|-----------------------------------+----------------------------------------------------------------------+
 | `enableRemoteDebugging`           | Allows for remote debugging via a pre-defined port (i.e. `5000`).
 | `enableIncremental`               | Enable Gradle's incremental compilation feature.
 | `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
@@ -63,13 +63,13 @@ The following commandline boolean flags are supported by the build:
 | `skipNodeModulesCleanUp`          | Skip cleaning and removing the `node_modules` directory. Mostly useful when running tests.
 | `skipSonarqube`                   | Ignore reporting results to Sonarqube.
 | `skipErrorProneCompiler`          | Skip running the `error-prone` static-analysis compiler.
-| `skipNpmCache`                    | Skip cleaning the NPM cache.
+| `skipBootifulArtifact`            | Do not apply the Spring Boot plugin to web application artifacts.
+| `ignoreTestFailures`              | Ignore test failures and let the build resume.
 | `skipNpmLint`                     | Skip running the linter for resources managed by NPM, such as Javascript files.
 | `forceBom`                        | Force the generation of the CAS Maven BOM.
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
 | `ignoreFindbugsFailures`          | Ignore Findbugs failures and let the build resume.
 | `ignoreTestFailures`              | Ignore test failures and let the build resume.
-
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
