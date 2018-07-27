@@ -33,7 +33,6 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
         val ctx = Pac4jUtils.getPac4jJ2EContext(request, response);
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
 
-
         var clearCreds = false;
         val authentication = authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
         if (!authentication.isPresent()) {

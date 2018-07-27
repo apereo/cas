@@ -51,6 +51,7 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
         return true;
     }
 
+
     /**
      * Is access token request request.
      *

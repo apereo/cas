@@ -226,7 +226,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getServiceId());
         val code = expiringOAuthCodeFactory.create(service, authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>());
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, null);
         this.ticketRegistry.addTicket(code);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
