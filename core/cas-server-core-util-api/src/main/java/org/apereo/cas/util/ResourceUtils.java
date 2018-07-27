@@ -161,9 +161,6 @@ public class ResourceUtils {
             return null;
         }
 
-        if (resource instanceof ClassPathResource) {
-            return resource;
-        }
         if (org.springframework.util.ResourceUtils.isFileURL(resource.getURL())) {
             return resource;
         }
