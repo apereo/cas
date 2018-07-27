@@ -31,17 +31,19 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
     @SneakyThrows
     public ModelAndView generate(final HttpServletRequest request, final HttpServletResponse response,
                                  final OAuth20AccessTokenResponseResult result) {
-        val generatedToken = result.getGeneratedToken();
-        val generateDeviceResponse = OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
-            && generatedToken.getDeviceCode().isPresent()
-            && generatedToken.getUserCode().isPresent()
-            && !generatedToken.getAccessToken().isPresent();
-
-        if (generateDeviceResponse) {
+        if (shouldGenerateDeviceFlowResponse(result)) {
             return generateResponseForDeviceToken(request, response, result);
         }
 
         return generateResponseForAccessToken(request, response, result);
+    }
+
+    private boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
+        val generatedToken = result.getGeneratedToken();
+        return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
+            && generatedToken.getDeviceCode().isPresent()
+            && generatedToken.getUserCode().isPresent()
+            && !generatedToken.getAccessToken().isPresent();
     }
 
     /**

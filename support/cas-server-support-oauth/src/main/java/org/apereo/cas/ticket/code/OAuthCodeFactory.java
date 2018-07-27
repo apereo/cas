@@ -22,8 +22,13 @@ public interface OAuthCodeFactory extends TicketFactory {
      * @param authentication       the authentication
      * @param ticketGrantingTicket the ticket granting ticket
      * @param scopes               the scopes
+     * @param codeChallenge        the code challenge
+     * @param codeChallengeMethod  the code challenge method
      * @return the OAuth code
      */
     OAuthCode create(Service service, Authentication authentication,
-                     TicketGrantingTicket ticketGrantingTicket, Collection<String> scopes);
+                     TicketGrantingTicket ticketGrantingTicket,
+                     Collection<String> scopes,
+                     String codeChallenge,
+                     String codeChallengeMethod);
 }

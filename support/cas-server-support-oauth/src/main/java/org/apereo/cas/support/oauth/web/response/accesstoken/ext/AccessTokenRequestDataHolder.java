@@ -48,4 +48,10 @@ public class AccessTokenRequestDataHolder {
     private OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;
 
     private String deviceCode;
+
+    private String codeChallenge;
+
+    private String codeChallengeMethod = "plain";
+
+    private String codeVerifier;
 }

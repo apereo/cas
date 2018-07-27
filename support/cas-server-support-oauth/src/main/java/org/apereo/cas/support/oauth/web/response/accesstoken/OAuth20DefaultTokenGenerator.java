@@ -77,7 +77,6 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return generateAccessTokenResult(holder, pair);
     }
 
-
     /**
      * Generate access token OAuth device code response type OAuth token generated result.
      *

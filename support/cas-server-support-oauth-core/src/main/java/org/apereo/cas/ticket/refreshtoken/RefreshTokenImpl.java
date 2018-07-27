@@ -40,8 +40,20 @@ public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
                             final Authentication authentication,
                             final ExpirationPolicy expirationPolicy,
                             final TicketGrantingTicket ticketGrantingTicket,
+                            final Collection<String> scopes,
+                            final String codeChallenge,
+                            final String codeChallengeMethod) {
+        super(id, service, authentication, expirationPolicy,
+            ticketGrantingTicket, scopes, codeChallenge, codeChallengeMethod);
+    }
+
+    public RefreshTokenImpl(final String id, final Service service,
+                            final Authentication authentication,
+                            final ExpirationPolicy expirationPolicy,
+                            final TicketGrantingTicket ticketGrantingTicket,
                             final Collection<String> scopes) {
-        super(id, service, authentication, expirationPolicy, ticketGrantingTicket, scopes);
+        this(id, service, authentication, expirationPolicy,
+            ticketGrantingTicket, scopes, null, null);
     }
 
     @Override

@@ -11,10 +11,13 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.HttpRequestUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.context.J2EContext;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator}.
@@ -24,10 +27,23 @@ import org.pac4j.core.context.J2EContext;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
+@Setter
 public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator implements OAuth20AuthorizationRequestValidator {
-    private final ServicesManager servicesManager;
-    private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    /**
+     * Service manager.
+     */
+    protected final ServicesManager servicesManager;
+    /**
+     * Service factory.
+     */
+    protected final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+    /**
+     * Service access enforcer.
+     */
+    protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public boolean validate(final J2EContext context) {

@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,6 @@ public class OAuth20ClientAuthenticator implements Authenticator<UsernamePasswor
         LOGGER.debug("Authenticating credential [{}]", credentials);
 
         val id = credentials.getUsername();
-        val secret = credentials.getPassword();
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
         if (registeredService == null) {
             throw new CredentialsException("Unable to locate registered service for " + id);
@@ -48,13 +48,26 @@ public class OAuth20ClientAuthenticator implements Authenticator<UsernamePasswor
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        if (!OAuth20Utils.checkClientSecret(registeredService, secret)) {
-            throw new CredentialsException("Bad secret for client identifier: " + id);
-        }
+        validateCredentials(credentials, registeredService, context);
 
         val profile = new CommonProfile();
         profile.setId(id);
         credentials.setUserProfile(profile);
         LOGGER.debug("Authenticated user profile [{}]", profile);
+    }
+
+    /**
+     * Validate credentials.
+     *
+     * @param credentials       the credentials
+     * @param registeredService the registered service
+     * @param context           the context
+     */
+    protected void validateCredentials(final UsernamePasswordCredentials credentials,
+                                       final OAuthRegisteredService registeredService,
+                                       final WebContext context) {
+        if (!OAuth20Utils.checkClientSecret(registeredService, credentials.getUsername())) {
+            throw new CredentialsException("Bad secret for client identifier: " + credentials.getPassword());
+        }
     }
 }
