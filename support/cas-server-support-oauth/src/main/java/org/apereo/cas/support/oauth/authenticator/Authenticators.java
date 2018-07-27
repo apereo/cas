@@ -26,5 +26,5 @@ public interface Authenticators {
     /**
      * OAuth authn for PKCE.
      */
-    String CAS_OAUTH_CLIENT_PKCE_AUTHN = "pkceAuthn";
+    String CAS_OAUTH_CLIENT_PROOF_KEY_CODE_EXCHANGE_AUTHN = "pkceAuthn";
 }
