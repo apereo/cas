@@ -4,8 +4,9 @@ import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.util.CollectionUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.BeforeClass;
@@ -14,7 +15,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -26,7 +26,6 @@ import static org.mockito.Mockito.*;
 public class OAuthRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthRegisteredService.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
     private final ServiceRegistry dao;
@@ -62,7 +61,7 @@ public class OAuthRegisteredServiceTests {
     }
 
     @Test
-    public void verifySerializeAOAuthRegisteredServiceToJson() throws IOException {
+    public void verifySerializeAOAuthRegisteredServiceToJson() {
         val serviceWritten = new OAuthRegisteredService();
         serviceWritten.setName("checkSaveMethod");
         serviceWritten.setServiceId("testId");
@@ -71,8 +70,12 @@ public class OAuthRegisteredServiceTests {
         serviceWritten.setClientId("clientid");
         serviceWritten.setServiceId("secret");
         serviceWritten.setBypassApprovalPrompt(true);
-        MAPPER.writeValue(JSON_FILE, serviceWritten);
-        val serviceRead = MAPPER.readValue(JSON_FILE, OAuthRegisteredService.class);
+        serviceWritten.setSupportedGrantTypes(CollectionUtils.wrapHashSet("something"));
+        serviceWritten.setSupportedResponseTypes(CollectionUtils.wrapHashSet("something"));
+
+        val serializer = new DefaultRegisteredServiceJsonSerializer();
+        serializer.to(JSON_FILE, serviceWritten);
+        val serviceRead = serializer.from(JSON_FILE);
         assertEquals(serviceWritten, serviceRead);
     }
 }
