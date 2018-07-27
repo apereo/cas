@@ -107,7 +107,9 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
   "clientSecret": "clientSecret",
   "serviceId" : "^(https|imaps)://<redirect-uri>.*",
   "name" : "OAuthService",
-  "id" : 100
+  "id" : 100,
+  "supportedGrantTypes": [ "java.util.HashSet", [ "...", "..." ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "...", "..." ] ]
 }
 ```
 
