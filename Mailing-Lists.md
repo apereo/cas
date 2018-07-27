@@ -44,7 +44,7 @@ Once you have posted to a mailing list, please be patient and allow members to r
 
 If you find that your messages are not reaching the mailing list in due time, please contact the project members and/or Apereo to resolve the issue.
 
-### Is this a bug?
+### Get Curious
 
 Research the issue and be sure to do your due diligence:
 
@@ -52,19 +52,15 @@ Research the issue and be sure to do your due diligence:
 - Have you looked at the project’s documentation to find better explanations? 
 - Have you reviewed the project’s mailing lists, chatrooms and other facilities to find possible solutions? 
 - Have you considered upgrading to the latest maintenance release to see if the problem has been fixed?
+- Have you looked at `DEBUG` logs to see if the software can offer an explanation?
 
-### Should I submit?
-
-CAS considers its issue tracking system as a placeholder to track genuine traceable issues and tasks. If you have a general question about the workings of the software, or if you’re unsure how something is supposed to work and are in need of an analysis and further discussion, consider choosing alternative vessels for contact. Use mailing lists, Gitter, Stackoverflow and other similar tools to engage with the project. When the dust has settled and you have arrived at a legitimate theory to explain the root cause of the problem, file a submission.
+### Contribute
 
 <div class="alert alert-info"><strong>Remember</strong><p>If you have already identified an enhancement or a bug, it is <strong>STRONGLY</strong> recommended that you simply submit a pull request to address the case. There is no need for special ceremony to create separate issues. The pull request <strong>IS</strong> the issue and it will be tracked and tagged as such.</p></div>
-
-### Be part of the solution
 
 If you can, always volunteer to post a patch and work up a solution. Be prepared to follow up to test the produced patch in your environment and always try to provide a confirmation. Simply complaining about something and letting it sit in the issue tracker for someone else to handle isn't going to get you much. If you find something that you deem worth someone else's time to fix for you, be sure to demonstrate the issue is first and foremost worth your own time as well. “It ain’t a problem for me if it ain’t a problem for you”, sort of thing. 
 
 <div class="alert alert-info"><strong>List Etiquette</strong><p>Unless explicitly asked, please <b>avoid</b> contacting individual project members directly.</p></div>
-
 
 ## CAS Developer List (cas-dev@apereo.org)
 
