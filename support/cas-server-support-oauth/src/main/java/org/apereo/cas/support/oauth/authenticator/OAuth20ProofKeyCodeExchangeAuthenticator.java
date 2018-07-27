@@ -20,17 +20,17 @@ import org.pac4j.core.exception.CredentialsException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * This is {@link OAuth20PKCEAuthenticator}.
+ * This is {@link OAuth20ProofKeyCodeExchangeAuthenticator}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Slf4j
-public class OAuth20PKCEAuthenticator extends OAuth20ClientAuthenticator {
+public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientAuthenticator {
     private final TicketRegistry ticketRegistry;
 
-    public OAuth20PKCEAuthenticator(final ServicesManager servicesManager, final ServiceFactory webApplicationServiceFactory,
-                                    final AuditableExecution registeredServiceAccessStrategyEnforcer, final TicketRegistry ticketRegistry) {
+    public OAuth20ProofKeyCodeExchangeAuthenticator(final ServicesManager servicesManager, final ServiceFactory webApplicationServiceFactory,
+                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer, final TicketRegistry ticketRegistry) {
         super(servicesManager, webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
         this.ticketRegistry = ticketRegistry;
     }
