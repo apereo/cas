@@ -81,8 +81,8 @@ public class OidcIntrospectionEndpointController extends OAuth20IntrospectionEnd
     }
 
     @Override
-    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionResponse(final OAuthRegisteredService service, final AccessToken ticket) {
-        val r = super.createIntrospectionResponse(service, ticket);
+    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuthRegisteredService service, final AccessToken ticket) {
+        val r = super.createIntrospectionValidResponse(service, ticket);
         r.setScope(OidcConstants.StandardScopes.OPENID.getScope());
         return r;
     }
