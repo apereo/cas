@@ -21,9 +21,10 @@ public class UnauthorizedServiceException extends RuntimeException {
      **/
     public static final String CODE_EMPTY_SVC_MGMR = "screen.service.empty.error.message";
 
-    /**
-     * The Unique ID for serialization.
-     */
+    /** Exception object that indicates the service is expired. **/
+    public static final String CODE_EXPIRED_SERVICE = "screen.service.expired.message";
+
+    /** The Unique ID for serialization. */
     private static final long serialVersionUID = 3905807495715960369L;
 
     private final String code;
