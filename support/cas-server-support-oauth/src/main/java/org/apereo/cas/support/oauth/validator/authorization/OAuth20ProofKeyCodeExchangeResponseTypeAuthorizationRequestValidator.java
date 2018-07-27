@@ -12,17 +12,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
 
 /**
- * This is {@link OAuth20PKCEResponseTypeAuthorizationRequestValidator}.
+ * This is {@link OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Slf4j
-public class OAuth20PKCEResponseTypeAuthorizationRequestValidator extends OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator {
+public class OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator extends OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator {
 
-    public OAuth20PKCEResponseTypeAuthorizationRequestValidator(final ServicesManager servicesManager,
-                                                                final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                                                final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+    public OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(final ServicesManager servicesManager,
+                                                                                final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                                                                final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 

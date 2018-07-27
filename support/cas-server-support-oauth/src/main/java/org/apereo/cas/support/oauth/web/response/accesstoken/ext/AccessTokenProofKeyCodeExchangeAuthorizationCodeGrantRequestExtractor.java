@@ -15,17 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link AccessTokenPKCEAuthorizationCodeGrantRequestExtractor}.
+ * This is {@link AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public class AccessTokenPKCEAuthorizationCodeGrantRequestExtractor extends AccessTokenAuthorizationCodeGrantRequestExtractor {
-    public AccessTokenPKCEAuthorizationCodeGrantRequestExtractor(final ServicesManager servicesManager,
-                                                                 final TicketRegistry ticketRegistry,
-                                                                 final CentralAuthenticationService centralAuthenticationService,
-                                                                 final OAuthProperties oAuthProperties,
-                                                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
+public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor extends AccessTokenAuthorizationCodeGrantRequestExtractor {
+    public AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(final ServicesManager servicesManager,
+                                                                                 final TicketRegistry ticketRegistry,
+                                                                                 final CentralAuthenticationService centralAuthenticationService,
+                                                                                 final OAuthProperties oAuthProperties,
+                                                                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
         super(servicesManager, ticketRegistry, centralAuthenticationService, oAuthProperties, webApplicationServiceServiceFactory);
     }
 

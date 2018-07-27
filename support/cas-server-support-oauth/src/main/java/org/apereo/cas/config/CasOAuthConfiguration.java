@@ -21,7 +21,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticator;
-import org.apereo.cas.support.oauth.authenticator.OAuth20PKCEAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UserAuthenticator;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
@@ -33,11 +33,11 @@ import org.apereo.cas.support.oauth.validator.authorization.OAuth20Authorization
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenResponseTypeAuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20PKCEResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20PasswordGrantTypeAuthorizationRequestValidator;
+import org.apereo.cas.support.oauth.validator.authorization.OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20TokenResponseTypeAuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypePKCETokenRequestValidator;
+import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20ClientCredentialsGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20DeviceCodeResponseTypeRequestValidator;
@@ -63,8 +63,8 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenClie
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenDeviceCodeResponseRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantAuditableRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
-import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPKCEAuthorizationCodeGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenPasswordGrantRequestExtractor;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRefreshTokenGrantRequestExtractor;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
@@ -205,8 +205,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         directFormClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
         directFormClient.setPasswordParameter(OAuth20Constants.CLIENT_SECRET);
 
-        val pkceAuthnClient = new DirectFormClient(oAuthProofKeyForCodeExchangeAuthenticator());
-        pkceAuthnClient.setName(Authenticators.CAS_OAUTH_CLIENT_PKCE_AUTHN);
+        val pkceAuthnClient = new DirectFormClient(oAuthProofKeyCodeExchangeAuthenticator());
+        pkceAuthnClient.setName(Authenticators.CAS_OAUTH_CLIENT_PROOF_KEY_CODE_EXCHANGE_AUTHN);
         pkceAuthnClient.setUsernameParameter(OAuth20Constants.CLIENT_ID);
         pkceAuthnClient.setPasswordParameter(OAuth20Constants.CODE_VERIFIER);
 
@@ -243,10 +243,10 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return new OAuth20ClientAuthenticator(this.servicesManager.getIfAvailable(), webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
-    @ConditionalOnMissingBean(name = "oAuthProofKeyForCodeExchangeAuthenticator")
+    @ConditionalOnMissingBean(name = "oAuthProofKeyCodeExchangeAuthenticator")
     @Bean
-    public Authenticator<UsernamePasswordCredentials> oAuthProofKeyForCodeExchangeAuthenticator() {
-        return new OAuth20PKCEAuthenticator(this.servicesManager.getIfAvailable(), webApplicationServiceFactory,
+    public Authenticator<UsernamePasswordCredentials> oAuthProofKeyCodeExchangeAuthenticator() {
+        return new OAuth20ProofKeyCodeExchangeAuthenticator(this.servicesManager.getIfAvailable(), webApplicationServiceFactory,
             registeredServiceAccessStrategyEnforcer, ticketRegistry.getIfAvailable());
     }
 
@@ -363,7 +363,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     public Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors() {
         final AccessTokenGrantRequestExtractor pkceExt =
-            new AccessTokenPKCEAuthorizationCodeGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
+            new AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
                 centralAuthenticationService, casProperties.getAuthn().getOauth(),
                 webApplicationServiceFactory);
 
@@ -499,7 +499,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @RefreshScope
     public Set<OAuth20AuthorizationRequestValidator> oauthAuthorizationRequestValidators() {
         val validators = new LinkedHashSet<OAuth20AuthorizationRequestValidator>();
-        validators.add(oauthPKCEResponseTypeAuthorizationRequestValidator());
+        validators.add(oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator());
         validators.add(oauthAuthorizationCodeResponseTypeRequestValidator());
         validators.add(oauthIdTokenResponseTypeRequestValidator());
         validators.add(oauthPasswordGrantTypeRequestValidator());
@@ -517,7 +517,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
         val svcManager = servicesManager.getIfAvailable();
         val registry = ticketRegistry.getIfAvailable();
-        validators.add(new OAuth20AuthorizationCodeGrantTypePKCETokenRequestValidator(svcManager, registry, registeredServiceAccessStrategyEnforcer));
+        validators.add(new OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(svcManager, registry, registeredServiceAccessStrategyEnforcer));
         validators.add(new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(svcManager, registry, registeredServiceAccessStrategyEnforcer));
         validators.add(new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(svcManager, registry, registeredServiceAccessStrategyEnforcer));
         validators.add(new OAuth20DeviceCodeResponseTypeRequestValidator(svcManager, webApplicationServiceFactory));
@@ -543,11 +543,11 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
             webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
-    @ConditionalOnMissingBean(name = "oauthPKCEResponseTypeAuthorizationRequestValidator")
+    @ConditionalOnMissingBean(name = "oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator")
     @Bean
     @RefreshScope
-    public OAuth20AuthorizationRequestValidator oauthPKCEResponseTypeAuthorizationRequestValidator() {
-        return new OAuth20PKCEResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
+    public OAuth20AuthorizationRequestValidator oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator() {
+        return new OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
             webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
