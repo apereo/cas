@@ -242,7 +242,7 @@ public abstract class AbstractOAuth20Tests {
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
         val code = oAuthCodeFactory.create(service, authentication,
-            new MockTicketGrantingTicket("casuser"), new ArrayList<>());
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>(), null, null);
         this.ticketRegistry.addTicket(code);
         return code;
     }

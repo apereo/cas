@@ -64,7 +64,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         scopes.addAll(token.getScopes());
 
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService != null && registeredService.isGenerateRefreshToken();
-        return AccessTokenRequestDataHolder.builder()
+        val builder = AccessTokenRequestDataHolder.builder()
             .scopes(scopes)
             .service(service)
             .authentication(token.getAuthentication())
@@ -72,8 +72,22 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .grantType(getGrantType())
             .generateRefreshToken(generateRefreshToken)
             .token(token)
-            .ticketGrantingTicket(token.getTicketGrantingTicket())
-            .build();
+            .ticketGrantingTicket(token.getTicketGrantingTicket());
+
+        return extractInternal(request, response, builder);
+    }
+
+    /**
+     * Extract internal access token request.
+     *
+     * @param request  the request
+     * @param response the response
+     * @param builder  the builder
+     * @return the access token request data holder
+     */
+    protected AccessTokenRequestDataHolder extractInternal(final HttpServletRequest request, final HttpServletResponse response,
+                                                           final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
+        return builder.build();
     }
 
     /**

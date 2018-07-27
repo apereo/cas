@@ -9,11 +9,14 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.J2EContext;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link OAuth20DeviceCodeResponseTypeRequestValidator}.
@@ -23,9 +26,13 @@ import org.pac4j.core.context.J2EContext;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Getter
+@Setter
 public class OAuth20DeviceCodeResponseTypeRequestValidator implements OAuth20TokenRequestValidator {
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public boolean validate(final J2EContext context) {
