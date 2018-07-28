@@ -64,7 +64,7 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
 
             if (response.getStatusLine().getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
                 LOGGER.error("Exceeded the number of allowed queries");
-                return IPAddressIntelligenceResponse.banned();
+                return bannedResponse;
             }
             val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
             LOGGER.debug("Received payload result after examining IP address [{}] as [{}]", clientIpAddress, result);
