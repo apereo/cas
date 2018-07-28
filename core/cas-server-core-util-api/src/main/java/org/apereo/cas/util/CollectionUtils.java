@@ -83,7 +83,11 @@ public class CollectionUtils {
             val set = (Set<Map.Entry>) map.entrySet();
             c.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
-            c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
+            if ((byte[].class).isInstance(obj)) {
+                c.add(obj);
+            } else {
+                c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
+            }
             LOGGER.trace("Converting array attribute [{}]", obj);
         } else {
             c.add(obj);
