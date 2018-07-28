@@ -86,7 +86,7 @@ public class JpaBeans {
         bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());
         bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
         bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
-        bean.setAutoCommit(jpaProperties.isAutocommit());
+        //bean.setAutoCommit(jpaProperties.isAutocommit());
         bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
         return bean;
     }
