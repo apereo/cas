@@ -47,6 +47,12 @@ public class AdaptiveAuthenticationProperties implements Serializable {
     private RiskBasedAuthenticationProperties risk = new RiskBasedAuthenticationProperties();
 
     /**
+     * Control settings that handle and calculate IP intelligence, etc.
+     */
+    @NestedConfigurationProperty
+    private AdaptiveAuthenticationIPIntelligenceProperties ipIntel = new AdaptiveAuthenticationIPIntelligenceProperties();
+
+    /**
      * A map of ({@code mfaProviderId -> adaptiveRegexPattern}) that tells CAS when to trigger an MFA authentication transaction.
      * <p>
      * This property binds a valid mfa provider to an adaptive regex pattern representing either IP address, user-agent or geolocation.

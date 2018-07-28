@@ -57,6 +57,9 @@ public class CollectionUtils {
     @SneakyThrows
     public static <T extends Collection> T toCollection(final Object obj, final Class<T> clazz) {
         val results = toCollection(obj);
+        if (clazz.isInterface()) {
+            throw new IllegalArgumentException("Cannot accept an interface " + clazz.getSimpleName() + " to create a new object instance");
+        }
         val col = clazz.getDeclaredConstructor().newInstance();
         col.addAll(results);
         return col;
@@ -308,8 +311,12 @@ public class CollectionUtils {
                     list.add((T) it.next());
                 }
             } else if (source.getClass().isArray()) {
-                val elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
-                list.addAll((List) elements);
+                if (source.getClass().isAssignableFrom(byte[].class)) {
+                    list.add(source);
+                } else {
+                    val elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
+                    list.addAll((List) elements);
+                }
             } else {
                 list.add(source);
             }

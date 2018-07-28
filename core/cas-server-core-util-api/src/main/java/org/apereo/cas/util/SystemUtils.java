@@ -16,7 +16,7 @@ import org.springframework.core.SpringVersion;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -41,7 +41,7 @@ public class SystemUtils {
     public static Map<String, Object> getSystemInfo() {
         val properties = System.getProperties();
 
-        val info = new HashMap<String, Object>(SYSTEM_INFO_DEFAULT_SIZE);
+        val info = new LinkedHashMap<String, Object>(SYSTEM_INFO_DEFAULT_SIZE);
 
         info.put("CAS Version", StringUtils.defaultString(CasVersion.getVersion(), "Not Available"));
         info.put("CAS Commit Id", StringUtils.defaultString(CasVersion.getSpecificationVersion(), "Not Available"));

@@ -7,6 +7,7 @@ ext {
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
     testCategoryType = System.getProperty("testCategoryType")
+    skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
     skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
     forceBom = Boolean.getBoolean("forceBom")
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")

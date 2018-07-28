@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.authentication;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
@@ -11,11 +10,6 @@ import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulato
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,15 +55,6 @@ public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaD
      * Instantiates a new SAML authentication meta data populator.
      */
     public SamlAuthenticationMetaDataPopulator() {
-        val packageName = CentralAuthenticationService.NAMESPACE;
-        val reflections =
-            new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(new FilterBuilder().includePackage(packageName))
-                .setUrls(ClasspathHelper.forPackage(packageName))
-                .setScanners(new SubTypesScanner(true)));
-
-        val subTypes = reflections.getSubTypesOf(Credential.class);
-        subTypes.forEach(t -> this.authenticationMethods.put(t.getName(), AUTHN_METHOD_UNSPECIFIED));
         this.authenticationMethods.put(HttpBasedServiceCredential.class.getName(), AUTHN_METHOD_SSL_TLS_CLIENT);
         this.authenticationMethods.put(UsernamePasswordCredential.class.getName(), AUTHN_METHOD_PASSWORD);
         this.authenticationMethods.put("org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredentials", AUTHN_METHOD_X509_PUBLICKEY);
@@ -79,7 +64,7 @@ public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaD
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         transaction.getPrimaryCredential().ifPresent(c -> {
             val credentialsClass = c.getClass().getName();
-            val authenticationMethod = this.authenticationMethods.get(credentialsClass);
+            val authenticationMethod = this.authenticationMethods.getOrDefault(credentialsClass, AUTHN_METHOD_UNSPECIFIED);
             builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
         });
 

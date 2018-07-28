@@ -15,4 +15,16 @@ public interface OAuthCode extends OAuthToken {
      * The prefix for OAuth codes.
      */
     String PREFIX = "OC";
+
+    /**
+     * The PKCE code challenge.
+     * @return code challenge
+     */
+    String getCodeChallenge();
+
+    /**
+     * The PKCE code challenge method.
+     * @return code challenge method (i.e. plain, S256, etc)
+     */
+    String getCodeChallengeMethod();
 }

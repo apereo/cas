@@ -107,15 +107,15 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
                 LOGGER.debug("Located access token [{}] in the request", accessToken);
                 val ticket = this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
                 if (ticket != null) {
-                    val introspect = createIntrospectionResponse(service, ticket);
+                    val introspect = createIntrospectionValidResponse(service, ticket);
                     return new ResponseEntity<>(introspect, HttpStatus.OK);
                 }
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        val introspect = createIntrospectionInvalidResponse();
+        return new ResponseEntity<>(introspect, HttpStatus.UNAUTHORIZED);
     }
 
     private boolean validateIntrospectionRequest(final OAuthRegisteredService registeredService,
@@ -143,7 +143,7 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
      * @param ticket  the ticket
      * @return the OAuth introspection access token response
      */
-    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionResponse(final OAuthRegisteredService service, final AccessToken ticket) {
+    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuthRegisteredService service, final AccessToken ticket) {
         val introspect = new OAuth20IntrospectionAccessTokenResponse();
         introspect.setActive(true);
         introspect.setClientId(service.getClientId());
@@ -168,6 +168,17 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
         introspect.setScope("CAS");
         introspect.setAud(service.getServiceId());
         introspect.setIss(casProperties.getAuthn().getOidc().getIssuer());
+        return introspect;
+    }
+
+    /**
+     * Create introspection invalid response.
+     *
+     * @return the o auth 20 introspection access token response
+     */
+    protected OAuth20IntrospectionAccessTokenResponse createIntrospectionInvalidResponse() {
+        val introspect = new OAuth20IntrospectionAccessTokenResponse();
+        introspect.setActive(false);
         return introspect;
     }
 }

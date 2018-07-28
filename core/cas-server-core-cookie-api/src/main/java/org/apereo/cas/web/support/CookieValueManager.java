@@ -2,6 +2,7 @@ package org.apereo.cas.web.support;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 
 /**
  * The {@link CookieValueManager} is responsible for
@@ -12,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public interface CookieValueManager {
+public interface CookieValueManager extends Serializable {
 
     /**
      * Build cookie value.

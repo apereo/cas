@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.adaptive;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.webflow.execution.RequestContext;
 
 import java.util.regex.Pattern;
 
@@ -24,21 +26,22 @@ import java.util.regex.Pattern;
 public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticationPolicy {
 
     private final GeoLocationService geoLocationService;
+    private final IPAddressIntelligenceService ipAddressIntelligenceService;
     private final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties;
 
     @Override
-    public boolean apply(final String userAgent, final GeoLocationRequest location) {
+    public boolean apply(final RequestContext requestContext, final String userAgent, final GeoLocationRequest location) {
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo == null || StringUtils.isBlank(userAgent)) {
             LOGGER.warn("No client IP or user-agent was provided. Skipping adaptive authentication policy...");
             return true;
         }
         val clientIp = clientInfo.getClientIpAddress();
-        LOGGER.debug("Located client IP address as [{}]", clientIp);
-        if (isClientIpAddressRejected(clientIp)) {
+        if (isIpAddressRejected(requestContext, clientIp)) {
             LOGGER.warn("Client IP [{}] is rejected for authentication", clientIp);
             return false;
         }
+
         if (isUserAgentRejected(userAgent)) {
             LOGGER.warn("User agent [{}] is rejected for authentication", userAgent);
             return false;
@@ -61,11 +64,6 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
         return true;
     }
 
-    private boolean isClientIpAddressRejected(final String clientIp) {
-        return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectIpAddresses())
-            && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectIpAddresses()).matcher(clientIp).find();
-    }
-
     private boolean isGeoLocationCountryRejected(final GeoLocationResponse finalLoc) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectCountries())
             && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectCountries()).matcher(finalLoc.build()).find();
@@ -74,5 +72,23 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
     private boolean isUserAgentRejected(final String userAgent) {
         return StringUtils.isNotBlank(this.adaptiveAuthenticationProperties.getRejectBrowsers())
             && Pattern.compile(this.adaptiveAuthenticationProperties.getRejectBrowsers()).matcher(userAgent).find();
+    }
+
+    private boolean isIpAddressRejected(final RequestContext requestContext, final String clientIp) {
+        LOGGER.debug("Located client IP address as [{}]", clientIp);
+        val ipResult = ipAddressIntelligenceService.examine(requestContext, clientIp);
+        if (ipResult.isBanned()) {
+            LOGGER.warn("Client IP [{}] is banned", clientIp);
+            return true;
+        }
+        if (ipResult.isRanked()) {
+            val threshold = adaptiveAuthenticationProperties.getRisk().getThreshold();
+            if (ipResult.getScore() >= threshold) {
+                LOGGER.warn("Client IP [{}] is rejected for authentication because intelligence score [{}] is higher than the configured risk threshold",
+                    clientIp, ipResult.getScore(), threshold);
+                return true;
+            }
+        }
+        return false;
     }
 }

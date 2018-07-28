@@ -72,11 +72,12 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         if (StringUtils.hasText(requestBody)) {
             request.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, requestBody);
         }
+        LOGGER.debug("Request Body: [{}]", requestBody);
         val requestChild = getRequestDocumentElement(requestBody);
         val artifactId = getArtifactIdFromRequest(requestChild);
         val requestId = getRequestIdFromRequest(requestChild);
+        LOGGER.debug("Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", artifactId, requestId);
 
-        LOGGER.debug("Request Body: [{}]\n\"Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", requestBody, artifactId, requestId);
         val samlService = new SamlService(id, service, artifactId, requestId);
         samlService.setSource(SamlProtocolConstants.CONST_PARAM_TARGET);
         return samlService;
@@ -105,6 +106,9 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             return null;
         }
         val requestIdAttribute = requestChild.getAttribute("RequestID");
+        if (requestIdAttribute == null) {
+            return null;
+        }
         return requestIdAttribute.getValue();
     }
 

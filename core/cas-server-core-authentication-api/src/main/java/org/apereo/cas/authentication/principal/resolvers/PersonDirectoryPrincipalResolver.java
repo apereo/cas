@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -134,20 +137,25 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected Pair<String, Map<String, Object>> convertPersonAttributesToPrincipal(final String extractedPrincipalId,
                                                                                    final Map<String, List<Object>> attributes) {
         final String[] principalId = {extractedPrincipalId};
-        val convertedAttributes = new HashMap<String, Object>();
+        val convertedAttributes = new LinkedHashMap<String, Object>();
         attributes.entrySet().forEach(entry -> {
             val key = entry.getKey();
-            LOGGER.debug("Found attribute [{}]", key);
-            val values = entry.getValue();
+            val values = CollectionUtils.toCollection(entry.getValue(), ArrayList.class);
+            LOGGER.debug("Found attribute [{}] with value(s)", key, values);
             if (StringUtils.isNotBlank(this.principalAttributeName) && key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     LOGGER.debug("[{}] is empty, using [{}] for principal", this.principalAttributeName, extractedPrincipalId);
                 } else {
-                    principalId[0] = values.get(0).toString();
+                    principalId[0] = CollectionUtils.firstElement(values).get().toString();
                     LOGGER.debug("Found principal attribute value [{}]; removing [{}] from attribute map.", extractedPrincipalId, this.principalAttributeName);
                 }
             } else {
-                convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
+                if (values.size() == 1) {
+                    val value = CollectionUtils.firstElement(values).get();
+                    convertedAttributes.put(key, value);
+                } else {
+                    convertedAttributes.put(key, values);
+                }
             }
         });
         return Pair.of(principalId[0], convertedAttributes);
