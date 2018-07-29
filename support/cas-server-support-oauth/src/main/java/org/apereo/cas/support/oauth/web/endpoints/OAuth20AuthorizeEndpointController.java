@@ -247,12 +247,17 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         val grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
             OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
         val scopes = OAuth20Utils.parseRequestScopes(context);
+        val codeChallenge =context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE);
+        val codeChallengeMethod = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.CODE_CHALLENGE_METHOD),
+            OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
         val holder = AccessTokenRequestDataHolder.builder()
             .service(service)
             .authentication(authentication)
             .registeredService(registeredService)
             .ticketGrantingTicket(ticketGrantingTicket)
             .grantType(OAuth20GrantTypes.valueOf(grantType))
+            .codeChallenge(codeChallenge)
+            .codeChallengeMethod(codeChallengeMethod)
             .scopes(scopes)
             .build();
 

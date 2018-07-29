@@ -71,6 +71,21 @@ public interface OAuth20Constants {
     String PASSWORD = "password";
 
     /**
+     * PKCE code challenge.
+     */
+    String CODE_CHALLENGE = "code_challenge";
+
+    /**
+     * PKCE code verifier.
+     */
+    String CODE_VERIFIER = "code_verifier";
+
+    /**
+     * PKCE code challenge method.
+     */
+    String CODE_CHALLENGE_METHOD = "code_challenge_method";
+
+    /**
      * The client secret.
      */
     String CLIENT_SECRET = "client_secret";

@@ -1,8 +1,10 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
@@ -34,12 +36,25 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
     @Override
     public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
         val authentication = holder.getAuthentication();
-        val code = oAuthCodeFactory.create(holder.getService(), authentication, holder.getTicketGrantingTicket(), holder.getScopes());
+        val code = oAuthCodeFactory.create(holder.getService(), authentication,
+            holder.getTicketGrantingTicket(), holder.getScopes(),
+            holder.getCodeChallenge(), holder.getCodeChallengeMethod());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         this.ticketRegistry.addTicket(code);
 
-        val state = authentication.getAttributes().get(OAuth20Constants.STATE).toString();
-        val nonce = authentication.getAttributes().get(OAuth20Constants.NONCE).toString();
+        return buildCallbackViewViaRedirectUri(context, clientId, authentication, code);
+    }
+
+    @Override
+    public boolean supports(final J2EContext context) {
+        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
+        return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.CODE.getType());
+    }
+
+    private View buildCallbackViewViaRedirectUri(final J2EContext context, final String clientId, final Authentication authentication, final OAuthCode code) {
+        val attributes = authentication.getAttributes();
+        val state = attributes.get(OAuth20Constants.STATE).toString();
+        val nonce = attributes.get(OAuth20Constants.NONCE).toString();
 
         val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
@@ -54,11 +69,5 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
         }
         LOGGER.debug("Redirecting to URL [{}]", callbackUrl);
         return new RedirectView(callbackUrl);
-    }
-
-    @Override
-    public boolean supports(final J2EContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE);
-        return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.CODE.getType());
     }
 }

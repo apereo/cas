@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
-import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationIPIntelligenceProperties;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.util.MockWebServer;
 
