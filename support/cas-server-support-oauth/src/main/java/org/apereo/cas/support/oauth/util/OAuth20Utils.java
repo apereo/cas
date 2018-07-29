@@ -351,7 +351,7 @@ public class OAuth20Utils {
             return true;
         }
         if (!StringUtils.equals(registeredService.getClientSecret(), clientSecret)) {
-            LOGGER.error("Wrong client secret for service: [{}]", registeredService);
+            LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
             return false;
         }
         return true;
