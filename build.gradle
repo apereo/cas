@@ -77,6 +77,8 @@ allprojects {
     apply plugin: "jacoco"
     apply plugin: "groovy"
 
+    project.ext["forceBootifulArtifact"] = null
+    
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
         apply plugin: "nebula.lint"
         gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
