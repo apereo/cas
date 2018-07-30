@@ -1,4 +1,6 @@
 project.ext["mainClassName"] = "org.apereo.cas.CasCommandLineShellApplication"
+project.ext["forceBootifulArtifact"] = true
+
 apply from: rootProject.file("gradle/springboot.gradle")
 
 description = "Apereo CAS Shell Support via Spring Shell"
