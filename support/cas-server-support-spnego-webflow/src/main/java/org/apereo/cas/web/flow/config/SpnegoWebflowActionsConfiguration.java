@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.webflow.execution.Action;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -101,8 +100,7 @@ public class SpnegoWebflowActionsConfiguration {
     public Action ldapSpnegoClientAction() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(spnegoProperties.getLdap());
-        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter(),
-            "host", new ArrayList<>(0));
+        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter());
 
         final SearchRequest searchRequest = LdapUtils.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
         return new LdapSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),

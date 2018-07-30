@@ -57,6 +57,11 @@ public class GAuthMultifactorProperties extends BaseMultifactorProviderPropertie
     private long timeStepSize = 30;
 
     /**
+     * Indicates whether this provider should support trusted devices.
+     */
+    private boolean trustedDeviceEnabled;
+    
+    /**
      * Since TOTP passwords are time-based, it is essential that the clock of both the server and
      * the client are synchronised within
      * the tolerance defined here as the window size.

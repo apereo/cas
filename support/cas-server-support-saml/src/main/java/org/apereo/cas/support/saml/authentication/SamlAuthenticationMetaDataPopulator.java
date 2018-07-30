@@ -1,24 +1,18 @@
 package org.apereo.cas.support.saml.authentication;
 
-import lombok.Setter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
+
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Capture SAML authentication metadata.
@@ -31,19 +25,29 @@ import java.util.Set;
 @Setter
 public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
-    /** The Constant ATTRIBUTE_AUTHENTICATION_METHOD. */
+    /**
+     * The Constant ATTRIBUTE_AUTHENTICATION_METHOD.
+     */
     public static final String ATTRIBUTE_AUTHENTICATION_METHOD = "samlAuthenticationStatementAuthMethod";
 
-    /** The Constant AUTHN_METHOD_PASSWORD. */
+    /**
+     * The Constant AUTHN_METHOD_PASSWORD.
+     */
     public static final String AUTHN_METHOD_PASSWORD = "urn:oasis:names:tc:SAML:1.0:am:password";
 
-    /** The Constant AUTHN_METHOD_SSL_TLS_CLIENT. */
+    /**
+     * The Constant AUTHN_METHOD_SSL_TLS_CLIENT.
+     */
     public static final String AUTHN_METHOD_SSL_TLS_CLIENT = "urn:ietf:rfc:2246";
 
-    /** The Constant AUTHN_METHOD_X509_PUBLICKEY. */
+    /**
+     * The Constant AUTHN_METHOD_X509_PUBLICKEY.
+     */
     public static final String AUTHN_METHOD_X509_PUBLICKEY = "urn:oasis:names:tc:SAML:1.0:am:X509-PKI";
 
-    /** The Constant AUTHN_METHOD_UNSPECIFIED. */
+    /**
+     * The Constant AUTHN_METHOD_UNSPECIFIED.
+     */
     public static final String AUTHN_METHOD_UNSPECIFIED = "urn:oasis:names:tc:SAML:1.0:am:unspecified";
 
     private final Map<String, String> authenticationMethods = new HashMap<>();
@@ -52,25 +56,16 @@ public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaD
      * Instantiates a new SAML authentication meta data populator.
      */
     public SamlAuthenticationMetaDataPopulator() {
-        final String packageName = CentralAuthenticationService.NAMESPACE;
-        final Reflections reflections =
-            new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(new FilterBuilder().includePackage(packageName))
-                .setUrls(ClasspathHelper.forPackage(packageName))
-                .setScanners(new SubTypesScanner(true)));
-
-        final Set<Class<? extends Credential>> subTypes = reflections.getSubTypesOf(Credential.class);
-        subTypes.forEach(t -> this.authenticationMethods.put(t.getName(), AUTHN_METHOD_UNSPECIFIED));
         this.authenticationMethods.put(HttpBasedServiceCredential.class.getName(), AUTHN_METHOD_SSL_TLS_CLIENT);
         this.authenticationMethods.put(UsernamePasswordCredential.class.getName(), AUTHN_METHOD_PASSWORD);
-        this.authenticationMethods.put("org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredentials", AUTHN_METHOD_X509_PUBLICKEY);
+        this.authenticationMethods.put("org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential", AUTHN_METHOD_X509_PUBLICKEY);
     }
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         transaction.getPrimaryCredential().ifPresent(c -> {
             final String credentialsClass = c.getClass().getName();
-            final String authenticationMethod = this.authenticationMethods.get(credentialsClass);
+            final String authenticationMethod = this.authenticationMethods.getOrDefault(credentialsClass, AUTHN_METHOD_UNSPECIFIED);
             builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
         });
 

@@ -85,7 +85,7 @@ public class WsFederationConfiguration implements Serializable {
 
     private String id = UUID.randomUUID().toString();
 
-    private CookieRetrievingCookieGenerator cookieGenerator;
+    private transient CookieRetrievingCookieGenerator cookieGenerator;
     
     public String getName() {
         return StringUtils.isBlank(this.name) ? getClass().getSimpleName() : this.name;
