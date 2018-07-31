@@ -85,7 +85,7 @@ import static org.junit.Assert.*;
     SurrogateAuthenticationMetadataConfiguration.class,
     SurrogateRestAuthenticationConfiguration.class
 })
-@TestPropertySource(properties = "cas.authn.surrogate.rest.url=http://localhost:9293")
+@TestPropertySource(properties = "cas.authn.surrogate.rest.url=http://localhost:9301")
 public class SurrogateRestAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules()
@@ -99,7 +99,7 @@ public class SurrogateRestAuthenticationServiceTests {
     @Test
     public void verifyAccountsQualifying() throws Exception {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
-        try (val webServer = new MockWebServer(9293,
+        try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
@@ -108,7 +108,7 @@ public class SurrogateRestAuthenticationServiceTests {
             throw new AssertionError(e.getMessage(), e);
         }
 
-        try (val webServer = new MockWebServer(9293,
+        try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
