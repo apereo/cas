@@ -4,7 +4,6 @@ MAINTAINER Apereo Foundation
 MAINTAINER Misagh Moayyed
 
 ARG CASVERSION
-ARG CASBRANCH
 ARG BOOTVERSION
 
 RUN cd / && mkdir -p /cas-overlay/maven
@@ -19,8 +18,6 @@ EXPOSE 8080 8443
 
 WORKDIR /cas-overlay
 
-ENV JAVA_HOME /opt/jre-home
-ENV PATH $PATH:$JAVA_HOME/bin:.
 RUN ./mvnw clean package -T 10 -Dcas.version=$CASVERSION -Dspringboot.version=$BOOTVERSION
 
 FROM openjdk:11-jdk as cas
@@ -29,5 +26,5 @@ COPY thekeystore /etc/cas/
 
 RUN echo $JAVA_HOME \
     && echo $PATH \
-    && which java
+    && which java \
     && java -jar ./cas.war
