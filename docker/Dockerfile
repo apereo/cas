@@ -1,4 +1,4 @@
-FROM openjdk:11-jdk as overlay
+FROM openjdk:11-jdk-slim as overlay
 
 MAINTAINER Apereo Foundation
 MAINTAINER Misagh Moayyed
@@ -20,6 +20,6 @@ WORKDIR /cas-overlay
 
 RUN ./mvnw clean package -T 10 -Dcas.version=$CASVERSION -Dspringboot.version=$BOOTVERSION
 
-FROM openjdk:11-jdk as cas
+FROM openjdk:11-jdk-slim as cas
 COPY --from=overlay /cas-overlay/target/cas.war .
 COPY thekeystore /etc/cas/
