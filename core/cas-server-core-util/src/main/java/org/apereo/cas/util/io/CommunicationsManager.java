@@ -148,7 +148,7 @@ public class CommunicationsManager {
      */
     public boolean sms(final String from, final String to, final String text) {
         if (!isSmsSenderDefined() || StringUtils.isBlank(text) || StringUtils.isBlank(from)) {
-            LOGGER.warn("Could not send email to [{}] because either no address/subject/text is found or email settings are not configured.", to);
+            LOGGER.warn("Could not send SMS to [{}] because either no from/text is found or SMS settings are not configured.", to);
             return false;
         }
         return this.smsSender.send(from, to, text);
