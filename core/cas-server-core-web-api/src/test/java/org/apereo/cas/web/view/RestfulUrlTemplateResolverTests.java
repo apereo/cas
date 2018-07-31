@@ -24,12 +24,12 @@ import static org.mockito.Mockito.*;
 public class RestfulUrlTemplateResolverTests {
     @Test
     public void verifyAction() {
-        try (val webServer = new MockWebServer(9294,
+        try (val webServer = new MockWebServer(9302,
             new ByteArrayResource("template".getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
 
             val props = new CasConfigurationProperties();
-            props.getView().getRest().setUrl("http://localhost:9294");
+            props.getView().getRest().setUrl("http://localhost:9302");
             val r = new RestfulUrlTemplateResolver(props);
             val res = r.resolveTemplate(mock(IEngineConfiguration.class), "cas",
                 "template", new LinkedHashMap<>());
