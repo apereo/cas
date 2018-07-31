@@ -23,8 +23,3 @@ RUN ./mvnw clean package -T 10 -Dcas.version=$CASVERSION -Dspringboot.version=$B
 FROM openjdk:11-jdk as cas
 COPY --from=overlay /cas-overlay/target/cas.war .
 COPY thekeystore /etc/cas/
-
-RUN echo $JAVA_HOME \
-    && echo $PATH \
-    && which java \
-    && java -jar ./cas.war
