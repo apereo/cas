@@ -73,7 +73,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apereo.cas</groupId>
-            <artifactId>cas-server-webapp${app.server}</artifactId>
+            <artifactId>cas-server-webapp-tomcat</artifactId>
             <version>${cas.version}</version>
             <type>war</type>
             <scope>runtime</scope>
