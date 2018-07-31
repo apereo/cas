@@ -29,6 +29,8 @@
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/redmond/jquery-ui.css"/>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css" />
+
     <link rel="stylesheet" type="text/css" media="screen" href="{{ relative }}stylesheets/stylesheet.css">
     <link rel="stylesheet" type="text/css" media="print" href="{{ relative }}stylesheets/print.css">
     <link href='//fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet' type='text/css'>
@@ -105,6 +107,21 @@
 <script src="{{ relative }}javascripts/main.js"></script>
 
 {% include footer.html %}
-    
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script type="text/javascript">
+  // var version = '{{ page.url }}'.replace(/^\/+|\/+$/g, '');
+
+  docsearch({
+    apiKey: 'e574b72c1301f8a28e49ec9644096c79',
+    indexName: 'apereo',
+    inputSelector: '#searchField',
+    algoliaOptions: { 'facetFilters': ["version:{{ version }}"] },
+    debug: false // Set debug to true if you want to inspect the dropdown
+  });
+</script>
+
+
 </body>
 </html>
