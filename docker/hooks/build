@@ -10,14 +10,13 @@ echo "Docker commit message: $COMMIT_MSG"
 cd ..
 
 cat gradle.properties | grep "version=" > version.xyz
-echo -n "Current CAS version: " && cat version.xyz
+# echo -n "Current CAS version: " && cat version.xyz
 cas_version=`(cut -d '=' -f 2 version.xyz)`
 
 cat gradle.properties | grep "springBootVersion=" > version.xyz
-echo -n "Current Spring Boot version: " && cat version.xyz
+# echo -n "Current Spring Boot version: " && cat version.xyz
 boot_version=`(cut -d '=' -f 2 version.xyz)`
 
-echo "CAS branch: $cas_branch"
 echo "CAS version: $cas_version"
 echo "Spring Boot Version: $boot_version"
 
@@ -25,18 +24,18 @@ echo "**************************************************************************
 echo "Building CAS version $cas_version tagged as $DOCKER_TAG for image $IMAGE_NAME"
 echo "******************************************************************************"
 
-echo $cas_version > version.xyz
-cas_branch="master"
-if [[ $cas_version != *"RC"* ]]; then
-    cas_branch=`(cut -d '.' -f 1,3 version.xyz)`
-else
-    cas_branch="master"
-fi
-
+# echo $cas_version > version.xyz
+# cas_branch="master"
+# if [[ $cas_version = *"RC"* ]]; then
+#    cas_branch="master"
+# else
+#    cas_branch=`(cut -d '.' -f 1,3 version.xyz)`
+# fi
+# echo "CAS branch: $cas_branch"
 rm -f version.xyz
 
 cd docker
 echo "Current directory: `pwd`"
-ls
-docker build --build-arg CASVERSION=$cas_version CASBRANCH=$cas_branch BOOTVERSION=$boot_version -t $IMAGE_NAME .
+# ls
+docker build --build-arg CASVERSION=$cas_version --build-arg CASBRANCH=$cas_branch --build-arg BOOTVERSION=$boot_version -t $IMAGE_NAME .
 echo "Built CAS image $IMAGE_NAME successfully."
