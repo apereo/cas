@@ -32,6 +32,8 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
 
     @Override
     public IPAddressIntelligenceResponse examineInternal(final RequestContext context, final String clientIpAddress) {
+        val bannedResponse = IPAddressIntelligenceResponse.banned();
+
         try {
             val properties = adaptiveAuthenticationProperties.getIpIntel().getBlackDot();
             val builder = new StringBuilder(String.format(properties.getUrl(), clientIpAddress));
@@ -57,12 +59,12 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
             LOGGER.debug("Sending IP check request to [{}]", url);
             val response = HttpUtils.execute(url, HttpMethod.GET.name());
             if (response == null) {
-                return IPAddressIntelligenceResponse.banned();
+                return bannedResponse;
             }
 
             if (response.getStatusLine().getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
                 LOGGER.error("Exceeded the number of allowed queries");
-                return IPAddressIntelligenceResponse.banned();
+                return bannedResponse;
             }
             val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
             LOGGER.debug("Received payload result after examining IP address [{}] as [{}]", clientIpAddress, result);
@@ -72,7 +74,7 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
             if ("success".equalsIgnoreCase(status)) {
                 val rank = Double.parseDouble(json.getOrDefault("result", 1).toString());
                 if (rank == 1) {
-                    return IPAddressIntelligenceResponse.banned();
+                    return bannedResponse;
                 }
                 if (rank == 0) {
                     return IPAddressIntelligenceResponse.allowed();
@@ -84,10 +86,10 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
             }
             val message = json.getOrDefault("message", "Invalid IP address").toString();
             LOGGER.error(message);
-            return IPAddressIntelligenceResponse.banned();
+            return bannedResponse;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return IPAddressIntelligenceResponse.banned();
+        return bannedResponse;
     }
 }
