@@ -39,7 +39,10 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
         http.csrf()
             .disable()
             .logout()
-            .disable();
+            .disable()
+            .requiresChannel()
+            .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+            .requiresSecure();
 
         val requests = http.authorizeRequests();
         configureEndpointAccessToDenyUndefined(requests);
