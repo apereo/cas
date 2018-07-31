@@ -32,6 +32,8 @@ public class OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidatorTests
         service.setClientId("client");
         service.setClientSecret("secret");
         service.setServiceId("https://callback.example.org");
+        service.setSupportedGrantTypes(
+                CollectionUtils.wrapSet(OAuth20GrantTypes.CLIENT_CREDENTIALS.getType()));
 
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(service));
         final OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidator v =

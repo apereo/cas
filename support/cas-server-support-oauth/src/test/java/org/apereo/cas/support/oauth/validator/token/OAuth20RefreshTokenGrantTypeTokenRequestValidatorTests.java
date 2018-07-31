@@ -1,12 +1,16 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.pac4j.core.context.J2EContext;
@@ -29,6 +33,7 @@ import static org.mockito.Mockito.*;
 public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
     private TicketRegistry ticketRegistry;
     private OAuth20TokenRequestValidator validator;
+    private OAuthRegisteredService registeredService;
 
     @Before
     public void before() {
@@ -37,11 +42,25 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         when(oauthCode.isExpired()).thenReturn(false);
         when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
 
+        final Service service = RegisteredServiceTestUtils.getService();
+
+        final ServicesManager serviceManager = mock(ServicesManager.class);
+
+        registeredService = new OAuthRegisteredService();
+        registeredService.setName("OAuth");
+        registeredService.setClientId("client");
+        registeredService.setClientSecret("secret");
+        registeredService.setServiceId(service.getId());
+        registeredService.setSupportedGrantTypes(
+                CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
+        when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(registeredService));
+
+
         this.ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.getTicket(anyString())).thenReturn(oauthCode);
 
         this.validator = new OAuth20RefreshTokenGrantTypeTokenRequestValidator(
-            new RegisteredServiceAccessStrategyAuditableEnforcer(), this.ticketRegistry);
+            serviceManager, new RegisteredServiceAccessStrategyAuditableEnforcer(), this.ticketRegistry);
     }
 
     @Test

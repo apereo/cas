@@ -56,6 +56,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         registeredService.setClientId("client");
         registeredService.setClientSecret("secret");
         registeredService.setServiceId(service.getId());
+        registeredService.setSupportedGrantTypes(
+                CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
 
         final OAuth20CasAuthenticationBuilder builder = new OAuth20CasAuthenticationBuilder(new DefaultPrincipalFactory(),
             new WebApplicationServiceFactory(), new DefaultOAuth20ProfileScopeToAttributesFilter(), new CasConfigurationProperties());

@@ -63,6 +63,7 @@ import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -279,6 +280,8 @@ public abstract class AbstractOAuth20Tests {
         registeredServiceImpl.setClientId(CLIENT_ID);
         registeredServiceImpl.setClientSecret(secret);
         registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        registeredServiceImpl.setSupportedGrantTypes(
+                CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
         return registeredServiceImpl;
     }
 

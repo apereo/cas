@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.validator.token;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.ticket.Ticket;
@@ -24,9 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator {
     private final TicketRegistry ticketRegistry;
 
-    public OAuth20RefreshTokenGrantTypeTokenRequestValidator(final AuditableExecution registeredServiceAccessStrategyEnforcer,
+    public OAuth20RefreshTokenGrantTypeTokenRequestValidator(final ServicesManager servicesManager,
+                                                             final AuditableExecution registeredServiceAccessStrategyEnforcer,
                                                              final TicketRegistry ticketRegistry) {
-        super(registeredServiceAccessStrategyEnforcer);
+        super(registeredServiceAccessStrategyEnforcer, servicesManager);
         this.ticketRegistry = ticketRegistry;
     }
 

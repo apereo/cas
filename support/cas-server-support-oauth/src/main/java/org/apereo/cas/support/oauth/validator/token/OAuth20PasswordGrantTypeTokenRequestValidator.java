@@ -10,7 +10,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
@@ -26,14 +25,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator {
-    private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
 
     public OAuth20PasswordGrantTypeTokenRequestValidator(final AuditableExecution registeredServiceAccessStrategyEnforcer,
                                                          final ServicesManager servicesManager,
                                                          final ServiceFactory webApplicationServiceServiceFactory) {
-        super(registeredServiceAccessStrategyEnforcer);
-        this.servicesManager = servicesManager;
+        super(registeredServiceAccessStrategyEnforcer, servicesManager);
         this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
     }
 
@@ -46,9 +43,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
     protected boolean validateInternal(final J2EContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
         final HttpServletRequest request = context.getRequest();
-        final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
-        LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        final OAuthRegisteredService registeredService = getRegisteredService(context, uProfile);
 
         if (HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)) {
             final WebApplicationService service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());

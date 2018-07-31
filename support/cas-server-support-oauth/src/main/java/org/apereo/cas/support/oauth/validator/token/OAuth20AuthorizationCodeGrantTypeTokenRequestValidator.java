@@ -27,15 +27,20 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator {
-    private final ServicesManager servicesManager;
     private final TicketRegistry ticketRegistry;
 
     public OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(final ServicesManager servicesManager,
                                                                   final TicketRegistry ticketRegistry,
                                                                   final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(registeredServiceAccessStrategyEnforcer);
-        this.servicesManager = servicesManager;
+        super(registeredServiceAccessStrategyEnforcer, servicesManager);
         this.ticketRegistry = ticketRegistry;
+    }
+
+    @Override
+    protected OAuthRegisteredService getRegisteredService(final J2EContext context, final UserProfile uProfile) {
+        final HttpServletRequest request = context.getRequest();
+        final String clientId = uProfile.getId();
+        return OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
     }
 
     @Override
@@ -49,7 +54,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         final HttpServletRequest request = context.getRequest();
         final String clientId = uProfile.getId();
         final String redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        final OAuthRegisteredService clientRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        final OAuthRegisteredService clientRegisteredService = getRegisteredService(context, uProfile);
 
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
         final boolean valid = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
