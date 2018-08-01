@@ -1,6 +1,8 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
@@ -24,6 +26,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -50,6 +53,10 @@ public class RestMultifactorAuthenticationTrustStorageTests {
     @Autowired
     @Qualifier("mfaTrustEngine")
     private MultifactorAuthenticationTrustStorage mfaTrustEngine;
+
+    @Autowired
+    @Qualifier("mfaTrustCipherExecutor")
+    private CipherExecutor mfaTrustCipherExecutor;
 
     @BeforeClass
     public static void setup() {
@@ -81,11 +88,17 @@ public class RestMultifactorAuthenticationTrustStorageTests {
         r.setRecordDate(LocalDateTime.now().minusDays(2));
 
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap(r));
-        try (val webServer = new MockWebServer(9297,
+        try (val webServer = new MockWebServer(9311,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            mfaTrustEngine.set(r);
-            val records = mfaTrustEngine.get(r.getPrincipal());
+
+            val props = new CasConfigurationProperties();
+            props.getAuthn().getMfa().getTrusted().getRest().setUrl("http://localhost:9311");
+            val mfaEngine = new RestMultifactorAuthenticationTrustStorage(new RestTemplate(), props);
+            mfaEngine.setCipherExecutor(mfaTrustCipherExecutor);
+
+            mfaEngine.set(r);
+            val records = mfaEngine.get(r.getPrincipal());
             assertNotNull(records);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
