@@ -66,7 +66,15 @@ import static org.junit.Assert.*;
         CasWebApplicationServiceFactoryConfiguration.class,
         RefreshAutoConfiguration.class})
 @EnableScheduling
-@TestPropertySource(locations = {"classpath:/mongo.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.mongo.dropCollection=true",
+    "cas.authn.mongo.host=localhost",
+    "cas.authn.mongo.port=8081",
+    "cas.authn.mongo.attributes=loc,state",
+    "cas.authn.mongo.usernameAttribute=username",
+    "cas.authn.mongo.passwordAttribute=password",
+    "cas.authn.pac4j.typedIdUsed=false"
+    })
 public class MongoDbAuthenticationHandlerTests {
 
     @ClassRule
