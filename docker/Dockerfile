@@ -23,3 +23,4 @@ RUN ./mvnw clean package -T 10 -Dcas.version=$CASVERSION -Dspringboot.version=$B
 FROM openjdk:11-jdk-slim as cas
 COPY --from=overlay /cas-overlay/target/cas.war .
 COPY thekeystore /etc/cas/
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
