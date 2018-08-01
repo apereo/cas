@@ -75,7 +75,15 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationPrincipalConfiguration.class
 })
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-@TestPropertySource(locations = {"classpath:/mongo-aup.properties"})
+@TestPropertySource(properties = {
+    "cas.acceptableUsagePolicy.mongo.host=localhost",
+    "cas.acceptableUsagePolicy.mongo.port=8081",
+    "cas.acceptableUsagePolicy.mongo.dropCollection=true",
+    "cas.acceptableUsagePolicy.mongo.collection=acceptable-usage-policy",
+    "cas.acceptableUsagePolicy.aupAttributeName=accepted",
+    "cas.acceptableUsagePolicy.mongo.databaseName=acceptableUsagePolicy"
+    }
+)
 public class MongoDbAcceptableUsagePolicyRepositoryTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
