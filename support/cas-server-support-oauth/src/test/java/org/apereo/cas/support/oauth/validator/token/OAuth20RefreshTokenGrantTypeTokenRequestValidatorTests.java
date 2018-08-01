@@ -52,7 +52,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         registeredService.setClientSecret("secret");
         registeredService.setServiceId(service.getId());
         registeredService.setSupportedGrantTypes(
-                CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
+                CollectionUtils.wrapHashSet(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(registeredService));
 
 

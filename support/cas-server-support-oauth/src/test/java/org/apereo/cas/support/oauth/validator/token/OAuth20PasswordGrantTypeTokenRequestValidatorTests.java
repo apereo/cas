@@ -43,7 +43,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
         registeredService.setClientId("client");
         registeredService.setClientSecret("secret");
         registeredService.setServiceId(service.getId());
-        registeredService.setSupportedGrantTypes(CollectionUtils.wrapSet(getGrantType().getType()));
+        registeredService.setSupportedGrantTypes(CollectionUtils.wrapHashSet(getGrantType().getType()));
 
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(registeredService));
 

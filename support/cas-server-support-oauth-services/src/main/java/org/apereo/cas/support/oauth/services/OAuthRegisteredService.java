@@ -14,7 +14,6 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * An extension of the {@link RegexRegisteredService} that defines the
@@ -51,11 +50,11 @@ public class OAuthRegisteredService extends RegexRegisteredService {
 
     @Lob
     @Column(name = "supported_grants", length = Integer.MAX_VALUE)
-    private Set<String> supportedGrantTypes = new HashSet<>();
+    private HashSet<String> supportedGrantTypes = new HashSet<>();
 
     @Lob
     @Column(name = "supported_responses", length = Integer.MAX_VALUE)
-    private Set<String> supportedResponseTypes = new HashSet<>();
+    private HashSet<String> supportedResponseTypes = new HashSet<>();
 
     @Override
     protected AbstractRegisteredService newInstance() {

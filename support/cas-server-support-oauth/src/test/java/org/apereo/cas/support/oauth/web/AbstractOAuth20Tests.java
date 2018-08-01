@@ -281,7 +281,7 @@ public abstract class AbstractOAuth20Tests {
         registeredServiceImpl.setClientSecret(secret);
         registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         registeredServiceImpl.setSupportedGrantTypes(
-                CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
+                CollectionUtils.wrapHashSet(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
         return registeredServiceImpl;
     }
 

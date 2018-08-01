@@ -34,7 +34,7 @@ public class OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTe
         service.setClientSecret("secret");
         service.setServiceId("https://callback.example.org");
         service.setSupportedGrantTypes(
-                CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
+                CollectionUtils.wrapHashSet(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
 
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(service));
         final OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator v =

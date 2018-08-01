@@ -33,7 +33,7 @@ public class OAuth20RefreshTokenGrantTypeAuthorizationRequestValidatorTests {
         service.setClientSecret("secret");
         service.setServiceId("https://callback.example.org");
         service.setSupportedGrantTypes(
-                CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD.getType()));
+                CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD.getType()));
 
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(service));
         final OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator v =
