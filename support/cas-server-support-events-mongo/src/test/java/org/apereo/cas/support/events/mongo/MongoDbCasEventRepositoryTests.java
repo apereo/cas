@@ -24,7 +24,12 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
  */
 @Category(MongoDbCategory.class)
 @SpringBootTest(classes = {MongoDbEventsConfiguration.class, RefreshAutoConfiguration.class})
-@TestPropertySource(locations = {"classpath:/mongoevents.properties"})
+@TestPropertySource(properties = {
+    "cas.events.mongo.host=localhost",
+    "cas.events.mongo.port=8081",
+    "cas.consent.mongo.databaseName=events",
+    "cas.events.mongo.dropCollection=true"
+    })
 public class MongoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @ClassRule
