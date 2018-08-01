@@ -39,7 +39,12 @@ import static org.junit.Assert.*;
     MultifactorAuthnTrustConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class})
-@TestPropertySource(locations = "classpath:trustedmongo.properties")
+@TestPropertySource(properties = {
+    "cas.authn.mfa.trusted.mongo.databaseName=mfa-trusted",
+    "cas.authn.mfa.trusted.mongo.host=localhost",
+    "cas.authn.mfa.trusted.mongo.port=8081",
+    "cas.authn.mfa.trusted.mongo.dropCollection=true"
+    })
 public class MongoDbMultifactorAuthenticationTrustStorageTests {
 
     @ClassRule
