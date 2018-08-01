@@ -37,5 +37,5 @@ rm -f version.xyz
 cd docker
 echo "Current directory: `pwd`"
 # ls
-docker build --build-arg CASVERSION=$cas_version --build-arg CASBRANCH=$cas_branch --build-arg BOOTVERSION=$boot_version -t $IMAGE_NAME .
+docker build --build-arg CASVERSION=$cas_version  --build-arg BOOTVERSION=$boot_version -t $IMAGE_NAME .
 echo "Built CAS image $IMAGE_NAME successfully."
