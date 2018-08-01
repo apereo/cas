@@ -27,7 +27,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 @TestPropertySource(properties = {
     "cas.events.mongo.host=localhost",
     "cas.events.mongo.port=8081",
-    "cas.consent.mongo.databaseName=events",
+    "cas.events.mongo.databaseName=events",
     "cas.events.mongo.dropCollection=true"
     })
 public class MongoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
