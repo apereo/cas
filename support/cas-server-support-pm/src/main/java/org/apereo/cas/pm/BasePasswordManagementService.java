@@ -108,7 +108,10 @@ public class BasePasswordManagementService implements PasswordManagementService 
                 claims.setStringClaim("client", holder.getClientIpAddress());
             }
             claims.setSubject(to);
+            LOGGER.debug("Creating password management token for [{}]", to);
             val json = claims.toJson();
+
+            LOGGER.debug("Encoding the generated JSON token...");
             return this.cipherExecutor.encode(json);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
