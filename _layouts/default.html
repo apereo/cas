@@ -12,6 +12,7 @@
      
     {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
     {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
+    {% capture version %}{{ page.url | replace:'/',' ' | truncatewords: 1 | remove:'...' }}{% endcapture %}
 
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -28,6 +29,8 @@
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/redmond/jquery-ui.css"/>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="{{ relative }}stylesheets/stylesheet.css">
     <link rel="stylesheet" type="text/css" media="print" href="{{ relative }}stylesheets/print.css">
@@ -93,7 +96,7 @@
         </div>
     </div>
 </div>
-    
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.3.2/js/tether.min.js"></script>
@@ -105,6 +108,19 @@
 <script src="{{ relative }}javascripts/main.js"></script>
 
 {% include footer.html %}
-    
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.js"></script>
+<script type="text/javascript">
+  docsearch({
+    apiKey: 'e574b72c1301f8a28e49ec9644096c79',
+    indexName: 'apereo',
+    inputSelector: '#searchField',
+    algoliaOptions: { 'facetFilters': ["version: {{ version }}"] },
+    debug: false // Set debug to true if you want to inspect the dropdown
+  });
+</script>
+
+
 </body>
 </html>
