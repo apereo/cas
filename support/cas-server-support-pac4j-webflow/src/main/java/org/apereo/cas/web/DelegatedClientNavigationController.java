@@ -88,6 +88,15 @@ public class DelegatedClientNavigationController {
         }
     }
 
+    /**
+     * Redirect response to flow. Receives the CAS, OAuth, OIDC, etc. callback response, adjust it to work with
+     * the login webflow, and redirects the requests to the login webflow endpoint.
+     *
+     * @param clientName the path-based parameter that provider the pac4j client name
+     * @param request  the request
+     * @param response the response
+     * @return the view
+     */
     @GetMapping(ENDPOINT_RESPONSE)
     public View redirectResponseToFlow(final @PathVariable("clientName") String clientName, final HttpServletRequest request, final HttpServletResponse response) {
         final URIBuilder builder = new URIBuilder(request.getRequestURL().append("?").append(request.getQueryString()).toString());
