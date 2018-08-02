@@ -11,7 +11,7 @@ import java.security.Principal;
  */
 public class MockJcifsAuthentication extends Authentication {
 
-    private Principal principal;
+    private final Principal principal;
     private byte[] outToken = new byte[]{4, 5, 6};
 
     public MockJcifsAuthentication() {
