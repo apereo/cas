@@ -59,6 +59,12 @@ public class WebflowProperties implements Serializable {
     private WebflowSessionManagementProperties session = new WebflowSessionManagementProperties();
 
     /**
+     * Configuration settings relevant for login flow and view decoration.
+     */
+    @NestedConfigurationProperty
+    private WebflowLoginDecoratorProperties loginDecorator = new WebflowLoginDecoratorProperties();
+
+    /**
      * Path to groovy resource that may auto-configure the webflow context
      * dynamically creating/removing states and actions.
      */
