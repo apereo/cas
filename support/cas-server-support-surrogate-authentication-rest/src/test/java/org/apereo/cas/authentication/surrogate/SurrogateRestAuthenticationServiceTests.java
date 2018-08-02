@@ -22,7 +22,9 @@ import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.SurrogateRestAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -93,6 +95,10 @@ public class SurrogateRestAuthenticationServiceTests {
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
     @Qualifier("surrogateAuthenticationService")
     private SurrogateAuthenticationService surrogateAuthenticationService;
 
@@ -108,10 +114,15 @@ public class SurrogateRestAuthenticationServiceTests {
             throw new AssertionError(e.getMessage(), e);
         }
 
-        try (val webServer = new MockWebServer(9301,
+        try (val webServer = new MockWebServer(9310,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
+
+            val props = new CasConfigurationProperties();
+            props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:9310");
+            val surrogateService = new SurrogateRestAuthenticationService(props.getAuthn().getSurrogate().getRest(), servicesManager);
+
+            val result = surrogateService.canAuthenticateAs("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
                 CoreAuthenticationTestUtils.getService());
             assertTrue(result);
