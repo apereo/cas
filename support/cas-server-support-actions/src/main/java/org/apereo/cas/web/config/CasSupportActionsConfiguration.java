@@ -23,6 +23,7 @@ import org.apereo.cas.web.flow.login.InitialAuthenticationRequestValidationActio
 import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.flow.login.InitializeLoginAction;
 import org.apereo.cas.web.flow.login.RedirectUnauthorizedServiceUrlAction;
+import org.apereo.cas.web.flow.login.RenderLoginAction;
 import org.apereo.cas.web.flow.login.SendTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
 import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
@@ -41,6 +42,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -57,6 +59,9 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 public class CasSupportActionsConfiguration {
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
@@ -171,6 +176,13 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     public Action initializeLoginAction() {
         return new InitializeLoginAction(servicesManager);
+    }
+
+    @ConditionalOnMissingBean(name = "renderLoginFormAction")
+    @Bean
+    @RefreshScope
+    public Action renderLoginFormAction() {
+        return new RenderLoginAction(servicesManager, casProperties, applicationContext);
     }
 
     @RefreshScope
