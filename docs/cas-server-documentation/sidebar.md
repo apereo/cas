@@ -183,11 +183,13 @@ layout: null
     *   [Dynamic Themes](/$version/installation/User-Interface-Customization-Themes.html)
     *   [Acceptable Usage Policy](/$version/installation/Webflow-Customization-AUP.html)
     *   [Interrupt Notifications](/$version/installation/Webflow-Customization-Interrupt.html)
+    *   [Dynamic Decorations](/$version/installation/Webflow-Customization-Decorators.html)
         
 *   [Webflow Management](#webflowmgmt)
     *   [Overview](/$version/installation/Webflow-Customization.html) 
     *   [Error Handling](/$version/installation/Webflow-Customization-Exceptions.html)
-    *   [Extending Webflow](/$version/installation/Webflow-Customization-Extensions.html) 
+    *   [Extending Webflow](/$version/installation/Webflow-Customization-Extensions.html)
+    *   [Dynamic Decorations](/$version/installation/Webflow-Customization-Decorators.html) 
     *   [Session Persistence](/$version/installation/Webflow-Customization-Sessions.html)
 
 * [High Availability](#highavailability)

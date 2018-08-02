@@ -44,6 +44,10 @@ CAS by default is configured to hot reload changes to the Spring webflow configu
 
 If you want to learn how to modify and extend the CAS authentication flows, [please see this guide](Webflow-Customization-Extensions.html).
 
+### Webflow Decorations
+
+Learn how to fetch and display data dynamically from external data sources and endpoints and pass those along to the webflow by [reviewing this guide](Webflow-Customization-Extensions.html).
+
 ## Required Service for Authentication
 
 By default, CAS will present a generic success page if the initial authentication request does not identify

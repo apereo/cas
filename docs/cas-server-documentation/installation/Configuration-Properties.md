@@ -3659,6 +3659,18 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # cas.webflow.redirectSameState=false
 ```
 
+### Spring Webflow Login Decorations
+
+#### Groovy
+
+```properties
+# cas.webflow.loginDecorator.groovy.location=file:/etc/cas/config/LoginDecorator.groovy
+```
+
+#### REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.webflow.loginDecorator.rest`.
+
 ### Spring Webflow Auto Configuration
 
 Options that control how the Spring Webflow context is dynamically altered and configured by CAS. To learn more about this topic, [please review this guide](Webflow-Customization-Extensions.html).
