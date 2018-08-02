@@ -19,6 +19,7 @@ import org.springframework.core.io.ClassPathResource;
     RefreshAutoConfiguration.class
 })
 public class JsonResourceSurrogateAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
+
     private SurrogateAuthenticationService service;
 
     @Before

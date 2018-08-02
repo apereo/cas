@@ -61,7 +61,11 @@ import javax.sql.DataSource;
     CasCoreUtilConfiguration.class,
     SurrogateJdbcAuthenticationConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/surrogate-jdbc.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.surrogate.jdbc.surrogateSearchQuery=select count(*) from surrogate_accounts where username=? and surrogateAccount=?",
+    "cas.authn.surrogate.jdbc.surrogateAccountQuery=select * from surrogate_accounts where username=?",
+    "cas.authn.surrogate.jdbc.autoCommit=true"
+    })
 @Getter
 public class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     @ClassRule

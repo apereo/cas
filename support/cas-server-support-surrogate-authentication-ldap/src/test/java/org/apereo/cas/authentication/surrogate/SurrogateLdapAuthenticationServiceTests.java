@@ -50,7 +50,6 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(locations = "classpath:/surrogate-ldap.properties")
 @Category(LdapCategory.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
@@ -83,6 +82,17 @@ import org.springframework.test.context.TestPropertySource;
     SurrogateLdapAuthenticationConfiguration.class
 })
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@TestPropertySource(properties = {
+    "cas.authn.surrogate.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.authn.surrogate.ldap.useSsl=false",
+    "cas.authn.surrogate.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.authn.surrogate.ldap.bindDn=cn=Directory Manager",
+    "cas.authn.surrogate.ldap.bindCredential=password",
+    "cas.authn.surrogate.ldap.searchFilter=cn={user}",
+    "cas.authn.surrogate.ldap.surrogateSearchFilter=employeeType={user}",
+    "cas.authn.surrogate.ldap.memberAttributeName=mail",
+    "cas.authn.surrogate.ldap.memberAttributeValueRegex=\\\\w+@example.org"
+    })
 @Getter
 public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
 
