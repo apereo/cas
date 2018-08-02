@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.PasswordlessAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.MockWebServer;
@@ -92,10 +93,14 @@ public class RestfulPasswordlessTokenRepositoryTests {
     public void verifyFindToken() {
         val token = passwordlessTokenRepository.createToken("casuser");
         val data = passwordlessCipherExecutor.encode(token).toString();
-        try (val webServer = new MockWebServer(9293,
+        try (val webServer = new MockWebServer(9306,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val foundToken = passwordlessTokenRepository.findToken("casuser");
+            val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
+            tokens.getRest().setUrl("http://localhost:9306");
+            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor);
+
+            val foundToken = passwordless.findToken("casuser");
             assertNotNull(foundToken);
             assertTrue(foundToken.isPresent());
         } catch (final Exception e) {
@@ -106,10 +111,14 @@ public class RestfulPasswordlessTokenRepositoryTests {
     @Test
     public void verifySaveToken() {
         val data = "THE_TOKEN";
-        try (val webServer = new MockWebServer(9293,
+        try (val webServer = new MockWebServer(9307,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            passwordlessTokenRepository.saveToken("casuser", data);
+            val tokens = new CasConfigurationProperties().getAuthn().getPasswordless().getTokens();
+            tokens.getRest().setUrl("http://localhost:9307");
+            val passwordless = new RestfulPasswordlessTokenRepository(tokens.getExpireInSeconds(), tokens.getRest(), passwordlessCipherExecutor);
+
+            passwordless.saveToken("casuser", data);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }

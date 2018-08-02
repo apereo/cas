@@ -50,7 +50,7 @@ public class RestAuditTrailManagerTests {
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             r.record(audit);
-            assertFalse(r.getAuditRecordsSince(LocalDate.now()).isEmpty());
+            assertFalse(r.getAuditRecordsSince(LocalDate.now().minusDays(2)).isEmpty());
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }

@@ -40,11 +40,11 @@ public class RestfulIPAddressIntelligenceServiceTests {
 
     @Test
     public void verifyBannedOperation() {
-        try (val webServer = new MockWebServer(9300,
+        try (val webServer = new MockWebServer(9304,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.FORBIDDEN)) {
             webServer.start();
             val props = new AdaptiveAuthenticationProperties();
-            props.getIpIntel().getRest().setUrl("http://localhost:9300");
+            props.getIpIntel().getRest().setUrl("http://localhost:9304");
             val service = new RestfulIPAddressIntelligenceService(props);
             val result = service.examine(new MockRequestContext(), "1.2.3.4");
             assertNotNull(result);
