@@ -11,14 +11,30 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>com.rimerosolutions.maven.plugins</groupId>
+                <artifactId>wrapper-maven-plugin</artifactId>
+                <version>0.0.5</version>
+                <configuration>
+                    <verifyDownload>true</verifyDownload>
+                    <checksumAlgorithm>MD5</checksumAlgorithm>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${springboot.version}</version>
                 <configuration>
-                    <mainClass>${mainClassName}</mainClass>
+                    <mainClass>org.apereo.cas.web.CasWebApplication</mainClass>
                     <addResources>true</addResources>
-                    <executable>${isExecutable}</executable>
+                    <executable>true</executable>
                     <layout>WAR</layout>
+                    <noverify>true</noverify>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.apereo.cas</groupId>
+                            <artifactId>cas-server-webapp-tomcat</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -31,19 +47,21 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.2.2</version>
                 <configuration>
                     <warName>cas</warName>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                     <recompressZippedFiles>false</recompressZippedFiles>
                     <archive>
                         <compress>false</compress>
-                        <manifestFile>${manifestFileToUse}</manifestFile>
+                        <manifestEntries>
+                            <Main-Class>org.springframework.boot.loader.WarLauncher</Main-Class>
+                        </manifestEntries>
                     </archive>
                     <overlays>
                         <overlay>
                             <groupId>org.apereo.cas</groupId>
-                            <artifactId>cas-server-webapp${app.server}</artifactId>
+                            <artifactId>cas-server-webapp-tomcat</artifactId>
                         </overlay>
                     </overlays>
                 </configuration>
@@ -55,7 +73,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apereo.cas</groupId>
-            <artifactId>cas-server-webapp${app.server}</artifactId>
+            <artifactId>cas-server-webapp-tomcat</artifactId>
             <version>${cas.version}</version>
             <type>war</type>
             <scope>runtime</scope>
@@ -63,14 +81,9 @@
     </dependencies>
 
     <properties>
-        <springboot.version>1.5.13.RELEASE</springboot.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <app.server>-tomcat</app.server>
-        <mainClassName>org.springframework.boot.loader.WarLauncher</mainClassName>
-        <isExecutable>false</isExecutable>
-        <manifestFileToUse>${project.build.directory}/war/work/org.apereo.cas/cas-server-webapp${app.server}/META-INF/MANIFEST.MF</manifestFileToUse>
     </properties>
 
     <repositories>
@@ -100,38 +113,4 @@
         </repository>
     </repositories>
 
-    <profiles>
-        <profile>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <id>exec</id>
-            <properties>
-                <mainClassName>org.apereo.cas.web.CasWebApplication</mainClassName>
-                <isExecutable>true</isExecutable>
-                <manifestFileToUse></manifestFileToUse>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.soebes.maven.plugins</groupId>
-                        <artifactId>echo-maven-plugin</artifactId>
-                        <version>0.3.0</version>
-                        <executions>
-                            <execution>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>echo</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <echos>
-                                <echo>Executable profile to make the generated CAS web application executable.</echo></echos>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
