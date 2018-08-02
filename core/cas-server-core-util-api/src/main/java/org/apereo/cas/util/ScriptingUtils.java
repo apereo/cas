@@ -203,10 +203,13 @@ public class ScriptingUtils {
                 val result = groovyObject.invokeMethod(methodName, args);
                 LOGGER.trace("Results returned by the groovy script are [{}]", result);
 
-                if (result != null && !clazz.isAssignableFrom(result.getClass())) {
-                    throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
+                if (!clazz.equals(Void.class)) {
+                    if (result != null && !clazz.isAssignableFrom(result.getClass())) {
+                        throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
+                    }
+                    return (T) result;
                 }
-                return (T) result;
+                return null;
             }
             LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
         } catch (final Exception e) {
