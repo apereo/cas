@@ -2,13 +2,9 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.Embeddable;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.util.HashSet;
@@ -22,17 +18,11 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Entity
+@Embeddable
 @Table(name = "RegexRegisteredServiceProperty")
 @EqualsAndHashCode
 public class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
     private static final long serialVersionUID = 1349556364689133211L;
-
-    @org.springframework.data.annotation.Id
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
-    @GenericGenerator(name = "native", strategy = "native")
-    private long id;
 
     @Lob
     @Column(name = "property_values")

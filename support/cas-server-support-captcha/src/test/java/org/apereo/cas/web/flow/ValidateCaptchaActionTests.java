@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.MockWebServer;
@@ -115,10 +116,15 @@ public class ValidateCaptchaActionTests {
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
-        try (val webServer = new MockWebServer(9294,
+        try (val webServer = new MockWebServer(9305,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val result = validateCaptchaAction.execute(context);
+
+            val props = new CasConfigurationProperties();
+            props.getGoogleRecaptcha().setVerifyUrl("http://localhost:9305");
+            val validateAction = new ValidateCaptchaAction(props.getGoogleRecaptcha());
+
+            val result = validateAction.execute(context);
             assertNotNull(result);
             assertEquals(ValidateCaptchaAction.EVENT_ID_ERROR, result.getId());
         } catch (final Exception e) {
