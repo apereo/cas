@@ -1622,41 +1622,62 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.spnego.principal`.
 
 ```properties
+# cas.authn.spnego.mixedModeAuthentication=false
+# cas.authn.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
+# cas.authn.spnego.send401OnAuthenticationFailure=true
+# cas.authn.spnego.ntlmAllowed=true
+# cas.authn.spnego.principalWithDomainName=false
+# cas.authn.spnego.name=
+# cas.authn.spnego.ntlm=false
+```
+
+### System Settings
+
+```properties
 # cas.authn.spnego.kerberosConf=
 # cas.authn.spnego.loginConf=
 # cas.authn.spnego.kerberosRealm=EXAMPLE.COM
-
-# cas.authn.spnego.jcifsUsername=
-# cas.authn.spnego.jcifsDomainController=
-# cas.authn.spnego.jcifsDomain=
-# cas.authn.spnego.jcifsServicePassword=
-# cas.authn.spnego.jcifsPassword=
-
-# cas.authn.spnego.mixedModeAuthentication=false
-# cas.authn.spnego.cachePolicy=600
-# cas.authn.spnego.timeout=300000
-# cas.authn.spnego.jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
-# cas.authn.spnego.jcifsNetbiosWins=
-# cas.authn.spnego.ntlmAllowed=true
-# cas.authn.spnego.hostNamePatternString=.+
-# cas.authn.spnego.useSubjectCredsOnly=false
-# cas.authn.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
-# cas.authn.spnego.dnsTimeout=2000
-# cas.authn.spnego.hostNameClientActionStrategy=hostnameSpnegoClientAction
-# cas.authn.spnego.kerberosKdc=172.10.1.10
-# cas.authn.spnego.alternativeRemoteHostAttribute=alternateRemoteHeader
-# cas.authn.spnego.ipsToCheckPattern=127.+
 # cas.authn.spnego.kerberosDebug=true
-# cas.authn.spnego.send401OnAuthenticationFailure=true
-# cas.authn.spnego.ntlm=false
-# cas.authn.spnego.principalWithDomainName=false
-# cas.authn.spnego.spnegoAttributeName=distinguishedName
-# cas.authn.spnego.name=
+# cas.authn.spnego.useSubjectCredsOnly=false
+# cas.authn.spnego.kerberosKdc=172.10.1.10
 ```
 
-#### SPNEGO LDAP Integration
+### Spnego Authentication Settings
+
+```properties
+# cas.authn.spnego[0].cachePolicy=600
+# cas.authn.spnego[0].jcifsDomainController=
+# cas.authn.spnego[0].jcifsDomain=
+# cas.authn.spnego[0].jcifsPassword=
+# cas.authn.spnego[0].jcifsUsername=
+# cas.authn.spnego[0].jcifsServicePassword=
+# cas.authn.spnego[0].timeout=300000
+# cas.authn.spnego[0].jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
+# cas.authn.spnego[0].jcifsNetbiosWins=
+```
+
+### SPNEGO Client Selection Strategy
+
+```properties
+# cas.authn.spnego.hostNameClientActionStrategy=hostnameSpnegoClientAction
+```
+
+### SPNEGO Client Selection Hostname
+
+```properties
+# cas.authn.spnego.alternativeRemoteHostAttribute=alternateRemoteHeader
+# cas.authn.spnego.ipsToCheckPattern=127.+
+# cas.authn.spnego.dnsTimeout=2000
+# cas.authn.spnego.hostNamePatternString=.+
+```
+
+### SPNEGO LDAP Integration
 
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.spnego.ldap`.
+
+```properties
+# cas.authn.spnego.spnegoAttributeName=distinguishedName
+```
 
 ### NTLM Authentication
 

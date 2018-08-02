@@ -10,6 +10,8 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link SpnegoProperties}.
@@ -23,6 +25,105 @@ import java.io.Serializable;
 public class SpnegoProperties implements Serializable {
 
     private static final long serialVersionUID = 8084143496524446970L;
+
+    /**
+     * Spnego settings that apply as system properties.
+     */
+    private final SpnegoSystemProperties system = new SpnegoSystemProperties();
+
+    /**
+     * Individual authentication settings for spengo that are grouped
+     * and fed to the spnego authentication object to form a collection.
+     */
+    private final List<SpnegoAuthenticationProperties> properties = new ArrayList<>();
+
+    @RequiresModule(name = "cas-server-support-spnego")
+    @Getter
+    @Setter
+    public static class SpnegoSystemProperties implements Serializable {
+        private static final long serialVersionUID = -7213507143858237596L;
+        /**
+         * The Login conf.
+         */
+        private String loginConf;
+
+        /**
+         * The Kerberos conf.
+         */
+        private String kerberosConf;
+
+        /**
+         * The Kerberos kdc.
+         */
+        private String kerberosKdc = "172.10.1.10";
+
+        /**
+         * The Kerberos realm.
+         */
+        private String kerberosRealm = "EXAMPLE.COM";
+
+        /**
+         * The Kerberos debug.
+         */
+        private String kerberosDebug;
+
+        /**
+         * The Use subject creds only.
+         */
+        private boolean useSubjectCredsOnly;
+
+    }
+
+    @RequiresModule(name = "cas-server-support-spnego")
+    @Getter
+    @Setter
+    public static class SpnegoAuthenticationProperties implements Serializable {
+        private static final long serialVersionUID = 4513529663377430783L;
+        /**
+         * Jcifs Netbios cache policy.
+         */
+        private long cachePolicy = 600;
+
+        /**
+         * The Jcifs domain controller.
+         */
+        private String jcifsDomainController;
+
+        /**
+         * The Jcifs domain.
+         */
+        private String jcifsDomain;
+
+        /**
+         * The Jcifs password.
+         */
+        private String jcifsPassword;
+
+        /**
+         * The Jcifs service password.
+         */
+        private String jcifsServicePassword;
+
+        /**
+         * The Jcifs service principal.
+         */
+        private String jcifsServicePrincipal = "HTTP/cas.example.com@EXAMPLE.COM";
+
+        /**
+         * Spnego JCIFS timeout.
+         */
+        private String timeout = "PT5M";
+
+        /**
+         * The Jcifs netbios wins.
+         */
+        private String jcifsNetbiosWins;
+
+        /**
+         * The Jcifs username.
+         */
+        private String jcifsUsername;
+    }
 
     /**
      * If specified, will create the principal by ths name on successful authentication.
@@ -55,81 +156,6 @@ public class SpnegoProperties implements Serializable {
      * LDAP settings for spnego to validate clients, etc.
      */
     private Ldap ldap = new Ldap();
-
-    /**
-     * The Jcifs password.
-     */
-    private String jcifsPassword;
-
-    /**
-     * The Jcifs service password.
-     */
-    private String jcifsServicePassword;
-
-    /**
-     * The Jcifs service principal.
-     */
-    private String jcifsServicePrincipal = "HTTP/cas.example.com@EXAMPLE.COM";
-
-    /**
-     * The Kerberos conf.
-     */
-    private String kerberosConf;
-
-    /**
-     * The Kerberos kdc.
-     */
-    private String kerberosKdc = "172.10.1.10";
-
-    /**
-     * The Kerberos realm.
-     */
-    private String kerberosRealm = "EXAMPLE.COM";
-
-    /**
-     * The Login conf.
-     */
-    private String loginConf;
-
-    /**
-     * Spnego JCIFS timeout.
-     */
-    private String timeout = "PT5M";
-
-    /**
-     * Jcifs Netbios cache policy.
-     */
-    private long cachePolicy = 600;
-
-    /**
-     * The Jcifs netbios wins.
-     */
-    private String jcifsNetbiosWins;
-
-    /**
-     * The Jcifs username.
-     */
-    private String jcifsUsername;
-
-    /**
-     * The Jcifs domain controller.
-     */
-    private String jcifsDomainController;
-
-    /**
-     * The Jcifs domain.
-     */
-    private String jcifsDomain;
-
-    /**
-     * The Kerberos debug.
-     */
-    private String kerberosDebug;
-
-    /**
-     * The Use subject creds only.
-     */
-    private boolean useSubjectCredsOnly;
 
     /**
      * When validating clients, specifies the DNS timeout used to look up an address.

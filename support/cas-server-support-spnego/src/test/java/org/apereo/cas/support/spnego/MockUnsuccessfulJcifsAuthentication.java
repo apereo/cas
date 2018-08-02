@@ -30,7 +30,7 @@ public class MockUnsuccessfulJcifsAuthentication extends Authentication {
     @Override
     public void process(final byte[] arg0) throws AuthenticationException {
         if (this.throwExceptionOnProcess) {
-            throw new AuthenticationException("not valid"); //$NON-NLS-1$
+            throw new AuthenticationException("not valid");
         }
     }
 }
