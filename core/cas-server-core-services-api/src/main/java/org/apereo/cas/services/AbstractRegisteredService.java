@@ -8,21 +8,23 @@ import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
-import javax.persistence.OneToMany;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import java.net.URL;
@@ -128,12 +130,16 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(name = "public_key", length = Integer.MAX_VALUE)
     private RegisteredServicePublicKey publicKey;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "RegisteredServiceImpl_Props")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.ALL)
+    @CollectionTable(name = "RegexRegisteredService_RegexRegisteredServiceProperty")
+    @MapKeyColumn(name = "RegexRegisteredServiceProperty_name")
+    @Column(name = "RegexRegisteredServiceProperty_value")
     private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "RegisteredService_Contacts")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Cascade(CascadeType.ALL)
+    @CollectionTable(name = "RegexRegisteredService_RegisteredServiceImplContact")
     @OrderColumn
     private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>();
 
