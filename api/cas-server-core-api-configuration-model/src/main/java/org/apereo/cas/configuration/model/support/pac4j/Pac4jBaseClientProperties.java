@@ -36,5 +36,5 @@ public class Pac4jBaseClientProperties implements Serializable {
     /**
      * Create a callback url with the clientId in the path instead of in the querystring.
      */
-    private boolean usePathBasedCallbackUrl = false;
+    private boolean usePathBasedCallbackUrl;
 }
