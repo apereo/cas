@@ -70,7 +70,13 @@ import java.util.Collection;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @EnableScheduling
-@TestPropertySource(locations = {"classpath:/mongoregistry.properties"})
+@TestPropertySource(properties = {
+    "cas.ticket.registry.mongo.databaseName=ticket-registry",
+    "cas.ticket.registry.mongo.host=localhost",
+    "cas.ticket.registry.mongo.port=8081",
+    "cas.ticket.registry.mongo.dropCollection=true"
+})
+
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
@@ -96,5 +102,4 @@ public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistry
     public TicketRegistry getNewTicketRegistry() {
         return this.ticketRegistry;
     }
-
 }
