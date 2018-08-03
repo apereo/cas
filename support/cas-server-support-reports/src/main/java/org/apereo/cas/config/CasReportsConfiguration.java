@@ -9,16 +9,19 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.report.AuditLogEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.LoggingConfigurationEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
+import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
 import org.apereo.cas.web.report.SpringWebflowEndpoint;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import org.apereo.cas.web.report.StatusEndpoint;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +51,14 @@ public class CasReportsConfiguration {
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
+
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     @Qualifier("auditTrailExecutionPlan")
@@ -117,6 +128,13 @@ public class CasReportsConfiguration {
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint() {
         return new SingleSignOnSessionsEndpoint(centralAuthenticationService, casProperties);
     }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint() {
+        return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator.getIfAvailable(), ticketRegistrySupport.getIfAvailable());
+    }
+
 
     @Bean
     @ConditionalOnEnabledEndpoint

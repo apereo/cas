@@ -486,6 +486,8 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # management.server.add-application-context-header=false
 ```
 
+### Basic Authentication Security
+
 Credentials for basic authentication may be defined via the following settings:
 
 ```properties
@@ -494,11 +496,7 @@ Credentials for basic authentication may be defined via the following settings:
 # spring.security.user.roles=
 ```
 
-Endpoint security configuration controlled by CAS may be controlled via the following settings:
-
-```properties
-# cas.monitor.endpoints.enableEndpointSecurity=true
-```
+### JAAS Authentication Security
 
 JAAS authentication for endpoint security may be configured via the following settings:
 
@@ -507,6 +505,8 @@ JAAS authentication for endpoint security may be configured via the following se
 # cas.monitor.endpoints.jaas.loginConfig=file:/etc/cas/config/jaas.conf
 # cas.monitor.endpoints.jaas.loginContextName=CAS
 ```
+
+### LDAP Authentication Security
 
 Shared LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
 under the configuration key `cas.monitor.endpoints.ldap`.
@@ -525,6 +525,8 @@ LDAP authentication for endpoint security may be additionally configured via the
 # cas.monitor.endpoints.ldap.ldapAuthz.searchFilter=
 ```
 
+### JDBC Authentication Security
+
 Shared database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings)
 under the configuration key `cas.monitor.endpoints.jdbc`.
 
@@ -538,16 +540,25 @@ JDBC authentication for endpoint security may be additionally configured via the
 Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) 
 under the configuration key `cas.monitor.endpoints.jdbc`.
 
+### Enabling Endpoints
+
+Endpoint security configuration controlled and activated by CAS may be controlled via the following settings:
+
+```properties
+# cas.monitor.endpoints.enableEndpointSecurity=true
+```
 
 To determine whether an endpoint is available, the calculation order for all endpoints is as follows:
 
-1. The `enabled` setting of the individual endpoint (i.e. `info`)is consulted in CAS settings, as demonstrated below:
+1. The `enabled` setting of the individual endpoint (i.e. `info`) is consulted in CAS settings, as demonstrated below:
 
 ```properties
 # management.endpoint.info.enabled=true
 ```
 2. If undefined, the global setting noted above is consulted from CAS settings.
 3. If undefined, the default built-in setting for the endpoint in CAS is consulted, which is typically `false` by default.
+
+All available endpoint ids [should be listed here](Monitoring-Statistics.html).
 
 Endpoints may also be mapped to custom arbitrary endpoints. For example, to remap the `health` endpoint to `healthcheck`, 
 specify the following settings:
