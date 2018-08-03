@@ -1,9 +1,14 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.apereo.cas.util.junit.RunningStandaloneCondition;
 
 import lombok.val;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
@@ -14,6 +19,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@RunWith(ConditionalSpringRunner.class)
+@ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class BlackDotIPAddressIntelligenceServiceTests {
     @Test
     public void verifyBannedOperation() {
