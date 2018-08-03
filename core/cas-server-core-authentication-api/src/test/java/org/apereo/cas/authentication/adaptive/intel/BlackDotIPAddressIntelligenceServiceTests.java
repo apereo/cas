@@ -8,7 +8,6 @@ import org.apereo.cas.util.junit.RunningStandaloneCondition;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
