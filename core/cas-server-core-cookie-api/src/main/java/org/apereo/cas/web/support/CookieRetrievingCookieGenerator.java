@@ -33,7 +33,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
 
     /**
      * The maximum age the cookie should be remembered for.
-     * The default is three months ({@value} in seconds, according to Google)
      */
     private final int rememberMeMaxAge;
 
