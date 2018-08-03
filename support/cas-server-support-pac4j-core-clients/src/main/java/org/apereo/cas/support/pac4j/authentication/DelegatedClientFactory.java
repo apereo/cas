@@ -443,9 +443,8 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(oidc.getAzure().getId())) {
             LOGGER.debug("Building OpenID Connect client for Azure AD...");
             val azure = getOidcConfigurationForClient(oidc.getAzure(), AzureAdOidcConfiguration.class);
-            azure.setTenant(oidc.getAzure().getTenant()); //TO-DO: This should be un-necessary after Sept 1, 2018.
+            azure.setTenant(oidc.getAzure().getTenant());
             val cfg = new AzureAdOidcConfiguration(azure);
-            cfg.setTenant(oidc.getAzure().getTenant());
             val azureClient = new AzureAdClient(cfg);
             configureClient(azureClient, oidc.getAzure());
             return azureClient;
