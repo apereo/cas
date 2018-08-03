@@ -64,9 +64,12 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.throttle.usernameParameter=username",
     "cas.audit.mongo.databaseName=throttle",
     "cas.audit.mongo.host=localhost",
-    "cas.audit.mongo.port=8081",
+    "cas.audit.mongo.port=27017",
     "cas.audit.mongo.collection=MongoDbCasThrottleRepository",
     "cas.audit.mongo.dropCollection=true",
+    "cas.audit.mongo.userId=root",
+    "cas.audit.mongo.password=secret",
+    "cas.audit.mongo.authenticationDatabaseName=admin",
     "cas.audit.mongo.asynchronous=false"})
 public class MongoDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {

@@ -25,8 +25,11 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 @Category(MongoDbCategory.class)
 @SpringBootTest(classes = {MongoDbEventsConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(properties = {
+    "cas.events.mongo.userId=root",
+    "cas.events.mongo.password=secret",
     "cas.events.mongo.host=localhost",
-    "cas.events.mongo.port=8081",
+    "cas.events.mongo.port=27017",
+    "cas.events.mongo.authenticationDatabaseName=admin",
     "cas.events.mongo.databaseName=events",
     "cas.events.mongo.dropCollection=true"
     })

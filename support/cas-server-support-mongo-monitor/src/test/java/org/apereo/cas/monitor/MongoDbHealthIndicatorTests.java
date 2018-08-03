@@ -76,9 +76,10 @@ import static org.junit.Assert.*;
     CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(properties = {
+    "cas.monitor.mongo.userId=root",
+    "cas.monitor.mongo.password=secret",
     "cas.monitor.mongo.host=localhost",
     "cas.monitor.mongo.port=27017",
-    "cas.monitor.mongo.dropCollection=true",
     "cas.monitor.mongo.authenticationDatabaseName=admin",
     "cas.monitor.mongo.databaseName=monitor"
 })

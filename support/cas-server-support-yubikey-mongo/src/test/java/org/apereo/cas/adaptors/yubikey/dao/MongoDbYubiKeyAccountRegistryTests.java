@@ -84,8 +84,11 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = {
     "cas.authn.mfa.yubikey.mongo.databaseName=mfa-trusted",
     "cas.authn.mfa.yubikey.mongo.host=localhost",
-    "cas.authn.mfa.yubikey.mongo.port=8081",
+    "cas.authn.mfa.yubikey.mongo.port=27017",
     "cas.authn.mfa.yubikey.mongo.dropCollection=true",
+    "cas.authn.mfa.yubikey.mongo.userId=root",
+    "cas.authn.mfa.yubikey.mongo.password=secret",
+    "cas.authn.mfa.yubikey.mongo.authenticationDatabaseName=admin",
     "cas.authn.mfa.yubikey.clientId=18423",
     "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="
     })

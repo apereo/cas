@@ -84,8 +84,11 @@ import static org.junit.Assert.*;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = {
     "cas.authn.mfa.gauth.mongo.host=localhost",
-    "cas.authn.mfa.gauth.mongo.port=8081",
+    "cas.authn.mfa.gauth.mongo.port=27017",
     "cas.authn.mfa.gauth.mongo.dropCollection=true",
+    "cas.authn.mfa.gauth.mongo.userId=root",
+    "cas.authn.mfa.gauth.mongo.password=secret",
+    "cas.authn.mfa.gauth.mongo.authenticationDatabaseName=admin",
     "cas.authn.mfa.gauth.mongo.databaseName=gauth-token-credential",
     "cas.authn.mfa.gauth.crypto.enabled=false"
 })

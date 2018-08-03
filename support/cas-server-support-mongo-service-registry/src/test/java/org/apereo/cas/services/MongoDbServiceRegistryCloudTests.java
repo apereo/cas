@@ -30,7 +30,10 @@ import java.util.Collection;
 @TestPropertySource(properties = {
     "cas.serviceRegistry.mongo.databaseName=service-registry",
     "cas.serviceRegistry.mongo.host=localhost",
-    "cas.serviceRegistry.mongo.port=8081",
+    "cas.serviceRegistry.mongo.port=27017",
+    "cas.serviceRegistry.mongo.userId=root",
+    "cas.serviceRegistry.mongo.password=secret",
+    "cas.serviceRegistry.mongo.authenticationDatabaseName=admin",
     "cas.serviceRegistry.mongo.dropCollection=true"
 })
 public class MongoDbServiceRegistryCloudTests extends AbstractServiceRegistryTests {

@@ -77,11 +77,14 @@ import static org.junit.Assert.*;
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @TestPropertySource(properties = {
     "cas.acceptableUsagePolicy.mongo.host=localhost",
-    "cas.acceptableUsagePolicy.mongo.port=8081",
+    "cas.acceptableUsagePolicy.mongo.port=27017",
     "cas.acceptableUsagePolicy.mongo.dropCollection=true",
     "cas.acceptableUsagePolicy.mongo.collection=acceptable-usage-policy",
-    "cas.acceptableUsagePolicy.aupAttributeName=accepted",
-    "cas.acceptableUsagePolicy.mongo.databaseName=acceptableUsagePolicy"
+    "cas.acceptableUsagePolicy.mongo.userId=root",
+    "cas.acceptableUsagePolicy.mongo.password=secret",
+    "cas.acceptableUsagePolicy.mongo.databaseName=acceptableUsagePolicy",
+    "cas.acceptableUsagePolicy.mongo.authenticationDatabaseName=admin",
+    "cas.acceptableUsagePolicy.aupAttributeName=accepted"
     }
 )
 public class MongoDbAcceptableUsagePolicyRepositoryTests {

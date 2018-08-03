@@ -17,13 +17,17 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.CollectionUtils;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.pac4j.mongo.profile.MongoProfile;
+import org.pac4j.mongo.profile.service.MongoProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -67,14 +71,12 @@ import static org.junit.Assert.*;
         RefreshAutoConfiguration.class})
 @EnableScheduling
 @TestPropertySource(properties = {
-    "cas.authn.mongo.dropCollection=true",
-    "cas.authn.mongo.host=localhost",
-    "cas.authn.mongo.port=8081",
+    "cas.authn.mongo.collectionName=users",
+    "cas.authn.mongo.mongoHostUri=mongodb://root:secret@localhost:27017/users",
     "cas.authn.mongo.attributes=loc,state",
-    "cas.authn.mongo.usernameAttribute=username",
-    "cas.authn.mongo.passwordAttribute=password",
     "cas.authn.pac4j.typedIdUsed=false"
     })
+@Slf4j
 public class MongoDbAuthenticationHandlerTests {
 
     @ClassRule
@@ -87,8 +89,18 @@ public class MongoDbAuthenticationHandlerTests {
     @Qualifier("mongoAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
+    @Autowired
+    @Qualifier("mongoAuthenticatorProfileService")
+    private MongoProfileService mongoProfileService;
+
     @Before
     public void initialize() {
+        val profile = new MongoProfile();
+        profile.setId("CASUSER");
+        profile.addAttributes(CollectionUtils.wrap("loc", "test", "state", "passing", "username", "u1"));
+        LOGGER.debug("using: [{}/{}]", mongoProfileService.getUsersDatabase(), mongoProfileService.getUsersCollection());
+        mongoProfileService.create(profile, "p1");
+
         RequestContextHolder.setRequestAttributes(
             new ServletRequestAttributes(new MockHttpServletRequest(), new MockHttpServletResponse()));
     }

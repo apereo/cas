@@ -42,7 +42,10 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = {
     "cas.authn.mfa.trusted.mongo.databaseName=mfa-trusted",
     "cas.authn.mfa.trusted.mongo.host=localhost",
-    "cas.authn.mfa.trusted.mongo.port=8081",
+    "cas.authn.mfa.trusted.mongo.port=27017",
+    "cas.authn.mfa.trusted.mongo.userId=root",
+    "cas.authn.mfa.trusted.mongo.password=secret",
+    "cas.authn.mfa.trusted.mongo.authenticationDatabaseName=admin",
     "cas.authn.mfa.trusted.mongo.dropCollection=true"
     })
 public class MongoDbMultifactorAuthenticationTrustStorageTests {

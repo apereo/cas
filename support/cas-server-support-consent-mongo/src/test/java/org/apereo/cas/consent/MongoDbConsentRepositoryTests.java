@@ -38,7 +38,10 @@ import static org.junit.Assert.*;
 @Category(MongoDbCategory.class)
 @TestPropertySource(properties = {
     "cas.consent.mongo.host=localhost",
-    "cas.consent.mongo.port=8081",
+    "cas.consent.mongo.port=27017",
+    "cas.consent.mongo.userId=root",
+    "cas.consent.mongo.password=secret",
+    "cas.consent.mongo.authenticationDatabaseName=admin",
     "cas.consent.mongo.dropCollection=true",
     "cas.consent.mongo.databaseName=consent"
     })
