@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -40,9 +41,8 @@ public class DefaultCasCookieValueManagerTests {
     @Before
     public void initialize() {
         MockitoAnnotations.initMocks(this);
-
         ClientInfoHolder.setClientInfo(clientInfo);
-        cookieValueManager = new DefaultCasCookieValueManager(CipherExecutor.noOp());
+        cookieValueManager = new DefaultCasCookieValueManager(CipherExecutor.noOp(), new TicketGrantingCookieProperties());
     }
 
     @After
