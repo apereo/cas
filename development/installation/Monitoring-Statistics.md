@@ -44,6 +44,7 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.
 | `statistics`              | Exposes statistics data on tickets, memory, server availability and uptime, etc.
 | `sso-sessions`            | Review the current single sign-on sessions establishes with CAS and manage each session remotely.
+| `sso`                     | Indicate the current status of the single signon session tied to the browser session and the SSO cookie.
 | `resolve-attributes/{name}`    | Invoke the CAS [attribute resolution](../integration/Attribute-Resolution.html) engine to locate attributes for `{name}`.
 | `release-attributes`           | Invoke the CAS [attribute release](../integration/Attribute-Release.html) engine to release attributes to an application.
 | `multifactor-trusted-devices`  | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine.
@@ -142,7 +143,7 @@ that would authenticate the request via JAAS, LDAP, JDBC, etc.
 Depending on method of access and the `content-type` that is negotiated between the caller and CAS, (i.e. web-based vs. command-line access), 
 credentials may be supplied in headers via `curl` and family or they may be entered into a web-based login form.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#actuator-management-endpoints]).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#actuator-management-endpoints).
 
 ### Troubleshooting
 
