@@ -13,7 +13,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link AllAuthenticationAttributesTestSuite}.
+ * This is {@link AllAuthenticationAttributesTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -29,5 +29,5 @@ import org.junit.runners.Suite;
     ScriptedRegisteredServiceAttributeReleasePolicyTests.class,
     ReturnAllowedAttributeReleasePolicyTests.class
 })
-public class AllAuthenticationAttributesTestSuite {
+public class AllAuthenticationAttributesTestsSuite {
 }

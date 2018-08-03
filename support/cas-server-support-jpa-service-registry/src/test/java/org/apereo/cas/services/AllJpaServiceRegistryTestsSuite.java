@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link AllJpaServiceRegistryTests}.
+ * This is {@link AllJpaServiceRegistryTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -16,5 +16,5 @@ import org.junit.runners.Suite;
     JpaServiceRegistryMicrosoftSqlServerTests.class,
     JpaServiceRegistryPostgresTests.class
 })
-public class AllJpaServiceRegistryTests {
+public class AllJpaServiceRegistryTestsSuite {
 }

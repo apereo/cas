@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link AllLdapConsentTests}.
+ * This is {@link AllLdapConsentTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -12,6 +12,6 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({LdapContinuousIntegrationConsentRepositoryTests.class,
     LdapEmbeddedConsentRepositoryTests.class})
-public class AllLdapConsentTests {
+public class AllLdapConsentTestsSuite {
 
 }
