@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link AllSpnegoTests}.
+ * This is {@link AllSpnegoTestSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -21,5 +21,5 @@ import org.junit.runners.Suite;
     SpnegoNegotiateCredentialsActionTests.class,
     SpnegoCredentialsActionTests.class
 })
-public class AllSpnegoTests {
+public class AllSpnegoTestSuite {
 }
