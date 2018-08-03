@@ -86,10 +86,8 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @ConditionalOnMissingBean(name = "pac4jSessionStoreCookieGenerator")
     public CookieRetrievingCookieGenerator pac4jSessionStoreCookieGenerator() {
         val c = casProperties.getAuthn().getPac4j().getCookie();
-        return new SessionStoreCookieGenerator(
-            new DefaultCasCookieValueManager(pac4jDelegatedSessionStoreCookieCipherExecutor()),
-            c.getName(), c.getPath(), c.getMaxAge(),
-            c.isSecure(), c.getDomain(), c.isHttpOnly());
+        val valueManager = new DefaultCasCookieValueManager(pac4jDelegatedSessionStoreCookieCipherExecutor(), c);
+        return new SessionStoreCookieGenerator(valueManager, c);
     }
 
     @Bean
