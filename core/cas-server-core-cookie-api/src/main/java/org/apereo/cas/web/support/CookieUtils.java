@@ -7,7 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * This is {@link CookieUtils}.
@@ -36,5 +39,20 @@ public class CookieUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Gets cookie from request.
+     *
+     * @param cookieName the cookie name
+     * @param request    the request
+     * @return the cookie from request
+     */
+    public static Optional<Cookie> getCookieFromRequest(final String cookieName, final HttpServletRequest request) {
+        val cookies = request.getCookies();
+        if (cookies == null) {
+            return Optional.empty();
+        }
+        return Arrays.stream(cookies).filter(c -> c.getName().equalsIgnoreCase(cookieName)).findFirst();
     }
 }

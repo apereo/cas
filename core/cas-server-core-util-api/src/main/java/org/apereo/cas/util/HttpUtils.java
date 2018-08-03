@@ -72,6 +72,19 @@ public class HttpUtils {
     /**
      * Execute http response.
      *
+     * @param url     the url
+     * @param method  the method
+     * @param headers the headers
+     * @return the http response
+     */
+    public static HttpResponse execute(final String url, final String method,
+                                       final Map<String, Object> headers) {
+        return execute(url, method, null, null, new HashMap<>(), headers);
+    }
+
+    /**
+     * Execute http response.
+     *
      * @param url    the url
      * @param method the method
      * @return the http response
