@@ -42,6 +42,10 @@ public class DelegatedClientNavigationController {
      * Endpoint path controlled by this controller to make the redirect.
      */
     public static final String ENDPOINT_REDIRECT = "clientredirect";
+
+    /**
+     * Endpoint path controlled by this controller that receives the response to PAC4J.
+     */
     public static final String ENDPOINT_RESPONSE = "login/{clientName}";
 
 
