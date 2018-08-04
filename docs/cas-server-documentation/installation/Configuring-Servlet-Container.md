@@ -5,7 +5,7 @@ title: CAS - Overlay Installation
 
 # Servlet Container Configuration
 
-A number of container options are available to deploy CAS. The [WAR Overlay](Maven-Overlay-Installation.html) guide
+A number of container options are available to deploy CAS. The [WAR Overlay](WAR-Overlay-Installation.html) guide
 describes how to build and deploy CAS.
 
 ## How Do I Choose?
@@ -141,7 +141,7 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 
 A CAS deployment may be deployed to any number of external servlet containers. The container **MUST** support
 the servlet specification `v4.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
-may be used, in the [WAR Overlay](Maven-Overlay-Installation.html) :
+may be used, in the [WAR Overlay](WAR-Overlay-Installation.html) :
 
 ```xml
 <dependency>
