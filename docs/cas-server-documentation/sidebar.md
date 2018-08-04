@@ -12,7 +12,7 @@ layout: null
 
 * [Installation](#casinstallation)
     *   [Requirements](/$version/planning/Installation-Requirements.html)
-    *   [WAR Overlays](/$version/installation/Maven-Overlay-Installation.html)
+    *   [WAR Overlays](/$version/installation/WAR-Overlay-Installation.html)
     *   [Command-line Shell](/$version/installation/Configuring-Commandline-Shell.html) 
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
     *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
