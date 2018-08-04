@@ -254,7 +254,7 @@ Any break in the privacy controls at any stage comprises the overall security of
 
 ### Upgrades
 
-CAS server upgrades should be carried out through the recommended [WAR overlay approach](../installation/Maven-Overlay-Installation.html). Established as a best 
+CAS server upgrades should be carried out through the recommended [WAR overlay approach](../installation/WAR-Overlay-Installation.html). Established as a best 
 practice, the overlay approach allows one to seamlessly obtain the intended CAS server version from well 
 known and public repositories while laying custom changes specific on top of the downloaded binary artifact.
 In the specifics of the overlay approach, it may also be desirable to externalize the configuration 

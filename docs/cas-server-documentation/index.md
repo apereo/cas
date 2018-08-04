@@ -35,7 +35,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Architecture](planning/Architecture.html)
 * [Getting Started](planning/Getting-Started.html)
 * [Installation Requirements](planning/Installation-Requirements.html)
-* [Installation](installation/Maven-Overlay-Installation.html)
+* [Installation](installation/WAR-Overlay-Installation.html)
 
 ## Demos
 
@@ -46,7 +46,7 @@ The following demos are provided by the Apereo CAS project:
 
 | Topic                                                                                      | Source Branch            | Location | Heroku
 |-------------------------------------|----------------------|--------------------------------------------------------|---------------------------------------
-| [CAS Overlay Project Initializr](installation/Maven-Overlay-Installation.html)            | `heroku-casinitializr`   | [Link](https://casinitializr.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinitializr)
+| [CAS Overlay Project Initializr](installation/WAR-Overlay-Installation.html)            | `heroku-casinitializr`   | [Link](https://casinitializr.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinitializr)
 | [CAS Web Application Server](index.html)                                                  | `heroku-caswebapp`       | [Link](https://casserver.herokuapp.com/cas) | ![](https://heroku-badge.herokuapp.com/?app=casserver&root=cas)
 | [CAS Management Server](installation/Installing-ServicesMgmt-Webapp.html)        | `heroku-mgmtwebapp` | [Link](https://casservermgmt.herokuapp.com/cas-management)  | ![](https://heroku-badge.herokuapp.com/?app=casservermgmt&root=cas-management)
 | [CAS Boot Administration Server](installation/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [Link](https://casbootadminserver.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=casbootadminserver)

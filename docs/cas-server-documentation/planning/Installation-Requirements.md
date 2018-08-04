@@ -25,12 +25,11 @@ See [this guide](../installation/Configuring-Servlet-Container.html) for more in
 
 ## Build Tools
 
-Maven or Gradle overlays are [provided](../installation/Maven-Overlay-Installation.html) to allow for a straightforward and flexible 
-deployment solution. While it admittedly requires a high up-front cost in learning, it reaps numerous
-benefits in the long run. 
+WAR overlays are [provided](../installation/WAR-Overlay-Installation.html) to allow for a straightforward and flexible 
+deployment solution. While it admittedly requires a high up-front cost in learning, it reaps numerous benefits in the long run. 
 
 <div class="alert alert-info"><strong>Do Less</strong><p>
-You <b>DO NOT</b> need to have Maven or Gradle installed prior to the installation. They are provided to you automatically.
+You <b>DO NOT</b> need to have Gradle installed prior to the installation. They are provided to you automatically.
 </p></div>
 
 ## Git (Optional)
