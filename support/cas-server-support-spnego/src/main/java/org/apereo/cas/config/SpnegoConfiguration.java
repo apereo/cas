@@ -13,7 +13,6 @@ import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.handler.support.NtlmAuthenticationHandler;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoPrincipalResolver;
-import org.apereo.cas.util.CollectionUtils;
 
 import jcifs.spnego.Authentication;
 import lombok.val;
