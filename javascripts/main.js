@@ -314,7 +314,7 @@ function generateDependencyLangFragments() {
       
       var tabs = "<ul class='nav nav-pills'> \
   <li class='nav-item'><a class='nav-link' data-toggle='tab' href='#maven" + mavenId + "'>Maven</a></li> \
-  <li class='nav-item'><a id='gradle" + gradleId + " onload="javascript:$('#gradle" + gradleId + "').click();" class='nav-link active' data-toggle='tab' href='#gradle" + gradleId + "'>Gradle</a></li> \
+  <li class='nav-item'><a id='gradle" + gradleId + " onload="$('#gradle" + gradleId + "').click();" class='nav-link active' data-toggle='tab' href='#gradle" + gradleId + "'>Gradle</a></li> \
   <li role='presentation' class='nav-item dropdown'> \
       <a class='nav-link dropdown-toggle' data-toggle='dropdown' href='#' role='button' aria-haspopup='true' aria-expanded='false'>Resources<span class='caret'></span></a> \
       <div class='dropdown-menu'> \
