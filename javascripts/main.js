@@ -341,6 +341,9 @@ function generateDependencyLangFragments() {
       divHighlight.empty();
       divHighlight.prepend(tabs);
   });
+
+  // select the gradle tab by default
+  $("a.nav-link[href^='#gradle']").click();
 }
 
 function responsiveImages() {
