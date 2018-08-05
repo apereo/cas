@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -15,6 +16,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
 @Getter
+@Setter
 public class Pac4jDelegatedSessionCookieProperties extends CookieProperties {
     private static final long serialVersionUID = 7392972818105536350L;
 
