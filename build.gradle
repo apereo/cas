@@ -59,6 +59,7 @@ buildscript {
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleFindbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
+        classpath "org.asciidoctor:asciidoctor-gradle-plugin:$asciiDoctorVersion"
     }
 }
 

@@ -44,7 +44,7 @@ public class PrincipalTransformationProperties implements Serializable {
     /**
      * Indicate whether the principal identifier should be transformed
      * into upper-case, lower-case, etc.
-     * Accepted values are {@code NONE, UPPERCASE, LOWERCASE},
+     * Accepted values are {@code NONE, UPPERCASE, LOWERCASE}.
      */
     private CaseConversion caseConversion = CaseConversion.NONE;
 
@@ -57,11 +57,11 @@ public class PrincipalTransformationProperties implements Serializable {
         /**
          * Lowercase conversion.
          */
-        UPPERCASE,
+        LOWERCASE,
         /**
-         * Uppcase conversion.
+         * Uppercase conversion.
          */
-        LOWERCASE
+        UPPERCASE
     }
 
     @RequiresModule(name = "cas-server-core-authentication", automated = true)

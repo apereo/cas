@@ -1,9 +1,5 @@
 package org.apereo.cas.configuration.metadata;
 
-import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
-import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
-import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -15,42 +11,20 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.Modifier;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
-import com.github.javaparser.ast.expr.BooleanLiteralExpr;
-import com.github.javaparser.ast.expr.LiteralStringValueExpr;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.google.common.base.Predicate;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.support.QueryType;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.jooq.lambda.Unchecked;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeElementsScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ValueHint;
-import org.springframework.core.io.Resource;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.File;
-import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -81,10 +55,10 @@ public class ConfigurationMetadataGenerator {
 
     private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");
     private static final Pattern NESTED_TYPE_PATTERN = Pattern.compile("java\\.util\\.\\w+<(org\\.apereo\\.cas\\..+)>");
+    private static final Pattern NESTED_CLASS_PATTERN = Pattern.compile("(.+)\\$(\\w+)");
 
     private final String buildDir;
     private final String sourcePath;
-    private final Map<String, Class> cachedPropertiesClasses = new HashMap<>();
 
     public ConfigurationMetadataGenerator(final String buildDir, final String sourcePath) {
         this.buildDir = buildDir;
@@ -133,16 +107,19 @@ public class ConfigurationMetadataGenerator {
                 final var matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
                 final var indexBrackets = matcher.matches();
                 final var typeName = matcher.group(1);
-                final var typePath = buildTypeSourcePath(typeName);
+                final var typePath = ConfigurationMetadataClassSourceLocator.getInstance().buildTypeSourcePath(this.sourcePath, typeName);
 
-                parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
-
+                final var parser = new ConfigurationMetadataUnitParser(this.sourcePath);
+                parser.parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
             }));
 
         properties.addAll(collectedProps);
         groups.addAll(collectedGroups);
 
         final var hints = processHints(properties, groups);
+
+        processNestedEnumProperties(properties, groups);
+        processNestedEnumGroups(properties, groups);
 
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
@@ -151,63 +128,89 @@ public class ConfigurationMetadataGenerator {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         final PrettyPrinter pp = new DefaultPrettyPrinter();
         final var writer = mapper.writer(pp);
-        writer.writeValue(jsonFile, jsonMap);
+        //writer.writeValue(jsonFile, jsonMap);
     }
 
-    private String buildTypeSourcePath(final String type) {
-        final var newName = type.replace(".", File.separator);
-        return sourcePath + "/src/main/java/" + newName + ".java";
+    private void processNestedEnumGroups(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
+//        val propertiesToProcess = groups.stream()
+//            .filter(e -> {
+//                val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
+//                return matcher.matches();
+//            })
+//            .collect(Collectors.toSet());
+//        propertiesToProcess.forEach(p -> {
+//            System.out.println(p.getName());
+//        });
     }
 
-    @SneakyThrows
-    private void parseCompilationUnit(final Set<ConfigurationMetadataProperty> collectedProps,
-                                      final Set<ConfigurationMetadataProperty> collectedGroups,
-                                      final ConfigurationMetadataProperty p,
-                                      final String typePath,
-                                      final String typeName,
-                                      final boolean indexNameWithBrackets) {
+    private void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
+        val propertiesToProcess =  properties.stream()
+            .filter(e -> {
+                val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
+                return matcher.matches();
+            })
+            .collect(Collectors.toSet());
 
-        try (val is = Files.newInputStream(Paths.get(typePath))) {
-            final var cu = JavaParser.parse(is);
-            new FieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets, typeName).visit(cu, p);
-            if (cu.getTypes().size() > 0) {
-                final var decl = ClassOrInterfaceDeclaration.class.cast(cu.getType(0));
-                for (var i = 0; i < decl.getExtendedTypes().size(); i++) {
-                    final var parentType = decl.getExtendedTypes().get(i);
-                    final var parentClazz = locatePropertiesClassForType(parentType);
-                    final var parentTypePath = buildTypeSourcePath(parentClazz.getName());
+        propertiesToProcess.forEach(e -> {
+            val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
+            matcher.matches();
 
-                    parseCompilationUnit(collectedProps, collectedGroups, p,
-                        parentTypePath, parentClazz.getName(), indexNameWithBrackets);
-                }
+            val parent = matcher.group(1);
+            val innerType = matcher.group(2);
+            val typePath = ConfigurationMetadataClassSourceLocator.getInstance().buildTypeSourcePath(this.sourcePath, parent);
+
+            try {
+                val cu = JavaParser.parse(new File(typePath));
+                val primaryType = cu.getPrimaryType().get();
+                primaryType.getMembers()
+                    .stream()
+                    .filter(member -> {
+                        if (member.isEnumDeclaration()) {
+                            val enumMem = member.asEnumDeclaration();
+                            return enumMem.getNameAsString().equals(innerType);
+                        }
+                        if (member.isClassOrInterfaceDeclaration()) {
+                            val typeName = member.asClassOrInterfaceDeclaration();
+                            return typeName.getNameAsString().equals(innerType);
+                        }
+                        return false;
+                    })
+                    .forEach(member -> {
+                        if (member.isEnumDeclaration()) {
+                            val enumMem = member.asEnumDeclaration();
+                            val builder = new StringBuilder(e.getDescription());
+                            enumMem.getEntries()
+                                .stream()
+                                .filter(entry -> entry.getJavadoc().isPresent())
+                                .forEach(entry -> {
+                                    builder.append(entry.getNameAsString())
+                                        .append(":")
+                                        .append(entry.getJavadoc().get().getDescription().toText())
+                                        .append(".");
+                                });
+                            e.setDescription(builder.toString());
+                        }
+                        if (member.isClassOrInterfaceDeclaration()) {
+                            val typeName = member.asClassOrInterfaceDeclaration();
+                            typeName.getFields()
+                                .stream()
+                                .filter(field -> !field.isStatic())
+                                .forEach(field -> {
+                                    val resultProps = new HashSet<ConfigurationMetadataProperty>();
+                                    val resultGroups = new HashSet<ConfigurationMetadataProperty>();
+
+                                    val creator = new ConfigurationMetadataPropertyCreator(false, resultProps, resultGroups, parent);
+                                    creator.createConfigurationProperty(field, e.getName());
+
+                                    groups.addAll(resultGroups);
+                                    properties.addAll(resultProps);
+                                });
+                        }
+                    });
+            } catch (final Exception ex) {
+                throw new RuntimeException(ex);
             }
-        }
-    }
-
-    private Class locatePropertiesClassForType(final ClassOrInterfaceType type) {
-        if (cachedPropertiesClasses.containsKey(type.getNameAsString())) {
-            return cachedPropertiesClasses.get(type.getNameAsString());
-        }
-
-        final Predicate<String> filterInputs = s -> s.contains(type.getNameAsString());
-        final Predicate<String> filterResults = s -> s.endsWith(type.getNameAsString());
-        final var packageName = ConfigurationMetadataGenerator.class.getPackage().getName();
-        final var reflections =
-            new Reflections(new ConfigurationBuilder()
-                .filterInputsBy(filterInputs)
-                .setUrls(ClasspathHelper.forPackage(packageName))
-                .setScanners(new TypeElementsScanner()
-                        .includeFields(false)
-                        .includeMethods(false)
-                        .includeAnnotations(false)
-                        .filterResultsBy(filterResults),
-                    new SubTypesScanner(false)));
-        final Class clz = reflections.getSubTypesOf(Serializable.class).stream()
-            .filter(c -> c.getSimpleName().equalsIgnoreCase(type.getNameAsString()))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));
-        cachedPropertiesClasses.put(type.getNameAsString(), clz);
-        return clz;
+        });
     }
 
     private Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
@@ -215,42 +218,42 @@ public class ConfigurationMetadataGenerator {
 
         final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>();
 
-        for (final var entry : props) {
+        for (val entry : props) {
             try {
-                final var propName = StringUtils.substringAfterLast(entry.getName(), ".");
-                final var groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
-                final var grp = groups
+                val propName = StringUtils.substringAfterLast(entry.getName(), ".");
+                val groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
+                val grp = groups
                     .stream()
                     .filter(g -> g.getName().equalsIgnoreCase(groupName))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
 
-                final var matcher = PATTERN_GENERICS.matcher(grp.getType());
-                final var className = matcher.find() ? matcher.group(1) : grp.getType();
+                val matcher = PATTERN_GENERICS.matcher(grp.getType());
+                val className = matcher.find() ? matcher.group(1) : grp.getType();
                 final Class clazz = ClassUtils.getClass(className);
 
 
-                final var hint = new ConfigurationMetadataHint();
+                val hint = new ConfigurationMetadataHint();
                 hint.setName(entry.getName());
 
                 if (clazz.isAnnotationPresent(RequiresModule.class)) {
-                    final var annotation = Arrays.stream(clazz.getAnnotations())
+                    val annotation = Arrays.stream(clazz.getAnnotations())
                         .filter(a -> a.annotationType().equals(RequiresModule.class))
                         .findFirst()
                         .map(RequiresModule.class::cast)
                         .get();
-                    final var valueHint = new ValueHint();
+                    val valueHint = new ValueHint();
                     valueHint.setValue(Stream.of(RequiresModule.class.getName(), annotation.automated()).collect(Collectors.toList()));
                     valueHint.setDescription(annotation.name());
                     hint.getValues().add(valueHint);
                 }
 
-                final var foundRequiredProperty = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName).spliterator(), false)
+                val foundRequiredProperty = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName).spliterator(), false)
                     .map(n -> ReflectionUtils.findField(clazz, n))
                     .anyMatch(f -> f != null && f.isAnnotationPresent(RequiredProperty.class));
 
                 if (foundRequiredProperty) {
-                    final var valueHint = new ValueHint();
+                    val valueHint = new ValueHint();
                     valueHint.setValue(RequiredProperty.class.getName());
                     hint.getValues().add(valueHint);
                 }
@@ -263,125 +266,5 @@ public class ConfigurationMetadataGenerator {
             }
         }
         return hints;
-    }
-
-    private class FieldVisitor extends VoidVisitorAdapter<ConfigurationMetadataProperty> {
-        private final Set<ConfigurationMetadataProperty> properties;
-        private final Set<ConfigurationMetadataProperty> groups;
-
-        private final String parentClass;
-        private final boolean indexNameWithBrackets;
-
-        FieldVisitor(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups,
-                     final boolean indexNameWithBrackets, final String clazz) {
-            this.properties = properties;
-            this.groups = groups;
-            this.indexNameWithBrackets = indexNameWithBrackets;
-            this.parentClass = clazz;
-        }
-
-        @Override
-        public void visit(final FieldDeclaration field, final ConfigurationMetadataProperty property) {
-            if (field.getVariables().isEmpty()) {
-                throw new IllegalArgumentException("Field " + field + " has no variable definitions");
-            }
-            final var var = field.getVariable(0);
-            if (field.getModifiers().contains(Modifier.STATIC)) {
-                LOGGER.debug("Field [{}] is static and will be ignored for metadata generation", var.getNameAsString());
-                return;
-            }
-            if (!field.getJavadoc().isPresent()) {
-                LOGGER.error("Field [{}] has no Javadoc defined", field);
-            }
-            final var prop = createConfigurationProperty(field, property);
-            processNestedClassOrInterfaceTypeIfNeeded(field, prop);
-        }
-
-        private ConfigurationMetadataProperty createConfigurationProperty(final FieldDeclaration fieldDecl,
-                                                                          final ConfigurationMetadataProperty arg) {
-            final var variable = fieldDecl.getVariables().get(0);
-            final var name = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
-                .map(Object::toString)
-                .findFirst()
-                .orElseGet(variable::getNameAsString);
-
-            final var indexedGroup = arg.getName().concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
-            final var indexedName = indexedGroup.concat(".").concat(name);
-
-            final var prop = new ConfigurationMetadataProperty();
-            if (fieldDecl.getJavadoc().isPresent()) {
-                final var description = fieldDecl.getJavadoc().get().getDescription().toText();
-                prop.setDescription(description);
-                prop.setShortDescription(StringUtils.substringBefore(description, "."));
-            } else {
-                LOGGER.error("No Javadoc found for field [{}]", indexedName);
-            }
-            prop.setName(indexedName);
-            prop.setId(indexedName);
-
-            final var elementType = fieldDecl.getElementType().asString();
-            if (elementType.equals(String.class.getSimpleName())
-                || elementType.equals(Integer.class.getSimpleName())
-                || elementType.equals(Long.class.getSimpleName())
-                || elementType.equals(Double.class.getSimpleName())
-                || elementType.equals(Float.class.getSimpleName())) {
-                prop.setType("java.lang." + elementType);
-            } else {
-                prop.setType(elementType);
-            }
-
-            final var initializer = variable.getInitializer();
-            if (initializer.isPresent()) {
-                final var exp = initializer.get();
-                if (exp instanceof LiteralStringValueExpr) {
-                    prop.setDefaultValue(((LiteralStringValueExpr) exp).getValue());
-                } else if (exp instanceof BooleanLiteralExpr) {
-                    prop.setDefaultValue(((BooleanLiteralExpr) exp).getValue());
-                }
-            }
-            properties.add(prop);
-
-            final var grp = new ConfigurationMetadataProperty();
-            grp.setId(indexedGroup);
-            grp.setName(indexedGroup);
-            grp.setType(this.parentClass);
-            groups.add(grp);
-
-            return prop;
-        }
-
-        private void processNestedClassOrInterfaceTypeIfNeeded(final FieldDeclaration n, final ConfigurationMetadataProperty prop) {
-            if (n.getElementType() instanceof ClassOrInterfaceType) {
-                final var type = (ClassOrInterfaceType) n.getElementType();
-                if (!shouldTypeBeExcluded(type)) {
-                    final var clz = locatePropertiesClassForType(type);
-                    if (clz != null && !clz.isMemberClass()) {
-                        final var typePath = buildTypeSourcePath(clz.getName());
-                        parseCompilationUnit(properties, groups, prop, typePath, clz.getName(), false);
-                    }
-                }
-            }
-        }
-
-        private boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
-            return type.getNameAsString().matches(
-                String.class.getSimpleName() + '|'
-                    + Integer.class.getSimpleName() + '|'
-                    + Double.class.getSimpleName() + '|'
-                    + Long.class.getSimpleName() + '|'
-                    + Float.class.getSimpleName() + '|'
-                    + Boolean.class.getSimpleName() + '|'
-                    + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + '|'
-                    + QueryType.class.getSimpleName() + '|'
-                    + AbstractLdapProperties.LdapType.class.getSimpleName() + '|'
-                    + CaseCanonicalizationMode.class.getSimpleName() + '|'
-                    + PasswordPolicyProperties.PasswordPolicyHandlingOptions.class.getSimpleName() + '|'
-                    + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + '|'
-                    + Map.class.getSimpleName() + '|'
-                    + Resource.class.getSimpleName() + '|'
-                    + List.class.getSimpleName() + '|'
-                    + Set.class.getSimpleName());
-        }
-
     }
 }

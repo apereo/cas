@@ -43,6 +43,8 @@ public class DeviceFingerprintProperties implements Serializable {
      */
     private UserAgent userAgent = new UserAgent();
 
+    @Getter
+    @Setter
     public static class ClientIp extends BaseDeviceFingerprintComponentProperties {
         private static final long serialVersionUID = 785014133279201757L;
 
@@ -84,6 +86,8 @@ public class DeviceFingerprintProperties implements Serializable {
         }
     }
 
+    @Getter
+    @Setter
     public static class UserAgent extends BaseDeviceFingerprintComponentProperties {
         private static final long serialVersionUID = -5325531035180836136L;
 
