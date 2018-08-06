@@ -434,10 +434,8 @@ public class DelegatedClientFactory {
                         break;
                     case "AZURE":
                         final AzureAdOidcConfiguration azure = getOidcConfigurationForClient(oidc, AzureAdOidcConfiguration.class);
-                        final AzureAdOidcConfiguration azureAdOidcConfiguration = new AzureAdOidcConfiguration(azure);
-                        azureAdOidcConfiguration.setTenant(oidc.getAzureTenantId());
-                        client = new AzureAdClient(azureAdOidcConfiguration);
-                        client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
+                        azure.setTenant(oidc.getAzureTenantId());
+                        client = new AzureAdClient(new AzureAdOidcConfiguration(azure));
                         break;
                     case "KEYCLOAK":
                         final KeycloakOidcConfiguration keycfg = getOidcConfigurationForClient(oidc, KeycloakOidcConfiguration.class);
