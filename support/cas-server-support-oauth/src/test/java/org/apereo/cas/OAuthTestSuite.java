@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticatorTests;
 import org.apereo.cas.support.oauth.services.OAuth20WebApplicationServiceTests;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidatorTests;
@@ -50,6 +51,7 @@ import org.junit.runners.Suite;
     OAuth20AccessTokenControllerMemcachedTests.class,
     OAuth20ProfileControllerTests.class,
     OAuth20WebApplicationServiceTests.class,
+    OAuth20UsernamePasswordAuthenticatorTests.class,
     OAuth20DefaultUserProfileViewRendererFlatTests.class,
     OAuth20DefaultUserProfileViewRendererNestedTests.class,
     AccessTokenGrantRequestAuditResourceResolverTests.class,

@@ -11,6 +11,8 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -35,16 +37,25 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
         val casCredential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
         try {
+            val clientIdAndSecret = getClientIdAndClientSecret(context);
+            if (clientIdAndSecret == null || StringUtils.isBlank(clientIdAndSecret.getKey())) {
+                throw new CredentialsException("No client credentials could be identified in this request");
+            }
 
-            val extractor = new BasicAuthExtractor();
-            val upc = extractor.extract(context);
-            
-            val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+            val clientId = clientIdAndSecret.getKey();
             val service = this.webApplicationServiceFactory.createService(clientId);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-            val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(null, casCredential);
+            val clientSecret = clientIdAndSecret.getRight();
+            if (StringUtils.isNotBlank(clientSecret) && !OAuth20Utils.checkClientSecret(registeredService, clientSecret)) {
+                throw new CredentialsException("Bad secret for client identifier: " + clientId);
+            }
+
+            val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, casCredential);
+            if (authenticationResult == null) {
+                throw new CredentialsException("Could not authenticate the provided credentials");
+            }
             val authentication = authenticationResult.getAuthentication();
             val principal = authentication.getPrincipal();
 
@@ -60,5 +71,22 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
         } catch (final Exception e) {
             throw new CredentialsException("Cannot login user using CAS internal authentication", e);
         }
+    }
+
+    /**
+     * Gets client id and client secret.
+     *
+     * @param context the context
+     * @return the client id and client secret
+     */
+    protected Pair<String, String> getClientIdAndClientSecret(final WebContext context) {
+        val extractor = new BasicAuthExtractor();
+        val upc = extractor.extract(context);
+        if (upc != null) {
+            return Pair.of(upc.getUsername(), upc.getPassword());
+        }
+        val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
+        val clientSecret = context.getRequestParameter(OAuth20Constants.CLIENT_SECRET);
+        return Pair.of(clientId, clientSecret);
     }
 }
