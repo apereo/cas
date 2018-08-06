@@ -23,12 +23,12 @@ import static org.junit.Assert.*;
 public class RestfulIPAddressIntelligenceServiceTests {
     @Test
     public void verifyAllowedOperation() {
-        try (val webServer = new MockWebServer(9293,
+        try (val webServer = new MockWebServer(9300,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
 
             val props = new AdaptiveAuthenticationProperties();
-            props.getIpIntel().getRest().setUrl("http://localhost:9293");
+            props.getIpIntel().getRest().setUrl("http://localhost:9300");
             val service = new RestfulIPAddressIntelligenceService(props);
             val result = service.examine(new MockRequestContext(), "1.2.3.4");
             assertNotNull(result);
@@ -40,11 +40,11 @@ public class RestfulIPAddressIntelligenceServiceTests {
 
     @Test
     public void verifyBannedOperation() {
-        try (val webServer = new MockWebServer(9299,
+        try (val webServer = new MockWebServer(9304,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.FORBIDDEN)) {
             webServer.start();
             val props = new AdaptiveAuthenticationProperties();
-            props.getIpIntel().getRest().setUrl("http://localhost:9299");
+            props.getIpIntel().getRest().setUrl("http://localhost:9304");
             val service = new RestfulIPAddressIntelligenceService(props);
             val result = service.examine(new MockRequestContext(), "1.2.3.4");
             assertNotNull(result);

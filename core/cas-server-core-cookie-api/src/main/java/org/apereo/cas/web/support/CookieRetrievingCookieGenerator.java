@@ -33,7 +33,6 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
 
     /**
      * The maximum age the cookie should be remembered for.
-     * The default is three months ({@value} in seconds, according to Google)
      */
     private final int rememberMeMaxAge;
 
@@ -149,7 +148,14 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
      */
     public String retrieveCookieValue(final HttpServletRequest request) {
         try {
-            val cookie = org.springframework.web.util.WebUtils.getCookie(request, getCookieName());
+            var cookie = org.springframework.web.util.WebUtils.getCookie(request, getCookieName());
+            if (cookie == null) {
+                val cookieValue = request.getHeader(getCookieName());
+                if (StringUtils.isNotBlank(cookieValue)) {
+                    LOGGER.debug("Found cookie [{}] under header name [{}]", cookieValue, getCookieName());
+                    cookie = createCookie(cookieValue);
+                }
+            }
             return cookie == null ? null : this.casCookieValueManager.obtainCookieValue(cookie, request);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);

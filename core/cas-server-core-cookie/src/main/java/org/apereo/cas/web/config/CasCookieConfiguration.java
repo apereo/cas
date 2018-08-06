@@ -48,7 +48,7 @@ public class CasCookieConfiguration {
     @Bean
     public CookieValueManager cookieValueManager() {
         if (casProperties.getTgc().getCrypto().isEnabled()) {
-            return new DefaultCasCookieValueManager(cookieCipherExecutor());
+            return new DefaultCasCookieValueManager(cookieCipherExecutor(), casProperties.getTgc());
         }
         return new NoOpCookieValueManager();
     }

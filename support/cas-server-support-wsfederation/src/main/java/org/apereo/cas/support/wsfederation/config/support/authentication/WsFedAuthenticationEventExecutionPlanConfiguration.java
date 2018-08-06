@@ -100,9 +100,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     private WsFederationCookieGenerator getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
         val cookie = wsfed.getCookie();
         val cipher = getCipherExecutorForWsFederationConfig(cookie);
-        return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher),
-            cookie.getName(), cookie.getPath(), cookie.getMaxAge(),
-            cookie.isSecure(), cookie.getDomain(), cookie.isHttpOnly());
+        return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, cookie), cookie);
     }
 
     private CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {

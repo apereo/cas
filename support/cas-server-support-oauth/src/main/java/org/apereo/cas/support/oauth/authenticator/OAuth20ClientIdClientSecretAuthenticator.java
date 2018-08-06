@@ -25,7 +25,7 @@ import org.pac4j.core.profile.CommonProfile;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OAuth20ClientAuthenticator implements Authenticator<UsernamePasswordCredentials> {
+public class OAuth20ClientIdClientSecretAuthenticator implements Authenticator<UsernamePasswordCredentials> {
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
@@ -66,7 +66,7 @@ public class OAuth20ClientAuthenticator implements Authenticator<UsernamePasswor
     protected void validateCredentials(final UsernamePasswordCredentials credentials,
                                        final OAuthRegisteredService registeredService,
                                        final WebContext context) {
-        if (!OAuth20Utils.checkClientSecret(registeredService, credentials.getUsername())) {
+        if (!OAuth20Utils.checkClientSecret(registeredService, credentials.getPassword())) {
             throw new CredentialsException("Bad secret for client identifier: " + credentials.getPassword());
         }
     }

@@ -22,7 +22,9 @@ import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.SurrogateRestAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -85,12 +87,16 @@ import static org.junit.Assert.*;
     SurrogateAuthenticationMetadataConfiguration.class,
     SurrogateRestAuthenticationConfiguration.class
 })
-@TestPropertySource(properties = "cas.authn.surrogate.rest.url=http://localhost:9293")
+@TestPropertySource(properties = "cas.authn.surrogate.rest.url=http://localhost:9301")
 public class SurrogateRestAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules()
         .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
     @Autowired
     @Qualifier("surrogateAuthenticationService")
@@ -99,7 +105,7 @@ public class SurrogateRestAuthenticationServiceTests {
     @Test
     public void verifyAccountsQualifying() throws Exception {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
-        try (val webServer = new MockWebServer(9293,
+        try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
@@ -108,10 +114,15 @@ public class SurrogateRestAuthenticationServiceTests {
             throw new AssertionError(e.getMessage(), e);
         }
 
-        try (val webServer = new MockWebServer(9293,
+        try (val webServer = new MockWebServer(9310,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val result = surrogateAuthenticationService.canAuthenticateAs("cassurrogate",
+
+            val props = new CasConfigurationProperties();
+            props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:9310");
+            val surrogateService = new SurrogateRestAuthenticationService(props.getAuthn().getSurrogate().getRest(), servicesManager);
+
+            val result = surrogateService.canAuthenticateAs("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
                 CoreAuthenticationTestUtils.getService());
             assertTrue(result);

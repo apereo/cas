@@ -48,8 +48,14 @@ public class SurrogateAuthenticationEventListener {
         val eventDetails = event.toString();
         if (communicationsManager.isSmsSenderDefined()) {
             val sms = casProperties.getAuthn().getSurrogate().getSms();
-            val text = sms.getText().concat("\n").concat(eventDetails);
-            communicationsManager.sms(sms.getFrom(), principal.getAttributes().get(sms.getAttributeName()).toString(), text);
+            val smsAttribute = sms.getAttributeName();
+            val to = principal.getAttributes().get(smsAttribute);
+            if (to != null) {
+                val text = sms.getText().concat("\n").concat(eventDetails);
+                this.communicationsManager.sms(sms.getFrom(), to.toString(), text);
+            } else {
+                LOGGER.trace("The principal has no {} attribute, cannot send SMS notification", smsAttribute);
+            }
         } else {
             LOGGER.trace("CAS is unable to send surrogate-authentication SMS messages given no settings are defined to account for servers, etc");
         }
