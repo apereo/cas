@@ -17,7 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-hazelcast-core")
 @Getter
 @Setter
-public abstract class BaseHazelcastProperties implements Serializable {
+public class BaseHazelcastProperties implements Serializable {
 
     /**
      * Logging type property name.
