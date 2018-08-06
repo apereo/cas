@@ -60,7 +60,7 @@ public class RegisteredServiceAccessStrategyUtils {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!ensureServiceIsNotExpired(registeredService)) {
-            final String msg = String.format("Expired Service Access. Service [%s] has been expired", service);
+            val msg = String.format("Expired Service Access. Service [%s] has been expired", service);
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EXPIRED_SERVICE, msg);
         }
