@@ -55,8 +55,8 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
     @Bean
     public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
         val clients = Stream.of(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
-            Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
             Authenticators.CAS_OAUTH_CLIENT_USER_FORM,
+            Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
             Authenticators.CAS_OAUTH_CLIENT_PROOF_KEY_CODE_EXCHANGE_AUTHN).collect(Collectors.joining(","));
         return new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients);
     }

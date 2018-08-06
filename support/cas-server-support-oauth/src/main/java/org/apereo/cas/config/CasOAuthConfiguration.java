@@ -20,9 +20,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
-import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientIdClientSecretAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAuthenticator;
-import org.apereo.cas.support.oauth.authenticator.OAuth20UserAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticator;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -240,7 +240,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
-        return new OAuth20ClientAuthenticator(this.servicesManager.getIfAvailable(), webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
+        return new OAuth20ClientIdClientSecretAuthenticator(this.servicesManager.getIfAvailable(), webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
     @ConditionalOnMissingBean(name = "oAuthProofKeyCodeExchangeAuthenticator")
@@ -253,7 +253,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
-        return new OAuth20UserAuthenticator(authenticationSystemSupport, servicesManager.getIfAvailable(), webApplicationServiceFactory);
+        return new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport, servicesManager.getIfAvailable(), webApplicationServiceFactory);
     }
 
     @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
