@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
  * @since 6.0.0
  */
 @Slf4j
-public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientAuthenticator {
+public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdClientSecretAuthenticator {
     private final TicketRegistry ticketRegistry;
 
     public OAuth20ProofKeyCodeExchangeAuthenticator(final ServicesManager servicesManager, final ServiceFactory webApplicationServiceFactory,

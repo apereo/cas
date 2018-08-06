@@ -7,9 +7,11 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.boot.configurationmetadata.CasConfigurationMetadataRepositoryJsonBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepository;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepositoryJsonBuilder;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.util.Arrays;
@@ -39,12 +41,21 @@ public class CasConfigurationMetadataRepository {
     @SneakyThrows
     public CasConfigurationMetadataRepository(final String resource) {
         val resources = new PathMatchingResourcePatternResolver().getResources(resource);
-        val builder = ConfigurationMetadataRepositoryJsonBuilder.create();
+        val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
         Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
             try (val in = r.getInputStream()) {
                 builder.withJsonResource(in);
             }
         }));
+        repository = builder.build();
+    }
+
+    @SneakyThrows
+    public CasConfigurationMetadataRepository(final Resource resource) {
+        val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
+        try (val in = resource.getInputStream()) {
+            builder.withJsonResource(in);
+        }
         repository = builder.build();
     }
 
