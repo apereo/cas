@@ -1,18 +1,19 @@
 package org.apereo.cas.web.support;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lombok.Setter;
-
 import java.util.Map;
 
 /**
@@ -105,7 +106,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
         super.addCookie(response, theCookieValue);
     }
 
-    private Boolean isRememberMeAuthentication(final RequestContext requestContext) {
+    private static Boolean isRememberMeAuthentication(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final String value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
         LOGGER.debug("Locating request parameter [{}] with value [{}]", RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, value);
@@ -135,7 +136,15 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
      */
     public String retrieveCookieValue(final HttpServletRequest request) {
         try {
-            final Cookie cookie = org.springframework.web.util.WebUtils.getCookie(request, getCookieName());
+            Cookie cookie = org.springframework.web.util.WebUtils.getCookie(request, getCookieName());
+            if (cookie == null) {
+                final String cookieValue = request.getHeader(getCookieName());
+                if (StringUtils.isNotBlank(cookieValue)) {
+                    LOGGER.debug("Found cookie [{}] under header name [{}]", cookieValue, getCookieName());
+                    cookie = createCookie(cookieValue);
+                }
+            }
+
             return cookie == null ? null : this.casCookieValueManager.obtainCookieValue(cookie, request);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
