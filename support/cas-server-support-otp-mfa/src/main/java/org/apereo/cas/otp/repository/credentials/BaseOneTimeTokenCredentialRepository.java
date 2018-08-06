@@ -40,6 +40,6 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
         val decodedSecret = tokenCredentialCipher.decode(account.getSecretKey());
         val newAccount = account.clone();
         newAccount.setSecretKey(decodedSecret);
-        return account;
+        return newAccount;
     }
 }

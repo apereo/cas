@@ -10,11 +10,13 @@ import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 
 /**
@@ -30,6 +32,8 @@ import static org.junit.Assert.*;
 })
 public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
     private IGoogleAuthenticator google;
+    @Mock
+    private CipherExecutor<String, String> cipherExecutor;
 
     @Before
     public void initialize() {
@@ -54,5 +58,23 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
         repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
         acct = repo.get("casuser");
         assertNotNull(acct);
+    }
+
+    @Test
+    public void verifyGetWithDecodedSecret() {
+        // given
+        when(cipherExecutor.encode("plain_secret")).thenReturn("abc321");
+        when(cipherExecutor.decode("abc321")).thenReturn("plain_secret");
+        val repo =
+            new InMemoryGoogleAuthenticatorTokenCredentialRepository(cipherExecutor, google);
+        var acct = repo.create("casuser");
+        acct.setSecretKey("plain_secret");
+        repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
+
+        // when
+        acct = repo.get("casuser");
+
+        // then
+        assertEquals("plain_secret", acct.getSecretKey());
     }
 }
