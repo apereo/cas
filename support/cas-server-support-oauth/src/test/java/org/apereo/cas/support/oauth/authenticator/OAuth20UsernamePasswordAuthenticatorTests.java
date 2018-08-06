@@ -21,6 +21,14 @@ import static org.junit.Assert.*;
  * @since 6.0.0
  */
 public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
+    protected OAuth20UsernamePasswordAuthenticator authenticator;
+
+    @Override
+    public void initialize() {
+        super.initialize();
+        authenticator = new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport, servicesManager, serviceFactory);
+    }
+
     @Test
     public void verifyAcceptedCredentialsWithClientId() {
         val credentials = new UsernamePasswordCredentials("casuser", "casuser");
