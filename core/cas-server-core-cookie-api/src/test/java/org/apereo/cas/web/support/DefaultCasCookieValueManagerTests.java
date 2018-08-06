@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
+
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.After;
@@ -40,7 +42,7 @@ public class DefaultCasCookieValueManagerTests {
         MockitoAnnotations.initMocks(this);
 
         ClientInfoHolder.setClientInfo(clientInfo);
-        cookieValueManager = new DefaultCasCookieValueManager(CipherExecutor.noOp());
+        cookieValueManager = new DefaultCasCookieValueManager(CipherExecutor.noOp(), new CookieProperties());
     }
 
     @After

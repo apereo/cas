@@ -87,7 +87,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     public CookieRetrievingCookieGenerator pac4jSessionStoreCookieGenerator() {
         final Pac4jDelegatedSessionCookieProperties c = casProperties.getAuthn().getPac4j().getCookie();
         return new SessionStoreCookieGenerator(
-            new DefaultCasCookieValueManager(pac4jDelegatedSessionStoreCookieCipherExecutor()),
+            new DefaultCasCookieValueManager(pac4jDelegatedSessionStoreCookieCipherExecutor(), c),
             c.getName(), c.getPath(), c.getMaxAge(),
             c.isSecure(), c.getDomain(), c.isHttpOnly());
     }

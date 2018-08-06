@@ -49,7 +49,7 @@ public class CasCookieConfiguration {
     @Bean
     public CookieValueManager cookieValueManager() {
         if (casProperties.getTgc().getCrypto().isEnabled()) {
-            return new DefaultCasCookieValueManager(cookieCipherExecutor());
+            return new DefaultCasCookieValueManager(cookieCipherExecutor(), casProperties.getTgc());
         }
         return new NoOpCookieValueManager();
     }
@@ -60,7 +60,7 @@ public class CasCookieConfiguration {
     public CipherExecutor cookieCipherExecutor() {
         final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getTgc().getCrypto();
         boolean enabled = crypto.isEnabled();
-        if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+        if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
             LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
                 + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.");
             enabled = true;
