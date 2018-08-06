@@ -11,6 +11,8 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
@@ -34,24 +36,26 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
+    RefreshAutoConfiguration.class
 })
 public abstract class BaseOAuth20AuthenticatorTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
     protected ServicesManager servicesManager;
     protected AuthenticationSystemSupport authenticationSystemSupport;
     protected ServiceFactory serviceFactory;
     protected OAuthRegisteredService service;
+    protected TicketRegistry ticketRegistry;
 
-    protected OAuth20UsernamePasswordAuthenticator authenticator;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
 
     @Before
     public void initialize() {
+        this.ticketRegistry = new DefaultTicketRegistry();
+
         val plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandler(new SimpleTestUsernamePasswordAuthenticationHandler());
 
@@ -72,6 +76,6 @@ public abstract class BaseOAuth20AuthenticatorTests {
 
         serviceFactory = mock(ServiceFactory.class);
         when(serviceFactory.createService(anyString())).thenReturn(RegisteredServiceTestUtils.getService());
-        authenticator = new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport, servicesManager, serviceFactory);
+
     }
 }
