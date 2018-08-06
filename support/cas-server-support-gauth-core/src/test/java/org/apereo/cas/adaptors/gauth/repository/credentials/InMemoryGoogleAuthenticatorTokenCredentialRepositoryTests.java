@@ -39,8 +39,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Test
     public void verifyCreate() {
-        val repo =
-            new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), google);
+        val repo = new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(), google);
         val acct = repo.create("casuser");
         assertNotNull(acct);
     }
