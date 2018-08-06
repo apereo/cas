@@ -1,6 +1,7 @@
 package org.springframework.boot.configurationmetadata;
 
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,13 +100,17 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
         if (item.getSourceType() == null) {
             return null;
         }
-        val name = item.getId().substring(0, item.getId().lastIndexOf('.'));
+
+        val idx = item.getId().lastIndexOf('.');
+        val name = idx > 0 ? item.getId().substring(0, idx) : StringUtils.EMPTY;
+
         for (val source : metadata.getSources()) {
             if (source.getType().equals(item.getSourceType()) && name.equals(source.getGroupId())) {
                 return source;
             }
         }
         return null;
+
     }
 
     private SimpleConfigurationMetadataRepository create(final RawConfigurationMetadata metadata) {
