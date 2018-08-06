@@ -40,6 +40,6 @@ public abstract class BaseOneTimeTokenCredentialRepository implements OneTimeTok
         final String decodedSecret = tokenCredentialCipher.decode(account.getSecretKey());
         final OneTimeTokenAccount newAccount = account.clone();
         newAccount.setSecretKey(decodedSecret);
-        return account;
+        return newAccount;
     }
 }
