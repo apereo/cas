@@ -8,7 +8,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link CasConfigurationMetadataRepositoryJsonBuilder}.
@@ -16,14 +15,14 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public final class CasConfigurationMetadataRepositoryJsonBuilder {
+public class CasConfigurationMetadataRepositoryJsonBuilder {
     private Charset defaultCharset = StandardCharsets.UTF_8;
 
     private final JsonReader reader = new JsonReader();
 
     private final List<SimpleConfigurationMetadataRepository> repositories = new ArrayList<>();
 
-    private CasConfigurationMetadataRepositoryJsonBuilder(final Charset defaultCharset) {
+    CasConfigurationMetadataRepositoryJsonBuilder(final Charset defaultCharset) {
         this.defaultCharset = defaultCharset;
     }
 
@@ -70,8 +69,8 @@ public final class CasConfigurationMetadataRepositoryJsonBuilder {
      * @return this builder
      */
     public ConfigurationMetadataRepository build() {
-        SimpleConfigurationMetadataRepository result = new SimpleConfigurationMetadataRepository();
-        for (SimpleConfigurationMetadataRepository repository : this.repositories) {
+        val result = new SimpleConfigurationMetadataRepository();
+        for (val repository : this.repositories) {
             result.include(repository);
         }
         return result;
@@ -79,38 +78,11 @@ public final class CasConfigurationMetadataRepositoryJsonBuilder {
 
     private SimpleConfigurationMetadataRepository add(final InputStream in, final Charset charset) {
         try {
-            RawConfigurationMetadata metadata = this.reader.read(in, charset);
+            val metadata = this.reader.read(in, charset);
             return create(metadata);
         } catch (final Exception ex) {
             throw new IllegalStateException("Failed to read configuration metadata", ex);
         }
-    }
-
-    private SimpleConfigurationMetadataRepository create(final RawConfigurationMetadata metadata) {
-        SimpleConfigurationMetadataRepository repository = new SimpleConfigurationMetadataRepository();
-        repository.add(metadata.getSources());
-        for (val item : metadata.getItems()) {
-            ConfigurationMetadataSource source = getSource(metadata, item);
-            repository.add(item, source);
-        }
-        Map<String, ConfigurationMetadataProperty> allProperties = repository.getAllProperties();
-        for (final ConfigurationMetadataHint hint : metadata.getHints()) {
-            ConfigurationMetadataProperty property = allProperties.get(hint.getId());
-            if (property != null) {
-                addValueHints(property, hint);
-            } else {
-                String id = hint.resolveId();
-                property = allProperties.get(id);
-                if (property != null) {
-                    if (hint.isMapKeyHints()) {
-                        addMapHints(property, hint);
-                    } else {
-                        addValueHints(property, hint);
-                    }
-                }
-            }
-        }
-        return repository;
     }
 
     private void addValueHints(final ConfigurationMetadataProperty property, final ConfigurationMetadataHint hint) {
@@ -128,12 +100,39 @@ public final class CasConfigurationMetadataRepositoryJsonBuilder {
             return null;
         }
         val name = item.getId().substring(0, item.getId().lastIndexOf('.'));
-        for (ConfigurationMetadataSource source : metadata.getSources()) {
+        for (val source : metadata.getSources()) {
             if (source.getType().equals(item.getSourceType()) && name.equals(source.getGroupId())) {
                 return source;
             }
         }
         return null;
+    }
+
+    private SimpleConfigurationMetadataRepository create(final RawConfigurationMetadata metadata) {
+        val repository = new SimpleConfigurationMetadataRepository();
+        repository.add(metadata.getSources());
+        for (val item : metadata.getItems()) {
+            val source = getSource(metadata, item);
+            repository.add(item, source);
+        }
+        val allProperties = repository.getAllProperties();
+        for (val hint : metadata.getHints()) {
+            var property = allProperties.get(hint.getId());
+            if (property != null) {
+                addValueHints(property, hint);
+            } else {
+                val id = hint.resolveId();
+                property = allProperties.get(id);
+                if (property != null) {
+                    if (hint.isMapKeyHints()) {
+                        addMapHints(property, hint);
+                    } else {
+                        addValueHints(property, hint);
+                    }
+                }
+            }
+        }
+        return repository;
     }
 
     /**
@@ -145,7 +144,7 @@ public final class CasConfigurationMetadataRepositoryJsonBuilder {
      * @throws IOException on error
      */
     public static CasConfigurationMetadataRepositoryJsonBuilder create(final InputStream... inputStreams) throws IOException {
-        CasConfigurationMetadataRepositoryJsonBuilder builder = create();
+        var builder = create();
         for (val inputStream : inputStreams) {
             builder = builder.withJsonResource(inputStream);
         }
