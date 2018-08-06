@@ -11,6 +11,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.services.persondir.support.QueryType;
 import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
@@ -40,7 +41,7 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
         if (field.getVariables().isEmpty()) {
             throw new IllegalArgumentException("Field " + field + " has no variable definitions");
         }
-        final var var = field.getVariable(0);
+        val var = field.getVariable(0);
         if (field.getModifiers().contains(Modifier.STATIC)) {
             LOGGER.debug("Field [{}] is static and will be ignored for metadata generation", var.getNameAsString());
             return;
@@ -48,20 +49,20 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
         if (!field.getJavadoc().isPresent()) {
             LOGGER.error("Field [{}] has no Javadoc defined", field);
         }
-        final var creator = new ConfigurationMetadataPropertyCreator(indexNameWithBrackets, properties, groups, parentClass);
-        final var prop = creator.createConfigurationProperty(field, property.getName());
+        val creator = new ConfigurationMetadataPropertyCreator(indexNameWithBrackets, properties, groups, parentClass);
+        val prop = creator.createConfigurationProperty(field, property.getName());
         processNestedClassOrInterfaceTypeIfNeeded(field, prop);
     }
 
 
     private void processNestedClassOrInterfaceTypeIfNeeded(final FieldDeclaration n, final ConfigurationMetadataProperty prop) {
         if (n.getElementType() instanceof ClassOrInterfaceType) {
-            final var type = (ClassOrInterfaceType) n.getElementType();
+            val type = (ClassOrInterfaceType) n.getElementType();
             if (!shouldTypeBeExcluded(type)) {
-                final var clz = ConfigurationMetadataClassSourceLocator.getInstance().locatePropertiesClassForType(type);
+                val clz = ConfigurationMetadataClassSourceLocator.getInstance().locatePropertiesClassForType(type);
                 if (clz != null && !clz.isMemberClass()) {
-                    final var typePath = ConfigurationMetadataClassSourceLocator.getInstance().buildTypeSourcePath(this.sourcePath, clz.getName());
-                    final var parser = new ConfigurationMetadataUnitParser(this.sourcePath);
+                    val typePath = ConfigurationMetadataClassSourceLocator.getInstance().buildTypeSourcePath(this.sourcePath, clz.getName());
+                    val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
                     parser.parseCompilationUnit(properties, groups, prop, typePath, clz.getName(), false);
                 }
             }

@@ -56,7 +56,6 @@ include "core:cas-server-core"
 
 include "docs:cas-server-documentation"
 include "docs:cas-server-documentation-swagger"
-include "docs:cas-server-documentation-generator"
 
 include "support:cas-server-support-bom"
 include "support:cas-server-support-aws"
