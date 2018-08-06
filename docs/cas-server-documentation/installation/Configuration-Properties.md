@@ -2611,6 +2611,7 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.claimTypesSupported=normal
 # cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
 # cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256
+# cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post
 
 # Define custom scopes and claims
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
