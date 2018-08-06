@@ -7,7 +7,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javaparser.JavaParser;
@@ -119,32 +119,19 @@ public class ConfigurationMetadataGenerator {
         final var hints = processHints(properties, groups);
 
         processNestedEnumProperties(properties, groups);
-        processNestedEnumGroups(properties, groups);
 
         jsonMap.put("properties", properties);
         jsonMap.put("groups", groups);
         jsonMap.put("hints", hints);
 
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        final PrettyPrinter pp = new DefaultPrettyPrinter();
+        final PrettyPrinter pp = new MinimalPrettyPrinter();
         final var writer = mapper.writer(pp);
-        //writer.writeValue(jsonFile, jsonMap);
-    }
-
-    private void processNestedEnumGroups(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
-//        val propertiesToProcess = groups.stream()
-//            .filter(e -> {
-//                val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
-//                return matcher.matches();
-//            })
-//            .collect(Collectors.toSet());
-//        propertiesToProcess.forEach(p -> {
-//            System.out.println(p.getName());
-//        });
+        writer.writeValue(jsonFile, jsonMap);
     }
 
     private void processNestedEnumProperties(final Set<ConfigurationMetadataProperty> properties, final Set<ConfigurationMetadataProperty> groups) {
-        val propertiesToProcess =  properties.stream()
+        val propertiesToProcess = properties.stream()
             .filter(e -> {
                 val matcher = NESTED_CLASS_PATTERN.matcher(e.getType());
                 return matcher.matches();
@@ -182,12 +169,10 @@ public class ConfigurationMetadataGenerator {
                             enumMem.getEntries()
                                 .stream()
                                 .filter(entry -> entry.getJavadoc().isPresent())
-                                .forEach(entry -> {
-                                    builder.append(entry.getNameAsString())
-                                        .append(":")
-                                        .append(entry.getJavadoc().get().getDescription().toText())
-                                        .append(".");
-                                });
+                                .forEach(entry -> builder.append(entry.getNameAsString())
+                                    .append(":")
+                                    .append(entry.getJavadoc().get().getDescription().toText())
+                                    .append("."));
                             e.setDescription(builder.toString());
                         }
                         if (member.isClassOrInterfaceDeclaration()) {

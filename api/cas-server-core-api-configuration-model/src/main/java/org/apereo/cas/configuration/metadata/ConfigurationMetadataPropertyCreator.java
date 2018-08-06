@@ -36,14 +36,14 @@ public class ConfigurationMetadataPropertyCreator {
      * @return the configuration metadata property
      */
     public ConfigurationMetadataProperty createConfigurationProperty(final FieldDeclaration fieldDecl, final String propName) {
-        final var variable = fieldDecl.getVariables().get(0);
-        final var name = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
+        val variable = fieldDecl.getVariables().get(0);
+        val name = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
             .map(Object::toString)
             .findFirst()
             .orElseGet(variable::getNameAsString);
 
-        final var indexedGroup = propName.concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
-        final var indexedName = indexedGroup.concat(".").concat(name);
+        val indexedGroup = propName.concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
+        val indexedName = indexedGroup.concat(".").concat(name);
 
         val prop = new ConfigurationMetadataProperty();
         if (fieldDecl.getJavadoc().isPresent()) {
