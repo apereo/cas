@@ -59,9 +59,10 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
         if (n.getElementType() instanceof ClassOrInterfaceType) {
             val type = (ClassOrInterfaceType) n.getElementType();
             if (!shouldTypeBeExcluded(type)) {
-                val clz = ConfigurationMetadataClassSourceLocator.getInstance().locatePropertiesClassForType(type);
+                val instance = ConfigurationMetadataClassSourceLocator.getInstance();
+                val clz = instance.locatePropertiesClassForType(type);
                 if (clz != null && !clz.isMemberClass()) {
-                    val typePath = ConfigurationMetadataClassSourceLocator.getInstance().buildTypeSourcePath(this.sourcePath, clz.getName());
+                    val typePath = instance.buildTypeSourcePath(this.sourcePath, clz.getName());
                     val parser = new ConfigurationMetadataUnitParser(this.sourcePath);
                     parser.parseCompilationUnit(properties, groups, prop, typePath, clz.getName(), false);
                 }

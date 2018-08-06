@@ -170,9 +170,9 @@ public class ConfigurationMetadataGenerator {
                                 .stream()
                                 .filter(entry -> entry.getJavadoc().isPresent())
                                 .forEach(entry -> builder.append(entry.getNameAsString())
-                                    .append(":")
+                                    .append(':')
                                     .append(entry.getJavadoc().get().getDescription().toText())
-                                    .append("."));
+                                    .append('.'));
                             e.setDescription(builder.toString());
                         }
                         if (member.isClassOrInterfaceDeclaration()) {

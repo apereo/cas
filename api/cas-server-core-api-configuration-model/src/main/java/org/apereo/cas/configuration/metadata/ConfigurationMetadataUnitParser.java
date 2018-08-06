@@ -35,11 +35,11 @@ public class ConfigurationMetadataUnitParser {
      */
     @SneakyThrows
     public void parseCompilationUnit(final Set<ConfigurationMetadataProperty> collectedProps,
-                                      final Set<ConfigurationMetadataProperty> collectedGroups,
-                                      final ConfigurationMetadataProperty p,
-                                      final String typePath,
-                                      final String typeName,
-                                      final boolean indexNameWithBrackets) {
+                                     final Set<ConfigurationMetadataProperty> collectedGroups,
+                                     final ConfigurationMetadataProperty p,
+                                     final String typePath,
+                                     final String typeName,
+                                     final boolean indexNameWithBrackets) {
 
         try (val is = Files.newInputStream(Paths.get(typePath))) {
             val cu = JavaParser.parse(is);
@@ -48,8 +48,9 @@ public class ConfigurationMetadataUnitParser {
                 val decl = ClassOrInterfaceDeclaration.class.cast(cu.getType(0));
                 for (var i = 0; i < decl.getExtendedTypes().size(); i++) {
                     val parentType = decl.getExtendedTypes().get(i);
-                    val parentClazz = ConfigurationMetadataClassSourceLocator.getInstance().locatePropertiesClassForType(parentType);
-                    val parentTypePath = ConfigurationMetadataClassSourceLocator.getInstance().buildTypeSourcePath(this.sourcePath, parentClazz.getName());
+                    val instance = ConfigurationMetadataClassSourceLocator.getInstance();
+                    val parentClazz = instance.locatePropertiesClassForType(parentType);
+                    val parentTypePath = instance.buildTypeSourcePath(this.sourcePath, parentClazz.getName());
 
                     parseCompilationUnit(collectedProps, collectedGroups, p,
                         parentTypePath, parentClazz.getName(), indexNameWithBrackets);
