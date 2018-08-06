@@ -13,6 +13,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -311,6 +312,9 @@ public class DelegatedClientFactory {
                 if (StringUtils.isBlank(cas.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                if (cas.isUsePathBasedCallbackUrl()) {
+                    client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
+                }
                 configureClient(client, cas);
 
                 index.incrementAndGet();
@@ -364,6 +368,9 @@ public class DelegatedClientFactory {
                 if (StringUtils.isBlank(saml.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                if (saml.isUsePathBasedCallbackUrl()) {
+                    client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
+                }
                 configureClient(client, saml);
 
                 index.incrementAndGet();
@@ -397,6 +404,9 @@ public class DelegatedClientFactory {
                 if (StringUtils.isBlank(oauth.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                if (oauth.isUsePathBasedCallbackUrl()) {
+                    client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
+                }
                 configureClient(client, oauth);
 
                 index.incrementAndGet();
@@ -424,6 +434,7 @@ public class DelegatedClientFactory {
                         break;
                     case "AZURE":
                         final AzureAdOidcConfiguration azure = getOidcConfigurationForClient(oidc, AzureAdOidcConfiguration.class);
+                        azure.setTenant(oidc.getAzureTenantId());
                         client = new AzureAdClient(new AzureAdOidcConfiguration(azure));
                         break;
                     case "KEYCLOAK":
@@ -440,6 +451,9 @@ public class DelegatedClientFactory {
                 final int count = index.intValue();
                 if (StringUtils.isBlank(oidc.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
+                }
+                if (oidc.isUsePathBasedCallbackUrl()) {
+                    client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
                 }
                 configureClient(client, oidc);
                 index.incrementAndGet();

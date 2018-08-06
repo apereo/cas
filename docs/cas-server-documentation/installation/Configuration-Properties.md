@@ -2629,6 +2629,7 @@ Delegate authentication to an external CAS server.
 ```properties
 # cas.authn.pac4j.cas[0].loginUrl=
 # cas.authn.pac4j.cas[0].protocol=
+# cas.authn.pac4j.cas[0].usePathBasedCallbackUrl=false
 ```
 
 ### OAuth20
@@ -2643,6 +2644,7 @@ Delegate authentication to an generic OAuth2 server. Common settings for this id
 # cas.authn.pac4j.oauth2[0].profileVerb=GET|POST
 # cas.authn.pac4j.oauth2[0].profileAttrs.attr1=path-to-attr-in-profile
 # cas.authn.pac4j.oauth2[0].customParams.param1=value1
+# cas.authn.pac4j.oauth2[0].usePathBasedCallbackUrl=false
 ```
 
 ### OpenID Connect
@@ -2658,6 +2660,8 @@ Delegate authentication to an external OpenID Connect server. Common settings fo
 # cas.authn.pac4j.oidc[0].useNonce=
 # cas.authn.pac4j.oidc[0].preferredJwsAlgorithm=
 # cas.authn.pac4j.oidc[0].customParams.param1=value1
+# cas.authn.pac4j.oidc[0].azureTenantId=
+# cas.authn.pac4j.oidc[0].usePathBasedCallbackUrl=false
 ```
 
 ### SAML2
