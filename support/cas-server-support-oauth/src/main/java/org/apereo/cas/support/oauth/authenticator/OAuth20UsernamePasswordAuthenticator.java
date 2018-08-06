@@ -14,6 +14,7 @@ import lombok.val;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 
@@ -25,7 +26,7 @@ import org.pac4j.core.profile.CommonProfile;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OAuth20UserAuthenticator implements Authenticator<UsernamePasswordCredentials> {
+public class OAuth20UsernamePasswordAuthenticator implements Authenticator<UsernamePasswordCredentials> {
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServicesManager servicesManager;
     private final ServiceFactory webApplicationServiceFactory;
@@ -34,13 +35,16 @@ public class OAuth20UserAuthenticator implements Authenticator<UsernamePasswordC
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
         val casCredential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
         try {
+
+            val extractor = new BasicAuthExtractor();
+            val upc = extractor.extract(context);
+            
             val clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
             val service = this.webApplicationServiceFactory.createService(clientId);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
-            val authenticationResult = this.authenticationSystemSupport
-                .handleAndFinalizeSingleAuthenticationTransaction(null, casCredential);
+            val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(null, casCredential);
             val authentication = authenticationResult.getAuthentication();
             val principal = authentication.getPrincipal();
 
