@@ -134,7 +134,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-You may also need to declare the following Maven repository in
+You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:
 
 ```xml

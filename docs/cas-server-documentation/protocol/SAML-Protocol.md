@@ -114,7 +114,7 @@ Content-Type: text/xml
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-core).
 
-You may also need to declare the following Maven repository in
+You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:
 
 ```xml

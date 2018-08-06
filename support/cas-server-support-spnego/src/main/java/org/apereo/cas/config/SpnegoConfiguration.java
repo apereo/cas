@@ -24,6 +24,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ResourceLoader;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link SpnegoConfiguration}.
@@ -35,6 +39,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("spnegoConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SpnegoConfiguration {
+
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -49,47 +56,44 @@ public class SpnegoConfiguration {
 
     @RefreshScope
     @Bean
-    @ConditionalOnMissingBean(name = "spnegoAuthentication")
-    public Authentication spnegoAuthentication() {
-        return new Authentication();
+    @ConditionalOnMissingBean(name = "spnegoAuthentications")
+    public List<Authentication> spnegoAuthentications() {
+        val spnegoSystem = casProperties.getAuthn().getSpnego().getSystem();
+
+        JcifsConfig.SystemSettings.initialize(resourceLoader, spnegoSystem.getLoginConf());
+        JcifsConfig.SystemSettings.setKerberosConf(spnegoSystem.getKerberosConf());
+        JcifsConfig.SystemSettings.setKerberosDebug(spnegoSystem.getKerberosDebug());
+        JcifsConfig.SystemSettings.setKerberosKdc(spnegoSystem.getKerberosKdc());
+        JcifsConfig.SystemSettings.setKerberosRealm(spnegoSystem.getKerberosRealm());
+        JcifsConfig.SystemSettings.setUseSubjectCredsOnly(spnegoSystem.isUseSubjectCredsOnly());
+
+        val props = casProperties.getAuthn().getSpnego().getProperties();
+        return props.stream()
+            .map(p -> {
+                val c = new JcifsConfig();
+                val jcifsSettings = c.getJcifsSettings();
+                jcifsSettings.setJcifsDomain(p.getJcifsDomain());
+                jcifsSettings.setJcifsDomainController(p.getJcifsDomainController());
+                jcifsSettings.setJcifsNetbiosCachePolicy(p.getCachePolicy());
+                jcifsSettings.setJcifsNetbiosWins(p.getJcifsNetbiosWins());
+                jcifsSettings.setJcifsPassword(p.getJcifsPassword());
+                jcifsSettings.setJcifsServicePassword(p.getJcifsServicePassword());
+                jcifsSettings.setJcifsServicePrincipal(p.getJcifsServicePrincipal());
+                jcifsSettings.setJcifsSocketTimeout(Beans.newDuration(p.getTimeout()).toMillis());
+                jcifsSettings.setJcifsUsername(p.getJcifsUsername());
+                return new Authentication(jcifsSettings.getProperties());
+            })
+            .collect(Collectors.toList());
     }
 
-    @Bean
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "jcifsConfig")
-    public JcifsConfig jcifsConfig() {
-        val c = new JcifsConfig();
-        val spnego = casProperties.getAuthn().getSpnego();
-        c.setJcifsDomain(spnego.getJcifsDomain());
-        c.setJcifsDomainController(spnego.getJcifsDomainController());
-        c.setJcifsNetbiosCachePolicy(spnego.getCachePolicy());
-        c.setJcifsNetbiosWins(spnego.getJcifsNetbiosWins());
-        c.setJcifsPassword(spnego.getJcifsPassword());
-        c.setJcifsServicePassword(spnego.getJcifsServicePassword());
-        c.setJcifsServicePrincipal(spnego.getJcifsServicePrincipal());
-        c.setJcifsSocketTimeout(Beans.newDuration(spnego.getTimeout()).toMillis());
-        c.setJcifsUsername(spnego.getJcifsUsername());
-        c.setKerberosConf(spnego.getKerberosConf());
-        c.setKerberosDebug(spnego.getKerberosDebug());
-        c.setKerberosKdc(spnego.getKerberosKdc());
-        c.setKerberosRealm(spnego.getKerberosRealm());
-        c.setLoginConf(spnego.getLoginConf());
-        c.setUseSubjectCredsOnly(spnego.isUseSubjectCredsOnly());
-
-        return c;
-    }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "spnegoHandler")
     public AuthenticationHandler spnegoHandler() {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        val h = new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), servicesManager, spnegoPrincipalFactory(),
-            spnegoAuthentication(), spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed());
-        h.setAuthentication(spnegoAuthentication());
-        h.setPrincipalWithDomainName(spnegoProperties.isPrincipalWithDomainName());
-        h.setNtlmAllowed(spnegoProperties.isNtlmAllowed());
-        return h;
+        return new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), servicesManager, spnegoPrincipalFactory(),
+            spnegoAuthentications(), spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed());
     }
 
     @Bean

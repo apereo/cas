@@ -55,8 +55,12 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
                                                final PasswordManagementService passwordManagementService,
                                                final CasConfigurationProperties casProperties) {
         val token = passwordManagementService.createToken(username);
-        return casProperties.getServer().getPrefix()
-            .concat('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
+        if (StringUtils.isNotBlank(token)) {
+            return casProperties.getServer().getPrefix()
+                .concat('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
+        }
+        LOGGER.error("Could not create password reset url since no reset token could be generated");
+        return null;
     }
 
     @Override
@@ -81,11 +85,13 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         }
 
         val url = buildPasswordResetUrl(username, passwordManagementService, casProperties);
-
-        LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url,
-            pm.getReset().getExpirationMinutes());
-        if (sendPasswordResetEmailToAccount(to, url)) {
-            return success();
+        if (StringUtils.isNotBlank(url)) {
+            LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url, pm.getReset().getExpirationMinutes());
+            if (sendPasswordResetEmailToAccount(to, url)) {
+                return success();
+            }
+        } else {
+            LOGGER.error("No password reset URL could be built and sent to [{}]", to);
         }
         LOGGER.error("Failed to notify account [{}]", to);
         return error();

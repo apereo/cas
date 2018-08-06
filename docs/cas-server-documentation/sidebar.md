@@ -12,7 +12,7 @@ layout: null
 
 * [Installation](#casinstallation)
     *   [Requirements](/$version/planning/Installation-Requirements.html)
-    *   [WAR Overlays](/$version/installation/Maven-Overlay-Installation.html)
+    *   [WAR Overlays](/$version/installation/WAR-Overlay-Installation.html)
     *   [Command-line Shell](/$version/installation/Configuring-Commandline-Shell.html) 
     *   [Docker Deployment](/$version/installation/Docker-Installation.html)
     *   [Servlet Containers](/$version/installation/Configuring-Servlet-Container.html)
@@ -183,11 +183,13 @@ layout: null
     *   [Dynamic Themes](/$version/installation/User-Interface-Customization-Themes.html)
     *   [Acceptable Usage Policy](/$version/installation/Webflow-Customization-AUP.html)
     *   [Interrupt Notifications](/$version/installation/Webflow-Customization-Interrupt.html)
+    *   [Dynamic Decorations](/$version/installation/Webflow-Customization-Decorators.html)
         
 *   [Webflow Management](#webflowmgmt)
     *   [Overview](/$version/installation/Webflow-Customization.html) 
     *   [Error Handling](/$version/installation/Webflow-Customization-Exceptions.html)
-    *   [Extending Webflow](/$version/installation/Webflow-Customization-Extensions.html) 
+    *   [Extending Webflow](/$version/installation/Webflow-Customization-Extensions.html)
+    *   [Dynamic Decorations](/$version/installation/Webflow-Customization-Decorators.html) 
     *   [Session Persistence](/$version/installation/Webflow-Customization-Sessions.html)
 
 * [High Availability](#highavailability)

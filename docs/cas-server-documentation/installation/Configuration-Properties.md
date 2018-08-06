@@ -486,6 +486,8 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # management.server.add-application-context-header=false
 ```
 
+### Basic Authentication Security
+
 Credentials for basic authentication may be defined via the following settings:
 
 ```properties
@@ -494,11 +496,7 @@ Credentials for basic authentication may be defined via the following settings:
 # spring.security.user.roles=
 ```
 
-Endpoint security configuration controlled by CAS may be controlled via the following settings:
-
-```properties
-# cas.monitor.endpoints.enableEndpointSecurity=true
-```
+### JAAS Authentication Security
 
 JAAS authentication for endpoint security may be configured via the following settings:
 
@@ -507,6 +505,8 @@ JAAS authentication for endpoint security may be configured via the following se
 # cas.monitor.endpoints.jaas.loginConfig=file:/etc/cas/config/jaas.conf
 # cas.monitor.endpoints.jaas.loginContextName=CAS
 ```
+
+### LDAP Authentication Security
 
 Shared LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) 
 under the configuration key `cas.monitor.endpoints.ldap`.
@@ -525,6 +525,8 @@ LDAP authentication for endpoint security may be additionally configured via the
 # cas.monitor.endpoints.ldap.ldapAuthz.searchFilter=
 ```
 
+### JDBC Authentication Security
+
 Shared database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings)
 under the configuration key `cas.monitor.endpoints.jdbc`.
 
@@ -538,16 +540,25 @@ JDBC authentication for endpoint security may be additionally configured via the
 Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) 
 under the configuration key `cas.monitor.endpoints.jdbc`.
 
+### Enabling Endpoints
+
+Endpoint security configuration controlled and activated by CAS may be controlled via the following settings:
+
+```properties
+# cas.monitor.endpoints.enableEndpointSecurity=true
+```
 
 To determine whether an endpoint is available, the calculation order for all endpoints is as follows:
 
-1. The `enabled` setting of the individual endpoint (i.e. `info`)is consulted in CAS settings, as demonstrated below:
+1. The `enabled` setting of the individual endpoint (i.e. `info`) is consulted in CAS settings, as demonstrated below:
 
 ```properties
 # management.endpoint.info.enabled=true
 ```
 2. If undefined, the global setting noted above is consulted from CAS settings.
 3. If undefined, the default built-in setting for the endpoint in CAS is consulted, which is typically `false` by default.
+
+All available endpoint ids [should be listed here](Monitoring-Statistics.html).
 
 Endpoints may also be mapped to custom arbitrary endpoints. For example, to remap the `health` endpoint to `healthcheck`, 
 specify the following settings:
@@ -1622,41 +1633,62 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.spnego.principal`.
 
 ```properties
+# cas.authn.spnego.mixedModeAuthentication=false
+# cas.authn.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
+# cas.authn.spnego.send401OnAuthenticationFailure=true
+# cas.authn.spnego.ntlmAllowed=true
+# cas.authn.spnego.principalWithDomainName=false
+# cas.authn.spnego.name=
+# cas.authn.spnego.ntlm=false
+```
+
+### System Settings
+
+```properties
 # cas.authn.spnego.kerberosConf=
 # cas.authn.spnego.loginConf=
 # cas.authn.spnego.kerberosRealm=EXAMPLE.COM
-
-# cas.authn.spnego.jcifsUsername=
-# cas.authn.spnego.jcifsDomainController=
-# cas.authn.spnego.jcifsDomain=
-# cas.authn.spnego.jcifsServicePassword=
-# cas.authn.spnego.jcifsPassword=
-
-# cas.authn.spnego.mixedModeAuthentication=false
-# cas.authn.spnego.cachePolicy=600
-# cas.authn.spnego.timeout=300000
-# cas.authn.spnego.jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
-# cas.authn.spnego.jcifsNetbiosWins=
-# cas.authn.spnego.ntlmAllowed=true
-# cas.authn.spnego.hostNamePatternString=.+
-# cas.authn.spnego.useSubjectCredsOnly=false
-# cas.authn.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
-# cas.authn.spnego.dnsTimeout=2000
-# cas.authn.spnego.hostNameClientActionStrategy=hostnameSpnegoClientAction
-# cas.authn.spnego.kerberosKdc=172.10.1.10
-# cas.authn.spnego.alternativeRemoteHostAttribute=alternateRemoteHeader
-# cas.authn.spnego.ipsToCheckPattern=127.+
 # cas.authn.spnego.kerberosDebug=true
-# cas.authn.spnego.send401OnAuthenticationFailure=true
-# cas.authn.spnego.ntlm=false
-# cas.authn.spnego.principalWithDomainName=false
-# cas.authn.spnego.spnegoAttributeName=distinguishedName
-# cas.authn.spnego.name=
+# cas.authn.spnego.useSubjectCredsOnly=false
+# cas.authn.spnego.kerberosKdc=172.10.1.10
 ```
 
-#### SPNEGO LDAP Integration
+### Spnego Authentication Settings
+
+```properties
+# cas.authn.spnego[0].cachePolicy=600
+# cas.authn.spnego[0].jcifsDomainController=
+# cas.authn.spnego[0].jcifsDomain=
+# cas.authn.spnego[0].jcifsPassword=
+# cas.authn.spnego[0].jcifsUsername=
+# cas.authn.spnego[0].jcifsServicePassword=
+# cas.authn.spnego[0].timeout=300000
+# cas.authn.spnego[0].jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
+# cas.authn.spnego[0].jcifsNetbiosWins=
+```
+
+### SPNEGO Client Selection Strategy
+
+```properties
+# cas.authn.spnego.hostNameClientActionStrategy=hostnameSpnegoClientAction
+```
+
+### SPNEGO Client Selection Hostname
+
+```properties
+# cas.authn.spnego.alternativeRemoteHostAttribute=alternateRemoteHeader
+# cas.authn.spnego.ipsToCheckPattern=127.+
+# cas.authn.spnego.dnsTimeout=2000
+# cas.authn.spnego.hostNamePatternString=.+
+```
+
+### SPNEGO LDAP Integration
 
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.spnego.ldap`.
+
+```properties
+# cas.authn.spnego.spnegoAttributeName=distinguishedName
+```
 
 ### NTLM Authentication
 
@@ -2579,6 +2611,7 @@ Allow CAS to become an OpenID Connect provider (OP). To learn more about this to
 # cas.authn.oidc.claimTypesSupported=normal
 # cas.authn.oidc.grantTypesSupported=authorization_code,password,client_credentials,refresh_token
 # cas.authn.oidc.idTokenSigningAlgValuesSupported=none,RS256
+# cas.authn.oidc.tokenEndpointAuthMethodsSupported=client_secret_basic,client_secret_post
 
 # Define custom scopes and claims
 # cas.authn.oidc.userDefinedScopes.scope1=cn,givenName,photos,customAttribute
@@ -2843,6 +2876,7 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 # cas.tgc.secure=true
 # cas.tgc.httpOnly=true
 # cas.tgc.rememberMeMaxAge=1209600
+# cas.tgc.pinToSession=true
 ```
 
 ### Signing & Encryption
@@ -3658,6 +3692,18 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 # cas.webflow.refresh=true
 # cas.webflow.redirectSameState=false
 ```
+
+### Spring Webflow Login Decorations
+
+#### Groovy
+
+```properties
+# cas.webflow.loginDecorator.groovy.location=file:/etc/cas/config/LoginDecorator.groovy
+```
+
+#### REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.webflow.loginDecorator.rest`.
 
 ### Spring Webflow Auto Configuration
 
