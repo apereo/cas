@@ -262,8 +262,8 @@ public class RegisteredServiceAccessStrategyUtils {
                 if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
                     return true;
                 }
-                final LocalDateTime now = getCurrentSystemTime();
-                final LocalDateTime expirationDate = DateTimeUtils.localDateTimeOf(policy.getExpirationDate());
+                val now = getCurrentSystemTime();
+                val expirationDate = DateTimeUtils.localDateTimeOf(policy.getExpirationDate());
                 LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
                 return !now.isAfter(expirationDate);
             } catch (final Exception e) {
