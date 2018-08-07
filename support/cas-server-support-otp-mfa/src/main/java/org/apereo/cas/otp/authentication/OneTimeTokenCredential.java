@@ -1,9 +1,14 @@
 package org.apereo.cas.otp.authentication;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageContext;
+import org.springframework.binding.validation.ValidationContext;
+
 import org.apereo.cas.authentication.Credential;
 
 import java.io.Serializable;
@@ -73,5 +78,21 @@ public class OneTimeTokenCredential implements Credential, Serializable {
 
     public void setToken(final String token) {
         this.token = token;
+    }
+
+    /**
+     * Validate.
+     *
+     * @param context the context
+     */
+    public void validate(final ValidationContext context) {
+        if (!StringUtils.isNotBlank(getId())) {
+            final MessageContext messages = context.getMessageContext();
+            messages.addMessage(new MessageBuilder()
+                .error()
+                .source("token")
+                .defaultText("Unable to accept credential with an empty or unspecified token")
+                .build());
+        }
     }
 }
