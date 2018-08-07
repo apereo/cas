@@ -45,7 +45,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
     @SneakyThrows
     private static String serializeRelyingPartyToken(final Element rpToken) {
         val sw = new StringWriter();
-        final TransformerFactory transformerFactory = TransformerFactory.newInstance();
+        val transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         val t = transformerFactory.newTransformer();
         t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, BooleanUtils.toStringYesNo(Boolean.TRUE));
