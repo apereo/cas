@@ -1,8 +1,7 @@
 package org.apereo.cas.adaptors.u2f;
 
-import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.OneTimeTokenCredential;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,16 +18,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
-public class U2FTokenCredential implements Credential {
-
+public class U2FTokenCredential extends OneTimeTokenCredential {
     private static final long serialVersionUID = -970682410132111037L;
 
-    private String token;
-
-    @Override
-    public String getId() {
-        return this.token;
+    public U2FTokenCredential(final String token) {
+        super(token);
     }
 }

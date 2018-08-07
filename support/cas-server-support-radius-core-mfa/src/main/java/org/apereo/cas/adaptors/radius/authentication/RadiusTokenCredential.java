@@ -1,8 +1,7 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
-import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.OneTimeTokenCredential;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,16 +18,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
-public class RadiusTokenCredential implements Credential {
-
+public class RadiusTokenCredential extends OneTimeTokenCredential {
     private static final long serialVersionUID = -7570675701132111037L;
 
-    private String token;
-
-    @Override
-    public String getId() {
-        return this.token;
+    public RadiusTokenCredential(final String token) {
+        super(token);
     }
 }

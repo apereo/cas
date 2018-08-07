@@ -3,8 +3,11 @@ package org.apereo.cas.authentication;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.ToString;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.validation.ValidationContext;
 
 /**
  * Base class for CAS credentials that are safe for long-term storage.
@@ -48,5 +51,25 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
     @Override
     public Class<? extends Credential> getCredentialClass() {
         return this.getClass();
+    }
+
+    public boolean isValid() {
+        return StringUtils.isNotBlank(getId());
+    }
+
+    /**
+     * Validate.
+     *
+     * @param context the context
+     */
+    public void validate(final ValidationContext context) {
+        if (!isValid()) {
+            val messages = context.getMessageContext();
+            messages.addMessage(new MessageBuilder()
+                .error()
+                .source("token")
+                .defaultText("Unable to accept credential with an empty or unspecified token")
+                .build());
+        }
     }
 }

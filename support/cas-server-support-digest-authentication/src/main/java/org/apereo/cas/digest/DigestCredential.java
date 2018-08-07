@@ -1,6 +1,6 @@
 package org.apereo.cas.digest;
 
-import org.apereo.cas.authentication.AbstractCredential;
+import org.apereo.cas.authentication.BasicIdentifiableCredential;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -21,15 +21,13 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class DigestCredential extends AbstractCredential {
+public class DigestCredential extends BasicIdentifiableCredential {
 
     private static final long serialVersionUID = 1523693794392289803L;
 
     private String realm;
 
     private String hash;
-
-    private String id;
 
     /**
      * Instantiates a new Basic identifiable credential.
@@ -41,9 +39,9 @@ public class DigestCredential extends AbstractCredential {
     @JsonCreator
     public DigestCredential(@JsonProperty("id") final String id, @JsonProperty("realm") final String realm,
                             @JsonProperty("hash") final String hash) {
+        super(id);
         this.realm = realm;
         this.hash = hash;
-        this.id = id;
     }
 
 }
