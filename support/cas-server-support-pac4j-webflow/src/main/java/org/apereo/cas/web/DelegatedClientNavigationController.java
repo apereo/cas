@@ -19,6 +19,7 @@ import org.pac4j.core.redirect.RedirectAction;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
@@ -41,6 +42,12 @@ public class DelegatedClientNavigationController {
      * Endpoint path controlled by this controller to make the redirect.
      */
     public static final String ENDPOINT_REDIRECT = "clientredirect";
+
+    /**
+     * Endpoint path controlled by this controller that receives the response to PAC4J.
+     */
+    public static final String ENDPOINT_RESPONSE = "login/{clientName}";
+
 
     private final Clients clients;
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
@@ -83,5 +90,27 @@ public class DelegatedClientNavigationController {
             }
             throw new UnauthorizedServiceException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Redirect response to flow. Receives the CAS, OAuth, OIDC, etc. callback response, adjust it to work with
+     * the login webflow, and redirects the requests to the login webflow endpoint.
+     *
+     * @param clientName the path-based parameter that provider the pac4j client name
+     * @param request  the request
+     * @param response the response
+     * @return the view
+     */
+    @GetMapping(ENDPOINT_RESPONSE)
+    public View redirectResponseToFlow(final @PathVariable("clientName") String clientName, final HttpServletRequest request, final HttpServletResponse response) {
+        final URIBuilder builder = new URIBuilder(request.getRequestURL().append('?').append(request.getQueryString()).toString());
+        builder.setPath(builder.getPath().replace('/' + clientName, ""));
+        builder.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientName);
+
+        final String url = builder.toString();
+        LOGGER.debug("Received a response for {}, redirecting the login flow ({})", clientName, url);
+
+        final View result = new RedirectView(url);
+        return result;
     }
 }

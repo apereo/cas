@@ -63,4 +63,9 @@ public class Pac4jOidcClientProperties extends Pac4jIdentifiableClientProperties
      * Custom parameters to send along in authZ requests, etc.
      */
     private Map<String, String> customParams = new HashMap<>();
+
+    /**
+     * Tenant Id as required by Microsoft Azure integrations.
+     */
+    private String azureTenantId;
 }
