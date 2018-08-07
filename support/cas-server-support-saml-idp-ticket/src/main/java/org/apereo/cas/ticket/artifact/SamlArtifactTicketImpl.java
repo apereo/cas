@@ -42,6 +42,7 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
     @Column(length = 5_000)
     private String relyingPartyId;
 
+    @Lob
     @Column(length = 10_000)
     private String object;
 
