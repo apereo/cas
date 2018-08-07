@@ -53,6 +53,7 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
         return this.getClass();
     }
 
+    @JsonIgnore
     public boolean isValid() {
         return StringUtils.isNotBlank(getId());
     }
