@@ -101,7 +101,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     @Override
     public Map<String, Object> getAttributes(final Principal principal, final Service selectedService, final RegisteredService registeredService) {
         LOGGER.debug("Initiating attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
-            principal.getId(), selectedService.getId(), registeredService.getServiceId());
+            principal.getId(), selectedService, registeredService.getServiceId());
         LOGGER.debug("Locating principal attributes for [{}]", principal.getId());
         val principalAttributes = resolveAttributesFromPrincipalAttributeRepository(principal);
         LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, principal.getId());
@@ -129,7 +129,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             return getAttributeFilter().filter(attributesToRelease);
         }
         LOGGER.debug("Finalizing attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
-            principal.getId(), selectedService.getId(), registeredService.getServiceId());
+            principal.getId(), selectedService, registeredService.getServiceId());
         return returnFinalAttributesCollection(attributesToRelease, registeredService);
     }
 
