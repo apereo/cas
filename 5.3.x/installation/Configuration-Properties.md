@@ -1296,8 +1296,8 @@ To learn more about this topic, [please review this guide](SMS-Messaging-Configu
 Send text messaging using Twilio.
 
 ```properties
-# cas.smsProviders.twilio.accountId=
-# cas.smsProviders.twilio.token=
+# cas.smsProvider.twilio.accountId=
+# cas.smsProvider.twilio.token=
 ```
 
 ### TextMagic
@@ -1305,9 +1305,9 @@ Send text messaging using Twilio.
 Send text messaging using TextMagic.
 
 ```properties
-# cas.smsProviders.textMagic.username=
-# cas.smsProviders.textMagic.token=
-# cas.smsProviders.textMagic.url=
+# cas.smsProvider.textMagic.username=
+# cas.smsProvider.textMagic.token=
+# cas.smsProvider.textMagic.url=
 ```
 
 ### Clickatell
@@ -1315,8 +1315,8 @@ Send text messaging using TextMagic.
 Send text messaging using Clickatell.
 
 ```properties
-# cas.smsProviders.clickatell.serverUrl=https://platform.clickatell.com/messages
-# cas.smsProviders.clickatell.token=
+# cas.smsProvider.clickatell.serverUrl=https://platform.clickatell.com/messages
+# cas.smsProvider.clickatell.token=
 ```
 
 ### Amazon SNS
@@ -1324,13 +1324,13 @@ Send text messaging using Clickatell.
 Send text messaging using Amazon SNS.
 
 ```properties
-# cas.smsProviders.sns.senderId=
-# cas.smsProviders.sns.maxPrice=
-# cas.smsProviders.sns.smsType=Transactional
+# cas.smsProvider.sns.senderId=
+# cas.smsProvider.sns.maxPrice=
+# cas.smsProvider.sns.smsType=Transactional
 ```
 
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
-under the configuration key `cas.smsProviders.sns`.
+under the configuration key `cas.smsProvider.sns`.
 
 ## GeoTracking
 
