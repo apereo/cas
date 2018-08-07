@@ -16,6 +16,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -52,9 +53,11 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @Convert(converter = SkippingNanoSecondsLocalDateTimeConverter.class)
     private LocalDateTime recordDate;
 
+    @Lob
     @Column(length = 10_000, nullable = false)
     private String recordKey;
 
+    @Lob
     @Column(length = 10_000, nullable = false)
     private String name;
 
