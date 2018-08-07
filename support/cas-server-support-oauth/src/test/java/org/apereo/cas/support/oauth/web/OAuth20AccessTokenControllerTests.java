@@ -346,6 +346,8 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         var mv = controller.handleRequest(mockRequest, mockResponse);
 
+        assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
+        assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
         val refreshToken = mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString();
         val accessToken = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
 
