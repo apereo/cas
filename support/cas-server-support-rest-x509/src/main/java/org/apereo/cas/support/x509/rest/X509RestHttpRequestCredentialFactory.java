@@ -5,13 +5,16 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CertUtils;
+import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.util.MultiValueMap;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -28,10 +31,30 @@ import java.util.List;
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
+@RequiredArgsConstructor
 @Slf4j
 public class X509RestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
 
     private static final String CERTIFICATE = "cert";
+    
+    private final boolean insecureX509;
+    private final X509CertificateExtractor certificateExtractor;
+    
+    @Override
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
+        val credentials = new ArrayList<Credential>();
+        if (insecureX509) {
+            credentials.addAll(fromRequestBody(requestBody));
+        }
+        if (certificateExtractor != null) {
+            val certFromHeader = certificateExtractor.extract(request);
+            if (certFromHeader != null) {
+                LOGGER.debug("Certificate found in HTTP request via {}", certificateExtractor.getClass().getName());
+                credentials.add(new X509CertificateCredential(certFromHeader));
+            }
+        }
+        return credentials;
+    }
 
     @Override
     public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
