@@ -45,7 +45,7 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
             canonicalizationMode = CaseCanonicalizationMode.NONE.name();
         }
         val uid = CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(username.trim(), Locale.getDefault());
-        LOGGER.debug("Resolved username for [{}] is [{}]", service.getId(), uid);
+        LOGGER.debug("Resolved username for [{}] is [{}]", service, uid);
         if (!this.encryptUsername) {
             return uid;
         }

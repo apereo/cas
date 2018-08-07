@@ -35,7 +35,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
             val registeredService = this.servicesManager.findServiceBy(service);
             LOGGER.debug("Located registered service definition [{}] for this authentication transaction", registeredService);
             if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                LOGGER.warn("Service [{}] is not allowed to use SSO.", registeredService);
+                LOGGER.warn("Service [{}] is not allowed to use SSO.", service);
                 throw new UnauthorizedSsoServiceException();
             }
             return !registeredService.getRequiredHandlers().isEmpty();
