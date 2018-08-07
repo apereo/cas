@@ -2815,6 +2815,7 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 # cas.tgc.secure=true
 # cas.tgc.httpOnly=true
 # cas.tgc.rememberMeMaxAge=1209600
+# cas.tgc.pinToSession=true
 ```
 
 ### Signing & Encryption
