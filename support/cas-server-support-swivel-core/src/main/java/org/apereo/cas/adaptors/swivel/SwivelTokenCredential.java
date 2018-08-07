@@ -8,6 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import lombok.ToString;
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.message.MessageContext;
+import org.springframework.binding.validation.ValidationContext;
 
 /**
  * This is {@link SwivelTokenCredential}.
@@ -31,5 +35,21 @@ public class SwivelTokenCredential implements Credential {
     @Override
     public String getId() {
         return this.token;
+    }
+
+    /**
+     * Validate.
+     *
+     * @param context the context
+     */
+    public void validate(final ValidationContext context) {
+        if (!StringUtils.isNotBlank(getId())) {
+            final MessageContext messages = context.getMessageContext();
+            messages.addMessage(new MessageBuilder()
+                .error()
+                .source("token")
+                .defaultText("Unable to accept credential with an empty or unspecified token")
+                .build());
+        }
     }
 }
