@@ -46,12 +46,14 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
         val request = context.getRequest();
         val clientId = uProfile.getId();
         val redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
+        val secret = request.getParameter(OAuth20Constants.CLIENT_SECRET);
         val clientRegisteredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
         val valid = HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REDIRECT_URI)
             && HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CODE)
-            && OAuth20Utils.checkCallbackValid(clientRegisteredService, redirectUri);
+            && OAuth20Utils.checkCallbackValid(clientRegisteredService, redirectUri)
+            && OAuth20Utils.checkClientSecret(registeredService, secret);
 
         if (valid) {
             val code = context.getRequestParameter(OAuth20Constants.CODE);
