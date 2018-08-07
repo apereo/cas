@@ -19,7 +19,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class OneTimeTokenCredential implements Credential {
+public class OneTimeTokenCredential extends AbstractCredential {
 
     private static final long serialVersionUID = -7570600701132111037L;
 
