@@ -34,7 +34,7 @@
         <on-entry>
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
-        <transition on="submit" bind="true" validate="false" to="realSubmit"/>
+        <transition on="submit" bind="true" validate="true" to="realSubmit"/>
     </view-state>
 
     <action-state id="saveRegistration">
