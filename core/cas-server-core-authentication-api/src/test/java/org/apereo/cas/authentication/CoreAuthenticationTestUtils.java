@@ -184,6 +184,14 @@ public class CoreAuthenticationTestUtils {
         return getAuthenticationResult(support, getService(), getCredentialsWithSameUsernameAndPassword());
     }
 
+    public static AuthenticationResult getAuthenticationResult() {
+        val result = mock(AuthenticationResult.class);
+        when(result.getAuthentication()).thenReturn(getAuthentication());
+        when(result.getService()).thenReturn(getService());
+        return result;
+    }
+
+
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Credential... credentials)
         throws AuthenticationException {
         return getAuthenticationResult(support, getService(), credentials);

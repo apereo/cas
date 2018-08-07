@@ -43,6 +43,8 @@ public class OidcServerDiscoverySettings {
     private List<String> idTokenSigningAlgValuesSupported;
     @JsonProperty("introspection_endpoint_auth_methods_supported")
     private List<String> introspectionSupportedAuthenticationMethods;
+    @JsonProperty("token_endpoint_auth_methods_supported")
+    private List<String> tokenEndpointAuthMethodsSupported;
 
     public OidcServerDiscoverySettings(final CasConfigurationProperties casProperties, final String issuer) {
         this.issuer = issuer;

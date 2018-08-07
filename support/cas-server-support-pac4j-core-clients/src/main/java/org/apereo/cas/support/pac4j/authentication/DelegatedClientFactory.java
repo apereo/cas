@@ -17,6 +17,7 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.BaseClient;
+import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -322,6 +323,7 @@ public class DelegatedClientFactory {
                 if (StringUtils.isBlank(cas.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
                 configureClient(client, cas);
 
                 index.incrementAndGet();
@@ -379,6 +381,7 @@ public class DelegatedClientFactory {
                 if (StringUtils.isBlank(saml.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
                 configureClient(client, saml);
 
                 index.incrementAndGet();
@@ -412,6 +415,7 @@ public class DelegatedClientFactory {
                 if (StringUtils.isBlank(oauth.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
                 configureClient(client, oauth);
 
                 index.incrementAndGet();
@@ -462,6 +466,7 @@ public class DelegatedClientFactory {
         LOGGER.debug("Building generic OpenID Connect client...");
         val generic = getOidcConfigurationForClient(oidc.getGeneric(), OidcConfiguration.class);
         val oc = new OidcClient(generic);
+        oc.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
         configureClient(oc, oidc.getGeneric());
         return oc;
     }
