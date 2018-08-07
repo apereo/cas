@@ -24,6 +24,15 @@ public class ApplicationContextProvider implements ApplicationContextAware, Reso
         return CONTEXT;
     }
 
+    /**
+     * Hold application context statically.
+     *
+     * @param ctx the ctx
+     */
+    public static void holdApplicationContext(final ApplicationContext ctx) {
+        CONTEXT = ctx;
+    }
+
     @Override
     public void setApplicationContext(final ApplicationContext ctx) {
         CONTEXT = ctx;
