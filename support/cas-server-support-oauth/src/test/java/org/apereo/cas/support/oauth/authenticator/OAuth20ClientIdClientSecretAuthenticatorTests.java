@@ -1,8 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
-import org.apereo.cas.services.UnauthorizedServiceException;
 
 import lombok.val;
 import org.junit.Test;
