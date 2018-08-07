@@ -9,6 +9,7 @@ import org.apereo.cas.web.view.DynamicHtmlView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
@@ -95,8 +96,8 @@ public class DelegatedClientNavigationController {
      */
     @GetMapping(ENDPOINT_RESPONSE)
     public View redirectResponseToFlow(final @PathVariable("clientName") String clientName, final HttpServletRequest request, final HttpServletResponse response) {
-        val builder = new URIBuilder(request.getRequestURL().append("?").append(request.getQueryString()).toString());
-        builder.setPath(builder.getPath().replace('/' + clientName, ""));
+        val builder = new URIBuilder(request.getRequestURL().append('?').append(request.getQueryString()).toString());
+        builder.setPath(builder.getPath().replace('/' + clientName, StringUtils.EMPTY));
         builder.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientName);
 
         val url = builder.toString();
