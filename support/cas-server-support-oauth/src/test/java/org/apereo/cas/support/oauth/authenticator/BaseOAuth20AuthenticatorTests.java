@@ -8,12 +8,14 @@ import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.junit.Before;
@@ -21,9 +23,12 @@ import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.mockito.Mockito.*;
@@ -38,6 +43,8 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class
 })
+@DirtiesContext
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseOAuth20AuthenticatorTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -51,9 +58,12 @@ public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Before
     public void initialize() {
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
         this.ticketRegistry = new DefaultTicketRegistry();
 
         val plan = new DefaultAuthenticationEventExecutionPlan();
