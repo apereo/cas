@@ -163,7 +163,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", s, service.getId());
                 oidc.setGenerateRefreshToken(Boolean.TRUE);
             } else if (filters.containsKey(s.trim())) {
-                LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s, filters.get(s).class.getSimpleName());
+                LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s, filters.get(s).getClass().getSimpleName());
                 policy.getPolicies().add(filters.get(s));
             } else {
                 LOGGER.debug("Scope [{}] is unsupported for service [{}]", s, service.getId());
