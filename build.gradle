@@ -432,7 +432,13 @@ task jacocoMerge(type: JacocoMerge) {
 
 task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
     description = 'Generates an aggregate report from all subprojects'
-    dependsOn publishedProjects.test
+
+    subprojects.each {
+        if (!it.path.contains(":docs")) {
+            it.tasks.withType(Test).each { task -> dependsOn(task) }
+        }
+    }
+    
     dependsOn jacocoMerge
 
     additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
