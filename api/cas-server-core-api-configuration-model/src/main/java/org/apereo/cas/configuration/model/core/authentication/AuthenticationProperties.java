@@ -34,6 +34,7 @@ import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationP
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.uma.UmaProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
@@ -245,6 +246,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OAuthProperties oauth = new OAuthProperties();
+
+    /**
+     * OAuth UMA authentication settings.
+     */
+    @NestedConfigurationProperty
+    private UmaProperties uma = new UmaProperties();
 
     /**
      * OpenID Connect authentication settings.
