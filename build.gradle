@@ -471,7 +471,7 @@ coveralls {
 }
 
 tasks.coveralls {
-    group = "Coverage reports"
+    group = "Coverage Reports"
     description = "Uploads the aggregated coverage report to Coveralls"
     dependsOn jacocoRootReport
 }
