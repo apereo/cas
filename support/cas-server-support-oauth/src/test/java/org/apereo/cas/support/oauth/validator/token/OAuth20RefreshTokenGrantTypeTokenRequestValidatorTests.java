@@ -1,12 +1,16 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.Before;
@@ -29,6 +33,7 @@ import static org.mockito.Mockito.*;
 public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
     private TicketRegistry ticketRegistry;
     private OAuth20TokenRequestValidator validator;
+    private OAuthRegisteredService registeredService;
 
     @Before
     public void before() {
@@ -40,8 +45,18 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         this.ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.getTicket(anyString())).thenReturn(oauthCode);
 
+        registeredService = new OAuthRegisteredService();
+        registeredService.setName("OAuthRegisteredService");
+        registeredService.setId(1);
+        registeredService.setServiceId("https://www.example.org");
+        registeredService.setClientId("client");
+        registeredService.setServiceId("secret");
+        val servicesManager = mock(ServicesManager.class);
+        when(servicesManager.getAllServices()).thenReturn(CollectionUtils.wrapList(registeredService));
+
         this.validator = new OAuth20RefreshTokenGrantTypeTokenRequestValidator(
-            new RegisteredServiceAccessStrategyAuditableEnforcer(), this.ticketRegistry);
+            new RegisteredServiceAccessStrategyAuditableEnforcer(), servicesManager,
+            this.ticketRegistry, new WebApplicationServiceFactory());
     }
 
     @Test
@@ -60,6 +75,11 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         request.setParameter(OAuth20Constants.CLIENT_SECRET, "secret");
         request.setParameter(OAuth20Constants.REFRESH_TOKEN, "RT-12345678");
 
+
+        registeredService.setSupportedGrantTypes(CollectionUtils.wrapHashSet(OAuth20GrantTypes.REFRESH_TOKEN.getType()));
         assertTrue(this.validator.validate(new J2EContext(request, response)));
+
+        registeredService.setSupportedGrantTypes(CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD.getType()));
+        assertFalse(this.validator.validate(new J2EContext(request, response)));
     }
 }
