@@ -69,7 +69,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
 
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(registeredService));
         this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(serviceManager,
-            ticketRegistry, new RegisteredServiceAccessStrategyAuditableEnforcer());
+            ticketRegistry, new RegisteredServiceAccessStrategyAuditableEnforcer(),
+            new WebApplicationServiceFactory());
     }
 
     @Test

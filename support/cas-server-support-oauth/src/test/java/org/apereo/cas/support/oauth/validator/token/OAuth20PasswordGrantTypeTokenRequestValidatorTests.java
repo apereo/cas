@@ -37,6 +37,7 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
         val service = RegisteredServiceTestUtils.getService();
 
         val serviceManager = mock(ServicesManager.class);
+
         registeredService = new OAuthRegisteredService();
         registeredService.setName("OAuth");
         registeredService.setClientId("client");
@@ -47,6 +48,27 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
         this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(new RegisteredServiceAccessStrategyAuditableEnforcer(),
             serviceManager, new WebApplicationServiceFactory());
+    }
+
+    @Test
+    public void verifySupportedGrantTypes() {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+
+        val profile = new CommonProfile();
+        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
+        profile.setId("client");
+        val session = request.getSession(true);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+
+        request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
+        request.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
+
+        registeredService.setSupportedGrantTypes(CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD.getType(), OAuth20GrantTypes.CLIENT_CREDENTIALS.getType()));
+        assertTrue(this.validator.validate(new J2EContext(request, response)));
+
+        registeredService.setSupportedGrantTypes(CollectionUtils.wrapHashSet("whatever"));
+        assertFalse(this.validator.validate(new J2EContext(request, response)));
     }
 
     @Test
