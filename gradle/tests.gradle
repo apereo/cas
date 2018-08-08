@@ -4,6 +4,7 @@ if (project.name =~ /cassandra/ && "CASSANDRA".equalsIgnoreCase(rootProject.test
             includeCategories 'org.apereo.cas.category.CassandraCategory'
         }
     }
+    jacocoRootReport.dependsOn testCassandra
 }
 
 if (project.name =~ /cosmos/ && "COSMOSDB".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -12,6 +13,7 @@ if (project.name =~ /cosmos/ && "COSMOSDB".equalsIgnoreCase(rootProject.testCate
             includeCategories 'org.apereo.cas.category.CosmosDbCategory'
         }
     }
+    jacocoRootReport.dependsOn testCosmosDb
 }
 
 if (project.name =~ /couchbase/ && "COUCHBASE".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -20,6 +22,7 @@ if (project.name =~ /couchbase/ && "COUCHBASE".equalsIgnoreCase(rootProject.test
             includeCategories 'org.apereo.cas.category.CouchbaseCategory'
         }
     }
+    jacocoRootReport.dependsOn testCouchbase
 }
 
 if (project.name =~ /couchdb/ && "COUCHDB".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -28,6 +31,7 @@ if (project.name =~ /couchdb/ && "COUCHDB".equalsIgnoreCase(rootProject.testCate
             includeCategories 'org.apereo.cas.category.CouchDbCategory'
         }
     }
+    jacocoRootReport.dependsOn testCouchDb
 }
 
 if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
@@ -37,6 +41,7 @@ if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
                 includeCategories 'org.apereo.cas.category.MySQLCategory'
             }
         }
+        jacocoRootReport.dependsOn testMySQL
     }
 
     if ("POSTGRES".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -45,6 +50,7 @@ if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
                 includeCategories 'org.apereo.cas.category.PostgresCategory'
             }
         }
+        jacocoRootReport.dependsOn testPostgres
     }
 
     if ("MSSQLSERVER".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -53,6 +59,7 @@ if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
                 includeCategories 'org.apereo.cas.category.MsSqlServerCategory'
             }
         }
+        jacocoRootReport.dependsOn testMsSqlServer
     }
 }
 
@@ -62,6 +69,7 @@ if (project.name =~ /dynamodb/ && "DYNAMODB".equalsIgnoreCase(rootProject.testCa
             includeCategories 'org.apereo.cas.category.DynamoDbCategory'
         }
     }
+    jacocoRootReport.dependsOn testDynamoDb
 }
 
 if ("FILESYSTEM".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -70,8 +78,8 @@ if ("FILESYSTEM".equalsIgnoreCase(rootProject.testCategoryType)) {
             includeCategories 'org.apereo.cas.category.FileSystemCategory'
         }
     }
+    jacocoRootReport.dependsOn testFileSystem
 }
-
 
 if (project.name =~ /ignite/ && "IGNITE".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testIgnite(type: Test) {
@@ -85,6 +93,7 @@ if (project.name =~ /ignite/ && "IGNITE".equalsIgnoreCase(rootProject.testCatego
         list.add("java.base/sun.nio.ch=ALL-UNNAMED")
         jvmArgs = list
     }
+    jacocoRootReport.dependsOn testIgnite
 }
 
 if (project.name =~ /influxdb/ && "INFLUXDB".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -93,8 +102,8 @@ if (project.name =~ /influxdb/ && "INFLUXDB".equalsIgnoreCase(rootProject.testCa
             includeCategories 'org.apereo.cas.category.InfluxDbCategory'
         }
     }
+    jacocoRootReport.dependsOn testInfluxDb
 }
-
 
 if ("LDAP".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testLdap(type: Test) {
@@ -110,6 +119,7 @@ if ("MAIL".equalsIgnoreCase(rootProject.testCategoryType)) {
             includeCategories 'org.apereo.cas.category.MailCategory'
         }
     }
+    jacocoRootReport.dependsOn testMail
 }
 
 if (project.name =~ /memcached/ && "MEMCACHED".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -118,6 +128,7 @@ if (project.name =~ /memcached/ && "MEMCACHED".equalsIgnoreCase(rootProject.test
             includeCategories 'org.apereo.cas.category.MemcachedCategory'
         }
     }
+    jacocoRootReport.dependsOn testMemcached
 }
 
 if (project.name =~ /mongo/ && "MONGODB".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -126,6 +137,7 @@ if (project.name =~ /mongo/ && "MONGODB".equalsIgnoreCase(rootProject.testCatego
             includeCategories 'org.apereo.cas.category.MongoDbCategory'
         }
     }
+    jacocoRootReport.dependsOn testMongoDb
 }
 
 if (project.name =~ /redis/ && "REDIS".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -134,6 +146,7 @@ if (project.name =~ /redis/ && "REDIS".equalsIgnoreCase(rootProject.testCategory
             includeCategories 'org.apereo.cas.category.RedisCategory'
         }
     }
+    jacocoRootReport.dependsOn testRedis
 }
 
 test {
