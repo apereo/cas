@@ -3,8 +3,6 @@ package org.apereo.cas.util;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
@@ -18,7 +16,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(JUnit4.class)
 public class ScriptingUtilsTests {
 
     @Test

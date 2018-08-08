@@ -2,8 +2,8 @@ package org.apereo.cas.util.junit;
 
 import lombok.val;
 import org.junit.Assume;
-import org.junit.rules.MethodRule;
-import org.junit.runners.model.FrameworkMethod;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import java.lang.reflect.Modifier;
@@ -14,34 +14,36 @@ import java.lang.reflect.Modifier;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class ConditionalIgnoreRule implements MethodRule {
+public class ConditionalIgnoreRule implements TestRule {
     /**
      * Has conditional ignore annotation boolean.
      *
-     * @param method the method
+     * @param target the target
      * @return the boolean
      */
-    private static boolean hasConditionalIgnoreAnnotation(final FrameworkMethod method) {
-        return method.getAnnotation(ConditionalIgnore.class) != null;
+    private static boolean hasConditionalIgnoreAnnotation(final Description target) {
+        return target.getTestClass().isAnnotationPresent(ConditionalIgnore.class) || target.getAnnotation(ConditionalIgnore.class) != null;
     }
 
     /**
      * Gets ignore condition.
      *
      * @param target the target
-     * @param method the method
      * @return the ignore condition
      */
-    private static IgnoreCondition getIgnoreCondition(final Object target, final FrameworkMethod method) {
-        val annotation = method.getAnnotation(ConditionalIgnore.class);
+    private static IgnoreCondition getIgnoreCondition(final Description target) {
+        var annotation = target.getAnnotation(ConditionalIgnore.class);
+        if (annotation == null) {
+            annotation = target.getTestClass().getAnnotation(ConditionalIgnore.class);
+        }
         return new IgnoreConditionCreator(target, annotation).create();
     }
 
     @Override
-    public Statement apply(final Statement base, final FrameworkMethod method, final Object target) {
-        if (hasConditionalIgnoreAnnotation(method)) {
-            val condition = getIgnoreCondition(target, method);
-            if (condition.isSatisfied()) {
+    public Statement apply(final Statement base, final Description target) {
+        if (hasConditionalIgnoreAnnotation(target)) {
+            val condition = getIgnoreCondition(target);
+            if (!condition.isSatisfied()) {
                 return new IgnoreStatement(condition);
             }
         }
@@ -52,7 +54,7 @@ public class ConditionalIgnoreRule implements MethodRule {
      * The type Ignore condition creator.
      */
     private static class IgnoreConditionCreator {
-        private final Object target;
+        private final Description target;
         private final Class<? extends IgnoreCondition> conditionType;
 
         /**
@@ -61,7 +63,7 @@ public class ConditionalIgnoreRule implements MethodRule {
          * @param target     the target
          * @param annotation the annotation
          */
-        IgnoreConditionCreator(final Object target, final ConditionalIgnore annotation) {
+        IgnoreConditionCreator(final Description target, final ConditionalIgnore annotation) {
             this.target = target;
             this.conditionType = annotation.condition();
         }

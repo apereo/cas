@@ -28,10 +28,10 @@ import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
 import lombok.val;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,7 +44,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
@@ -54,7 +55,6 @@ import org.springframework.webflow.test.MockRequestContext;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     InitialFlowSetupActionSsoTests.CasTestConfiguration.class,
     CasSupportActionsConfiguration.class,
@@ -85,6 +85,11 @@ import org.springframework.webflow.test.MockRequestContext;
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @TestPropertySource(properties = "cas.sso.allowMissingServiceParameter=false")
 public class InitialFlowSetupActionSsoTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

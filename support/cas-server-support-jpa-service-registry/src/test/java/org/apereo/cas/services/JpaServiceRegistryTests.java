@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
 import org.junit.runner.RunWith;
@@ -26,7 +25,7 @@ import java.util.Collection;
  * @author battags
  * @since 3.1.0
  */
-@RunWith(ConditionalParameterizedRunner.class)
+@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,

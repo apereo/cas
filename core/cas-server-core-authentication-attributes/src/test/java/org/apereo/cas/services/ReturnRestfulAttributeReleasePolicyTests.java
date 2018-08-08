@@ -8,8 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 
@@ -25,7 +23,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(JUnit4.class)
 public class ReturnRestfulAttributeReleasePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "verifySerializeAReturnAllowedAttributeReleasePolicyToJson.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

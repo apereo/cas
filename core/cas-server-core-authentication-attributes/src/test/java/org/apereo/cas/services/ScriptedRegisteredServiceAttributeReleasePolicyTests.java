@@ -4,8 +4,6 @@ import org.apereo.cas.CoreAttributesTestUtils;
 
 import lombok.val;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import java.util.Collections;
 
@@ -17,7 +15,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(JUnit4.class)
 public class ScriptedRegisteredServiceAttributeReleasePolicyTests {
 
     @Test

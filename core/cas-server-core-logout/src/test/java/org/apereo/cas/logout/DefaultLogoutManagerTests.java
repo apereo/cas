@@ -20,8 +20,6 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -36,7 +34,6 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@RunWith(JUnit4.class)
 public class DefaultLogoutManagerTests {
     private static final String ID = "id";
     private static final String URL = "http://www.github.com";

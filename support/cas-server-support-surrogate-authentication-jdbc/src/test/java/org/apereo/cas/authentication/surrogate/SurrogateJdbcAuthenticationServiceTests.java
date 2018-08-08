@@ -21,15 +21,17 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 
 import lombok.val;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.sql.DataSource;
 
@@ -41,7 +43,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -65,6 +66,12 @@ import static org.junit.Assert.*;
 })
 @TestPropertySource(locations = {"classpath:/surrogate-jdbc.properties"})
 public class SurrogateJdbcAuthenticationServiceTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Autowired
     @Qualifier("surrogateAuthenticationService")
     private SurrogateAuthenticationService surrogateAuthenticationService;

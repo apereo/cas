@@ -20,8 +20,9 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -29,7 +30,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
@@ -42,7 +44,6 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CasThemesConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -60,9 +61,14 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/castheme.properties"})
 public class ServiceThemeResolverTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
     private static final String MOZILLA = "Mozilla";
     private static final String DEFAULT_THEME_NAME = "test";
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("servicesManager")

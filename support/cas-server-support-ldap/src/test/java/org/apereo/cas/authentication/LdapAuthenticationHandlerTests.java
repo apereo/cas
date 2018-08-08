@@ -19,16 +19,17 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -43,7 +44,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
@@ -64,6 +64,12 @@ import static org.junit.Assert.*;
     LdapAuthenticationConfiguration.class})
 @TestPropertySource(locations = {"classpath:/ldapauthn.properties"})
 public class LdapAuthenticationHandlerTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 

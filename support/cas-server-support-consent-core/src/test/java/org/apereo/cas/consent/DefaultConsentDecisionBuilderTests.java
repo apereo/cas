@@ -9,13 +9,15 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -25,7 +27,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     CasConsentApiConfiguration.class,
     CasConsentCoreConfiguration.class,
@@ -34,6 +35,11 @@ import static org.junit.Assert.*;
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class})
 public class DefaultConsentDecisionBuilderTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("consentDecisionBuilder")

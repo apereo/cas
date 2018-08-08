@@ -12,8 +12,6 @@ import lombok.val;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +29,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RunWith(JUnit4.class)
 public class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String ATTR_1 = "attr1";

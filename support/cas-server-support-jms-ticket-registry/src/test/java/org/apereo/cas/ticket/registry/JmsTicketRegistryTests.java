@@ -19,7 +19,6 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JmsTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -30,8 +29,8 @@ import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfigura
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This is {@link JmsTicketRegistryTests}.
@@ -39,7 +38,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(ConditionalParameterizedRunner.class)
+@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     ActiveMQAutoConfiguration.class,
     JmsAutoConfiguration.class,
@@ -66,7 +65,6 @@ import java.util.Collection;
 },
     properties = {"spring.activemq.pool.enabled=false", "spring.activemq.packages.trust-all=true"})
 public class JmsTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
-
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
@@ -77,7 +75,7 @@ public class JmsTicketRegistryTests extends BaseSpringRunnableTicketRegistryTest
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false);
+        return Collections.singletonList(false);
     }
 
     @Override

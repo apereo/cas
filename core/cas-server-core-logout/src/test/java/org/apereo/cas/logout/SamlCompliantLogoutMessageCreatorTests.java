@@ -4,8 +4,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 
 import lombok.val;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
@@ -19,7 +17,6 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@RunWith(JUnit4.class)
 public class SamlCompliantLogoutMessageCreatorTests {
     public static final String CONST_TEST_URL = "https://google.com";
 

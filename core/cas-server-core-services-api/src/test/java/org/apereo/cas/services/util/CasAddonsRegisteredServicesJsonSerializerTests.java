@@ -3,8 +3,6 @@ package org.apereo.cas.services.util;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -18,7 +16,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(JUnit4.class)
 public class CasAddonsRegisteredServicesJsonSerializerTests {
 
     @Test

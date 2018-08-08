@@ -3,11 +3,12 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 
 import lombok.val;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Optional;
 
@@ -19,8 +20,12 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(SpringRunner.class)
 public class SurrogatePrincipalResolverTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -40,7 +45,7 @@ public class SurrogatePrincipalResolverTests {
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val p = resolver.resolve(credential);
         assertNotNull(p);
-        assertTrue(p.getId().equals("TEST"));
+        assertEquals("TEST", p.getId());
     }
 
     @Test
@@ -60,6 +65,6 @@ public class SurrogatePrincipalResolverTests {
         val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()));
         assertNotNull(p);
-        assertTrue(p.getId().equals("casuser"));
+        assertEquals("casuser", p.getId());
     }
 }

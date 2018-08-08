@@ -63,16 +63,17 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
 import lombok.val;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -91,7 +92,6 @@ import static org.mockito.Mockito.*;
  * @author Dmitriy Kopylenko
  * @since 3.0.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreConfiguration.class,
@@ -112,6 +112,8 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationPrincipalConfiguration.class
 })
 public class DefaultCentralAuthenticationServiceMockitoTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
     private static final String TGT_ID = "tgt-id";
     private static final String TGT2_ID = "tgt2-id";
@@ -123,6 +125,9 @@ public class DefaultCentralAuthenticationServiceMockitoTests {
     private static final String SVC2_ID = "test2";
 
     private static final String PRINCIPAL = "principal";
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

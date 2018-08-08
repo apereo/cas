@@ -9,13 +9,15 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.io.File;
 
@@ -27,13 +29,18 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     AopAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
 public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final Resource JSON_FILE = new FileSystemResource(new File(FileUtils.getTempDirectoryPath(), "repository.json"));
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     private IGoogleAuthenticator google;
 

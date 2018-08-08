@@ -2,12 +2,15 @@ package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningStandaloneCondition;
 
 import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
@@ -18,9 +21,17 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RunWith(ConditionalSpringRunner.class)
 @ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class BlackDotIPAddressIntelligenceServiceTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
+
     @Test
     public void verifyBannedOperation() {
         val props = new AdaptiveAuthenticationProperties();
