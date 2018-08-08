@@ -59,7 +59,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 
@@ -67,7 +66,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
-import org.junit.runner.RunWith;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.InitializingBean;
@@ -86,6 +86,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.nio.charset.StandardCharsets;
@@ -143,8 +145,10 @@ import static org.junit.Assert.*;
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@RunWith(ConditionalSpringRunner.class)
 public abstract class AbstractOAuth20Tests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     public static final String CONTEXT = OAuth20Constants.BASE_OAUTH20_URL + '/';
     public static final String CLIENT_ID = "1";
     public static final String CLIENT_SECRET = "secret";
@@ -161,6 +165,9 @@ public abstract class AbstractOAuth20Tests {
     public static final String GOOD_USERNAME = "test";
     public static final String GOOD_PASSWORD = "test";
     public static final int DELTA = 2;
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("accessTokenController")
