@@ -1,8 +1,12 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.Pac4jUtils;
 
@@ -35,6 +39,16 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
+    /**
+     * Service manager instance, managing the registry.
+     */
+    protected final ServicesManager servicesManager;
+
+    /**
+     * Service factory instance.
+     */
+    protected final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     /**
@@ -53,6 +67,46 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
         }
         LOGGER.error("Unsupported grant type: [{}]", type);
         return false;
+    }
+
+    /**
+     * Is grand type supported.
+     *
+     * @param registeredService the registered service
+     * @param type              the type
+     * @return the boolean
+     */
+    protected boolean isGrandTypeSupportedBy(final OAuthRegisteredService registeredService, final OAuth20GrantTypes type) {
+        return isGrandTypeSupportedBy(registeredService, type.getType());
+    }
+
+    /**
+     * Is grand type supported service.
+     *
+     * @param registeredService the registered service
+     * @param type              the type
+     * @return true/false
+     */
+    protected boolean isGrandTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
+        if (registeredService == null) {
+            LOGGER.warn("No registered service definition was supplied to examine for supported grant types");
+            return false;
+        }
+
+        val grantTypes = registeredService.getSupportedGrantTypes();
+        if (grantTypes == null || grantTypes.isEmpty()) {
+            LOGGER.warn("Service definition [{}] does not define any authorized/supported grant types. "
+                + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
+                + "This behavior will be enforced by CAS in future versions.", registeredService.getServiceId());
+            return true;
+        }
+        val supported = grantTypes.stream().anyMatch(t -> t.equalsIgnoreCase(type));
+        if (!supported) {
+            LOGGER.warn("Unauthorized requested grant type. None of the grant types [{}] defined by "
+                + "service definition [{}] match the requested grant type [{}]", grantTypes, registeredService.getServiceId(), type);
+            return false;
+        }
+        return true;
     }
 
     @Override
