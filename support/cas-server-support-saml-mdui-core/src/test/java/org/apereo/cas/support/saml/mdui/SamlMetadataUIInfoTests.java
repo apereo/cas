@@ -2,17 +2,19 @@ package org.apereo.cas.support.saml.mdui;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
 
 import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.opensaml.saml.ext.saml2mdui.Description;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -23,12 +25,16 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class
 })
 @DirtiesContext
 public class SamlMetadataUIInfoTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Test
     public void verifyInfoNotAvailable() {
