@@ -1,6 +1,7 @@
 package org.apereo.cas.uma.discovery;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,14 +68,43 @@ public class UmaServerDiscoverySettings {
         this.casProperties = casProperties;
     }
 
-    /*
-		m.put("dynamic_client_endpoint", issuer + DynamicClientRegistrationEndpoint.URL);
-		m.put("token_endpoint", issuer + "token");
-		m.put("authorization_endpoint", issuer + "authorize");
-		m.put("requesting_party_claims_endpoint", issuer + ClaimsCollectionEndpoint.URL);
-		m.put("introspection_endpoint", issuer + IntrospectionEndpoint.URL);
-		m.put("resource_set_registration_endpoint", issuer + ResourceSetRegistrationEndpoint.DISCOVERY_URL);
-		m.put("permission_registration_endpoint", issuer + PermissionRegistrationEndpoint.URL);
-		m.put("rpt_endpoint", issuer + AuthorizationRequestEndpoint.URL);
-     */
+    @JsonProperty("dynamic_client_endpoint")
+    public String getDynamicClientEndpoint() {
+        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.REGISTRATION_URL);
+    }
+
+    @JsonProperty("token_endpoint")
+    public String getTokenEndpoint() {
+        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.ACCESS_TOKEN_URL);
+    }
+
+    @JsonProperty("authorization_endpoint")
+    public String getAuthorizationEndpoint() {
+        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.AUTHORIZE_URL);
+    }
+
+    @JsonProperty("requesting_party_claims_endpoint")
+    public String getRequestingPartyClaimsEndpoint() {
+        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.CLAIMS_COLLECTION_URL);
+    }
+
+    @JsonProperty("introspection_endpoint")
+    public String getIntrospectionEndpoint() {
+        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.INTROSPECTION_URL);
+    }
+
+    @JsonProperty("resource_set_registration_endpoint")
+    public String getResourceSetRegistrationEndpoint() {
+        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.RESOURCE_SET_REGISTRATION_URL);
+    }
+
+    @JsonProperty("permission_registration_endpoint")
+    public String getPermissionRegistrationEndpoint() {
+        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.PERMISSION_URL);
+    }
+
+    @JsonProperty("rpt_endpoint")
+    public String getAuthorizationRequestEndpoint() {
+        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.AUTHORIZATION_REQUEST_URL);
+    }
 }
