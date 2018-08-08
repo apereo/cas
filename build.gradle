@@ -15,7 +15,7 @@ ext {
 
     publishingRelease = publishReleases && rootProject.sonatypeUsername != null && rootProject.sonatypePassword != null
     /*
-        Open the Git repository in the current directory.
+        Open the project git repository in the current directory.
         Get commit id of HEAD.
      */
     git = org.ajoberstar.grgit.Grgit.open(dir: file('.').canonicalPath)
