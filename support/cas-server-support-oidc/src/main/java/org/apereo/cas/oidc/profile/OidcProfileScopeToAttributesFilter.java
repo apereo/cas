@@ -84,6 +84,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             final BaseOidcScopeAttributeReleasePolicy ex = t.newInstance();
             if (oidc.getScopes().contains(ex.getScopeName())) {
                 LOGGER.debug("Found OpenID Connect scope [{}] to filter attributes", ex.getScopeName());
+                ex.setSupportedClaims(oidc.getClaims());
                 filters.put(ex.getScopeName(), ex);
             } else {
                 LOGGER.debug("OpenID Connect scope [{}] is not configured for use and will be ignored", ex.getScopeName());
@@ -92,7 +93,10 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
         if (!userScopes.isEmpty()) {
             LOGGER.debug("Configuring attributes release policies for user-defined scopes [{}]", userScopes);
-            userScopes.forEach(t -> filters.put(t.getScopeName(), t));
+            userScopes.forEach(t -> {
+                t.setSupportedClaims(oidc.getClaims());
+                filters.put(t.getScopeName(), t)
+            });
         }
     }
 
@@ -131,7 +135,6 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 .filter(this.filters::containsKey)
                 .forEach(s -> {
                     final BaseOidcScopeAttributeReleasePolicy policy = filters.get(s);
-                    policy.setSupportedClaims(oidc.getClaims());
                     attributes.putAll(policy.getAttributes(principal, service, registeredService));
                 });
         return attributes;
@@ -150,57 +153,23 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
         final OidcRegisteredService oidc = OidcRegisteredService.class.cast(service);
 
-        oidc.getScopes().forEach(s -> {
+        oidc.getScopes().stream().map(s -> s.trim()).forEach(s -> {
             LOGGER.debug("Reviewing scope [{}] for [{}]", s, service.getServiceId());
 
-            try {
-                final OidcConstants.StandardScopes scope = OidcConstants.StandardScopes.valueOf(s.trim().toLowerCase().toUpperCase());
-                switch (scope) {
-                    case EMAIL:
-                        LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s, OidcEmailScopeAttributeReleasePolicy.class.getSimpleName());
-                        policy.getPolicies().add(new OidcEmailScopeAttributeReleasePolicy());
-                        break;
-                    case ADDRESS:
-                        LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
-                                OidcAddressScopeAttributeReleasePolicy.class.getSimpleName());
-                        policy.getPolicies().add(new OidcAddressScopeAttributeReleasePolicy());
-                        break;
-                    case PROFILE:
-                        LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
-                                OidcProfileScopeAttributeReleasePolicy.class.getSimpleName());
-                        policy.getPolicies().add(new OidcProfileScopeAttributeReleasePolicy());
-                        break;
-                    case PHONE:
-                        LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s,
-                                OidcProfileScopeAttributeReleasePolicy.class.getSimpleName());
-                        policy.getPolicies().add(new OidcPhoneScopeAttributeReleasePolicy());
-                        break;
-                    case OFFLINE_ACCESS:
-                        LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", s, service.getId());
-                        oidc.setGenerateRefreshToken(Boolean.TRUE);
-                        break;
-                    case CUSTOM:
-                        LOGGER.debug("Found custom scope [{}] for service [{}]", s, service.getId());
-                        otherScopes.add(s.trim());
-                        break;
-                    default:
-                        LOGGER.debug("Scope [{}] is unsupported for service [{}]", s, service.getId());
-                        break;
-                }
-            } catch (final Exception e) {
-                LOGGER.debug("[{}] appears to be a user-defined scope and does not match any of the predefined standard scopes. "
-                        + "Checking [{}] against user-defined scopes provided as [{}]", s, s, userScopes);
-
-                final BaseOidcScopeAttributeReleasePolicy userPolicy = userScopes.stream()
-                        .filter(t -> t.getScopeName().equals(s.trim()))
-                        .findFirst()
-                        .orElse(null);
-                if (userPolicy != null) {
-                    LOGGER.debug("Mapped user-defined scope [{}] to attribute release policy [{}]", s, userPolicy);
-                    policy.getPolicies().add(userPolicy);
-                }
+            if (OidcConstants.StandardScopes.CUSTOM.getScope().equals(s)) {
+                LOGGER.debug("Found custom scope [{}] for service [{}]", s, service.getId());
+                otherScopes.add(s);
+            } else if (OidcConstants.StandardScopes.OFFLINE_ACCESS.getScope().equals(s)) {
+                LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", s, service.getId());
+                oidc.setGenerateRefreshToken(Boolean.TRUE);
+            } else if (filters.containsKey(s.trim())) {
+                LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s, filters.get(s). class.getSimpleName());
+                policy.getPolicies().add(filters.get(s));
+            } else {
+                LOGGER.debug("Scope [{}] is unsupported for service [{}]", s, service.getId());
             }
         });
+
         otherScopes.remove(OidcConstants.StandardScopes.OPENID.getScope());
         if (!otherScopes.isEmpty()) {
             LOGGER.debug("Mapped scopes [{}] to attribute release policy [{}]", otherScopes,
