@@ -424,6 +424,7 @@ def publishedProjects = subprojects.findAll { !it.path.contains(':docs') }
 task jacocoMerge(type: JacocoMerge) {
     publishedProjects.each { subproject ->
         executionData subproject.tasks.withType(Test)
+        dependsOn tasks.withType(Test)
     }
     doFirst {
         executionData = files(executionData.findAll { it.exists() })
