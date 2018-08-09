@@ -509,21 +509,73 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return validators;
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator")
+    public OAuth20TokenRequestValidator oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator() {
+        val registry = ticketRegistry.getIfAvailable();
+        val svcManager = servicesManager.getIfAvailable();
+        return new OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(svcManager,
+            registry, registeredServiceAccessStrategyEnforcer, webApplicationServiceFactory);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oauthAuthorizationCodeGrantTypeTokenRequestValidator")
+    public OAuth20TokenRequestValidator oauthAuthorizationCodeGrantTypeTokenRequestValidator() {
+        val registry = ticketRegistry.getIfAvailable();
+        val svcManager = servicesManager.getIfAvailable();
+        return new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(svcManager,
+            registry, registeredServiceAccessStrategyEnforcer, webApplicationServiceFactory);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oauthDeviceCodeResponseTypeRequestValidator")
+    public OAuth20TokenRequestValidator oauthDeviceCodeResponseTypeRequestValidator() {
+        val registry = ticketRegistry.getIfAvailable();
+        val svcManager = servicesManager.getIfAvailable();
+        return new OAuth20DeviceCodeResponseTypeRequestValidator(svcManager, webApplicationServiceFactory);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oauthRefreshTokenGrantTypeTokenRequestValidator")
+    public OAuth20TokenRequestValidator oauthRefreshTokenGrantTypeTokenRequestValidator() {
+        val registry = ticketRegistry.getIfAvailable();
+        val svcManager = servicesManager.getIfAvailable();
+        return new OAuth20RefreshTokenGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer,
+            svcManager, registry, webApplicationServiceFactory);
+    }
+
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oauthPasswordGrantTypeTokenRequestValidator")
+    public OAuth20TokenRequestValidator oauthPasswordGrantTypeTokenRequestValidator() {
+        val registry = ticketRegistry.getIfAvailable();
+        val svcManager = servicesManager.getIfAvailable();
+        return new OAuth20PasswordGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer,
+            svcManager, webApplicationServiceFactory);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "oauthClientCredentialsGrantTypeTokenRequestValidator")
+    public OAuth20TokenRequestValidator oauthClientCredentialsGrantTypeTokenRequestValidator() {
+        val registry = ticketRegistry.getIfAvailable();
+        val svcManager = servicesManager.getIfAvailable();
+        return new OAuth20ClientCredentialsGrantTypeTokenRequestValidator(svcManager,
+            registeredServiceAccessStrategyEnforcer, webApplicationServiceFactory);
+    }
+
     @ConditionalOnMissingBean(name = "oauthTokenRequestValidators")
     @Bean
     @RefreshScope
     public Collection<OAuth20TokenRequestValidator> oauthTokenRequestValidators() {
         val validators = new ArrayList<OAuth20TokenRequestValidator>();
 
-        val svcManager = servicesManager.getIfAvailable();
-        val registry = ticketRegistry.getIfAvailable();
-        validators.add(new OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(svcManager, registry, registeredServiceAccessStrategyEnforcer));
-        validators.add(new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(svcManager, registry, registeredServiceAccessStrategyEnforcer));
-        validators.add(new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(svcManager, registry, registeredServiceAccessStrategyEnforcer));
-        validators.add(new OAuth20DeviceCodeResponseTypeRequestValidator(svcManager, webApplicationServiceFactory));
-        validators.add(new OAuth20RefreshTokenGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer, registry));
-        validators.add(new OAuth20PasswordGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer, svcManager, webApplicationServiceFactory));
-        validators.add(new OAuth20ClientCredentialsGrantTypeTokenRequestValidator(svcManager, registeredServiceAccessStrategyEnforcer, webApplicationServiceFactory));
+        validators.add(oauth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator());
+        validators.add(oauthAuthorizationCodeGrantTypeTokenRequestValidator());
+        validators.add(oauthDeviceCodeResponseTypeRequestValidator());
+        validators.add(oauthRefreshTokenGrantTypeTokenRequestValidator());
+        validators.add(oauthPasswordGrantTypeTokenRequestValidator());
+        validators.add(oauthClientCredentialsGrantTypeTokenRequestValidator());
+
         return validators;
     }
 
