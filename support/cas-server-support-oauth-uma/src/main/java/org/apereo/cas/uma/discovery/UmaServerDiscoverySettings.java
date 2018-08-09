@@ -38,13 +38,13 @@ public class UmaServerDiscoverySettings {
     private String version = "1.0";
 
     @JsonProperty("pat_profiles_supported")
-    private List<String> patProfilesSupported = CollectionUtils.wrapList("bearer");
+    private List<String> patProfilesSupported = CollectionUtils.wrapList(OAuth20Constants.TOKEN_TYPE_BEARER);
 
     @JsonProperty("aat_profiles_supported")
-    private List<String> aatProfilesSupported = CollectionUtils.wrapList("bearer");
+    private List<String> aatProfilesSupported = CollectionUtils.wrapList(OAuth20Constants.TOKEN_TYPE_BEARER);
 
     @JsonProperty("rpt_profiles_supported")
-    private List<String> rptProfilesSupported = CollectionUtils.wrapList("bearer");
+    private List<String> rptProfilesSupported = CollectionUtils.wrapList(OAuth20Constants.TOKEN_TYPE_BEARER);
 
     @JsonProperty("claim_token_profiles_supported")
     private List<String> clientTokenProfilesSupported = new ArrayList<>();

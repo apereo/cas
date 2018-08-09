@@ -13,6 +13,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -79,7 +80,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver() {
-        final CasWebflowEventResolver r = new GrouperMultifactorAuthenticationPolicyEventResolver(
+        val r = new GrouperMultifactorAuthenticationPolicyEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService,
             servicesManager,
