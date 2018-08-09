@@ -205,7 +205,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
         this.ticketRegistry.addTicket(accessToken);
 
         val mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
-        mockRequest.addHeader("Authorization", OAuth20Constants.BEARER_TOKEN + ' ' + accessToken.getId());
+        mockRequest.addHeader("Authorization", OAuth20Constants.TOKEN_TYPE_BEARER + ' ' + accessToken.getId());
         val mockResponse = new MockHttpServletResponse();
         val entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.OK, entity.getStatusCode());

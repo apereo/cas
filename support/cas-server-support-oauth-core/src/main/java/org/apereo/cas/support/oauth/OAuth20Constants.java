@@ -131,11 +131,6 @@ public interface OAuth20Constants {
     String REFRESH_TOKEN = "refresh_token";
 
     /**
-     * The bearer token.
-     */
-    String BEARER_TOKEN = "Bearer";
-
-    /**
      * The missing access token.
      */
     String MISSING_ACCESS_TOKEN = "missing_accessToken";

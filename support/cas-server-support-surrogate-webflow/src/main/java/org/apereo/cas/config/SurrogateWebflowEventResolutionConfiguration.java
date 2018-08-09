@@ -10,8 +10,8 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.SurrogateMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -67,7 +67,7 @@ public class SurrogateWebflowEventResolutionConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver surrogateMultifactorAuthenticationWebflowEventResolver() {
-        final AbstractCasWebflowEventResolver r = new SurrogateMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
+        val r = new SurrogateMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
             centralAuthenticationService, servicesManager,
             ticketRegistrySupport,
             warnCookieGenerator,

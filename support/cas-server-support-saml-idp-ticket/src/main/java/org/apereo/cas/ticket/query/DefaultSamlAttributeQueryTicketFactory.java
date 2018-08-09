@@ -46,7 +46,7 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
         try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
             val codeId = createTicketIdFor(id);
             val service = this.webApplicationServiceFactory.createService(relyingParty);
-            final SamlAttributeQueryTicket at = new SamlAttributeQueryTicketImpl(codeId, service, this.expirationPolicy,
+            val at = new SamlAttributeQueryTicketImpl(codeId, service, this.expirationPolicy,
                 relyingParty, w.toString(), ticketGrantingTicket);
             if (ticketGrantingTicket != null) {
                 ticketGrantingTicket.getDescendantTickets().add(at.getId());

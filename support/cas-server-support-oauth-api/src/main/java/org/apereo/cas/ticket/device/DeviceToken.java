@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.device;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketState;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -13,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @since 6.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface DeviceToken extends Ticket, TicketState {
+public interface DeviceToken extends Ticket {
     /**
      * Prefix generally applied to unique ids.
      */
