@@ -19,19 +19,19 @@ import java.util.Scanner;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for {@link X509RestHttpRequestCredentialFactory}.
+ * Unit tests for {@link X509RestMultipartBodyCredentialFactory}.
  *
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class X509RestHttpRequestCredentialFactoryTests {
+public class X509RestMultipartBodyCredentialFactoryTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @InjectMocks
-    private X509RestHttpRequestCredentialFactory factory;
+    private X509RestMultipartBodyCredentialFactory factory;
 
     @Test
     public void createX509Credential() throws IOException {
@@ -41,7 +41,7 @@ public class X509RestHttpRequestCredentialFactoryTests {
         scan.close();
         requestBody.add("cert", certStr);
 
-        val cred = factory.fromRequestBody(requestBody).iterator().next();
+        val cred = factory.fromRequest(null, requestBody).iterator().next();
         assertTrue(cred instanceof X509CertificateCredential);
     }
 
@@ -50,7 +50,7 @@ public class X509RestHttpRequestCredentialFactoryTests {
         val requestBody = new LinkedMultiValueMap<String, String>();
         requestBody.add("username", "name");
         requestBody.add("password", "passwd");
-        val cred = factory.fromRequestBody(requestBody);
+        val cred = factory.fromRequest(null, requestBody);
         assertTrue(cred.isEmpty());
     }
 }

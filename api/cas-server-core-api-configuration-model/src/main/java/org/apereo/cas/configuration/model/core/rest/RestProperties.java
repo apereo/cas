@@ -34,12 +34,12 @@ public class RestProperties implements Serializable {
     private String attributeValue;
 
     /**
-     * Usage Warning!
-     * The X.509 feature over REST provides a tremendously convenient target for claiming user identities. To
-     * securely use this feature, network configuration MUST allow connections to the CAS server only from
-     * trusted hosts which in turn have strict security limitations and logging.
-     * 
-     * this defaults to false, i'd make it explicit but checkstyle complains
+     * Flag that enables X509Certificate extraction from the request headers for authentication.
      */
-    private boolean x509insecure;
+    private boolean headerAuth = true;
+    
+    /**
+     * Flag that enables X509Certificate extraction from the request body for authentication.
+     */
+    private boolean bodyAuth;
 }

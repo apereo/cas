@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CertUtils;
-import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is {@link X509RestHttpRequestCredentialFactory} that attempts to read the contents
+ * This is {@link X509RestMultipartBodyCredentialFactory} that attempts to read the contents
  * of the request body under {@link #CERTIFICATE} parameter to locate and construct
  * X509 credentials. If the request body does not contain a certificate,
  * it will then fallback onto the default behavior of capturing credentials.
@@ -33,31 +32,12 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class X509RestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
+public class X509RestMultipartBodyCredentialFactory implements RestHttpRequestCredentialFactory {
 
     private static final String CERTIFICATE = "cert";
     
-    private final boolean insecureX509;
-    private final X509CertificateExtractor certificateExtractor;
-    
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
-        val credentials = new ArrayList<Credential>();
-        if (insecureX509) {
-            credentials.addAll(fromRequestBody(requestBody));
-        }
-        if (certificateExtractor != null) {
-            val certFromHeader = certificateExtractor.extract(request);
-            if (certFromHeader != null) {
-                LOGGER.debug("Certificate found in HTTP request via {}", certificateExtractor.getClass().getName());
-                credentials.add(new X509CertificateCredential(certFromHeader));
-            }
-        }
-        return credentials;
-    }
-
-    @Override
-    public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
         val cert = requestBody.getFirst(CERTIFICATE);
         LOGGER.debug("Certificate in the request body: [{}]", cert);
         if (StringUtils.isBlank(cert)) {
