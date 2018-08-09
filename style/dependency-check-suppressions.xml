@@ -7,6 +7,12 @@
         <cve>CVE-2007-1355</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2018-3081</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-5237</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2007-2450</cve>
     </suppress>
     <suppress>
