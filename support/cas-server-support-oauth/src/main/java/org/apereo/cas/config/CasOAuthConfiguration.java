@@ -125,7 +125,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-
 /**
  * This this {@link CasOAuthConfiguration}.
  *
