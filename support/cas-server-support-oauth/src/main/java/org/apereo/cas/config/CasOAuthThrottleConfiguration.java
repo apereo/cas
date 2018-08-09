@@ -85,8 +85,7 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
 
         @Override
         public void addInterceptors(final InterceptorRegistry registry) {
-            authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors().forEach(handler ->
-            {
+            authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors().forEach(handler -> {
                 val baseUrl = BASE_OAUTH20_URL.concat("/");
                 registry.addInterceptor(handler)
                     .addPathPatterns(baseUrl.concat(OAuth20Constants.AUTHORIZE_URL).concat("*"))

@@ -259,14 +259,15 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         val mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
         val mv = controller.handleRequest(mockRequest, mockResponse);
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.DEVICE_CODE));
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.DEVICE_VERIFICATION_URI));
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.DEVICE_USER_CODE));
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.DEVICE_INTERVAL));
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
+        val model = mv.getModel();
+        assertTrue(model.containsKey(OAuth20Constants.DEVICE_CODE));
+        assertTrue(model.containsKey(OAuth20Constants.DEVICE_VERIFICATION_URI));
+        assertTrue(model.containsKey(OAuth20Constants.DEVICE_USER_CODE));
+        assertTrue(model.containsKey(OAuth20Constants.DEVICE_INTERVAL));
+        assertTrue(model.containsKey(OAuth20Constants.EXPIRES_IN));
 
-        val devCode = mv.getModel().get(OAuth20Constants.DEVICE_CODE).toString();
-        val userCode = mv.getModel().get(OAuth20Constants.DEVICE_USER_CODE).toString();
+        val devCode = model.get(OAuth20Constants.DEVICE_CODE).toString();
+        val userCode = model.get(OAuth20Constants.DEVICE_USER_CODE).toString();
 
         val devReq = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.DEVICE_AUTHZ_URL);
         devReq.setParameter(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE, userCode);
