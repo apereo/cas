@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
@@ -187,8 +186,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests {
     public void prepareNewCAS() {
         this.authentication = mock(Authentication.class);
         when(this.authentication.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
-        final CredentialMetaData metadata = new BasicCredentialMetaData(
-            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
+        val metadata = new BasicCredentialMetaData(RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         val successes = new HashMap<String, AuthenticationHandlerExecutionResult>();
         successes.put("handler1", new DefaultAuthenticationHandlerExecutionResult(mock(AuthenticationHandler.class), metadata));
         when(this.authentication.getCredentials()).thenReturn(Arrays.asList(metadata));

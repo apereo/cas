@@ -148,8 +148,8 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         var accessToken = request.getParameter(OAuth20Constants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             val authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
-            if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase().startsWith(OAuth20Constants.BEARER_TOKEN.toLowerCase() + ' ')) {
-                accessToken = authHeader.substring(OAuth20Constants.BEARER_TOKEN.length() + 1);
+            if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase().startsWith(OAuth20Constants.TOKEN_TYPE_BEARER.toLowerCase() + ' ')) {
+                accessToken = authHeader.substring(OAuth20Constants.TOKEN_TYPE_BEARER.length() + 1);
             }
         }
         LOGGER.debug("[{}]: [{}]", OAuth20Constants.ACCESS_TOKEN, accessToken);

@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdServiceFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
@@ -82,8 +81,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val authentication = CoreAuthenticationTestUtils.getAuthentication("scootman28");
-        final TicketGrantingTicket t = new TicketGrantingTicketImpl("TGT-11", authentication,
-            new NeverExpiresExpirationPolicy());
+        val t = new TicketGrantingTicketImpl("TGT-11", authentication, new NeverExpiresExpirationPolicy());
 
         this.ticketRegistry.addTicket(t);
 
