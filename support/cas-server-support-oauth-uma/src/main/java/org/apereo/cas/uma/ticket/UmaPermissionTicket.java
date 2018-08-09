@@ -20,9 +20,24 @@ public interface UmaPermissionTicket extends Ticket {
      */
     String PREFIX = "UMAP";
 
+    /**
+     * Gets supplied claims.
+     *
+     * @return the supplied claims
+     */
     Collection<String> getSuppliedClaims();
 
+    /**
+     * Gets scopes.
+     *
+     * @return the scopes
+     */
     Collection<String> getScopes();
 
+    /**
+     * Gets resource set.
+     *
+     * @return the resource set
+     */
     ResourceSet getResourceSet();
 }

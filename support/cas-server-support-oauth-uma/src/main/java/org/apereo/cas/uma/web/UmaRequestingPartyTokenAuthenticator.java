@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web;
 
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
@@ -27,10 +28,15 @@ public class UmaRequestingPartyTokenAuthenticator implements Authenticator<Token
 
     @Override
     public void validate(final TokenCredentials credentials, final WebContext webContext) {
-        val rpt = credentials.getToken();
+        val rpt = credentials.getToken().trim();
         val at = this.ticketRegistry.getTicket(rpt, AccessToken.class);
         if (at == null || at.isExpired()) {
-            throw new CredentialsException("Unable to locate requesting party access token " + rpt);
+            val err = String.format("Access token is not found or has expired. Unable to authenticate requesting party access token %s", rpt);
+            throw new CredentialsException(err);
+        }
+        if (!at.getScopes().contains(OAuth20Constants.UMA_PROTECTION_SCOPE)) {
+            val err = String.format("Missing scope [%s]. Unable to authenticate requesting party access token %s", OAuth20Constants.UMA_PERMISSION_URL, rpt);
+            throw new CredentialsException(err);
         }
         val profile = new CommonProfile();
         val authentication = at.getAuthentication();
@@ -39,6 +45,8 @@ public class UmaRequestingPartyTokenAuthenticator implements Authenticator<Token
         val attributes = new LinkedHashMap<>(authentication.getAttributes());
         attributes.putAll(principal.getAttributes());
         profile.addAttributes(attributes);
+        profile.getPermissions().addAll(at.getScopes());
+
         LOGGER.debug("Authenticated requesting party access token [{}]", profile);
         credentials.setUserProfile(profile);
     }
