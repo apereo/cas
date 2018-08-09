@@ -10,10 +10,13 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.DateTimeUtils;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyUtils} that encapsulates common
@@ -55,6 +58,11 @@ public class RegisteredServiceAccessStrategyUtils {
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
+        if (!ensureServiceIsNotExpired(registeredService)) {
+            final String msg = String.format("Expired Service Access. Service [%s] has been expired", service);
+            LOGGER.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EXPIRED_SERVICE, msg);
+        }
     }
 
     /**
@@ -65,6 +73,16 @@ public class RegisteredServiceAccessStrategyUtils {
      */
     public static void ensureServiceAccessIsAllowed(final Service service, final RegisteredService registeredService) {
         ensureServiceAccessIsAllowed(service.getId(), registeredService);
+    }
+
+    /**
+     * Ensure service is not expired.
+     *
+     * @param registeredService the service
+     * @return boolean - true if service is not expired
+     */
+    public static boolean ensureServiceIsNotExpired(final RegisteredService registeredService) {
+        return getRegisteredServiceExpirationPolicyPredicate().test(registeredService);
     }
 
     /**
@@ -228,6 +246,41 @@ public class RegisteredServiceAccessStrategyUtils {
         }
         LOGGER.debug("Current authentication via ticket [{}] allows service [{}] to participate in the existing SSO session",
             ticketGrantingTicket.getId(), service.getId());
+    }
+
+    /**
+     * Returns a predicate that determined whether a service has expired.
+     *
+     * @return true if the service is still valid. false if service has expired.
+     */
+    public static Predicate<RegisteredService> getRegisteredServiceExpirationPolicyPredicate() {
+        return service -> {
+            try {
+                if (service == null) {
+                    return false;
+                }
+                final RegisteredServiceExpirationPolicy policy = service.getExpirationPolicy();
+                if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
+                    return true;
+                }
+                final LocalDateTime now = getCurrentSystemTime();
+                final LocalDateTime expirationDate = DateTimeUtils.localDateTimeOf(policy.getExpirationDate());
+                LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
+                return !now.isAfter(expirationDate);
+            } catch (final Exception e) {
+                LOGGER.warn(e.getMessage(), e);
+            }
+            return false;
+        };
+    }
+
+    /**
+     * Gets current system time.
+     *
+     * @return the current system time
+     */
+    protected static LocalDateTime getCurrentSystemTime() {
+        return LocalDateTime.now();
     }
 
 }
