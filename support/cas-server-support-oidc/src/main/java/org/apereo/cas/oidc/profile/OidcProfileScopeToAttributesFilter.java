@@ -7,11 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
@@ -128,7 +124,6 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                                                         final Principal principal,
                                                         final Service service,
                                                         final RegisteredService registeredService) {
-        final OidcProperties oidc = casProperties.getAuthn().getOidc();
         final Map<String, Object> attributes = new HashMap<>();
         stream.stream()
                 .distinct()
