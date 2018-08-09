@@ -1,7 +1,5 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
@@ -19,6 +17,7 @@ import org.apereo.cas.uma.ticket.resource.repository.DefaultResourceSetRepositor
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.UmaRequestingPartyTokenAuthenticator;
 import org.apereo.cas.uma.web.controllers.UmaPermissionRegistrationEndpointController;
+import org.apereo.cas.uma.web.controllers.UmaResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.UmaWellKnownEndpointController;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
@@ -35,7 +34,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -63,14 +61,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     private TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ResourceLoader resourceLoader;
 
     @Bean
     @ConditionalOnMissingBean(name = "umaServerDiscoverySettingsFactory")
@@ -84,15 +75,19 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
         return new UmaWellKnownEndpointController(discoverySettings);
     }
 
-    @RefreshScope
     @Bean
     public UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController() {
         return new UmaPermissionRegistrationEndpointController(defaultUmaPermissionTicketFactory(), umaResourceSetRepository());
     }
 
     @Bean
+    public UmaResourceSetRegistrationEndpointController umaResourceSetRegistrationEndpointController() {
+        return new UmaResourceSetRegistrationEndpointController();
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "umaResourceSetRepository")
-    private ResourceSetRepository umaResourceSetRepository() {
+    public ResourceSetRepository umaResourceSetRepository() {
         return new DefaultResourceSetRepository();
     }
 
@@ -131,6 +126,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(umaSecurityInterceptor())
-            .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"));
+            .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
+            .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"));
     }
 }
