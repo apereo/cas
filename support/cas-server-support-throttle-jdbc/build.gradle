@@ -6,7 +6,6 @@ dependencies {
     implementation project(":core:cas-server-core-audit")
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":support:cas-server-support-throttle")
-    implementation project(":support:cas-server-support-throttle-core")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     

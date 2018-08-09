@@ -1,4 +1,4 @@
-package org.apereo.cas.web.support.config;
+package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
