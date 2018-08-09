@@ -216,11 +216,6 @@ public interface OAuth20Constants {
     String DEVICE_AUTHZ_URL = "device";
 
     /**
-     * Registration endpoint URL.
-     */
-    String REGISTRATION_URL = "register";
-
-    /**
      * The token url.
      */
     String TOKEN_URL = "token";
@@ -251,23 +246,28 @@ public interface OAuth20Constants {
     String TOKEN_TYPE_BEARER = "bearer";
 
     /**
+     * Registration endpoint URL.
+     */
+    String UMA_REGISTRATION_URL = "register";
+
+    /**
      * resource set registration endpoint URL.
      */
-    String RESOURCE_SET_REGISTRATION_URL = "resourceSet";
+    String UMA_RESOURCE_SET_REGISTRATION_URL = "resourceSet";
 
     /**
      * permission registration endpoint URL.
      */
-    String PERMISSION_URL = "permission";
+    String UMA_PERMISSION_URL = "permission";
 
     /**
      * authorization registration endpoint URL.
      */
-    String AUTHORIZATION_REQUEST_URL = "authzRequest";
+    String UMA_AUTHORIZATION_REQUEST_URL = "authzRequest";
 
     /**
      * claims collection endpoint URL.
      */
-    String CLAIMS_COLLECTION_URL = "rqpClaims";
+    String UMA_CLAIMS_COLLECTION_URL = "rqpClaims";
 
 }

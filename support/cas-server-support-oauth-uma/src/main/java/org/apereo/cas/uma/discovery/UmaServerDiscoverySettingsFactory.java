@@ -17,7 +17,7 @@ public class UmaServerDiscoverySettingsFactory implements FactoryBean<UmaServerD
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public UmaServerDiscoverySettings getObject() throws Exception {
+    public UmaServerDiscoverySettings getObject() {
         val uma = casProperties.getAuthn().getUma();
         return new UmaServerDiscoverySettings(casProperties, uma.getIssuer());
     }

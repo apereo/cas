@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -13,10 +15,16 @@ import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettingsFactory;
 import org.apereo.cas.uma.ticket.DefaultUmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.web.UmaRequestingPartyTokenAuthenticator;
+import org.apereo.cas.uma.web.controllers.UmaPermissionRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.UmaWellKnownEndpointController;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.val;
+import org.pac4j.core.config.Config;
+import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.http.client.direct.HeaderClient;
+import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +34,14 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 
 /**
  * This is {@link CasOAuthUmaConfiguration}.
@@ -35,7 +51,7 @@ import org.springframework.core.io.ResourceLoader;
  */
 @Configuration("casOAuthUmaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuthUmaConfiguration {
+public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -61,10 +77,15 @@ public class CasOAuthUmaConfiguration {
     }
 
     @Autowired
+    @Bean
+    public UmaWellKnownEndpointController umaWellKnownEndpointController(@Qualifier("umaServerDiscoverySettingsFactory") final UmaServerDiscoverySettings discoverySettings) {
+        return new UmaWellKnownEndpointController(discoverySettings);
+    }
+
     @RefreshScope
     @Bean
-    public UmaWellKnownEndpointController umaWellKnownController(@Qualifier("umaServerDiscoverySettingsFactory") final UmaServerDiscoverySettings discoverySettings) {
-        return new UmaWellKnownEndpointController(discoverySettings);
+    public UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController() {
+        return new UmaPermissionRegistrationEndpointController();
     }
 
     @ConditionalOnMissingBean(name = "umaPermissionTicketIdGenerator")
@@ -88,4 +109,20 @@ public class CasOAuthUmaConfiguration {
         return new DefaultUmaPermissionTicketFactory(umaPermissionTicketIdGenerator(), umaPermissionTicketExpirationPolicy());
     }
 
+    @Bean
+    public SecurityInterceptor umaSecurityInterceptor() {
+        val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry);
+        val basicAuthClient = new HeaderClient(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER, authenticator);
+        basicAuthClient.setName("CAS_UMA_CLIENT_BASIC_AUTH");
+        val clients = Stream.of(basicAuthClient.getName()).collect(Collectors.joining(","));
+        val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), basicAuthClient);
+        config.setSessionStore(new J2ESessionStore());
+        return new SecurityInterceptor(config, clients);
+    }
+
+    @Override
+    public void addInterceptors(final InterceptorRegistry registry) {
+        registry.addInterceptor(umaSecurityInterceptor())
+            .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"));
+    }
 }
