@@ -270,7 +270,14 @@ public abstract class AbstractOAuth20Tests {
         servicesManager.load();
     }
 
-    protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service, final boolean refreshToken) throws Exception {
+    protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service,
+                                                          final boolean refreshToken) throws Exception {
+        return internalVerifyClientOK(service, refreshToken, null);
+    }
+
+    protected Pair<String, String> internalVerifyClientOK(final OAuthRegisteredService service,
+                                                          final boolean refreshToken,
+                                                          final String scopes) throws Exception {
 
         val principal = createPrincipal();
         val code = addCode(principal, service);
@@ -285,6 +292,10 @@ public abstract class AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
 
+        if (StringUtils.isNotBlank(scopes)) {
+            mockRequest.setParameter(OAuth20Constants.SCOPE, scopes);
+        }
+
         mockRequest.setParameter(OAuth20Constants.CODE, code.getId());
         val mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
@@ -295,20 +306,20 @@ public abstract class AbstractOAuth20Tests {
         var accessTokenId = StringUtils.EMPTY;
         var refreshTokenId = StringUtils.EMPTY;
 
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
-
+        val model = mv.getModel();
+        assertTrue(model.containsKey(OAuth20Constants.ACCESS_TOKEN));
 
         if (refreshToken) {
-            assertTrue(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
-            refreshTokenId = mv.getModel().get(OAuth20Constants.REFRESH_TOKEN).toString();
+            assertTrue(model.containsKey(OAuth20Constants.REFRESH_TOKEN));
+            refreshTokenId = model.get(OAuth20Constants.REFRESH_TOKEN).toString();
         }
-        assertTrue(mv.getModel().containsKey(OAuth20Constants.EXPIRES_IN));
-        accessTokenId = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();
+        assertTrue(model.containsKey(OAuth20Constants.EXPIRES_IN));
+        accessTokenId = model.get(OAuth20Constants.ACCESS_TOKEN).toString();
 
         val accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
         assertEquals(principal, accessToken.getAuthentication().getPrincipal());
 
-        val timeLeft = Integer.parseInt(mv.getModel().get(OAuth20Constants.EXPIRES_IN).toString());
+        val timeLeft = Integer.parseInt(model.get(OAuth20Constants.EXPIRES_IN).toString());
         assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
 
         return Pair.of(accessTokenId, refreshTokenId);

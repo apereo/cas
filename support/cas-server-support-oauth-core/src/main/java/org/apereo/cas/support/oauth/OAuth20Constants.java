@@ -270,4 +270,8 @@ public interface OAuth20Constants {
      */
     String UMA_CLAIMS_COLLECTION_URL = "rqpClaims";
 
+    /**
+     * UMA protection scope.
+     */
+    String UMA_PROTECTION_SCOPE = "uma_protection";
 }

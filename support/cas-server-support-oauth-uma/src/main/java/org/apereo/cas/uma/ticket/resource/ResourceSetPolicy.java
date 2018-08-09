@@ -1,6 +1,7 @@
 package org.apereo.cas.uma.ticket.resource;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -26,6 +27,7 @@ import java.util.HashSet;
 @Setter
 @Embeddable
 @Table(name = "UMA_ResourceSetPolicy")
+@EqualsAndHashCode
 public class ResourceSetPolicy implements Serializable {
 
     private static final long serialVersionUID = 1664113523427391736L;

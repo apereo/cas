@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -410,6 +411,40 @@ public class CollectionUtils {
         val list = new ArrayList<T>();
         addToCollection(list, source);
         return list;
+    }
+
+    /**
+     * As multi value map.
+     *
+     * @param innerMap the inner map
+     * @return the multi value map
+     */
+    public static MultiValueMap asMultiValueMap(final Map innerMap) {
+        return org.springframework.util.CollectionUtils.toMultiValueMap(innerMap);
+    }
+
+    /**
+     * As multi value map.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the multi value map
+     */
+    public static MultiValueMap asMultiValueMap(final String key, final Object value) {
+        return org.springframework.util.CollectionUtils.toMultiValueMap(wrap(key, value));
+    }
+
+    /**
+     * As multi value map.
+     *
+     * @param key1   the key 1
+     * @param value1 the value 1
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @return the multi value map
+     */
+    public static MultiValueMap asMultiValueMap(final String key1, final Object value1, final String key2, final Object value2) {
+        return org.springframework.util.CollectionUtils.toMultiValueMap(wrap(key1, value1, key2, value2));
     }
 
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {

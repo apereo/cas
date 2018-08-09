@@ -188,6 +188,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val authn = DefaultAuthenticationBuilder
             .newInstance(holder.getAuthentication())
             .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
+            .addAttribute(OAuth20Constants.SCOPE, holder.getScopes())
             .build();
 
         LOGGER.debug("Creating access token for [{}]", holder);

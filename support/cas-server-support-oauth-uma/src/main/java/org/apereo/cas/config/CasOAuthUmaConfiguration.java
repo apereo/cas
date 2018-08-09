@@ -15,6 +15,8 @@ import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettingsFactory;
 import org.apereo.cas.uma.ticket.DefaultUmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.ticket.resource.repository.DefaultResourceSetRepository;
+import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.UmaRequestingPartyTokenAuthenticator;
 import org.apereo.cas.uma.web.controllers.UmaPermissionRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.UmaWellKnownEndpointController;
@@ -85,7 +87,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @RefreshScope
     @Bean
     public UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController() {
-        return new UmaPermissionRegistrationEndpointController();
+        return new UmaPermissionRegistrationEndpointController(defaultUmaPermissionTicketFactory(), umaResourceSetRepository());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "umaResourceSetRepository")
+    private ResourceSetRepository umaResourceSetRepository() {
+        return new DefaultResourceSetRepository();
     }
 
     @ConditionalOnMissingBean(name = "umaPermissionTicketIdGenerator")
@@ -112,7 +120,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @Bean
     public SecurityInterceptor umaSecurityInterceptor() {
         val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry);
-        val basicAuthClient = new HeaderClient(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER, authenticator);
+        val basicAuthClient = new HeaderClient(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER.concat(" "), authenticator);
         basicAuthClient.setName("CAS_UMA_CLIENT_BASIC_AUTH");
         val clients = Stream.of(basicAuthClient.getName()).collect(Collectors.joining(","));
         val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), basicAuthClient);
