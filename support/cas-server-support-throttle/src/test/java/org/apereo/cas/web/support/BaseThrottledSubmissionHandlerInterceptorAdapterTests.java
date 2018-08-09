@@ -1,12 +1,18 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
+import org.apereo.cas.config.CasThrottlingConfiguration;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -27,7 +33,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
+import org.springframework.webflow.execution.Event;
+import org.springframework.webflow.test.MockRequestContext;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
@@ -44,10 +53,10 @@ import static org.junit.Assert.*;
     AopAutoConfiguration.class,
     CasThrottlingConfiguration.class})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@TestPropertySource(properties = "spring.aop.proxy-target-class=true")
+@TestPropertySource(properties = {"spring.aop.proxy-target-class=true", "cas.authn.throttle.failure.rangeSeconds=1", "cas.authn.throttle.failure.threshold=2"})
 @EnableScheduling
 @Slf4j
-public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
+public class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
@@ -55,6 +64,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Autowired
+    @Qualifier("casAuthenticationManager")
+    protected AuthenticationManager authenticationManager;
 
     @Autowired
     @Qualifier("authenticationThrottle")
@@ -87,9 +100,8 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         failLoop(3, 1000, HttpStatus.SC_UNAUTHORIZED);
     }
 
-
     @SneakyThrows
-    private void failLoop(final int trials, final int period, final int expected) throws Exception {
+    protected void failLoop(final int trials, final int period, final int expected) throws Exception {
         // Seed with something to compare against
         loginUnsuccessfully("mog", "1.2.3.4");
 
@@ -105,7 +117,33 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         });
     }
 
+    protected MockHttpServletResponse loginUnsuccessfully(final String username, final String fromAddress) throws Exception {
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
+        request.setMethod("POST");
+        request.setParameter("username", username);
+        request.setRemoteAddr(fromAddress);
+        request.setRequestURI("/cas/login");
+        val context = new MockRequestContext();
+        context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
+        request.setAttribute("flowRequestContext", context);
+        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        throttle.preHandle(request, response, null);
 
-    protected abstract MockHttpServletResponse loginUnsuccessfully(String username, String fromAddress) throws Exception;
+        try {
+            authenticationManager.authenticate(DefaultAuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(), badCredentials(username)));
+        } catch (final AuthenticationException e) {
+            throttle.postHandle(request, response, null, null);
+            return response;
+        }
+        throw new AssertionError("Expected AbstractAuthenticationException");
+    }
 
+    private static UsernamePasswordCredential badCredentials(final String username) {
+        val credentials = new UsernamePasswordCredential();
+        credentials.setUsername(username);
+        credentials.setPassword("badpassword");
+        return credentials;
+    }
 }
