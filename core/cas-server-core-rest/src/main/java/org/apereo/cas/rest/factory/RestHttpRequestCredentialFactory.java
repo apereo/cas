@@ -21,9 +21,9 @@ public interface RestHttpRequestCredentialFactory extends Ordered {
     /**
      * Create new Credential instances from HTTP request or requestBody.
      * 
-     * @param request object containing headers to extract the X509Certificate(s) from
-     * @param requestBody to optionally construct Credential from - if x509insecure is set to true
-     * @return Credential instance
+     * @param request object to extract credentials from
+     * @param requestBody multipart/form-data request body to extract credentials from
+     * @return Credential instance(s)
      */
     List<Credential> fromRequest(HttpServletRequest request, MultiValueMap<String, String> requestBody);
 
