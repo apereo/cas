@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
@@ -85,7 +86,17 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
         @Override
         public void addInterceptors(final InterceptorRegistry registry) {
             authenticationThrottlingExecutionPlan.getAuthenticationThrottleInterceptors().forEach(handler ->
-                registry.addInterceptor(handler).addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*")));
+            {
+                val baseUrl = BASE_OAUTH20_URL.concat("/");
+                registry.addInterceptor(handler)
+                    .addPathPatterns(baseUrl.concat(OAuth20Constants.AUTHORIZE_URL).concat("*"))
+                    .addPathPatterns(baseUrl.concat(OAuth20Constants.ACCESS_TOKEN_URL).concat("*"))
+                    .addPathPatterns(baseUrl.concat(OAuth20Constants.INTROSPECTION_URL).concat("*"))
+                    .addPathPatterns(baseUrl.concat(OAuth20Constants.CALLBACK_AUTHORIZE_URL).concat("*"))
+                    .addPathPatterns(baseUrl.concat(OAuth20Constants.DEVICE_AUTHZ_URL).concat("*"))
+                    .addPathPatterns(baseUrl.concat(OAuth20Constants.TOKEN_URL).concat("*"))
+                    .addPathPatterns(baseUrl.concat(OAuth20Constants.PROFILE_URL).concat("*"));
+            });
         }
     }
 
