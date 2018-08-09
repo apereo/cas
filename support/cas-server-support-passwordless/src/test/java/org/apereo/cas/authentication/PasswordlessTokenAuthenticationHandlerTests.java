@@ -21,7 +21,7 @@ public class PasswordlessTokenAuthenticationHandlerTests {
     public void verifyAction() throws Exception {
         val repository = new InMemoryPasswordlessTokenRepository(60);
         repository.saveToken("casuser", "123456");
-        final AuthenticationHandler h = new PasswordlessTokenAuthenticationHandler(null,
+        val h = new PasswordlessTokenAuthenticationHandler(null,
             mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), 0, repository);
         val c = new OneTimePasswordCredential("casuser", "123456");
