@@ -19,8 +19,6 @@ import com.esotericsoftware.kryo.KryoException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.time.ZonedDateTime;
@@ -39,7 +37,6 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(JUnit4.class)
 @Slf4j
 public class CasKryoTranscoderTests {
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";

@@ -23,6 +23,7 @@ import org.apereo.cas.config.CasOAuthConfiguration;
 import org.apereo.cas.config.CasOAuthThrottleConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
@@ -37,7 +38,6 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
-import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
