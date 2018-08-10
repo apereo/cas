@@ -47,7 +47,7 @@ import static org.mockito.Mockito.*;
     CasCoreHttpConfiguration.class,
     SurrogateAuthenticationConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/surrogate.properties"})
+@TestPropertySource(properties = {"cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"})
 public class SurrogateAuthenticationPostProcessorTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
