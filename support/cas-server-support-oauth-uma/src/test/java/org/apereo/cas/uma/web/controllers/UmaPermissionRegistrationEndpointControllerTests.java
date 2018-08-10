@@ -55,6 +55,6 @@ public class UmaPermissionRegistrationEndpointControllerTests extends AbstractOA
         val map = new LinkedHashMap<String, Object>();
         map.put("resource_id", "1234567890");
         map.put("resource_scopes", CollectionUtils.wrapList("read"));
-        umaPermissionRegistrationEndpointController.handle(MAPPER.writeValueAsString(map));
+        umaPermissionRegistrationEndpointController.handle(MAPPER.writeValueAsString(map), mockRequest, mockResponse);
     }
 }
