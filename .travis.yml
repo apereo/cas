@@ -93,6 +93,8 @@ jobs:
     script: ./ci/build-javadocs.sh
   - stage: build
     script: ./ci/build-config-metadata.sh
+  - stage: build
+    script: ./ci/check-config-factories.sh
     ############################################
   - stage: dependencies
     script: ./ci/analyze-dependencies.sh
