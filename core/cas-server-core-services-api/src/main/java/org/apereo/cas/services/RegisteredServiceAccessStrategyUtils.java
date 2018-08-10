@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
@@ -258,7 +257,7 @@ public class RegisteredServiceAccessStrategyUtils {
                 if (service == null) {
                     return false;
                 }
-                final RegisteredServiceExpirationPolicy policy = service.getExpirationPolicy();
+                val policy = service.getExpirationPolicy();
                 if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
                     return true;
                 }
