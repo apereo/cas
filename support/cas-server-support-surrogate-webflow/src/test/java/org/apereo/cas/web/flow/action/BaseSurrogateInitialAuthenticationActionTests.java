@@ -74,7 +74,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     SurrogateAuthenticationConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/surrogate-webflow.properties"})
+@TestPropertySource(properties = {"cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"})
 public abstract class BaseSurrogateInitialAuthenticationActionTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
