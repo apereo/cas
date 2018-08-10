@@ -206,6 +206,7 @@ layout: null
     *   [CAS](/$version/protocol/CAS-Protocol.html)
     *   [OpenID](/$version/protocol/OpenID-Protocol.html)
     *   [OAuth2](/$version/protocol/OAuth-Protocol.html)
+        *   [User-Managed Access](/$version/protocol/OAuth-UMA-Protocol.html)
     *   [OpenID Connect](/$version/protocol/OIDC-Protocol.html)
     *   [WS-Federation](/$version/protocol/WS-Federation-Protocol.html)
     *   [SAML](#samlprotocol)
