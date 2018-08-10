@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -19,8 +20,8 @@ import lombok.ToString;
 @Setter
 @AllArgsConstructor
 @EqualsAndHashCode
-public class BasicIdentifiableCredential implements Credential {
-
+@NoArgsConstructor
+public class BasicIdentifiableCredential extends AbstractCredential {
     private static final long serialVersionUID = -700605020472810939L;
 
     private String id;

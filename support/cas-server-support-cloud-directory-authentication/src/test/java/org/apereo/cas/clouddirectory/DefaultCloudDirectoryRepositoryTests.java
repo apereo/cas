@@ -11,11 +11,13 @@ import com.amazonaws.services.clouddirectory.model.ListIndexResult;
 import com.amazonaws.services.clouddirectory.model.ListObjectAttributesResult;
 import com.amazonaws.services.clouddirectory.model.TypedAttributeValue;
 import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -30,9 +32,14 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 public class DefaultCloudDirectoryRepositoryTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Test
     public void verifyAction() {
         val cloud = mock(AmazonCloudDirectory.class);
