@@ -1,13 +1,13 @@
 package org.apereo.cas.support.x509.rest;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
+import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
 
 import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -27,12 +27,12 @@ import static org.junit.Assert.*;
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class X509RestHttpRequestHeaderCredentialFactoryTests {
+    private static final String HEADER = "ssl_client_cert";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    @InjectMocks
-    private X509RestHttpRequestHeaderCredentialFactory factory;
+    private X509RestHttpRequestHeaderCredentialFactory factory = new X509RestHttpRequestHeaderCredentialFactory(new RequestHeaderX509CertificateExtractor(HEADER));
 
     @Test
     public void createX509Credential() throws IOException {
@@ -42,7 +42,7 @@ public class X509RestHttpRequestHeaderCredentialFactoryTests {
         val certStr = scan.useDelimiter("\\Z").next();
         scan.close();
         
-        request.addHeader("ssl_client_cert", certStr);
+        request.addHeader(HEADER, certStr);
 
         val cred = factory.fromRequest(request, null).iterator().next();
         assertTrue(cred instanceof X509CertificateCredential);
