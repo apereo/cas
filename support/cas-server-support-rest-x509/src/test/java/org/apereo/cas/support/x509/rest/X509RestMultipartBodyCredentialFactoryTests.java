@@ -30,8 +30,7 @@ public class X509RestMultipartBodyCredentialFactoryTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    @InjectMocks
-    private X509RestMultipartBodyCredentialFactory factory;
+    private X509RestMultipartBodyCredentialFactory factory = new X509RestMultipartBodyCredentialFactory();
 
     @Test
     public void createX509Credential() throws IOException {
