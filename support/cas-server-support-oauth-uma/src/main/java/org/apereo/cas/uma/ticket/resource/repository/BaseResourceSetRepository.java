@@ -77,12 +77,14 @@ public abstract class BaseResourceSetRepository implements ResourceSetRepository
      * @return the boolean
      */
     protected boolean validateResourceSetScopes(final ResourceSet rs) {
-        if (rs.getPolicies() == null) {
+        if (rs.getPolicies() == null || rs.getPolicies().isEmpty()) {
             return true;
         }
         for (val policy : rs.getPolicies()) {
-            if (!rs.getScopes().containsAll(policy.getScopes())) {
-                return false;
+            for (val permission : policy.getPermissions()) {
+                if (!rs.getScopes().containsAll(permission.getScopes())) {
+                    return false;
+                }
             }
         }
         return true;

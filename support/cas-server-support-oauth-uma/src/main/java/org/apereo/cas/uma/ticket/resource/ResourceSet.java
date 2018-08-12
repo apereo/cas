@@ -1,7 +1,6 @@
 package org.apereo.cas.uma.ticket.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +25,6 @@ import java.util.HashSet;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @Setter
 @Embeddable

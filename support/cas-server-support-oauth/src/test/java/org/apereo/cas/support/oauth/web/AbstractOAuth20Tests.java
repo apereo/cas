@@ -62,6 +62,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -149,6 +150,8 @@ public abstract class AbstractOAuth20Tests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
+    public static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     public static final String CONTEXT = OAuth20Constants.BASE_OAUTH20_URL + '/';
     public static final String CLIENT_ID = "1";
     public static final String CLIENT_SECRET = "secret";
@@ -156,8 +159,9 @@ public abstract class AbstractOAuth20Tests {
     public static final String REDIRECT_URI = "http://someurl";
     public static final String OTHER_REDIRECT_URI = "http://someotherurl";
     public static final int TIMEOUT = 7200;
-    public static final String ID = "1234";
+    public static final String ID = "casuser";
     public static final String NAME = "attributeName";
+    public static final String ATTRIBUTES_PARAM = "attributes";
     public static final String NAME2 = "attributeName2";
     public static final String VALUE = "attributeValue";
     public static final String USERNAME = "username";
