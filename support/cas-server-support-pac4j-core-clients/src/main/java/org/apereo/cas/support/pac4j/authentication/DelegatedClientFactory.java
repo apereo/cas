@@ -381,7 +381,6 @@ public class DelegatedClientFactory {
                 if (StringUtils.isBlank(saml.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
-                client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
                 configureClient(client, saml);
 
                 index.incrementAndGet();

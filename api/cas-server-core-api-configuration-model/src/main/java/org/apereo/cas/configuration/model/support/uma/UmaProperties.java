@@ -24,7 +24,7 @@ public class UmaProperties implements Serializable {
      * UMA issuer.
      */
     @RequiredProperty
-    private String issuer = "http://localhost:8080/cas/uma";
+    private String issuer = "http://localhost:8080/cas";
 
     /**
      * Handles settings related to permission tickets.
