@@ -86,7 +86,7 @@ public abstract class BaseUmaEndpointController {
     }
 
     /**
-     * Build response entity error model;
+     * Build response entity error model.
      *
      * @param code    the code
      * @param message the message
@@ -98,6 +98,12 @@ public abstract class BaseUmaEndpointController {
             "message", message);
     }
 
+    /**
+     * Gets client id from authenticated profile.
+     *
+     * @param profile the profile
+     * @return the client id from authenticated profile
+     */
     protected static String getClientIdFromAuthenticatedProfile(final CommonProfile profile) {
         if (profile.containsAttribute(OAuth20Constants.CLIENT_ID)) {
             return (String) profile.getAttribute(OAuth20Constants.CLIENT_ID);
@@ -105,6 +111,12 @@ public abstract class BaseUmaEndpointController {
         return null;
     }
 
+    /**
+     * Gets resource set uri location.
+     *
+     * @param saved the saved
+     * @return the resource set uri location
+     */
     protected String getResourceSetUriLocation(final ResourceSet saved) {
         return casProperties.getAuthn().getUma().getIssuer()
             + OAuth20Constants.BASE_OAUTH20_URL + "/"
