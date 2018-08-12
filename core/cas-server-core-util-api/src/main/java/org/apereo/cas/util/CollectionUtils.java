@@ -444,7 +444,8 @@ public class CollectionUtils {
      * @return the multi value map
      */
     public static MultiValueMap asMultiValueMap(final String key1, final Object value1, final String key2, final Object value2) {
-        return org.springframework.util.CollectionUtils.toMultiValueMap(wrap(key1, value1, key2, value2));
+        val wrap = (Map) wrap(key1, wrapList(value1), key2, wrapList(value2));
+        return org.springframework.util.CollectionUtils.toMultiValueMap(wrap);
     }
 
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {

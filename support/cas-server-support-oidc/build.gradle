@@ -7,7 +7,7 @@ dependencies {
     
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
-    implementation project(":support:cas-server-support-throttle-core")
+    implementation project(":support:cas-server-support-throttle")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")
@@ -37,7 +37,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":support:cas-server-support-themes")
-    testImplementation project(":support:cas-server-support-throttle")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core-configuration")

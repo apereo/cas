@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import org.apereo.cas.audit.spi.resource.ShortenedReturnValueAsStringResourceResolver;
+
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.aspectj.lang.JoinPoint;

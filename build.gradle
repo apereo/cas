@@ -15,7 +15,7 @@ ext {
 
     publishingRelease = publishReleases && rootProject.sonatypeUsername != null && rootProject.sonatypePassword != null
     /*
-        Open the Git repository in the current directory.
+        Open the project git repository in the current directory.
         Get commit id of HEAD.
      */
     git = org.ajoberstar.grgit.Grgit.open(dir: file('.').canonicalPath)
@@ -424,6 +424,7 @@ def publishedProjects = subprojects.findAll { !it.path.contains(':docs') }
 task jacocoMerge(type: JacocoMerge) {
     publishedProjects.each { subproject ->
         executionData subproject.tasks.withType(Test)
+        dependsOn tasks.withType(Test)
     }
     doFirst {
         executionData = files(executionData.findAll { it.exists() })
@@ -432,7 +433,13 @@ task jacocoMerge(type: JacocoMerge) {
 
 task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
     description = 'Generates an aggregate report from all subprojects'
-    dependsOn publishedProjects.test
+
+    subprojects.each {
+        if (!it.path.contains(":docs")) {
+            it.tasks.withType(Test).each { task -> dependsOn(task) }
+        }
+    }
+    
     dependsOn jacocoMerge
 
     additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
@@ -471,7 +478,7 @@ coveralls {
 }
 
 tasks.coveralls {
-    group = "Coverage reports"
+    group = "Coverage Reports"
     description = "Uploads the aggregated coverage report to Coveralls"
     dependsOn jacocoRootReport
 }

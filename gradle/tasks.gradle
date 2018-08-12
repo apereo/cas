@@ -85,9 +85,42 @@ task downloadDependencies {
     }
 }
 
+task verifySpringConfigurationFactories(description: "Examine spring.factories file and ensure @Configuration classes can be located") {
+    doLast {
+        def springFactoriesFile = new File(project.projectDir, "src/main/resources/META-INF/spring.factories")
+        if (springFactoriesFile.exists()) {
+            def properties = new Properties()
+            properties.load(new FileReader(springFactoriesFile))
+
+            if (properties.containsKey("org.springframework.cloud.bootstrap.BootstrapConfiguration")) {
+                def classes = properties.get("org.springframework.cloud.bootstrap.BootstrapConfiguration")
+                checkForSpringConfigurationFactories(project.projectDir.getCanonicalPath(), classes)
+            }
+            if (properties.containsKey("org.springframework.boot.autoconfigure.EnableAutoConfiguration")) {
+                def classes = properties.get("org.springframework.boot.autoconfigure.EnableAutoConfiguration")
+                checkForSpringConfigurationFactories(project.projectDir.getCanonicalPath(), classes)
+            }
+        }
+    }
+}
+
+
+
 task outputSpotbugsReports(description: "Display Findbugs output") {
     doLast {
         printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)
+    }
+}
+
+def checkForSpringConfigurationFactories(String projectPath, String configurations) {
+    def classes = configurations.split(",")
+    classes.each {
+        def sourcePath = "/src/main/java/".replace("/", String.valueOf(File.separator))
+        def clazz = projectPath + sourcePath + it.replace(".", String.valueOf(File.separator))  + ".java"
+        def configurationFile = new File(clazz)
+        if (!configurationFile.exists()) {
+            throw new GradleException("Spring configuration class does not exist: ${clazz}")
+        }
     }
 }
 

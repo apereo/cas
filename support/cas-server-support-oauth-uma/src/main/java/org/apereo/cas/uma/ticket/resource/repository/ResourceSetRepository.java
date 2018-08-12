@@ -53,6 +53,15 @@ public interface ResourceSetRepository {
     ResourceSet save(ResourceSet set);
 
     /**
+     * Update resource set.
+     *
+     * @param currentResource the current resource
+     * @param newResource     the new resource
+     * @return the resource set
+     */
+    ResourceSet update(ResourceSet currentResource, ResourceSet newResource);
+
+    /**
      * Remove.
      *
      * @param set the set

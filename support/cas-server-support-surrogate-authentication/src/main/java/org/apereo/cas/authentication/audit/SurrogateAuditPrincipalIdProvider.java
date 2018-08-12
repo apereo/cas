@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.audit;
 
-import org.apereo.cas.audit.spi.DefaultAuditPrincipalIdProvider;
+import org.apereo.cas.audit.spi.principal.DefaultAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;

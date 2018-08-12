@@ -12,6 +12,7 @@ if (project.name =~ /cosmos/ && "COSMOSDB".equalsIgnoreCase(rootProject.testCate
             includeCategories 'org.apereo.cas.category.CosmosDbCategory'
         }
     }
+
 }
 
 if (project.name =~ /couchbase/ && "COUCHBASE".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -20,6 +21,7 @@ if (project.name =~ /couchbase/ && "COUCHBASE".equalsIgnoreCase(rootProject.test
             includeCategories 'org.apereo.cas.category.CouchbaseCategory'
         }
     }
+
 }
 
 if (project.name =~ /couchdb/ && "COUCHDB".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -28,6 +30,7 @@ if (project.name =~ /couchdb/ && "COUCHDB".equalsIgnoreCase(rootProject.testCate
             includeCategories 'org.apereo.cas.category.CouchDbCategory'
         }
     }
+
 }
 
 if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
@@ -37,6 +40,7 @@ if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
                 includeCategories 'org.apereo.cas.category.MySQLCategory'
             }
         }
+
     }
 
     if ("POSTGRES".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -45,6 +49,7 @@ if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
                 includeCategories 'org.apereo.cas.category.PostgresCategory'
             }
         }
+
     }
 
     if ("MSSQLSERVER".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -53,6 +58,7 @@ if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
                 includeCategories 'org.apereo.cas.category.MsSqlServerCategory'
             }
         }
+
     }
 }
 
@@ -62,6 +68,7 @@ if (project.name =~ /dynamodb/ && "DYNAMODB".equalsIgnoreCase(rootProject.testCa
             includeCategories 'org.apereo.cas.category.DynamoDbCategory'
         }
     }
+
 }
 
 if ("FILESYSTEM".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -70,8 +77,8 @@ if ("FILESYSTEM".equalsIgnoreCase(rootProject.testCategoryType)) {
             includeCategories 'org.apereo.cas.category.FileSystemCategory'
         }
     }
-}
 
+}
 
 if (project.name =~ /ignite/ && "IGNITE".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testIgnite(type: Test) {
@@ -85,6 +92,7 @@ if (project.name =~ /ignite/ && "IGNITE".equalsIgnoreCase(rootProject.testCatego
         list.add("java.base/sun.nio.ch=ALL-UNNAMED")
         jvmArgs = list
     }
+
 }
 
 if (project.name =~ /influxdb/ && "INFLUXDB".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -93,8 +101,8 @@ if (project.name =~ /influxdb/ && "INFLUXDB".equalsIgnoreCase(rootProject.testCa
             includeCategories 'org.apereo.cas.category.InfluxDbCategory'
         }
     }
-}
 
+}
 
 if ("LDAP".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testLdap(type: Test) {
@@ -110,6 +118,7 @@ if ("MAIL".equalsIgnoreCase(rootProject.testCategoryType)) {
             includeCategories 'org.apereo.cas.category.MailCategory'
         }
     }
+
 }
 
 if (project.name =~ /memcached/ && "MEMCACHED".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -118,6 +127,7 @@ if (project.name =~ /memcached/ && "MEMCACHED".equalsIgnoreCase(rootProject.test
             includeCategories 'org.apereo.cas.category.MemcachedCategory'
         }
     }
+
 }
 
 if (project.name =~ /mongo/ && "MONGODB".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -126,6 +136,7 @@ if (project.name =~ /mongo/ && "MONGODB".equalsIgnoreCase(rootProject.testCatego
             includeCategories 'org.apereo.cas.category.MongoDbCategory'
         }
     }
+
 }
 
 if (project.name =~ /redis/ && "REDIS".equalsIgnoreCase(rootProject.testCategoryType)) {

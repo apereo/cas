@@ -36,7 +36,7 @@ public class ResourceSetPolicy implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id = System.currentTimeMillis();
+    private long id;
 
     @Column
     private String name;
@@ -48,4 +48,8 @@ public class ResourceSetPolicy implements Serializable {
     @Lob
     @Column
     private HashSet<String> scopes = new HashSet<>();
+
+    public ResourceSetPolicy() {
+        id = System.currentTimeMillis();
+    }
 }
