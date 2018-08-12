@@ -38,7 +38,7 @@ public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndp
     }
 
     /**
-     * Gets policy for resource set.
+     * Delete policy for resource set.
      *
      * @param resourceId the resource id
      * @param policyId   the policy id
@@ -49,7 +49,7 @@ public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndp
     @DeleteMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getPoliciesForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
+    public ResponseEntity deletePoliciesForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
                                                     @PathVariable(value = "policyId") final long policyId,
                                                     final HttpServletRequest request,
                                                     final HttpServletResponse response) {
@@ -65,9 +65,9 @@ public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndp
 
             val policies = resourceSet.getPolicies().stream().filter(p -> p.getId() != policyId).collect(Collectors.toSet());
             resourceSet.setPolicies(new HashSet<>(policies));
-            umaResourceSetRepository.save(resourceSet);
+            val saved = umaResourceSetRepository.save(resourceSet);
 
-            val model = CollectionUtils.wrap("entity", resourceSet, "code", HttpStatus.OK);
+            val model = CollectionUtils.wrap("entity", saved, "code", HttpStatus.OK);
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
