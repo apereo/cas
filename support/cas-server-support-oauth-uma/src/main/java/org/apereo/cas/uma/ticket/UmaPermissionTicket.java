@@ -25,7 +25,7 @@ public interface UmaPermissionTicket extends Ticket {
      *
      * @return the supplied claims
      */
-    Collection<String> getSuppliedClaims();
+    Collection<String> getClaims();
 
     /**
      * Gets scopes.
