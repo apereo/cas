@@ -33,11 +33,11 @@ public class DefaultUmaPermissionTicket extends AbstractTicket implements UmaPer
 
     @Lob
     @Column
-    private Collection<String> suppliedClaims = new LinkedHashSet<>();
+    private LinkedHashSet<String> claims = new LinkedHashSet<>();
 
     @Lob
     @Column
-    private Collection<String> scopes = new LinkedHashSet<>();
+    private LinkedHashSet<String> scopes = new LinkedHashSet<>();
 
     @Lob
     @Column
@@ -47,7 +47,7 @@ public class DefaultUmaPermissionTicket extends AbstractTicket implements UmaPer
                                       final ExpirationPolicy expirationPolicy, final Collection<String> scopes) {
         super(id, expirationPolicy);
         this.resourceSet = resourceSet;
-        this.scopes = scopes;
+        this.scopes = new LinkedHashSet<>(scopes);
     }
 
     @Override
