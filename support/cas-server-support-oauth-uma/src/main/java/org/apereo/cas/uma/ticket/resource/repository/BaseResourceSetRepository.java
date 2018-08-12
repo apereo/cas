@@ -49,10 +49,16 @@ public abstract class BaseResourceSetRepository implements ResourceSetRepository
             throw new IllegalArgumentException("Cannot save a resource set with inconsistent scopes.");
         }
 
-        newResource.setOwner(currentResource.getOwner());
-        newResource.setClientId(currentResource.getClientId());
-        val saved = saveInternal(newResource);
+        currentResource.setOwner(newResource.getOwner());
+        currentResource.setClientId(newResource.getClientId());
+        currentResource.setName(newResource.getName());
+        currentResource.setIconUri(newResource.getIconUri());
+        currentResource.setPolicies(newResource.getPolicies());
+        currentResource.setScopes(newResource.getScopes());
+        currentResource.setType(newResource.getType());
+        currentResource.setUri(newResource.getUri());
 
+        val saved = saveInternal(currentResource);
         return saved;
     }
 
