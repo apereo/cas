@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultResourceSetRepository}.
@@ -17,8 +16,17 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
-public class DefaultResourceSetRepository implements ResourceSetRepository {
+public class DefaultResourceSetRepository extends BaseResourceSetRepository {
     private final Map<Long, ResourceSet> repository = new ConcurrentHashMap<>();
+
+    @Override
+    public ResourceSet saveInternal(final ResourceSet set) {
+        if (set.getId() <= 0) {
+            set.setId(System.currentTimeMillis());
+        }
+        repository.put(set.getId(), set);
+        return set;
+    }
 
     @Override
     public Collection<ResourceSet> getAll() {
@@ -31,22 +39,6 @@ public class DefaultResourceSetRepository implements ResourceSetRepository {
     }
 
     @Override
-    public Collection<ResourceSet> getByOwner(final String owner) {
-        return repository.values().stream().filter(s -> s.getOwner().equalsIgnoreCase(owner)).collect(Collectors.toSet());
-    }
-
-    @Override
-    public Collection<ResourceSet> getByClient(final String clientId) {
-        return repository.values().stream().filter(s -> s.getClientId().equalsIgnoreCase(clientId)).collect(Collectors.toSet());
-    }
-
-    @Override
-    public ResourceSet save(final ResourceSet set) {
-        repository.put(set.getId(), set);
-        return set;
-    }
-
-    @Override
     public void remove(final ResourceSet set) {
         repository.remove(set.getId());
     }
@@ -54,10 +46,5 @@ public class DefaultResourceSetRepository implements ResourceSetRepository {
     @Override
     public void removeAll() {
         repository.clear();
-    }
-
-    @Override
-    public long count() {
-        return repository.size();
     }
 }

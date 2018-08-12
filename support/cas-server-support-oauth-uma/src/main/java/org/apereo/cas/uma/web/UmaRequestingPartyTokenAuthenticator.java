@@ -44,8 +44,9 @@ public class UmaRequestingPartyTokenAuthenticator implements Authenticator<Token
         profile.setId(principal.getId());
         val attributes = new LinkedHashMap<>(authentication.getAttributes());
         attributes.putAll(principal.getAttributes());
+
         profile.addAttributes(attributes);
-        profile.getPermissions().addAll(at.getScopes());
+        profile.addPermissions(at.getScopes());
 
         LOGGER.debug("Authenticated requesting party access token [{}]", profile);
         credentials.setUserProfile(profile);
