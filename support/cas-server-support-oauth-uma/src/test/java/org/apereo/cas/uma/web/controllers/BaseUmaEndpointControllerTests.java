@@ -6,7 +6,9 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaCreateResourceSetRegistrationEndpointController;
+import org.apereo.cas.uma.web.controllers.resource.UmaDeleteResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistrationEndpointController;
+import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -42,6 +44,14 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     @Autowired
     @Qualifier("umaCreateResourceSetRegistrationEndpointController")
     protected UmaCreateResourceSetRegistrationEndpointController umaCreateResourceSetRegistrationEndpointController;
+
+    @Autowired
+    @Qualifier("umaDeleteResourceSetRegistrationEndpointController")
+    protected UmaDeleteResourceSetRegistrationEndpointController umaDeleteResourceSetRegistrationEndpointController;
+
+    @Autowired
+    @Qualifier("umaUpdateResourceSetRegistrationEndpointController")
+    protected UmaUpdateResourceSetRegistrationEndpointController umaUpdateResourceSetRegistrationEndpointController;
 
     @Autowired
     @Qualifier("umaFindResourceSetRegistrationEndpointController")
