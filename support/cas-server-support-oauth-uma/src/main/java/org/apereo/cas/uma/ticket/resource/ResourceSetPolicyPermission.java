@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 
 /**
- * This is {@link ResourceSetPolicy}.
+ * This is {@link ResourceSetPolicyPermission}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -26,9 +26,9 @@ import java.util.HashSet;
 @Getter
 @Setter
 @Embeddable
-@Table(name = "UMA_ResourceSetPolicy")
-@EqualsAndHashCode
-public class ResourceSetPolicy implements Serializable {
+@Table(name = "UMA_ResourceSetPolicyPermission")
+@EqualsAndHashCode(of = "id")
+public class ResourceSetPolicyPermission implements Serializable {
 
     private static final long serialVersionUID = 1664113523427391736L;
 
@@ -38,11 +38,14 @@ public class ResourceSetPolicy implements Serializable {
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
+    @Column
+    private String subject;
+
     @Lob
     @Column
-    private HashSet<ResourceSetPolicyPermission> permissions = new HashSet<>();
-
-    public ResourceSetPolicy() {
+    private HashSet<String> scopes = new HashSet<>();
+    
+    public ResourceSetPolicyPermission() {
         id = System.currentTimeMillis();
     }
 }

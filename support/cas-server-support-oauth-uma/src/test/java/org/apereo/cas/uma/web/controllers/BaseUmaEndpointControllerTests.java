@@ -5,6 +5,10 @@ import org.apereo.cas.config.CasOAuthUmaConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationEndpointController;
+import org.apereo.cas.uma.web.controllers.policy.UmaCreatePolicyForResourceSetEndpointController;
+import org.apereo.cas.uma.web.controllers.policy.UmaDeletePolicyForResourceSetEndpointController;
+import org.apereo.cas.uma.web.controllers.policy.UmaFindPolicyForResourceSetEndpointController;
+import org.apereo.cas.uma.web.controllers.policy.UmaUpdatePolicyForResourceSetEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaCreateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaDeleteResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistrationEndpointController;
@@ -56,6 +60,22 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
     @Autowired
     @Qualifier("umaFindResourceSetRegistrationEndpointController")
     protected UmaFindResourceSetRegistrationEndpointController umaFindResourceSetRegistrationEndpointController;
+
+    @Autowired
+    @Qualifier("umaCreatePolicyForResourceSetEndpointController")
+    protected UmaCreatePolicyForResourceSetEndpointController umaCreatePolicyForResourceSetEndpointController;
+
+    @Autowired
+    @Qualifier("umaFindPolicyForResourceSetEndpointController")
+    protected UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController;
+
+    @Autowired
+    @Qualifier("umaDeletePolicyForResourceSetEndpointController")
+    protected UmaDeletePolicyForResourceSetEndpointController umaDeletePolicyForResourceSetEndpointController;
+
+    @Autowired
+    @Qualifier("umaUpdatePolicyForResourceSetEndpointController")
+    protected UmaUpdatePolicyForResourceSetEndpointController umaUpdatePolicyForResourceSetEndpointController;
 
     @Autowired
     @Qualifier("umaSecurityInterceptor")

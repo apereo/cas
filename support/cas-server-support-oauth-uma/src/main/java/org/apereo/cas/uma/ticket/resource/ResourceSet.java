@@ -31,7 +31,7 @@ import java.util.HashSet;
 @Setter
 @Embeddable
 @Table(name = "UMA_ResourceSet")
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 public class ResourceSet implements Serializable {
     private static final long serialVersionUID = -5529923878827427102L;
 

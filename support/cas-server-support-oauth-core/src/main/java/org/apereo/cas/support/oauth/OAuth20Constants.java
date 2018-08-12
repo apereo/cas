@@ -12,14 +12,17 @@ public interface OAuth20Constants {
      * Device code flow verification uri.
      */
     String DEVICE_VERIFICATION_URI = "verification_uri";
+
     /**
      * Device code flow user code.
      */
     String DEVICE_USER_CODE = "user_code";
+
     /**
      * Device code flow device code.
      */
     String DEVICE_CODE = "device_code";
+
     /**
      * Device code flow refresh interval.
      */
@@ -259,6 +262,11 @@ public interface OAuth20Constants {
      * permission registration endpoint URL.
      */
     String UMA_PERMISSION_URL = "permission";
+
+    /**
+     * policy registration endpoint URL.
+     */
+    String UMA_POLICY_URL = "policy";
 
     /**
      * authorization registration endpoint URL.
