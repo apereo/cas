@@ -14,6 +14,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 
 /**
@@ -33,7 +34,7 @@ public class DefaultUmaPermissionTicket extends AbstractTicket implements UmaPer
 
     @Lob
     @Column
-    private LinkedHashSet<String> claims = new LinkedHashSet<>();
+    private LinkedHashMap<String, Object> claims = new LinkedHashMap<>();
 
     @Lob
     @Column

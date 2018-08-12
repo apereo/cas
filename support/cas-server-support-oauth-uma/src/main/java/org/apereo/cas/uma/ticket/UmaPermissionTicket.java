@@ -6,6 +6,7 @@ import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * This is {@link UmaPermissionTicket}.
@@ -25,7 +26,7 @@ public interface UmaPermissionTicket extends Ticket {
      *
      * @return the supplied claims
      */
-    Collection<String> getClaims();
+    Map<String, Object> getClaims();
 
     /**
      * Gets scopes.
