@@ -16,6 +16,7 @@ import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.repository.DefaultResourceSetRepository;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.UmaRequestingPartyTokenAuthenticator;
+import org.apereo.cas.uma.web.controllers.claims.UmaRequestingPartyClaimsCollectionEndpointController;
 import org.apereo.cas.uma.web.controllers.discovery.UmaWellKnownEndpointController;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.policy.UmaCreatePolicyForResourceSetEndpointController;
@@ -74,6 +75,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "umaServerDiscoverySettingsFactory")
     public FactoryBean<UmaServerDiscoverySettings> umaServerDiscoverySettingsFactory() {
         return new UmaServerDiscoverySettingsFactory(casProperties);
+    }
+
+    @Bean
+    public UmaRequestingPartyClaimsCollectionEndpointController umaRequestingPartyClaimsCollectionEndpointController() {
+        return new UmaRequestingPartyClaimsCollectionEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(),
+            casProperties, servicesManager, ticketRegistry);
     }
 
     @Autowired
@@ -169,6 +177,9 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(umaSecurityInterceptor())
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
-            .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"));
+            .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
+            .addPathPatterns(BASE_OAUTH20_URL.concat("/*/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
+            .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
+            .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"));
     }
 }

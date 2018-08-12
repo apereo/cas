@@ -184,6 +184,16 @@ public interface OAuth20Constants {
     String AUTHORIZATION_PENDING = "authorization_pending";
 
     /**
+     * Authz state.
+     */
+    String AUTHORIZATION_STATE = "authorization_state";
+
+    /**
+     * Authz state claims submitted.
+     */
+    String CLAIMS_SUBMITTED = "claims_submitted";
+
+    /**
      * slow down error for when approval requests are too quick.
      */
     String SLOW_DOWN = "slow_down";
