@@ -49,10 +49,10 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
     @PostMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL,
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getPolicyForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
-                                                  @RequestBody final String body,
-                                                  final HttpServletRequest request,
-                                                  final HttpServletResponse response) {
+    public ResponseEntity createPolicyForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
+                                                     @RequestBody final String body,
+                                                     final HttpServletRequest request,
+                                                     final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response);
             val resourceSetResult = umaResourceSetRepository.getById(resourceId);
@@ -72,7 +72,7 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
             resourceSet.getPolicies().add(umaRequest);
             val saved = umaResourceSetRepository.save(resourceSet);
 
-            val model = CollectionUtils.wrap("entity", saved.getPolicies(), "code", HttpStatus.FOUND);
+            val model = CollectionUtils.wrap("entity", saved, "code", HttpStatus.FOUND);
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
