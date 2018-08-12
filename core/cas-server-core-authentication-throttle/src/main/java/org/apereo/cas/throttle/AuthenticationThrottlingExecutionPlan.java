@@ -1,4 +1,4 @@
-package org.apereo.cas.web.support;
+package org.apereo.cas.throttle;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 

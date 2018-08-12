@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import org.apereo.cas.audit.spi.resource.TicketValidationResourceResolver;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.validation.Assertion;
 

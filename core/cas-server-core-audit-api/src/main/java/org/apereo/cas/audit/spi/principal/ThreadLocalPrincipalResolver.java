@@ -1,4 +1,4 @@
-package org.apereo.cas.audit.spi;
+package org.apereo.cas.audit.spi.principal;
 
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;

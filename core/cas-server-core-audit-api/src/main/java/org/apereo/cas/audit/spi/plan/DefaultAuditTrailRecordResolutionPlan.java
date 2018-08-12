@@ -1,4 +1,4 @@
-package org.apereo.cas.audit.spi;
+package org.apereo.cas.audit.spi.plan;
 
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 

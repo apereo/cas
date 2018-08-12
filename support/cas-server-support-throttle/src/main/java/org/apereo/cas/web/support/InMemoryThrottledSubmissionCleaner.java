@@ -1,5 +1,7 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
+
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.scheduling.annotation.Scheduled;
