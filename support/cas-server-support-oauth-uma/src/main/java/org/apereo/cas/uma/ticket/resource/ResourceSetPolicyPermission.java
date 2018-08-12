@@ -1,5 +1,7 @@
 package org.apereo.cas.uma.ticket.resource;
 
+import org.apereo.cas.util.RandomUtils;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,6 +46,6 @@ public class ResourceSetPolicyPermission implements Serializable {
     private HashSet<String> scopes = new HashSet<>();
 
     public ResourceSetPolicyPermission() {
-        id = System.currentTimeMillis();
+        id = Math.abs(RandomUtils.getNativeInstance().nextInt());
     }
 }
