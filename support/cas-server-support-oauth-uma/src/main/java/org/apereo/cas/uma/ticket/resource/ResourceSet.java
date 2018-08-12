@@ -1,10 +1,14 @@
 package org.apereo.cas.uma.ticket.resource;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
+import org.pac4j.core.profile.CommonProfile;
+import org.springframework.http.HttpStatus;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -35,7 +39,7 @@ public class ResourceSet implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
-    private long id = System.currentTimeMillis();
+    private long id;
 
     @Column
     private String name;
@@ -62,4 +66,28 @@ public class ResourceSet implements Serializable {
     @Lob
     @Column
     private HashSet<ResourceSetPolicy> policies = new HashSet<>();
+
+    public ResourceSet() {
+        id = System.currentTimeMillis();
+    }
+
+    /**
+     * Validate.
+     *
+     * @param profile the profile
+     */
+    @JsonIgnore
+    public void validate(final CommonProfile profile) {
+        if (StringUtils.isBlank(getClientId())) {
+            throw new InvalidResourceSetException(HttpStatus.BAD_REQUEST.value(), "Authentication request does contain a client id");
+        }
+
+        if (getScopes().isEmpty()) {
+            throw new InvalidResourceSetException(HttpStatus.BAD_REQUEST.value(), "Resource set registration is missing scopes");
+        }
+
+        if (!getOwner().equals(profile.getId())) {
+            throw new InvalidResourceSetException(HttpStatus.FORBIDDEN.value(), "Resource-set owner does not match the authenticated profile");
+        }
+    }
 }
