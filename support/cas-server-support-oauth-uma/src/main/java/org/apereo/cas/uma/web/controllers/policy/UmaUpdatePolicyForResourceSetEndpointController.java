@@ -40,10 +40,11 @@ public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndp
     }
 
     /**
-     * Gets policy for resource set.
+     * Update policy for resource set.
      *
      * @param resourceId the resource id
      * @param policyId   the policy id
+     * @param body       the body
      * @param request    the request
      * @param response   the response
      * @return the policy for resource set
@@ -51,11 +52,11 @@ public class UmaUpdatePolicyForResourceSetEndpointController extends BaseUmaEndp
     @PutMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL + "/{policyId}",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity getPoliciesForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
-                                                    @PathVariable(value = "policyId") final long policyId,
-                                                    @RequestBody final String body,
-                                                    final HttpServletRequest request,
-                                                    final HttpServletResponse response) {
+    public ResponseEntity updatePoliciesForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
+                                                       @PathVariable(value = "policyId") final long policyId,
+                                                       @RequestBody final String body,
+                                                       final HttpServletRequest request,
+                                                       final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response);
             val resourceSetResult = umaResourceSetRepository.getById(resourceId);
