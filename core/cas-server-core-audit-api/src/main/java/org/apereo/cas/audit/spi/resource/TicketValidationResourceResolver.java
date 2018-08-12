@@ -1,4 +1,4 @@
-package org.apereo.cas.audit.spi;
+package org.apereo.cas.audit.spi.resource;
 
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.validation.Assertion;
