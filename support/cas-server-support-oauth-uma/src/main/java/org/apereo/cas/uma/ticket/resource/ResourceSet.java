@@ -1,5 +1,7 @@
 package org.apereo.cas.uma.ticket.resource;
 
+import org.apereo.cas.util.RandomUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -66,7 +68,7 @@ public class ResourceSet implements Serializable {
     private HashSet<ResourceSetPolicy> policies = new HashSet<>();
 
     public ResourceSet() {
-        id = System.currentTimeMillis();
+        id = Math.abs(RandomUtils.getNativeInstance().nextInt());
     }
 
     /**

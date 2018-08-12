@@ -7,6 +7,7 @@ import org.apereo.cas.uma.web.controllers.UmaDeleteResourceSetRegistrationEndpoi
 import org.apereo.cas.uma.web.controllers.UmaFindPolicyForResourceSetEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.UmaFindResourceSetRegistrationEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.UmaPermissionRegistrationEndpointControllerTests;
+import org.apereo.cas.uma.web.controllers.UmaUpdatePolicyForResourceSetEndpointControllerTests;
 import org.apereo.cas.uma.web.controllers.UmaUpdateResourceSetRegistrationEndpointControllerTests;
 
 import org.junit.runner.RunWith;
@@ -27,7 +28,8 @@ import org.junit.runners.Suite;
     UmaUpdateResourceSetRegistrationEndpointControllerTests.class,
     UmaCreatePolicyForResourceSetEndpointControllerTests.class,
     UmaDeletePolicyForResourceSetEndpointControllerTests.class,
-    UmaFindPolicyForResourceSetEndpointControllerTests.class
+    UmaFindPolicyForResourceSetEndpointControllerTests.class,
+    UmaUpdatePolicyForResourceSetEndpointControllerTests.class
 })
 public class UmaTestSuite {
 }
