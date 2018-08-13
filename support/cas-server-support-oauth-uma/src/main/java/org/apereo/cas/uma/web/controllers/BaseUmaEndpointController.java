@@ -125,6 +125,21 @@ public abstract class BaseUmaEndpointController {
     }
 
     /**
+     * The type Uma authorization request.
+     */
+    @Data
+    public static class UmaAuthorizationRequest implements Serializable {
+        private static final long serialVersionUID = -5359723510084259980L;
+
+        @JsonProperty
+        private String ticket;
+
+        @JsonProperty
+        private String rpt;
+    }
+
+
+    /**
      * The uma resource registration request.
      */
     @Data

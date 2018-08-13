@@ -55,11 +55,13 @@ public class UmaServerDiscoverySettings {
     @JsonProperty("pat_grant_types_supported")
     private List<String> patGrantTypesSupported = CollectionUtils.wrapList(
         OAuth20GrantTypes.AUTHORIZATION_CODE.getType(),
+        OAuth20GrantTypes.UMA_TICKET.getType(),
         OAuth20GrantTypes.CLIENT_CREDENTIALS.getType());
 
     @JsonProperty("aat_grant_types_supported")
     private List<String> aatGrantTypesSupported = CollectionUtils.wrapList(
         OAuth20GrantTypes.AUTHORIZATION_CODE.getType(),
+        OAuth20GrantTypes.UMA_TICKET.getType(),
         OAuth20GrantTypes.CLIENT_CREDENTIALS.getType());
 
     public UmaServerDiscoverySettings(final CasConfigurationProperties casProperties, final String issuer) {

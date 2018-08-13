@@ -16,6 +16,7 @@ import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.repository.DefaultResourceSetRepository;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.UmaRequestingPartyTokenAuthenticator;
+import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointController;
 import org.apereo.cas.uma.web.controllers.claims.UmaRequestingPartyClaimsCollectionEndpointController;
 import org.apereo.cas.uma.web.controllers.discovery.UmaWellKnownEndpointController;
 import org.apereo.cas.uma.web.controllers.permission.UmaPermissionRegistrationEndpointController;
@@ -75,6 +76,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @ConditionalOnMissingBean(name = "umaServerDiscoverySettingsFactory")
     public FactoryBean<UmaServerDiscoverySettings> umaServerDiscoverySettingsFactory() {
         return new UmaServerDiscoverySettingsFactory(casProperties);
+    }
+
+    @Bean
+    public UmaAuthorizationRequestEndpointController umaAuthorizationRequestEndpointController() {
+        return new UmaAuthorizationRequestEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(),
+            casProperties, servicesManager, ticketRegistry);
     }
 
     @Bean

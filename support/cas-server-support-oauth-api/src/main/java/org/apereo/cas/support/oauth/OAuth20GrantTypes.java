@@ -30,7 +30,11 @@ public enum OAuth20GrantTypes {
     /**
      * For the refresh token grant type.
      */
-    REFRESH_TOKEN("refresh_token");
+    REFRESH_TOKEN("refresh_token"),
+    /**
+     * UMA ticket grant type.
+     */
+    UMA_TICKET("urn:ietf:params:oauth:grant-type:uma-ticket");
 
     private final String type;
 
