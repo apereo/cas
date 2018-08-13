@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.authentication.GoogleAppsSamlAuthenticationRe
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactoryTests;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -13,7 +14,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses({
     GoogleAppsSamlAuthenticationRequestTests.class,
     GoogleAccountsServiceTests.class,

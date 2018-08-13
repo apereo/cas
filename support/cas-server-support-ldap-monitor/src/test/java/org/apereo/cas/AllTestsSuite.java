@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.monitor.PooledConnectionFactoryHealthIndicatorTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -11,7 +12,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses(PooledConnectionFactoryHealthIndicatorTests.class)
 public class AllTestsSuite {
 }

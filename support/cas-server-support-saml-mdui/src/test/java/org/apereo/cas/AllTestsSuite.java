@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserActionTests;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserDynamicActionTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -12,7 +13,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses({SamlMetadataUIParserActionTests.class, SamlMetadataUIParserDynamicActionTests.class})
 public class AllTestsSuite {
 }

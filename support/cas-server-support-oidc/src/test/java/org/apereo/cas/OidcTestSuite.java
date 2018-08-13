@@ -12,6 +12,7 @@ import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointControllerTests;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolverTests;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIActionTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -21,7 +22,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses({
     OidcWellKnownEndpointControllerTests.class,
     OidcIdTokenGeneratorServiceTests.class,

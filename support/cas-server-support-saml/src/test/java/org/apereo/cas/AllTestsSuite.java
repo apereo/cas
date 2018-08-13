@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.web.support.WebUtilTests;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseViewTests;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseViewTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -17,7 +18,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses({
     SamlServiceTests.class,
     SamlAuthenticationMetaDataPopulatorTests.class,

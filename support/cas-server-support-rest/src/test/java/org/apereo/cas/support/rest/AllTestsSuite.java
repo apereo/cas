@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -9,7 +10,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses({
     TicketGrantingTicketResourceTests.class,
     ServiceTicketResourceTests.class,

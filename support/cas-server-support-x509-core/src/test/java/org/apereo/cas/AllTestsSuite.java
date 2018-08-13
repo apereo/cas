@@ -11,6 +11,7 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectAlternat
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectDNPrincipalResolverTests;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509SubjectPrincipalResolverTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -21,7 +22,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses({
     X509SerialNumberAndIssuerDNPrincipalResolverTests.class,
     X509SerialNumberPrincipalResolverTests.class,

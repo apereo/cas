@@ -25,6 +25,7 @@ import org.apereo.cas.ticket.accesstoken.OAuthAccessTokenSovereignExpirationPoli
 import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenExpirationPolicyTests;
 import org.apereo.cas.ticket.refreshtoken.OAuthRefreshTokenSovereignExpirationPolicyTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -34,7 +35,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses({
     OAuth20AccessTokenControllerTests.class,
     OAuth20AuthorizeControllerTests.class,

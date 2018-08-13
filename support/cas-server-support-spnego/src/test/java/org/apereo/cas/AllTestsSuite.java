@@ -4,6 +4,7 @@ import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoA
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredentialsTests;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredentialsToPrincipalResolverTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -13,7 +14,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses({
     JcifsSpnegoAuthenticationHandlerTests.class,
     SpnegoCredentialsTests.class,

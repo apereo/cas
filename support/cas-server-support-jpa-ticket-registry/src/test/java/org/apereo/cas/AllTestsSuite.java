@@ -4,6 +4,7 @@ import org.apereo.cas.monitor.SessionHealthIndicatorJpaTests;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategyTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -13,7 +14,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses({SessionHealthIndicatorJpaTests.class, JpaTicketRegistryTests.class,
     JpaLockingStrategyTests.class})
 public class AllTestsSuite {
