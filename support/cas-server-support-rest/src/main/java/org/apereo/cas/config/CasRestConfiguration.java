@@ -26,9 +26,9 @@ import org.apereo.cas.support.rest.resources.ServiceTicketResource;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
+import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlan;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
