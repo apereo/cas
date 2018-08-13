@@ -21,7 +21,7 @@ before_cache:
 before_script:
  - unset -v _JAVA_OPTIONS
  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
- - source install-jdk.sh -F 10 -L BCL
+ - source install-jdk.sh -F 11 -L BCL
 cache:
   bundler: false
   cargo: false
