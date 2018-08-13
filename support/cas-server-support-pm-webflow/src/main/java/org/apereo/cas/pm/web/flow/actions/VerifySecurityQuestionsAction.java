@@ -40,7 +40,7 @@ public class VerifySecurityQuestionsAction extends AbstractAction {
             .filter(q -> {
                 final String answer = request.getParameter("q" + i.getAndIncrement());
                 final String answerOnRecord = questions.get(q);
-                final boolean result = passwordManagementService.isValidSecurityQuestionAnswer(username, q, question, answer);
+                final boolean result = passwordManagementService.isValidSecurityQuestionAnswer(username, q, answerOnRecord, answer);
                 LOGGER.trace("Validating security question [{}] with answer [{}] against provided answer [{}] by username [{}]: [{}]",
                     q, answerOnRecord, answer, username, result);
                 return result;
