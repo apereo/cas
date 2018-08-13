@@ -21,7 +21,7 @@ import lombok.ToString;
 @Getter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true, exclude = {"password"})
-public class OneTimePasswordCredential extends AbstractCredential {
+public class OneTimePasswordCredential extends BasicIdentifiableCredential {
 
     /**
      * Serialization version marker.
@@ -33,14 +33,9 @@ public class OneTimePasswordCredential extends AbstractCredential {
      */
     private String password;
 
-    /**
-     * Optional unique identifier.
-     */
-    private String id;
-
     @JsonCreator
     public OneTimePasswordCredential(@JsonProperty("id") final String id, @JsonProperty("password") final String password) {
+        super(id);
         this.password = password;
-        this.id = id;
     }
 }

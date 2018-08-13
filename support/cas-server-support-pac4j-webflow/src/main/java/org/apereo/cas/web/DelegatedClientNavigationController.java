@@ -9,6 +9,7 @@ import org.apereo.cas.web.view.DynamicHtmlView;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
@@ -65,8 +66,15 @@ public class DelegatedClientNavigationController {
      */
     @GetMapping(ENDPOINT_REDIRECT)
     public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
-        val clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
+        var clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
+        if (StringUtils.isBlank(clientName)) {
+            clientName = (String) request.getAttribute(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
+        }
+
         try {
+            if (StringUtils.isBlank(clientName)) {
+                throw new UnauthorizedServiceException("No client name parameter is provided in the incoming request");
+            }
             val client = (IndirectClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
             val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             val ticket = delegatedClientWebflowManager.store(webContext, client);
@@ -89,24 +97,49 @@ public class DelegatedClientNavigationController {
      * the login webflow, and redirects the requests to the login webflow endpoint.
      *
      * @param clientName the path-based parameter that provider the pac4j client name
-     * @param request  the request
-     * @param response the response
+     * @param request    the request
+     * @param response   the response
      * @return the view
      */
     @GetMapping(ENDPOINT_RESPONSE)
     public View redirectResponseToFlow(final @PathVariable("clientName") String clientName, final HttpServletRequest request, final HttpServletResponse response) {
-        val builder = new URIBuilder(request.getRequestURL().append("?").append(request.getQueryString()).toString());
-        builder.setPath(builder.getPath().replace('/' + clientName, ""));
-        builder.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientName);
-
-        val url = builder.toString();
-        LOGGER.debug("Received a response for {}, redirecting the login flow ({})", clientName, url);
-
-        val result = new RedirectView(url);
-        return result;
+        return buildRedirectViewBackToFlow(clientName, request);
     }
 
-    private View getResultingView(final IndirectClient<Credentials, CommonProfile> client, final J2EContext webContext, final Ticket ticket) {
+    /**
+     * Build redirect view back to flow view.
+     *
+     * @param clientName the client name
+     * @param request    the request
+     * @return the view
+     */
+    protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) {
+        val builder = new StringBuilder();
+        builder.append(request.getRequestURL());
+
+        val urlBuilder = new URIBuilder(builder.toString());
+        request.getParameterMap().forEach((k, v) -> {
+            val value = request.getParameter(k);
+            urlBuilder.addParameter(k, value);
+        });
+
+        urlBuilder.setPath(urlBuilder.getPath().replace('/' + clientName, StringUtils.EMPTY));
+        urlBuilder.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientName);
+
+        val url = urlBuilder.toString();
+        LOGGER.debug("Received a response for client [{}], redirecting the login flow [{}]", clientName, url);
+        return new RedirectView(url);
+    }
+
+    /**
+     * Gets resulting view.
+     *
+     * @param client     the client
+     * @param webContext the web context
+     * @param ticket     the ticket
+     * @return the resulting view
+     */
+    protected View getResultingView(final IndirectClient<Credentials, CommonProfile> client, final J2EContext webContext, final Ticket ticket) {
         val action = client.getRedirectAction(webContext);
         if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
             return new DynamicHtmlView(action.getContent());

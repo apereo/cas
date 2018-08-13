@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -14,6 +15,7 @@ import lombok.ToString;
  */
 @ToString(callSuper = true)
 @Getter
+@Setter
 public class TokenCredential extends BasicIdentifiableCredential {
 
     private static final long serialVersionUID = 2749515041385101770L;

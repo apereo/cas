@@ -43,7 +43,6 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
             }
 
             val clientId = clientIdAndSecret.getKey();
-            val service = this.webApplicationServiceFactory.createService(clientId);
             val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
@@ -52,6 +51,11 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
                 throw new CredentialsException("Bad secret for client identifier: " + clientId);
             }
 
+            val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
+            val service = StringUtils.isNotBlank(redirectUri)
+                ? this.webApplicationServiceFactory.createService(redirectUri)
+                : null;
+            
             val authenticationResult = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, casCredential);
             if (authenticationResult == null) {
                 throw new CredentialsException("Could not authenticate the provided credentials");

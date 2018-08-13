@@ -19,9 +19,9 @@ before_cache:
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 # Remove once Travis CI fixes JDK setup
 before_script:
-- unset -v _JAVA_OPTIONS
-- wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
-- source install-jdk.sh -F 11 -L BCL
+ - unset -v _JAVA_OPTIONS
+ - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+ - source install-jdk.sh -F 10 -L BCL
 cache:
   bundler: false
   cargo: false
@@ -89,6 +89,8 @@ jobs:
     script: ./ci/build-javadocs.sh
   - stage: build
     script: ./ci/build-config-metadata.sh
+  - stage: build
+    script: ./ci/check-config-factories.sh
     ############################################
   - stage: dependencies
     script: ./ci/analyze-dependencies.sh

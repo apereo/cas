@@ -4,8 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
-import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlan;
-import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlanConfigurer;
+import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
+import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
 
 import lombok.val;
 import org.pac4j.core.config.Config;
