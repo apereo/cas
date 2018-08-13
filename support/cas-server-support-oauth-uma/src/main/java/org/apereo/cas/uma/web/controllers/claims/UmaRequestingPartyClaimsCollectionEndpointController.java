@@ -16,6 +16,7 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.View;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Controller("umaRequestingPartyClaimsCollectionEndpointController")
 @Slf4j
 public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUmaEndpointController {
     private final ServicesManager servicesManager;

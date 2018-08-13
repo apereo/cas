@@ -37,7 +37,7 @@ public class UmaCreatePolicyForResourceSetEndpointControllerTests extends BaseUm
         val policy = new ResourceSetPolicy();
         val perm = new ResourceSetPolicyPermission();
         perm.setScopes(CollectionUtils.wrapHashSet("read", "write"));
-        final CommonProfile profile = (CommonProfile) Pac4jUtils.getPac4jProfileManager(results.getLeft(), results.getMiddle()).get(true).get();
+        val profile = (CommonProfile) Pac4jUtils.getPac4jProfileManager(results.getLeft(), results.getMiddle()).get(true).get();
         perm.setSubject(profile.getId());
         policy.setPermissions(CollectionUtils.wrapHashSet(perm));
         val body = MAPPER.writeValueAsString(policy);
