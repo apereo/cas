@@ -1538,6 +1538,23 @@ Password encoding  settings for this feature are available [here](Configuration-
 # cas.authn.jdbc.encode[0].order=0
 ```
 
+## CouchDb Authentication
+
+To learn more about this topic, [please review this guide](CouchDb-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.couchDb`.
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.couchDb`.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn`.
+
+```properties
+# cas.authn.couchDb.attributes=
+# cas.authn.couchDb.usernameAttribute=username
+# cas.authn.couchDb.passwordAttribute=password
+# cas.authn.couchDb.name=
+# cas.authn.couchDb.order=
+```
+
 ## MongoDb Authentication
 
 To learn more about this topic, [please review this guide](../installation/MongoDb-Authentication.html). 
