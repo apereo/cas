@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.services.MongoDbServiceRegistryCloudTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -12,7 +13,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses(MongoDbServiceRegistryCloudTests.class)
 public class AllTestsSuite {
 }

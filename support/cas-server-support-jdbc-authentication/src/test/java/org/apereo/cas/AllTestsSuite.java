@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandlerT
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandlerTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -16,7 +17,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses({
     QueryAndEncodeDatabaseAuthenticationHandlerTests.class,
     QueryDatabaseAuthenticationHandlerTests.class,

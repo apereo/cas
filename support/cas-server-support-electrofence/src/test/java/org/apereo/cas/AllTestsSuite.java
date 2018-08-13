@@ -7,6 +7,7 @@ import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculatorTes
 import org.apereo.cas.impl.notify.AuthenticationRiskEmailNotifierTests;
 import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifierTests;
 
+import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -16,7 +17,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(Suite.class)
+@RunWith(Enclosed.class)
 @Suite.SuiteClasses({
     DateTimeAuthenticationRequestRiskCalculatorTests.class,
     GeoLocationAuthenticationRequestRiskCalculatorTests.class,
