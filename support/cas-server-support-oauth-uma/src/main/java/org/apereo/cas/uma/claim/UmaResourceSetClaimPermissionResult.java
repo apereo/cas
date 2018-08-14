@@ -26,6 +26,9 @@ public class UmaResourceSetClaimPermissionResult implements Serializable {
         return details.isEmpty();
     }
 
+    /**
+     * The Details for analysis result.
+     */
     @Data
     public static class Details implements Serializable {
         private static final long serialVersionUID = -4294568893393275983L;
