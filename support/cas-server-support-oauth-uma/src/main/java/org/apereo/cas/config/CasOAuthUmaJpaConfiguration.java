@@ -4,14 +4,15 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
-import org.apereo.cas.uma.ticket.resource.repository.impl.JpaResourceSetRepository;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
+import org.apereo.cas.uma.ticket.resource.repository.impl.JpaResourceSetRepository;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +38,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureBefore(CasOAuthUmaConfiguration.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@ConditionalOnProperty(name = "cas.authn.uma.resourceSet.jpa.url")
 public class CasOAuthUmaJpaConfiguration {
 
     @Autowired
