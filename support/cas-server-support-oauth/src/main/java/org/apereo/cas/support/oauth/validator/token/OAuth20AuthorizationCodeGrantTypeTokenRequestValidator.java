@@ -38,7 +38,6 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
 
     @Override
     protected OAuthRegisteredService getRegisteredService(final J2EContext context, final UserProfile uProfile) {
-        final HttpServletRequest request = context.getRequest();
         final String clientId = uProfile.getId();
         return OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
     }

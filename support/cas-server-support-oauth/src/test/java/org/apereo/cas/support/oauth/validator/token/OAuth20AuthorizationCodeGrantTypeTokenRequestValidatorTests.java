@@ -48,9 +48,6 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
     private OAuth20TokenRequestValidator validator;
 
     private TicketRegistry ticketRegistry;
-    private OAuthRegisteredService supportingService;
-    private OAuthRegisteredService nonSupportingService;
-    private OAuthRegisteredService promiscuousService;
 
     private void registerTicket(final String name, final OAuthRegisteredService service) {
         final OAuth20CasAuthenticationBuilder builder = new OAuth20CasAuthenticationBuilder(
@@ -62,25 +59,25 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         final ExpirationPolicy expirationPolicy = new OAuthCodeExpirationPolicy(1, 60);
         final OAuthCode oauthCode = new DefaultOAuthCodeFactory(expirationPolicy).create(oauthCasAuthenticationBuilderService,
                 RegisteredServiceTestUtils.getAuthentication(), new MockTicketGrantingTicket("casuser"), new HashSet<>());
-        when(ticketRegistry.getTicket(name, any())).thenReturn(oauthCode);
+        when(ticketRegistry.getTicket(eq(name), any())).thenReturn(oauthCode);
     }
 
     @Before
     public void before() {
         final ServicesManager serviceManager = mock(ServicesManager.class);
-        supportingService = RequestValidatorTestUtils.getService(
+        final OAuthRegisteredService supportingService = RequestValidatorTestUtils.getService(
                 RegisteredServiceTestUtils.CONST_TEST_URL,
                 RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SHARED_SECRET,
                 CollectionUtils.wrapHashSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
-        nonSupportingService = RequestValidatorTestUtils.getService(
+        final OAuthRegisteredService nonSupportingService = RequestValidatorTestUtils.getService(
                 RegisteredServiceTestUtils.CONST_TEST_URL2,
                 RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SHARED_SECRET,
                 CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD));
-        promiscuousService = RequestValidatorTestUtils.getPromiscousService(
+        final OAuthRegisteredService promiscuousService = RequestValidatorTestUtils.getPromiscousService(
                 RegisteredServiceTestUtils.CONST_TEST_URL3,
                 RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
                 RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
@@ -103,7 +100,6 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
 
     @Test
     public void verifyOperation() {
-        final Service service = RegisteredServiceTestUtils.getService();
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
         final MockHttpServletResponse response = new MockHttpServletResponse();
@@ -115,7 +111,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
-        request.setParameter(OAuth20Constants.REDIRECT_URI, service.getId());
+        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL);
 
         request.setParameter(OAuth20Constants.CODE, SUPPORTING_SERVICE_TICKET);
         assertTrue(this.validator.validate(new J2EContext(request, response)));
@@ -128,12 +124,14 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType());
 
         request.setParameter(OAuth20Constants.CODE, NON_SUPPORTING_SERVICE_TICKET);
+        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL2);
         profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
         assertFalse(this.validator.validate(new J2EContext(request, response)));
 
         request.setParameter(OAuth20Constants.CODE, PROMISCUOUS_SERVICE_TICKET);
         profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+        request.setParameter(OAuth20Constants.REDIRECT_URI, RegisteredServiceTestUtils.CONST_TEST_URL3);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
         assertTrue(this.validator.validate(new J2EContext(request, response)));
     }

@@ -36,36 +36,32 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
 
     private TicketRegistry ticketRegistry;
     private OAuth20TokenRequestValidator validator;
-    private OAuthRegisteredService supportingService;
-    private OAuthRegisteredService nonSupportingService;
-    private OAuthRegisteredService promiscuousService;
 
-    private void registerTicket(final String name, final OAuthRegisteredService service) {
+    private void registerTicket(final String name) {
         final RefreshToken oauthCode = mock(RefreshToken.class);
         when(oauthCode.getId()).thenReturn(name);
         when(oauthCode.isExpired()).thenReturn(false);
         when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
-
-        when(ticketRegistry.getTicket(name)).thenReturn(oauthCode);
+        when(ticketRegistry.getTicket(eq(name))).thenReturn(oauthCode);
     }
 
     @Before
     public void before() {
         final ServicesManager serviceManager = mock(ServicesManager.class);
 
-        supportingService = RequestValidatorTestUtils.getService(
+        final OAuthRegisteredService supportingService = RequestValidatorTestUtils.getService(
                 RegisteredServiceTestUtils.CONST_TEST_URL,
                 RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SHARED_SECRET,
                 CollectionUtils.wrapHashSet(OAuth20GrantTypes.REFRESH_TOKEN));
-        nonSupportingService = RequestValidatorTestUtils.getService(
+        final OAuthRegisteredService nonSupportingService = RequestValidatorTestUtils.getService(
                 RegisteredServiceTestUtils.CONST_TEST_URL2,
                 RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SHARED_SECRET,
                 CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD));
-        promiscuousService = RequestValidatorTestUtils.getPromiscousService(
+        final OAuthRegisteredService promiscuousService = RequestValidatorTestUtils.getPromiscousService(
                 RegisteredServiceTestUtils.CONST_TEST_URL3,
                 RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
                 RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
@@ -75,9 +71,9 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
 
         this.ticketRegistry = mock(TicketRegistry.class);
 
-        registerTicket(SUPPORTING_SERVICE_TICKET, supportingService);
-        registerTicket(NON_SUPPORTING_SERVICE_TICKET, nonSupportingService);
-        registerTicket(PROMISCUOUS_SERVICE_TICKET, promiscuousService);
+        registerTicket(SUPPORTING_SERVICE_TICKET);
+        registerTicket(NON_SUPPORTING_SERVICE_TICKET);
+        registerTicket(PROMISCUOUS_SERVICE_TICKET);
 
         this.validator = new OAuth20RefreshTokenGrantTypeTokenRequestValidator(
             serviceManager, new RegisteredServiceAccessStrategyAuditableEnforcer(), this.ticketRegistry);

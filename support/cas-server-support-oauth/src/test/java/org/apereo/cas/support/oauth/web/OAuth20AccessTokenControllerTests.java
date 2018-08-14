@@ -455,14 +455,14 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     @Test
     public void verifyUserAuth() throws Exception {
-        addRegisteredService(CollectionUtils.wrapHashSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+        addRegisteredService(CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD));
         internalVerifyUserAuth(false, false);
     }
 
     @Test
     public void verifyUserAuthWithRefreshToken() throws Exception {
         final OAuthRegisteredService registeredService = addRegisteredService(
-                CollectionUtils.wrapHashSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+                CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD));
         registeredService.setGenerateRefreshToken(true);
         internalVerifyUserAuth(true, false);
     }
@@ -479,7 +479,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     @Test
     public void verifyJsonUserAuthWithRefreshToken() throws Exception {
         final OAuthRegisteredService registeredService = addRegisteredService(
-                CollectionUtils.wrapHashSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+                CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD));
         registeredService.setGenerateRefreshToken(true);
         registeredService.setJsonFormat(true);
         internalVerifyUserAuth(true, true);

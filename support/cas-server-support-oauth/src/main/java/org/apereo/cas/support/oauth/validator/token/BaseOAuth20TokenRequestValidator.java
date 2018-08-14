@@ -68,11 +68,15 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
         }
 
         final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
-        if (!OAuth20Utils.isAuthorizedGrantTypeForService(context, getRegisteredService(context, uProfile))) {
+        final OAuthRegisteredService registeredService = getRegisteredService(context, uProfile);
+        if (registeredService == null) {
+            LOGGER.warn("No registered service found");
+            return false;
+        }
+        if (!OAuth20Utils.isAuthorizedGrantTypeForService(context, registeredService)) {
             LOGGER.warn("Grant type is not supported: [{}]", grantType);
             return false;
         }
-
         return validateInternal(context, grantType, manager, uProfile);
     }
 

@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
+import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -34,6 +35,7 @@ public class OAuth20AccessTokenControllerNoGrantTypeTests extends OAuth20AccessT
     @Test
     public void verifyClientDisallowedAuthorizationCode() {
         // This test should never fail in this suite, so just doing nothing.
+        assertTrue(true);
     }
 
     // All the other tests should pass with overrides in this class.
