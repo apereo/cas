@@ -156,6 +156,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         val perm = new UmaPermissionRegistrationRequest();
         perm.setResourceId(resourceId);
         perm.setScopes(CollectionUtils.wrapList("read"));
+        perm.setClaims(new LinkedHashMap<>(CollectionUtils.wrap("givenName", "CAS")));
         return perm;
     }
 
