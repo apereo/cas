@@ -1,9 +1,8 @@
 package org.apereo.cas.uma.ticket.resource;
 
-import org.apereo.cas.util.RandomUtils;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -29,6 +28,7 @@ import java.util.LinkedHashMap;
 @Embeddable
 @Table(name = "UMA_ResourceSetPolicyPermission")
 @EqualsAndHashCode(of = "id")
+@NoArgsConstructor
 public class ResourceSetPolicyPermission implements Serializable {
 
     private static final long serialVersionUID = 1664113523427391736L;
@@ -43,14 +43,10 @@ public class ResourceSetPolicyPermission implements Serializable {
     private String subject;
 
     @Lob
-    @Column
+    @Column(length = Integer.MAX_VALUE)
     private HashSet<String> scopes = new HashSet<>();
 
     @Lob
-    @Column
+    @Column(length = Integer.MAX_VALUE)
     private LinkedHashMap<String, Object> claims = new LinkedHashMap<>();
-
-    public ResourceSetPolicyPermission() {
-        id = Math.abs(RandomUtils.getNativeInstance().nextInt());
-    }
 }
