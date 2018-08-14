@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.LinkedHashMap;
 
@@ -24,6 +25,7 @@ import static org.junit.Assert.*;
  * @since 6.0.0
  */
 @Import(CasOAuthUmaJpaConfiguration.class)
+@TestPropertySource(properties = "cas.authn.uma.resourceSet.jpa.url=jdbc:hsqldb:mem:cas-uma-resourceset")
 public class JpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTests {
 
     @Autowired
