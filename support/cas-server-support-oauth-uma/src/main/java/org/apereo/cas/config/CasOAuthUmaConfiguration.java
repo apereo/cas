@@ -69,6 +69,7 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 @Configuration("casOAuthUmaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -91,11 +92,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "umaResourceSetClaimPermissionExaminer")
     public UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer() {
         return new DefaultUmaResourceSetClaimPermissionExaminer();
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
     public IdTokenGeneratorService umaRequestingPartyTokenGenerator() {
         return new UmaIdTokenGeneratorService(casProperties,
             new UmaRequestingPartyTokenGeneratorService(), servicesManager, ticketRegistry);
@@ -126,47 +129,56 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Bean
     public UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController() {
-        return new UmaPermissionRegistrationEndpointController(defaultUmaPermissionTicketFactory(), umaResourceSetRepository(), casProperties);
+        return new UmaPermissionRegistrationEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(), casProperties, ticketRegistry);
     }
 
     @Bean
     public UmaCreateResourceSetRegistrationEndpointController umaCreateResourceSetRegistrationEndpointController() {
-        return new UmaCreateResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(), umaResourceSetRepository(), casProperties);
+        return new UmaCreateResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(), casProperties);
     }
 
     @Bean
     public UmaDeleteResourceSetRegistrationEndpointController umaDeleteResourceSetRegistrationEndpointController() {
-        return new UmaDeleteResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(), umaResourceSetRepository(), casProperties);
+        return new UmaDeleteResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(), casProperties);
     }
 
     @Bean
     public UmaUpdateResourceSetRegistrationEndpointController umaUpdateResourceSetRegistrationEndpointController() {
-        return new UmaUpdateResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(), umaResourceSetRepository(), casProperties);
+        return new UmaUpdateResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(), casProperties);
     }
 
     @Bean
     public UmaFindResourceSetRegistrationEndpointController umaFindResourceSetRegistrationEndpointController() {
-        return new UmaFindResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(), umaResourceSetRepository(), casProperties);
+        return new UmaFindResourceSetRegistrationEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(), casProperties);
     }
 
     @Bean
     public UmaCreatePolicyForResourceSetEndpointController umaCreatePolicyForResourceSetEndpointController() {
-        return new UmaCreatePolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(), umaResourceSetRepository(), casProperties);
+        return new UmaCreatePolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(), casProperties);
     }
 
     @Bean
     public UmaDeletePolicyForResourceSetEndpointController umaDeletePolicyForResourceSetEndpointController() {
-        return new UmaDeletePolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(), umaResourceSetRepository(), casProperties);
+        return new UmaDeletePolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(), casProperties);
     }
 
     @Bean
     public UmaUpdatePolicyForResourceSetEndpointController umaUpdatePolicyForResourceSetEndpointController() {
-        return new UmaUpdatePolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(), umaResourceSetRepository(), casProperties);
+        return new UmaUpdatePolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(), casProperties);
     }
 
     @Bean
     public UmaFindPolicyForResourceSetEndpointController umaFindPolicyForResourceSetEndpointController() {
-        return new UmaFindPolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(), umaResourceSetRepository(), casProperties);
+        return new UmaFindPolicyForResourceSetEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(), casProperties);
     }
 
     @Bean

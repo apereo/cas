@@ -1,5 +1,6 @@
 package org.apereo.cas.uma.web.controllers.authz;
 
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 
 import lombok.val;
@@ -37,12 +38,17 @@ public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpo
         body = createUmaPermissionRegistrationRequest(resourceId).toJson();
         response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.OK, response.getStatusCode());
+        model = (Map) response.getBody();
 
-        // Execute authorization
+        val permissionTicket = model.get("ticket").toString();
+
         results = authenticateUmaRequestWithAuthorizationScope();
 
-//        val authzRequest = new UmaAuthorizationRequest();
-//        umaAuthorizationRequestEndpointController.handleAuthorizationRequest(body, results.getLeft(), results.getMiddle());
+        val authzRequest = new UmaAuthorizationRequest();
+        authzRequest.setGrantType(OAuth20GrantTypes.UMA_TICKET.getType());
+        authzRequest.setTicket(permissionTicket);
+        body = authzRequest.toJson();
+        response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(body, results.getLeft(), results.getMiddle());
 
     }
 }

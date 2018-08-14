@@ -2,6 +2,7 @@ package org.apereo.cas.uma.web.controllers.permission;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
@@ -9,7 +10,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.hjson.JsonObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,10 +30,14 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpointController {
 
+    private final TicketRegistry ticketRegistry;
+
     public UmaPermissionRegistrationEndpointController(final UmaPermissionTicketFactory umaPermissionTicketFactory,
                                                        final ResourceSetRepository umaResourceSetRepository,
-                                                       final CasConfigurationProperties casProperties) {
+                                                       final CasConfigurationProperties casProperties,
+                                                       final TicketRegistry ticketRegistry) {
         super(umaPermissionTicketFactory, umaResourceSetRepository, casProperties);
+        this.ticketRegistry = ticketRegistry;
     }
 
     /**
@@ -72,8 +76,9 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
             val permission = umaPermissionTicketFactory.create(resourceSet, umaRequest.getScopes(), umaRequest.getClaims());
 
             if (permission != null) {
-                val entity = new JsonObject().add("ticket", permission.getId());
-                val model = CollectionUtils.wrap("entity", entity, "code", HttpStatus.CREATED);
+                ticketRegistry.addTicket(permission);
+
+                val model = CollectionUtils.wrap("ticket", permission.getId(), "code", HttpStatus.CREATED);
                 return new ResponseEntity(model, HttpStatus.OK);
             }
 
