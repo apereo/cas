@@ -24,6 +24,11 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#oauth2-uma).
 
+## Resources Storage
+
+Resource definitions are by default kept inside an in-memory repository. CAS also provides an alternative implementation backed by the relational database
+of choice to track and manage such definitions. The repository choice is activated in CAS properties.
+
 ## Endpoints
 
 ### Requesting Party Token
@@ -58,8 +63,8 @@ Issue a `PUT` request as `/oauth2.0/${resourceId}/policy/${policyId}` with the p
 
 #### Find
 
-Issue a `GET` request as `/oauth2.0/${resourceId}/policy/` to fetch all policy definitions for a resource.
-Issue a `GET` request as `/oauth2.0/${resourceId}/policy/${policyId}` to a specific policy definition for a resource.
+- Issue a `GET` request as `/oauth2.0/${resourceId}/policy/` to fetch all policy definitions for a resource.
+- Issue a `GET` request as `/oauth2.0/${resourceId}/policy/${policyId}` to fetch a specific policy definition for a resource.
 
 ### Resources
 
@@ -89,8 +94,8 @@ Issue a `PUT` request as `${resourceSetEndpoint}/${resourceId}` with the payload
 
 #### Find
 
-Issue a `GET` request as `${resourceSetEndpoint}/${resourceId}` to fetch a specific resource definition. 
-Issue a `GET` request as `${resourceSetEndpoint}` to fetch all resource definitions.
+- Issue a `GET` request as `${resourceSetEndpoint}/${resourceId}` to fetch a specific resource definition. 
+- Issue a `GET` request as `${resourceSetEndpoint}` to fetch all resource definitions.
 
 ### Permission Tickets
 
