@@ -77,7 +77,6 @@ public abstract class BaseIdTokenSigningAndEncryptionService implements IdTokenS
                                                                           final JsonWebSignature jws,
                                                                           final RsaJsonWebKey jsonWebKey) {
         LOGGER.debug("Service [{}] is set to sign id tokens", svc);
-
         jws.setKey(jsonWebKey.getPrivateKey());
         jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
         if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
