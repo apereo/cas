@@ -2835,6 +2835,23 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.userProfileViewType=NESTED|FLAT
 ```
 
+### OAuth2 UMA
+
+To learn more about this topic, [please review this guide](../protocol/OAuth-OpenId-Authentication.html).
+
+```properties
+# cas.authn.uma.issuer=http://localhost:8080/cas
+
+# cas.authn.uma.requestingPartyToken.maxTimeToLiveInSeconds=PT3M
+# cas.authn.uma.requestingPartyToken.jwksFile=file:/etc/cas/uma-keystore.jwks
+
+# cas.authn.uma.permissionTicket.maxTimeToLiveInSeconds=PT3M
+```
+
+#### OAuth2 UMA JPA
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.uma.resourceSet.jpa`.
+
 ## Localization
 
 To learn more about this topic, [please review this guide](User-Interface-Customization-Localization.html).

@@ -73,7 +73,6 @@ public class UmaProperties implements Serializable {
         @Getter
         @Setter
         public static class Jpa extends AbstractJpaProperties {
-
             private static final long serialVersionUID = 210435146313504995L;
 
             public Jpa() {
@@ -96,7 +95,6 @@ public class UmaProperties implements Serializable {
         /**
          * Path to the JWKS file that is used to sign the rpt token.
          */
-        @RequiredProperty
         private transient Resource jwksFile = new FileSystemResource("/etc/cas/uma-keystore.jwks");
     }
 }

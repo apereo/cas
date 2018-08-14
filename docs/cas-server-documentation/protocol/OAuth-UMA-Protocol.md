@@ -18,6 +18,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-<div class="alert alert-warning"><strong>Construction Ahead</strong>
-<p>This feature is still in development.</p>
-</div>
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#oauth2-uma).
