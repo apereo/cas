@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.uma;
 
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -38,6 +39,11 @@ public class UmaProperties implements Serializable {
      */
     private RequestingPartyToken requestingPartyToken = new RequestingPartyToken();
 
+    /**
+     * Handles settings related to management of resource-sets, etc.
+     */
+    private ResourceSet resourceSet = new ResourceSet();
+
     @RequiresModule(name = "cas-server-support-oauth-uma")
     @Getter
     @Setter
@@ -54,6 +60,30 @@ public class UmaProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-oauth-uma")
     @Getter
     @Setter
+    public static class ResourceSet implements Serializable {
+        private static final long serialVersionUID = 215435145313504895L;
+
+        /**
+         * Store resource-sets and policies via JPA.
+         */
+        private Jpa jpa = new Jpa();
+
+        @RequiresModule(name = "cas-server-support-oauth-uma")
+        @Getter
+        @Setter
+        public static class Jpa extends AbstractJpaProperties {
+
+            private static final long serialVersionUID = 210435146313504995L;
+
+            public Jpa() {
+                super.setUrl("jdbc:hsqldb:mem:cas-uma-resourceset");
+            }
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-oauth-uma")
+    @Getter
+    @Setter
     public static class RequestingPartyToken implements Serializable {
         private static final long serialVersionUID = 3988708361481340920L;
 
@@ -61,6 +91,7 @@ public class UmaProperties implements Serializable {
          * Hard timeout to kill the access token and expire it.
          */
         private String maxTimeToLiveInSeconds = "PT3M";
+
         /**
          * Path to the JWKS file that is used to sign the rpt token.
          */

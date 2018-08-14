@@ -1,6 +1,7 @@
-package org.apereo.cas.uma.ticket.resource.repository;
+package org.apereo.cas.uma.ticket.resource.repository.impl;
 
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
+import org.apereo.cas.uma.ticket.resource.repository.BaseResourceSetRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
