@@ -69,21 +69,16 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         val context = Pac4jUtils.getPac4jJ2EContext(request, response);
         LOGGER.debug("Attempting to produce claims for the id token [{}]", accessToken);
-        val claims = produceIdTokenClaims(request, accessToken, timeoutInSeconds,
-            oidcRegisteredService, getAuthenticatedProfile(request, response), context, responseType);
-        LOGGER.debug("Produce claims for the id token [{}] as [{}]", accessToken, claims);
+        val authenticatedProfile = getAuthenticatedProfile(request, response);
+        val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
+            oidcRegisteredService, authenticatedProfile, context, responseType);
 
-        val idTokenResult = this.signingService.encode(oidcRegisteredService, claims);
-        accessToken.setIdToken(idTokenResult);
-
-        LOGGER.debug("Updating access token [{}] in ticket registry with ID token [{}]", accessToken.getId(), idTokenResult);
-        this.ticketRegistry.updateTicket(accessToken);
-
-        return idTokenResult;
+        return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
     }
 
+
     /**
-     * Produce id token claims jwt claims.
+     * Produce claims as jwt.
      *
      * @param request          the request
      * @param accessTokenId    the access token id
@@ -94,13 +89,13 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
      * @param responseType     the response type
      * @return the jwt claims
      */
-    protected JwtClaims produceIdTokenClaims(final HttpServletRequest request,
-                                             final AccessToken accessTokenId,
-                                             final long timeoutInSeconds,
-                                             final OidcRegisteredService service,
-                                             final UserProfile profile,
-                                             final J2EContext context,
-                                             final OAuth20ResponseTypes responseType) {
+    protected JwtClaims buildJwtClaims(final HttpServletRequest request,
+                                       final AccessToken accessTokenId,
+                                       final long timeoutInSeconds,
+                                       final OidcRegisteredService service,
+                                       final UserProfile profile,
+                                       final J2EContext context,
+                                       final OAuth20ResponseTypes responseType) {
         val authentication = accessTokenId.getAuthentication();
         val principal = authentication.getPrincipal();
         val oidc = casProperties.getAuthn().getOidc();

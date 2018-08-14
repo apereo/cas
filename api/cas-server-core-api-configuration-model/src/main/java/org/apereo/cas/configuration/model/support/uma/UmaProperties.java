@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 
@@ -59,5 +61,10 @@ public class UmaProperties implements Serializable {
          * Hard timeout to kill the access token and expire it.
          */
         private String maxTimeToLiveInSeconds = "PT3M";
+        /**
+         * Path to the JWKS file that is used to sign the rpt token.
+         */
+        @RequiredProperty
+        private transient Resource jwksFile = new FileSystemResource("/etc/cas/uma-keystore.jwks");
     }
 }
