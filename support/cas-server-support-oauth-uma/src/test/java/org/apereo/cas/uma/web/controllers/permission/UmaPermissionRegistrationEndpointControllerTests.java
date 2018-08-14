@@ -21,7 +21,7 @@ public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEnd
     @Test
     public void verifyPermissionRegistrationOperation() throws Exception {
         val results = authenticateUmaRequestWithProtectionScope();
-        val body = createUmaResourceRegistrationRequest().toJson();
+        val body = createUmaPermissionRegistrationRequest(100).toJson();
         val response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertNotNull(response.getBody());
