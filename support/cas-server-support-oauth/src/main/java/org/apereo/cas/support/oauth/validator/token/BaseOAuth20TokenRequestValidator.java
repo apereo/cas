@@ -61,14 +61,14 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
             return false;
         }
 
-        final UserProfile uProfile = profile.get();
+        final UserProfile uProfile = profile.orElse(null);
         if (uProfile == null) {
             LOGGER.warn("Could not locate authenticated profile for this request as null");
             return false;
         }
 
         final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
-        if (!isGrantTypeSupported(grantType, getRegisteredService(context, uProfile))) {
+        if (!OAuth20Utils.isAuthorizedGrantTypeForService(context, getRegisteredService(context, uProfile))) {
             LOGGER.warn("Grant type is not supported: [{}]", grantType);
             return false;
         }
@@ -101,23 +101,5 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     public boolean supports(final J2EContext context) {
         final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
-    }
-
-    /**
-     * Check the grant type against expected grant types.
-     *
-     * @param type          the current grant type
-     * @param service OAuth service
-     * @return whether the grant type is supported by the service
-     */
-    private static boolean isGrantTypeSupported(final String type, final OAuthRegisteredService service) {
-        LOGGER.debug("Grant type received: [{}]", type);
-        for (final String expectedType : service.getSupportedGrantTypes()) {
-            if (type.equalsIgnoreCase(expectedType)) {
-                return true;
-            }
-        }
-        LOGGER.error("Unsupported grant type: [{}]", type);
-        return false;
     }
 }

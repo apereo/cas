@@ -13,4 +13,10 @@ public class OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests extends
     protected OAuth20GrantTypes getGrantType() {
         return OAuth20GrantTypes.CLIENT_CREDENTIALS;
     }
+
+    @Override
+    protected OAuth20GrantTypes getWrongGrantType() {
+        return OAuth20GrantTypes.AUTHORIZATION_CODE;
+    }
+
 }

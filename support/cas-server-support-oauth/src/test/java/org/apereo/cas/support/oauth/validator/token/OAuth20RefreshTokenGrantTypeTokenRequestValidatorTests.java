@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.validator.token;
 
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -31,33 +30,54 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
+    private static final String SUPPORTING_SERVICE_TICKET = "RT-SUPPORTING";
+    private static final String NON_SUPPORTING_SERVICE_TICKET = "RT-NON-SUPPORTING";
+    private static final String PROMISCUOUS_SERVICE_TICKET = "RT-PROMISCUOUS";
+
     private TicketRegistry ticketRegistry;
     private OAuth20TokenRequestValidator validator;
-    private OAuthRegisteredService registeredService;
+    private OAuthRegisteredService supportingService;
+    private OAuthRegisteredService nonSupportingService;
+    private OAuthRegisteredService promiscuousService;
 
-    @Before
-    public void before() {
+    private void registerTicket(final String name, final OAuthRegisteredService service) {
         final RefreshToken oauthCode = mock(RefreshToken.class);
-        when(oauthCode.getId()).thenReturn("RT-12345678");
+        when(oauthCode.getId()).thenReturn(name);
         when(oauthCode.isExpired()).thenReturn(false);
         when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
 
-        final Service service = RegisteredServiceTestUtils.getService();
+        when(ticketRegistry.getTicket(name)).thenReturn(oauthCode);
+    }
 
+    @Before
+    public void before() {
         final ServicesManager serviceManager = mock(ServicesManager.class);
 
-        registeredService = new OAuthRegisteredService();
-        registeredService.setName("OAuth");
-        registeredService.setClientId("client");
-        registeredService.setClientSecret("secret");
-        registeredService.setServiceId(service.getId());
-        registeredService.setSupportedGrantTypes(
-                CollectionUtils.wrapHashSet(OAuth20GrantTypes.REFRESH_TOKEN.getType()));
-        when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(registeredService));
-
+        supportingService = RequestValidatorTestUtils.getService(
+                RegisteredServiceTestUtils.CONST_TEST_URL,
+                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET,
+                CollectionUtils.wrapHashSet(OAuth20GrantTypes.REFRESH_TOKEN));
+        nonSupportingService = RequestValidatorTestUtils.getService(
+                RegisteredServiceTestUtils.CONST_TEST_URL2,
+                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET,
+                CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD));
+        promiscuousService = RequestValidatorTestUtils.getPromiscousService(
+                RegisteredServiceTestUtils.CONST_TEST_URL3,
+                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET);
+        when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(supportingService,
+                nonSupportingService, promiscuousService));
 
         this.ticketRegistry = mock(TicketRegistry.class);
-        when(ticketRegistry.getTicket(anyString())).thenReturn(oauthCode);
+
+        registerTicket(SUPPORTING_SERVICE_TICKET, supportingService);
+        registerTicket(NON_SUPPORTING_SERVICE_TICKET, nonSupportingService);
+        registerTicket(PROMISCUOUS_SERVICE_TICKET, promiscuousService);
 
         this.validator = new OAuth20RefreshTokenGrantTypeTokenRequestValidator(
             serviceManager, new RegisteredServiceAccessStrategyAuditableEnforcer(), this.ticketRegistry);
@@ -69,16 +89,30 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
 
         final CommonProfile profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("client");
+        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         final HttpSession session = request.getSession(true);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
         
         final MockHttpServletResponse response = new MockHttpServletResponse();
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());
-        request.setParameter(OAuth20Constants.CLIENT_ID, "client");
-        request.setParameter(OAuth20Constants.CLIENT_SECRET, "secret");
-        request.setParameter(OAuth20Constants.REFRESH_TOKEN, "RT-12345678");
+        request.setParameter(OAuth20Constants.CLIENT_ID, RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+        request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
+        request.setParameter(OAuth20Constants.REFRESH_TOKEN, SUPPORTING_SERVICE_TICKET);
 
+        assertTrue(this.validator.validate(new J2EContext(request, response)));
+
+        profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setParameter(OAuth20Constants.CLIENT_ID, RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
+        request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
+        request.setParameter(OAuth20Constants.REFRESH_TOKEN, NON_SUPPORTING_SERVICE_TICKET);
+        assertFalse(this.validator.validate(new J2EContext(request, response)));
+
+        profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setParameter(OAuth20Constants.CLIENT_ID, RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+        request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
+        request.setParameter(OAuth20Constants.REFRESH_TOKEN, PROMISCUOUS_SERVICE_TICKET);
         assertTrue(this.validator.validate(new J2EContext(request, response)));
     }
 }

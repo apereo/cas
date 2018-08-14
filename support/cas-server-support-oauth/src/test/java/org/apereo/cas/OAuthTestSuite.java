@@ -3,9 +3,6 @@ package org.apereo.cas;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.services.OAuth20WebApplicationServiceTests;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidatorTests;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20PasswordGrantTypeAuthorizationRequestValidatorTests;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20RefreshTokenGrantTypeAuthorizationRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeTokenRequestValidatorTests;
@@ -43,9 +40,6 @@ import org.junit.runners.Suite;
     OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests.class,
     OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests.class,
     OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests.class,
-    OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidatorTests.class,
-    OAuth20PasswordGrantTypeAuthorizationRequestValidatorTests.class,
-    OAuth20RefreshTokenGrantTypeAuthorizationRequestValidatorTests.class,
     OAuthRefreshTokenSovereignExpirationPolicyTests.class,
     OAuth20AccessTokenControllerMemcachedTests.class,
     OAuth20ProfileControllerTests.class,

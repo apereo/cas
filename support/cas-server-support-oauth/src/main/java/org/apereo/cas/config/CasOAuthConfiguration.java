@@ -32,10 +32,7 @@ import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenResponseTypeAuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20PasswordGrantTypeAuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20TokenResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20ClientCredentialsGrantTypeTokenRequestValidator;
@@ -428,14 +425,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return validators;
     }
 
-    @ConditionalOnMissingBean(name = "oauthClientCredentialsGrantTypeRequestValidator")
-    @Bean
-    @RefreshScope
-    public OAuth20AuthorizationRequestValidator oauthClientCredentialsGrantTypeRequestValidator() {
-        return new OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidator(servicesManager,
-            webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
-    }
-
     @ConditionalOnMissingBean(name = "oauthAuthorizationCodeResponseTypeRequestValidator")
     @Bean
     @RefreshScope
@@ -457,22 +446,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthIdTokenResponseTypeRequestValidator() {
         return new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager,
-            webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
-    }
-
-    @ConditionalOnMissingBean(name = "oauthPasswordGrantTypeRequestValidator")
-    @Bean
-    @RefreshScope
-    public OAuth20AuthorizationRequestValidator oauthPasswordGrantTypeRequestValidator() {
-        return new OAuth20PasswordGrantTypeAuthorizationRequestValidator(servicesManager,
-            webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
-    }
-
-    @ConditionalOnMissingBean(name = "oauthRefreshTokenGrantTypeRequestValidator")
-    @Bean
-    @RefreshScope
-    public OAuth20AuthorizationRequestValidator oauthRefreshTokenGrantTypeRequestValidator() {
-        return new OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator(servicesManager,
             webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 

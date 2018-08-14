@@ -63,7 +63,6 @@ import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -99,8 +98,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -242,12 +243,18 @@ public abstract class AbstractOAuth20Tests {
         return CoreAuthenticationTestUtils.getPrincipal(ID, map);
     }
 
-    protected OAuthRegisteredService addRegisteredService() {
-        return addRegisteredService(false);
+    protected OAuthRegisteredService addRegisteredService(final HashSet<OAuth20GrantTypes> grantTypes) {
+        return addRegisteredService(false, grantTypes);
     }
 
-    protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken) {
-        final OAuthRegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
+    protected OAuthRegisteredService addRegisteredService() {
+        return addRegisteredService(false, new HashSet<>());
+    }
+
+
+    protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken,
+                                                          final HashSet<OAuth20GrantTypes> grantTypes) {
+        final OAuthRegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, grantTypes);
         registeredService.setGenerateRefreshToken(generateRefreshToken);
         servicesManager.save(registeredService);
         return registeredService;
@@ -273,7 +280,9 @@ public abstract class AbstractOAuth20Tests {
         return refreshToken;
     }
 
-    protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String secret) {
+    protected OAuthRegisteredService getRegisteredService(final String serviceId,
+                                                          final String secret,
+                                                          final HashSet<OAuth20GrantTypes> grantTypes) {
         final OAuthRegisteredService registeredServiceImpl = new OAuthRegisteredService();
         registeredServiceImpl.setName("The registered service name");
         registeredServiceImpl.setServiceId(serviceId);
@@ -281,7 +290,7 @@ public abstract class AbstractOAuth20Tests {
         registeredServiceImpl.setClientSecret(secret);
         registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
         registeredServiceImpl.setSupportedGrantTypes(
-                CollectionUtils.wrapHashSet(OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
+                grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new)));
         return registeredServiceImpl;
     }
 
