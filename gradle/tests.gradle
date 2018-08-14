@@ -172,7 +172,7 @@ test {
 }
 
 tasks.withType(Test) {
-    exclude "**/Abstract*.*", "**/Base*.*"
+    exclude "**/Abstract*.*", "**/Base*.*", "**/*Suite.*"
     enabled = !Boolean.getBoolean("skipTests")
     scanForTestClasses = false
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")

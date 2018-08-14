@@ -109,7 +109,7 @@ public class TicketGrantingTicketResource {
      */
     protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
                                                                         final HttpServletRequest request) {
-        val credential = this.credentialFactory.fromRequestBody(requestBody);
+        val credential = this.credentialFactory.fromRequest(request, requestBody);
         if (credential == null || credential.isEmpty()) {
             throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
         }
