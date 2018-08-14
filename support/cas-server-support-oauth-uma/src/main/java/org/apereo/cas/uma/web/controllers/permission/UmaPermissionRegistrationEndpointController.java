@@ -2,13 +2,11 @@ package org.apereo.cas.uma.web.controllers.permission;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonObject;
@@ -21,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
-import java.util.Collection;
 
 /**
  * This is {@link UmaPermissionRegistrationEndpointController}.
@@ -53,7 +49,7 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handle(@RequestBody final String body, final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            val profileResult = getAuthenticatedProfile(request, response);
+            val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 
             val umaRequest = MAPPER.readValue(body, UmaPermissionRegistrationRequest.class);
             if (umaRequest == null) {
@@ -61,7 +57,7 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
             }
 
-            val resourceSetResult = umaResourceSetRepository.getById(umaRequest.getId());
+            val resourceSetResult = umaResourceSetRepository.getById(umaRequest.getResourceId());
             if (!resourceSetResult.isPresent()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
@@ -73,7 +69,7 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
             }
 
-            val permission = umaPermissionTicketFactory.create(resourceSet, umaRequest.getScopes());
+            val permission = umaPermissionTicketFactory.create(resourceSet, umaRequest.getScopes(), umaRequest.getClaims());
 
             if (permission != null) {
                 val entity = new JsonObject().add("ticket", permission.getId());
@@ -87,20 +83,5 @@ public class UmaPermissionRegistrationEndpointController extends BaseUmaEndpoint
             LOGGER.error(e.getMessage(), e);
         }
         return new ResponseEntity("Unable to complete the permission registration request.", HttpStatus.BAD_REQUEST);
-    }
-
-
-    /**
-     * The uma permission registration request.
-     */
-    @Data
-    public static class UmaPermissionRegistrationRequest implements Serializable {
-        private static final long serialVersionUID = 3614209506339611242L;
-
-        @JsonProperty("resource_set_id")
-        private long id;
-
-        @JsonProperty("resource_scopes")
-        private Collection<String> scopes;
     }
 }

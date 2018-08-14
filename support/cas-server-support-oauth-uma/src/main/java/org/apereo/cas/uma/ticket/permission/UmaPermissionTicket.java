@@ -1,12 +1,12 @@
-package org.apereo.cas.uma.ticket;
+package org.apereo.cas.uma.ticket.permission;
 
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link UmaPermissionTicket}.
@@ -33,7 +33,7 @@ public interface UmaPermissionTicket extends Ticket {
      *
      * @return the scopes
      */
-    Collection<String> getScopes();
+    Set<String> getScopes();
 
     /**
      * Gets resource set.

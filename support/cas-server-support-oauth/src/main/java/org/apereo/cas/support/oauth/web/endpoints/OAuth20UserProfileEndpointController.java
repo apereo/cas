@@ -77,7 +77,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
     private static ResponseEntity buildUnauthorizedResponseEntity(final String code) {
         val map = new LinkedMultiValueMap<String, String>(1);
         map.add(OAuth20Constants.ERROR, code);
-        val value = OAuth20Utils.jsonify(map);
+        val value = OAuth20Utils.toJson(map);
         return new ResponseEntity<>(value, HttpStatus.UNAUTHORIZED);
     }
 

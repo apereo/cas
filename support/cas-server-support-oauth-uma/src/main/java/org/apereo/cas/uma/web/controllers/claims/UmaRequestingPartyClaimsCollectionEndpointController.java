@@ -8,8 +8,8 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.uma.ticket.UmaPermissionTicket;
-import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 
@@ -66,7 +66,7 @@ public class UmaRequestingPartyClaimsCollectionEndpointController extends BaseUm
                           @RequestParam(value = "state", required = false) final String state,
                           final HttpServletRequest request, final HttpServletResponse response) {
 
-        val profileResult = getAuthenticatedProfile(request, response);
+        val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 
         val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service);
