@@ -179,7 +179,7 @@ public class PasswordManagementProperties implements Serializable {
         /**
          * How long in minutes should the password expiration link remain valid.
          */
-        private float expirationMinutes = 1;
+        private long expirationMinutes = 1;
 
         public Reset() {
             this.mail.setAttributeName("mail");

@@ -20,6 +20,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
@@ -187,14 +188,14 @@ public class OAuth20Utils {
     }
 
     /**
-     * Jsonify string.
+     * Jsonify.
      *
-     * @param map the map
+     * @param value the map
      * @return the string
      */
     @SneakyThrows
-    public static String jsonify(final Map map) {
-        return MAPPER.writeValueAsString(map);
+    public static String toJson(final Object value) {
+        return MAPPER.writeValueAsString(value);
     }
 
     /**
@@ -372,4 +373,18 @@ public class OAuth20Utils {
         }
         return checked;
     }
+
+    /**
+     * Gets client id from authenticated profile.
+     *
+     * @param profile the profile
+     * @return the client id from authenticated profile
+     */
+    public static String getClientIdFromAuthenticatedProfile(final CommonProfile profile) {
+        if (profile.containsAttribute(OAuth20Constants.CLIENT_ID)) {
+            return (String) profile.getAttribute(OAuth20Constants.CLIENT_ID);
+        }
+        return null;
+    }
+
 }

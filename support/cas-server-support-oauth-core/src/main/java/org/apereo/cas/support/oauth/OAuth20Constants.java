@@ -281,7 +281,7 @@ public interface OAuth20Constants {
     /**
      * authorization registration endpoint URL.
      */
-    String UMA_AUTHORIZATION_REQUEST_URL = "authzRequest";
+    String UMA_AUTHORIZATION_REQUEST_URL = "rptAuthzRequest";
 
     /**
      * claims collection endpoint URL.
@@ -292,4 +292,22 @@ public interface OAuth20Constants {
      * UMA protection scope.
      */
     String UMA_PROTECTION_SCOPE = "uma_protection";
+
+    /**
+     * UMA authz scope.
+     */
+    String UMA_AUTHORIZATION_SCOPE = "uma_authorization";
+
+    /**
+     * requesting party claim.
+     */
+    String REQUESTING_PARTY_CLAIMS = "requesting_party_claims";
+    /**
+     * error details.
+     */
+    String ERROR_DETAILS = "error_details";
+    /**
+     * need information.
+     */
+    String NEED_INFO = "need_info";
 }
