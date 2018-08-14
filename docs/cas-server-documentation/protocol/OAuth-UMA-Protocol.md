@@ -24,6 +24,11 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#oauth2-uma).
 
+## Resources Storage
+
+Resource definitions are by default kept inside an in-memory repository. CAS also provides an alternative implementation backed by the relational database
+of choice to track and manage such definitions. The repository choice is activated in CAS properties.
+
 ## Endpoints
 
 ### Requesting Party Token
