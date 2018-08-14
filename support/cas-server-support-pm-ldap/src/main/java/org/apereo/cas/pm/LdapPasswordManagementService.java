@@ -132,9 +132,10 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     final LdapAttribute q = entry.getAttribute(k);
                     final LdapAttribute a = entry.getAttribute(v);
                     final String value = q.getStringValue();
-                    if (q != null && a != null && StringUtils.isNotBlank(value) && StringUtils.isNotBlank(a.getStringValue())) {
-                        LOGGER.debug("Added security question [{}]", value);
-                        set.put(value, value);
+                    final String answerValue = a.getStringValue();
+                    if (q != null && a != null && StringUtils.isNotBlank(value) && StringUtils.isNotBlank(answerValue)) {
+                        LOGGER.debug("Added security question [{}] with answer [{}]", value, answerValue);
+                        set.put(value, answerValue);
                     }
                 });
             } else {
