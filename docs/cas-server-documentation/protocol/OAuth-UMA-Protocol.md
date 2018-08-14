@@ -8,6 +8,10 @@ title: CAS - OAuth User-Managed Access Protocol
 User-Managed Access (UMA) is a lightweight access control protocol that defines a centralized workflow to allow an entity (user or corporation) 
 to manage access to their resources.
 
+To learn more about UMA, please [read the specification](https://docs.kantarainitiative.org/uma/rec-uma-core.html).
+
+## Configuration
+
 Support is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -24,7 +28,7 @@ To see the relevant list of CAS properties for this feature, please [review this
 
 ### Requesting Party Token
 
-Issue a `GET` request to `/oauth2.0/umaJwks` to retrieve signing keys.
+Issue a `GET` request to `/oauth2.0/umaJwks` to retrieve signing public keys.
 
 ### Policies
 
@@ -87,3 +91,42 @@ Issue a `PUT` request as `${resourceSetEndpoint}/${resourceId}` with the payload
 
 Issue a `GET` request as `${resourceSetEndpoint}/${resourceId}` to fetch a specific resource definition. 
 Issue a `GET` request as `${resourceSetEndpoint}` to fetch all resource definitions.
+
+### Permission Tickets
+
+Issue a `POST` request to `/oauth2.0/permission` with the payload body as:
+
+```json
+{
+    "claims": {"givenName":"CAS"},
+    "resource_id": 100,
+    "resource_scopes": ["read"]
+}
+```
+
+### Claims Collection
+
+Issue a `GET` request to `/oauth2.0/rqpClaims` with the following query parameters:
+
+- `client_id`
+- `redirect_uri`
+- `ticket`
+- `state` (Optional)
+
+### Discovery
+
+UMA discovery is available via `GET` at `/oauth2.0/.well-known/uma-configuration`.
+
+### Authorization
+
+Issue a `POST` request to `/oauth2.0/rptAuthzRequest` with the payload body as:
+
+```json
+{
+    "ticket": "...",
+    "rpt": "...",
+    "grant_type":"urn:ietf:params:oauth:grant-type:uma-ticket",
+    "claim_token": "...",
+    "claim_token_format": "..."
+}
+```
