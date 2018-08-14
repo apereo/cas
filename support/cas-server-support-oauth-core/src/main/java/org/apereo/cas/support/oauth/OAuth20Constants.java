@@ -287,6 +287,10 @@ public interface OAuth20Constants {
      * claims collection endpoint URL.
      */
     String UMA_CLAIMS_COLLECTION_URL = "rqpClaims";
+    /**
+     * URL endpoint that exposes JWKS for token signing.
+     */
+    String UMA_JWKS_URL = "umaJwks";
 
     /**
      * UMA protection scope.
