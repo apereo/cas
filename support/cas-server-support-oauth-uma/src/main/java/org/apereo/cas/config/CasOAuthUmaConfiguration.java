@@ -100,8 +100,9 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
     public IdTokenGeneratorService umaRequestingPartyTokenGenerator() {
+        val jwks = casProperties.getAuthn().getUma().getRequestingPartyToken().getJwksFile();
         return new UmaIdTokenGeneratorService(casProperties,
-            new UmaRequestingPartyTokenGeneratorService(), servicesManager, ticketRegistry);
+            new UmaRequestingPartyTokenGeneratorService(jwks), servicesManager, ticketRegistry);
     }
 
     @Bean
