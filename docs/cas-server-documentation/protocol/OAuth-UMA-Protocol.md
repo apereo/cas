@@ -19,3 +19,40 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#oauth2-uma).
+
+## Endpoints
+
+### Requesting Party Token
+
+Issue a `GET` request to `/oauth2.0/umaJwks` to retrieve signing keys.
+
+### Resources
+
+Resource-related operations are handled at endpoint `/oauth2.0/resourceSet`.
+
+#### Create
+
+The expected `POST` payload body is:
+
+```json
+{
+  "uri": "...",
+  "type": "...",
+  "name": "...",
+  "icon_uri": "...",
+  "resource_scopes": ["read","write"]
+}
+```
+
+#### Delete
+
+Issue a `DELETE` request as `${resourceSetEndpoint}/${resourceId}`
+
+#### Update
+
+Issue a `PUT` request as `${resourceSetEndpoint}/${resourceId}` with the payload body as one matching the `POST` method.
+
+#### Find
+
+Issue a `GET` request as `${resourceSetEndpoint}/${resourceId}` to fetch a specific resource definition. 
+Issue a `GET` request as `${resourceSetEndpoint}` to fetch all resource definitions.
