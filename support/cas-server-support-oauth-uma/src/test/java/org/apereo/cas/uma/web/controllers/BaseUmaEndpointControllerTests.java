@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 
 import static org.junit.Assert.*;
 
@@ -145,6 +146,7 @@ public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Test
         val policy = new ResourceSetPolicy();
         val perm = new ResourceSetPolicyPermission();
         perm.setScopes(new HashSet<>(scopes));
+        perm.setClaims(new LinkedHashMap<>(CollectionUtils.wrap("givenName", "CAS")));
         perm.setSubject(profile.getId());
         policy.setPermissions(CollectionUtils.wrapHashSet(perm));
         return policy;
