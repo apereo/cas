@@ -42,10 +42,9 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 public class OidcJwksEndpointController extends BaseOAuth20Controller {
-
-
     @NonNull
     private final Resource jwksFile;
+
     @Autowired
     private ResourceLoader resourceLoader;
 
