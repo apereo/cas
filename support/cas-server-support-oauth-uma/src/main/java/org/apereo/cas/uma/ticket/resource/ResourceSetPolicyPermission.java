@@ -16,6 +16,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 
 /**
  * This is {@link ResourceSetPolicyPermission}.
@@ -44,6 +45,10 @@ public class ResourceSetPolicyPermission implements Serializable {
     @Lob
     @Column
     private HashSet<String> scopes = new HashSet<>();
+
+    @Lob
+    @Column
+    private LinkedHashMap<String, Object> claims = new LinkedHashMap<>();
 
     public ResourceSetPolicyPermission() {
         id = Math.abs(RandomUtils.getNativeInstance().nextInt());

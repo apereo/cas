@@ -31,6 +31,11 @@ public class UmaProperties implements Serializable {
      */
     private PermissionTicket permissionTicket = new PermissionTicket();
 
+    /**
+     * Handles settings related to rpt tokens.
+     */
+    private RequestingPartyToken requestingPartyToken = new RequestingPartyToken();
+
     @RequiresModule(name = "cas-server-support-oauth-uma")
     @Getter
     @Setter
@@ -42,5 +47,17 @@ public class UmaProperties implements Serializable {
          */
         private String maxTimeToLiveInSeconds = "PT3M";
 
+    }
+
+    @RequiresModule(name = "cas-server-support-oauth-uma")
+    @Getter
+    @Setter
+    public static class RequestingPartyToken implements Serializable {
+        private static final long serialVersionUID = 3988708361481340920L;
+
+        /**
+         * Hard timeout to kill the access token and expire it.
+         */
+        private String maxTimeToLiveInSeconds = "PT3M";
     }
 }

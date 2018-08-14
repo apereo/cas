@@ -79,10 +79,12 @@ public class BasePasswordManagementService implements PasswordManagementService 
                 return null;
             }
 
-            if (claims.getExpirationTime().isBefore(NumericDate.now())) {
+            val expirationTime = claims.getExpirationTime();
+            if (expirationTime.isBefore(NumericDate.now())) {
                 LOGGER.error("Token has expired.");
                 return null;
             }
+
 
             return claims.getSubject();
         } catch (final Exception e) {

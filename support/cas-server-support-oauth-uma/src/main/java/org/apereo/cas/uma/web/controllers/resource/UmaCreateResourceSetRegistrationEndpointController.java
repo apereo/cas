@@ -2,7 +2,7 @@ package org.apereo.cas.uma.web.controllers.resource;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
@@ -49,7 +49,7 @@ public class UmaCreateResourceSetRegistrationEndpointController extends BaseUmaE
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity registerResourceSet(@RequestBody final String body, final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            val profileResult = getAuthenticatedProfile(request, response);
+            val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 
             val umaRequest = MAPPER.readValue(body, UmaResourceRegistrationRequest.class);
             if (umaRequest == null) {

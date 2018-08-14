@@ -25,16 +25,17 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.oidc.config.OidcConfiguration;
 import org.apereo.cas.oidc.discovery.OidcServerDiscoverySettings;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
-import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
-import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.ticket.IdTokenGeneratorService;
+import org.apereo.cas.ticket.IdTokenSigningAndEncryptionService;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -53,6 +54,7 @@ import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
@@ -107,6 +109,7 @@ import java.util.Optional;
     "cas.authn.oidc.issuer=https://sso.example.org/cas/oidc",
     "cas.authn.oidc.jwksFile=classpath:keystore.jwks"
 })
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class AbstractOidcTests {
 
     @ClassRule
@@ -120,12 +123,15 @@ public abstract class AbstractOidcTests {
     protected OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
 
     @Autowired
+    protected CasConfigurationProperties casProperties;
+
+    @Autowired
     @Qualifier("oidcDefaultJsonWebKeystoreCache")
     protected LoadingCache<String, Optional<RsaJsonWebKey>> oidcDefaultJsonWebKeystoreCache;
 
     @Autowired
     @Qualifier("oidcTokenSigningAndEncryptionService")
-    protected OidcIdTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService;
+    protected IdTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService;
 
     @Autowired
     @Qualifier("oidcServiceJsonWebKeystoreCache")
@@ -149,7 +155,7 @@ public abstract class AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcIdTokenGenerator")
-    protected OidcIdTokenGeneratorService oidcIdTokenGenerator;
+    protected IdTokenGeneratorService oidcIdTokenGenerator;
 
     @Before
     public void initialize() {

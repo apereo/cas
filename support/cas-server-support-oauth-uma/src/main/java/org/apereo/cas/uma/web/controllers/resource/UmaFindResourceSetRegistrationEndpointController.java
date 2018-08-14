@@ -2,7 +2,8 @@ package org.apereo.cas.uma.web.controllers.resource;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
@@ -49,8 +50,8 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity findResourceSets(final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            val profileResult = getAuthenticatedProfile(request, response);
-            val resources = umaResourceSetRepository.getByClient(getClientIdFromAuthenticatedProfile(profileResult));
+            val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
+            val resources = umaResourceSetRepository.getByClient(OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));
             val model = resources.stream().map(ResourceSet::getId).collect(Collectors.toSet());
             return new ResponseEntity(model, HttpStatus.OK);
         } catch (final Exception e) {
@@ -72,7 +73,7 @@ public class UmaFindResourceSetRegistrationEndpointController extends BaseUmaEnd
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity findResourceSet(@PathVariable("id") final long id, final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            val profileResult = getAuthenticatedProfile(request, response);
+            val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
 
             val resourceSetResult = umaResourceSetRepository.getById(id);
             if (!resourceSetResult.isPresent()) {

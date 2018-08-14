@@ -1,6 +1,7 @@
 package org.apereo.cas.uma.discovery;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.oauth.OAuth20ClaimTokenFormats;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.util.CollectionUtils;
@@ -47,7 +48,8 @@ public class UmaServerDiscoverySettings {
     private List<String> rptProfilesSupported = CollectionUtils.wrapList(OAuth20Constants.TOKEN_TYPE_BEARER);
 
     @JsonProperty("claim_token_profiles_supported")
-    private List<String> clientTokenProfilesSupported = new ArrayList<>();
+    private List<String> clientTokenProfilesSupported = CollectionUtils.wrapList(OAuth20ClaimTokenFormats.IDTOKEN.getType(),
+        OAuth20ClaimTokenFormats.JWT.getType());
 
     @JsonProperty("uma_profiles_supported")
     private List<String> umaProfilesSupported = new ArrayList<>();

@@ -114,8 +114,7 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
      * @since 4.1.0
      */
     private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model, final Service service) {
-        val authnAttributes = authenticationAttributeReleasePolicy
-            .getAuthenticationAttributesForRelease(getPrimaryAuthenticationFrom(model));
+        val authnAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(getPrimaryAuthenticationFrom(model));
         if (isRememberMeAuthentication(model)) {
             authnAttributes.put(this.rememberMeAttributeName, Boolean.TRUE.toString());
         }

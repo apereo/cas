@@ -2,7 +2,7 @@ package org.apereo.cas.uma.web.controllers.policy;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
 import org.apereo.cas.util.CollectionUtils;
@@ -54,7 +54,7 @@ public class UmaDeletePolicyForResourceSetEndpointController extends BaseUmaEndp
                                                     final HttpServletRequest request,
                                                     final HttpServletResponse response) {
         try {
-            val profileResult = getAuthenticatedProfile(request, response);
+            val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
             val resourceSetResult = umaResourceSetRepository.getById(resourceId);
             if (!resourceSetResult.isPresent()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
