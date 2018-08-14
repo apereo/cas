@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -76,7 +77,7 @@ public class UmaProperties implements Serializable {
             private static final long serialVersionUID = 210435146313504995L;
 
             public Jpa() {
-                super.setUrl("jdbc:hsqldb:mem:cas-uma-resourceset");
+                super.setUrl(StringUtils.EMPTY);
             }
         }
     }
