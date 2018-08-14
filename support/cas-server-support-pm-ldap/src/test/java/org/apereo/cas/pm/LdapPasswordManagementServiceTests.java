@@ -108,6 +108,8 @@ public class LdapPasswordManagementServiceTests {
         val questions = passwordChangeService.getSecurityQuestions("caspm");
         assertEquals(2, questions.size());
         assertTrue(questions.containsKey("RegisteredAddressQuestion"));
+        assertEquals("666", questions.get("RegisteredAddressQuestion"));
         assertTrue(questions.containsKey("PostalCodeQuestion"));
+        assertEquals("1776", questions.get("PostalCodeQuestion"));
     }
 }

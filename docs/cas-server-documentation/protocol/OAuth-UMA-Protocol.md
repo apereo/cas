@@ -63,8 +63,8 @@ Issue a `PUT` request as `/oauth2.0/${resourceId}/policy/${policyId}` with the p
 
 #### Find
 
-Issue a `GET` request as `/oauth2.0/${resourceId}/policy/` to fetch all policy definitions for a resource.
-Issue a `GET` request as `/oauth2.0/${resourceId}/policy/${policyId}` to a specific policy definition for a resource.
+- Issue a `GET` request as `/oauth2.0/${resourceId}/policy/` to fetch all policy definitions for a resource.
+- Issue a `GET` request as `/oauth2.0/${resourceId}/policy/${policyId}` to fetch a specific policy definition for a resource.
 
 ### Resources
 
@@ -94,8 +94,8 @@ Issue a `PUT` request as `${resourceSetEndpoint}/${resourceId}` with the payload
 
 #### Find
 
-Issue a `GET` request as `${resourceSetEndpoint}/${resourceId}` to fetch a specific resource definition. 
-Issue a `GET` request as `${resourceSetEndpoint}` to fetch all resource definitions.
+- Issue a `GET` request as `${resourceSetEndpoint}/${resourceId}` to fetch a specific resource definition. 
+- Issue a `GET` request as `${resourceSetEndpoint}` to fetch all resource definitions.
 
 ### Permission Tickets
 

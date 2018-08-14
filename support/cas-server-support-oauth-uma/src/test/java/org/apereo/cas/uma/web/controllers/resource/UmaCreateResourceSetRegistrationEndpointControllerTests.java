@@ -45,7 +45,7 @@ public class UmaCreateResourceSetRegistrationEndpointControllerTests extends Bas
         assertNotNull(response.getBody());
         model = (Map) response.getBody();
         assertTrue(model.containsKey("code"));
-        assertTrue(model.containsKey("entity"));
+        assertTrue(model.containsKey("ticket"));
 
     }
 }
