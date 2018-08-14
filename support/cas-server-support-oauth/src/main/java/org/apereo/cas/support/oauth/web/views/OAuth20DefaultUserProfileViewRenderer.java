@@ -48,9 +48,9 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
                 .stream()
                 .filter(k -> !k.equalsIgnoreCase(MODEL_ATTRIBUTE_ATTRIBUTES))
                 .forEach(k -> flattened.put(k, model.get(k)));
-            return OAuth20Utils.jsonify(flattened);
+            return OAuth20Utils.toJson(flattened);
         }
-        return OAuth20Utils.jsonify(model);
+        return OAuth20Utils.toJson(model);
 
     }
 }

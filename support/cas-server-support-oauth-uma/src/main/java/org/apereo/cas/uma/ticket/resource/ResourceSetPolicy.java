@@ -1,7 +1,9 @@
 package org.apereo.cas.uma.ticket.resource;
 
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.RandomUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,5 +46,15 @@ public class ResourceSetPolicy implements Serializable {
 
     public ResourceSetPolicy() {
         id = Math.abs(RandomUtils.getNativeInstance().nextInt());
+    }
+
+    /**
+     * As json string.
+     *
+     * @return the string
+     */
+    @JsonIgnore
+    public String toJson() {
+        return OAuth20Utils.toJson(this);
     }
 }

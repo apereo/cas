@@ -5,17 +5,24 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
+import org.apereo.cas.uma.claim.DefaultUmaResourceSetClaimPermissionExaminer;
+import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettingsFactory;
-import org.apereo.cas.uma.ticket.DefaultUmaPermissionTicketFactory;
-import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.ticket.permission.DefaultUmaPermissionTicketFactory;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.repository.DefaultResourceSetRepository;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
-import org.apereo.cas.uma.web.UmaRequestingPartyTokenAuthenticator;
+import org.apereo.cas.uma.ticket.rpt.UmaIdTokenGeneratorService;
+import org.apereo.cas.uma.ticket.rpt.UmaRequestingPartyTokenGeneratorService;
+import org.apereo.cas.uma.web.authn.UmaAuthorizationApiTokenAuthenticator;
+import org.apereo.cas.uma.web.authn.UmaRequestingPartyTokenAuthenticator;
 import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointController;
 import org.apereo.cas.uma.web.controllers.claims.UmaRequestingPartyClaimsCollectionEndpointController;
 import org.apereo.cas.uma.web.controllers.discovery.UmaWellKnownEndpointController;
@@ -33,6 +40,7 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import lombok.val;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.session.J2ESessionStore;
+import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
@@ -70,6 +78,10 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     private TicketRegistry ticketRegistry;
 
     @Autowired
+    @Qualifier("oauthTokenGenerator")
+    private OAuth20TokenGenerator oauthTokenGenerator;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean
@@ -79,10 +91,24 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
+    public UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer() {
+        return new DefaultUmaResourceSetClaimPermissionExaminer();
+    }
+
+    @Bean
+    public IdTokenGeneratorService umaRequestingPartyTokenGenerator() {
+        return new UmaIdTokenGeneratorService(casProperties,
+            new UmaRequestingPartyTokenGeneratorService(), servicesManager, ticketRegistry);
+    }
+
+    @Bean
     public UmaAuthorizationRequestEndpointController umaAuthorizationRequestEndpointController() {
         return new UmaAuthorizationRequestEndpointController(defaultUmaPermissionTicketFactory(),
             umaResourceSetRepository(),
-            casProperties, servicesManager, ticketRegistry);
+            casProperties, servicesManager,
+            ticketRegistry, oauthTokenGenerator,
+            umaResourceSetClaimPermissionExaminer(),
+            umaRequestingPartyTokenGenerator());
     }
 
     @Bean
@@ -171,23 +197,36 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public SecurityInterceptor umaSecurityInterceptor() {
+    public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor() {
         val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry);
-        val basicAuthClient = new HeaderClient(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER.concat(" "), authenticator);
-        basicAuthClient.setName("CAS_UMA_CLIENT_BASIC_AUTH");
-        val clients = Stream.of(basicAuthClient.getName()).collect(Collectors.joining(","));
-        val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), basicAuthClient);
+        return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH");
+    }
+
+    @Bean
+    public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor() {
+        val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry);
+        return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH");
+    }
+
+    private SecurityInterceptor getSecurityInterceptor(final Authenticator authenticator, final String clientName) {
+        val headerClient = new HeaderClient(HttpHeaders.AUTHORIZATION, OAuth20Constants.TOKEN_TYPE_BEARER.concat(" "), authenticator);
+        headerClient.setName(clientName);
+        val clients = Stream.of(headerClient.getName()).collect(Collectors.joining(","));
+        val config = new Config(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()), headerClient);
         config.setSessionStore(new J2ESessionStore());
         return new SecurityInterceptor(config, clients);
     }
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(umaSecurityInterceptor())
+        registry.addInterceptor(umaRequestingPartyTokenSecurityInterceptor())
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/*/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"));
+
+        registry.addInterceptor(umaAuthorizationApiTokenSecurityInterceptor())
+            .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL).concat("*"));
     }
 }

@@ -1,4 +1,4 @@
-package org.apereo.cas.uma.ticket;
+package org.apereo.cas.uma.ticket.permission;
 
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * This is {@link DefaultUmaPermissionTicketFactory}.
@@ -35,9 +36,9 @@ public class DefaultUmaPermissionTicketFactory implements UmaPermissionTicketFac
     }
 
     @Override
-    public UmaPermissionTicket create(final ResourceSet resourceSet, final Collection<String> scopes) {
+    public UmaPermissionTicket create(final ResourceSet resourceSet, final Collection<String> scopes, final Map<String, Object> claims) {
         val codeId = this.idGenerator.getNewTicketId(UmaPermissionTicket.PREFIX);
-        return new DefaultUmaPermissionTicket(codeId, resourceSet, this.expirationPolicy, scopes);
+        return new DefaultUmaPermissionTicket(codeId, resourceSet, this.expirationPolicy, scopes, claims);
     }
 
     @Override

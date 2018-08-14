@@ -2,7 +2,8 @@ package org.apereo.cas.uma.web.controllers.resource;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
+import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointController;
@@ -49,7 +50,7 @@ public class UmaDeleteResourceSetRegistrationEndpointController extends BaseUmaE
         produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteResourceSet(@PathVariable("id") final long id, final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            val profileResult = getAuthenticatedProfile(request, response);
+            val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
             val resourceSetResult = umaResourceSetRepository.getById(id);
             if (!resourceSetResult.isPresent()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
@@ -57,7 +58,7 @@ public class UmaDeleteResourceSetRegistrationEndpointController extends BaseUmaE
             }
             val resourceSet = resourceSetResult.get();
             resourceSet.validate(profileResult);
-            if (!resourceSet.getClientId().equalsIgnoreCase(getClientIdFromAuthenticatedProfile(profileResult))) {
+            if (!resourceSet.getClientId().equalsIgnoreCase(OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult))) {
                 throw new InvalidResourceSetException(HttpStatus.FORBIDDEN.value(), "Resource-set owner does not match the authenticated profile");
             }
             umaResourceSetRepository.remove(resourceSet);

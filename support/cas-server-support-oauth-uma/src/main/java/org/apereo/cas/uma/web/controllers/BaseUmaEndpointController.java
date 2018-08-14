@@ -3,17 +3,14 @@ package org.apereo.cas.uma.web.controllers;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.uma.ticket.UmaPermissionTicketFactory;
+import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.InvalidResourceSetException;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.pac4j.core.profile.CommonProfile;
@@ -22,9 +19,6 @@ import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Optional;
 
 /**
@@ -58,18 +52,21 @@ public abstract class BaseUmaEndpointController {
     /**
      * Gets authenticated profile.
      *
-     * @param request  the request
-     * @param response the response
+     * @param request            the request
+     * @param response           the response
+     * @param requiredPermission the required permission
      * @return the authenticated profile
      */
-    protected CommonProfile getAuthenticatedProfile(final HttpServletRequest request, final HttpServletResponse response) {
+    protected CommonProfile getAuthenticatedProfile(final HttpServletRequest request,
+                                                    final HttpServletResponse response,
+                                                    final String requiredPermission) {
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         val profile = (Optional<CommonProfile>) manager.get(true);
         if (profile == null || !profile.isPresent()) {
             throw new AuthenticationException("Unable to locate authenticated profile");
         }
         val p = profile.get();
-        if (!p.getPermissions().contains(OAuth20Constants.UMA_PROTECTION_SCOPE)) {
+        if (!p.getPermissions().contains(requiredPermission)) {
             throw new AuthenticationException("Authenticated profile does not carry the UMA protection scope");
         }
         return p;
@@ -98,18 +95,6 @@ public abstract class BaseUmaEndpointController {
             "message", message);
     }
 
-    /**
-     * Gets client id from authenticated profile.
-     *
-     * @param profile the profile
-     * @return the client id from authenticated profile
-     */
-    protected static String getClientIdFromAuthenticatedProfile(final CommonProfile profile) {
-        if (profile.containsAttribute(OAuth20Constants.CLIENT_ID)) {
-            return (String) profile.getAttribute(OAuth20Constants.CLIENT_ID);
-        }
-        return null;
-    }
 
     /**
      * Gets resource set uri location.
@@ -123,66 +108,4 @@ public abstract class BaseUmaEndpointController {
             + OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL + "/"
             + saved.getId();
     }
-
-    /**
-     * The type Uma authorization request.
-     */
-    @Data
-    public static class UmaAuthorizationRequest implements Serializable {
-        private static final long serialVersionUID = -5359723510084259980L;
-
-        @JsonProperty
-        private String ticket;
-
-        @JsonProperty
-        private String rpt;
-    }
-
-
-    /**
-     * The uma resource registration request.
-     */
-    @Data
-    public static class UmaResourceRegistrationRequest implements Serializable {
-        private static final long serialVersionUID = 3614209506339611242L;
-
-        @JsonProperty("_id")
-        private long id;
-
-        @JsonProperty
-        private String uri;
-
-        @JsonProperty
-        private String type;
-
-        @JsonProperty("icon_uri")
-        private String iconUri;
-
-        @JsonProperty
-        private String name;
-
-        @JsonProperty("resource_scopes")
-        private Collection<String> scopes;
-
-        /**
-         * As resource set.
-         *
-         * @param profileResult the profile result
-         * @return the resource set
-         */
-        @JsonIgnore
-        public ResourceSet asResourceSet(final CommonProfile profileResult) {
-            val resourceSet = new ResourceSet();
-            resourceSet.setIconUri(getIconUri());
-            resourceSet.setId(getId());
-            resourceSet.setName(getName());
-            resourceSet.setScopes(new HashSet<>(getScopes()));
-            resourceSet.setUri(getUri());
-            resourceSet.setType(getType());
-            resourceSet.setOwner(profileResult.getId());
-            resourceSet.setClientId(getClientIdFromAuthenticatedProfile(profileResult));
-            return resourceSet;
-        }
-    }
-
 }
