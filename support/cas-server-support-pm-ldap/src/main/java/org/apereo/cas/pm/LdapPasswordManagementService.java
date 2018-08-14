@@ -120,16 +120,19 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             if (LdapUtils.containsResultEntry(response)) {
                 val entry = response.getResult().getEntry();
                 LOGGER.debug("Located LDAP entry [{}] in the response", entry);
-                val qs = properties.getLdap().getSecurityQuestionsAttributes();
-                LOGGER.debug("Security question attributes are defined to be [{}]", qs);
+                val questionsAndAnswers = properties.getLdap().getSecurityQuestionsAttributes();
+                LOGGER.debug("Security question attributes are defined to be [{}]", questionsAndAnswers);
 
-                qs.forEach((k, v) -> {
-                    val q = entry.getAttribute(k);
-                    val a = entry.getAttribute(v);
-                    val value = q.getStringValue();
-                    if (q != null && a != null && StringUtils.isNotBlank(value) && StringUtils.isNotBlank(a.getStringValue())) {
-                        LOGGER.debug("Added security question [{}]", value);
-                        set.put(value, value);
+                questionsAndAnswers.forEach((k, v) -> {
+                    val questionAttribute = entry.getAttribute(k);
+                    val answerAttribute = entry.getAttribute(v);
+
+                    val question = questionAttribute.getStringValue();
+                    val answer = answerAttribute.getStringValue();
+
+                    if (questionAttribute != null && answerAttribute != null && StringUtils.isNotBlank(question) && StringUtils.isNotBlank(answer)) {
+                        LOGGER.debug("Added security question [{}] with answer [{}]", question, answer);
+                        set.put(question, answer);
                     }
                 });
             } else {
