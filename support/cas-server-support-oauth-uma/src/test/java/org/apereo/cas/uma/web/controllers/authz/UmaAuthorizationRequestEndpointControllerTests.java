@@ -6,6 +6,7 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
 
@@ -17,6 +18,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@TestPropertySource(properties = "cas.authn.uma.requestingPartyToken.jwksFile=classpath:uma-keystore.jwks")
 public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
     public void verifyAuthorizationOperation() throws Exception {
@@ -49,6 +51,9 @@ public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpo
         authzRequest.setTicket(permissionTicket);
         body = authzRequest.toJson();
         response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(body, results.getLeft(), results.getMiddle());
-
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        model = (Map) response.getBody();
+        assertTrue(model.containsKey("code"));
+        assertTrue(model.containsKey("rpt"));
     }
 }
