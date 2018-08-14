@@ -205,11 +205,8 @@ where REST credentials may be retrieved from a certificate embedded in the reque
 the usual and default username/password.
 
 This pattern may be of interest in cases where the internal network architecture hides
-the CAS server from external users behind firewall or a messaging bus and
-allows only trusted applications to connect to the CAS server.
-
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The X.509 feature over REST
-provides a tremendously convenient target for claiming user identities. To securely use this feature, network configuration <strong>MUST</strong> allow connections to the CAS server only from trusted hosts which in turn have strict security limitations and logging.</p></div>
+the CAS server from external users behind firewall, reverse proxy, or a messaging bus and
+allows only trusted applications to connect directly to the CAS server.
 
 Support is enabled by including the following in your overlay:
 
@@ -221,12 +218,22 @@ Support is enabled by including the following in your overlay:
 </dependency>
 ```
 
-### Request a Ticket Granting Ticket
+### Request a Ticket Granting Ticket (request body method)
+
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The X.509 feature over REST
+provides a tremendously convenient target for claiming user identities. To securely use this feature, 
+network configuration <strong>MUST</strong> allow connections to the CAS server 
+only from trusted hosts which in turn have strict security limitations and logging.</p></div>
 
 ```bash
 POST /cas/v1/tickets HTTP/1.0
 cert=<ascii certificate>
 ```
+
+### Request a Ticket Granting Ticket (TLS Client Authentication)
+
+The cas server should be configured for X509 authentication on the login page for
+this to function properly.
 
 #### Successful Response
 
