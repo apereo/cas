@@ -2,14 +2,10 @@ package org.apereo.cas.uma.claim;
 
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
-import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 
+import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link DefaultUmaResourceSetClaimPermissionExaminer}.
@@ -17,30 +13,39 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Slf4j
 public class DefaultUmaResourceSetClaimPermissionExaminer implements UmaResourceSetClaimPermissionExaminer {
     @Override
-    public Map<ResourceSetPolicyPermission, Collection<String>> examine(final ResourceSet rs, final UmaPermissionTicket ticket) {
-        val allUnmatched = new LinkedHashMap<ResourceSetPolicyPermission, Collection<String>>();
+    public UmaResourceSetClaimPermissionResult examine(final ResourceSet rs, final UmaPermissionTicket ticket) {
+        val result = new UmaResourceSetClaimPermissionResult();
         for (val policy : rs.getPolicies()) {
-            for (val perm : policy.getPermissions()) {
-                val unmatched = examinePermission(perm, ticket);
-                allUnmatched.put(perm, unmatched);
+            val details = new UmaResourceSetClaimPermissionResult.Details();
+
+            for (val permission : policy.getPermissions()) {
+                if (!permission.getScopes().containsAll(ticket.getScopes())) {
+                    LOGGER.debug("Policy permission [{}] does not contain all requested scopes [{}] from ticket [{}]",
+                        permission.getId(), ticket.getScopes(), ticket.getId());
+                    val delta = Sets.difference(permission.getScopes(), ticket.getScopes());
+                    details.getUnmatchedScopes().addAll(delta);
+                }
+
+                permission.getClaims().forEach((permClaimKey, permClaimValue) -> {
+                    val matched = ticket.getClaims()
+                        .entrySet()
+                        .stream()
+                        .anyMatch(entry -> entry.getKey().equalsIgnoreCase(permClaimKey) && entry.getValue().equals(permClaimValue));
+                    if (!matched) {
+                        LOGGER.debug("Policy permission [{}] does not contain all requested claims [{}] from ticket [{}]",
+                            permission.getId(), ticket.getClaims(), ticket.getId());
+                        details.getUnmatchedClaims().put(permClaimKey, permClaimValue);
+                    }
+                });
+
+                if (!details.isSatisfied()) {
+                    result.getDetails().put(permission.getId(), details);
+                }
             }
         }
-        return allUnmatched;
-    }
-
-    private Collection<String> examinePermission(final ResourceSetPolicyPermission permission, final UmaPermissionTicket ticket) {
-        val claimsUnmatched = new HashSet<String>();
-        permission.getClaims().forEach((permClaimKey, permClaimValue) -> {
-            val matched = ticket.getClaims()
-                .entrySet()
-                .stream()
-                .anyMatch(entry -> entry.getKey().equalsIgnoreCase(permClaimKey) && entry.getValue().equals(permClaimValue));
-            if (!matched) {
-                claimsUnmatched.add(permClaimKey);
-            }
-        });
-        return claimsUnmatched;
+        return result;
     }
 }
