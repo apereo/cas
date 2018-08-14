@@ -35,6 +35,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaCreateResourceSetRegistrat
 import org.apereo.cas.uma.web.controllers.resource.UmaDeleteResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
+import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.val;
@@ -113,6 +114,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
             ticketRegistry, oauthTokenGenerator,
             umaResourceSetClaimPermissionExaminer(),
             umaRequestingPartyTokenGenerator());
+    }
+
+    @Bean
+    public UmaRequestingPartyTokenJwksEndpointController umaRequestingPartyTokenJwksEndpointController() {
+        return new UmaRequestingPartyTokenJwksEndpointController(defaultUmaPermissionTicketFactory(),
+            umaResourceSetRepository(),
+            casProperties, servicesManager, ticketRegistry);
     }
 
     @Bean
