@@ -26,6 +26,37 @@ To see the relevant list of CAS properties for this feature, please [review this
 
 Issue a `GET` request to `/oauth2.0/umaJwks` to retrieve signing keys.
 
+### Policies
+
+#### Create
+
+Issue a `POST` request to `/oauth2.0/${resourceId}/policy` with the payload body as:
+
+```json
+{
+  "permissions": [{
+    "subject": "casuser",
+    "scopes": ["read","write"],
+    "claims": {
+        "givenName": "CAS"
+      }
+    }]
+}
+```
+
+#### Delete
+
+Issue a `DELETE` request as `/oauth2.0/${resourceId}/policy/${policyId}`
+
+#### Update
+
+Issue a `PUT` request as `/oauth2.0/${resourceId}/policy/${policyId}` with the payload body as one matching the `POST` method.
+
+#### Find
+
+Issue a `GET` request as `/oauth2.0/${resourceId}/policy/` to fetch all policy definitions for a resource.
+Issue a `GET` request as `/oauth2.0/${resourceId}/policy/${policyId}` to a specific policy definition for a resource.
+
 ### Resources
 
 Resource-related operations are handled at endpoint `/oauth2.0/resourceSet`.
