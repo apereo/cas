@@ -84,6 +84,8 @@ jobs:
   - stage: build
     script: ./ci/analyze-style.sh
   - stage: build
+    script: ./ci/analyze-bugs.sh
+  - stage: build
     if: type != pull_request
     script: ./ci/analyze-sonarqube.sh
   - stage: build
