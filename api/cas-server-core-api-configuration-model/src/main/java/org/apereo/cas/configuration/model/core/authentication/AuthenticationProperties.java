@@ -318,10 +318,4 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuthenticationAttributeReleaseProperties authenticationAttributeRelease = new AuthenticationAttributeReleaseProperties();
-
-    /**
-     * Whether CAS authentication/protocol attributes
-     * should be released as part of ticket validation.
-     */
-    private boolean releaseProtocolAttributes = true;
 }

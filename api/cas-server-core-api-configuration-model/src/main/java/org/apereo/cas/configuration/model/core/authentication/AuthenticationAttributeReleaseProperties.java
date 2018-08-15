@@ -22,6 +22,12 @@ public class AuthenticationAttributeReleaseProperties implements Serializable {
     private static final long serialVersionUID = 6123748197108749858L;
 
     /**
+     * Whether CAS authentication/protocol attributes
+     * should be released as part of ticket validation.
+     */
+    private boolean enabled = true;
+
+    /**
      * List of authentication attributes that should never be released.
      */
     private List<String> neverRelease = new ArrayList<>();

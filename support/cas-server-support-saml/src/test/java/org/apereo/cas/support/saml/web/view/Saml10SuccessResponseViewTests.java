@@ -60,13 +60,13 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         mgmr.load();
 
         this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString()),
-            mgmr, "attribute",
+            mgmr, 
             new Saml10ObjectBuilder(configBean),
             new DefaultArgumentExtractor(new SamlServiceFactory(new Saml10ObjectBuilder(configBean))),
             StandardCharsets.UTF_8.name(), 1000, 30,
             "testIssuer",
             "whatever",
-            new DefaultAuthenticationAttributeReleasePolicy());
+            new DefaultAuthenticationAttributeReleasePolicy("attribute"));
     }
 
     @Test
