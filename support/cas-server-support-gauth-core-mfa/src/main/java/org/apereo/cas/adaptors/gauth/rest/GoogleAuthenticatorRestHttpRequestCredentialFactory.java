@@ -8,6 +8,8 @@ import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactory implements Rest
     public static final String PARAMETER_NAME_GAUTH_OTP = "gauthotp";
     
     @Override
-    public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
         final String token = requestBody.getFirst(PARAMETER_NAME_GAUTH_OTP);
         LOGGER.debug("Google authenticator token in the request body: [{}]", token);
         if (StringUtils.isBlank(token)) {

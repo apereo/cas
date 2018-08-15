@@ -17,6 +17,6 @@ public class YubiKeyRestHttpRequestCredentialFactoryTests {
         final YubiKeyRestHttpRequestCredentialFactory f = new YubiKeyRestHttpRequestCredentialFactory();
         final LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add(YubiKeyRestHttpRequestCredentialFactory.PARAMETER_NAME_YUBIKEY_OTP, "token");
-        assertFalse(f.fromRequestBody(body).isEmpty());
+        assertFalse(f.fromRequest(null, body).isEmpty());
     }
 }
