@@ -105,7 +105,7 @@ jobs:
   - stage: test
     script: ./ci/tests/run-tests-simple.sh
   - stage: test
-    script: ./ci/tests/run-tests-restful.sh
+    script: ./ci/tests/restful/run-tests-restful.sh
   - stage: test
     script: ./ci/tests/cassandra/run-tests-cassandra.sh
   - stage: test
@@ -135,6 +135,9 @@ jobs:
   - stage: test
     script: ./ci/tests/postgres/run-tests-postgres.sh
   - stage: test
+    script: ./ci/tests/postgres/run-tests-mariadb.sh
+  - stage: test
     script: ./ci/tests/mongodb/run-tests-mongodb.sh
   - stage: test
     script: ./ci/tests/redis/run-tests-redis.sh
+

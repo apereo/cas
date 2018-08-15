@@ -49,7 +49,6 @@ if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
                 includeCategories "org.apereo.cas.category.PostgresCategory"
             }
         }
-
     }
 
     if ("MSSQLSERVER".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -58,7 +57,14 @@ if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
                 includeCategories "org.apereo.cas.category.MsSqlServerCategory"
             }
         }
+    }
 
+    if ("MARIADB".equalsIgnoreCase(rootProject.testCategoryType)) {
+        task testMariaDb(type: Test) {
+            useJUnit {
+                includeCategories "org.apereo.cas.category.MariaDbCategory"
+            }
+        }
     }
 }
 
@@ -173,6 +179,7 @@ test {
         excludeCategories "org.apereo.cas.category.MsSqlServerCategory"
         excludeCategories "org.apereo.cas.category.MySQLCategory"
         excludeCategories "org.apereo.cas.category.RestfulApiCategory"
+        excludeCategories "org.apereo.cas.category.MariaDbCategory"
     }
     onlyIf {
         "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType)
