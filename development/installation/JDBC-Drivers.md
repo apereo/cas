@@ -97,6 +97,7 @@ Available drivers are:
 | `org.hibernate.dialect.MySQLMyISAMDialect`   
 | `org.hibernate.dialect.MySQL5InnoDBDialect`   
 | `org.hibernate.dialect.MySQL57InnoDBDialect`  
+| `org.hibernate.dialect.MySQL8Dialect`
 
 ### PostgreSQL
 
