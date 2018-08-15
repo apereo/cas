@@ -39,5 +39,5 @@ public class RestProperties implements Serializable {
     /**
      * Flag that enables X509Certificate extraction from the request body for authentication.
      */
-    private boolean bodyAuth;
+    private boolean bodyAuth = true;
 }
