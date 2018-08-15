@@ -3,8 +3,6 @@ package org.apereo.cas.support.oauth.web;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
-import static org.junit.Assert.*;
-import org.junit.Test;
 
 import java.util.HashSet;
 
