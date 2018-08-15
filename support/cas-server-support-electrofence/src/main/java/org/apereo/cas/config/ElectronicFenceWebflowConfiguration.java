@@ -17,6 +17,7 @@ import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -98,7 +99,7 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
     @RefreshScope
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
                                                                                final AuthenticationSystemSupport authenticationSystemSupport) {
-        final CasWebflowEventResolver r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
+        val r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
             servicesManager,
             ticketRegistrySupport, warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,

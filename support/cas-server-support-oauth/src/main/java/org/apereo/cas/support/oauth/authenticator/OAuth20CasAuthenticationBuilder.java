@@ -30,7 +30,7 @@ import org.pac4j.core.profile.UserProfile;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -65,7 +65,7 @@ public class OAuth20CasAuthenticationBuilder {
     protected final CasConfigurationProperties casProperties;
 
     private static Map<String, Object> getPrincipalAttributesFromProfile(final UserProfile profile) {
-        val profileAttributes = new HashMap<String, Object>(profile.getAttributes());
+        val profileAttributes = new LinkedHashMap<String, Object>(profile.getAttributes());
         profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
         profileAttributes.remove(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
         profileAttributes.remove(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
@@ -139,6 +139,7 @@ public class OAuth20CasAuthenticationBuilder {
             .addAttribute("scopes", scopes)
             .addAttribute(OAuth20Constants.STATE, state)
             .addAttribute(OAuth20Constants.NONCE, nonce)
+            .addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
             .addCredential(metadata)
             .setPrincipal(newPrincipal)
             .setAuthenticationDate(ZonedDateTime.now())

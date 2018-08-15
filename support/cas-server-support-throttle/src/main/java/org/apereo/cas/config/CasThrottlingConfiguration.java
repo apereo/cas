@@ -2,9 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlan;
-import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlanConfigurer;
-import org.apereo.cas.web.support.DefaultAuthenticationThrottlingExecutionPlan;
+import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
+import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlanConfigurer;
+import org.apereo.cas.throttle.DefaultAuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;

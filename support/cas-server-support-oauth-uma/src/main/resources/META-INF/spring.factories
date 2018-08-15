@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasOAuthUmaConfiguration,\
+org.apereo.cas.config.CasOAuthUmaComponentSerializationConfiguration,\
+org.apereo.cas.config.CasOAuthUmaJpaConfiguration
