@@ -32,10 +32,8 @@ public class OAuth20AccessTokenControllerNoGrantTypeTests extends OAuth20AccessT
     }
 
     @Override
-    @Test
     public void verifyClientDisallowedAuthorizationCode() {
         // This test should never fail in this suite, so just doing nothing.
-        assertTrue(true);
     }
 
     // All the other tests should pass with overrides in this class.
