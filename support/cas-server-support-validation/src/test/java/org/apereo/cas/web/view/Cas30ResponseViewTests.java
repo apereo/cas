@@ -139,8 +139,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
 
     protected AbstractCasView getCasViewToRender(final ProtocolAttributeEncoder encoder, final View viewDelegated) {
         return new Cas30ResponseView(true, encoder, servicesManager,
-            "attribute",
-            viewDelegated, true, new DefaultAuthenticationAttributeReleasePolicy(),
+            viewDelegated, new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new DefaultCas30ProtocolAttributesRenderer());
     }

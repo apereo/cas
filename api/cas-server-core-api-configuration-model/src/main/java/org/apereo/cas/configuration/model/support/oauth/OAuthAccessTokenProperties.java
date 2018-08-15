@@ -30,10 +30,4 @@ public class OAuthAccessTokenProperties implements Serializable {
      * Essentially, this is an idle time out.
      */
     private String timeToKillInSeconds = "PT7200S";
-
-    /**
-     * Whether CAS authentication/protocol attributes
-     * should be released as part of this access token's validation.
-     */
-    private boolean releaseProtocolAttributes = true;
 }

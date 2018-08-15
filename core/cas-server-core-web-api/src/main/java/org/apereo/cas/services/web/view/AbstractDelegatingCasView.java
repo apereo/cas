@@ -1,8 +1,8 @@
 package org.apereo.cas.services.web.view;
 
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -32,11 +32,9 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     public AbstractDelegatingCasView(final boolean successResponse,
                                      final ProtocolAttributeEncoder protocolAttributeEncoder,
                                      final ServicesManager servicesManager,
-                                     final String authenticationContextAttribute,
                                      final View view,
                                      final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-            authenticationAttributeReleasePolicy);
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationAttributeReleasePolicy);
         this.view = view;
     }
 

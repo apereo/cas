@@ -62,13 +62,13 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator<Usern
             }
             val authentication = authenticationResult.getAuthentication();
             val principal = authentication.getPrincipal();
+            val attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
 
             val profile = new CommonProfile();
             val id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
             LOGGER.debug("Created profile id [{}]", id);
 
             profile.setId(id);
-            val attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
             profile.addAttributes(attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);
             credentials.setUserProfile(profile);

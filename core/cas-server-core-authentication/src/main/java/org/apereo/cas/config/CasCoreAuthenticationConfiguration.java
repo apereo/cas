@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CasViewConstants;
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -13,6 +12,7 @@ import org.apereo.cas.authentication.PolicyBasedAuthenticationManager;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -79,14 +79,19 @@ public class CasCoreAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy() {
-        val authenticationAttributeRelease =
-            casProperties.getAuthn().getAuthenticationAttributeRelease();
-        val policy = new DefaultAuthenticationAttributeReleasePolicy();
-        policy.setAttributesToRelease(authenticationAttributeRelease.getOnlyRelease());
-        val attributesToNeverRelease = CollectionUtils.wrapSet(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+        val release = casProperties.getAuthn().getAuthenticationAttributeRelease();
+        if (!release.isEnabled()) {
+            LOGGER.debug("CAS is configured to not release protocol-level authentication attributes.");
+            return AuthenticationAttributeReleasePolicy.noOp();
+        }
+
+        val attributesToNeverRelease = CollectionUtils.wrapSet(
+            CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
+            CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET,
             RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-        attributesToNeverRelease.addAll(authenticationAttributeRelease.getNeverRelease());
-        policy.setAttributesToNeverRelease(attributesToNeverRelease);
-        return policy;
+        attributesToNeverRelease.addAll(release.getNeverRelease());
+
+        return new DefaultAuthenticationAttributeReleasePolicy(release.getOnlyRelease(), attributesToNeverRelease,
+            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute());
     }
 }

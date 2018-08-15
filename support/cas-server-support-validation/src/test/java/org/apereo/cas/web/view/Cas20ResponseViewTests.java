@@ -89,7 +89,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             }
         };
         val view = new Cas20ResponseView(true, null,
-            null, "attribute", delegatedView, new DefaultAuthenticationAttributeReleasePolicy(),
+            null, delegatedView, new DefaultAuthenticationAttributeReleasePolicy("attribute"),
             new DefaultAuthenticationServiceSelectionPlan());
         view.render(modelAndView.getModel(), req, resp);
 

@@ -41,7 +41,7 @@ public class Cas10ResponseViewTests {
     public void verifySuccessView() throws Exception {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(true, null,
-            null, null, null);
+            null, null);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("yes\ntest\n", response.getContentAsString());
     }
@@ -50,7 +50,7 @@ public class Cas10ResponseViewTests {
     public void verifyFailureView() throws Exception {
         val response = new MockHttpServletResponse();
         val view = new Cas10ResponseView(false, null,
-            null, null, null);
+            null, null);
         view.render(this.model, new MockHttpServletRequest(), response);
         assertEquals("no\n\n", response.getContentAsString());
     }

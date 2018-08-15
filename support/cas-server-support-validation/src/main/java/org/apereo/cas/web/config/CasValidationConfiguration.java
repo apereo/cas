@@ -1,7 +1,6 @@
 package org.apereo.cas.web.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -12,6 +11,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
@@ -29,7 +29,6 @@ import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer
 import org.apereo.cas.web.view.attributes.InlinedCas30ProtocolAttributesRenderer;
 import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 
-import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -151,7 +150,6 @@ public class CasValidationConfiguration {
         return new Cas10ResponseView(true,
             protocolAttributeEncoder.getIfAvailable(),
             servicesManager,
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             authenticationAttributeReleasePolicy);
     }
 
@@ -161,7 +159,6 @@ public class CasValidationConfiguration {
         return new Cas10ResponseView(false,
             protocolAttributeEncoder.getIfAvailable(),
             servicesManager,
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             authenticationAttributeReleasePolicy);
     }
 
@@ -171,7 +168,6 @@ public class CasValidationConfiguration {
         return new Cas20ResponseView(true,
             protocolAttributeEncoder.getIfAvailable(),
             servicesManager,
-            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             cas2SuccessView,
             authenticationAttributeReleasePolicy,
             authenticationServiceSelectionPlan.getIfAvailable());
@@ -180,13 +176,9 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "cas3ServiceJsonView")
     public View cas3ServiceJsonView() {
-        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        val isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
         return new Cas30JsonResponseView(true,
             protocolAttributeEncoder.getIfAvailable(),
             servicesManager,
-            authenticationContextAttribute,
-            isReleaseProtocolAttributes,
             authenticationAttributeReleasePolicy,
             authenticationServiceSelectionPlan.getIfAvailable(),
             cas3ProtocolAttributesRenderer());
@@ -207,14 +199,10 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "cas3ServiceSuccessView")
     public View cas3ServiceSuccessView() {
-        val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        val isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
         return new Cas30ResponseView(true,
             protocolAttributeEncoder.getIfAvailable(),
             servicesManager,
-            authenticationContextAttribute,
             cas3SuccessView,
-            isReleaseProtocolAttributes,
             authenticationAttributeReleasePolicy,
             authenticationServiceSelectionPlan.getIfAvailable(),
             cas3ProtocolAttributesRenderer());
