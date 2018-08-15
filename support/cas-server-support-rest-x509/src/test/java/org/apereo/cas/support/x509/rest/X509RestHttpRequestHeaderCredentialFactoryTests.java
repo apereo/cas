@@ -45,7 +45,7 @@ public class X509RestHttpRequestHeaderCredentialFactoryTests {
         request.addHeader(HEADER, certStr);
 
         final Credential cred = factory.fromRequest(request, requestBody).iterator().next();
-        assertFalse(cred instanceof X509CertificateCredential);
+        assertFalse("cred is not right type: "+cred, cred instanceof X509CertificateCredential);
     }
 
     @Test
