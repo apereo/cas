@@ -138,6 +138,9 @@ public class JpaBeans {
         }
         properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
         properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
+        properties.put("hibernate.connection.useUnicode", Boolean.TRUE);
+        properties.put("hibernate.connection.characterEncoding", "UTF-8");
+        properties.put("hibernate.connection.charSet", "UTF-8");
         properties.putAll(jpaProperties.getProperties());
         bean.setJpaProperties(properties);
 
