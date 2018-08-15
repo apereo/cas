@@ -41,7 +41,7 @@ public class X509RestMultipartBodyCredentialFactoryTests {
         requestBody.add("cert", certStr);
 
         final Credential cred = factory.fromRequest(null, requestBody).iterator().next();
-        assertFalse(cred instanceof X509CertificateCredential);
+        assertTrue(cred instanceof X509CertificateCredential);
     }
 
     @Test
