@@ -2,6 +2,7 @@ package org.apereo.cas.pm.rest;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.pm.RestPasswordManagementConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
