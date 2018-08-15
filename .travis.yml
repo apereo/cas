@@ -137,7 +137,7 @@ jobs:
   - stage: test
     script: ./ci/tests/postgres/run-tests-postgres.sh
   - stage: test
-    script: ./ci/tests/postgres/run-tests-mariadb.sh
+    script: ./ci/tests/mariadb/run-tests-mariadb.sh
   - stage: test
     script: ./ci/tests/mongodb/run-tests-mongodb.sh
   - stage: test
