@@ -37,27 +37,27 @@ public class SamlIdPMetadataDocument {
 
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
-    @Column(name = "metadata", length = Integer.MAX_VALUE)
+    @Column(name = "metadata", length = 8_000)
     private String metadata;
 
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
-    @Column(name = "signingCertificate", length = Integer.MAX_VALUE)
+    @Column(name = "signingCertificate", length = 3_000)
     private String signingCertificate;
 
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
-    @Column(name = "signingKey", length = Integer.MAX_VALUE)
+    @Column(name = "signingKey", length = 3_000)
     private String signingKey;
 
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
-    @Column(name = "encryptionCertificate", length = Integer.MAX_VALUE)
+    @Column(name = "encryptionCertificate", length = 3_000)
     private String encryptionCertificate;
 
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
-    @Column(name = "encryptionKey", length = Integer.MAX_VALUE)
+    @Column(name = "encryptionKey", length = 3_000)
     private String encryptionKey;
 
     public SamlIdPMetadataDocument() {
