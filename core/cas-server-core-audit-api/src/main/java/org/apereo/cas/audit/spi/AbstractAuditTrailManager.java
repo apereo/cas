@@ -1,4 +1,4 @@
-package org.apereo.cas.audit;
+package org.apereo.cas.audit.spi;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

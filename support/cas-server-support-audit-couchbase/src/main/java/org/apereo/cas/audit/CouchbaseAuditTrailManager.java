@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;

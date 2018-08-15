@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import org.apereo.cas.audit.spi.AbstractAuditTrailManager;
 import org.apereo.cas.audit.spi.AuditActionContextJsonSerializer;
 import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
 import org.apereo.cas.util.CollectionUtils;
