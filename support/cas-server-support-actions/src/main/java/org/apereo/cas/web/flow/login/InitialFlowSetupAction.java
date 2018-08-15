@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.login;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -57,6 +58,7 @@ public class InitialFlowSetupAction extends AbstractAction {
 
             val selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
             val registeredService = this.servicesManager.findServiceBy(selectedService);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
             if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
                 LOGGER.debug("Placing registered service [{}] with id [{}] in context scope",
                     registeredService.getServiceId(),
