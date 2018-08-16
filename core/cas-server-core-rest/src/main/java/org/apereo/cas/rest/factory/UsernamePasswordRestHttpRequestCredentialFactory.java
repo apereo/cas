@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
     private int order;
 
     @Override
-    public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
         final String username = requestBody.getFirst(USERNAME);
         final String password = requestBody.getFirst(PASSWORD);
         if (username == null || password == null) {

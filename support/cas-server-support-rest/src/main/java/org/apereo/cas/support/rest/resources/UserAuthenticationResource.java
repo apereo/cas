@@ -58,7 +58,7 @@ public class UserAuthenticationResource {
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
         try {
-            final Collection<Credential> credential = this.credentialFactory.fromRequestBody(requestBody);
+            final Collection<Credential> credential = this.credentialFactory.fromRequest(request, requestBody);
             if (credential == null || credential.isEmpty()) {
                 throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
             }

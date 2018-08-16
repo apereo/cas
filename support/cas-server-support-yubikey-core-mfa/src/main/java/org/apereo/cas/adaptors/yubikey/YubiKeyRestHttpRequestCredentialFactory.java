@@ -7,6 +7,8 @@ import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +26,7 @@ public class YubiKeyRestHttpRequestCredentialFactory implements RestHttpRequestC
     public static final String PARAMETER_NAME_YUBIKEY_OTP = "yubikeyotp";
 
     @Override
-    public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
         final String otp = requestBody.getFirst(PARAMETER_NAME_YUBIKEY_OTP);
         LOGGER.debug("YubiKey token in the request body: [{}]", otp);
         if (StringUtils.isBlank(otp)) {

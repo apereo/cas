@@ -3740,6 +3740,8 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 ```properties
 # cas.rest.attributeName=
 # cas.rest.attributeValue=
+# cas.rest.headerAuth=
+# cas.rest.bodyAuth=
 ```
 
 ## Metrics
