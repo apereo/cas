@@ -64,6 +64,7 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationPrincipalConfiguration.class
 })
 public class BaseAcceptableUsagePolicyRepositoryTests {
+
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
