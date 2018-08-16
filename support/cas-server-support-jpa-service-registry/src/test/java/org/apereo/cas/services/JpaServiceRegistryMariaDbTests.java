@@ -13,11 +13,11 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@TestPropertySource(locations = "classpath:svcregmysql.properties")
+@TestPropertySource(locations = "classpath:svcregmariadb.properties")
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 3306)
 @Category(MySQLCategory.class)
-public class JpaServiceRegistryMySQLTests extends JpaServiceRegistryTests {
-    public JpaServiceRegistryMySQLTests(final Class<? extends RegisteredService> registeredServiceClass) {
+public class JpaServiceRegistryMariaDbTests extends JpaServiceRegistryTests {
+    public JpaServiceRegistryMariaDbTests(final Class<? extends RegisteredService> registeredServiceClass) {
         super(registeredServiceClass);
     }
 }
