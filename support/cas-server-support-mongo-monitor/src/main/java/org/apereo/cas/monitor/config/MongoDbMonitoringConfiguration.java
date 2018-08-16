@@ -8,8 +8,10 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
  * This is {@link MongoDbMonitoringConfiguration}.
@@ -25,11 +27,19 @@ public class MongoDbMonitoringConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public HealthIndicator mongoHealthIndicator() {
+    @RefreshScope
+    public MongoTemplate mongoHealthIndicatorTemplate() {
         val factory = new MongoDbConnectionFactory();
         val mongoProps = casProperties.getMonitor().getMongo();
-        val mongoTemplate = factory.buildMongoTemplate(mongoProps);
-        return new MongoDbHealthIndicator(mongoTemplate,
+        return factory.buildMongoTemplate(mongoProps);
+    }
+
+
+
+    @Bean
+    @RefreshScope
+    public HealthIndicator mongoHealthIndicator() {
+        return new MongoDbHealthIndicator(mongoHealthIndicatorTemplate(),
             casProperties.getMonitor().getWarn().getEvictionThreshold(),
             casProperties.getMonitor().getWarn().getThreshold());
     }

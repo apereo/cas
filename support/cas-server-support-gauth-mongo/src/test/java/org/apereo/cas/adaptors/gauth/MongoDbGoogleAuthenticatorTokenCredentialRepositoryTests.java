@@ -82,7 +82,16 @@ import static org.junit.Assert.*;
     CasCoreWebConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@TestPropertySource(locations = {"classpath:/mongogauth.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.mfa.gauth.mongo.host=localhost",
+    "cas.authn.mfa.gauth.mongo.port=27017",
+    "cas.authn.mfa.gauth.mongo.dropCollection=true",
+    "cas.authn.mfa.gauth.mongo.userId=root",
+    "cas.authn.mfa.gauth.mongo.password=secret",
+    "cas.authn.mfa.gauth.mongo.authenticationDatabaseName=admin",
+    "cas.authn.mfa.gauth.mongo.databaseName=gauth-token-credential",
+    "cas.authn.mfa.gauth.crypto.enabled=false"
+})
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Category(MongoDbCategory.class)

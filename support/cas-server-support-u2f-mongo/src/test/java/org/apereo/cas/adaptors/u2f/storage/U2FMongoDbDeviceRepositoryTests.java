@@ -27,7 +27,15 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     U2FMongoDbConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class})
-@TestPropertySource(locations = "classpath:/mongou2f.properties")
+@TestPropertySource(properties = {
+    "cas.authn.mfa.u2f.mongo.databaseName=mfa-trusted",
+    "cas.authn.mfa.u2f.mongo.host=localhost",
+    "cas.authn.mfa.u2f.mongo.port=27017",
+    "cas.authn.mfa.u2f.mongo.userId=root",
+    "cas.authn.mfa.u2f.mongo.password=secret",
+    "cas.authn.mfa.u2f.mongo.authenticationDatabaseName=admin",
+    "cas.authn.mfa.u2f.mongo.dropCollection=true"
+    })
 public class U2FMongoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
 
     @ClassRule

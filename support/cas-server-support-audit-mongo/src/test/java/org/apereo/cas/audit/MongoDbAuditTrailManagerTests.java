@@ -40,7 +40,16 @@ import static org.junit.Assert.*;
         CasWebApplicationServiceFactoryConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreWebConfiguration.class})
-@TestPropertySource(locations = {"classpath:/mongoaudit.properties"})
+@TestPropertySource(properties = {
+    "cas.audit.mongo.host=localhost",
+    "cas.audit.mongo.port=27017",
+    "cas.audit.mongo.dropCollection=true",
+    "cas.audit.mongo.asynchronous=false",
+    "cas.audit.mongo.userId=root",
+    "cas.audit.mongo.password=secret",
+    "cas.audit.mongo.databaseName=audit",
+    "cas.audit.mongo.authenticationDatabaseName=admin"
+})
 @Category(MongoDbCategory.class)
 public class MongoDbAuditTrailManagerTests {
 
