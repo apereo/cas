@@ -33,7 +33,12 @@ import static org.junit.Assert.*;
     MemcachedMonitorConfiguration.class,
     CasCoreUtilSerializationConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/monitor.properties"})
+@TestPropertySource(properties = {
+    "cas.monitor.memcached.servers=localhost:11212",
+    "cas.monitor.memcached.failureMode=Redistribute",
+    "cas.monitor.memcached.locatorType=ARRAY_MOD",
+    "cas.monitor.memcached.hashAlgorithm=FNV1A_64_HASH"
+})
 @DirtiesContext
 @Category(MemcachedCategory.class)
 public class MemcachedHealthIndicatorTests {

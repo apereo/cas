@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
     CasEventsInfluxDbRepositoryConfiguration.class
 })
 @Category(InfluxDbCategory.class)
-@TestPropertySource(locations = "classpath:influxdb-events.properties")
+@TestPropertySource(properties = "cas.events.influxDb.batchInterval=PT0.001S")
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class InfluxDbCasEventRepositoryTests {
 
