@@ -24,7 +24,10 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {RadiusConfiguration.class, RefreshAutoConfiguration.class})
-@TestPropertySource(locations = {"classpath:/radius2.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.radius.client.sharedSecret=NoSecret",
+    "cas.authn.radius.client.inetAddress=localhost,localguest"
+})
 public class RadiusConfigurationTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

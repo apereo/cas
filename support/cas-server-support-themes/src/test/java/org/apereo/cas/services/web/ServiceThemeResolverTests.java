@@ -59,7 +59,7 @@ import static org.mockito.Mockito.*;
     CasCoreUtilConfiguration.class,
     ThymeleafAutoConfiguration.class,
     RefreshAutoConfiguration.class})
-@TestPropertySource(locations = {"classpath:/castheme.properties"})
+@TestPropertySource(properties = "cas.theme.defaultThemeName=test")
 public class ServiceThemeResolverTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

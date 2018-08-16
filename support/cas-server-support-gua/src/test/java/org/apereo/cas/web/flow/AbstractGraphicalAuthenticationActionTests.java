@@ -68,7 +68,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreHttpConfiguration.class,
     CasCoreUtilConfiguration.class
 })
-@TestPropertySource(locations = "classpath:gua.properties")
+@TestPropertySource(properties = "cas.authn.gua.resource.location=classpath:image.jpg")
 public abstract class AbstractGraphicalAuthenticationActionTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

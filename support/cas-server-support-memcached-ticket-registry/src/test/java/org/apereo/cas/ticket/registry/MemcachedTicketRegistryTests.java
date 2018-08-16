@@ -32,7 +32,12 @@ import java.util.Collection;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/memcached.properties"})
+@TestPropertySource(properties = {
+    "cas.ticket.registry.memcached.servers=localhost:11211",
+    "cas.ticket.registry.memcached.failureMode=Redistribute",
+    "cas.ticket.registry.memcached.locatorType=ARRAY_MOD",
+    "cas.ticket.registry.memcached.hashAlgorithm=FNV1A_64_HASH"
+})
 @Category(CouchbaseCategory.class)
 public class MemcachedTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
     @Autowired

@@ -23,7 +23,12 @@ import static org.junit.Assert.*;
  * @since 5.2.0
  */
 @Import(MemcachedTicketRegistryConfiguration.class)
-@TestPropertySource(locations = {"classpath:/memcached-oauth.properties"})
+@TestPropertySource(properties = {
+    "cas.ticket.registry.memcached.servers=localhost:11211",
+    "cas.ticket.registry.memcached.failureMode=Redistribute",
+    "cas.ticket.registry.memcached.locatorType=ARRAY_MOD",
+    "cas.ticket.registry.memcached.hashAlgorithm=FNV1A_64_HASH"
+})
 @Category(MemcachedCategory.class)
 @ConditionalIgnore(condition = NoOpCondition.class, port = 11211)
 public class OAuth20AccessTokenControllerMemcachedTests extends AbstractOAuth20Tests {

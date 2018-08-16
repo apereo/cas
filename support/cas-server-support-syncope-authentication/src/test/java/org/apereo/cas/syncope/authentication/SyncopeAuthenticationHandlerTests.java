@@ -47,7 +47,7 @@ import java.nio.charset.StandardCharsets;
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
 })
-@TestPropertySource(locations = "classpath:syncope.properties")
+@TestPropertySource(properties = "cas.authn.syncope.url=http://localhost:8095")
 @Slf4j
 public class SyncopeAuthenticationHandlerTests {
     @ClassRule

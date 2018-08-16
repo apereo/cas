@@ -104,7 +104,10 @@ import static org.junit.Assert.*;
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreUtilConfiguration.class})
-@TestPropertySource(locations = {"classpath:/rest.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.samlIdp.metadata.rest.url=http://localhost:8078",
+    "cas.authn.samlIdp.metadata.location=file:/tmp"
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class RestSamlRegisteredServiceMetadataResolverTests {
 

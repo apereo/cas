@@ -29,7 +29,10 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(locations = "classpath:trusted-mfa-webflow.properties")
+@TestPropertySource(properties = {
+    "cas.authn.mfa.trusted.expiration=30",
+    "cas.authn.mfa.trusted.timeUnit=SECONDS"
+})
 public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Autowired

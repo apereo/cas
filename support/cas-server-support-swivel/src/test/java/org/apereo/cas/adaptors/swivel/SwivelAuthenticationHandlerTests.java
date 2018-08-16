@@ -89,7 +89,11 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     SwivelConfiguration.class,
     SwivelAuthenticationEventExecutionPlanConfiguration.class})
-@TestPropertySource(locations = {"classpath:/swivelauthn.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.mfa.swivel.swivelUrl=http://localhost:9191",
+    "cas.authn.mfa.swivel.sharedSecret=$ecret",
+    "cas.authn.mfa.swivel.ignoreSslErrors=true"
+})
 public class SwivelAuthenticationHandlerTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

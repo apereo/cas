@@ -34,7 +34,10 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     ClickatellSmsConfiguration.class
 })
-@TestPropertySource(locations = "classpath:clickatell.properties")
+@TestPropertySource(properties = {
+    "cas.smsProvider.clickatell.serverUrl=http://localhost:8099",
+    "cas.smsProvider.clickatell.token=DEMO_TOKEN"
+})
 public class ClickatellSmsSenderTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
