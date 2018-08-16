@@ -67,7 +67,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
         final String policyPattern = casProperties.getAuthn().getPm().getPolicyPattern();
         return (credential, bean) -> StringUtils.hasText(bean.getPassword())
             && bean.getPassword().equals(bean.getConfirmedPassword())
-            && bean.getPassword().matches(policyPattern);
+            && !bean.getPassword().matches(policyPattern);
     }
 
     @ConditionalOnMissingBean(name = "passwordChangeService")
