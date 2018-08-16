@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Credential;
 import org.springframework.core.Ordered;
 import org.springframework.util.MultiValueMap;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -15,14 +16,15 @@ import java.util.List;
  */
 @FunctionalInterface
 public interface RestHttpRequestCredentialFactory extends Ordered {
-
+    
     /**
-     * Create new Credential instances from HTTP request body.
-     *
-     * @param requestBody to construct Credential from
-     * @return Credential instance
+     * Create new Credential instances from HTTP request or requestBody.
+     * 
+     * @param request object to extract credentials from
+     * @param requestBody multipart/form-data request body to extract credentials from
+     * @return Credential instance(s)
      */
-    List<Credential> fromRequestBody(MultiValueMap<String, String> requestBody);
+    List<Credential> fromRequest(HttpServletRequest request, MultiValueMap<String, String> requestBody);
 
     @Override
     default int getOrder() {

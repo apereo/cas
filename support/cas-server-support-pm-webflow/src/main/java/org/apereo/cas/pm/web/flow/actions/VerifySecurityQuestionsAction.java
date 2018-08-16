@@ -32,17 +32,25 @@ public class VerifySecurityQuestionsAction extends AbstractAction {
 
         final Map<String, String> questions = passwordManagementService.getSecurityQuestions(username);
         final List<String> canonicalQuestions = BasePasswordManagementService.canonicalizeSecurityQuestions(questions);
+        LOGGER.debug("Canonical security questions are [{}]", canonicalQuestions);
+        
         final AtomicInteger i = new AtomicInteger(0);
         final long c = canonicalQuestions
             .stream()
             .filter(q -> {
                 final String answer = request.getParameter("q" + i.getAndIncrement());
-                return passwordManagementService.isValidSecurityQuestionAnswer(username, q, questions.get(q), answer);
+                final String answerOnRecord = questions.get(q);
+                final boolean result = passwordManagementService.isValidSecurityQuestionAnswer(username, q, answerOnRecord, answer);
+                LOGGER.trace("Validating security question [{}] with answer [{}] against provided answer [{}] by username [{}]: [{}]",
+                    q, answerOnRecord, answer, username, result);
+                return result;
             })
             .count();
+        
         if (c == questions.size()) {
             return success();
         }
+        LOGGER.error("Unable to validate answers to all security questions; only validated [{}] question(s) successfully", c);
         return error();
     }
 }
