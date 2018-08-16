@@ -729,6 +729,7 @@ If multiple attribute repository sources are defined, they are added into a list
 and their results are cached and merged.
 
 ```properties
+# A negative expirationTime disables attribute caching
 # cas.authn.attributeRepository.expirationTime=30
 # cas.authn.attributeRepository.expirationTimeUnit=MINUTES
 # cas.authn.attributeRepository.maximumCacheSize=10000
