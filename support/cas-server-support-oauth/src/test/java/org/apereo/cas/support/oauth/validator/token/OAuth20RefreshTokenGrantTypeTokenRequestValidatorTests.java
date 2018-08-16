@@ -31,28 +31,50 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
+    private static final String SUPPORTING_SERVICE_TICKET = "RT-SUPPORTING";
+    private static final String NON_SUPPORTING_SERVICE_TICKET = "RT-NON-SUPPORTING";
+    private static final String PROMISCUOUS_SERVICE_TICKET = "RT-PROMISCUOUS";
+
     private TicketRegistry ticketRegistry;
     private OAuth20TokenRequestValidator validator;
-    private OAuthRegisteredService registeredService;
+
+    private void registerTicket(final String name) {
+        val oauthCode = mock(RefreshToken.class);
+        when(oauthCode.getId()).thenReturn(name);
+        when(oauthCode.isExpired()).thenReturn(false);
+        when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
+        when(ticketRegistry.getTicket(eq(name))).thenReturn(oauthCode);
+    }
 
     @Before
     public void before() {
-        val oauthCode = mock(RefreshToken.class);
-        when(oauthCode.getId()).thenReturn("RT-12345678");
-        when(oauthCode.isExpired()).thenReturn(false);
-        when(oauthCode.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
+        final ServicesManager servicesManager = mock(ServicesManager.class);
+
+        final OAuthRegisteredService supportingService = RequestValidatorTestUtils.getService(
+                RegisteredServiceTestUtils.CONST_TEST_URL,
+                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET,
+                CollectionUtils.wrapHashSet(OAuth20GrantTypes.REFRESH_TOKEN));
+        final OAuthRegisteredService nonSupportingService = RequestValidatorTestUtils.getService(
+                RegisteredServiceTestUtils.CONST_TEST_URL2,
+                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET,
+                CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD));
+        final OAuthRegisteredService promiscuousService = RequestValidatorTestUtils.getPromiscousService(
+                RegisteredServiceTestUtils.CONST_TEST_URL3,
+                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET);
+        when(servicesManager.getAllServices()).thenReturn(CollectionUtils.wrapList(supportingService,
+                nonSupportingService, promiscuousService));
 
         this.ticketRegistry = mock(TicketRegistry.class);
-        when(ticketRegistry.getTicket(anyString())).thenReturn(oauthCode);
 
-        registeredService = new OAuthRegisteredService();
-        registeredService.setName("OAuthRegisteredService");
-        registeredService.setId(1);
-        registeredService.setServiceId("https://www.example.org");
-        registeredService.setClientId("client");
-        registeredService.setServiceId("secret");
-        val servicesManager = mock(ServicesManager.class);
-        when(servicesManager.getAllServices()).thenReturn(CollectionUtils.wrapList(registeredService));
+        registerTicket(SUPPORTING_SERVICE_TICKET);
+        registerTicket(NON_SUPPORTING_SERVICE_TICKET);
+        registerTicket(PROMISCUOUS_SERVICE_TICKET);
 
         this.validator = new OAuth20RefreshTokenGrantTypeTokenRequestValidator(
             new RegisteredServiceAccessStrategyAuditableEnforcer(), servicesManager,
@@ -61,25 +83,34 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
 
     @Test
     public void verifyOperation() {
-        val request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
 
-        val profile = new CommonProfile();
+        final CommonProfile profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("client");
+        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         val session = request.getSession(true);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
 
-        val response = new MockHttpServletResponse();
+        final MockHttpServletResponse response = new MockHttpServletResponse();
         request.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType());
-        request.setParameter(OAuth20Constants.CLIENT_ID, "client");
-        request.setParameter(OAuth20Constants.CLIENT_SECRET, "secret");
-        request.setParameter(OAuth20Constants.REFRESH_TOKEN, "RT-12345678");
+        request.setParameter(OAuth20Constants.CLIENT_ID, RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
+        request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
+        request.setParameter(OAuth20Constants.REFRESH_TOKEN, SUPPORTING_SERVICE_TICKET);
 
-
-        registeredService.setSupportedGrantTypes(CollectionUtils.wrapHashSet(OAuth20GrantTypes.REFRESH_TOKEN.getType()));
         assertTrue(this.validator.validate(new J2EContext(request, response)));
 
-        registeredService.setSupportedGrantTypes(CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD.getType()));
+        profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setParameter(OAuth20Constants.CLIENT_ID, RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
+        request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
+        request.setParameter(OAuth20Constants.REFRESH_TOKEN, NON_SUPPORTING_SERVICE_TICKET);
         assertFalse(this.validator.validate(new J2EContext(request, response)));
+
+        profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        request.setParameter(OAuth20Constants.CLIENT_ID, RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+        request.setParameter(OAuth20Constants.CLIENT_SECRET, RequestValidatorTestUtils.SHARED_SECRET);
+        request.setParameter(OAuth20Constants.REFRESH_TOKEN, PROMISCUOUS_SERVICE_TICKET);
+        assertTrue(this.validator.validate(new J2EContext(request, response)));
     }
 }

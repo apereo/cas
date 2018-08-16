@@ -14,6 +14,7 @@ import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeToke
 import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenControllerMemcachedTests;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenControllerTests;
+import org.apereo.cas.support.oauth.web.OAuth20AccessTokenControllerNoGrantTypeTests;
 import org.apereo.cas.support.oauth.web.OAuth20AuthorizeControllerTests;
 import org.apereo.cas.support.oauth.web.OAuth20ProfileControllerTests;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenGrantRequestAuditResourceResolverTests;
@@ -37,6 +38,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     OAuth20AccessTokenControllerTests.class,
+    OAuth20AccessTokenControllerNoGrantTypeTests.class,
     OAuth20AuthorizeControllerTests.class,
     OAuthAccessTokenExpirationPolicyTests.class,
     OAuthAccessTokenSovereignExpirationPolicyTests.class,

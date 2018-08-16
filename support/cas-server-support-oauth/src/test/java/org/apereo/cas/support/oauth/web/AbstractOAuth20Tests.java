@@ -93,10 +93,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -213,14 +211,35 @@ public abstract class AbstractOAuth20Tests {
         return CoreAuthenticationTestUtils.getPrincipal(ID, map);
     }
 
-    protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String secret) {
+    protected OAuthRegisteredService getRegisteredService(final String serviceId,
+                                                          final String secret,
+                                                          final HashSet<OAuth20GrantTypes> grantTypes) {
         val registeredServiceImpl = new OAuthRegisteredService();
         registeredServiceImpl.setName("The registered service name");
         registeredServiceImpl.setServiceId(serviceId);
         registeredServiceImpl.setClientId(CLIENT_ID);
         registeredServiceImpl.setClientSecret(secret);
         registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        registeredServiceImpl.setSupportedGrantTypes(
+                grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new)));
         return registeredServiceImpl;
+    }
+
+    protected OAuthRegisteredService addRegisteredService(final HashSet<OAuth20GrantTypes> grantTypes) {
+        return addRegisteredService(false, grantTypes);
+    }
+
+    protected OAuthRegisteredService addRegisteredService() {
+        return addRegisteredService(false, new HashSet<>());
+    }
+
+
+    protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken,
+                                                          final HashSet<OAuth20GrantTypes> grantTypes) {
+        final OAuthRegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, grantTypes);
+        registeredService.setGenerateRefreshToken(generateRefreshToken);
+        servicesManager.save(registeredService);
+        return registeredService;
     }
 
     protected static Authentication getAuthentication(final Principal principal) {
@@ -237,15 +256,8 @@ public abstract class AbstractOAuth20Tests {
             .build();
     }
 
-    protected OAuthRegisteredService addRegisteredService() {
-        return addRegisteredService(false);
-    }
-
     protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken) {
-        val registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
-        registeredService.setGenerateRefreshToken(generateRefreshToken);
-        servicesManager.save(registeredService);
-        return registeredService;
+        return addRegisteredService(generateRefreshToken, new HashSet<>());
     }
 
     protected OAuthCode addCode(final Principal principal, final OAuthRegisteredService registeredService) {
