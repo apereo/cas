@@ -2,6 +2,7 @@ package org.apereo.cas.impl.account;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -32,6 +33,7 @@ import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -80,6 +82,7 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.passwordless.accounts.rest.url=http://localhost:9291")
+@Category(RestfulApiCategory.class)
 public class RestfulPasswordlessUserAccountStoreTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

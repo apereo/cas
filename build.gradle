@@ -328,6 +328,8 @@ subprojects {
             reportLevel = "low"
             includeFilter = file("$rootProject.projectDir/style/findbugs-rules.xml")
             excludeFilter = file("$rootProject.projectDir/style/findbugs-excludes.xml")
+            //jvmArgs = ["-Xms2g", "-Xmx4g"]
+            extraArgs = ["maxHeap 4000"]
         }
 
         [spotbugsMain, spotbugsTest].each {

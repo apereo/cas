@@ -1,11 +1,13 @@
 package org.apereo.cas.rest.audit;
 
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -19,6 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Category(RestfulApiCategory.class)
 public class RestResponseEntityAuditResourceResolverTests {
     @Test
     public void verifyAction() {

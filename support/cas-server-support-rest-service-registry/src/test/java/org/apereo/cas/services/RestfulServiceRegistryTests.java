@@ -1,11 +1,13 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.RestServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpStatus;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +47,7 @@ import java.util.Collection;
     MetricsAutoConfiguration.class
 })
 @TestPropertySource(locations = "classpath:restful-svc.properties")
+@Category(RestfulApiCategory.class)
 public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired

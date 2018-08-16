@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.policy;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -17,6 +18,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,6 +59,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
     CasCoreTicketCatalogConfiguration.class
 })
 @DirtiesContext
+@Category(RestfulApiCategory.class)
 public class RestfulAuthenticationPolicyTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

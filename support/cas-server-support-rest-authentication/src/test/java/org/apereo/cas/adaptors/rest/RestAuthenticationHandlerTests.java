@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -27,6 +28,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -51,9 +53,11 @@ import javax.security.auth.login.FailedLoginException;
 import java.io.StringWriter;
 
 import static org.junit.Assert.*;
-import static org.springframework.test.web.client.ExpectedCount.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
+import static org.springframework.test.web.client.ExpectedCount.manyTimes;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 /**
  * This is {@link RestAuthenticationHandlerTests}.
@@ -61,7 +65,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@SpringBootTest(classes = {CasRestAuthenticationConfiguration.class,
+@SpringBootTest(classes = {
+    CasRestAuthenticationConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
@@ -83,6 +88,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @EnableScheduling
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@Category(RestfulApiCategory.class)
 public class RestAuthenticationHandlerTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

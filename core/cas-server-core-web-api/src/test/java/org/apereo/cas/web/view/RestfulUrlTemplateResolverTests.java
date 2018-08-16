@@ -1,10 +1,12 @@
 package org.apereo.cas.web.view;
 
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.thymeleaf.IEngineConfiguration;
@@ -21,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Category(RestfulApiCategory.class)
 public class RestfulUrlTemplateResolverTests {
     @Test
     public void verifyAction() {

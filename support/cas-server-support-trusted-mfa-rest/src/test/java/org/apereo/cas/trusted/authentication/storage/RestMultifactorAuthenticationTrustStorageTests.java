@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -19,6 +20,7 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +43,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Category(RestfulApiCategory.class)
 @SpringBootTest(classes = {
     RestMultifactorAuthenticationTrustConfiguration.class,
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,

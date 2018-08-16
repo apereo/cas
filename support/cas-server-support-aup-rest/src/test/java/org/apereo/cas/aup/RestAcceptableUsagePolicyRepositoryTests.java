@@ -1,12 +1,14 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -26,6 +28,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Category(RestfulApiCategory.class)
 public class RestAcceptableUsagePolicyRepositoryTests {
     @Test
     public void verify() {

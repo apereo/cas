@@ -3,14 +3,14 @@ source ./ci/functions.sh
 
 runBuild=false
 echo "Reviewing changes that might affect the Gradle build..."
-currentChangeSetAffectsStyle
+currentChangeSetAffectsTests
 retval=$?
 if [ "$retval" == 0 ]
 then
-    echo "Found changes that require the build to run static analysis."
+    echo "Found changes that require the build to run test cases."
     runBuild=true
 else
-    echo "Changes do NOT affect project static analysis."
+    echo "Changes do NOT affect project test cases."
     runBuild=false
 fi
 
@@ -21,18 +21,19 @@ fi
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=RESTFUL "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-echo -e "Installing NPM...\n"
-./gradlew npmInstall --stacktrace -q
+gradleBuild="$gradleBuild testRestful coveralls -x test -x javadoc -x check \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
-gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
-     -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel -DshowStandardStreams=true "
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
+    gradleBuild="$gradleBuild -DshowStandardStreams=true "
+fi
 
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
