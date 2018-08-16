@@ -35,7 +35,10 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class})
-@TestPropertySource(locations = {"classpath:/rest-attribute-repository.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.attributeRepository.rest[0].method=GET",
+    "cas.authn.attributeRepository.rest[0].url=http://localhost:8085"
+})
 @Category(RestfulApiCategory.class)
 public class RestfulPersonAttributeDaoTests {
     @ClassRule
