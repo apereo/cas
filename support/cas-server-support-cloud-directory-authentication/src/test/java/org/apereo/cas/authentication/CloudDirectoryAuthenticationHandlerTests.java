@@ -28,7 +28,10 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
-@TestPropertySource(locations = {"classpath:/clouddirectory.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.cloudDirectory.usernameAttributeName=username",
+    "cas.authn.cloudDirectory.passwordAttributeName=password"
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CloudDirectoryAuthenticationHandlerTests {
     @ClassRule

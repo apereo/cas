@@ -26,7 +26,11 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class})
-@TestPropertySource(locations = {"classpath:/persondirectory.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.attributeRepository.stub.attributes.uid=uid",
+    "cas.authn.attributeRepository.stub.attributes.givenName=givenName",
+    "cas.authn.attributeRepository.stub.attributes.eppn=eppn"
+})
 public class CachingAttributeRepositoryTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
