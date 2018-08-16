@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.gauth.repository.credentials;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.model.support.mfa.GoogleAuthenticatorMultifactorProperties;
 import org.apereo.cas.util.MockWebServer;
@@ -14,6 +15,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -38,6 +40,7 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class
 })
+@Category(RestfulApiCategory.class)
 public class RestGoogleAuthenticatorTokenCredentialRepositoryTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

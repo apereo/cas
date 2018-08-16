@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.decorator;
 
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.model.webapp.WebflowLoginDecoratorProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
@@ -24,6 +26,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Category(RestfulApiCategory.class)
 public class RestfulLoginWebflowDecoratorTests {
     @Test
     public void verifyOperation() {
