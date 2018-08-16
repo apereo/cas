@@ -1,6 +1,6 @@
-package org.apereo.cas.adaptors.gauth;
+package org.apereo.cas.adaptors.gauth.token;
 
-import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
+import org.apereo.cas.adaptors.gauth.credential.JpaGoogleAuthenticatorTokenCredentialRepositoryTests;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
