@@ -962,10 +962,9 @@ release. If you wish to restrict which authentication attributes get released, y
 Protocol/authentication attributes may also be released conditionally on a per-service basis. To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
 
 ```properties
-# cas.authn.releaseProtocolAttributes=true
-
 # cas.authn.authenticationAttributeRelease.onlyRelease=authenticationDate,isFromNewLogin
 # cas.authn.authenticationAttributeRelease.neverRelease=
+# cas.authn.authenticationAttributeRelease.enabled=true
 ```
 
 ## Principal Resolution
@@ -2822,7 +2821,6 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.code.timeToKillInSeconds=30
 # cas.authn.oauth.code.numberOfUses=1
 
-# cas.authn.oauth.accessToken.releaseProtocolAttributes=true
 # cas.authn.oauth.accessToken.timeToKillInSeconds=7200
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 
