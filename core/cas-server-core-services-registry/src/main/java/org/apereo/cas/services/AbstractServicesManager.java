@@ -238,8 +238,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
     }
 
     private RegisteredService checkServiceExpirationPolicyIfAny(final RegisteredService registeredService) {
-        if (registeredService == null
-            || RegisteredServiceAccessStrategyUtils.ensureServiceIsNotExpired(registeredService)) {
+        if (registeredService == null || RegisteredServiceAccessStrategyUtils.ensureServiceIsNotExpired(registeredService)) {
             return registeredService;
         }
         return processExpiredRegisteredService(registeredService);
