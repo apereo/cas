@@ -45,8 +45,7 @@ public class PasswordChangeAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         try {
             val c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
-            val bean = requestContext.getFlowScope()
-                .get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
+            val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
 
             if (!passwordValidationService.isValid(c, bean)) {
                 return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
