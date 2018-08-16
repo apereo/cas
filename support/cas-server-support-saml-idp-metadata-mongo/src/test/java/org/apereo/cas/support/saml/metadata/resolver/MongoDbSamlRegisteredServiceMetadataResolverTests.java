@@ -6,11 +6,11 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
@@ -21,20 +21,28 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@TestPropertySource(locations = {"classpath:/samlsp-mongo.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.samlIdp.metadata.mongo.databaseName=saml-idp-resolver",
+    "cas.authn.samlIdp.metadata.mongo.dropCollection=true",
+    "cas.authn.samlIdp.metadata.mongo.collection=samlResolver",
+    "cas.authn.samlIdp.metadata.mongo.host=localhost",
+    "cas.authn.samlIdp.metadata.mongo.port=27017",
+    "cas.authn.samlIdp.metadata.mongo.userId=root",
+    "cas.authn.samlIdp.metadata.mongo.password=secret",
+    "cas.authn.samlIdp.metadata.mongo.authenticationDatabaseName=admin",
+    "cas.authn.samlIdp.metadata.mongo.idpMetadataCollection=saml-idp-metadata-resolver",
+    "cas.authn.samlIdp.metadata.location=file:/tmp"
+    })
 public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
-    @Before
-    public void initialize() throws Exception {
+    @Test
+    public void verifyResolver() throws IOException {
         val mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
         val res = new ClassPathResource("sp-metadata.xml");
         val md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
-        mongoDbSamlMetadataResolverTemplate.save(md, mongo.getCollection());
-    }
+        resolver.saveOrUpdate(md);
 
-    @Test
-    public void verifyResolver() {
         val service = new SamlRegisteredService();
         service.setName("SAML Service");
         service.setServiceId("https://carmenwiki.osu.edu/shibboleth");
@@ -42,6 +50,6 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongo
         service.setMetadataLocation("mongodb://");
         assertTrue(resolver.supports(service));
         val resolvers = resolver.resolve(service);
-        assertTrue(resolvers.size() == 1);
+        assertEquals(1, resolvers.size());
     }
 }

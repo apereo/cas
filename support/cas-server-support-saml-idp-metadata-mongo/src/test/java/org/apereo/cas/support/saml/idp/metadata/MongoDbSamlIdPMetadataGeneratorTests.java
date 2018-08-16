@@ -13,7 +13,16 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@TestPropertySource(locations = {"classpath:/samlidp-mongo.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.samlIdp.metadata.mongo.databaseName=saml-idp-generator",
+    "cas.authn.samlIdp.metadata.mongo.host=localhost",
+    "cas.authn.samlIdp.metadata.mongo.port=27017",
+    "cas.authn.samlIdp.metadata.mongo.userId=root",
+    "cas.authn.samlIdp.metadata.mongo.password=secret",
+    "cas.authn.samlIdp.metadata.mongo.authenticationDatabaseName=admin",
+    "cas.authn.samlIdp.metadata.mongo.dropCollection=true",
+    "cas.authn.samlIdp.metadata.mongo.idpMetadataCollection=saml-idp-metadata"
+    })
 public class MongoDbSamlIdPMetadataGeneratorTests extends BaseMongoDbSamlMetadataTests {
     @Test
     public void verifyOperation() {
