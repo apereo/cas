@@ -81,7 +81,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
         val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
 
-        if (!isGrandTypeSupportedBy(registeredService, grantType)) {
+        if (!isGrantTypeSupportedBy(registeredService, grantType)) {
             LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", getGrantType(), registeredService.getServiceId());
             return false;
         }

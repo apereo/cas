@@ -70,24 +70,24 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
     }
 
     /**
-     * Is grand type supported.
+     * Is grant type supported.
      *
      * @param registeredService the registered service
      * @param type              the type
      * @return the boolean
      */
-    protected boolean isGrandTypeSupportedBy(final OAuthRegisteredService registeredService, final OAuth20GrantTypes type) {
-        return isGrandTypeSupportedBy(registeredService, type.getType());
+    protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final OAuth20GrantTypes type) {
+        return OAuth20Utils.isAuthorizedGrantTypeForService(type.getType(), registeredService);
     }
 
     /**
-     * Is grand type supported service.
+     * Is grant type supported service.
      *
      * @param registeredService the registered service
      * @param type              the type
      * @return true/false
      */
-    protected boolean isGrandTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
+    protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
         if (registeredService == null) {
             LOGGER.warn("No registered service definition was supplied to examine for supported grant types");
             return false;

@@ -80,7 +80,7 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidator extends Base
                 return false;
             }
 
-            if (!isGrandTypeSupportedBy(clientRegisteredService, grantType)) {
+            if (!isGrantTypeSupportedBy(clientRegisteredService, grantType)) {
                 LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", getGrantType(), clientRegisteredService.getServiceId());
                 return false;
             }
