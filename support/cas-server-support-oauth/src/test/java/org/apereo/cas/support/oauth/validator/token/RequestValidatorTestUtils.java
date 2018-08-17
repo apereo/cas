@@ -1,10 +1,13 @@
 package org.apereo.cas.support.oauth.validator.token;
+
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import lombok.val;
+
 import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import lombok.val;
 
 /**
  * Some utils for creating test services for request validator testing.
@@ -21,7 +24,7 @@ public class RequestValidatorTestUtils {
                                                     final String name,
                                                     final String clientId,
                                                     final String clientSecret,
-                                                    final HashSet<OAuth20GrantTypes> grantTypes) {
+                                                    final Set<OAuth20GrantTypes> grantTypes) {
         val registeredService = new OAuthRegisteredService();
         registeredService.setName(name);
         registeredService.setClientId(clientId);

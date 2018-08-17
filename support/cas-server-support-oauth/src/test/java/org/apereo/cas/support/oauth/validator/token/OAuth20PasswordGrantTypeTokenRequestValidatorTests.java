@@ -44,13 +44,13 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
                 RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SHARED_SECRET,
-                CollectionUtils.wrapHashSet(getGrantType()));
+                CollectionUtils.wrapSet(getGrantType()));
         nonSupportingService = RequestValidatorTestUtils.getService(
                 RegisteredServiceTestUtils.CONST_TEST_URL2,
                 RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SHARED_SECRET,
-                CollectionUtils.wrapHashSet(getWrongGrantType()));
+                CollectionUtils.wrapSet(getWrongGrantType()));
         promiscuousService = RequestValidatorTestUtils.getPromiscousService(
                 RegisteredServiceTestUtils.CONST_TEST_URL3,
                 RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
@@ -67,8 +67,8 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
     @Test
     public void verifyOperation() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        val response = new MockHttpServletResponse();
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, "unsupported");
         assertFalse(this.validator.validate(new J2EContext(request, response)));

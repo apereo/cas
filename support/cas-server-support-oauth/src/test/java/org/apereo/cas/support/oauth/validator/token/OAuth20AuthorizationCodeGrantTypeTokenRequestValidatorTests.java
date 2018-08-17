@@ -17,6 +17,8 @@ import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 import org.pac4j.core.context.J2EContext;
@@ -27,7 +29,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.HashSet;
 
-import lombok.val;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -63,20 +64,20 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
 
     @Before
     public void before() {
-        final ServicesManager serviceManager = mock(ServicesManager.class);
-        final OAuthRegisteredService supportingService = RequestValidatorTestUtils.getService(
+        val serviceManager = mock(ServicesManager.class);
+        val supportingService = RequestValidatorTestUtils.getService(
                 RegisteredServiceTestUtils.CONST_TEST_URL,
                 RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SHARED_SECRET,
-                CollectionUtils.wrapHashSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
-        final OAuthRegisteredService nonSupportingService = RequestValidatorTestUtils.getService(
+                CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+        val nonSupportingService = RequestValidatorTestUtils.getService(
                 RegisteredServiceTestUtils.CONST_TEST_URL2,
                 RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
                 RequestValidatorTestUtils.SHARED_SECRET,
-                CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD));
-        final OAuthRegisteredService promiscuousService = RequestValidatorTestUtils.getPromiscousService(
+                CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
+        val promiscuousService = RequestValidatorTestUtils.getPromiscousService(
                 RegisteredServiceTestUtils.CONST_TEST_URL3,
                 RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
                 RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,

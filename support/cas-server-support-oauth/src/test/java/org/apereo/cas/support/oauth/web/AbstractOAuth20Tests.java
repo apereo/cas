@@ -93,7 +93,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -213,7 +218,7 @@ public abstract class AbstractOAuth20Tests {
 
     protected OAuthRegisteredService getRegisteredService(final String serviceId,
                                                           final String secret,
-                                                          final HashSet<OAuth20GrantTypes> grantTypes) {
+                                                          final Set<OAuth20GrantTypes> grantTypes) {
         val registeredServiceImpl = new OAuthRegisteredService();
         registeredServiceImpl.setName("The registered service name");
         registeredServiceImpl.setServiceId(serviceId);
@@ -225,7 +230,7 @@ public abstract class AbstractOAuth20Tests {
         return registeredServiceImpl;
     }
 
-    protected OAuthRegisteredService addRegisteredService(final HashSet<OAuth20GrantTypes> grantTypes) {
+    protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes) {
         return addRegisteredService(false, grantTypes);
     }
 
@@ -235,11 +240,16 @@ public abstract class AbstractOAuth20Tests {
 
 
     protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken,
-                                                          final HashSet<OAuth20GrantTypes> grantTypes) {
-        final OAuthRegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, grantTypes);
+                                                          final Set<OAuth20GrantTypes> grantTypes) {
+        val registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, grantTypes);
         registeredService.setGenerateRefreshToken(generateRefreshToken);
         servicesManager.save(registeredService);
         return registeredService;
+    }
+
+
+    protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken) {
+        return addRegisteredService(generateRefreshToken, new HashSet<>());
     }
 
     protected static Authentication getAuthentication(final Principal principal) {
@@ -254,10 +264,6 @@ public abstract class AbstractOAuth20Tests {
             .addCredential(metadata)
             .addSuccess(principal.getClass().getCanonicalName(), handlerResult)
             .build();
-    }
-
-    protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken) {
-        return addRegisteredService(generateRefreshToken, new HashSet<>());
     }
 
     protected OAuthCode addCode(final Principal principal, final OAuthRegisteredService registeredService) {
