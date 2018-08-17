@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;

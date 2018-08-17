@@ -1,5 +1,9 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.handler;
 
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationHandlerResolver;
+import org.apereo.cas.authentication.AuthenticationTransaction;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
+import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;

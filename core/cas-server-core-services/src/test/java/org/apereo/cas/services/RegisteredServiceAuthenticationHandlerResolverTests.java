@@ -2,9 +2,9 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
-import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
