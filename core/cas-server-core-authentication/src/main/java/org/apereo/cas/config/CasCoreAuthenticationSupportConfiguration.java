@@ -8,7 +8,8 @@ import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
-import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
@@ -76,9 +77,19 @@ public class CasCoreAuthenticationSupportConfiguration {
         return new RegisteredServiceAuthenticationHandlerResolver(servicesManager.getIfAvailable());
     }
 
+    @Bean
+    @Lazy
+    @ConditionalOnMissingBean(name = "byCredentialSourceAuthenticationHandlerResolver")
+    public AuthenticationHandlerResolver byCredentialSourceAuthenticationHandlerResolver() {
+        return new ByCredentialSourceAuthenticationHandlerResolver();
+    }
+
     @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
+        return plan -> {
+            plan.registerAuthenticationHandlerResolver(byCredentialSourceAuthenticationHandlerResolver());
+            plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
+        };
     }
 }
