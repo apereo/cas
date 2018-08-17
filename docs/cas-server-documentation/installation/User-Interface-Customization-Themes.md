@@ -18,7 +18,7 @@ CAS is configured to decorate views based on the `theme` property of a given reg
 ```properties
 cas.standard.css.file=/themes/[theme_name]/css/cas.css
 cas.javascript.file=/themes/[theme_name]/js/cas.js
-cas.admin.css.file=/themes/[theme-name]/css/admin.css
+cas.admin.css.file=/themes/[theme_name]/css/admin.css
 ```
 
 - Create the directory `src/main/resources/static/themes/[theme_name]`. Put the theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.
@@ -49,7 +49,7 @@ Views associated with a particular theme by default are expected to be found at:
 ```properties
 cas.standard.css.file=/themes/[theme_name]/css/cas.css
 cas.javascript.file=/themes/[theme_name]/js/cas.js
-cas.admin.css.file=/themes/[theme-name]/css/admin.css
+cas.admin.css.file=/themes/[theme_name]/css/admin.css
 ```
 
 - Clone the default set of view pages into a new directory based on the theme id (i.e. `src/main/resources/templates/<theme-id>`).
