@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Setter
 public class SamlIdPTicketProperties implements Serializable {
 
-    private static final long serialVersionUID = 9837089259390742073L;
+    private static final long serialVersionUID = 6837089259390742073L;
 
     /**
      * name that should be given to the saml artifact cache storage name.
