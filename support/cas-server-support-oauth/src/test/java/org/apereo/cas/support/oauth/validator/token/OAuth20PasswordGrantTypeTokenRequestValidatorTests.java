@@ -30,45 +30,39 @@ import static org.mockito.Mockito.*;
  */
 public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
     private OAuth20TokenRequestValidator validator;
-    private OAuthRegisteredService registeredService;
+    private OAuthRegisteredService supportingService;
+    private OAuthRegisteredService nonSupportingService;
+    private OAuthRegisteredService promiscuousService;
 
     @Before
     public void before() {
         val service = RegisteredServiceTestUtils.getService();
 
         val serviceManager = mock(ServicesManager.class);
+        supportingService = RequestValidatorTestUtils.getService(
+                RegisteredServiceTestUtils.CONST_TEST_URL,
+                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET,
+                CollectionUtils.wrapSet(getGrantType()));
+        nonSupportingService = RequestValidatorTestUtils.getService(
+                RegisteredServiceTestUtils.CONST_TEST_URL2,
+                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET,
+                CollectionUtils.wrapSet(getWrongGrantType()));
+        promiscuousService = RequestValidatorTestUtils.getPromiscousService(
+                RegisteredServiceTestUtils.CONST_TEST_URL3,
+                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET);
 
-        registeredService = new OAuthRegisteredService();
-        registeredService.setName("OAuth");
-        registeredService.setClientId("client");
-        registeredService.setClientSecret("secret");
-        registeredService.setServiceId(service.getId());
+        when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(
+                supportingService, nonSupportingService, promiscuousService));
 
-        when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(registeredService));
 
         this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(new RegisteredServiceAccessStrategyAuditableEnforcer(),
             serviceManager, new WebApplicationServiceFactory());
-    }
-
-    @Test
-    public void verifySupportedGrantTypes() {
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-
-        val profile = new CommonProfile();
-        profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("client");
-        val session = request.getSession(true);
-        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
-
-        request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
-        request.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
-
-        registeredService.setSupportedGrantTypes(CollectionUtils.wrapHashSet(OAuth20GrantTypes.PASSWORD.getType(), OAuth20GrantTypes.CLIENT_CREDENTIALS.getType()));
-        assertTrue(this.validator.validate(new J2EContext(request, response)));
-
-        registeredService.setSupportedGrantTypes(CollectionUtils.wrapHashSet("whatever"));
-        assertFalse(this.validator.validate(new J2EContext(request, response)));
     }
 
     @Test
@@ -81,16 +75,30 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
         val profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("client");
+        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         val session = request.getSession(true);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
-        request.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
+        request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());
+        assertTrue(this.validator.validate(new J2EContext(request, response)));
+
+        request.setParameter(OAuth20Constants.CLIENT_ID, nonSupportingService.getClientId());
+        profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        assertFalse(this.validator.validate(new J2EContext(request, response)));
+
+        request.setParameter(OAuth20Constants.CLIENT_ID, promiscuousService.getClientId());
+        profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
         assertTrue(this.validator.validate(new J2EContext(request, response)));
     }
 
     protected OAuth20GrantTypes getGrantType() {
         return OAuth20GrantTypes.PASSWORD;
+    }
+
+    protected OAuth20GrantTypes getWrongGrantType() {
+        return OAuth20GrantTypes.AUTHORIZATION_CODE;
     }
 }
