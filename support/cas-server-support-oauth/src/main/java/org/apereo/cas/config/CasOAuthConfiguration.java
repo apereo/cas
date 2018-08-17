@@ -418,10 +418,14 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @RefreshScope
     public Collection<OAuth20TokenRequestValidator> oauthTokenRequestValidators() {
         final List<OAuth20TokenRequestValidator> validators = new ArrayList<>();
-        validators.add(new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(servicesManager, ticketRegistry, registeredServiceAccessStrategyEnforcer));
-        validators.add(new OAuth20RefreshTokenGrantTypeTokenRequestValidator(servicesManager, registeredServiceAccessStrategyEnforcer, ticketRegistry));
-        validators.add(new OAuth20PasswordGrantTypeTokenRequestValidator(registeredServiceAccessStrategyEnforcer, servicesManager, webApplicationServiceFactory));
-        validators.add(new OAuth20ClientCredentialsGrantTypeTokenRequestValidator(servicesManager, registeredServiceAccessStrategyEnforcer, webApplicationServiceFactory));
+        validators.add(new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(
+            servicesManager, ticketRegistry, registeredServiceAccessStrategyEnforcer, webApplicationServiceFactory));
+        validators.add(new OAuth20RefreshTokenGrantTypeTokenRequestValidator(
+            registeredServiceAccessStrategyEnforcer, servicesManager, ticketRegistry, webApplicationServiceFactory));
+        validators.add(new OAuth20PasswordGrantTypeTokenRequestValidator(
+            registeredServiceAccessStrategyEnforcer, servicesManager, webApplicationServiceFactory));
+        validators.add(new OAuth20ClientCredentialsGrantTypeTokenRequestValidator(
+            servicesManager, registeredServiceAccessStrategyEnforcer, webApplicationServiceFactory));
         return validators;
     }
 

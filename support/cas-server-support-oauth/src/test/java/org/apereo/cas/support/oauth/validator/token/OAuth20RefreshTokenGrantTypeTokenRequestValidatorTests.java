@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator.token;
 
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -76,7 +77,8 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests {
         registerTicket(PROMISCUOUS_SERVICE_TICKET);
 
         this.validator = new OAuth20RefreshTokenGrantTypeTokenRequestValidator(
-            serviceManager, new RegisteredServiceAccessStrategyAuditableEnforcer(), this.ticketRegistry);
+            new RegisteredServiceAccessStrategyAuditableEnforcer(), serviceManager,
+            this.ticketRegistry, new WebApplicationServiceFactory());
     }
 
     @Test

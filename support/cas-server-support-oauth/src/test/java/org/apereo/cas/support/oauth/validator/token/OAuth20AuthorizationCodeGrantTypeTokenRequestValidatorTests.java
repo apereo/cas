@@ -95,7 +95,8 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
                         nonSupportingService,
                         promiscuousService));
         this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(serviceManager,
-            ticketRegistry, new RegisteredServiceAccessStrategyAuditableEnforcer());
+                ticketRegistry, new RegisteredServiceAccessStrategyAuditableEnforcer(),
+                new WebApplicationServiceFactory());
     }
 
     @Test
