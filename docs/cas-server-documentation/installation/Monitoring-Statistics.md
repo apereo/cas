@@ -51,8 +51,7 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `attribute-consent`  | Manage and control [attribute consent decisions](../integration/Attribute-Release-Consent.html).
 | `gauth-credential-repository`  | Manage and control [Google Authenticator account records](GoogleAuthenticator-Authentication.html).
 | `yubikey-account-repository`  | Manage and control [Google Authenticator account records](YubiKey-Authentication.html).
-| `oauth-access-tokens`  | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html).
-| `oauth-refresh-tokens`  | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html).
+| `oauth-tokens`  | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html).
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>status</code>, <code>health</code> and <code>configuration-metadata</code>.

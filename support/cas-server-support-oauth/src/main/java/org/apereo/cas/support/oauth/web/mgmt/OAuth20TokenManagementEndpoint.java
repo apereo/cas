@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Endpoint(id = "oauth-access-tokens", enableByDefault = false)
+@Endpoint(id = "oauth-tokens", enableByDefault = false)
 @RequiredArgsConstructor
 @Slf4j
 public class OAuth20TokenManagementEndpoint {
