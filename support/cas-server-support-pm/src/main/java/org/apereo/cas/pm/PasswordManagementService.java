@@ -38,6 +38,16 @@ public interface PasswordManagementService {
     }
 
     /**
+     * Find username linked to the email.
+     *
+     * @param email the email
+     * @return the string
+     */
+    default String findUsername(String email) {
+        return null;
+    }
+
+    /**
      * Create token string.
      *
      * @param username the username

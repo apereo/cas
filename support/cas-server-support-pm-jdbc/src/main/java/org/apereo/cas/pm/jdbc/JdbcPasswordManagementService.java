@@ -40,7 +40,6 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-
     @Override
     public boolean changeInternal(final Credential credential, final PasswordChangeBean bean) {
         val c = (UsernamePasswordCredential) credential;
@@ -61,6 +60,21 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
             return null;
         } catch (final EmptyResultDataAccessException e) {
             LOGGER.debug("Username {} not found when searching for email", username);
+            return null;
+        }
+    }
+
+    @Override
+    public String findUsername(final String email) {
+        try {
+            val username = this.jdbcTemplate.queryForObject(properties.getJdbc().getSqlFindUser(), String.class, email);
+            if (StringUtils.isNotBlank(username)) {
+                return username;
+            }
+            LOGGER.debug("Email {} not found when searching for user", email);
+            return null;
+        } catch (final EmptyResultDataAccessException e) {
+            LOGGER.debug("Email {} not found when searching for user", email);
             return null;
         }
     }

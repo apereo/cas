@@ -62,6 +62,25 @@ public class RestPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
+    public String findUsername(final String email) {
+        val rest = properties.getRest();
+        if (StringUtils.isBlank(rest.getEndpointUrlUser())) {
+            return null;
+        }
+
+        val headers = new HttpHeaders();
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        headers.put("email", CollectionUtils.wrap(email));
+        val entity = new HttpEntity<>(headers);
+        val result = restTemplate.exchange(rest.getEndpointUrlEmail(), HttpMethod.GET, entity, String.class);
+
+        if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
+            return result.getBody();
+        }
+        return null;
+    }
+
+    @Override
     public String findEmail(final String username) {
         val rest = properties.getRest();
         if (StringUtils.isBlank(rest.getEndpointUrlEmail())) {
