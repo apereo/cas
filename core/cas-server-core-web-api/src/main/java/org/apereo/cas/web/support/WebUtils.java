@@ -970,4 +970,14 @@ public class WebUtils {
     public static void putDelegatedAuthenticationProviderDominant(final RequestContext context, final Object client) {
         context.getFlowScope().put("delegatedAuthenticationProviderDominant", client);
     }
+
+    /**
+     * Put available authentication handle names.
+     *
+     * @param context           the context
+     * @param availableHandlers the available handlers
+     */
+    public static void putAvailableAuthenticationHandleNames(final RequestContext context, final Collection<String> availableHandlers) {
+        context.getFlowScope().put("availableAuthenticationHandlerNames", availableHandlers);
+    }
 }

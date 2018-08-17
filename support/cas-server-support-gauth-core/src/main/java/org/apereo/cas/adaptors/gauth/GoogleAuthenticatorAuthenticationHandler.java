@@ -97,6 +97,11 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return GoogleAuthenticatorTokenCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
         return GoogleAuthenticatorTokenCredential.class.isAssignableFrom(credential.getClass());
     }
