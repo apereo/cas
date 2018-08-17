@@ -82,7 +82,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         val authenticationHandler = new JcifsSpnegoAuthenticationHandler("", null, null,
             CollectionUtils.wrapList(new MockJcifsAuthentication()), true, true);
 
-        assertFalse(authenticationHandler.supports(null));
+        assertFalse(authenticationHandler.supports((SpnegoCredential) null));
         assertTrue(authenticationHandler.supports(new SpnegoCredential(new byte[]{0, 1, 2})));
         assertFalse(authenticationHandler.supports(new UsernamePasswordCredential()));
     }

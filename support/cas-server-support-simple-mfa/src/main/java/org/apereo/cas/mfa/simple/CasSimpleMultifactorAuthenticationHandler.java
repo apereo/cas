@@ -62,6 +62,11 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return CasSimpleMultifactorTokenCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
         return CasSimpleMultifactorTokenCredential.class.isAssignableFrom(credential.getClass());
     }
