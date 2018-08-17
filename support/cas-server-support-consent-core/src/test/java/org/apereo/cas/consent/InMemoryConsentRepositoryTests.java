@@ -1,13 +1,10 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasConsentCoreConfiguration;
 
-import lombok.val;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 /**
  * This is {@link InMemoryConsentRepositoryTests}.
@@ -15,20 +12,10 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class InMemoryConsentRepositoryTests {
-    @Test
-    public void verifyConsentDecisionStored() {
-        val builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
-        val regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        val svc = RegisteredServiceTestUtils.getService();
-        val decision = builder.build(svc,
-            regSvc, "casuser",
-            CollectionUtils.wrap("attribute", "value"));
-        val repo = new InMemoryConsentRepository();
-        assertTrue(repo.storeConsentDecision(decision));
-
-        assertTrue(repo.getConsentDecisions().size() == 1);
-        val b = repo.deleteConsentDecision(decision.getId(), "casuser");
-        assertTrue(b);
-    }
+@SpringBootTest(classes = {
+    CasConsentCoreConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreAuditConfiguration.class
+})
+public class InMemoryConsentRepositoryTests extends BaseConsentRepositoryTests {
 }
