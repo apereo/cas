@@ -1,35 +1,17 @@
 apply plugin: "war"
-apply plugin: "org.springframework.boot"
+
+project.ext["mainClassName"] = "org.apereo.cas.CasConfigurationServerWebApplication"
+apply from: rootProject.file("gradle/springboot.gradle")
 
 description = "Apereo CAS Spring Cloud Configuration Server"
 
-javadoc {
-    enabled false
-}
-
-bootRun {
-    addResources = true
-    jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5005,server=y,suspend=n"]
-}
-
-war {
-    enabled = !rootProject.publishingRelease
-}
-
-springBoot  {
-    mainClass = "org.apereo.cas.CasConfigurationServerWebApplication"
-}
-
-bootRepackage {
-    mainClass = "org.apereo.cas.CasConfigurationServerWebApplication"
-    enabled = !rootProject.publishingRelease
-}
-
 dependencies {
-    providedRuntime libraries.springboottomcat
-    runtimeOnly libraries.springsecurity
-    runtimeOnly libraries.springsecurityweb
-    runtimeOnly libraries.springsecurityconfig
+    implementation libraries.springboottomcat
+    implementation libraries.springsecurity
+    implementation libraries.springsecurityweb
+    implementation libraries.springsecurityconfig
     implementation libraries.springcloudconfigserver
+    
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-logging")
 }

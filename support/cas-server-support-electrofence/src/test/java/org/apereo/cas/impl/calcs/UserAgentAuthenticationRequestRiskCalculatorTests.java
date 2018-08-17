@@ -1,11 +1,10 @@
 package org.apereo.cas.impl.calcs;
 
-import org.apereo.cas.api.AuthenticationRiskScore;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.HttpRequestUtils;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
@@ -25,24 +24,24 @@ public class UserAgentAuthenticationRequestRiskCalculatorTests extends BaseAuthe
 
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("nobody1");
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        final MockHttpServletRequest request = new MockHttpServletRequest();
-        final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("nobody1");
+        val service = RegisteredServiceTestUtils.getRegisteredService("test");
+        val request = new MockHttpServletRequest();
+        val score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isHighestRisk());
     }
 
     @Test
     public void verifyTestWhenAuthnEventsFoundForUser() {
-        final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
-        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        val authentication = CoreAuthenticationTestUtils.getAuthentication("casuser");
+        val service = RegisteredServiceTestUtils.getRegisteredService("test");
+        val request = new MockHttpServletRequest();
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)");
 
         request.setRemoteAddr("107.181.69.221");
         request.setLocalAddr("127.0.0.1");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
-        final AuthenticationRiskScore score = authenticationRiskEvaluator.eval(authentication, service, request);
+        val score = authenticationRiskEvaluator.eval(authentication, service, request);
         assertTrue(score.isRiskGreaterThan(casProperties.getAuthn().getAdaptive().getRisk().getThreshold()));
     }
 }

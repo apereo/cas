@@ -1,14 +1,15 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.MongoDbAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +24,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("casAcceptableUsagePolicyMongoDbConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
+@ConditionalOnProperty(prefix = "cas.acceptableUsagePolicy", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class CasAcceptableUsagePolicyMongoDbConfiguration {
 
     @Autowired
@@ -36,9 +37,9 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
     @RefreshScope
     @Bean
     public MongoTemplate mongoAcceptableUsagePolicyTemplate() {
-        final AcceptableUsagePolicyProperties.MongoDb mongo = casProperties.getAcceptableUsagePolicy().getMongo();
-        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
-        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        val mongo = casProperties.getAcceptableUsagePolicy().getMongo();
+        val factory = new MongoDbConnectionFactory();
+        val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
         return mongoTemplate;
     }
@@ -46,10 +47,10 @@ public class CasAcceptableUsagePolicyMongoDbConfiguration {
     @RefreshScope
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        final AcceptableUsagePolicyProperties.MongoDb mongo = casProperties.getAcceptableUsagePolicy().getMongo();
+        val mongo = casProperties.getAcceptableUsagePolicy().getMongo();
         return new MongoDbAcceptableUsagePolicyRepository(ticketRegistrySupport,
-                casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
-                mongoAcceptableUsagePolicyTemplate(),
-                mongo.getCollection());
+            casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
+            mongoAcceptableUsagePolicyTemplate(),
+            mongo.getCollection());
     }
 }

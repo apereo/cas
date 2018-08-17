@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Getter;
 
 /**
  * Authentication raised by {@link AuthenticationManager} to signal authentication failure.
@@ -14,17 +14,22 @@ import lombok.Getter;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @Getter
 public class AuthenticationException extends RuntimeException {
 
-    /** Serialization metadata. */
+    /**
+     * Serialization metadata.
+     */
     private static final long serialVersionUID = -6032827784134751797L;
 
-    /** Immutable map of handler names to the errors they raised. */
+    /**
+     * Immutable map of handler names to the errors they raised.
+     */
     private final Map<String, Throwable> handlerErrors;
 
-    /** Immutable map of handler names to an authentication success metadata instance. */
+    /**
+     * Immutable map of handler names to an authentication success metadata instance.
+     */
     private final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses;
 
     /**
@@ -55,7 +60,7 @@ public class AuthenticationException extends RuntimeException {
     /**
      * Creates a new instance for the case when there are both handler successes and failures.
      *
-     * @param handlerErrors Map of handler names to errors.
+     * @param handlerErrors    Map of handler names to errors.
      * @param handlerSuccesses Map of handler names to authentication successes.
      */
     public AuthenticationException(final Map<String, Throwable> handlerErrors, final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
@@ -66,8 +71,8 @@ public class AuthenticationException extends RuntimeException {
      * Creates a new instance for the case when there are both handler successes and failures and a custom
      * error message is required.
      *
-     * @param message the message associated with this error.
-     * @param handlerErrors Map of handler names to errors.
+     * @param message          the message associated with this error.
+     * @param handlerErrors    Map of handler names to errors.
      * @param handlerSuccesses Map of handler names to authentication successes.
      */
     public AuthenticationException(final String message, final Map<String, Throwable> handlerErrors,

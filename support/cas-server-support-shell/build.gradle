@@ -1,9 +1,8 @@
-apply plugin: "application"
-apply plugin: "org.springframework.boot"
+project.ext["mainClassName"] = "org.apereo.cas.CasCommandLineShellApplication"
+project.ext["forceBootifulArtifact"] = true
 
-def MAIN_CLASS = "org.apereo.cas.CasCommandLineShellApplication"
+apply from: rootProject.file("gradle/springboot.gradle")
 
-mainClassName = MAIN_CLASS
 description = "Apereo CAS Shell Support via Spring Shell"
 
 dependencies {
@@ -12,52 +11,24 @@ dependencies {
      * executable jar by the build packaging process.
      */
     compile project(":api:cas-server-core-api-services")
-
-    compile project(":core:cas-server-core-configuration")
+    
     compile project(":core:cas-server-core-configuration-api")
-    compile project(":core:cas-server-core-util")
+    compile project(":core:cas-server-core-util-api")
     compile project(":core:cas-server-core-services-api")
+    compile project(":core:cas-server-core-logging-config")
     compile project(":core:cas-server-core-configuration-metadata-repository")
-
+    
     compile project(":support:cas-server-support-oauth-services")
     compile project(":support:cas-server-support-oidc-services")
     compile project(":support:cas-server-support-saml-idp-core")
     compile project(":support:cas-server-support-ws-idp-api")
     compile project(":support:cas-server-support-saml-idp-core")
+    
     compile libraries.springbootconfigmetadata
+    compile libraries.springshell
     compile libraries.metrics
     compile libraries.pac4j
     compile libraries.jasypt
     compile libraries.bouncycastle
     compile libraries.opensaml
-}
-
-springBoot {
-    mainClass = MAIN_CLASS
-}
-
-bootRepackage {
-    mainClass = MAIN_CLASS
-    enabled = !rootProject.publishingRelease
-}
-
-bootRun {
-    systemProperties = System.properties
-    def list = []
-    if (rootProject.enableRemoteDebugging) {
-        list.add("-Xrunjdwp:transport=dt_socket,address=5007,server=y,suspend=n")
-    }
-    jvmArgs = list
-}
-
-run {
-    def execArgs = System.getProperty('args')
-    if (execArgs != null) {
-        args execArgs.split()
-    }
-}
-
-[distZip, distTar].each { task -> configurations.archives.artifacts.removeAll
-        { it.class.simpleName == "ArchivePublishArtifact" && it.archiveTask == task }
-    task.enabled = false
 }

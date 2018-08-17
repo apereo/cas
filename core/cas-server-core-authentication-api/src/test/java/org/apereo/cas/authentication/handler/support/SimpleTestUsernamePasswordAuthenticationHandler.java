@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.handler.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
@@ -9,9 +8,12 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
@@ -30,18 +32,13 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Slf4j
-public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    
+public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler implements InitializingBean {
+
 
     /**
      * Default mapping of special usernames to exceptions raised when that user attempts authentication.
      */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
-
-    /**
-     * Map of special usernames to exceptions that are raised when a user with that name attempts authentication.
-     */
-    private final Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
 
     static {
         DEFAULT_USERNAME_ERROR_MAP.put("accountDisabled", new AccountDisabledException("Account disabled"));
@@ -51,25 +48,30 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
         DEFAULT_USERNAME_ERROR_MAP.put("passwordExpired", new CredentialExpiredException("Password expired"));
     }
 
+    /**
+     * Map of special usernames to exceptions that are raised when a user with that name attempts authentication.
+     */
+    private final Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
+
     public SimpleTestUsernamePasswordAuthenticationHandler() {
         super("", null, null, null);
     }
 
-    @PostConstruct
-    private void init() {
+    @Override
+    public void afterPropertiesSet() {
         LOGGER.warn("[{}] is only to be used in a testing environment. NEVER enable this in a production environment.",
-                this.getClass().getName());
+            this.getClass().getName());
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                                         final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+        throws GeneralSecurityException, PreventedException {
 
-        final String username = credential.getUsername();
-        final String password = credential.getPassword();
+        val username = credential.getUsername();
+        val password = credential.getPassword();
 
-        final Exception exception = this.usernameErrorMap.get(username);
+        val exception = this.usernameErrorMap.get(username);
         if (exception instanceof GeneralSecurityException) {
             throw (GeneralSecurityException) exception;
         }
@@ -81,14 +83,14 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
         }
         if (exception != null) {
             LOGGER.debug("Cannot throw checked exception [{}] since it is not declared by method signature.",
-                    exception.getClass().getName(),
-                    exception);
+                exception.getClass().getName(),
+                exception);
         }
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
             LOGGER.debug("User [{}] was successfully authenticated.", username);
             return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
-                    this.principalFactory.createPrincipal(username));
+                this.principalFactory.createPrincipal(username));
         }
         LOGGER.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();

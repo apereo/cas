@@ -1,21 +1,22 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.RegexUtils;
 
 import javax.persistence.PostLoad;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -279,14 +280,14 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @return the boolean
      */
     protected boolean requiredAttributesFoundInMap(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
-        final Set<String> difference = requiredAttributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
+        val difference = requiredAttributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
         if (this.requireAllAttributes && difference.size() < requiredAttributes.size()) {
             return false;
         }
         return difference.stream().anyMatch(key -> {
-            final Set<String> values = requiredAttributes.get(key);
-            final Set<Object> availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
-            final Pattern pattern = RegexUtils.concatenate(values, this.caseInsensitive);
+            val values = requiredAttributes.get(key);
+            val availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
+            val pattern = RegexUtils.concatenate(values, this.caseInsensitive);
             if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {
                 return availableValues.stream().map(Object::toString).anyMatch(pattern.asPredicate());
             }

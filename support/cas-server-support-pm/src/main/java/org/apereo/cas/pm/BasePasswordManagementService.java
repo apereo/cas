@@ -1,13 +1,14 @@
 package org.apereo.cas.pm;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
@@ -25,23 +26,35 @@ import java.util.UUID;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class BasePasswordManagementService implements PasswordManagementService {
 
     /**
      * Password management settings.
      */
     protected final PasswordManagementProperties properties;
-    
+
     private final CipherExecutor<Serializable, String> cipherExecutor;
 
     private final String issuer;
-    
+
+    /**
+     * Orders security questions consistently.
+     *
+     * @param questionMap A map of question/answer key/value pairs
+     * @return A list of questions in a consistent order
+     */
+    public static List<String> canonicalizeSecurityQuestions(final Map<String, String> questionMap) {
+        val keys = new ArrayList<String>(questionMap.keySet());
+        keys.sort(String.CASE_INSENSITIVE_ORDER);
+        return keys;
+    }
+
     @Override
     public String parseToken(final String token) {
         try {
-            final String json = this.cipherExecutor.decode(token);
-            final JwtClaims claims = JwtClaims.parse(json);
+            val json = this.cipherExecutor.decode(token);
+            val claims = JwtClaims.parse(json);
 
             if (!claims.getIssuer().equals(issuer)) {
                 LOGGER.error("Token issuer does not match CAS");
@@ -56,20 +69,22 @@ public class BasePasswordManagementService implements PasswordManagementService 
                 return null;
             }
 
-            final ClientInfo holder = ClientInfoHolder.getClientInfo();
+            val holder = ClientInfoHolder.getClientInfo();
             if (!claims.getStringClaimValue("origin").equals(holder.getServerIpAddress())) {
-                LOGGER.error("Token origin does not match CAS");
+                LOGGER.error("Token origin server IP address does not match CAS");
                 return null;
             }
             if (!claims.getStringClaimValue("client").equals(holder.getClientIpAddress())) {
-                LOGGER.error("Token client does not match CAS");
+                LOGGER.error("Token client IP address does not match CAS");
                 return null;
             }
 
-            if (claims.getExpirationTime().isBefore(NumericDate.now())) {
+            val expirationTime = claims.getExpirationTime();
+            if (expirationTime.isBefore(NumericDate.now())) {
                 LOGGER.error("Token has expired.");
                 return null;
             }
+
 
             return claims.getSubject();
         } catch (final Exception e) {
@@ -81,21 +96,24 @@ public class BasePasswordManagementService implements PasswordManagementService 
     @Override
     public String createToken(final String to) {
         try {
-            final String token = UUID.randomUUID().toString();
-            final JwtClaims claims = new JwtClaims();
+            val token = UUID.randomUUID().toString();
+            val claims = new JwtClaims();
             claims.setJwtId(token);
             claims.setIssuer(issuer);
             claims.setAudience(issuer);
             claims.setExpirationTimeMinutesInTheFuture(properties.getReset().getExpirationMinutes());
             claims.setIssuedAtToNow();
 
-            final ClientInfo holder = ClientInfoHolder.getClientInfo();
+            val holder = ClientInfoHolder.getClientInfo();
             if (holder != null) {
                 claims.setStringClaim("origin", holder.getServerIpAddress());
                 claims.setStringClaim("client", holder.getClientIpAddress());
             }
             claims.setSubject(to);
-            final String json = claims.toJson();
+            LOGGER.debug("Creating password management token for [{}]", to);
+            val json = claims.toJson();
+
+            LOGGER.debug("Encoding the generated JSON token...");
             return this.cipherExecutor.encode(json);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -104,8 +122,8 @@ public class BasePasswordManagementService implements PasswordManagementService 
     }
 
     @Audit(action = "CHANGE_PASSWORD",
-            actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
-            resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
+        actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
+        resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
     @Override
     public boolean change(final Credential c, final PasswordChangeBean bean) throws InvalidPasswordException {
         return changeInternal(c, bean);
@@ -121,17 +139,5 @@ public class BasePasswordManagementService implements PasswordManagementService 
      */
     public boolean changeInternal(final Credential c, final PasswordChangeBean bean) throws InvalidPasswordException {
         return false;
-    }
-
-    /**
-     * Orders security questions consistently.
-     *
-     * @param questionMap A map of question/answer key/value pairs
-     * @return A list of questions in a consistent order
-     */
-    public static List<String> canonicalizeSecurityQuestions(final Map<String, String> questionMap) {
-        final List<String> keys = new ArrayList<>(questionMap.keySet());
-        keys.sort(String.CASE_INSENSITIVE_ORDER);
-        return keys;
     }
 }

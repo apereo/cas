@@ -1,9 +1,7 @@
 package org.apereo.cas.logging;
 
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.AppenderRef;
@@ -22,7 +20,6 @@ import org.apache.logging.log4j.core.layout.PatternLayout;
  * @since 5.0.0
  */
 @Plugin(name = "CasAppender", category = "Core", elementType = "appender", printObject = true)
-@Slf4j
 public class CasAppender extends AbstractAppender {
     private static final long serialVersionUID = 3744758323628847477L;
 
@@ -36,26 +33,10 @@ public class CasAppender extends AbstractAppender {
      * @param config      the config
      * @param appenderRef the appender ref
      */
-    public CasAppender(final String name, @NonNull final Configuration config, @NonNull final AppenderRef appenderRef) {
+    public CasAppender(final String name, final Configuration config, final AppenderRef appenderRef) {
         super(name, null, PatternLayout.createDefaultLayout());
         this.config = config;
         this.appenderRef = appenderRef;
-    }
-
-    @Override
-    public void append(final LogEvent logEvent) {
-        final LogEvent newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
-        final String refName = this.appenderRef.getRef();
-        if (StringUtils.isNotBlank(refName)) {
-            final Appender appender = this.config.getAppender(refName);
-            if (appender != null) {
-                appender.append(newLogEvent);
-            } else {
-                LOGGER.warn("No log appender could be found for [{}]", refName);
-            }
-        } else {
-            LOGGER.warn("No log appender reference could be located in logging configuration.");
-        }
     }
 
     /**
@@ -71,5 +52,21 @@ public class CasAppender extends AbstractAppender {
                                     @PluginElement("AppenderRef") final AppenderRef appenderRef,
                                     @PluginConfiguration final Configuration config) {
         return new CasAppender(name, config, appenderRef);
+    }
+
+    @Override
+    public void append(final LogEvent logEvent) {
+        val newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
+        val refName = this.appenderRef.getRef();
+        if (StringUtils.isNotBlank(refName)) {
+            val appender = this.config.getAppender(refName);
+            if (appender != null) {
+                appender.append(newLogEvent);
+            } else {
+                LOGGER.warn("No log appender could be found for [{}]", refName);
+            }
+        } else {
+            LOGGER.warn("No log appender reference could be located in logging configuration.");
+        }
     }
 }

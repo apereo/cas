@@ -92,7 +92,7 @@ Support is enabled by including the following dependency in the overlay:
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#risk-based-authentication).
 
-### SMS Messaging
+### Messaging & Notifications
 
 Users may be notified of risky authentication attempts via text messages and/or email.
 To learn more about available options, please [see this guide](SMS-Messaging-Configuration.html)

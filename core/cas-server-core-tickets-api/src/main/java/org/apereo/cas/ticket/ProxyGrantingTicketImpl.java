@@ -1,18 +1,18 @@
 package org.apereo.cas.ticket;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.NoArgsConstructor;
+import lombok.val;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-
-import lombok.NoArgsConstructor;
 
 /**
  * Concrete implementation of a proxy granting ticket (PGT). A PGT is
@@ -30,8 +30,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @DiscriminatorValue(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-@Slf4j
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements ProxyGrantingTicket {
 
@@ -67,7 +66,7 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
 
     @Override
     public ProxyTicket grantProxyTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy, final boolean onlyTrackMostRecentSession) {
-        final ProxyTicket serviceTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
+        val serviceTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
         trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
     }

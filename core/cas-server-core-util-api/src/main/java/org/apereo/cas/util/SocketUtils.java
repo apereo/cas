@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import lombok.experimental.UtilityClass;
+import lombok.val;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -21,7 +22,7 @@ public class SocketUtils {
      * @return the boolean
      */
     public static boolean isTcpPortAvailable(final int port) {
-        try (ServerSocket serverSocket = new ServerSocket()) {
+        try (val serverSocket = new ServerSocket()) {
             serverSocket.setReuseAddress(false);
             serverSocket.bind(new InetSocketAddress(InetAddress.getByName("localhost"), port), 1);
             return true;

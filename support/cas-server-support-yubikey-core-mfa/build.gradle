@@ -4,7 +4,7 @@ dependencies {
     
     implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
-
-    compileOnly project(":core:cas-server-core-rest")
+    implementation project(":core:cas-server-core-rest")
 }

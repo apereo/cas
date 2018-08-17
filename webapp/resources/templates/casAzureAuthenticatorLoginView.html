@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title th:text="#{cas.mfa.azure.pagetitle}">Microsoft Authenticator View</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
     <style>
         textarea {
             border: 2pt;
@@ -22,7 +22,7 @@
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" id="login" class="box">
-        <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}">
+        <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
             <div id="msg" class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('*')}">
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">this error block and text is only shown if there are errors</span>
             </div>

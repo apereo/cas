@@ -1,17 +1,19 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.CipherExecutor;
+
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.codec.binary.Base32;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CipherExecutor;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
-import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 
@@ -21,9 +23,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.security.PrivateKey;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * This is {@link EncodingUtils} that encapsulates common base64, signing and encryption calls and operations in one spot.
@@ -41,6 +41,12 @@ public class EncodingUtils {
      * JSON web key parameter that identifies the key..
      */
     public static final String JSON_WEB_KEY = "k";
+
+    private static final Base32 BASE32_CHUNKED_ENCODER = new Base32(76, new byte[]{10});
+    private static final Base32 BASE32_UNCHUNKED_ENCODER = new Base32(0, new byte[]{10});
+
+    private static final Base64 BASE64_CHUNKED_ENCODER = new Base64(76, new byte[]{10});
+    private static final Base64 BASE64_UNCHUNKED_ENCODER = new Base64(0, new byte[]{10});
 
     /**
      * Hex decode string.
@@ -63,7 +69,7 @@ public class EncodingUtils {
      */
     public static String hexDecode(final char[] data) {
         try {
-            final byte[] result = Hex.decodeHex(data);
+            val result = Hex.decodeHex(data);
             return new String(result, StandardCharsets.UTF_8);
         } catch (final Exception e) {
             return null;
@@ -78,7 +84,7 @@ public class EncodingUtils {
      */
     public static String hexEncode(final String data) {
         try {
-            final char[] result = Hex.encodeHex(data.getBytes(StandardCharsets.UTF_8));
+            val result = Hex.encodeHex(data.getBytes(StandardCharsets.UTF_8));
             return new String(result);
         } catch (final Exception e) {
             return null;
@@ -93,7 +99,7 @@ public class EncodingUtils {
      */
     public static String hexEncode(final byte[] data) {
         try {
-            final char[] result = Hex.encodeHex(data);
+            val result = Hex.encodeHex(data);
             return new String(result);
         } catch (final Exception e) {
             return null;
@@ -128,6 +134,20 @@ public class EncodingUtils {
      */
     public static String encodeBase64(final byte[] data) {
         return Base64.encodeBase64String(data);
+    }
+
+    /**
+     * Base64-encode the given byte[] as a string.
+     *
+     * @param data    the byte array to encode
+     * @param chunked the chunked
+     * @return the encoded string
+     */
+    public static String encodeBase64(final byte[] data, final boolean chunked) {
+        if (chunked) {
+            return BASE64_CHUNKED_ENCODER.encodeToString(data).trim();
+        }
+        return BASE64_UNCHUNKED_ENCODER.encodeToString(data).trim();
     }
 
     /**
@@ -180,6 +200,19 @@ public class EncodingUtils {
         return Base64.encodeBase64(data);
     }
 
+    /**
+     * Base32-encode the given byte[] as a string.
+     *
+     * @param data    the byte array to encode
+     * @param chunked the chunked
+     * @return the encoded string
+     */
+    public static String encodeBase32(final byte[] data, final boolean chunked) {
+        if (chunked) {
+            return BASE32_CHUNKED_ENCODER.encodeToString(data).trim();
+        }
+        return BASE32_UNCHUNKED_ENCODER.encodeToString(data).trim();
+    }
 
     /**
      * Url encode a value via UTF-8.
@@ -234,14 +267,14 @@ public class EncodingUtils {
      */
     @SneakyThrows
     public static byte[] verifyJwsSignature(final Key signingKey, final byte[] value) {
-        final String asString = new String(value, StandardCharsets.UTF_8);
-        final JsonWebSignature jws = new JsonWebSignature();
+        val asString = new String(value, StandardCharsets.UTF_8);
+        val jws = new JsonWebSignature();
         jws.setCompactSerialization(asString);
         jws.setKey(signingKey);
 
-        final boolean verified = jws.verifySignature();
+        val verified = jws.verifySignature();
         if (verified) {
-            final String payload = jws.getPayload();
+            val payload = jws.getEncodedPayload();
             LOGGER.trace("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
             return EncodingUtils.decodeBase64(payload);
         }
@@ -256,8 +289,8 @@ public class EncodingUtils {
      * @return the key
      */
     public static String generateJsonWebKey(final int size) {
-        final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
-        final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
+        val octetKey = OctJwkGenerator.generateJwk(size);
+        val params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
         return params.get(JSON_WEB_KEY).toString();
     }
 
@@ -269,10 +302,10 @@ public class EncodingUtils {
      */
     @SneakyThrows
     public static Key generateJsonWebKey(final String secret) {
-        final Map<String, Object> keys = new HashMap<>(2);
+        val keys = new HashMap<String, Object>(2);
         keys.put("kty", "oct");
         keys.put(EncodingUtils.JSON_WEB_KEY, secret);
-        final JsonWebKey jwk = JsonWebKey.Factory.newJwk(keys);
+        val jwk = JsonWebKey.Factory.newJwk(keys);
         return jwk.getKey();
     }
 
@@ -294,7 +327,7 @@ public class EncodingUtils {
      * @param value the value
      * @return the byte []
      */
-    public static byte[] signJwsRSASha512(final PrivateKey key, final byte[] value) {
+    public static byte[] signJwsRSASha512(final Key key, final byte[] value) {
         return signJws(key, value, AlgorithmIdentifiers.RSA_USING_SHA512);
     }
 
@@ -308,11 +341,12 @@ public class EncodingUtils {
      */
     @SneakyThrows
     public static byte[] signJws(final Key key, final byte[] value, final String algHeaderValue) {
-        final String base64 = EncodingUtils.encodeBase64(value);
-        final JsonWebSignature jws = new JsonWebSignature();
-        jws.setPayload(base64);
+        val base64 = EncodingUtils.encodeBase64(value);
+        val jws = new JsonWebSignature();
+        jws.setEncodedPayload(base64);
         jws.setAlgorithmHeaderValue(algHeaderValue);
         jws.setKey(key);
+        jws.setHeader("typ", "JWT");
         return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
     }
 
@@ -355,12 +389,13 @@ public class EncodingUtils {
                                            final String algorithmHeaderValue,
                                            final String contentEncryptionAlgorithmIdentifier) {
         try {
-            final JsonWebEncryption jwe = new JsonWebEncryption();
+            val jwe = new JsonWebEncryption();
             jwe.setPayload(value.toString());
             jwe.enableDefaultCompression();
             jwe.setAlgorithmHeaderValue(algorithmHeaderValue);
             jwe.setEncryptionMethodHeaderParameter(contentEncryptionAlgorithmIdentifier);
             jwe.setKey(secretKeyEncryptionKey);
+            jwe.setHeader("typ", "JWT");
             LOGGER.debug("Encrypting via [{}]", contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
@@ -377,7 +412,7 @@ public class EncodingUtils {
      */
     @SneakyThrows
     public static String decryptJwtValue(final Key secretKeyEncryptionKey, final String value) {
-        final JsonWebEncryption jwe = new JsonWebEncryption();
+        val jwe = new JsonWebEncryption();
         jwe.setKey(secretKeyEncryptionKey);
         jwe.setCompactSerialization(value);
         LOGGER.debug("Decrypting value...");
@@ -391,7 +426,7 @@ public class EncodingUtils {
      */
     public static boolean isJceInstalled() {
         try {
-            final int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
+            val maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
             return maxKeyLen == Integer.MAX_VALUE;
         } catch (final Exception e) {
             return false;

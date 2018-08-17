@@ -1,13 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.CertUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.security.cert.CRLException;
@@ -15,24 +16,24 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509CRL;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Handles the fetching of CRL objects based on resources.
  * Supports http/ldap resources.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
 @Slf4j
 public class ResourceCRLFetcher implements CRLFetcher {
-    
+
     @Override
     public Collection<X509CRL> fetch(final Collection<Resource> crls) throws IOException, CRLException {
-        final Set<X509CRL> results = new HashSet<>();
-        for (final Resource r : crls) {
+        val results = new HashSet<X509CRL>();
+        for (val r : crls) {
             LOGGER.debug("Fetching CRL data from [{}]", r);
-            try(InputStream ins = r.getInputStream()) {
-                final X509CRL crl = (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
+            try (val ins = r.getInputStream()) {
+                val crl = (X509CRL) CertUtils.getCertificateFactory().generateCRL(ins);
                 if (crl != null) {
                     results.add(crl);
                 }
@@ -47,8 +48,8 @@ public class ResourceCRLFetcher implements CRLFetcher {
      *
      * @param crl the resource
      * @return the x 509 cRL
-     * @throws IOException the exception thrown if resources cant be fetched
-     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws IOException          the exception thrown if resources cant be fetched
+     * @throws CRLException         the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
     @Override
@@ -62,13 +63,13 @@ public class ResourceCRLFetcher implements CRLFetcher {
      *
      * @param crl the resource
      * @return the x 509 cRL
-     * @throws IOException the exception thrown if resources cant be fetched
-     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws IOException          the exception thrown if resources cant be fetched
+     * @throws CRLException         the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
     @Override
     public X509CRL fetch(final Resource crl) throws IOException, CRLException, CertificateException {
-        final Collection<X509CRL> results = fetch(CollectionUtils.wrap(crl));
+        val results = fetch(CollectionUtils.wrap(crl));
         if (!results.isEmpty()) {
             return results.iterator().next();
         }
@@ -83,8 +84,8 @@ public class ResourceCRLFetcher implements CRLFetcher {
      *
      * @param crl the resource
      * @return the x 509 cRL
-     * @throws IOException the exception thrown if resources cant be fetched
-     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws IOException          the exception thrown if resources cant be fetched
+     * @throws CRLException         the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
     @Override
@@ -98,8 +99,8 @@ public class ResourceCRLFetcher implements CRLFetcher {
      *
      * @param crl the resource
      * @return the x 509 cRL
-     * @throws IOException the exception thrown if resources cant be fetched
-     * @throws CRLException the exception thrown if resources cant be fetched
+     * @throws IOException          the exception thrown if resources cant be fetched
+     * @throws CRLException         the exception thrown if resources cant be fetched
      * @throws CertificateException the exception thrown if resources cant be fetched
      */
     @Override

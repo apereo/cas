@@ -1,5 +1,7 @@
 package org.apereo.cas.util.ldap.uboundid;
 
+import org.apereo.cas.util.LdapTestUtils;
+
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.listener.InMemoryListenerConfig;
@@ -11,13 +13,12 @@ import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustStoreTrustManager;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apereo.cas.util.LdapTestUtils;
 import org.ldaptive.LdapEntry;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.ClassPathResource;
 
-import javax.annotation.PreDestroy;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -30,8 +31,7 @@ import java.util.Properties;
  * @since 4.1.0
  */
 @Slf4j
-public class InMemoryTestLdapDirectoryServer implements Closeable {
-
+public class InMemoryTestLdapDirectoryServer implements AutoCloseable, DisposableBean {
 
     private final InMemoryDirectoryServer directoryServer;
 
@@ -47,24 +47,24 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
                                            final InputStream schemaFile,
                                            final int port) {
         LOGGER.debug("Loading properties...");
-        final Properties p = new Properties();
+        val p = new Properties();
         p.load(properties);
 
-        final InMemoryDirectoryServerConfig config =
+        val config =
             new InMemoryDirectoryServerConfig(p.getProperty("ldap.rootDn"));
         config.addAdditionalBindCredentials(p.getProperty("ldap.managerDn"), p.getProperty("ldap.managerPassword"));
 
         LOGGER.debug("Loading keystore file...");
-        final File keystoreFile = File.createTempFile("key", "store");
+        val keystoreFile = File.createTempFile("key", "store");
         try (OutputStream outputStream = new FileOutputStream(keystoreFile)) {
             IOUtils.copy(new ClassPathResource("/ldapServerTrustStore").getInputStream(), outputStream);
         }
 
-        final String serverKeyStorePath = keystoreFile.getCanonicalPath();
-        final SSLUtil serverSSLUtil = new SSLUtil(
+        val serverKeyStorePath = keystoreFile.getCanonicalPath();
+        val serverSSLUtil = new SSLUtil(
             new KeyStoreKeyManager(serverKeyStorePath, "changeit".toCharArray()),
             new TrustStoreTrustManager(serverKeyStorePath));
-        final SSLUtil clientSSLUtil = new SSLUtil(new TrustStoreTrustManager(serverKeyStorePath));
+        val clientSSLUtil = new SSLUtil(new TrustStoreTrustManager(serverKeyStorePath));
 
         LOGGER.debug("Loading LDAP listeners and ports...");
         config.setListenerConfigs(
@@ -83,20 +83,20 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
         config.setMaxConnections(-1);
 
         LOGGER.debug("Loading LDAP schema...");
-        final File file = File.createTempFile("ldap", "schema");
+        val file = File.createTempFile("ldap", "schema");
         try (OutputStream outputStream = new FileOutputStream(file)) {
             IOUtils.copy(schemaFile, outputStream);
         }
 
         LOGGER.debug("Setting LDAP schema...");
-        final Schema s = Schema.mergeSchemas(Schema.getSchema(file));
+        val s = Schema.mergeSchemas(Schema.getSchema(file));
         config.setSchema(s);
 
         this.directoryServer = new InMemoryDirectoryServer(config);
         LOGGER.debug("Populating directory...");
 
         LOGGER.debug("Loading LDIF file...");
-        final File ldif = File.createTempFile("ldiff", "file");
+        val ldif = File.createTempFile("ldiff", "file");
         try (OutputStream outputStream = new FileOutputStream(ldif)) {
             IOUtils.copy(ldifFile, outputStream);
         }
@@ -104,12 +104,12 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
         LOGGER.debug("Importing LDIF file...");
         this.directoryServer.importFromLDIF(true, ldif.getCanonicalPath());
 
-        int retryCount = 5;
+        var retryCount = 5;
         while (retryCount > 0) {
             try {
                 LOGGER.debug("Trying to restart LDAP server: attempt [{}]", retryCount);
                 this.directoryServer.restartServer();
-                try (LDAPConnection c = getConnection()) {
+                try (val c = getConnection()) {
                     LOGGER.debug("Connected to [{}]:[{}]", c.getConnectedAddress(), c.getConnectedPort());
                     populateDefaultEntries(c);
                 }
@@ -125,7 +125,7 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
     }
 
     public void populateEntries(final InputStream rs) throws Exception {
-        try (LDAPConnection connection = getConnection()) {
+        try (val connection = getConnection()) {
             populateEntries(connection, rs);
         }
     }
@@ -152,12 +152,16 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
     }
 
     @Override
-    @PreDestroy
     public void close() {
         LOGGER.debug("Shutting down LDAP server...");
         this.directoryServer.closeAllConnections(true);
         this.directoryServer.shutDown(true);
         LOGGER.debug("Shut down LDAP server.");
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        close();
     }
 
     public boolean isAlive() {

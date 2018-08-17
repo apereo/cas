@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.x509.web.extractcert;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
+
+import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -14,7 +15,6 @@ import java.security.cert.X509Certificate;
  * @author Hal Deadman
  * @since 5.3.0
  */
-@Slf4j
 public class X509CertificateExtractorTests extends AbstractX509CertificateTests {
 
     private static final String[] CERTIFICATE_LINES = new String[]{
@@ -51,11 +51,11 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
         "-----END CERTIFICATE-----"};
 
     private RequestHeaderX509CertificateExtractor extractX509CertificateFromHeader
-            = new RequestHeaderX509CertificateExtractor("ssl_client_cert");
+        = new RequestHeaderX509CertificateExtractor("ssl_client_cert");
 
     private static String certificateSingleLine(final String[] lines, final String separator) {
-        final StringBuilder singleSpaced = new StringBuilder();
-        for (final String current : lines) {
+        val singleSpaced = new StringBuilder();
+        for (val current : lines) {
             singleSpaced.append(current).append(separator);
         }
         singleSpaced.deleteCharAt(singleSpaced.length() - 1);
@@ -74,21 +74,21 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
 
     @Test
     public void verifyExtractX509FromHeaderSpaceSeperator() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine(" "));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
     public void verifyExtractX509FromHeaderNoSeparator() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine("\t"));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
     public void verifyExtractX509FromHeaderNoHeader() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         Assert.assertNull(extractX509CertificateFromHeader.extract(request));
     }
 }

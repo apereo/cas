@@ -1,12 +1,13 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.CasProtocolConstants;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
-import org.apereo.cas.CasProtocolConstants;
 import org.springframework.context.annotation.Scope;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +38,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements CasP
         LOGGER.debug("Is validation specification set to enforce [{}] protocol behavior? [{}]. Is assertion issued from a new login? [{}]",
             CasProtocolConstants.PARAMETER_RENEW, BooleanUtils.toStringYesNo(this.renew),
             BooleanUtils.toStringYesNo(assertion.isFromNewLogin()));
-        boolean satisfied = isSatisfiedByInternal(assertion);
+        var satisfied = isSatisfiedByInternal(assertion);
         if (!satisfied) {
             LOGGER.warn("[{}] is not internally satisfied by the produced assertion", getClass().getSimpleName());
             return false;

@@ -1,16 +1,17 @@
 package org.apereo.cas.ticket.registry;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 
-import javax.annotation.PreDestroy;
-import java.io.Closeable;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.DisposableBean;
+
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -28,8 +29,8 @@ import java.util.stream.Collectors;
  * @since 4.1.0
  */
 @Slf4j
-@AllArgsConstructor
-public class HazelcastTicketRegistry extends AbstractTicketRegistry implements Closeable {
+@RequiredArgsConstructor
+public class HazelcastTicketRegistry extends AbstractTicketRegistry implements AutoCloseable, DisposableBean {
     private final HazelcastInstance hazelcastInstance;
     private final TicketCatalog ticketCatalog;
     private final long pageSize;
@@ -42,38 +43,38 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public void addTicket(final Ticket ticket) {
-        final long ttl = ticket.getExpirationPolicy().getTimeToLive();
+        val ttl = ticket.getExpirationPolicy().getTimeToLive();
         if (ttl < 0) {
             throw new IllegalArgumentException("The expiration policy of ticket " + ticket.getId() + "is set to use a negative ttl");
         }
 
         LOGGER.debug("Adding ticket [{}] with ttl [{}s]", ticket.getId(), ttl);
-        final Ticket encTicket = encodeTicket(ticket);
+        val encTicket = encodeTicket(ticket);
 
-        final TicketDefinition metadata = this.ticketCatalog.find(ticket);
-        final IMap<String, Ticket> ticketMap = getTicketMapInstanceByMetadata(metadata);
+        val metadata = this.ticketCatalog.find(ticket);
+        val ticketMap = getTicketMapInstanceByMetadata(metadata);
 
         ticketMap.set(encTicket.getId(), encTicket, ttl, TimeUnit.SECONDS);
         LOGGER.debug("Added ticket [{}] with ttl [{}s]", encTicket.getId(), ttl);
     }
 
     private IMap<String, Ticket> getTicketMapInstanceByMetadata(final TicketDefinition metadata) {
-        final String mapName = metadata.getProperties().getStorageName();
+        val mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating map name [{}] for ticket definition [{}]", mapName, metadata);
         return getTicketMapInstance(mapName);
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        final String encTicketId = encodeTicketId(ticketId);
+        val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             return null;
         }
-        final TicketDefinition metadata = this.ticketCatalog.find(ticketId);
+        val metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
-            final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(metadata);
-            final Ticket ticket = map.get(encTicketId);
-            final Ticket result = decodeTicket(ticket);
+            val map = getTicketMapInstanceByMetadata(metadata);
+            val ticket = map.get(encTicketId);
+            val result = decodeTicket(ticket);
             if (result != null && result.isExpired()) {
                 LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
                 map.remove(encTicketId);
@@ -87,9 +88,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
 
     @Override
     public boolean deleteSingleTicket(final String ticketIdToDelete) {
-        final String encTicketId = encodeTicketId(ticketIdToDelete);
-        final TicketDefinition metadata = this.ticketCatalog.find(ticketIdToDelete);
-        final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(metadata);
+        val encTicketId = encodeTicketId(ticketIdToDelete);
+        val metadata = this.ticketCatalog.find(ticketIdToDelete);
+        val map = getTicketMapInstanceByMetadata(metadata);
         return map.remove(encTicketId) != null;
     }
 
@@ -99,7 +100,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
             .map(this::getTicketMapInstanceByMetadata)
             .filter(Objects::nonNull)
             .mapToInt(instance -> {
-                final int size = instance.size();
+                val size = instance.size();
                 instance.evictAll();
                 instance.clear();
                 return size;
@@ -125,7 +126,6 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     /**
      * Make sure we shutdown HazelCast when the context is destroyed.
      */
-    @PreDestroy
     public void shutdown() {
         try {
             LOGGER.info("Shutting down Hazelcast instance [{}]", this.hazelcastInstance.getConfig().getInstanceName());
@@ -136,13 +136,18 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     }
 
     @Override
+    public void destroy() throws Exception {
+        close();
+    }
+
+    @Override
     public void close() {
         shutdown();
     }
 
     private IMap<String, Ticket> getTicketMapInstance(final String mapName) {
         try {
-            final IMap<String, Ticket> inst = hazelcastInstance.getMap(mapName);
+            val inst = hazelcastInstance.<String, Ticket>getMap(mapName);
             LOGGER.debug("Located Hazelcast map instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {

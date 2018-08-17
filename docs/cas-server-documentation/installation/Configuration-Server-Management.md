@@ -97,7 +97,7 @@ The following endpoints are secured and exposed by the configuration server:
 | `/encrypt`                        | Accepts a `POST` to encrypt CAS configuration settings.
 | `/decrypt`                        | Accepts a `POST` to decrypt CAS configuration settings.
 | `/refresh`                        | Accepts a `POST` and attempts to refresh the internal state of configuration server.
-| `/env`                            | Accepts a `GET` and describes all configuration sources of the configuration server.
+| `/actuator/env`                   | Accepts a `GET` and describes all configuration sources of the configuration server.
 | `/cas/default`                    | Describes what the configuration server knows about the `default` settings profile.
 | `/cas/native`                     | Describes what the configuration server knows about the `native` settings profile.
 | `/bus/refresh`                    | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.
@@ -109,11 +109,16 @@ Once you have the configuration server deployed, you can observe the collection 
 curl -u casuser:Mellon http://config.server.url:8888/casconfigserver/cas/native
 ```
 
-You can also observe the collection of property sources that provide settings to the configuration server:
+Assuming actuator endpoints are enabled in the configuration, 
+you can also observe the collection of property sources that provide settings to the configuration server:
 
 ```bash
-curl -u casuser:Mellon http://localhost:8888/casconfigserver/env
+curl -u casuser:Mellon http://localhost:8888/casconfigserver/actuator/env
 ```
+
+<div class="alert alert-info"><strong>Actuator Endpoints</strong><p>
+Remember that actuator endpoints typically are prefixed with <code>/actuator</code>.
+</p></div>
 
 #### Clients and Consumers
 
@@ -217,7 +222,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-mongo</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-mongo</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -257,14 +262,16 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-zookeeper</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-zookeeper</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#zookeeper).
 
-You will need to map CAS settings to ZooKeeper's nodes that contain values. The parent node for all settings should match the configuration root value provided to CAS. Under the root, you could have folders such as `cas`, `cas,dev`, `cas,local`, etc where `dev` and `local` are Spring profiles.
+You will need to map CAS settings to ZooKeeper's nodes that contain values. The parent node for all settings should 
+match the configuration root value provided to CAS. Under the root, you could have folders such 
+as `cas`, `cas,dev`, `cas,local`, etc where `dev` and `local` are Spring profiles.
 
 To create nodes and values in Apache ZooKeeper, try the following commands
 as a sample:
@@ -277,16 +284,48 @@ create /cas/config/cas cas
 create /cas/config/cas/settingName casuser::Test
 ```
 
-Creating nodes and directories in Apache ZooKeeper may require providing a value. The above sample commands show that the value `cas` is provided when creating directories. Always check with the official Apache ZooKeeper guides. You may not need to do that step.
+Creating nodes and directories in Apache ZooKeeper may require providing a value. The above sample commands show that 
+the value `cas` is provided when creating directories. Always check with the official Apache ZooKeeper guides. You may not need to do that step.
 
 Finally in your CAS properties, the new `settingName` setting can be used as a reference.
 
 ```properties
-cas.something.something=${settingName}
+# cas.something.something=${settingName}
 ```
 
 ...where `${settingName}` gets the value of the contents of the Apache ZooKeeper node `cas/config/cas/settingName`.
 
+##### Amazon S3
+
+CAS is also able to use [Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/dev) to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+ 
+ ```xml
+ <dependency>
+      <groupId>org.apereo.cas</groupId>
+      <artifactId>cas-server-support-configuration-cloud-aws-s3</artifactId>
+      <version>${cas.version}</version>
+ </dependency>
+ ```
+ 
+ See [this guide](Configuration-Properties.html#amazon-s3) for relevant settings.
+
+##### Amazon Secrets Manager
+
+CAS is also able to use [Amazon Secret Manager](https://aws.amazon.com/secrets-manager/) to locate properties and settings.
+
+Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-configuration-cloud-aws-secretsmanager</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+See [this guide](Configuration-Properties.html#amazon-secrets-manager) for relevant settings.
 
 ##### DynamoDb
 
@@ -297,7 +336,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-dynamodb</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-dynamodb</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -312,7 +351,7 @@ The `DynamoDbCasProperties` table is automatically created by CAS with the follo
 }
 ```
 
-To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#dynamodb).
+See [this guide](Configuration-Properties.html#dynamodb) for relevant settings.
 
 ##### Azure KeyVault Secrets
 
@@ -321,14 +360,18 @@ CAS is also able to use Microsoft Azure's KeyVault Secrets to locate properties 
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-azure-keyvault</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-azure-keyvault</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#azure-keyvault-secrets).
 
-**IMPORTANT**: The allowed  name pattern in Azure Key Vault is `^[0-9a-zA-Z-]+$`.For properties that contain that contain `.` in the name (i.e. `cas.some.property`),  replace `.` with `-` when you store the setting in Azure Key Vault (i.e. `cas-some-property`). The module  will handle the transformation for you. 
+**IMPORTANT**: The allowed  name pattern in Azure Key Vault is `^[0-9a-zA-Z-]+$`. For properties that contain 
+that contain `.` in the name (i.e. `cas.some.property`),  replace `.` with `-` when you store the setting in Azure Key Vault (i.e. `cas-some-property`). 
+The module will handle the transformation for you. 
+
+See [this guide](Configuration-Properties.html#azure-keyvault-secrets) for relevant settings.
 
 ##### JDBC
 
@@ -339,7 +382,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-jdbc</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-jdbc</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -349,7 +392,12 @@ To see the relevant list of CAS properties for this feature, please [review this
 
 #### CAS Server Cloud Configuration
 
-The cloud configuration modules provided above on this page by the CAS project directly may also be used verbatim inside a CAS server overlay. Remember that the primary objective for these modules is to simply retrieve settings and properties from a source. While they are mostly and primarily useful when activated inside the Spring Cloud Configuration server and can be set to honor profiles and such, they nonetheless may also be used inside a CAS server overlay directly to simply fetch settings from a source while running in standalone mode. In such scenarios, all sources of configuration regardless of format or syntax will work alongside each other to retrieve settings and you can certainly mix and match as you see fit.
+The cloud configuration modules provided above on this page by the CAS project directly may also be used verbatim inside 
+a CAS server overlay. Remember that the primary objective for these modules is to simply retrieve settings and properties 
+from a source. While they are mostly and primarily useful when activated inside the Spring Cloud Configuration server and 
+can be set to honor profiles and such, they nonetheless may also be used inside a CAS server overlay directly to simply 
+fetch settings from a source while running in standalone mode. In such scenarios, all sources of configuration regardless 
+of format or syntax will work alongside each other to retrieve settings and you can certainly mix and match as you see fit.
 
 #### Composite Sources
 
@@ -380,7 +428,11 @@ conflicts between repositories that contain values for the same properties.
 
 #### Property Overrides
 
-The configuration server has an "overrides" feature that allows the operator to provide configuration properties to all applications that cannot be accidentally changed by the application using the normal change events and hooks. To declare overrides add a map of name-value pairs to `spring.cloud.config.server.overrides`. For example:
+The configuration server has an "overrides" feature that allows the operator to provide configuration properties 
+to all applications that cannot be accidentally changed by the application using the normal change events and hooks. 
+To declare overrides add a map of name-value pairs to `spring.cloud.config.server.overrides`. 
+
+For example:
 
 ```yml
 spring:

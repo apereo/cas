@@ -1,9 +1,9 @@
 package org.apereo.cas.web.support;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.After;
@@ -16,6 +16,9 @@ import org.mockito.stubbing.OngoingStubbing;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Pattern;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Daniel Frett
@@ -36,11 +39,10 @@ public class DefaultCasCookieValueManagerTests {
     private Cookie cookie;
 
     @Before
-    public void setup() {
+    public void initialize() {
         MockitoAnnotations.initMocks(this);
-
         ClientInfoHolder.setClientInfo(clientInfo);
-        cookieValueManager = new DefaultCasCookieValueManager(CipherExecutor.noOp());
+        cookieValueManager = new DefaultCasCookieValueManager(CipherExecutor.noOp(), new TicketGrantingCookieProperties());
     }
 
     @After
@@ -54,12 +56,12 @@ public class DefaultCasCookieValueManagerTests {
         whenGettingUserAgent().thenReturn(USER_AGENT);
 
         // test encoding first
-        final String encoded = cookieValueManager.buildCookieValue(VALUE, request);
-        assertEquals(VALUE + "@" + CLIENT_IP + "@" + USER_AGENT, encoded);
+        val encoded = cookieValueManager.buildCookieValue(VALUE, request);
+        assertEquals(VALUE + '@' + CLIENT_IP + '@' + USER_AGENT, encoded);
 
         // now test decoding the cookie
         when(cookie.getValue()).thenReturn(encoded);
-        final String decoded = cookieValueManager.obtainCookieValue(cookie, request);
+        val decoded = cookieValueManager.obtainCookieValue(cookie, request);
         assertEquals(VALUE, decoded);
     }
 

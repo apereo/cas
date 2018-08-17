@@ -1,8 +1,9 @@
 package org.apereo.cas.ticket;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,7 +18,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface TicketGrantingTicket extends Ticket {
 
     /**

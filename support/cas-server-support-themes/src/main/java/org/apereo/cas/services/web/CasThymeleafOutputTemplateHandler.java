@@ -1,11 +1,11 @@
 package org.apereo.cas.services.web;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.NoArgsConstructor;
+import lombok.val;
 import org.thymeleaf.engine.AbstractTemplateHandler;
 import org.thymeleaf.model.ICloseElementTag;
 import org.thymeleaf.model.IOpenElementTag;
 import org.thymeleaf.model.IText;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link CasThymeleafOutputTemplateHandler}.
@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @NoArgsConstructor
 public class CasThymeleafOutputTemplateHandler extends AbstractTemplateHandler {
 
@@ -21,7 +20,7 @@ public class CasThymeleafOutputTemplateHandler extends AbstractTemplateHandler {
 
     @Override
     public void handleText(final IText text) {
-        final String contentString = text.getText();
+        val contentString = text.getText();
         if (!contentString.isEmpty() && contentString.trim().isEmpty()) {
             if (!writeWhitespace) {
                 return;

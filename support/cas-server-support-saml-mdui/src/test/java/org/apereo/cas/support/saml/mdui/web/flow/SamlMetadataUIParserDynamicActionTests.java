@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -8,8 +7,9 @@ import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -18,7 +18,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
@@ -31,26 +30,23 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@RunWith(SpringRunner.class)
 @Import({SamlMetadataUIConfiguration.class, SamlMetadataUIWebflowConfiguration.class})
 @TestPropertySource(properties = "cas.samlMetadataUi.resources=http://mdq-beta.incommon.org/global/entities/::")
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-@Slf4j
 public class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTests {
-
     @Autowired
     @Qualifier("samlMetadataUIParserAction")
     private Action samlMetadataUIParserAction;
 
     @Test
     public void verifyEntityIdUIInfoExistsDynamically() throws Exception {
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        val ctx = new MockRequestContext();
+        val request = new MockHttpServletRequest();
         request.addParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID, "https://carmenwiki.osu.edu/shibboleth");
 
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
 
-        final MockServletContext sCtx = new MockServletContext();
+        val sCtx = new MockServletContext();
         ctx.setExternalContext(new ServletExternalContext(sCtx, request, response));
         samlMetadataUIParserAction.execute(ctx);
         assertNotNull(WebUtils.getServiceUserInterfaceMetadata(ctx, SamlMetadataUIInfo.class));

@@ -34,12 +34,18 @@ public interface ServicesManager {
     RegisteredService save(RegisteredService registeredService, boolean publishEvent);
 
     /**
+     * Delete all entries in the underlying storage service.
+     */
+    void deleteAll();
+
+    /**
      * Delete the entry for this RegisteredService.
      *
      * @param id the id of the registeredService to delete.
      * @return the registered service that was deleted, null if there was none.
      */
     RegisteredService delete(long id);
+
 
     /**
      * Delete the entry for this RegisteredService.
@@ -129,8 +135,10 @@ public interface ServicesManager {
      * Inform the ServicesManager to reload its list of services if its cached
      * them. Note that this is a suggestion and that ServicesManagers are free
      * to reload whenever they want.
+     *
+     * @return the collection
      */
-    void load();
+    Collection<RegisteredService> load();
 
     /**
      * Return a count of loaded services by this manager.

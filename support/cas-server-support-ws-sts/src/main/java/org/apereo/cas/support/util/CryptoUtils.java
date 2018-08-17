@@ -1,9 +1,10 @@
 package org.apereo.cas.support.util;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import java.util.Properties;
 import lombok.NoArgsConstructor;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Properties;
 
 /**
  * This is {@link CryptoUtils}.
@@ -11,7 +12,6 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @NoArgsConstructor
 public class CryptoUtils {
 
@@ -35,7 +35,7 @@ public class CryptoUtils {
      * @return the security properties
      */
     public static Properties getSecurityProperties(final String file, final String psw, final String alias) {
-        final Properties p = new Properties();
+        val p = new Properties();
         p.put("org.apache.ws.security.crypto.provider", "org.apache.ws.security.components.crypto.Merlin");
         p.put("org.apache.ws.security.crypto.merlin.keystore.type", "jks");
         p.put("org.apache.ws.security.crypto.merlin.keystore.password", psw);

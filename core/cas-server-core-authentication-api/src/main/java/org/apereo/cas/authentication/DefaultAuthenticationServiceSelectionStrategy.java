@@ -1,19 +1,18 @@
 package org.apereo.cas.authentication;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
-import org.springframework.core.Ordered;
+
+import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.Ordered;
 
 /**
  * This is {@link DefaultAuthenticationServiceSelectionStrategy} which returns back to the caller
- * the provided service, as it was without any additional processing. 
+ * the provided service, as it was without any additional processing.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Setter
 @Getter
 public class DefaultAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {

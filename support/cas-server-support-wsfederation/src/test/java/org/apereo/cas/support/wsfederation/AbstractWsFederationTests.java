@@ -1,6 +1,5 @@
 package org.apereo.cas.support.wsfederation;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -21,24 +20,26 @@ import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationConfiguration;
 import org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Collection;
 
 /**
  * Abstract class, provides resources to run wsfed tests.
@@ -46,48 +47,54 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(
-    classes = {
-        AbstractOpenSamlTests.SamlTestConfiguration.class,
-        WsFederationAuthenticationConfiguration.class,
-        WsFedAuthenticationEventExecutionPlanConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CoreSamlConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        RefreshAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasValidationConfiguration.class,
-        CasProtocolViewsConfiguration.class,
-        CasCoreValidationConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreUtilConfiguration.class})
+@SpringBootTest(classes = {
+    AbstractOpenSamlTests.SamlTestConfiguration.class,
+    WsFederationAuthenticationConfiguration.class,
+    WsFedAuthenticationEventExecutionPlanConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CoreSamlConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCookieConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasValidationConfiguration.class,
+    CasProtocolViewsConfiguration.class,
+    CasCoreValidationConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreUtilConfiguration.class})
 @TestPropertySource(locations = {"classpath:/wsfed.properties"})
-@ContextConfiguration(locations = {"classpath:/applicationContext.xml"}, initializers = EnvironmentConversionServiceInitializer.class)
-@Slf4j
+@ContextConfiguration(locations = {"classpath:/applicationContext.xml"})
 public class AbstractWsFederationTests extends AbstractOpenSamlTests {
+    @Autowired
+    @Qualifier("wsFederationConfigurations")
+    protected Collection<WsFederationConfiguration> wsFederationConfigurations;
 
     @Autowired
+    @Qualifier("wsFederationCookieManager")
+    protected WsFederationCookieManager wsFederationCookieManager;
+
+    @Autowired
+    @Qualifier("wsFederationHelper")
     protected WsFederationHelper wsFederationHelper;
+
 }
 

@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title th:text="#{screen.success.header}">Generic Success View</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 </head>
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content">
+    <div layout:fragment="content" class="row">
         <div class="alert alert-success">
             <h2 th:utext="#{screen.success.header}">Log In Successful</h2>
             <p th:utext="#{screen.success.success(${principal.id})}">You, <strong>username</strong>, have successfully
@@ -21,8 +21,16 @@
             <p th:utext="#{screen.success.security}">When you are finished, for security reasons, please <a
                     href="logout">log out</a> and exit your web browser.</p>
         </div>
-        <div th:replace="fragments/cas-resources-list"/>
+
+        <div id="notices" class="col-md mt-3 mt-md-0">
+            <div th:replace="fragments/cas-resources-list :: cas-resource-list">
+                <a href="fragments/cas-resources-list.html">cas-resource</a> list fragment
+            </div>
+        </div>
+        
     </div>
+
+    
 </main>
 </body>
 </html>

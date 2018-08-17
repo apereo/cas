@@ -1,18 +1,18 @@
 package org.apereo.cas.metadata;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
 import lombok.Getter;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.jooq.lambda.Unchecked;
+import org.springframework.boot.configurationmetadata.CasConfigurationMetadataRepositoryJsonBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepository;
-import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepositoryJsonBuilder;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import java.io.InputStream;
 import java.util.Arrays;
 
 /**
@@ -22,7 +22,6 @@ import java.util.Arrays;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 public class CasConfigurationMetadataRepository {
     private final ConfigurationMetadataRepository repository;
@@ -40,16 +39,25 @@ public class CasConfigurationMetadataRepository {
      */
     @SneakyThrows
     public CasConfigurationMetadataRepository(final String resource) {
-        final Resource[] resources = new PathMatchingResourcePatternResolver().getResources(resource);
-        final ConfigurationMetadataRepositoryJsonBuilder builder = ConfigurationMetadataRepositoryJsonBuilder.create();
+        val resources = new PathMatchingResourcePatternResolver().getResources(resource);
+        val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
         Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
-            try (InputStream in = r.getInputStream()) {
+            try (val in = r.getInputStream()) {
                 builder.withJsonResource(in);
             }
         }));
         repository = builder.build();
     }
-    
+
+    @SneakyThrows
+    public CasConfigurationMetadataRepository(final Resource resource) {
+        val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
+        try (val in = resource.getInputStream()) {
+            builder.withJsonResource(in);
+        }
+        repository = builder.build();
+    }
+
     /**
      * Gets property group id.
      *

@@ -1,7 +1,5 @@
 package org.apereo.cas.audit.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.entity.AuditTrailEntity;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -9,6 +7,9 @@ import org.apereo.cas.configuration.model.core.audit.AuditJdbcProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
@@ -38,7 +39,6 @@ import javax.sql.DataSource;
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-@Slf4j
 public class CasSupportJdbcAuditConfiguration {
 
     @Autowired
@@ -46,21 +46,25 @@ public class CasSupportJdbcAuditConfiguration {
 
     @Bean
     public AuditTrailManager jdbcAuditTrailManager() {
-        final AuditJdbcProperties jdbc = casProperties.getAudit().getJdbc();
-        final JdbcAuditTrailManager t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
+        val jdbc = casProperties.getAudit().getJdbc();
+        val t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
         t.setCleanupCriteria(auditCleanupCriteria());
         t.setDataSource(inspektrAuditTrailDataSource());
         t.setAsynchronous(jdbc.isAsynchronous());
         t.setColumnLength(jdbc.getColumnLength());
-        String tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
+        t.setTableName(getAuditTableNameFrom(jdbc));
+        return t;
+    }
+
+    private String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
+        var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
         if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
-            tableName = jdbc.getDefaultSchema() + '.' + tableName;
+            tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);
         }
         if (StringUtils.isNotBlank(jdbc.getDefaultCatalog())) {
-            tableName = jdbc.getDefaultCatalog() + '.' + tableName;
+            tableName = jdbc.getDefaultCatalog().concat(".").concat(tableName);
         }
-        t.setTableName(tableName);
-        return t;
+        return tableName;
     }
 
     @Bean
@@ -72,12 +76,12 @@ public class CasSupportJdbcAuditConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean inspektrAuditEntityManagerFactory() {
         return JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                        JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
-                        "jpaInspektrAuditContext",
-                        CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
-                        inspektrAuditTrailDataSource()),
-                casProperties.getAudit().getJdbc());
+            new JpaConfigDataHolder(
+                JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
+                "jpaInspektrAuditContext",
+                CollectionUtils.wrap(AuditTrailEntity.class.getPackage().getName()),
+                inspektrAuditTrailDataSource()),
+            casProperties.getAudit().getJdbc());
     }
 
     @Bean
@@ -98,7 +102,7 @@ public class CasSupportJdbcAuditConfiguration {
 
     @Bean
     public TransactionTemplate inspektrAuditTransactionTemplate() {
-        final TransactionTemplate t = new TransactionTemplate(inspektrAuditTransactionManager());
+        val t = new TransactionTemplate(inspektrAuditTransactionManager());
         t.setIsolationLevelName(casProperties.getAudit().getJdbc().getIsolationLevelName());
         t.setPropagationBehaviorName(casProperties.getAudit().getJdbc().getPropagationBehaviorName());
         return t;

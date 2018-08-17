@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import lombok.val;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 
 /**
@@ -20,7 +22,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     private static final int MAX_CACHE_SIZE = 10_000;
 
     private final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
-    private final LoadingCache<SamlRegisteredService, MetadataResolver> cache;
+    private final LoadingCache<SamlRegisteredServiceCacheKey, MetadataResolver> cache;
 
     public SamlRegisteredServiceDefaultCachingMetadataResolver(final long metadataCacheExpirationMinutes,
                                                                final SamlRegisteredServiceMetadataResolverCacheLoader loader) {
@@ -33,17 +35,13 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     @Override
     public MetadataResolver resolve(final SamlRegisteredService service) {
-        MetadataResolver resolver = null;
-        try {
-            LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
-            resolver = this.cache.get(service);
-            return resolver;
-        } finally {
-            if (resolver != null) {
-                LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
-                    resolver.getId(),
-                    service.getMetadataLocation());
-            }
-        }
+        LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
+        val k = new SamlRegisteredServiceCacheKey(service);
+        LOGGER.debug("Locating cached metadata resolver using key [{}] for service [{}]", k.getId(), service.getName());
+        val resolver = this.cache.get(k);
+        LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
+            resolver.getId(),
+            service.getMetadataLocation());
+        return resolver;
     }
 }

@@ -1,20 +1,23 @@
 package org.apereo.cas.support.claims;
 
-import lombok.AllArgsConstructor;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.ws.idp.WSFederationClaims;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.cxf.rt.security.claims.ClaimCollection;
 import org.apache.cxf.sts.claims.ClaimsHandler;
 import org.apache.cxf.sts.claims.ClaimsParameters;
 import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.claims.ProcessedClaimCollection;
 import org.apache.cxf.sts.token.realm.RealmSupport;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.ws.idp.WSFederationClaims;
+
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.Getter;
 
 /**
  * This is {@link WrappingSecurityTokenServiceClaimsHandler}.
@@ -24,7 +27,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler, RealmSupport {
 
     private final String handlerRealm;
@@ -33,7 +36,9 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
 
     @Override
     public List<URI> getSupportedClaimTypes() {
-        return WSFederationClaims.ALL_CLAIMS.stream().map(c -> UriBuilder.fromUri(c.getUri()).build()).collect(Collectors.toList());
+        return WSFederationClaims.ALL_CLAIMS.stream()
+            .map(c -> UriBuilder.fromUri(c.getUri()).build())
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -50,9 +55,9 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
             LOGGER.warn("No claims are available to process");
             return new ProcessedClaimCollection();
         }
-        final ProcessedClaimCollection claimCollection = new ProcessedClaimCollection();
+        val claimCollection = new ProcessedClaimCollection();
         claims.stream().map(requestClaim -> {
-            final ProcessedClaim claim = new ProcessedClaim();
+            val claim = new ProcessedClaim();
             claim.setClaimType(requestClaim.getClaimType());
             claim.setIssuer(this.issuer);
             claim.setOriginalIssuer(this.issuer);

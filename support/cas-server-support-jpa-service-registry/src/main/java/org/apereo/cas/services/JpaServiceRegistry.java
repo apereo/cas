@@ -1,13 +1,15 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+
+import lombok.ToString;
+import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import lombok.ToString;
 
 /**
  * Implementation of the ServiceRegistry based on JPA.
@@ -18,12 +20,12 @@ import lombok.ToString;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerServiceReg")
-@Slf4j
 @ToString
 public class JpaServiceRegistry extends AbstractServiceRegistry {
+    private static final String ENTITY_NAME = AbstractRegisteredService.class.getSimpleName();
 
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
@@ -37,16 +39,16 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public List<RegisteredService> load() {
-        final List<RegisteredService> list = this.entityManager.createQuery("select r from AbstractRegisteredService r",
-            RegisteredService.class).getResultList();
+        val query = String.format("select r from %s r", ENTITY_NAME);
+        val list = this.entityManager.createQuery(query, RegisteredService.class).getResultList();
         list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;
     }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        final boolean isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
-        final RegisteredService r = this.entityManager.merge(registeredService);
+        val isNew = registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE;
+        val r = this.entityManager.merge(registeredService);
         if (!isNew) {
             this.entityManager.persist(r);
         }
@@ -65,6 +67,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public long size() {
-        return this.entityManager.createQuery("select count(r) from AbstractRegisteredService r", Long.class).getSingleResult();
+        val query = String.format("select count(r) from %s r", ENTITY_NAME);
+        return this.entityManager.createQuery(query, Long.class).getSingleResult();
     }
 }

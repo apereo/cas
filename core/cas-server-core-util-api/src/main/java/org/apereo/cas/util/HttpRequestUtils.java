@@ -1,17 +1,22 @@
 package org.apereo.cas.util;
 
-import com.google.common.base.Splitter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.web.support.ArgumentExtractor;
+
+import com.google.common.base.Splitter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Enumeration;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +35,13 @@ public class HttpRequestUtils {
      * Constant representing the request header for user agent.
      */
     public static final String USER_AGENT_HEADER = "user-agent";
+
+    private static final int GEO_LOC_LAT_INDEX = 0;
+    private static final int GEO_LOC_LONG_INDEX = 1;
+    private static final int GEO_LOC_ACCURACY_INDEX = 2;
+    private static final int GEO_LOC_TIME_INDEX = 3;
+
+    private static final int PING_URL_TIMEOUT = 5_000;
 
     /**
      * Gets http servlet request from request attributes.
@@ -61,19 +73,15 @@ public class HttpRequestUtils {
      * @return the http servlet request geo location
      */
     public static GeoLocationRequest getHttpServletRequestGeoLocation(final HttpServletRequest request) {
-        final int latIndex = 0;
-        final int longIndex = 1;
-        final int accuracyIndex = 2;
-        final int timeIndex = 3;
-        final GeoLocationRequest loc = new GeoLocationRequest();
+        val loc = new GeoLocationRequest();
         if (request != null) {
-            final String geoLocationParam = request.getParameter("geolocation");
+            val geoLocationParam = request.getParameter("geolocation");
             if (StringUtils.isNotBlank(geoLocationParam)) {
-                final List<String> geoLocation = Splitter.on(",").splitToList(geoLocationParam);
-                loc.setLatitude(geoLocation.get(latIndex));
-                loc.setLongitude(geoLocation.get(longIndex));
-                loc.setAccuracy(geoLocation.get(accuracyIndex));
-                loc.setTimestamp(geoLocation.get(timeIndex));
+                val geoLocation = Splitter.on(",").splitToList(geoLocationParam);
+                loc.setLatitude(geoLocation.get(GEO_LOC_LAT_INDEX));
+                loc.setLongitude(geoLocation.get(GEO_LOC_LONG_INDEX));
+                loc.setAccuracy(geoLocation.get(GEO_LOC_ACCURACY_INDEX));
+                loc.setTimestamp(geoLocation.get(GEO_LOC_TIME_INDEX));
             }
         }
         return loc;
@@ -86,16 +94,16 @@ public class HttpRequestUtils {
      * @return the request headers
      */
     public static Map<String, String> getRequestHeaders(final HttpServletRequest request) {
-        final Map<String, String> headers = new LinkedHashMap<>();
-        final Enumeration<String> headerNames = request.getHeaderNames();
+        val headers = new LinkedHashMap<String, Object>();
+        val headerNames = request.getHeaderNames();
         if (headerNames != null) {
             while (headerNames.hasMoreElements()) {
-                final String headerName = headerNames.nextElement();
-                final String headerValue = StringUtils.stripToEmpty(request.getHeader(headerName));
+                val headerName = headerNames.nextElement();
+                val headerValue = StringUtils.stripToEmpty(request.getHeader(headerName));
                 headers.put(headerName, headerValue);
             }
         }
-        return headers;
+        return (Map) headers;
     }
 
     /**
@@ -131,7 +139,7 @@ public class HttpRequestUtils {
      * @return whether the parameter exists
      */
     public static boolean doesParameterExist(final HttpServletRequest request, final String name) {
-        final String parameter = request.getParameter(name);
+        val parameter = request.getParameter(name);
         if (StringUtils.isBlank(parameter)) {
             LOGGER.error("Missing request parameter: [{}]", name);
             return false;
@@ -140,4 +148,24 @@ public class HttpRequestUtils {
         return true;
     }
 
+    /**
+     * Ping url and return http status.
+     *
+     * @param location the location
+     * @return the http status
+     */
+    public static HttpStatus pingUrl(final String location) {
+        try {
+            val url = new URL(location);
+            val connection = (HttpURLConnection) url.openConnection();
+            connection.setConnectTimeout(PING_URL_TIMEOUT);
+            connection.setReadTimeout(PING_URL_TIMEOUT);
+            connection.setRequestMethod(HttpMethod.HEAD.name());
+            val status = HttpStatus.valueOf(connection.getResponseCode());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return HttpStatus.SERVICE_UNAVAILABLE;
+
+    }
 }

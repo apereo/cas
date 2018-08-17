@@ -1,18 +1,14 @@
 package org.apereo.cas.adaptors.rest;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.HttpUtils;
+
+import lombok.val;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-import java.nio.charset.Charset;
 
 /**
  * This is {@link RestAuthenticationApi}.
@@ -20,10 +16,9 @@ import java.nio.charset.Charset;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class RestAuthenticationApi {
 
-    private final RestTemplate restTemplate;
+    private final transient RestTemplate restTemplate;
     private final String authenticationUri;
 
     public RestAuthenticationApi(final RestTemplate restTemplate, final String authenticationUri) {
@@ -38,22 +33,7 @@ public class RestAuthenticationApi {
      * @return the response entity
      */
     public ResponseEntity<SimplePrincipal> authenticate(final UsernamePasswordCredential c) {
-        final HttpEntity<SimplePrincipal> entity = new HttpEntity<>(createHeaders(c));
+        val entity = new HttpEntity<>(HttpUtils.createBasicAuthHeaders(c.getUsername(), c.getPassword()));
         return restTemplate.exchange(authenticationUri, HttpMethod.POST, entity, SimplePrincipal.class);
-    }
-
-    /**
-     * Create authorization http headers.
-     *
-     * @param c the credentials
-     * @return the http headers
-     */
-    public static HttpHeaders createHeaders(final UsernamePasswordCredential c) {
-        final HttpHeaders acceptHeaders = new HttpHeaders();
-        acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        final String authorization = c.getUsername() + ':' + c.getPassword();
-        final String basic = EncodingUtils.encodeBase64(authorization.getBytes(Charset.forName("US-ASCII")));
-        acceptHeaders.set("Authorization", "Basic " + basic);
-        return acceptHeaders;
     }
 }

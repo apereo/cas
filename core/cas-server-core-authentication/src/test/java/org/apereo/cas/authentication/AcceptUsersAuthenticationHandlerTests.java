@@ -1,7 +1,8 @@
 package org.apereo.cas.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
+
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -12,7 +13,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -20,9 +20,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class AcceptUsersAuthenticationHandlerTests {
-
     private static final String SCOTT = "scott";
     private static final String RUTGERS = "rutgers";
 
@@ -32,7 +30,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     private final AcceptUsersAuthenticationHandler authenticationHandler;
 
     public AcceptUsersAuthenticationHandlerTests() {
-        final Map<String, String> users = new HashMap<>();
+        val users = new HashMap<String, String>();
         users.put(SCOTT, RUTGERS);
         users.put("dima", "javarules");
         users.put("bill", "thisisAwesoME");
@@ -43,7 +41,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifySupportsSpecialCharacters() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
         c.setUsername("brian");
         c.setPassword("t�st");
         assertEquals("brian", this.authenticationHandler.authenticate(c).getPrincipal().getId());
@@ -51,7 +49,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifySupportsProperUserCredentials() {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(RUTGERS);
@@ -62,8 +60,8 @@ public class AcceptUsersAuthenticationHandlerTests {
     public void verifyDoesntSupportBadUserCredentials() {
         try {
             assertFalse(this.authenticationHandler
-                    .supports(new HttpBasedServiceCredential(new URL(
-                            "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
+                .supports(new HttpBasedServiceCredential(new URL(
+                    "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
         } catch (final MalformedURLException e) {
             throw new AssertionError("Could not resolve URL.", e);
         }
@@ -71,7 +69,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticatesUserInMap() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(RUTGERS);
@@ -85,7 +83,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsUserNotInMap() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername("fds");
         c.setPassword(RUTGERS);
@@ -98,7 +96,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullUserName() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword("user");
@@ -109,7 +107,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullUserNameAndPassword() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername(null);
         c.setPassword(null);
@@ -122,7 +120,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyFailsNullPassword() throws Exception {
-        final UsernamePasswordCredential c = new UsernamePasswordCredential();
+        val c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
         c.setPassword(null);

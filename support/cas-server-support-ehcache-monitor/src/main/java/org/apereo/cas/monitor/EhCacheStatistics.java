@@ -1,9 +1,7 @@
 package org.apereo.cas.monitor;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.sf.ehcache.Cache;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.statistics.StatisticsGateway;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Formatter;
@@ -14,12 +12,11 @@ import java.util.Formatter;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-@Slf4j
 public class EhCacheStatistics implements CacheStatistics {
 
     private static final double TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE = 1048510.0;
     private static final int PERCENTAGE_VALUE = 100;
-    
+
     private final Cache cache;
 
     private final boolean useBytes;
@@ -48,7 +45,7 @@ public class EhCacheStatistics implements CacheStatistics {
      */
     @Override
     public long getSize() {
-        final StatisticsGateway statistics = this.cache.getStatistics();
+        val statistics = this.cache.getStatistics();
         if (this.useBytes) {
             this.diskSize = statistics.getLocalDiskSizeInBytes();
             this.heapSize = statistics.getLocalHeapSizeInBytes();
@@ -67,7 +64,7 @@ public class EhCacheStatistics implements CacheStatistics {
      */
     @Override
     public long getCapacity() {
-        final CacheConfiguration config = this.cache.getCacheConfiguration();
+        val config = this.cache.getCacheConfiguration();
         if (this.useBytes) {
             return config.getMaxBytesLocalDisk();
         }
@@ -80,8 +77,8 @@ public class EhCacheStatistics implements CacheStatistics {
     }
 
     @Override
-    public int getPercentFree() {
-        final long capacity = getCapacity();
+    public long getPercentFree() {
+        val capacity = getCapacity();
         if (capacity == 0) {
             return 0;
         }
@@ -94,26 +91,24 @@ public class EhCacheStatistics implements CacheStatistics {
     }
 
     @Override
-    public void toString(final StringBuilder builder) {
-        final String name = this.getName();
+    public String toString(final StringBuilder builder) {
+        val name = this.getName();
         if (StringUtils.isNotBlank(name)) {
             builder.append(name).append(':');
         }
-        final int free = getPercentFree();
-        try (Formatter formatter = new Formatter(builder)) {
+        val free = getPercentFree();
+        try (val formatter = new Formatter(builder)) {
             if (this.useBytes) {
-                formatter.format("%.2f", this.heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
-                builder.append("MB heap, ");
-                formatter.format("%.2f", this.diskSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
-                builder.append("MB disk, ");
+                formatter.format("%.2f MB heap, ", this.heapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
+                formatter.format("%.2f MB disk, ", this.diskSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
             } else {
                 builder.append(this.heapSize).append(" items in heap, ");
                 builder.append(this.diskSize).append(" items on disk, ");
             }
-            formatter.format("%.2f", this.offHeapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
-            builder.append("MB off-heap, ");
-            builder.append(free).append("% free, ");
+            formatter.format("%.2f MB off-heap, ", this.offHeapSize / TOTAL_NUMBER_BYTES_IN_ONE_MEGABYTE);
+            builder.append(getPercentFree()).append(" perfect free, ");
             builder.append(getEvictions()).append(" evictions");
         }
+        return builder.toString();
     }
 }

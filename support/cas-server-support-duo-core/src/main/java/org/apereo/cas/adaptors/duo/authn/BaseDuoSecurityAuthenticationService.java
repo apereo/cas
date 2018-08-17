@@ -1,18 +1,18 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import com.duosecurity.client.Http;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.http.HttpMessage;
+
+import com.duosecurity.client.Http;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.http.HttpMethod;
 
 import java.net.URL;
@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
     private static final long serialVersionUID = -8044100706027708789L;
 
@@ -38,7 +38,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     private static final String RESULT_KEY_STATUS_MESSAGE = "status_msg";
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    
+
     /**
      * Duo Properties.
      */
@@ -46,18 +46,25 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private final transient HttpClient httpClient;
 
+    private static String buildUrlHttpScheme(final String url) {
+        if (!url.startsWith("http")) {
+            return "https://" + url;
+        }
+        return url;
+    }
+
     @Override
     public boolean ping() {
         try {
-            final String url = buildUrlHttpScheme(getApiHost().concat("/rest/v1/ping"));
+            val url = buildUrlHttpScheme(getApiHost().concat("/rest/v1/ping"));
             LOGGER.debug("Contacting Duo @ [{}]", url);
 
-            final HttpMessage msg = this.httpClient.sendMessageToEndPoint(new URL(url));
+            val msg = this.httpClient.sendMessageToEndPoint(new URL(url));
             if (msg != null) {
-                final String response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
+                val response = URLDecoder.decode(msg.getMessage(), StandardCharsets.UTF_8.name());
                 LOGGER.debug("Received Duo ping response [{}]", response);
 
-                final JsonNode result = MAPPER.readTree(response);
+                val result = MAPPER.readTree(response);
                 if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
                     && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
                     && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
@@ -87,7 +94,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final BaseDuoSecurityAuthenticationService rhs = (BaseDuoSecurityAuthenticationService) obj;
+        val rhs = (BaseDuoSecurityAuthenticationService) obj;
         return new EqualsBuilder()
             .append(this.duoProperties.getDuoApiHost(), rhs.duoProperties.getDuoApiHost())
             .append(this.duoProperties.getDuoApplicationKey(), rhs.duoProperties.getDuoApplicationKey())
@@ -108,29 +115,29 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     @Override
     public DuoUserAccount getDuoUserAccount(final String username) {
-        final DuoUserAccount account = new DuoUserAccount(username);
+        val account = new DuoUserAccount(username);
         account.setStatus(DuoUserAccountAuthStatus.AUTH);
 
         try {
-            final Http userRequest = buildHttpPostUserPreAuthRequest(username);
+            val userRequest = buildHttpPostUserPreAuthRequest(username);
             signHttpUserPreAuthRequest(userRequest);
             LOGGER.debug("Contacting Duo to inquire about username [{}]", username);
-            final String userResponse = userRequest.executeHttpRequest().body().string();
-            final String jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8.name());
+            val userResponse = userRequest.executeHttpRequest().body().string();
+            val jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8.name());
             LOGGER.debug("Received Duo admin response [{}]", jsonResponse);
 
-            final JsonNode result = MAPPER.readTree(jsonResponse);
+            val result = MAPPER.readTree(jsonResponse);
             if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
                 && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
 
-                final JsonNode response = result.get(RESULT_KEY_RESPONSE);
-                final String authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
+                val response = result.get(RESULT_KEY_RESPONSE);
+                val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
 
-                final DuoUserAccountAuthStatus status = DuoUserAccountAuthStatus.valueOf(authResult);
+                val status = DuoUserAccountAuthStatus.valueOf(authResult);
                 account.setStatus(status);
                 account.setMessage(response.get(RESULT_KEY_STATUS_MESSAGE).asText());
                 if (status == DuoUserAccountAuthStatus.ENROLL) {
-                    final String enrollUrl = response.get(RESULT_KEY_ENROLL_PORTAL_URL).asText();
+                    val enrollUrl = response.get(RESULT_KEY_ENROLL_PORTAL_URL).asText();
                     account.setEnrollPortalUrl(enrollUrl);
                 }
             }
@@ -138,13 +145,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             LOGGER.warn("Reaching Duo has failed with error: [{}]", e.getMessage(), e);
         }
         return account;
-    }
-
-    private static String buildUrlHttpScheme(final String url) {
-        if (!url.startsWith("http")) {
-            return "https://" + url;
-        }
-        return url;
     }
 
     /**
@@ -165,7 +165,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @return the http
      */
     protected Http buildHttpPostUserPreAuthRequest(final String username) {
-        final Http usersRequest = new Http(HttpMethod.POST.name(),
+        val usersRequest = new Http(HttpMethod.POST.name(),
             duoProperties.getDuoApiHost(),
             String.format("/auth/v%s/preauth", AUTH_API_VERSION));
         usersRequest.addParam("username", username);

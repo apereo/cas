@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.radius;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.security.auth.login.FailedLoginException;
@@ -35,12 +36,12 @@ public class RadiusUtils {
                                                                             final List<RadiusServer> servers,
                                                                             final boolean failoverOnAuthenticationFailure,
                                                                             final boolean failoverOnException) throws Exception {
-        for (final RadiusServer radiusServer : servers) {
+        for (val radiusServer : servers) {
             LOGGER.debug("Attempting to authenticate [{}] at [{}]", username, radiusServer);
             try {
-                final RadiusResponse response = radiusServer.authenticate(username, password);
+                val response = radiusServer.authenticate(username, password);
                 if (response != null) {
-                    final Map<String, Object> attributes = new HashMap<>();
+                    val attributes = new HashMap<String, Object>();
                     response.getAttributes().forEach(attribute -> attributes.put(attribute.getAttributeName(), attribute.getValue().toString()));
                     return Pair.of(Boolean.TRUE, Optional.of(attributes));
                 }
@@ -56,6 +57,6 @@ public class RadiusUtils {
                 LOGGER.warn("failoverOnException enabled -- trying next server.", e);
             }
         }
-        return Pair.of(Boolean.TRUE, Optional.empty());
+        return Pair.of(Boolean.FALSE, Optional.empty());
     }
 }

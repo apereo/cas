@@ -1,5 +1,14 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.BasicCredentialMetaData;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
+
 import jcifs.Config;
 import jcifs.UniAddress;
 import jcifs.netbios.NbtAddress;
@@ -9,16 +18,10 @@ import jcifs.ntlmssp.Type3Message;
 import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbAuthException;
 import jcifs.smb.SmbSession;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -42,15 +45,12 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
     private static final int NTLM_TOKEN_TYPE_THREE = 3;
 
     private static final String DEFAULT_DOMAIN_CONTROLLER = Config.getProperty("jcifs.smb.client.domain");
-
-    private boolean loadBalance = true;
-
     /**
      * Sets domain controller. Will default if none is defined or passed.
      */
     private final String domainController;
-
     private final String includePattern;
+    private boolean loadBalance = true;
 
     public NtlmAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                      final boolean loadBalance, final String domainController, final String includePattern) {
@@ -66,45 +66,31 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final SpnegoCredential ntlmCredential = (SpnegoCredential) credential;
-        final byte[] src = ntlmCredential.getInitToken();
+        val ntlmCredential = (SpnegoCredential) credential;
+        val src = ntlmCredential.getInitToken();
 
-        final UniAddress dc;
-        boolean success = false;
+        var success = false;
         try {
-            if (this.loadBalance) {
-                if (StringUtils.isNotBlank(this.includePattern)) {
-                    final NbtAddress[] dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
-                    dc = Arrays.stream(dcs)
-                            .filter(dc2 -> dc2.getHostAddress().matches(this.includePattern))
-                            .findFirst()
-                            .map(UniAddress::new)
-                            .orElse(null);
-                } else {
-                    dc = new UniAddress(NbtAddress.getByName(this.domainController, NBT_ADDRESS_TYPE, null));
-                }
-            } else {
-                dc = UniAddress.getByName(this.domainController, true);
-            }
-            final byte[] challenge = SmbSession.getChallenge(dc);
+            val dc = getUniAddress();
+            val challenge = SmbSession.getChallenge(dc);
 
             switch (src[NTLM_TOKEN_TYPE_FIELD_INDEX]) {
                 case NTLM_TOKEN_TYPE_ONE:
                     LOGGER.debug("Type 1 received");
-                    final Type1Message type1 = new Type1Message(src);
-                    final Type2Message type2 = new Type2Message(type1,
-                            challenge, null);
+                    val type1 = new Type1Message(src);
+                    val type2 = new Type2Message(type1,
+                        challenge, null);
                     LOGGER.debug("Type 2 returned. Setting next token.");
                     ntlmCredential.setNextToken(type2.toByteArray());
                     break;
                 case NTLM_TOKEN_TYPE_THREE:
                     LOGGER.debug("Type 3 received");
-                    final Type3Message type3 = new Type3Message(src);
-                    final byte[] lmResponse = type3.getLMResponse() == null ? new byte[0] : type3.getLMResponse();
-                    final byte[] ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
-                    final NtlmPasswordAuthentication ntlm = new NtlmPasswordAuthentication(
-                            type3.getDomain(), type3.getUser(), challenge,
-                            lmResponse, ntResponse);
+                    val type3 = new Type3Message(src);
+                    val lmResponse = type3.getLMResponse() == null ? new byte[0] : type3.getLMResponse();
+                    val ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
+                    val ntlm = new NtlmPasswordAuthentication(
+                        type3.getDomain(), type3.getUser(), challenge,
+                        lmResponse, ntResponse);
                     LOGGER.debug("Trying to authenticate [{}] with domain controller", type3.getUser());
                     try {
                         SmbSession.logon(dc, ntlm);
@@ -125,6 +111,27 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
             throw new FailedLoginException();
         }
         return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(ntlmCredential), ntlmCredential.getPrincipal());
+    }
+
+    @SneakyThrows
+    private UniAddress getUniAddress() {
+        if (this.loadBalance) {
+            if (StringUtils.isNotBlank(this.includePattern)) {
+                val dcs = NbtAddress.getAllByName(this.domainController, NBT_ADDRESS_TYPE, null, null);
+                return Arrays.stream(dcs)
+                    .filter(dc2 -> dc2.getHostAddress().matches(this.includePattern))
+                    .findFirst()
+                    .map(UniAddress::new)
+                    .orElse(null);
+            }
+            return new UniAddress(NbtAddress.getByName(this.domainController, NBT_ADDRESS_TYPE, null));
+        }
+        return UniAddress.getByName(this.domainController, true);
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return SpnegoCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

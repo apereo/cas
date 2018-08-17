@@ -1,19 +1,23 @@
 package org.apereo.cas.adaptors.gauth;
 
-import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
+import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
+
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
-import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
-import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
+import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import javax.persistence.NoResultException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link MongoDbGoogleAuthenticatorTokenCredentialRepository}.
@@ -24,13 +28,13 @@ import java.util.List;
 @Slf4j
 @ToString
 public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
-
     private final IGoogleAuthenticator googleAuthenticator;
     private final MongoOperations mongoTemplate;
     private final String collectionName;
 
     public MongoDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                               final MongoOperations mongoTemplate, final String collectionName,
+                                                               final MongoOperations mongoTemplate,
+                                                               final String collectionName,
                                                                final CipherExecutor<String, String> tokenCredentialCipher) {
         super(tokenCredentialCipher);
         this.googleAuthenticator = googleAuthenticator;
@@ -41,9 +45,9 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOne
     @Override
     public OneTimeTokenAccount get(final String username) {
         try {
-            final Query query = new Query();
+            val query = new Query();
             query.addCriteria(Criteria.where("username").is(username));
-            final GoogleAuthenticatorAccount r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
+            val r = this.mongoTemplate.findOne(query, GoogleAuthenticatorAccount.class, this.collectionName);
             if (r != null) {
                 return decode(r);
             }
@@ -54,21 +58,54 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOne
     }
 
     @Override
+    public Collection<OneTimeTokenAccount> load() {
+        try {
+            val r = this.mongoTemplate.findAll(GoogleAuthenticatorAccount.class, this.collectionName);
+            return r.stream()
+                .map(this::decode)
+                .collect(Collectors.toList());
+
+        } catch (final Exception e) {
+            LOGGER.error("No record could be found for google authenticator", e);
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
     public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
-        final GoogleAuthenticatorAccount account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
+        val account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
         update(account);
     }
 
     @Override
     public OneTimeTokenAccount create(final String username) {
-        final GoogleAuthenticatorKey key = this.googleAuthenticator.createCredentials();
+        val key = this.googleAuthenticator.createCredentials();
         return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
     }
 
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
-        final OneTimeTokenAccount encodedAccount = encode(account);
+        val encodedAccount = encode(account);
         this.mongoTemplate.save(encodedAccount, this.collectionName);
         return encodedAccount;
+    }
+
+    @Override
+    public void deleteAll() {
+        this.mongoTemplate.remove(new Query(), GoogleAuthenticatorAccount.class, this.collectionName);
+    }
+
+    @Override
+    public void delete(final String username) {
+        val query = new Query();
+        query.addCriteria(Criteria.where("username").is(username));
+        this.mongoTemplate.remove(query, GoogleAuthenticatorAccount.class, this.collectionName);
+    }
+
+    @Override
+    public long count() {
+        val query = new Query();
+        query.addCriteria(Criteria.where("username").exists(true));
+        return this.mongoTemplate.count(query, GoogleAuthenticatorAccount.class, this.collectionName);
     }
 }

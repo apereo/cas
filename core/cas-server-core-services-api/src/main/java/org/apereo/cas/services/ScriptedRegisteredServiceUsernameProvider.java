@@ -1,14 +1,16 @@
 package org.apereo.cas.services;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.ScriptingUtils;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * This is {@link ScriptedRegisteredServiceUsernameProvider}.
@@ -32,7 +34,7 @@ public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredSer
     protected String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         try {
             LOGGER.debug("Found groovy script to execute");
-            final Object result = ScriptingUtils.executeScriptEngine(this.script, new Object[]{principal.getAttributes(), principal.getId(), LOGGER}, Object.class);
+            val result = ScriptingUtils.executeScriptEngine(this.script, new Object[]{principal.getAttributes(), principal.getId(), LOGGER}, Object.class);
             if (result != null) {
                 LOGGER.debug("Found username [{}] from script [{}]", result, this.script);
                 return result.toString();

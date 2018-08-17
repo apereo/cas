@@ -1,12 +1,14 @@
 package org.apereo.cas.web.flow.login;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -21,7 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SendTicketGrantingTicketAction extends AbstractAction {
     private final CentralAuthenticationService centralAuthenticationService;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
@@ -29,8 +31,8 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final String ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
-        final String ticketGrantingTicketValueFromCookie = (String) context.getFlowScope().get(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID);
+        val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
+        val ticketGrantingTicketValueFromCookie = WebUtils.getTicketGrantingTicketIdFrom(context.getFlowScope());
 
         if (StringUtils.isBlank(ticketGrantingTicketId)) {
             LOGGER.debug("No ticket-granting ticket is found in the context.");
@@ -44,7 +46,7 @@ public class SendTicketGrantingTicketAction extends AbstractAction {
             this.ticketGrantingTicketCookieGenerator.addCookie(context, ticketGrantingTicketId);
         } else {
             LOGGER.info("Authentication session is renewed but CAS is not configured to create the SSO session. "
-                    + "SSO cookie will not be generated. Subsequent requests will be challenged for credentials.");
+                + "SSO cookie will not be generated. Subsequent requests will be challenged for credentials.");
         }
 
         if (ticketGrantingTicketValueFromCookie != null && !ticketGrantingTicketId.equals(ticketGrantingTicketValueFromCookie)) {

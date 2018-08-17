@@ -1,9 +1,13 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -17,7 +21,6 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
-@Slf4j
 @Getter
 @Setter
 public class Pac4jDelegatedAuthenticationProperties implements Serializable {
@@ -30,6 +33,11 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      * should be combined with the principal id.
      */
     private boolean typedIdUsed;
+
+    /**
+     * The attribute to use as the principal identifier built during and upon a successful authentication attempt.
+     */
+    private String principalAttributeId;
 
     /**
      * Settings that deal with having Facebook as an external delegated-to authentication provider.
@@ -126,7 +134,7 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private Pac4jDelegatedSessionCookieProperties cookie = new Pac4jDelegatedSessionCookieProperties();
-    
+
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter
@@ -213,6 +221,12 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     public static class Twitter extends Pac4jIdentifiableClientProperties {
 
         private static final long serialVersionUID = 6906343970517008092L;
+
+        /**
+         * Set to true to request the user's email address from the Twitter API.
+         * For this to have an effect it must first be enabled in the Twitter developer console.
+         */
+        private boolean includeEmail;
 
         public Twitter() {
             setClientName("Twitter");

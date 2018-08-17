@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.core.OrderComparator;
 
 import java.util.Arrays;
@@ -15,8 +16,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultAuthenticationServiceSelectionPlan implements AuthenticationServiceSelectionPlan {
     private final List<AuthenticationServiceSelectionStrategy> strategies;
 
@@ -33,10 +33,27 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
 
     @Override
     public Service resolveService(final Service service) {
-        return this.strategies.stream()
-                .filter(s -> s.supports(service))
-                .findFirst()
-                .get()
-                .resolveServiceFrom(service);
+        val strategy = this.strategies
+            .stream()
+            .filter(s -> s.supports(service))
+            .findFirst();
+
+        if (strategy.isPresent()) {
+            val result = strategy.get();
+            return result.resolveServiceFrom(service);
+        }
+        return null;
+    }
+
+    @Override
+    public <T extends Service> T resolveService(final Service service, final Class<T> clazz) {
+        val result = resolveService(service);
+        if (result == null) {
+            return null;
+        }
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Object [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
+        }
+        return (T) result;
     }
 }

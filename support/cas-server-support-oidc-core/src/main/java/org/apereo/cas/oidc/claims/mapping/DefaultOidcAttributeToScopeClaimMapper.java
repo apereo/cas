@@ -1,9 +1,7 @@
 package org.apereo.cas.oidc.claims.mapping;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -18,14 +16,13 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultOidcAttributeToScopeClaimMapper implements OidcAttributeToScopeClaimMapper {
 
     /**
      * Map OIDC claim to an attribute.
      */
-    private Map<String, String> claimsToAttribute = new HashMap<>();
+    private final Map<String, String> claimsToAttribute;
 
     @Override
     public String getMappedAttribute(final String claim) {

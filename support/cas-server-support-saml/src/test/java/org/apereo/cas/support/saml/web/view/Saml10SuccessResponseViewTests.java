@@ -1,27 +1,24 @@
 package org.apereo.cas.support.saml.web.view;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
-import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -33,8 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -46,55 +41,59 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.1
  */
-@Slf4j
 public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     private static final String TEST_VALUE = "testValue";
     private static final String TEST_ATTRIBUTE = "testAttribute";
     private static final String PRINCIPAL_ID = "testPrincipal";
+
     private Saml10SuccessResponseView response;
 
     @Before
-    public void setUp() {
-        final List<RegisteredService> list = new ArrayList<>();
+    public void initialize() {
+        val list = new ArrayList<RegisteredService>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
-        final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
+        val dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(list);
 
-        final ServicesManager mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
+        val mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
         mgmr.load();
 
         this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString()),
-                mgmr, "attribute", new Saml10ObjectBuilder(configBean),
-                new DefaultArgumentExtractor(new SamlServiceFactory()), StandardCharsets.UTF_8.name(), 1000, 30,
-                "testIssuer", "whatever", new DefaultAuthenticationAttributeReleasePolicy());
+            mgmr, 
+            new Saml10ObjectBuilder(configBean),
+            new DefaultArgumentExtractor(new SamlServiceFactory(new Saml10ObjectBuilder(configBean))),
+            StandardCharsets.UTF_8.name(), 1000, 30,
+            "testIssuer",
+            "whatever",
+            new DefaultAuthenticationAttributeReleasePolicy("attribute"));
     }
 
     @Test
     public void verifyResponse() throws Exception {
-        final Map<String, Object> model = new HashMap<>();
+        val model = new HashMap<String, Object>();
 
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
         attributes.put("testEmptyCollection", new ArrayList<>(0));
         attributes.put("testAttributeCollection", Arrays.asList("tac1", "tac2"));
-        final Principal principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
+        val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 
-        final Map<String, Object> authAttributes = new HashMap<>();
+        val authAttributes = new HashMap<String, Object>();
         authAttributes.put(
-                SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
-                SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
+            SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
+            SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authAttributes.put("testSamlAttribute", "value");
 
-        final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
-        final Assertion assertion = new DefaultAssertionBuilder(primary).with(Collections.singletonList(primary)).with(
-                CoreAuthenticationTestUtils.getService()).with(true).build();
+        val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
+        val assertion = new DefaultAssertionBuilder(primary).with(Collections.singletonList(primary)).with(
+            CoreAuthenticationTestUtils.getService()).with(true).build();
         model.put("assertion", assertion);
 
-        final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
+        val servletResponse = new MockHttpServletResponse();
 
         this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
-        final String written = servletResponse.getContentAsString();
+        val written = servletResponse.getContentAsString();
 
         assertTrue(written.contains(PRINCIPAL_ID));
         assertTrue(written.contains(TEST_ATTRIBUTE));
@@ -113,29 +112,29 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponseWithNoAttributes() throws Exception {
-        final Map<String, Object> model = new HashMap<>();
+        val model = new HashMap<String, Object>();
 
-        final Principal principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID);
+        val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID);
 
-        final Map<String, Object> authAttributes = new HashMap<>();
+        val authAttributes = new HashMap<String, Object>();
         authAttributes.put(
-                SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
-                SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
+            SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD,
+            SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT);
         authAttributes.put("testSamlAttribute", "value");
 
-        final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
-        final Assertion assertion = new DefaultAssertionBuilder(primary)
-                .with(Collections.singletonList(primary))
-                .with(CoreAuthenticationTestUtils.getService())
-                .with(true)
-                .build();
+        val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
+        val assertion = new DefaultAssertionBuilder(primary)
+            .with(Collections.singletonList(primary))
+            .with(CoreAuthenticationTestUtils.getService())
+            .with(true)
+            .build();
 
         model.put("assertion", assertion);
 
-        final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
+        val servletResponse = new MockHttpServletResponse();
 
         this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
-        final String written = servletResponse.getContentAsString();
+        val written = servletResponse.getContentAsString();
 
         assertTrue(written.contains(PRINCIPAL_ID));
         assertTrue(written.contains(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_SSL_TLS_CLIENT));
@@ -144,30 +143,30 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     @Test
     public void verifyResponseWithoutAuthMethod() throws Exception {
-        final Map<String, Object> model = new HashMap<>();
+        val model = new HashMap<String, Object>();
 
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         attributes.put(TEST_ATTRIBUTE, TEST_VALUE);
-        final Principal principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
+        val principal = new DefaultPrincipalFactory().createPrincipal(PRINCIPAL_ID, attributes);
 
-        final Map<String, Object> authnAttributes = new HashMap<>();
+        val authnAttributes = new HashMap<String, Object>();
         authnAttributes.put("authnAttribute1", "authnAttrbuteV1");
         authnAttributes.put("authnAttribute2", "authnAttrbuteV2");
         authnAttributes.put(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
 
-        final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
+        val primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 
-        final Assertion assertion = new DefaultAssertionBuilder(primary)
-                .with(Collections.singletonList(primary))
-                .with(CoreAuthenticationTestUtils.getService())
-                .with(true)
-                .build();
+        val assertion = new DefaultAssertionBuilder(primary)
+            .with(Collections.singletonList(primary))
+            .with(CoreAuthenticationTestUtils.getService())
+            .with(true)
+            .build();
         model.put("assertion", assertion);
 
-        final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
+        val servletResponse = new MockHttpServletResponse();
 
         this.response.renderMergedOutputModel(model, new MockHttpServletRequest(), servletResponse);
-        final String written = servletResponse.getContentAsString();
+        val written = servletResponse.getContentAsString();
 
         assertTrue(written.contains(PRINCIPAL_ID));
         assertTrue(written.contains(TEST_ATTRIBUTE));

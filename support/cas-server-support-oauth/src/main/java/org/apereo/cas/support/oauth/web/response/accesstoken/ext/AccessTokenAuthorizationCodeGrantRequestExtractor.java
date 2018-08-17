@@ -1,8 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
@@ -10,15 +8,18 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Set;
 
 /**
  * This is {@link AccessTokenAuthorizationCodeGrantRequestExtractor}.
@@ -43,28 +44,50 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
     @Override
     public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
-        final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
-        final Set<String> scopes = OAuth20Utils.parseRequestScopes(request);
+        val grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
+        val scopes = OAuth20Utils.parseRequestScopes(request);
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
-        final String redirectUri = getRegisteredServiceIdentifierFromRequest(request);
-        final OAuthRegisteredService registeredService = getOAuthRegisteredServiceBy(request);
+        val redirectUri = getRegisteredServiceIdentifierFromRequest(request);
+        val registeredService = getOAuthRegisteredServiceBy(request);
         if (registeredService == null) {
             throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri);
         }
 
-        final OAuthToken token = getOAuthTokenFromRequest(request);
+        val token = getOAuthTokenFromRequest(request);
         if (token == null) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
-        
-        final Service service = this.webApplicationServiceServiceFactory.createService(redirectUri);
+
+        val service = this.webApplicationServiceServiceFactory.createService(redirectUri);
         scopes.addAll(token.getScopes());
 
-        return new AccessTokenRequestDataHolder(service, token.getAuthentication(), token,
-            registeredService, getGrantType(),
-            isAllowedToGenerateRefreshToken(), scopes);
+        val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService != null && registeredService.isGenerateRefreshToken();
+        val builder = AccessTokenRequestDataHolder.builder()
+            .scopes(scopes)
+            .service(service)
+            .authentication(token.getAuthentication())
+            .registeredService(registeredService)
+            .grantType(getGrantType())
+            .generateRefreshToken(generateRefreshToken)
+            .token(token)
+            .ticketGrantingTicket(token.getTicketGrantingTicket());
+
+        return extractInternal(request, response, builder);
+    }
+
+    /**
+     * Extract internal access token request.
+     *
+     * @param request  the request
+     * @param response the response
+     * @param builder  the builder
+     * @return the access token request data holder
+     */
+    protected AccessTokenRequestDataHolder extractInternal(final HttpServletRequest request, final HttpServletResponse response,
+                                                           final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
+        return builder.build();
     }
 
     /**
@@ -91,10 +114,10 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     }
 
     /**
-     * Gets o auth parameter.
+     * Gets OAuth parameter.
      *
      * @param request the request
-     * @return the o auth parameter
+     * @return the OAuth parameter
      */
     protected String getOAuthParameter(final HttpServletRequest request) {
         return request.getParameter(getOAuthParameterName());
@@ -107,7 +130,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the OAuth token
      */
     protected OAuthToken getOAuthTokenFromRequest(final HttpServletRequest request) {
-        final OAuthToken token = this.ticketRegistry.getTicket(getOAuthParameter(request), OAuthToken.class);
+        val token = this.ticketRegistry.getTicket(getOAuthParameter(request), OAuthToken.class);
         if (token == null || token.isExpired()) {
             LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(request), token);
             if (token != null) {
@@ -126,13 +149,18 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      */
     @Override
     public boolean supports(final HttpServletRequest context) {
-        final String grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
+        val grantType = context.getParameter(OAuth20Constants.GRANT_TYPE);
         return OAuth20Utils.isGrantType(grantType, getGrantType());
     }
 
     @Override
     public OAuth20GrantTypes getGrantType() {
         return OAuth20GrantTypes.AUTHORIZATION_CODE;
+    }
+
+    @Override
+    public OAuth20ResponseTypes getResponseType() {
+        return OAuth20ResponseTypes.NONE;
     }
 
     /**
@@ -144,8 +172,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
      * @return the registered service
      */
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
-        final String redirectUri = getRegisteredServiceIdentifierFromRequest(request);
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
+        val redirectUri = getRegisteredServiceIdentifierFromRequest(request);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
         LOGGER.debug("Located registered service [{}]", registeredService);
         return registeredService;
     }

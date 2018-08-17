@@ -1,11 +1,12 @@
 package org.apereo.cas.configuration.model.support.redis;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
-import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is {@link BaseRedisProperties}.
@@ -13,7 +14,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 @Setter
 public class BaseRedisProperties implements Serializable {
@@ -58,11 +58,6 @@ public class BaseRedisProperties implements Serializable {
      * Redis Sentinel settings.
      */
     private Sentinel sentinel;
-
-    /**
-     * Whether or not to activate the pool configuration.
-     */
-    private boolean usePool = true;
 
     /**
      * Whether or not to use SSL for connection factory.

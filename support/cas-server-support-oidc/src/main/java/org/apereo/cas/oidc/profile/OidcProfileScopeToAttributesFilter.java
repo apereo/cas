@@ -1,11 +1,9 @@
 package org.apereo.cas.oidc.profile;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcAddressScopeAttributeReleasePolicy;
@@ -13,7 +11,6 @@ import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
-import org.apereo.cas.oidc.claims.mapping.OidcAttributeToScopeClaimMapper;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -21,6 +18,9 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.J2EContext;
 import org.reflections.Reflections;
@@ -32,10 +32,8 @@ import org.reflections.util.FilterBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link OidcProfileScopeToAttributesFilter}.
@@ -48,7 +46,6 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     private final Map<String, BaseOidcScopeAttributeReleasePolicy> filters;
     private final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
 
-    private final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper;
     private final PrincipalFactory principalFactory;
     private final ServicesManager servicesManager;
     private final CasConfigurationProperties casProperties;
@@ -56,9 +53,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     public OidcProfileScopeToAttributesFilter(final PrincipalFactory principalFactory,
                                               final ServicesManager servicesManager,
                                               final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes,
-                                              final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper,
                                               final CasConfigurationProperties casProperties) {
-        this.attributeToScopeClaimMapper = attributeToScopeClaimMapper;
         this.casProperties = casProperties;
         this.filters = new HashMap<>();
         this.principalFactory = principalFactory;
@@ -69,19 +64,18 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     }
 
     private void configureAttributeReleasePoliciesByScope() {
-        final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        final String packageName = BaseOidcScopeAttributeReleasePolicy.class.getPackage().getName();
-        final Reflections reflections =
+        val oidc = casProperties.getAuthn().getOidc();
+        val packageName = BaseOidcScopeAttributeReleasePolicy.class.getPackage().getName();
+        val reflections =
             new Reflections(new ConfigurationBuilder()
                 .filterInputsBy(new FilterBuilder().includePackage(packageName))
                 .setUrls(ClasspathHelper.forPackage(packageName))
                 .setScanners(new SubTypesScanner(true)));
 
-        final Set<Class<? extends BaseOidcScopeAttributeReleasePolicy>> subTypes =
+        val subTypes =
             reflections.getSubTypesOf(BaseOidcScopeAttributeReleasePolicy.class);
         subTypes.forEach(Unchecked.consumer(t -> {
-            final BaseOidcScopeAttributeReleasePolicy ex = t.getDeclaredConstructor().newInstance();
-
+            val ex = t.getDeclaredConstructor().newInstance();
             if (oidc.getScopes().contains(ex.getScopeName())) {
                 LOGGER.debug("Found OpenID Connect scope [{}] to filter attributes", ex.getScopeName());
                 filters.put(ex.getScopeName(), ex);
@@ -100,10 +94,10 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
     public Principal filter(final Service service, final Principal profile,
                             final RegisteredService registeredService,
                             final J2EContext context, final AccessToken accessToken) {
-        final Principal principal = super.filter(service, profile, registeredService, context, accessToken);
+        val principal = super.filter(service, profile, registeredService, context, accessToken);
 
         if (registeredService instanceof OidcRegisteredService) {
-            final Collection<String> scopes = new HashSet<>(accessToken.getScopes());
+            val scopes = new LinkedHashSet<>(accessToken.getScopes());
             if (!scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
                 LOGGER.warn("Request does not indicate a scope [{}] that can identify an OpenID Connect request. "
                     + "This is a REQUIRED scope that MUST be present in the request. Given its absence, "
@@ -111,27 +105,27 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 return principal;
             }
 
-            final OidcRegisteredService oidcService = (OidcRegisteredService) registeredService;
+            val oidcService = (OidcRegisteredService) registeredService;
             scopes.retainAll(oidcService.getScopes());
 
-            final Map<String, Object> attributes = filterAttributesByScope(scopes, principal, service, oidcService, accessToken);
+            val attributes = filterAttributesByScope(scopes, principal, service, oidcService, accessToken);
             LOGGER.debug("Final collection of attributes filtered by scopes [{}] are [{}]", scopes, attributes);
             return this.principalFactory.createPrincipal(profile.getId(), attributes);
         }
         return principal;
     }
 
-    private Map<String, Object> filterAttributesByScope(final Collection<String> stream,
+    private Map<String, Object> filterAttributesByScope(final Collection<String> scopes,
                                                         final Principal principal,
                                                         final Service service,
                                                         final RegisteredService registeredService,
                                                         final AccessToken accessToken) {
-        final Map<String, Object> attributes = new HashMap<>();
-        stream.stream()
+        val attributes = new HashMap<String, Object>();
+        scopes.stream()
             .distinct()
             .filter(this.filters::containsKey)
             .forEach(s -> {
-                final BaseOidcScopeAttributeReleasePolicy policy = filters.get(s);
+                val policy = filters.get(s);
                 attributes.putAll(policy.getAttributes(principal, service, registeredService));
             });
         return attributes;
@@ -146,15 +140,15 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
 
         LOGGER.debug("Reconciling OpenId Connect scopes and claims for [{}]", service.getServiceId());
 
-        final List<String> otherScopes = new ArrayList<>();
-        final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
-        final OidcRegisteredService oidc = OidcRegisteredService.class.cast(service);
+        val otherScopes = new ArrayList<String>();
+        val policy = new ChainingAttributeReleasePolicy();
+        val oidc = OidcRegisteredService.class.cast(service);
 
         oidc.getScopes().forEach(s -> {
             LOGGER.debug("Reviewing scope [{}] for [{}]", s, service.getServiceId());
 
             try {
-                final OidcConstants.StandardScopes scope = OidcConstants.StandardScopes.valueOf(s.trim().toLowerCase().toUpperCase());
+                val scope = OidcConstants.StandardScopes.valueOf(s.trim().toLowerCase().toUpperCase());
                 switch (scope) {
                     case EMAIL:
                         LOGGER.debug("Mapped [{}] to attribute release policy [{}]", s, OidcEmailScopeAttributeReleasePolicy.class.getSimpleName());
@@ -177,7 +171,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                         break;
                     case OFFLINE_ACCESS:
                         LOGGER.debug("Given scope [{}], service [{}] is marked to generate refresh tokens", s, service.getId());
-                        oidc.setGenerateRefreshToken(Boolean.TRUE);
+                        oidc.setGenerateRefreshToken(true);
                         break;
                     case CUSTOM:
                         LOGGER.debug("Found custom scope [{}] for service [{}]", s, service.getId());
@@ -191,7 +185,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
                 LOGGER.debug("[{}] appears to be a user-defined scope and does not match any of the predefined standard scopes. "
                     + "Checking [{}] against user-defined scopes provided as [{}]", s, s, userScopes);
 
-                final BaseOidcScopeAttributeReleasePolicy userPolicy = userScopes.stream()
+                val userPolicy = userScopes.stream()
                     .filter(t -> t.getScopeName().equals(s.trim()))
                     .findFirst()
                     .orElse(null);

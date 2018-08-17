@@ -1,11 +1,14 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.util.DigestUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
+import lombok.val;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -26,16 +29,16 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     /**
      * The factory responsible for creating service objects based on the arguments extracted.
      */
-    protected List<ServiceFactory<? extends WebApplicationService>> serviceFactories= new ArrayList<>();;
+    protected List<ServiceFactory<? extends WebApplicationService>> serviceFactories = new ArrayList<>();
 
     @Override
     public WebApplicationService extractService(final HttpServletRequest request) {
-        final WebApplicationService service = extractServiceInternal(request);
-
+        val service = extractServiceInternal(request);
         if (service == null) {
-            LOGGER.debug("Extractor did not generate service.");
+            LOGGER.trace("Extractor did not generate service.");
         } else {
-            LOGGER.debug("Extractor generated service type [{}] for: [{}]", service.getClass().getName(), service.getId());
+            LOGGER.trace("Extractor generated service type [{}] for: [{}]",
+                service.getClass().getName(), DigestUtils.abbreviate(service.getId()));
         }
 
         return service;

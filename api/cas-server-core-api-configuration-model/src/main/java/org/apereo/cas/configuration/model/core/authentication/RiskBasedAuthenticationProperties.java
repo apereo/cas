@@ -1,13 +1,14 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * This is {@link RiskBasedAuthenticationProperties}.
@@ -16,7 +17,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-electrofence", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class RiskBasedAuthenticationProperties implements Serializable {
@@ -29,7 +29,7 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     private IpAddress ip = new IpAddress();
 
     /**
-     *  Handle risky authentication attempts via a user-agent criteria.
+     * Handle risky authentication attempts via a user-agent criteria.
      */
     private Agent agent = new Agent();
 

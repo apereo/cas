@@ -1,5 +1,4 @@
 description = "Apereo Central Authentication Service $version"
-
 defaultTasks "clean", "build"
 
 ext {
@@ -7,14 +6,17 @@ ext {
     publishReleases = Boolean.getBoolean("publishReleases")
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
-    forceBom = Boolean.getBoolean('forceBom')
+    testCategoryType = System.getProperty("testCategoryType")
+    skipBootifulArtifact = System.getProperty("skipBootifulArtifact")
+    skipErrorProneCompiler = System.getProperty("skipErrorProneCompiler")
+    forceBom = Boolean.getBoolean("forceBom")
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
     continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
 
     publishingRelease = publishReleases && rootProject.sonatypeUsername != null && rootProject.sonatypePassword != null
     /*
-    Open the Git repository in the current directory.
-    Get commit id of HEAD.
+        Open the project git repository in the current directory.
+        Get commit id of HEAD.
      */
     git = org.ajoberstar.grgit.Grgit.open(dir: file('.').canonicalPath)
     def gitHead = git.head()
@@ -29,6 +31,10 @@ def isArtifactSigningRequired = {
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.kt3k.coveralls"
+apply plugin: "com.github.ben-manes.versions"
+if (!Boolean.getBoolean("skipSonarqube")) {
+    apply plugin: "org.sonarqube"
+}
 
 buildscript {
     repositories {
@@ -37,28 +43,29 @@ buildscript {
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://repo.spring.io/plugins-release" }
+        maven { url "https://repo.spring.io/libs-milestone" }
     }
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:8.3.2"
-        classpath "io.franzbecker:gradle-lombok:1.11"
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
-        classpath "io.spring.gradle:propdeps-plugin:0.0.10.RELEASE"
-        classpath "org.ajoberstar:grgit:2.1.1"
-        classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
-        classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
-        classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlinVersion"
+        classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
+        classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
+        classpath "com.github.ben-manes:gradle-versions-plugin:$gradleDependencyVersionsVersion"
+        classpath "io.spring.gradle:propdeps-plugin:$gradlePropDepsVersion"
+        classpath "org.ajoberstar:grgit:$gradleGitVersion"
+        classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
+        classpath "com.moowork.gradle:gradle-node-plugin:$gradleNodeVersion"
+        classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$gradleCoverallsVersion"
+        classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
+        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleFindbugsVersion"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
     }
 }
 
 if (rootProject.continuousIntegrationBuild) {
     buildScan {
-        licenseAgreementUrl = 'https://gradle.com/terms-of-service'
-        licenseAgree = 'yes'
+        licenseAgreementUrl = "https://gradle.com/terms-of-service"
+        licenseAgree = "yes"
     }
 }
 
@@ -67,9 +74,11 @@ allprojects {
     apply plugin: "eclipse"
     apply plugin: "maven"
     apply plugin: "signing"
-    apply plugin: 'com.github.ben-manes.versions'
     apply plugin: "jacoco"
+    apply plugin: "groovy"
 
+    project.ext["forceBootifulArtifact"] = null
+    
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
         apply plugin: "nebula.lint"
         gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
@@ -81,6 +90,10 @@ allprojects {
         apply from: rootProject.file("gradle/maven.gradle")
     }
 
+    jacoco {
+        toolVersion = "$gradleJacocoVersion"
+    }
+
     signing {
         required = isArtifactSigningRequired
         sign configurations.archives
@@ -90,13 +103,13 @@ allprojects {
         module {
             downloadSources = false
             downloadJavadoc = false
-            excludeDirs = [file(".gradle")]
+            excludeDirs << file(".gradle")
             ["classes", "bin", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
                 excludeDirs << file("$buildDir/$it")
             }
         }
     }
-
+    
     signArchives.enabled = rootProject.publishingRelease || rootProject.publishSnapshots
 
     /*
@@ -109,6 +122,12 @@ allprojects {
         mavenLocal()
         mavenCentral()
         jcenter()
+        maven { url "https://repo.spring.io/libs-milestone" }
+    }
+
+    javadoc {
+        options.addBooleanOption('html5', true)
+        failOnError = Boolean.getBoolean("ignoreJavadocFailures")
     }
 }
 
@@ -121,23 +140,23 @@ subprojects {
             description: "Display a graph of all project dependencies") {
         doLast {}
     }
-    apply plugin: "kotlin"
-    apply plugin: "kotlin-spring"
     apply plugin: "java-library"
-    if (!Boolean.getBoolean("skipErrorProneCompiler")) {
-        apply plugin: "net.ltgt.errorprone"
-    }
+   if (!rootProject.skipErrorProneCompiler) {
+       apply plugin: "net.ltgt.errorprone-javacplugin"
+   }
     apply plugin: "checkstyle"
     apply plugin: "io.franzbecker.gradle-lombok"
     if (!Boolean.getBoolean("skipFindbugs")) {
-        apply plugin: "findbugs"
+        apply plugin: "com.github.spotbugs"
     }
     apply plugin: "propdeps"
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
-
+    apply plugin: "org.owasp.dependencycheck"
+    
     apply from: rootProject.file("gradle/tasks.gradle")
+    apply from: rootProject.file("gradle/tests.gradle")
 
     ext.libraries = rootProject.ext.libraries
 
@@ -147,34 +166,13 @@ subprojects {
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://repo.spring.io/plugins-release/" }
+        maven { url "https://repo.spring.io/milestone/" }
+        maven { url "https://repo.spring.io/libs-milestone" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
         maven { url "https://jitpack.io" }
         jcenter()
     }
 
-    tasks.withType(JavaCompile) {
-        // The last argument to disable parameter names is a workaround for: https://github.com/google/error-prone/issues/780
-        options.compilerArgs += ['-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
-    }
-
-    test {
-        enabled = !Boolean.getBoolean("skipTests")
-        useJUnit()
-        scanForTestClasses = false
-        ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-        include "**/*Tests.*"
-        exclude "**/Abstract*.*","**/Base*.*"
-        maxParallelForks = 1
-        jvmArgs "-Xmx1024m"
-        classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
-        testLogging {
-            events = ["FAILED", "STANDARD_OUT"]
-            exceptionFormat = "full"
-            showStandardStreams = Boolean.getBoolean("showStandardStreams")
-            showExceptions = true
-            showCauses = true
-        }
-    }
 
     configurations {
         tests
@@ -186,8 +184,8 @@ subprojects {
                 failOnVersionConflict()
             }
             preferProjectModules()
-            cacheDynamicVersionsFor 5, 'days'
-            cacheChangingModulesFor 5, 'days'
+            cacheDynamicVersionsFor 5, "days"
+            cacheChangingModulesFor 5, "days"
 
             /**
              * Required for all JRadius modules
@@ -198,11 +196,12 @@ subprojects {
                 }
             }
         }
-
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")
         exclude(group: "cglib", module: "cglib-full")
+        exclude(group: "org.slf4j", module: "slf4j-log4j12")
+        exclude(group: "org.apache.logging.log4j", module: "log4j-to-slf4j")
     }
 
     artifacts {
@@ -217,16 +216,43 @@ subprojects {
     }
 
     sourceSets {
-        test.resources.srcDirs = ["${projectDir}/src/test/resources", "${projectDir}/src/test/java"]
+        main {
+            java {
+                srcDirs = ["${projectDir}/src/main/java", "${projectDir}/src/main/groovy"]
+
+            }
+            resources {
+                srcDirs = ["${projectDir}/src/main/resources"]
+            }
+        }
+        test {
+            java {
+                srcDirs = ["${projectDir}/src/test/java", "${projectDir}/src/test/groovy"]
+
+            }
+            resources {
+                srcDirs = ["${projectDir}/src/test/resources"]
+            }
+        }
     }
 
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
-    compileJava.options.compilerArgs << '-parameters'
-    compileJava.options.fork = true
-    if (Boolean.getBoolean("enableIncremental")) {
-        compileJava.options.incremental = true
+    [compileTestJava, compileJava].each {
+        it.options.fork = false
+        it.options.incremental = false
+        
+        def casCompilerArgs = ["-parameters"]
+
+        if (!rootProject.skipErrorProneCompiler) {
+            it.options.errorprone.allErrorsAsWarnings = false
+            it.options.errorprone.disableWarningsInGeneratedCode = true
+            it.options.errorprone.errorproneArgs += [ '-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF' ]
+
+            casCompilerArgs.add("-XDcompilePolicy=byfile")
+        }
+        it.options.compilerArgs += casCompilerArgs
     }
 
     def currentTime = java.time.ZonedDateTime.now()
@@ -241,22 +267,15 @@ subprojects {
         project.buildDate != null || !project.buildJarFile.exists()
     }
 
-    compileKotlin {
-        kotlinOptions.jvmTarget = "$targetCompatibility"
-        kotlinOptions.javaParameters = true
-    }
-
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "$targetCompatibility"
-    }
-
     lombok {
         version = "$lombokVersion"
     }
 
     jar {
         manifest {
-            attributes("Implementation-Title": project.name,
+            attributes(
+                    "Automatic-Module-Name": project.name,
+                    "Implementation-Title": project.name,
                     "Implementation-Vendor": project.group,
                     "Created-By": project.group,
                     "Specification-Version": rootProject.currentRevision,
@@ -264,47 +283,71 @@ subprojects {
         }
     }
 
-    checkstyle {
-        configFile new File(rootDir, "style/checkstyle-rules.xml")
-        configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
-        ignoreFailures false
-        showViolations true
-        toolVersion "${checkstyleVersion}"
+    if (!Boolean.getBoolean("skipCheckstyle")) {
+        checkstyle {
+            configFile new File(rootDir, "style/checkstyle-rules.xml")
+            configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
+            ignoreFailures false
+            showViolations true
+            toolVersion "${checkstyleVersion}"
+        }
     }
 
-    checkstyleTest {
-        enabled = !Boolean.getBoolean("skipCheckstyle")
-    }
-
-    checkstyleMain {
-        enabled = !Boolean.getBoolean("skipCheckstyle")
+    dependencyCheck {
+        /*
+         * Specifies if the build should be failed if a CVSS score equal
+         * to or above a specified level is identified.
+         */
+        failBuildOnCVSS = 7
+        skipTestGroups = true
+        suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
+        analyzers {
+            assemblyEnabled = false
+            swiftEnabled = false
+            cocoapodsEnabled = false
+            nspEnabled = false
+            autoconfEnabled = false
+            cmakeEnabled = false
+            pathToMono = false
+            nuspecEnabled = false
+            rubygemsEnabled = false
+            pyPackageEnabled = false
+            pyDistributionEnabled = false
+            nexusEnabled = false
+            centralEnabled = false
+        }
     }
 
     if (!Boolean.getBoolean("skipFindbugs")) {
-        findbugs {
+        spotbugs {
             toolVersion = "${findbugsVersion}"
             sourceSets = [sourceSets.main]
-            ignoreFailures = false
+            ignoreFailures = true
             reportsDir = file("$project.buildDir/findbugsReports")
             effort = "max"
             reportLevel = "low"
             includeFilter = file("$rootProject.projectDir/style/findbugs-rules.xml")
+            excludeFilter = file("$rootProject.projectDir/style/findbugs-excludes.xml")
+            //jvmArgs = ["-Xms2g", "-Xmx4g"]
+            extraArgs = ["maxHeap 4000"]
         }
 
-        findbugsMain {
-            reports {
-                xml.enabled = false
-                html.enabled = true
+        [spotbugsMain, spotbugsTest].each {
+            it.reports {
+                xml.enabled = true
+                html.enabled = false
             }
+            it.finalizedBy outputSpotbugsReports
         }
     }
+
     dependencies {
-        //optional libraries.springcomponentindexer
+        optional libraries.springcomponentindexer
 
         implementation libraries.aspectj
         implementation libraries.validationapi
 
-        api libraries.kotlin
+        api libraries.jaxb
         api libraries.log4j
         api libraries.guava
         api libraries.commons
@@ -316,26 +359,36 @@ subprojects {
         api libraries.httpclient
         api libraries.quartz
         api libraries.hibernate
+        api libraries.groovy
         api libraries.springcloud
         api libraries.springboot
 
         provided libraries.javax
 
         if (!Boolean.getBoolean("skipFindbugs")) {
-            findbugs libraries.findbugs
-            findbugs configurations.findbugsPlugins.dependencies
-            findbugsPlugins libraries.findbugscontrib
-            findbugsPlugins libraries.findbugssec
+            spotbugs libraries.findbugs
+            spotbugs configurations.spotbugsPlugins.dependencies
+
+            spotbugsPlugins libraries.findbugscontrib
+            spotbugsPlugins libraries.findbugssec
         }
 
         if (!Boolean.getBoolean("skipErrorProneCompiler")) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
         }
         testImplementation libraries.tests
+        testImplementation libraries.groovy
+        compileOnly libraries.findbugsannotations
+    }
+
+    if (project.name != 'cas-server-core-api-test-category') {
+        dependencies {
+            testImplementation project(path: ":api:cas-server-core-api-test-category", configuration: "tests")
+        }
     }
 }
 
-task wrapper(type: Wrapper, description: "Gradle wrapper") {
+wrapper {
     gradleVersion = project.gradleVersion
 }
 
@@ -343,6 +396,8 @@ task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single d
     source subprojects.collect { project -> project.sourceSets.main.allJava }
     destinationDir = new File(buildDir, "javadoc")
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
+    options.addBooleanOption('html5', true)
+    failOnError = Boolean.getBoolean("ignoreJavadocFailures")
 }
 
 task aggregateJavadocsIntoJar(type: Jar, dependsOn: javadoc, description: "Aggregate all Javadocs into a single directory") {
@@ -366,47 +421,66 @@ artifacts {
     archives rootSourcesJar
 }
 
-task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test reports into a single directory") {
-    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
-    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+def publishedProjects = subprojects.findAll { !it.path.contains(':docs') }
+
+task jacocoMerge(type: JacocoMerge) {
+    publishedProjects.each { subproject ->
+        executionData subproject.tasks.withType(Test)
+        dependsOn tasks.withType(Test)
+    }
+    doFirst {
+        executionData = files(executionData.findAll { it.exists() })
+    }
+}
+
+task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
+    description = 'Generates an aggregate report from all subprojects'
+
+    subprojects.each {
+        if (!it.path.contains(":docs")) {
+            it.tasks.withType(Test).each { task -> dependsOn(task) }
+        }
+    }
+    
+    dependsOn jacocoMerge
+
+    additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(publishedProjects.sourceSets.main.allSource.srcDirs)
     classDirectories = files(files(subprojects.sourceSets.main.output).collect {
         fileTree(dir: it,
                 include: '**/*.class',
                 exclude: [
                         '**/**Configuration.class',
                         '**/shell/cli/**',
+                        '**/shell/commands/**',
                         '**/**Configuration$**',
+                        '**/**Controller**',
                         '**/**ConfigurationMetadataGenerator**',
                         '**/**Application.class',
                         '**/**Application$**',
                         '**/**WebflowConfigurer.class',
                         '**/**WebflowConfigurer$**',
                         '**/**Exception.class',
+                        '**/**Banner.class',
                         '**/**Exception$**',
                         '**/**Properties.class',
                         '**/**Properties$**'
                 ])
     })
-
-    executionData = files(subprojects.jacocoTestReport.executionData)
+    executionData jacocoMerge.destinationFile
     reports {
-        html.enabled = true
+        html.enabled = false
         xml.enabled = true
-    }
-    doFirst {
-        executionData = files(executionData.findAll {
-            it.exists()
-        })
     }
 }
 
 coveralls {
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoAggregateReport/jacocoAggregateReport.xml"
-    sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
+    sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 }
 
 tasks.coveralls {
-    group = "Coverage reports"
+    group = "Coverage Reports"
     description = "Uploads the aggregated coverage report to Coveralls"
-    dependsOn jacocoAggregateReport
+    dependsOn jacocoRootReport
 }

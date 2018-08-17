@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp")
-@Slf4j
 @Getter
 @Setter
 public class SamlIdPMetadataProperties implements Serializable {
@@ -49,7 +48,7 @@ public class SamlIdPMetadataProperties implements Serializable {
      * This directory will be used to hold the configuration files.
      */
     @RequiredProperty
-    private Resource location = new FileSystemResource("/etc/cas/saml");
+    private transient Resource location = new FileSystemResource("/etc/cas/saml");
 
     /**
      * Properties pertaining to mongo db saml metadata resolvers.
@@ -68,6 +67,12 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private RestSamlMetadataProperties rest = new RestSamlMetadataProperties();
+
+    /**
+     * Properties pertaining to AWS S3 metadata resolution.
+     */
+    @NestedConfigurationProperty
+    private AmazonS3SamlMetadataProperties amazonS3 = new AmazonS3SamlMetadataProperties();
 
     /**
      * Algorithm name to use when generating private key.
@@ -89,4 +94,8 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     private List<String> supportedContentTypes = new ArrayList<>();
 
+    public SamlIdPMetadataProperties() {
+        supportedContentTypes.add("application/xml");
+        supportedContentTypes.add("text/xml");
+    }
 }

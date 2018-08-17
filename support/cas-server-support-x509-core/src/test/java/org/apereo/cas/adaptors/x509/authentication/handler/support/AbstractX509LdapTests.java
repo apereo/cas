@@ -1,16 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapTestUtils;
-import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
-import org.springframework.core.io.ClassPathResource;
 
-import java.util.Collection;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
+import org.ldaptive.LdapAttribute;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * Parent class to help with testing x509 operations that deal with LDAP.
@@ -18,7 +16,6 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperations {
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";
@@ -39,18 +36,16 @@ public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperatio
      * @throws Exception the exception
      */
     private static void populateCertificateRevocationListAttribute(final int port) throws Exception {
-        final Collection<LdapEntry> col = getLdapDirectory(port).getLdapEntries();
-        for (final LdapEntry ldapEntry : col) {
+        val col = getLdapDirectory(port).getLdapEntries();
+        for (val ldapEntry : col) {
             if (ldapEntry.getDn().equals(DN)) {
-                final LdapAttribute attr = new LdapAttribute(true);
-
-                byte[] value = new byte[1024];
-                IOUtils.read(new ClassPathResource("userCA-valid.crl").getInputStream(), value);
-                value = EncodingUtils.encodeBase64ToByteArray(value);
+                val attr = new LdapAttribute(true);
+                val userCA = new byte[1024];
+                IOUtils.read(new ClassPathResource("userCA-valid.crl").getInputStream(), userCA);
+                val value = EncodingUtils.encodeBase64ToByteArray(userCA);
                 attr.setName("certificateRevocationList");
                 attr.addBinaryValue(value);
                 LdapTestUtils.modifyLdapEntry(getLdapDirectory(port).getConnection(), ldapEntry, attr);
-
             }
         }
     }

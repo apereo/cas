@@ -1,12 +1,13 @@
 package org.apereo.cas;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.val;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * This is {@link DistributedCacheObject}.
@@ -14,18 +15,14 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @ToString
 @Getter
 public class DistributedCacheObject<V extends Serializable> implements Serializable {
 
     private static final long serialVersionUID = -6776499291439952013L;
-
-    private Map<String, Object> properties = new LinkedHashMap<>();
-
     private final long timestamp;
-
     private final V value;
+    private Map<String, Object> properties = new LinkedHashMap<>();
 
     public DistributedCacheObject(final V value) {
         this(new Date().getTime(), value);
@@ -35,7 +32,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
         this.timestamp = timestamp;
         this.value = value;
     }
-    
+
     /**
      * Gets property.
      *
@@ -46,7 +43,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
      */
     public <T> T getProperty(final String name, final Class<T> clazz) {
         if (containsProperty(name)) {
-            final Object item = this.properties.get(name);
+            val item = this.properties.get(name);
             if (item == null) {
                 return null;
             }

@@ -1,12 +1,7 @@
 package org.apereo.cas.web.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
-import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
 import org.apereo.cas.web.WarningCookieRetrievingCookieGenerator;
@@ -15,6 +10,10 @@ import org.apereo.cas.web.support.CookieValueManager;
 import org.apereo.cas.web.support.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.NoOpCookieValueManager;
 import org.apereo.cas.web.support.TGCCookieRetrievingCookieGenerator;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,7 +39,7 @@ public class CasCookieConfiguration {
     @Bean
     @RefreshScope
     public CookieRetrievingCookieGenerator warnCookieGenerator() {
-        final WarningCookieProperties props = casProperties.getWarningCookie();
+        val props = casProperties.getWarningCookie();
         return new WarningCookieRetrievingCookieGenerator(props.getName(), props.getPath(),
             props.getMaxAge(), props.isSecure(), props.isHttpOnly());
     }
@@ -49,7 +48,7 @@ public class CasCookieConfiguration {
     @Bean
     public CookieValueManager cookieValueManager() {
         if (casProperties.getTgc().getCrypto().isEnabled()) {
-            return new DefaultCasCookieValueManager(cookieCipherExecutor());
+            return new DefaultCasCookieValueManager(cookieCipherExecutor(), casProperties.getTgc());
         }
         return new NoOpCookieValueManager();
     }
@@ -58,8 +57,8 @@ public class CasCookieConfiguration {
     @RefreshScope
     @Bean
     public CipherExecutor cookieCipherExecutor() {
-        final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getTgc().getCrypto();
-        boolean enabled = crypto.isEnabled();
+        val crypto = casProperties.getTgc().getCrypto();
+        var enabled = crypto.isEnabled();
         if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
             LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
                 + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.");
@@ -77,11 +76,12 @@ public class CasCookieConfiguration {
         return CipherExecutor.noOp();
     }
 
+    @ConditionalOnMissingBean(name = "ticketGrantingTicketCookieGenerator")
     @Bean
     @RefreshScope
     public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator() {
-        final TicketGrantingCookieProperties tgc = casProperties.getTgc();
-        final int rememberMeMaxAge = (int) Beans.newDuration(tgc.getRememberMeMaxAge()).getSeconds();
+        val tgc = casProperties.getTgc();
+        val rememberMeMaxAge = (int) Beans.newDuration(tgc.getRememberMeMaxAge()).getSeconds();
         return new TGCCookieRetrievingCookieGenerator(cookieValueManager(),
             tgc.getName(),
             tgc.getPath(),

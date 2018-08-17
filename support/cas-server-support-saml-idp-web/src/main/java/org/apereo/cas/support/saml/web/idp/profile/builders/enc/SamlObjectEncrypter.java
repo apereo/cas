@@ -1,18 +1,18 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.EncodingUtils;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
-import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
 import org.opensaml.saml.saml2.encryption.Encrypter;
@@ -26,7 +26,6 @@ import org.opensaml.xmlsec.criterion.EncryptionConfigurationCriterion;
 import org.opensaml.xmlsec.encryption.support.DataEncryptionParameters;
 import org.opensaml.xmlsec.encryption.support.EncryptionConstants;
 import org.opensaml.xmlsec.encryption.support.KeyEncryptionParameters;
-import org.opensaml.xmlsec.impl.BasicEncryptionConfiguration;
 import org.opensaml.xmlsec.keyinfo.impl.BasicProviderKeyInfoCredentialResolver;
 import org.opensaml.xmlsec.keyinfo.impl.KeyInfoProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.DEREncodedKeyValueProvider;
@@ -99,19 +98,19 @@ public class SamlObjectEncrypter {
                                      final HttpServletResponse response,
                                      final HttpServletRequest request) throws SamlException {
 
-        final String className = samlObject.getClass().getName();
-        final String entityId = adaptor.getEntityId();
+        val className = samlObject.getClass().getName();
+        val entityId = adaptor.getEntityId();
         LOGGER.debug("Attempting to encrypt [{}] for [{}]", className, entityId);
-        final Credential credential = getKeyEncryptionCredential(entityId, adaptor, service);
+        val credential = getKeyEncryptionCredential(entityId, adaptor, service);
         LOGGER.info("Found encryption public key: [{}]", EncodingUtils.encodeBase64(credential.getPublicKey().getEncoded()));
 
-        final KeyEncryptionParameters keyEncParams = getKeyEncryptionParameters(samlObject, service, adaptor, credential);
+        val keyEncParams = getKeyEncryptionParameters(samlObject, service, adaptor, credential);
         LOGGER.debug("Key encryption algorithm for [{}] is [{}]", keyEncParams.getRecipient(), keyEncParams.getAlgorithm());
 
-        final DataEncryptionParameters dataEncParams = getDataEncryptionParameters(samlObject, service, adaptor);
+        val dataEncParams = getDataEncryptionParameters(samlObject, service, adaptor);
         LOGGER.debug("Data encryption algorithm for [{}] is [{}]", entityId, dataEncParams.getAlgorithm());
 
-        final Encrypter encrypter = getEncrypter(samlObject, service, adaptor, keyEncParams, dataEncParams);
+        val encrypter = getEncrypter(samlObject, service, adaptor, keyEncParams, dataEncParams);
         LOGGER.debug("Attempting to encrypt [{}] for [{}] with key placement of [{}]",
             className, entityId, encrypter.getKeyPlacement());
 
@@ -133,7 +132,7 @@ public class SamlObjectEncrypter {
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                      final KeyEncryptionParameters keyEncParams, final
                                      DataEncryptionParameters dataEncParams) {
-        final Encrypter encrypter = new Encrypter(dataEncParams, keyEncParams);
+        val encrypter = new Encrypter(dataEncParams, keyEncParams);
         encrypter.setKeyPlacement(Encrypter.KeyPlacement.PEER);
         return encrypter;
     }
@@ -148,7 +147,7 @@ public class SamlObjectEncrypter {
      */
     protected DataEncryptionParameters getDataEncryptionParameters(final Assertion samlObject, final SamlRegisteredService service,
                                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-        final DataEncryptionParameters dataEncParams = new DataEncryptionParameters();
+        val dataEncParams = new DataEncryptionParameters();
         dataEncParams.setAlgorithm(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128);
         return dataEncParams;
     }
@@ -165,7 +164,7 @@ public class SamlObjectEncrypter {
     protected KeyEncryptionParameters getKeyEncryptionParameters(final Object samlObject, final SamlRegisteredService service,
                                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                  final Credential credential) {
-        final KeyEncryptionParameters keyEncParams = new KeyEncryptionParameters();
+        val keyEncParams = new KeyEncryptionParameters();
         keyEncParams.setRecipient(adaptor.getEntityId());
         keyEncParams.setEncryptionCredential(credential);
         keyEncParams.setAlgorithm(EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP);
@@ -184,8 +183,8 @@ public class SamlObjectEncrypter {
     protected Credential getKeyEncryptionCredential(final String peerEntityId,
                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                     final SamlRegisteredService service) throws Exception {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        final BasicEncryptionConfiguration config =
+        val idp = casProperties.getAuthn().getSamlIdp();
+        val config =
             DefaultSecurityConfigurationBootstrap.buildDefaultEncryptionConfiguration();
 
         if (this.overrideBlackListedEncryptionAlgorithms != null && !this.overrideBlackListedEncryptionAlgorithms.isEmpty()) {
@@ -209,25 +208,25 @@ public class SamlObjectEncrypter {
         LOGGER.debug("Signature data algorithms: [{}]", config.getDataEncryptionAlgorithms());
         LOGGER.debug("Encryption whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
 
-        final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
+        val kekCredentialResolver = new MetadataCredentialResolver();
 
-        final List<KeyInfoProvider> providers = new ArrayList<>();
+        val providers = new ArrayList<KeyInfoProvider>();
         providers.add(new RSAKeyValueProvider());
         providers.add(new DSAKeyValueProvider());
         providers.add(new InlineX509DataProvider());
         providers.add(new DEREncodedKeyValueProvider());
         providers.add(new KeyInfoReferenceProvider());
 
-        final BasicProviderKeyInfoCredentialResolver keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(providers);
+        val keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(providers);
         kekCredentialResolver.setKeyInfoCredentialResolver(keyInfoResolver);
 
-        final RoleDescriptorResolver roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(adaptor,
+        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(adaptor,
             idp.getMetadata().isRequireValidMetadata());
 
         kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         kekCredentialResolver.initialize();
 
-        final CriteriaSet criteriaSet = new CriteriaSet();
+        val criteriaSet = new CriteriaSet();
         criteriaSet.add(new EncryptionConfigurationCriterion(config));
         criteriaSet.add(new EntityIdCriterion(peerEntityId));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));

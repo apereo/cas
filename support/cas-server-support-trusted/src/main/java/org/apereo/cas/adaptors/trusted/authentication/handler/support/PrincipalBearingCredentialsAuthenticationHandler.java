@@ -1,13 +1,15 @@
 package org.apereo.cas.adaptors.trusted.authentication.handler.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * AuthenticationHandler which authenticates Principal-bearing credentials.
@@ -28,8 +30,13 @@ public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAu
     @Override
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential) {
         LOGGER.debug("Trusting credential for: [{}]", credential);
-        final PrincipalBearingCredential bearingCredential = (PrincipalBearingCredential) credential;
+        val bearingCredential = (PrincipalBearingCredential) credential;
         return new DefaultAuthenticationHandlerExecutionResult(this, bearingCredential, bearingCredential.getPrincipal());
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return PrincipalBearingCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

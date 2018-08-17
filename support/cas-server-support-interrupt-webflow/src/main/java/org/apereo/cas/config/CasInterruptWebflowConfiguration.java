@@ -1,18 +1,18 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.webflow.InterruptSingleSignOnParticipationStrategy;
+import org.apereo.cas.interrupt.webflow.InterruptWebflowConfigurer;
 import org.apereo.cas.interrupt.webflow.actions.FinalizeInterruptFlowAction;
 import org.apereo.cas.interrupt.webflow.actions.InquireInterruptAction;
-import org.apereo.cas.interrupt.webflow.InterruptWebflowConfigurer;
 import org.apereo.cas.interrupt.webflow.actions.PrepareInterruptViewAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,7 +34,6 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casInterruptWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -42,11 +41,11 @@ public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlan
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("interruptInquirer")
     private InterruptInquirer interruptInquirer;
-    
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -56,14 +55,14 @@ public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlan
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @ConditionalOnMissingBean(name = "interruptWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer interruptWebflowConfigurer() {
         return new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
-    
+
     @Bean
     public Action inquireInterruptAction() {
         return new InquireInterruptAction(interruptInquirer);
@@ -73,7 +72,7 @@ public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlan
     public Action prepareInterruptViewAction() {
         return new PrepareInterruptViewAction();
     }
-    
+
     @Bean
     public Action finalizeInterruptFlowAction() {
         return new FinalizeInterruptFlowAction();

@@ -1,19 +1,19 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
-import javax.persistence.PostLoad;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,11 +26,11 @@ import java.util.Set;
  */
 @Entity
 @DiscriminatorValue("oidc")
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 public class OidcRegisteredService extends OAuthRegisteredService {
 
     private static final long serialVersionUID = 1310899699465091444L;
@@ -46,6 +46,9 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     @Column
     private String idTokenEncryptionAlg;
+
+    @Column
+    private String idTokenSigningAlg;
 
     @Column
     private String idTokenEncryptionEncoding;
@@ -68,10 +71,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Lob
     @Column(name = "scopes", length = Integer.MAX_VALUE)
     private HashSet<String> scopes = new HashSet<>();
-
-    public OidcRegisteredService() {
-        setJsonFormat(Boolean.TRUE);
-    }
 
     /**
      * Gets subject type.
@@ -120,15 +119,9 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         getScopes().addAll(scopes);
     }
 
-    /**
-     * Initializes the registered service with default values
-     * for fields that are unspecified. Only triggered by JPA.
-     */
     @Override
-    @PostLoad
-    public void postLoad() {
-        super.postLoad();
-        
+    public void initialize() {
+        super.initialize();
         if (this.scopes == null) {
             this.scopes = new HashSet<>();
         }

@@ -1,23 +1,22 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -26,15 +25,14 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolver {
     /**
      * Internal flag to indicate whether surrogate account selection is requested.
      */
     public static final String CONTEXT_ATTRIBUTE_REQUEST_SURROGATE = "requestSurrogateAccount";
-    
+
     private final SurrogateAuthenticationService surrogateService;
-    
+
     public SurrogateWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                          final CentralAuthenticationService centralAuthenticationService,
                                          final ServicesManager servicesManager,
@@ -44,7 +42,7 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
                                          final MultifactorAuthenticationProviderSelector selector,
                                          final SurrogateAuthenticationService surrogateService) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-                warnCookieGenerator, authenticationSelectionStrategies, selector);
+            warnCookieGenerator, authenticationSelectionStrategies, selector);
         this.surrogateService = surrogateService;
     }
 
@@ -60,10 +58,10 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
     }
 
     private boolean loadSurrogates(final RequestContext requestContext) {
-        final Credential c = WebUtils.getCredential(requestContext);
+        val c = WebUtils.getCredential(requestContext);
         if (c instanceof UsernamePasswordCredential) {
-            final String username = c.getId();
-            final Collection<String> surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            val username = c.getId();
+            val surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             if (!surrogates.isEmpty()) {
                 surrogates.add(username);
                 requestContext.getFlowScope().put("surrogates", surrogates);

@@ -5,6 +5,7 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -26,9 +27,9 @@ public class ThrowableSerializer extends Serializer<Throwable> {
     @Override
     public Throwable read(final Kryo kryo, final Input input, final Class<Throwable> type) {
         try {
-            final Class clazz = kryo.readObject(input, Class.class);
-            final String msg = kryo.readObject(input, String.class);
-            final Throwable throwable = (Throwable) clazz.getDeclaredConstructor(String.class).newInstance(msg);
+            val clazz = kryo.readObject(input, Class.class);
+            val msg = kryo.readObject(input, String.class);
+            val throwable = (Throwable) clazz.getDeclaredConstructor(String.class).newInstance(msg);
             return throwable;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

@@ -1,0 +1,5 @@
+description = "Apereo CAS Core Test Categories. Used for tests requiring a server connection."
+
+dependencies {
+
+}

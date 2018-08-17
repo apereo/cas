@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link SurrogateAuthenticationService}.
@@ -27,7 +27,7 @@ public interface SurrogateAuthenticationService {
      * Indicates that surrogate authn is enabled and activated.
      */
     String AUTHENTICATION_ATTR_SURROGATE_ENABLED = "surrogateEnabled";
-    
+
     /**
      * Checks whether a principal can authenticate as a surrogate user.
      *
@@ -46,5 +46,5 @@ public interface SurrogateAuthenticationService {
      * @param username The username of the surrogate
      * @return collection of usernames
      */
-    Collection<String> getEligibleAccountsForSurrogateToProxy(String username);
+    List<String> getEligibleAccountsForSurrogateToProxy(String username);
 }

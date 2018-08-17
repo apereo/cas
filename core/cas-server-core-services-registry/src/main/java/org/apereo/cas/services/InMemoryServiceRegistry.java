@@ -1,11 +1,12 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -17,7 +18,6 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 @ToString
 @Setter
 @NoArgsConstructor
@@ -25,7 +25,7 @@ import java.util.List;
 public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     private List<RegisteredService> registeredServices = new ArrayList<>();
-    
+
     @Override
     public boolean delete(final RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);
@@ -43,8 +43,12 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public List<RegisteredService> load() {
-        this.registeredServices.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
-        return this.registeredServices;
+        val services = new ArrayList<RegisteredService>();
+        this.registeredServices.forEach(s -> {
+            publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
+            services.add(s);
+        });
+        return services;
     }
 
     @Override
@@ -52,7 +56,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             registeredService.setId(findHighestId() + 1);
         }
-        final RegisteredService svc = findServiceById(registeredService.getId());
+        val svc = findServiceById(registeredService.getId());
         if (svc != null) {
             this.registeredServices.remove(svc);
         }

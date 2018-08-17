@@ -5,13 +5,17 @@ title: CAS Common Properties Overview
 
 # CAS Common Properties
 
-This document describes a number of suggestions and configuration options that apply to and are common amongst a selection of CAS modules and features. To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
+This document describes a number of suggestions and configuration options that apply to and are common amongst a selection of CAS modules and features. 
+To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Naming Convention
 
-- Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`. All other settings are controlled and provided to CAS via other underlying frameworks and may have their own schemas and syntax. **BE CAREFUL** with the distinction.
+- Settings and properties that are controlled by the CAS platform directly always begin with the prefix `cas`. All other settings are controlled 
+and provided to CAS via other underlying frameworks and may have their own schemas and syntax. **BE CAREFUL** with the distinction.
 
-- Unrecognized properties are generally ignored by CAS and/or frameworks upon which CAS depends. This means if you somehow misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting is entirely ignored by CAS and likely the feature it controls will never be activated in the way you intend.
+- Unrecognized properties are rejected by CAS and/or frameworks upon which CAS depends. 
+This means if you somehow misspell a property definition or fail to adhere to the dot-notation syntax and such, your setting 
+is entirely refused by CAS and likely the feature it controls will never be activated in the way you intend.
 
 ## Indexed Settings
 
@@ -237,7 +241,6 @@ The following options related to JPA/JDBC support in CAS apply equally to a numb
 # ${configurationKey}.defaultCatalog=
 # ${configurationKey}.defaultSchema=
 # ${configurationKey}.ddlAuto=create-drop
-# ${configurationKey}.maxAgeDays=180
 
 # ${configurationKey}.autocommit=false
 # ${configurationKey}.idleTimeout=5000
@@ -570,7 +573,7 @@ The following options related to MongoDb support in CAS apply equally to a numbe
 # ${configurationKey}.mongo.writeConcern=NORMAL
 # ${configurationKey}.mongo.authenticationDatabaseName=
 # ${configurationKey}.mongo.replicaSet=
-# ${configurationKey}.mongo.ssEnabled=false
+# ${configurationKey}.mongo.sslEnabled=false
 # ${configurationKey}.mongo.conns.lifetime=60000
 # ${configurationKey}.mongo.conns.perHost=10
 ```
@@ -580,18 +583,6 @@ The following options related to MongoDb support in CAS apply equally to a numbe
 The following options related to DynamoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
 
 ```properties
-# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
-# ${configurationKey}.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
-
-# Alternatively, you may directly provide credentials to CAS
-# ${configurationKey}.dynamoDb.credentialAccessKey=
-# ${configurationKey}.dynamoDb.credentialSecretKey=
-
-# ${configurationKey}.dynamoDb.endpoint=http://localhost:8000
-# ${configurationKey}.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
-# ${configurationKey}.dynamoDb.regionOverride=
-# ${configurationKey}.dynamoDb.serviceNameIntern=
-
 # ${configurationKey}.dynamoDb.dropTablesOnStartup=false
 # ${configurationKey}.dynamoDb.preventTableCreationOnStartup=false
 # ${configurationKey}.dynamoDb.timeOffset=0
@@ -613,6 +604,8 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 # ${configurationKey}.dynamoDb.localAddress=
 # ${configurationKey}.dynamoDb.maxConnections=10
 ```
+
+AWS settings for this feature are available [here](#amazon-integration-settings).
 
 ## RESTful Integrations
 
@@ -638,7 +631,6 @@ The following options related to Redis support in CAS apply equally to a number 
 # ${configurationKey}.redis.password=
 # ${configurationKey}.redis.timeout=2000
 # ${configurationKey}.redis.useSsl=false
-# ${configurationKey}.redis.usePool=true
 
 # ${configurationKey}.redis.pool.max-active=20
 # ${configurationKey}.redis.pool.maxIdle=8
@@ -673,7 +665,7 @@ Note that the default value for Hibernate's DDL setting is `create-drop` which m
 | `update`             | Update the schema.
 | `create`             | Create the schema, destroying previous data.
 | `create-drop`        | Drop the schema at the end of the session.
-| `none`        | Do nothing.
+| `none`               | Do nothing.
 
 Note that during a version migration where any schema has changed `create-drop` will result
 in the loss of all data as soon as CAS is started. For transient data like tickets this is probably
@@ -686,7 +678,10 @@ please review [this guide](http://docs.spring.io/spring-framework/docs/current/j
 
 ## SAML2 Service Provider Integrations
 
-The settings defined for each service provider simply attempt to automate the creation of a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering SAML service providers with CAS which would depend on your service registry of choice.
+The settings defined for each service provider simply attempt to automate the creation of 
+a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the 
+applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering 
+SAML service providers with CAS which would depend on your service registry of choice.
 
 Each SAML service provider supports the following settings:
 
@@ -702,7 +697,6 @@ Each SAML service provider supports the following settings:
 | `entityIds`           | List of entity ids allowed for this service provider.
 | `signResponses`       | Indicate whether responses should be signed. Default is `true`.
 | `signAssertions`      | Indicate whether assertions should be signed. Default is `false`.
-
 
 The only required setting that would activate the automatic configuration for a service provider is the presence and definition of metadata. All other settings are optional. 
 
@@ -741,13 +735,16 @@ The following bypass options apply equally to multifactor authentication provide
 
 # ${configurationKey}.bypass.httpRequestRemoteAddress=127.+|example.*
 # ${configurationKey}.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
+
+# ${configurationKey}.groovy.location=file:/etc/cas/config/mfa-bypass.groovy
 ```
 
-In multifactor authentication bypass is determined via REST, RESTful settings are available [here](#restful-integrations) under the configuration key `${configurationKey}.bypass.rest`.
+If multifactor authentication bypass is determined via REST, 
+RESTful settings are available [here](#restful-integrations) under the configuration key `${configurationKey}.bypass.rest`.
 
 ## Couchbase Integration Settings
 
-The following  options are shared and apply when CAS is configured to integrate with Couchbase (i.e ticket registry, etc), given the provider's *configuration key*:
+The following options are shared and apply when CAS is configured to integrate with Couchbase (i.e ticket registry, etc), given the provider's *configuration key*:
 
 ```properties
 # ${configurationKey}.nodeSet=localhost:8091
@@ -755,6 +752,27 @@ The following  options are shared and apply when CAS is configured to integrate 
 # ${configurationKey}.queryEnabled=true
 # ${configurationKey}.bucket=default
 # ${configurationKey}.timeout=PT30S
+```
+
+## Amazon Integration Settings
+
+The following options are shared and apply when CAS is configured to integrate with various 
+Amazon Web Service features, given the provider's *configuration key*:
+
+```properties
+# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
+# ${configurationKey}.credentialsPropertiesFile=file:/path/to/file.properties
+
+# Alternatively, you may directly provide credentials to CAS
+# ${configurationKey}.credentialAccessKey=
+# ${configurationKey}.credentialSecretKey=
+
+# ${configurationKey}.endpoint=http://localhost:8000
+# ${configurationKey}.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
+# ${configurationKey}.regionOverride=
+# ${configurationKey}.serviceNameIntern=
+
+# ${configurationKey}.localAddress=
 ```
 
 ## Memcached Integration Settings
@@ -786,7 +804,7 @@ The following  options are shared and apply when CAS is configured to integrate 
 
 ## Password Policy Settings
 
-The following  options are shared and apply when CAS is configured to integrate with account sources and authentication strategies that support password policy enforement and detection, given the provider's *configuration key*. Note that certain setting may only be applicable if the underlying account source is LDAP and are only taken into account if the authentication strategy configured in CAS is able to honor and recognize them: 
+The following  options are shared and apply when CAS is configured to integrate with account sources and authentication strategies that support password policy enforcement and detection, given the provider's *configuration key*. Note that certain setting may only be applicable if the underlying account source is LDAP and are only taken into account if the authentication strategy configured in CAS is able to honor and recognize them: 
 
 ```properties
 # ${configurationKey}.type=GENERIC|AD|FreeIPA|EDirectory
@@ -799,6 +817,7 @@ The following  options are shared and apply when CAS is configured to integrate 
 # ${configurationKey}.displayWarningOnMatch=true
 # ${configurationKey}.warnAll=true
 # ${configurationKey}.warningDays=30
+# ${configurationKey}.accountStateHandlingEnabled=true
 
 # An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
 # ${configurationKey}.customPolicyClass=com.example.MyAuthenticationResponseHandler
@@ -813,7 +832,7 @@ Password policy strategy types are outlined below. The strategy evaluates the au
 
 | Option        | Description
 |---------------|-----------------------------------------------------------------------------
-| `DEFAULT`     | Accepts the auhentication response as is, and processes account state, if any.
+| `DEFAULT`     | Accepts the authentication response as is, and processes account state, if any.
 | `GROOVY`      | Examine the authentication response as part of a Groovy script dynamically. The responsibility of handling account state changes and warnings is entirely delegated to the script.
 | `REJECT_RESULT_CODE`  | An extension of the `DEFAULT` where account state is processed only if the result code of the authentication response is not blacklisted in the configuration. By default `INVALID_CREDENTIALS(49)` prevents CAS from handling account states.
 
@@ -830,6 +849,7 @@ def List<MessageDescriptor> run(final Object... args) {
     def response = args[0]
     def configuration = args[1];
     def logger = args[2]
+    def applicationContext = args[3]
 
     logger.info("Handling password policy [{}] via ${configuration.getAccountStateHandler()}", response)
 
@@ -846,11 +866,49 @@ The parameters passed are as follows:
 | `configuration`       | The LDAP password policy configuration carrying the account state handler defined.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
+## Email Notifications
 
+To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
 
+The following options are shared and apply when CAS is configured to send email notifications, given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.mail.from=
+# ${configurationKey}.mail.text=
+# ${configurationKey}.mail.subject=
+# ${configurationKey}.mail.cc=
+# ${configurationKey}.mail.bcc=
+# ${configurationKey}.mail.attributeName=mail
+```
+
+The following settings may also need to be defined to describe the mail server settings:
+
+```properties
+# spring.mail.host=
+# spring.mail.port=
+# spring.mail.username=
+# spring.mail.password=
+# spring.mail.testConnection=true
+# spring.mail.properties.mail.smtp.auth=true
+# spring.mail.properties.mail.smtp.starttls.enable=true
+```
+
+## SMS Notifications
+ 
+The following options are shared and apply when CAS is configured to send SMS notifications, given the provider's *configuration key*:
+ 
+```properties
+# ${configurationKey}.sms.from=
+# ${configurationKey}.sms.text=
+# ${configurationKey}.sms.attributeName=phone
+```
+
+You will also need to ensure a provider is defined that is able to send SMS messages. To learn more about this 
+topic, [please review this guide](SMS-Messaging-Configuration.html).
+ 
 ## Delegated Authentication Settings
 
-The following  options are shared and apply when CAS is configured to delegate authentication 
+The following options are shared and apply when CAS is configured to delegate authentication 
 to an external provider such as Yahoo, given the provider's *configuration key*:
 
 ```properties
@@ -860,6 +918,20 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.autoRedirect=false
 ```
 
+### Delegated Authentication OpenID Connect Settings
+
+The following options are shared and apply when CAS is configured to delegate authentication 
+to an external OpenID Connect provider such as Azure AD, given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.discoveryUri=
+# ${configurationKey}.logoutUrl=
+# ${configurationKey}.maxClockSkew=
+# ${configurationKey}.scope=
+# ${configurationKey}.useNonce=
+# ${configurationKey}.preferredJwsAlgorithm=
+# ${configurationKey}.customParams.param1=value1
+```
 
 ## LDAP Connection Settings
 
@@ -982,7 +1054,9 @@ The following types are supported:
 
 ### LDAP Authentication/Search Settings
 
-In addition to common LDAP connection settings above, there are cases where CAS simply need to execute authenticate against an LDAP server to fetch an account or set of attributes or execute a search query in general. The following  options apply  given the provider's *configuration key*:
+In addition to common LDAP connection settings above, there are cases where CAS simply need to execute 
+authenticate against an LDAP server to fetch an account or set of attributes or execute a search query in general. 
+The following  options apply  given the provider's *configuration key*:
 
 **Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, etc will simply deactivate LDAP  altogether silently.
 
@@ -991,6 +1065,7 @@ In addition to common LDAP connection settings above, there are cases where CAS 
 
 # ${configurationKey}.baseDn=dc=example,dc=org
 # ${configurationKey}.subtreeSearch=true
+# ${configurationKey}.searchFilter=cn={user}
 
 # ${configurationKey}.enhanceWithEntryResolver=true
 # ${configurationKey}.derefAliases=NEVER|SEARCHING|FINDING|ALWAYS

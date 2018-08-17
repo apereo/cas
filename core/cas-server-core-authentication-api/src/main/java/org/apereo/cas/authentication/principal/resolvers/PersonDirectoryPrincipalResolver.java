@@ -1,25 +1,30 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.util.CollectionUtils;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Resolves principals by querying a data source using the Jasig
@@ -33,7 +38,7 @@ import java.util.Map;
  */
 @Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
@@ -63,20 +68,21 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected final String principalAttributeName;
 
     public PersonDirectoryPrincipalResolver() {
-        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(), false, formUserId -> formUserId, null);
+        this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(), false,
+            String::trim, null);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository, final String principalAttributeName) {
-        this(attributeRepository, new DefaultPrincipalFactory(), false, formUserId -> formUserId, principalAttributeName);
+        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(), false, formUserId -> formUserId, principalAttributeName);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository) {
-        this(attributeRepository, new DefaultPrincipalFactory(), false, formUserId -> formUserId, null);
+        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(), false, formUserId -> formUserId, null);
     }
 
     public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeName) {
-        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(),
-            returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName);
+        this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(),
+            returnNullIfNoAttributes, String::trim, principalAttributeName);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository,
@@ -91,9 +97,13 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     @Override
-    public Principal resolve(final Credential credential, final Principal currentPrincipal, final AuthenticationHandler handler) {
+    public Principal resolve(final Credential credential, final Optional<Principal> currentPrincipal, final Optional<AuthenticationHandler> handler) {
         LOGGER.debug("Attempting to resolve a principal...");
-        String principalId = extractPrincipalId(credential, currentPrincipal);
+        var principalId = extractPrincipalId(credential, currentPrincipal);
+        if (StringUtils.isBlank(principalId)) {
+            LOGGER.debug("Principal id [{}] could not be found", principalId);
+            return null;
+        }
         if (principalNameTransformer != null) {
             principalId = principalNameTransformer.transform(principalId);
         }
@@ -102,7 +112,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             return null;
         }
         LOGGER.debug("Creating principal for [{}]", principalId);
-        final Map<String, List<Object>> attributes = retrievePersonAttributes(principalId, credential);
+        val attributes = retrievePersonAttributes(principalId, credential);
         if (attributes == null || attributes.isEmpty()) {
             LOGGER.debug("Principal id [{}] did not specify any attributes", principalId);
             if (!this.returnNullIfNoAttributes) {
@@ -113,7 +123,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             return null;
         }
         LOGGER.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
-        final Pair<String, Map<String, Object>> pair = convertPersonAttributesToPrincipal(principalId, attributes);
+        val pair = convertPersonAttributesToPrincipal(principalId, attributes);
         return this.principalFactory.createPrincipal(pair.getKey(), pair.getValue());
     }
 
@@ -127,20 +137,25 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     protected Pair<String, Map<String, Object>> convertPersonAttributesToPrincipal(final String extractedPrincipalId,
                                                                                    final Map<String, List<Object>> attributes) {
         final String[] principalId = {extractedPrincipalId};
-        final Map<String, Object> convertedAttributes = new HashMap<>();
+        val convertedAttributes = new LinkedHashMap<String, Object>();
         attributes.entrySet().forEach(entry -> {
-            final String key = entry.getKey();
-            LOGGER.debug("Found attribute [{}]", key);
-            final List<Object> values = entry.getValue();
+            val key = entry.getKey();
+            val values = CollectionUtils.toCollection(entry.getValue(), ArrayList.class);
+            LOGGER.debug("Found attribute [{}] with value(s)", key, values);
             if (StringUtils.isNotBlank(this.principalAttributeName) && key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     LOGGER.debug("[{}] is empty, using [{}] for principal", this.principalAttributeName, extractedPrincipalId);
                 } else {
-                    principalId[0] = values.get(0).toString();
+                    principalId[0] = CollectionUtils.firstElement(values).get().toString();
                     LOGGER.debug("Found principal attribute value [{}]; removing [{}] from attribute map.", extractedPrincipalId, this.principalAttributeName);
                 }
             } else {
-                convertedAttributes.put(key, values.size() == 1 ? values.get(0) : values);
+                if (values.size() == 1) {
+                    val value = CollectionUtils.firstElement(values).get();
+                    convertedAttributes.put(key, value);
+                } else {
+                    convertedAttributes.put(key, values);
+                }
             }
         });
         return Pair.of(principalId[0], convertedAttributes);
@@ -155,14 +170,10 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @return the map
      */
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
-        final IPersonAttributes personAttributes = this.attributeRepository.getPerson(principalId);
-        final Map<String, List<Object>> attributes;
-        if (personAttributes == null) {
-            attributes = null;
-        } else {
-            attributes = personAttributes.getAttributes();
-        }
-        return attributes;
+        val personAttributes = this.attributeRepository.getPerson(principalId);
+        return personAttributes == null
+            ? null
+            : personAttributes.getAttributes();
     }
 
     /**
@@ -173,7 +184,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @param currentPrincipal the current principal
      * @return the username, or null if it could not be resolved.
      */
-    protected String extractPrincipalId(final Credential credential, final Principal currentPrincipal) {
+    protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         return credential.getId();
     }
 

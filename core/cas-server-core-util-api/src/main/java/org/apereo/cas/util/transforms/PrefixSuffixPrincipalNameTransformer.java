@@ -1,10 +1,11 @@
 package org.apereo.cas.util.transforms;
 
+import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
+
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import lombok.Setter;
+import lombok.val;
 
 /**
  * Transform the user id by adding a prefix or suffix.
@@ -13,7 +14,6 @@ import lombok.Setter;
  * @author Scott Battaglia
  * @since 3.3.6
  */
-@Slf4j
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +24,7 @@ public class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransf
 
     @Override
     public String transform(final String formUserId) {
-        final StringBuilder stringBuilder = new StringBuilder();
+        val stringBuilder = new StringBuilder();
         if (this.prefix != null) {
             stringBuilder.append(this.prefix);
         }

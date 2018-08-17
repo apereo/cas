@@ -1,11 +1,13 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
-import java.io.Serializable;
+
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
+
+import java.io.Serializable;
 
 /**
  * This is {@link BaseU2FDeviceRepository}.
@@ -13,7 +15,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @Getter
 @Setter
 public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
@@ -28,7 +29,7 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     @Override
     public String getDeviceRegistrationRequest(final String requestId, final String username) {
-        final String request = requestStorage.get(requestId);
+        val request = requestStorage.get(requestId);
         requestStorage.invalidate(requestId);
         requestStorage.cleanUp();
         return request;
@@ -36,7 +37,7 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     @Override
     public String getDeviceAuthenticationRequest(final String requestId, final String username) {
-        final String request = requestStorage.get(requestId);
+        val request = requestStorage.get(requestId);
         requestStorage.invalidate(requestId);
         requestStorage.cleanUp();
         return request;

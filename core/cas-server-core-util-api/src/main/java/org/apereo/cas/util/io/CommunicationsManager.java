@@ -1,15 +1,16 @@
 package org.apereo.cas.util.io;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
-import javax.mail.internet.MimeMessage;
+import java.util.Optional;
 
 /**
  * This is {@link CommunicationsManager}.
@@ -18,16 +19,10 @@ import javax.mail.internet.MimeMessage;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class CommunicationsManager {
-
-
-    @Autowired(required = false)
-    @Qualifier("smsSender")
-    private SmsSender smsSender;
-
-    @Autowired(required = false)
-    @Qualifier("mailSender")
-    private JavaMailSender mailSender;
+    private final SmsSender smsSender;
+    private final JavaMailSender mailSender;
 
     public boolean isMailSenderDefined() {
         return this.mailSender != null;
@@ -55,9 +50,12 @@ public class CommunicationsManager {
                          final String subject,
                          final String cc, final String bcc) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isMailSenderDefined()) {
-            final String to = getFirstAttributeByName(principal, attribute);
-            return email(text, from, subject, to, cc, bcc);
+            val to = getFirstAttributeByName(principal, attribute);
+            if (to.isPresent()) {
+                return email(text, from, subject, to.get().toString(), cc, bcc);
+            }
         }
+        LOGGER.debug("Email attribute [{}] cannot be found or no configuration for email provider is defined", attribute);
         return false;
     }
 
@@ -91,13 +89,13 @@ public class CommunicationsManager {
                          final String cc, final String bcc) {
         try {
             if (!isMailSenderDefined() || StringUtils.isBlank(text) || StringUtils.isBlank(from)
-                    || StringUtils.isBlank(subject) || StringUtils.isBlank(to)) {
-                LOGGER.warn("Could not send email to [{}] because either no address/subject/text is found or email settings are not configured.", to);
+                || StringUtils.isBlank(subject) || StringUtils.isBlank(to)) {
+                LOGGER.warn("Could not send email to [{}] because either no from/to/subject/text is defined or email settings are not configured.", to);
                 return false;
             }
 
-            final MimeMessage message = this.mailSender.createMimeMessage();
-            final MimeMessageHelper helper = new MimeMessageHelper(message);
+            val message = this.mailSender.createMimeMessage();
+            val helper = new MimeMessageHelper(message);
             helper.setTo(to);
             helper.setText(text);
             helper.setSubject(subject);
@@ -132,9 +130,12 @@ public class CommunicationsManager {
                        final String attribute,
                        final String text, final String from) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
-            final String to = getFirstAttributeByName(principal, attribute);
-            return sms(from, to, text);
+            val to = getFirstAttributeByName(principal, attribute);
+            if (to.isPresent()) {
+                return sms(from, to.get().toString(), text);
+            }
         }
+        LOGGER.debug("Phone attribute [{}] cannot be found or no configuration for sms provider is defined", attribute);
         return false;
     }
 
@@ -148,15 +149,29 @@ public class CommunicationsManager {
      */
     public boolean sms(final String from, final String to, final String text) {
         if (!isSmsSenderDefined() || StringUtils.isBlank(text) || StringUtils.isBlank(from)) {
-            LOGGER.warn("Could not send email to [{}] because either no address/subject/text is found or email settings are not configured.", to);
+            LOGGER.warn("Could not send SMS to [{}] because either no from/text is found or SMS settings are not configured.", to);
             return false;
         }
         return this.smsSender.send(from, to, text);
     }
 
-    private String getFirstAttributeByName(final Principal principal, final String attribute) {
-        final Object value = principal.getAttributes().get(attribute);
-        return CollectionUtils.firstElement(value).toString();
+    private Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
+        val value = principal.getAttributes().get(attribute);
+        return CollectionUtils.firstElement(value);
     }
 
+    /**
+     * Validate.
+     *
+     * @return true, if email or sms providers are defined for CAS.
+     */
+    public boolean validate() {
+        if (!isMailSenderDefined()) {
+            LOGGER.warn("CAS is unable to send email given no settings are defined to account for email servers, etc");
+        }
+        if (!isSmsSenderDefined()) {
+            LOGGER.warn("CAS is unable to send sms messages given no settings are defined to account for sms providers, etc");
+        }
+        return isMailSenderDefined() || isSmsSenderDefined();
+    }
 }

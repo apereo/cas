@@ -1,10 +1,5 @@
 package org.apereo.cas.discovery;
 
-import com.google.common.base.Predicates;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -14,6 +9,13 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
+
+import com.google.common.base.Predicates;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
@@ -44,23 +46,24 @@ import java.util.stream.Collectors;
 @Setter
 @RequiredArgsConstructor
 public class CasServerProfileRegistrar implements ApplicationContextAware {
-    private ApplicationContext applicationContext;
-
     private final ServicesManager servicesManager;
     private final CasConfigurationProperties casProperties;
     private final Clients clients;
     private final Set<String> availableAttributes;
+    private ApplicationContext applicationContext;
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesActive() {
-        return MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext)
-            .values().stream().collect(Collectors.toMap(MultifactorAuthenticationProvider::getId,
-                MultifactorAuthenticationProvider::getFriendlyName));
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        return providers
+            .values()
+            .stream()
+            .collect(Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName));
     }
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
         final Function<Class, Object> mapper = c -> {
             try {
-                final MultifactorAuthenticationProvider p = MultifactorAuthenticationProvider.class.cast(c.getDeclaredConstructor().newInstance());
+                val p = MultifactorAuthenticationProvider.class.cast(c.getDeclaredConstructor().newInstance());
                 LOGGER.debug("Located supported multifactor authentication provider [{}]", p.getId());
                 return p;
             } catch (final Exception e) {
@@ -68,14 +71,18 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
                 return null;
             }
         };
-        final Predicate filter = o -> !VariegatedMultifactorAuthenticationProvider.class.isAssignableFrom(Class.class.cast(o));
-        final Collector collector = Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName);
-        return (Map) locateSubtypesByReflection(mapper, collector,
-            AbstractMultifactorAuthenticationProvider.class, filter, CentralAuthenticationService.NAMESPACE);
+        val collector = Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName);
+        return (Map) locateSubtypesByReflection(mapper, collector, AbstractMultifactorAuthenticationProvider.class,
+            o -> !VariegatedMultifactorAuthenticationProvider.class.isAssignableFrom(Class.class.cast(o)),
+            CentralAuthenticationService.NAMESPACE);
     }
 
     private Map<String, Class> locateRegisteredServiceTypesActive() {
-        return this.servicesManager.getAllServices().stream().map(svc -> Pair.of(svc.getFriendlyName(), svc.getClass())).distinct().collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+        return this.servicesManager.getAllServices()
+            .stream()
+            .map(svc -> Pair.of(svc.getFriendlyName(), svc.getClass()))
+            .distinct()
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     private Map<String, Class> locateRegisteredServiceTypesSupported() {
@@ -86,17 +93,17 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
                 return null;
             }
         };
-        final Collector collector = Collectors.toMap(RegisteredService::getFriendlyName, RegisteredService::getClass);
+        val collector = Collectors.toMap(RegisteredService::getFriendlyName, RegisteredService::getClass);
         return (Map) locateSubtypesByReflection(mapper, collector,
             AbstractRegisteredService.class, Predicates.alwaysTrue(), CentralAuthenticationService.NAMESPACE);
     }
 
     private Object locateSubtypesByReflection(final Function<Class, Object> mapper, final Collector collector,
                                               final Class parentType, final Predicate filter, final String packageNamespace) {
-        final Reflections reflections = new Reflections(new ConfigurationBuilder()
+        val reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forPackage(packageNamespace))
             .setScanners(new SubTypesScanner(false)));
-        final Set<Class<?>> subTypes = (Set) reflections.getSubTypesOf(parentType);
+        val subTypes = (Set<Class<?>>) reflections.getSubTypesOf(parentType);
         return subTypes.stream()
             .filter(c -> !Modifier.isInterface(c.getModifiers()) && !Modifier.isAbstract(c.getModifiers()) && filter.test(c))
             .map(mapper)
@@ -129,7 +136,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
      * @return the profile
      */
     public CasServerProfile getProfile() {
-        final CasServerProfile profile = new CasServerProfile();
+        val profile = new CasServerProfile();
         profile.setRegisteredServiceTypesSupported(locateRegisteredServiceTypesSupported());
         profile.setRegisteredServiceTypes(locateRegisteredServiceTypesActive());
         profile.setMultifactorAuthenticationProviderTypesSupported(locateMultifactorAuthenticationProviderTypesSupported());

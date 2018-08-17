@@ -1,11 +1,17 @@
 package org.apereo.cas.services;
 
-import static org.mockito.Mockito.*;
-
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
-import org.junit.Before;
+import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+
+import lombok.SneakyThrows;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.springframework.context.ApplicationEventPublisher;
+
+import java.util.Arrays;
+import java.util.Collection;
+
+import static org.mockito.Mockito.*;
 
 /**
  * Test cases for {@link YamlServiceRegistry}.
@@ -13,17 +19,25 @@ import org.springframework.context.ApplicationEventPublisher;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
+@RunWith(Parameterized.class)
 public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
 
-    @Before
-    public void setup() {
-        try {
-            this.dao = new YamlServiceRegistry(RESOURCE, false,
-                    mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+    public YamlServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
     }
 
+    @Parameterized.Parameters
+    public static Collection<Object> getTestParameters() {
+        return Arrays.asList(RegexRegisteredService.class);
+    }
+
+    @Override
+    @SneakyThrows
+    public void initializeServiceRegistry() {
+        this.dao = new YamlServiceRegistry(RESOURCE, false,
+            mock(ApplicationEventPublisher.class),
+            new NoOpRegisteredServiceReplicationStrategy(),
+            new DefaultRegisteredServiceResourceNamingStrategy());
+        super.initializeServiceRegistry();
+    }
 }

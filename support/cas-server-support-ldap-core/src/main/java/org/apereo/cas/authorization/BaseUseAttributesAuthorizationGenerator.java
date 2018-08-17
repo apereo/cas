@@ -1,17 +1,16 @@
 package org.apereo.cas.authorization;
 
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.Response;
 import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchResult;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.AccountNotFoundException;
@@ -24,16 +23,13 @@ import org.pac4j.core.profile.CommonProfile;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class BaseUseAttributesAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
-
-
     /**
      * Search connection factory.
      */
-    @NonNull
     protected final ConnectionFactory connectionFactory;
-    @NonNull
+
     private final SearchExecutor userSearchExecutor;
     private final boolean allowMultipleResults;
 
@@ -66,27 +62,24 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
 
     @Override
     public CommonProfile generate(final WebContext context, final CommonProfile profile) {
-        final String username = profile.getId();
-        final SearchResult userResult;
+        val username = profile.getId();
+
         try {
             LOGGER.debug("Attempting to get details for user [{}].", username);
-            final Response<SearchResult> response = this.userSearchExecutor.search(
-                    this.connectionFactory,
-                    LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
-                            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username)));
+            val filter = LdapUtils.newLdaptiveSearchFilter(this.userSearchExecutor.getSearchFilter().getFilter(),
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(username));
+            val response = this.userSearchExecutor.search(this.connectionFactory, filter);
 
             LOGGER.debug("LDAP user search response: [{}]", response);
-            userResult = response.getResult();
-
+            val userResult = response.getResult();
             if (userResult.size() == 0) {
                 throw new IllegalArgumentException(new AccountNotFoundException(username + " not found."));
             }
-            if (userResult.size() > 1 && !this.allowMultipleResults) {
-                throw new IllegalStateException(
-                        "Found multiple results for user which is not allowed (allowMultipleResults=false).");
+            if (!this.allowMultipleResults && userResult.size() > 1) {
+                throw new IllegalStateException("Found multiple results for user which is not allowed.");
             }
 
-            final LdapEntry userEntry = userResult.getEntry();
+            val userEntry = userResult.getEntry();
             return generateAuthorizationForLdapEntry(profile, userEntry);
         } catch (final LdapException e) {
             throw new IllegalArgumentException("LDAP error fetching details for user.", e);

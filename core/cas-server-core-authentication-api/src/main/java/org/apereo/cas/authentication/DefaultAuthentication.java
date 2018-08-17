@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Principal;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.Principal;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -22,8 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-@Slf4j
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode

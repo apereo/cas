@@ -17,7 +17,8 @@ dependencies {
     implementation project(":core:cas-server-core-cookie-api")
     
     implementation libraries.pac4j
-
+    implementation libraries.caffein
+    
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-tickets")

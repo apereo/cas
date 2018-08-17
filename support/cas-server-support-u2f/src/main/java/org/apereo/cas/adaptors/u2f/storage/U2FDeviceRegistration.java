@@ -2,8 +2,11 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.extern.slf4j.Slf4j;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,8 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDate;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link U2FDeviceRegistration}.
@@ -23,10 +24,10 @@ import lombok.Setter;
  */
 @Entity
 @Table(name = "U2FDeviceRegistration")
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-@Slf4j
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @Setter
+@AllArgsConstructor
 public class U2FDeviceRegistration {
 
     @org.springframework.data.annotation.Id

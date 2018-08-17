@@ -1,10 +1,10 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import com.yubico.client.v2.ResponseStatus;
-import com.yubico.client.v2.VerificationResponse;
 import com.yubico.client.v2.YubicoClient;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -14,7 +14,7 @@ import org.apache.commons.lang3.StringUtils;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultYubiKeyAccountValidator implements YubiKeyAccountValidator {
 
     private final YubicoClient client;
@@ -22,10 +22,10 @@ public class DefaultYubiKeyAccountValidator implements YubiKeyAccountValidator {
     @Override
     public boolean isValid(final String uid, final String token) {
         try {
-            final String yubikeyPublicId = getTokenPublicId(token);
+            val yubikeyPublicId = getTokenPublicId(token);
             if (StringUtils.isNotBlank(yubikeyPublicId)) {
-                final VerificationResponse response = this.client.verify(token);
-                final ResponseStatus status = response.getStatus();
+                val response = this.client.verify(token);
+                val status = response.getStatus();
                 if (status.compareTo(ResponseStatus.OK) == 0) {
                     LOGGER.debug("YubiKey response status [{}] at [{}]", status, response.getTimestamp());
                     return true;

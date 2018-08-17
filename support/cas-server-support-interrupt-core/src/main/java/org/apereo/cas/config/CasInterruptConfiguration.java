@@ -1,14 +1,15 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.interrupt.GroovyScriptInterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.JsonResourceInterruptInquirer;
+import org.apereo.cas.interrupt.RegexAttributeInterruptInquirer;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirer;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,7 +24,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casInterruptConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasInterruptConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -31,7 +31,10 @@ public class CasInterruptConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "interruptInquirer")
     public InterruptInquirer interruptInquirer() {
-        final InterruptProperties ip = casProperties.getInterrupt();
+        val ip = casProperties.getInterrupt();
+        if (StringUtils.isNotBlank(ip.getAttributeName()) && StringUtils.isNotBlank(ip.getAttributeValue())) {
+            return new RegexAttributeInterruptInquirer(ip.getAttributeName(), ip.getAttributeValue());
+        }
         if (ip.getJson().getLocation() != null) {
             return new JsonResourceInterruptInquirer(ip.getJson().getLocation());
         }
@@ -41,6 +44,6 @@ public class CasInterruptConfiguration {
         if (StringUtils.isNotBlank(ip.getRest().getUrl())) {
             return new RestEndpointInterruptInquirer(ip.getRest());
         }
-        return (authentication, registeredService, service) -> new InterruptResponse();
+        return (authentication, registeredService, service, credential) -> new InterruptResponse();
     }
 }

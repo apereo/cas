@@ -1,10 +1,7 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
-import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.metadata.resolver.JpaSamlRegisteredServiceMetadataResolver;
@@ -13,6 +10,8 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegi
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurator;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -39,7 +38,6 @@ import java.util.List;
 @Configuration("SamlIdPJpaMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-@Slf4j
 public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
 
     @Autowired
@@ -51,7 +49,7 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
 
     @Bean
     public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        val idp = casProperties.getAuthn().getSamlIdp();
         return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
     }
 
@@ -66,10 +64,10 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
     public HibernateJpaVendorAdapter jpaSamlMetadataVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-    
+
     @Bean
     public DataSource dataSourceSamlMetadata() {
-        final SamlIdPMetadataProperties idp = casProperties.getAuthn().getSamlIdp().getMetadata();
+        val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
         return JpaBeans.newDataSource(idp.getJpa());
     }
 
@@ -81,24 +79,22 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean samlMetadataEntityManagerFactory() {
-        final SamlIdPMetadataProperties idp = casProperties.getAuthn().getSamlIdp().getMetadata();
-        final LocalContainerEntityManagerFactoryBean bean =
-            JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                    jpaSamlMetadataVendorAdapter(),
-                    "jpaSamlMetadataContext",
-                    jpaSamlMetadataPackagesToScan(),
-                    dataSourceSamlMetadata()), idp.getJpa());
-        return bean;
+        val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
+        return JpaBeans.newHibernateEntityManagerFactoryBean(
+            new JpaConfigDataHolder(
+                jpaSamlMetadataVendorAdapter(),
+                "jpaSamlMetadataContext",
+                jpaSamlMetadataPackagesToScan(),
+                dataSourceSamlMetadata()), idp.getJpa());
     }
 
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerSamlMetadata(
         @Qualifier("samlMetadataEntityManagerFactory") final EntityManagerFactory emf) {
-        final JpaTransactionManager mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
-    
+
 }

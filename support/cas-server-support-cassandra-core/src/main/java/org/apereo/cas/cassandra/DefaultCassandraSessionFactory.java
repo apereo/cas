@@ -1,5 +1,7 @@
 package org.apereo.cas.cassandra;
 
+import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.HostDistance;
@@ -11,14 +13,12 @@ import com.datastax.driver.core.Session;
 import com.datastax.driver.core.SocketOptions;
 import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.LoggingRetryPolicy;
-import com.datastax.driver.core.policies.RetryPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
+import org.springframework.beans.factory.DisposableBean;
 
-import javax.annotation.PreDestroy;
-import java.io.Closeable;
 import java.util.Arrays;
 
 /**
@@ -28,7 +28,7 @@ import java.util.Arrays;
  * @since 5.2.0
  */
 @Slf4j
-public class DefaultCassandraSessionFactory implements CassandraSessionFactory, Closeable {
+public class DefaultCassandraSessionFactory implements CassandraSessionFactory, AutoCloseable, DisposableBean {
 
 
     private final Cluster cluster;
@@ -40,47 +40,47 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
     }
 
     private static Cluster initializeCassandraCluster(final BaseCassandraProperties cassandra) {
-        final Cluster cluster;
-        final PoolingOptions poolingOptions = new PoolingOptions()
-                .setMaxRequestsPerConnection(HostDistance.LOCAL, cassandra.getMaxRequestsPerConnection())
-                .setConnectionsPerHost(HostDistance.LOCAL, cassandra.getCoreConnections(), cassandra.getMaxConnections());
+        val poolingOptions = new PoolingOptions()
+            .setMaxRequestsPerConnection(HostDistance.LOCAL, cassandra.getMaxRequestsPerConnection())
+            .setConnectionsPerHost(HostDistance.LOCAL, cassandra.getCoreConnections(), cassandra.getMaxConnections());
 
-        final DCAwareRoundRobinPolicy.Builder dcPolicyBuilder = DCAwareRoundRobinPolicy.builder();
+        val dcPolicyBuilder = DCAwareRoundRobinPolicy.builder();
         if (StringUtils.isNotBlank(cassandra.getLocalDc())) {
             dcPolicyBuilder.withLocalDc(cassandra.getLocalDc());
         }
 
-        final TokenAwarePolicy loadBalancingPolicy = new TokenAwarePolicy(dcPolicyBuilder.build(), cassandra.isShuffleReplicas());
+        val replica = TokenAwarePolicy.ReplicaOrdering.valueOf(cassandra.getReplicaOrdering().toUpperCase());
+        val loadBalancingPolicy = new TokenAwarePolicy(dcPolicyBuilder.build(), replica);
 
-        final SocketOptions socketOptions = new SocketOptions()
-                .setConnectTimeoutMillis(cassandra.getConnectTimeoutMillis())
-                .setReadTimeoutMillis(cassandra.getReadTimeoutMillis());
+        val socketOptions = new SocketOptions()
+            .setConnectTimeoutMillis(cassandra.getConnectTimeoutMillis())
+            .setReadTimeoutMillis(cassandra.getReadTimeoutMillis());
 
-        final QueryOptions queryOptions = new QueryOptions()
-                .setConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getConsistencyLevel()))
-                .setSerialConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getSerialConsistencyLevel()));
+        val queryOptions = new QueryOptions()
+            .setConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getConsistencyLevel()))
+            .setSerialConsistencyLevel(ConsistencyLevel.valueOf(cassandra.getSerialConsistencyLevel()));
 
-        final RetryPolicy retryPolicy = RetryPolicyType.valueOf(cassandra.getRetryPolicy()).getRetryPolicy();
-        final Cluster.Builder builder =
-                Cluster.builder()
-                        .withCredentials(cassandra.getUsername(), cassandra.getPassword())
-                        .withPoolingOptions(poolingOptions)
-                        .withProtocolVersion(ProtocolVersion.valueOf(cassandra.getProtocolVersion()))
-                        .withLoadBalancingPolicy(loadBalancingPolicy)
-                        .withSocketOptions(socketOptions)
-                        .withRetryPolicy(new LoggingRetryPolicy(retryPolicy))
-                        .withCompression(ProtocolOptions.Compression.valueOf(cassandra.getCompression()))
-                        .withPort(cassandra.getPort())
-                        .withQueryOptions(queryOptions);
+        val retryPolicy = RetryPolicyType.valueOf(cassandra.getRetryPolicy()).getRetryPolicy();
+        val builder =
+            Cluster.builder()
+                .withCredentials(cassandra.getUsername(), cassandra.getPassword())
+                .withPoolingOptions(poolingOptions)
+                .withProtocolVersion(ProtocolVersion.valueOf(cassandra.getProtocolVersion()))
+                .withLoadBalancingPolicy(loadBalancingPolicy)
+                .withSocketOptions(socketOptions)
+                .withRetryPolicy(new LoggingRetryPolicy(retryPolicy))
+                .withCompression(ProtocolOptions.Compression.valueOf(cassandra.getCompression()))
+                .withPort(cassandra.getPort())
+                .withQueryOptions(queryOptions);
 
         Arrays.stream(StringUtils.split(cassandra.getContactPoints(), ','))
-                .forEach(contactPoint -> builder.addContactPoint(StringUtils.trim(contactPoint)));
+            .forEach(contactPoint -> builder.addContactPoint(StringUtils.trim(contactPoint)));
 
-        cluster = builder.build();
+        val cluster = builder.build();
 
         if (LOGGER.isDebugEnabled()) {
-            cluster.getMetadata().getAllHosts().forEach(clusterHost -> 
-                    LOGGER.debug("Host [{}]:\n\n\tDC: [{}]\n\tRack: [{}]\n\tVersion: [{}]\n\tDistance: [{}]\n\tUp?: [{}]\n",
+            cluster.getMetadata().getAllHosts().forEach(clusterHost ->
+                LOGGER.debug("Host [{}]:\n\n\tDC: [{}]\n\tRack: [{}]\n\tVersion: [{}]\n\tDistance: [{}]\n\tUp?: [{}]\n",
                     clusterHost.getAddress(), clusterHost.getDatacenter(), clusterHost.getRack(),
                     clusterHost.getCassandraVersion(), loadBalancingPolicy.distance(clusterHost), clusterHost.isUp()));
         }
@@ -95,7 +95,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
     /**
      * Destroy.
      */
-    @PreDestroy
+    @Override
     public void destroy() {
         try {
             LOGGER.debug("Closing Cassandra session");

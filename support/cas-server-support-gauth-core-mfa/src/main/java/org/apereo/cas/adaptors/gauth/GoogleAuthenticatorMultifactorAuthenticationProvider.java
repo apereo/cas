@@ -1,10 +1,10 @@
 package org.apereo.cas.adaptors.gauth;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.GoogleAuthenticatorMultifactorProperties;
+
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * The authentication provider for google authenticator.
@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @NoArgsConstructor
 public class GoogleAuthenticatorMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
@@ -20,7 +19,7 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
 
     @Override
     public String getId() {
-        return StringUtils.defaultIfBlank(super.getId(), GAuthMultifactorProperties.DEFAULT_IDENTIFIER);
+        return StringUtils.defaultIfBlank(super.getId(), GoogleAuthenticatorMultifactorProperties.DEFAULT_IDENTIFIER);
     }
 
     @Override

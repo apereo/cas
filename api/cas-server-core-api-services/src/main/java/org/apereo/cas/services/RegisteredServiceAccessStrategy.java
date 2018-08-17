@@ -18,7 +18,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
 
     /**
@@ -29,6 +29,15 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
     @JsonIgnore
     default boolean isServiceAccessAllowed() {
         return true;
+    }
+
+    /**
+     * Sets service access allowed.
+     *
+     * @param enabled the value
+     */
+    @JsonIgnore
+    default void setServiceAccessAllowed(final boolean enabled) {
     }
 
     /**
@@ -89,16 +98,8 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
     }
 
     /**
-     * Sets service access allowed.
-     *
-     * @param enabled the value
-     */
-    @JsonIgnore
-    default void setServiceAccessAllowed(final boolean enabled) {
-    }
-
-    /**
      * Return the delegated authentication policy for this service.
+     *
      * @return authn policy
      */
     default RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {

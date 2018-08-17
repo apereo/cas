@@ -1,8 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.Ticket;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.infinispan.Cache;
 
 import java.util.Collection;
@@ -18,40 +20,40 @@ import java.util.concurrent.TimeUnit;
  * @since 4.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     private final Cache<String, Ticket> cache;
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        final Ticket encodedTicket = encodeTicket(ticket);
+        val encodedTicket = encodeTicket(ticket);
         this.cache.put(encodedTicket.getId(), encodedTicket);
         return ticket;
     }
 
     @Override
     public void addTicket(final Ticket ticketToAdd) {
-        final Ticket ticket = encodeTicket(ticketToAdd);
+        val ticket = encodeTicket(ticketToAdd);
 
         final long idleTime = ticketToAdd.getExpirationPolicy().getTimeToIdle() <= 0
-                ? ticketToAdd.getExpirationPolicy().getTimeToLive()
-                : ticketToAdd.getExpirationPolicy().getTimeToIdle();
+            ? ticketToAdd.getExpirationPolicy().getTimeToLive()
+            : ticketToAdd.getExpirationPolicy().getTimeToIdle();
 
         LOGGER.debug("Adding ticket [{}] to cache store to live [{}] seconds and stay idle for [{}]",
-                ticketToAdd.getId(), ticketToAdd.getExpirationPolicy().getTimeToLive(), idleTime);
+            ticketToAdd.getId(), ticketToAdd.getExpirationPolicy().getTimeToLive(), idleTime);
 
         this.cache.put(ticket.getId(), ticket,
-                ticketToAdd.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS,
-                idleTime, TimeUnit.SECONDS);
+            ticketToAdd.getExpirationPolicy().getTimeToLive(), TimeUnit.SECONDS,
+            idleTime, TimeUnit.SECONDS);
     }
 
     @Override
     public Ticket getTicket(final String ticketId) {
-        final String encTicketId = encodeTicketId(ticketId);
+        val encTicketId = encodeTicketId(ticketId);
         if (ticketId == null) {
             return null;
         }
-        final Ticket result = decodeTicket(Ticket.class.cast(cache.get(encTicketId)));
+        val result = decodeTicket(Ticket.class.cast(cache.get(encTicketId)));
         if (result != null && result.isExpired()) {
             LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
             this.cache.remove(encTicketId);
@@ -68,7 +70,7 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        final int size = this.cache.size();
+        val size = this.cache.size();
         this.cache.clear();
         return size;
     }

@@ -1,7 +1,13 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CasEmbeddedContainerUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.ResourceUtils;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
@@ -9,40 +15,33 @@ import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.SSLValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.coyote.ajp.AjpNio2Protocol;
+import org.apache.coyote.ajp.AjpNioProtocol;
+import org.apache.coyote.http11.Http11Nio2Protocol;
+import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.coyote.http2.Http2Protocol;
 import org.apache.tomcat.util.descriptor.web.LoginConfig;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
 import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
-import org.apereo.cas.CasEmbeddedContainerUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatAjpProperties;
-import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatBasicAuthenticationProperties;
-import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatExtendedAccessLogProperties;
-import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
-import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
-import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatSslValveProperties;
-import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.Resource;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.util.SocketUtils;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
@@ -56,7 +55,7 @@ import java.nio.charset.StandardCharsets;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
-@AutoConfigureBefore(EmbeddedServletContainerAutoConfiguration.class)
+@AutoConfigureBefore(ServletWebServerFactoryAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class CasEmbeddedContainerTomcatConfiguration {
@@ -67,45 +66,71 @@ public class CasEmbeddedContainerTomcatConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnMissingBean(name = "casServletContainerFactory")
+    private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
+        val field = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
+        ReflectionUtils.makeAccessible(field);
+        switch (protocol) {
+            case "AJP/2":
+                ReflectionUtils.setField(field, connector, new AjpNio2Protocol());
+                break;
+            case "AJP/1.3":
+                ReflectionUtils.setField(field, connector, new AjpNioProtocol());
+                break;
+            case "HTTP/2":
+                ReflectionUtils.setField(field, connector, new Http2Protocol());
+                break;
+            case "HTTP/1.2":
+                ReflectionUtils.setField(field, connector, new Http11Nio2Protocol());
+                break;
+            case "HTTP/1.1":
+            default:
+                ReflectionUtils.setField(field, connector, new Http11NioProtocol());
+                break;
+        }
+    }
+
+    @ConditionalOnMissingBean(name = "casServletWebServerFactory")
     @Bean
-    public EmbeddedServletContainerFactory casServletContainerFactory() {
-        return new CasTomcatEmbeddedServletContainerFactory(casProperties.getServer().getClustering());
+    public ConfigurableServletWebServerFactory casServletWebServerFactory() {
+        return new CasTomcatServletWebServerFactory(casProperties.getServer().getTomcat().getClustering());
     }
 
     @ConditionalOnMissingBean(name = "casTomcatEmbeddedServletContainerCustomizer")
     @Bean
-    public EmbeddedServletContainerCustomizer casTomcatEmbeddedServletContainerCustomizer() {
-        return configurableEmbeddedServletContainer -> {
-            if (configurableEmbeddedServletContainer instanceof TomcatEmbeddedServletContainerFactory) {
-                final TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) configurableEmbeddedServletContainer;
-                configureAjp(tomcat);
-                configureHttp(tomcat);
-                configureHttpProxy(tomcat);
-                configureExtendedAccessLogValve(tomcat);
-                configureRewriteValve(tomcat);
-                configureSSLValve(tomcat);
-                configureBasicAuthn(tomcat);
-            } else {
-                LOGGER.error("EmbeddedServletContainer [{}] does not support Tomcat!", configurableEmbeddedServletContainer);
+    public ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer() {
+        return new ServletWebServerFactoryCustomizer(serverProperties) {
+            @Override
+            public void customize(final ConfigurableServletWebServerFactory factory) {
+                if (factory instanceof TomcatServletWebServerFactory) {
+                    val tomcat = (TomcatServletWebServerFactory) factory;
+                    configureAjp(tomcat);
+                    configureHttp(tomcat);
+                    configureHttpProxy(tomcat);
+                    configureExtendedAccessLogValve(tomcat);
+                    configureRewriteValve(tomcat);
+                    configureSSLValve(tomcat);
+                    configureBasicAuthn(tomcat);
+                } else {
+                    LOGGER.error("Servlet web server factory [{}] does not support Apache Tomcat and cannot be customized!", factory);
+                }
             }
         };
     }
 
-    private void configureBasicAuthn(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasEmbeddedApacheTomcatBasicAuthenticationProperties basic = casProperties.getServer().getBasicAuthn();
+    private void configureBasicAuthn(final TomcatServletWebServerFactory tomcat) {
+        val basic = casProperties.getServer().getTomcat().getBasicAuthn();
         if (basic.isEnabled()) {
             tomcat.addContextCustomizers(ctx -> {
-                final LoginConfig config = new LoginConfig();
+                val config = new LoginConfig();
                 config.setAuthMethod("BASIC");
                 ctx.setLoginConfig(config);
 
                 basic.getSecurityRoles().forEach(ctx::addSecurityRole);
 
                 basic.getAuthRoles().forEach(r -> {
-                    final SecurityConstraint constraint = new SecurityConstraint();
+                    val constraint = new SecurityConstraint();
                     constraint.addAuthRole(r);
-                    final SecurityCollection collection = new SecurityCollection();
+                    val collection = new SecurityCollection();
                     basic.getPatterns().forEach(collection::addPattern);
                     constraint.addCollection(collection);
                     ctx.addConstraint(constraint);
@@ -115,8 +140,8 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureRewriteValve(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final Resource res = casProperties.getServer().getRewriteValve().getLocation();
+    private void configureRewriteValve(final TomcatServletWebServerFactory tomcat) {
+        val res = casProperties.getServer().getTomcat().getRewriteValve().getLocation();
         if (ResourceUtils.doesResourceExist(res)) {
             LOGGER.debug("Configuring rewrite valve at [{}]", res);
 
@@ -125,9 +150,9 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 @SneakyThrows
                 protected synchronized void startInternal() {
                     super.startInternal();
-                    try (InputStream is = res.getInputStream();
-                         InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                         BufferedReader buffer = new BufferedReader(isr)) {
+                    try (val is = res.getInputStream();
+                         val isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+                         val buffer = new BufferedReader(isr)) {
                         parse(buffer);
                     }
                 }
@@ -140,12 +165,12 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureExtendedAccessLogValve(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasEmbeddedApacheTomcatExtendedAccessLogProperties ext = casProperties.getServer().getExtAccessLog();
+    private void configureExtendedAccessLogValve(final TomcatServletWebServerFactory tomcat) {
+        val ext = casProperties.getServer().getTomcat().getExtAccessLog();
 
         if (ext.isEnabled() && StringUtils.isNotBlank(ext.getPattern())) {
             LOGGER.debug("Creating extended access log valve configuration for the embedded tomcat container...");
-            final ExtendedAccessLogValve valve = new ExtendedAccessLogValve();
+            val valve = new ExtendedAccessLogValve();
             valve.setPattern(ext.getPattern());
 
             if (StringUtils.isBlank(ext.getDirectory())) {
@@ -164,12 +189,12 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureHttp(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasEmbeddedApacheTomcatHttpProperties http = casProperties.getServer().getHttp();
+    private void configureHttp(final TomcatServletWebServerFactory tomcat) {
+        val http = casProperties.getServer().getTomcat().getHttp();
         if (http.isEnabled()) {
             LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
-            final Connector connector = new Connector(http.getProtocol());
-            int port = http.getPort();
+            val connector = new Connector(http.getProtocol());
+            var port = http.getPort();
             if (port <= 0) {
                 LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
                 port = SocketUtils.findAvailableTcpPort();
@@ -185,8 +210,8 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureHttpProxy(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasEmbeddedApacheTomcatHttpProxyProperties proxy = casProperties.getServer().getHttpProxy();
+    private void configureHttpProxy(final TomcatServletWebServerFactory tomcat) {
+        val proxy = casProperties.getServer().getTomcat().getHttpProxy();
         if (proxy.isEnabled()) {
             LOGGER.debug("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
             tomcat.getTomcatConnectorCustomizers().add(connector -> {
@@ -195,7 +220,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
                 if (StringUtils.isNotBlank(proxy.getProtocol())) {
                     LOGGER.debug("Setting HTTP proxying protocol to [{}]", proxy.getProtocol());
-                    connector.setProtocol(proxy.getProtocol());
+                    configureConnectorForProtocol(connector, proxy.getProtocol());
                 }
                 if (proxy.getRedirectPort() > 0) {
                     LOGGER.debug("Setting HTTP proxying redirect port to [{}]", proxy.getRedirectPort());
@@ -215,12 +240,11 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureAjp(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasEmbeddedApacheTomcatAjpProperties ajp = casProperties.getServer().getAjp();
+    private void configureAjp(final TomcatServletWebServerFactory tomcat) {
+        val ajp = casProperties.getServer().getTomcat().getAjp();
         if (ajp.isEnabled() && ajp.getPort() > 0) {
             LOGGER.debug("Creating AJP configuration for the embedded tomcat container...");
-            final Connector ajpConnector = new Connector(ajp.getProtocol());
-            ajpConnector.setProtocol(ajp.getProtocol());
+            val ajpConnector = new Connector(ajp.getProtocol());
             ajpConnector.setPort(ajp.getPort());
             ajpConnector.setSecure(ajp.isSecure());
             ajpConnector.setAllowTrace(ajp.isAllowTrace());
@@ -246,12 +270,12 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureSSLValve(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasEmbeddedApacheTomcatSslValveProperties valveConfig = casProperties.getServer().getSslValve();
+    private void configureSSLValve(final TomcatServletWebServerFactory tomcat) {
+        val valveConfig = casProperties.getServer().getTomcat().getSslValve();
 
         if (valveConfig.isEnabled()) {
             LOGGER.debug("Adding SSLValve to context of the embedded tomcat container...");
-            final SSLValve valve = new SSLValve();
+            val valve = new SSLValve();
             valve.setSslCipherHeader(valveConfig.getSslCipherHeader());
             valve.setSslCipherUserKeySizeHeader(valveConfig.getSslCipherUserKeySizeHeader());
             valve.setSslClientCertHeader(valveConfig.getSslClientCertHeader());

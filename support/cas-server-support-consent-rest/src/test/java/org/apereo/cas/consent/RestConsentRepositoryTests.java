@@ -1,15 +1,16 @@
 package org.apereo.cas.consent;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -28,8 +29,10 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
+@Category(RestfulApiCategory.class)
 public class RestConsentRepositoryTests {
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     private RestTemplate restTemplate;
     private MockRestServiceServer server;
 
@@ -42,46 +45,88 @@ public class RestConsentRepositoryTests {
     @Test
     public void verifyConsentDecisionIsNotFound() {
         server.expect(manyTimes(), requestTo("/consent"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withServerError());
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withServerError());
 
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        final Service svc = RegisteredServiceTestUtils.getService();
-        final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
-        final ConsentDecision d = repo.findConsentDecision(svc, regSvc, CoreAuthenticationTestUtils.getAuthentication());
+        val regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        val svc = RegisteredServiceTestUtils.getService();
+        val repo = new RestConsentRepository(this.restTemplate, "/consent");
+        val d = repo.findConsentDecision(svc, regSvc, CoreAuthenticationTestUtils.getAuthentication());
         assertNull(d);
         server.verify();
     }
-    
+
+    @Test
+    public void verifyConsentDecisionsFound() throws Exception {
+
+        val builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        val regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        val svc = RegisteredServiceTestUtils.getService();
+        val decision = builder.build(svc,
+            regSvc, "casuser",
+            CollectionUtils.wrap("attribute", "value"));
+        val body = MAPPER.writeValueAsString(CollectionUtils.wrapList(decision));
+        server.expect(manyTimes(), requestTo("/consent"))
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+
+        val repo = new RestConsentRepository(this.restTemplate, "/consent");
+        var d = repo.findConsentDecisions("casuser");
+        assertNotNull(d);
+        assertFalse(d.isEmpty());
+        server.verify();
+
+        d = repo.findConsentDecisions();
+        assertNotNull(d);
+        assertFalse(d.isEmpty());
+        server.verify();
+    }
+
     @Test
     public void verifyConsentDecisionIsFound() throws Exception {
-        final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-        final DefaultConsentDecisionBuilder builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
-        final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
-        final Service svc = RegisteredServiceTestUtils.getService();
-        final ConsentDecision decision = builder.build(svc,
-                regSvc, "casuser",
-                CollectionUtils.wrap("attribute", "value"));
-        final String body = mapper.writeValueAsString(decision);
+        val builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        val regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        val svc = RegisteredServiceTestUtils.getService();
+        val decision = builder.build(svc,
+            regSvc, "casuser",
+            CollectionUtils.wrap("attribute", "value"));
+        val body = MAPPER.writeValueAsString(decision);
         server.expect(manyTimes(), requestTo("/consent"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+            .andExpect(method(HttpMethod.GET))
+            .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
 
-        final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
-        final ConsentDecision d = repo.findConsentDecision(svc, regSvc, CoreAuthenticationTestUtils.getAuthentication());
+        val repo = new RestConsentRepository(this.restTemplate, "/consent");
+        val d = repo.findConsentDecision(svc, regSvc, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(d);
         assertEquals("casuser", d.getPrincipal());
         server.verify();
     }
-    
+
+    @Test
+    public void verifyConsentDecisionStored() throws Exception {
+        val builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
+        val regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
+        val svc = RegisteredServiceTestUtils.getService();
+        val decision = builder.build(svc,
+            regSvc, "casuser",
+            CollectionUtils.wrap("attribute", "value"));
+        val body = MAPPER.writeValueAsString(decision);
+        server.expect(manyTimes(), requestTo("/consent"))
+            .andExpect(method(HttpMethod.POST))
+            .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+        val repo = new RestConsentRepository(this.restTemplate, "/consent");
+        assertTrue(repo.storeConsentDecision(decision));
+        server.verify();
+    }
+
     @Test
     public void verifyConsentDecisionIsDeleted() {
         server.expect(manyTimes(), requestTo("/consent/1"))
-                .andExpect(method(HttpMethod.DELETE))
-                .andRespond(withSuccess());
-        
-        final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
-        final boolean b = repo.deleteConsentDecision(1, "CasUser");
+            .andExpect(method(HttpMethod.DELETE))
+            .andRespond(withSuccess());
+
+        val repo = new RestConsentRepository(this.restTemplate, "/consent");
+        val b = repo.deleteConsentDecision(1, "CasUser");
         assertTrue(b);
         server.verify();
     }

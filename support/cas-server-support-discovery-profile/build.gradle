@@ -19,7 +19,6 @@ dependencies {
     implementation project(":support:cas-server-support-ws-idp-api")
 
     implementation project(":support:cas-server-support-authy-core")
-    implementation project(":support:cas-server-support-azure-core")
     implementation project(":support:cas-server-support-u2f-core")
     implementation project(":support:cas-server-support-swivel-core")
     implementation project(":support:cas-server-support-gauth-core-mfa")
@@ -34,5 +33,11 @@ dependencies {
     implementation libraries.pac4j
     
     testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":support:cas-server-support-pac4j")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa", configuration: "tests")
 }

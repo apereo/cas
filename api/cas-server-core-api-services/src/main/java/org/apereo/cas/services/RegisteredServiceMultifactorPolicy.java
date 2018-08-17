@@ -12,36 +12,8 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceMultifactorPolicy extends Serializable {
-    /**
-     * The enum Failure modes.
-     */
-    enum FailureModes {
-        /**
-         * Disallow MFA, proceed with authentication but don't communicate MFA to the RP.
-         */
-        OPEN,
-        /**
-         * Disallow MFA, block with authentication.
-         */
-        CLOSED,
-        /**
-         * Disallow MFA, proceed with authentication and communicate MFA to the RP.
-         */
-        PHANTOM,
-
-        /**
-         * Do not check for failure at all.
-         */
-        NONE,
-
-        /**
-         * The default one indicating that no failure mode is set at all.
-         */
-        NOT_SET
-    }
-
     /**
      * Gets MFA authentication provider id.
      *
@@ -77,5 +49,33 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
      * @return true/false
      */
     boolean isBypassEnabled();
+
+    /**
+     * The enum Failure modes.
+     */
+    enum FailureModes {
+        /**
+         * Disallow MFA, proceed with authentication but don't communicate MFA to the RP.
+         */
+        OPEN,
+        /**
+         * Disallow MFA, block with authentication.
+         */
+        CLOSED,
+        /**
+         * Disallow MFA, proceed with authentication and communicate MFA to the RP.
+         */
+        PHANTOM,
+
+        /**
+         * Do not check for failure at all.
+         */
+        NONE,
+
+        /**
+         * The default one indicating that no failure mode is set at all.
+         */
+        NOT_SET
+    }
 
 }

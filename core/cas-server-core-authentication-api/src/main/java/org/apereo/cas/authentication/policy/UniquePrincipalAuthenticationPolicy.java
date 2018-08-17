@@ -1,12 +1,14 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.function.FunctionUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.security.GeneralSecurityException;
 
@@ -21,20 +23,22 @@ import java.security.GeneralSecurityException;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy {
     private final TicketRegistry ticketRegistry;
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
         try {
-            final Principal authPrincipal = authentication.getPrincipal();
-            final long count = this.ticketRegistry.getTickets(t -> {
-                boolean pass = TicketGrantingTicket.class.isInstance(t) && !t.isExpired();
-                if (pass) {
-                    final Principal principal = TicketGrantingTicket.class.cast(t).getAuthentication().getPrincipal();
-                    pass = principal.getId().equalsIgnoreCase(authPrincipal.getId());
-                }
+            val authPrincipal = authentication.getPrincipal();
+            val count = this.ticketRegistry.getTickets(t -> {
+                var pass = FunctionUtils.doIf(TicketGrantingTicket.class.isInstance(t) && !t.isExpired(),
+                    () -> {
+                        val principal = TicketGrantingTicket.class.cast(t).getAuthentication().getPrincipal();
+                        return principal.getId().equalsIgnoreCase(authPrincipal.getId());
+                    },
+                    () -> Boolean.TRUE)
+                    .get();
                 return pass;
             }).count();
             if (count == 0) {
@@ -42,7 +46,7 @@ public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy
                 return true;
             }
             LOGGER.warn("Authentication policy cannot be satisfied for principal [{}] because [{}] sessions currently exist",
-                    authPrincipal.getId(), count);
+                authPrincipal.getId(), count);
             return false;
         } catch (final Exception e) {
             throw new GeneralSecurityException(e);

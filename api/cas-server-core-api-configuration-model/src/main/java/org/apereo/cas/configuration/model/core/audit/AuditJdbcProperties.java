@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.core.audit;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link AuditJdbcProperties}.
@@ -13,7 +13,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-audit-jdbc")
-@Slf4j
 @Getter
 @Setter
 public class AuditJdbcProperties extends AbstractJpaProperties {
@@ -38,7 +37,7 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
      * functionality no longer substrings the audit record.
      */
     private int columnLength = 100;
-    
+
     /**
      * Defines the isolation level for transactions.
      *

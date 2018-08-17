@@ -1,0 +1,51 @@
+apply plugin: "com.moowork.node"
+
+node {
+    version = "${nodeVersion}"
+    nodeModulesDir = project(":webapp").projectDir
+    download = true
+}
+
+npm_update {
+    args = ['--production', '--loglevel', 'warn']
+}
+
+if (!Boolean.getBoolean("skipNpmCache")) {
+    npm_install.dependsOn(npm_cache_verify)
+} else {
+    npm_install.enabled = false
+}
+
+task npmLint(type: NpmTask) {
+    dependsOn npm_install
+    description "Lint the JavaScript files"
+    group "UI"
+    args = ['run', 'lint', '--silent']
+}
+
+task compileSass(type: NpmTask) {
+    group 'UI'
+    dependsOn npm_install
+    description "Compile Sass"
+    args = ['run', 'gulp', '--silent']
+}
+
+if (!rootProject.publishingRelease && !Boolean.getBoolean("skipNpmLint")) {
+    processResources.dependsOn npmLint
+} else {
+    npmLint.enabled = false
+}
+
+if (!Boolean.getBoolean("skipSass")) {
+    processResources.dependsOn compileSass
+} else {
+    logger.info("Skipping Sass compilation...")
+}
+
+if (!Boolean.getBoolean("skipNodeModulesCleanUp")) {
+    clean.delete << new File(project(":webapp").projectDir, "node_modules")
+    clean.delete << fileTree(dir: project(":webapp").projectDir.getPath() + '/resources/static/js', include: '*-bundle.js')
+} else {
+    logger.info("Skipping node_modules cleanup...")
+}
+

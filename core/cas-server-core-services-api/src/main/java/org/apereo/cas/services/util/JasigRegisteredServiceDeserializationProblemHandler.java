@@ -1,5 +1,8 @@
 package org.apereo.cas.services.util;
 
+import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.apereo.cas.util.function.FunctionUtils;
+
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JavaType;
@@ -7,12 +10,12 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.databind.type.SimpleType;
+import com.google.common.base.Predicates;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
-import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-
-import java.io.IOException;
+import org.jooq.lambda.Unchecked;
 
 /**
  * This is {@link JasigRegisteredServiceDeserializationProblemHandler}
@@ -36,13 +39,13 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
                                         final String failureMsg) {
 
         if (subTypeId.contains("org.jasig.")) {
-            final String newTypeName = subTypeId.replaceAll("jasig", "apereo");
+            val newTypeName = subTypeId.replaceAll("jasig", "apereo");
             LOGGER.warn("Found legacy CAS JSON definition type identified as [{}]. "
                     + "While CAS will attempt to convert the legacy definition to [{}] for the time being, "
                     + "the definition SHOULD manually be upgraded to the new supported syntax",
                 subTypeId, newTypeName);
-            final Class newType = ClassUtils.getClass(newTypeName);
-            return SimpleType.construct(newType);
+            val newType = ClassUtils.getClass(newTypeName);
+            return SimpleType.constructUnsafe(newType);
         }
         return null;
     }
@@ -50,34 +53,34 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
     @Override
     public boolean handleUnknownProperty(final DeserializationContext ctxt, final JsonParser p,
                                          final JsonDeserializer<?> deserializer,
-                                         final Object beanOrClass, final String propertyName) throws IOException {
-        boolean handled = false;
-        if (beanOrClass instanceof CachingPrincipalAttributesRepository) {
-            final CachingPrincipalAttributesRepository repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
-            switch (propertyName) {
-                case "duration":
-                    for (int i = 1; i <= TOKEN_COUNT_DURATION; i++) {
+                                         final Object beanOrClass, final String propertyName) {
+        val handled = FunctionUtils.doIf(Predicates.instanceOf(CachingPrincipalAttributesRepository.class),
+            () -> {
+                if (!"duration".equals(propertyName)) {
+                    return Boolean.FALSE;
+                }
+                return Unchecked.supplier(() -> {
+                    for (var i = 1; i <= TOKEN_COUNT_DURATION; i++) {
                         p.nextToken();
                     }
-                    final String timeUnit = p.getText();
-                    for (int i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
+                    val timeUnit = p.getText();
+                    for (var i = 1; i <= TOKEN_COUNT_EXPIRATION; i++) {
                         p.nextToken();
                     }
-                    final int expiration = p.getValueAsInt();
 
+                    val expiration = p.getValueAsInt();
+                    val repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);
                     repo.setTimeUnit(timeUnit);
                     repo.setExpiration(expiration);
 
                     LOGGER.warn("CAS has converted legacy JSON property [{}] for type [{}]. It parsed 'expiration' value [{}] with time unit of [{}]."
                             + "It is STRONGLY recommended that you review the configuration and upgrade from the legacy syntax.",
                         propertyName, beanOrClass.getClass().getName(), expiration, timeUnit);
-
-                    handled = true;
-                    break;
-                default:
-                    break;
-            }
-        }
+                    return Boolean.TRUE;
+                }).get();
+            },
+            () -> Boolean.FALSE)
+            .apply(beanOrClass);
 
         return handled;
     }

@@ -7,11 +7,7 @@ title: CAS - JMeter Performance Testing
 
 Apache JMeter is a great performance testing tool that is used heavily within the Java community.
 
-### Java Version
-
-As of this writing, the latest stable version of JMeter is `3.2` which will require **Java 8+**. 
-
-### Install JMeter
+## Install JMeter
 
 * Linux and Mac:
   * Download the JMeter binary.
@@ -23,13 +19,13 @@ As of this writing, the latest stable version of JMeter is `3.2` which will requ
   * Here is a tutorial for windows setup. 
     * [http://toolsqa.com/jmeter/download-and-installation-jmeter/](http://toolsqa.com/jmeter/download-and-installation-jmeter/)
 
-### Sample Test Scripts
+## Sample Test Scripts
 
 Below you will find three generic runnable login scripts for the three most popular CAS implementation flavors. Please feel free to edit and use for your needs.
 
 Although the scripts support different login methodologies, they do share some common traits.
 
-#### Common Settings Tabs
+## Common Settings Tabs
 
 * _User Defined Variables_
   * _ThreadCount_ - Number of Threads (Kind of like Users).  Recommend starting with 100 users or so.
@@ -95,7 +91,7 @@ The scripts can be downloaded from [here](https://github.com/apereo/cas/raw/mast
       * May need to updated Assertion for successful user information returned
     * _GET - User Logout_ -- Logout user from CAS session via CAS logout
 
-### Run Test Scripts
+## Run Test Scripts
 
 Once you have saved the test scripts to your system. You can either run within the JMeter
 GUI or via command line. It his highly recommended that the GUI be used for 

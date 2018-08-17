@@ -7,9 +7,10 @@ dependencies {
     api project(":api:cas-server-core-api-web")
     
     implementation libraries.pac4j
+    implementation libraries.springsecurity
     implementation libraries.zxingbarcode
     implementation libraries.bouncycastle
-    implementation libraries.groovy
+
     implementation libraries.semver
     implementation libraries.oshi
 }

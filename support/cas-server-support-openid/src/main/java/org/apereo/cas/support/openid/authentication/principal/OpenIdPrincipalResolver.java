@@ -1,12 +1,14 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
+
+import lombok.ToString;
 import org.apereo.services.persondir.IPersonAttributeDao;
+
+import java.util.Optional;
 
 /**
  * Implementation of PrincipalResolver that converts the OpenId
@@ -15,7 +17,6 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 @ToString(callSuper = true)
 public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
@@ -25,7 +26,7 @@ public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
     }
 
     @Override
-    protected String extractPrincipalId(final Credential credential, final Principal currentPrincipal) {
+    protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
         return ((OpenIdCredential) credential).getUsername();
     }
 

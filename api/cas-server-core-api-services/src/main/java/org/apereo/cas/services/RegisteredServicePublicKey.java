@@ -7,10 +7,11 @@ import java.security.PublicKey;
 
 /**
  * Represents a public key for a CAS registered service.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include=JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServicePublicKey extends Serializable {
 
     /**

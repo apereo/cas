@@ -34,6 +34,9 @@ org.apereo.cas.config.CasSamlSPEverBridgeConfiguration,\
 org.apereo.cas.config.CasSamlSPCherWellConfiguration,\
 org.apereo.cas.config.CasSamlSPBynderConfiguration,\
 org.apereo.cas.config.CasSamlSPFamisConfiguration,\
+org.apereo.cas.config.CasSamlSPGiveCampusConfiguration,\
+org.apereo.cas.config.CasSamlSPRocketChatConfiguration,\
 org.apereo.cas.config.CasSamlSPInCommonConfiguration,\
+org.apereo.cas.config.CasSamlSPBlackBaudConfiguration,\
 org.apereo.cas.config.CasSamlSPPollEverywhereConfiguration,\
-org.apereo.cas.config.CasSamlSPConcurSolutionsConfiguration  
+org.apereo.cas.config.CasSamlSPConcurSolutionsConfiguration

@@ -1,18 +1,21 @@
 package org.apereo.cas.support.saml.mdui;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.input.ClosedInputStream;
 import org.apereo.cas.util.EncodingUtils;
+
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.input.ClosedInputStream;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
-import lombok.NoArgsConstructor;
 
 /**
  * A metadata adapter {@link DynamicMetadataResolverAdapter}
@@ -44,10 +47,10 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
     @Override
     protected InputStream getResourceInputStream(final Resource resource, final String entityId) throws IOException {
         if (resource instanceof UrlResource && resource.getURL().toExternalForm().toLowerCase().endsWith("/entities/")) {
-            final String encodedId = EncodingUtils.urlEncode(entityId);
-            final URL url = new URL(resource.getURL().toExternalForm().concat(encodedId));
+            val encodedId = EncodingUtils.urlEncode(entityId);
+            val url = new URL(resource.getURL().toExternalForm().concat(encodedId));
             LOGGER.debug("Locating metadata input stream for [{}] via [{}]", encodedId, url);
-            final HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
+            val httpcon = (HttpURLConnection) url.openConnection();
             httpcon.setDoOutput(true);
             httpcon.addRequestProperty("Accept", "*/*");
             httpcon.setRequestMethod("GET");

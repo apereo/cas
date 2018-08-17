@@ -1,14 +1,14 @@
 package org.apereo.cas.web.flow.configurer;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
-import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
-import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
@@ -37,10 +37,10 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
 
     @Override
     protected void doInitialize() {
-        final Flow flow = getLogoutFlow();
+        val flow = getLogoutFlow();
 
         if (flow != null) {
-            final ActionState terminateSessionActionState = createTerminateSessionActionState(flow);
+            val terminateSessionActionState = createTerminateSessionActionState(flow);
             createLogoutConfirmationView(flow);
             createDoLogoutActionState(flow);
             createFrontLogoutActionState(flow);
@@ -63,10 +63,8 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
      * @return the action state
      */
     protected ActionState createTerminateSessionActionState(final Flow flow) {
-        final ActionState actionState = createActionState(flow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION,
-            createEvaluateAction(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION));
-        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_WARN,
-            CasWebflowConstants.STATE_ID_CONFIRM_LOGOUT_VIEW);
+        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION, CasWebflowConstants.ACTION_ID_TERMINATE_SESSION);
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.STATE_ID_CONFIRM_LOGOUT_VIEW);
         createStateDefaultTransition(actionState, CasWebflowConstants.STATE_ID_DO_LOGOUT);
         return actionState;
     }
@@ -87,7 +85,7 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
      * @param flow the flow
      */
     protected void createLogoutViewState(final Flow flow) {
-        final EndState logoutView = createEndState(flow, CasWebflowConstants.STATE_ID_LOGOUT_VIEW, "casLogoutView");
+        val logoutView = createEndState(flow, CasWebflowConstants.STATE_ID_LOGOUT_VIEW, "casLogoutView");
         logoutView.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_LOGOUT_VIEW_SETUP));
     }
 
@@ -106,7 +104,7 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
      * @param flow the flow
      */
     protected void createFrontLogoutActionState(final Flow flow) {
-        final ActionState actionState = createActionState(flow, CasWebflowConstants.STATE_ID_FRONT_LOGOUT,
+        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_FRONT_LOGOUT,
             createEvaluateAction("frontChannelLogoutAction"));
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_FINISH, CasWebflowConstants.STATE_ID_FINISH_LOGOUT);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_PROPAGATE,
@@ -119,7 +117,7 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
      * @param flow the flow
      */
     private void createDoLogoutActionState(final Flow flow) {
-        final ActionState actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DO_LOGOUT, createEvaluateAction("logoutAction"));
+        val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DO_LOGOUT, createEvaluateAction("logoutAction"));
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_FINISH, CasWebflowConstants.STATE_ID_FINISH_LOGOUT);
         createTransitionForState(actionState, "front", CasWebflowConstants.STATE_ID_FRONT_LOGOUT);
     }
@@ -130,7 +128,7 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
      * @param flow the flow
      */
     protected void createLogoutConfirmationView(final Flow flow) {
-        final ViewState view = createViewState(flow, CasWebflowConstants.STATE_ID_CONFIRM_LOGOUT_VIEW, "casConfirmLogoutView");
+        val view = createViewState(flow, CasWebflowConstants.STATE_ID_CONFIRM_LOGOUT_VIEW, "casConfirmLogoutView");
         createTransitionForState(view, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_TERMINATE_SESSION);
     }
 

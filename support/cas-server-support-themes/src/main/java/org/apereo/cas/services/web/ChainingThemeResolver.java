@@ -1,12 +1,12 @@
 package org.apereo.cas.services.web;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.theme.AbstractThemeResolver;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -19,7 +19,7 @@ import java.util.Set;
 @Slf4j
 public class ChainingThemeResolver extends AbstractThemeResolver {
 
-    
+
     private final Set<ThemeResolver> chain = new LinkedHashSet<>();
 
     /**
@@ -35,17 +35,17 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
 
     @Override
     public String resolveThemeName(final HttpServletRequest httpServletRequest) {
-        final Iterator<ThemeResolver> it = chain.iterator();
+        val it = chain.iterator();
         while (it.hasNext()) {
-            final ThemeResolver r = it.next();
-            LOGGER.debug("Attempting to resolve theme via [{}]", r.getClass().getSimpleName());
-            final String resolverTheme = r.resolveThemeName(httpServletRequest);
+            val r = it.next();
+            LOGGER.trace("Attempting to resolve theme via [{}]", r.getClass().getSimpleName());
+            val resolverTheme = r.resolveThemeName(httpServletRequest);
             if (!resolverTheme.equalsIgnoreCase(getDefaultThemeName())) {
-                LOGGER.debug("Resolved theme [{}]", resolverTheme);
+                LOGGER.trace("Resolved theme [{}]", resolverTheme);
                 return resolverTheme;
             }
         }
-        LOGGER.debug("No specific theme could be found. Using default theme [{}}", getDefaultThemeName());
+        LOGGER.trace("No specific theme could be found. Using default theme [{}}", getDefaultThemeName());
         return getDefaultThemeName();
     }
 

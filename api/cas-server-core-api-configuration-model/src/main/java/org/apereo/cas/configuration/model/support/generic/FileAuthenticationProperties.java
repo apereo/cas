@@ -1,14 +1,15 @@
 package org.apereo.cas.configuration.model.support.generic;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.Resource;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.core.io.Resource;
+
+import java.io.Serializable;
 
 /**
  * This is {@link FileAuthenticationProperties}.
@@ -17,7 +18,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-generic")
-@Slf4j
 @Getter
 @Setter
 public class FileAuthenticationProperties implements Serializable {
@@ -27,7 +27,7 @@ public class FileAuthenticationProperties implements Serializable {
     /**
      * File resource where user accounts are kept.
      */
-    private Resource filename;
+    private transient Resource filename;
 
     /**
      * Separator character that distinguishes between usernames and passwords in the file.

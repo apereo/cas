@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa.request;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -8,11 +7,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.util.CookieGenerator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -37,13 +38,13 @@ public class RequestHeaderMultifactorAuthenticationPolicyEventResolver extends B
                                                                      final MultifactorAuthenticationProviderSelector selector,
                                                                      final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, authenticationStrategies, selector, casProperties);
+            ticketRegistrySupport, warnCookieGenerator, authenticationStrategies, selector, casProperties);
         mfaRequestHeader = casProperties.getAuthn().getMfa().getRequestHeader();
     }
 
     @Override
     protected List<String> resolveEventFromHttpRequest(final HttpServletRequest request) {
-        final Enumeration<String> values = request.getHeaders(mfaRequestHeader);
+        val values = request.getHeaders(mfaRequestHeader);
         if (values != null) {
             LOGGER.debug("Received request header [{}] as [{}]", mfaRequestHeader, values);
             return Collections.list(values);

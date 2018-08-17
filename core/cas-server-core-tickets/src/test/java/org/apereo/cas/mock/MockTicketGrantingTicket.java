@@ -1,12 +1,9 @@
 package org.apereo.cas.mock;
 
-import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -20,13 +17,17 @@ import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.val;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.Getter;
 
 /**
  * Mock ticket-granting ticket.
@@ -34,9 +35,8 @@ import lombok.Getter;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 @Getter
-@EqualsAndHashCode(of ={"id"})
+@EqualsAndHashCode(of = {"id"})
 public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
@@ -48,18 +48,14 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     private final Authentication authentication;
 
     private final ZonedDateTime created;
-
-    private int usageCount;
-
-    private boolean expired;
-
     private final Map<String, Service> services = new HashMap<>();
-
     private final Map<String, Service> proxyGrantingTickets = new HashMap<>();
+    private int usageCount;
+    private boolean expired;
 
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
-        final CredentialMetaData metaData = new BasicCredentialMetaData(c);
+        val metaData = new BasicCredentialMetaData(c);
         authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
             .createPrincipal(principal, attributes)).addCredential(metaData)
             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
@@ -68,9 +64,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     public MockTicketGrantingTicket(final String principal) {
-        this(principal,
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
-            new HashMap());
+        this(principal, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), new HashMap());
     }
 
     @Override
@@ -153,7 +147,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
     }
-    
+
 
     @Override
     public String getPrefix() {

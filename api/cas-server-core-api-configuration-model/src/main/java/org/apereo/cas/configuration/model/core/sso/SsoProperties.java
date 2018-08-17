@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.core.sso;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for {@code create.sso}.
@@ -13,7 +14,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class SsoProperties implements Serializable {
@@ -37,8 +37,8 @@ public class SsoProperties implements Serializable {
     private boolean proxyAuthnEnabled = true;
 
     /**
-     *  Indicates whether this server implementation should globally
-     *  support CAS protocol authentication requests that are tagged with "renew=true".
+     * Indicates whether this server implementation should globally
+     * support CAS protocol authentication requests that are tagged with "renew=true".
      */
     private boolean renewAuthnEnabled = true;
 }

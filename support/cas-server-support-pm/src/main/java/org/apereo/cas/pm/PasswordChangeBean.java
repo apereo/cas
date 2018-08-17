@@ -1,11 +1,12 @@
 package org.apereo.cas.pm;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -14,14 +15,17 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Getter
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
+@AllArgsConstructor
 public class PasswordChangeBean implements Serializable {
     private static final long serialVersionUID = 8885460875620586503L;
 
+    @Size(min = 1, message = "required.password")
     private String password;
+
+    @Size(min = 1, message = "required.confirmedPassword")
     private String confirmedPassword;
 }

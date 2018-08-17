@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
+
+import lombok.val;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -24,7 +24,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class FileTrustStoreSslSocketFactoryTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
@@ -32,19 +31,29 @@ public class FileTrustStoreSslSocketFactoryTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    private static SSLConnectionSocketFactory sslFactory(final Resource resource, final String password) {
+        return new SSLConnectionSocketFactory(new DefaultCasSslContext(resource,
+            password,
+            KeyStore.getDefaultType()).getSslContext());
+    }
+
+    private static SSLConnectionSocketFactory sslFactory() {
+        return sslFactory(RESOURCE, "changeit");
+    }
+
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() {
-        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
-        final HttpClient client = clientFactory.getObject();
+        val client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://self-signed.badssl.com"));
     }
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() {
-        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
-        final HttpClient client = clientFactory.getObject();
+        val client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://untrusted-root.badssl.com"));
     }
 
@@ -62,27 +71,17 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() {
-        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
-        final HttpClient client = clientFactory.getObject();
+        val client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://www.google.com"));
     }
 
     @Test
     public void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() {
-        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
-        final HttpClient client = clientFactory.getObject();
+        val client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("http://wikipedia.org"));
-    }
-
-    private static SSLConnectionSocketFactory sslFactory(final Resource resource, final String password) {
-        return new SSLConnectionSocketFactory(new DefaultCasSslContext(resource,
-                password,
-                KeyStore.getDefaultType()).getSslContext());
-    }
-
-    private static SSLConnectionSocketFactory sslFactory() {
-        return sslFactory(RESOURCE, "changeit");
     }
 }

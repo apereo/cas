@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title th:text="#{cas.login.pagetitle}">CAS Interrupt View</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 
     <script th:inline="javascript" th:if="${interrupt.autoRedirect}">
         /*<![CDATA[*/
@@ -30,7 +30,7 @@
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" id="login">
+    <div layout:fragment="content">
         <h1 th:text="#{screen.interrupt.title}">Authentication Interrupt</h1>
         <p th:utext="#{screen.interrupt.message(${principal.id})}">The authentication flow has been interrupted. CAS has
             not yet established a single sign-on session for <strong>{0}</strong>.</p>
@@ -40,11 +40,10 @@
             <br/>
 
             <div th:if="${interrupt.links}">
-                <a class="btn btn-submit"
+                <a class="btn btn-success"
                    th:each="link : ${interrupt.links}"
                    th:text="${link.key}"
-                   th:href="${link.value}"
-                   type="button">link.key</a>
+                   th:href="${link.value}">link.key</a>
             </div>
         </div>
 
@@ -60,9 +59,8 @@
                            th:value="#{screen.interrupt.btn.proceed}"
                            value="Proceed"
                            type="submit"/>
-                    &nbsp;
-                    <a class="btn btn-warning" id="cancel" name="cancel" th:href="@{/login}"
-                       th:text="#{screen.interrupt.btn.cancel}">Cancel</a>
+                    &nbsp;<a class="btn btn-primary" id="login" name="login"
+                             th:href="${service?.id} ?: @{/login}" th:text="#{screen.error.page.loginagain}">Login Again</a>
                 </div>
             </div>
         </form>

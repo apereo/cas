@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.filters.CsrfPreventionFilter;
-import org.apache.catalina.filters.RemoteAddrFilter;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatRemoteAddressProperties;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.val;
+import org.apache.catalina.filters.CsrfPreventionFilter;
+import org.apache.catalina.filters.RemoteAddrFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,7 +27,6 @@ import org.springframework.http.HttpStatus;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 @ImportAutoConfiguration(CasEmbeddedContainerTomcatConfiguration.class)
-@Slf4j
 public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -36,7 +35,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @RefreshScope
     @Bean
     public FilterRegistrationBean tomcatCsrfPreventionFilter() {
-        final FilterRegistrationBean bean = new FilterRegistrationBean();
+        val bean = new FilterRegistrationBean();
         bean.setFilter(new CsrfPreventionFilter());
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("tomcatCsrfPreventionFilter");
@@ -47,9 +46,9 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @RefreshScope
     @Bean
     public FilterRegistrationBean tomcatRemoteAddressFilter() {
-        final FilterRegistrationBean bean = new FilterRegistrationBean();
-        final CasEmbeddedApacheTomcatRemoteAddressProperties addr = casProperties.getServer().getRemoteAddr();
-        final RemoteAddrFilter filter = new RemoteAddrFilter();
+        val bean = new FilterRegistrationBean();
+        val addr = casProperties.getServer().getTomcat().getRemoteAddr();
+        val filter = new RemoteAddrFilter();
         filter.setAllow(addr.getAllowedClientIpAddressRegex());
         filter.setDeny(addr.getDeniedClientIpAddressRegex());
         filter.setDenyStatus(HttpStatus.UNAUTHORIZED.value());

@@ -1,11 +1,12 @@
 package org.apereo.cas.configuration.support;
 
-import lombok.SneakyThrows;
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
+
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.val;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
@@ -14,7 +15,6 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Slf4j
+
 @UtilityClass
 public class Beans {
 
@@ -36,7 +36,7 @@ public class Beans {
      * @return the thread pool executor factory bean
      */
     public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final ConnectionPoolingProperties config) {
-        final ThreadPoolExecutorFactoryBean bean = newThreadPoolExecutorFactoryBean(config.getMaxSize(), config.getMaxSize());
+        val bean = newThreadPoolExecutorFactoryBean(config.getMaxSize(), config.getMaxSize());
         bean.setCorePoolSize(config.getMinSize());
         return bean;
     }
@@ -50,7 +50,7 @@ public class Beans {
      */
     public static ThreadPoolExecutorFactoryBean newThreadPoolExecutorFactoryBean(final long keepAlive,
                                                                                  final long maxSize) {
-        final ThreadPoolExecutorFactoryBean bean = new ThreadPoolExecutorFactoryBean();
+        val bean = new ThreadPoolExecutorFactoryBean();
         bean.setMaxPoolSize((int) maxSize);
         bean.setKeepAliveSeconds((int) keepAlive);
         return bean;
@@ -64,10 +64,10 @@ public class Beans {
      */
     @SneakyThrows
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
-        final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
-        final Map<String, List<Object>> pdirMap = new HashMap<>();
+        val dao = new NamedStubPersonAttributeDao();
+        val pdirMap = new HashMap<String, List<Object>>();
         p.getStub().getAttributes().forEach((key, value) -> {
-            final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(value);
+            val vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(value);
             pdirMap.put(key, Arrays.stream(vals).collect(Collectors.toList()));
         });
         dao.setBackingMap(pdirMap);

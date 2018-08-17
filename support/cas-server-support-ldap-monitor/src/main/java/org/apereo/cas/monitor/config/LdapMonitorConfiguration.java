@@ -1,12 +1,11 @@
 package org.apereo.cas.monitor.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.monitor.PooledLdapConnectionFactoryHealthIndicator;
 import org.apereo.cas.util.LdapUtils;
-import org.ldaptive.pool.PooledConnectionFactory;
+
+import lombok.val;
 import org.ldaptive.pool.SearchValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +26,6 @@ import java.util.concurrent.ExecutorService;
  */
 @Configuration("ldapMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class LdapMonitorConfiguration {
 
     @Autowired
@@ -41,10 +39,9 @@ public class LdapMonitorConfiguration {
 
     @Autowired
     @Bean
-    public HealthIndicator pooledLdapConnectionFactoryHealthIndicator(@Qualifier("pooledConnectionFactoryMonitorExecutorService")
-                                                                          final ExecutorService executor) {
-        final MonitorProperties.Ldap ldap = casProperties.getMonitor().getLdap();
-        final PooledConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+    public HealthIndicator pooledLdapConnectionFactoryHealthIndicator(@Qualifier("pooledConnectionFactoryMonitorExecutorService") final ExecutorService executor) {
+        val ldap = casProperties.getMonitor().getLdap();
+        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new PooledLdapConnectionFactoryHealthIndicator(Beans.newDuration(ldap.getMaxWait()).toMillis(),
             connectionFactory, executor, new SearchValidator());
     }

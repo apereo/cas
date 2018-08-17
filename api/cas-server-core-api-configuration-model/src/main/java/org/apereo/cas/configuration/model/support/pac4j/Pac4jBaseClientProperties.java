@@ -1,9 +1,9 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -14,13 +14,12 @@ import java.io.Serializable;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
-@Slf4j
 @Getter
 @Setter
 public class Pac4jBaseClientProperties implements Serializable {
 
     private static final long serialVersionUID = -7885975876831784206L;
-    
+
     /**
      * Name of the client mostly for UI purposes and uniqueness.
      * This name, with 'non-word' characters converted to '-' (e.g. "This Org (New)" becomes "This-Org--New-")
@@ -28,6 +27,7 @@ public class Pac4jBaseClientProperties implements Serializable {
      * custom styling of individual IdPs (e.g. for an organization logo).
      */
     private String clientName;
+
     /**
      * Auto-redirect to this client.
      */

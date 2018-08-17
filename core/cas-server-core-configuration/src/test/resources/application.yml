@@ -1,0 +1,20 @@
+server:
+  port: 9999
+
+spring:
+  application:
+    name: CAS
+       
+cas:
+  server:
+      name: https://cas.example.org:9999
+  authn:
+    accept:
+      users: casuser::Mellon
+
+test:
+  classpath: classpathAppYml
+  dir:
+    app: classpathAppYml
+    cas: classpathAppYml
+  file: classpathAppYml

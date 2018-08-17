@@ -1,9 +1,5 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -11,13 +7,15 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.MetadataUIUtils;
-import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link SamlMetadataUIParserAction} that attempts to parse
@@ -32,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 4.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SamlMetadataUIParserAction extends AbstractAction {
 
     private final String entityIdParameterName;
@@ -42,23 +40,23 @@ public class SamlMetadataUIParserAction extends AbstractAction {
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
-        final String entityId = getEntityIdFromRequest(requestContext);
+        val entityId = getEntityIdFromRequest(requestContext);
         if (StringUtils.isBlank(entityId)) {
             LOGGER.debug("No entity id found for parameter [{}]", this.entityIdParameterName);
             return success();
         }
 
         LOGGER.debug("Located entity id [{}] from request", entityId);
-        
+
         if (!MetadataUIUtils.isMetadataFoundForEntityId(metadataAdapter, entityId)) {
             LOGGER.debug("Metadata is not found for entity [{}] and CAS service registry is consulted for the entity definition", entityId);
-            final RegisteredService registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
+            val registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
             LOGGER.debug("Registered service definition linked to [{}] is found as [{}]", entityId, registeredService);
             verifyRegisteredService(requestContext, registeredService);
             loadSamlMetadataIntoRequestContext(requestContext, entityId, registeredService);
         } else {
             LOGGER.debug("Metadata is found for entity [{}]", entityId);
-            final RegisteredService registeredService = getRegisteredServiceFromRequest(requestContext);
+            val registeredService = getRegisteredServiceFromRequest(requestContext);
             LOGGER.debug("Registered service definition linked to [{}] is found as [{}]", entityId, registeredService);
             verifyRegisteredService(requestContext, registeredService);
             loadSamlMetadataIntoRequestContext(requestContext, entityId, registeredService);
@@ -76,7 +74,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      */
     protected void loadSamlMetadataIntoRequestContext(final RequestContext requestContext, final String entityId, final RegisteredService registeredService) {
         LOGGER.debug("Locating SAML MDUI for entity [{}]", entityId);
-        final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(
+        val mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(
             this.metadataAdapter, entityId, registeredService, WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext));
         LOGGER.debug("Located SAML MDUI for entity [{}] as [{}]", entityId, mdui);
         WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
@@ -106,9 +104,9 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @return the registered service from request
      */
     protected RegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext, final String entityId) {
-        final Service currentService = WebUtils.getService(requestContext);
-        final WebApplicationService service = this.serviceFactory.createService(entityId);
-        RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        val currentService = WebUtils.getService(requestContext);
+        val service = this.serviceFactory.createService(entityId);
+        var registeredService = this.servicesManager.findServiceBy(service);
         if (registeredService == null) {
             LOGGER.debug("Entity id [{}] not found in the registry. Fallback onto [{}]", entityId, currentService);
             registeredService = this.servicesManager.findServiceBy(currentService);
@@ -116,7 +114,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
         LOGGER.debug("Located service definition [{}]", registeredService);
         return registeredService;
     }
-    
+
     /**
      * Gets registered service from request.
      *
@@ -124,8 +122,8 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @return the registered service from request
      */
     protected RegisteredService getRegisteredServiceFromRequest(final RequestContext requestContext) {
-        final Service currentService = WebUtils.getService(requestContext);
-        final RegisteredService registeredService = this.servicesManager.findServiceBy(currentService);
+        val currentService = WebUtils.getService(requestContext);
+        val registeredService = this.servicesManager.findServiceBy(currentService);
         return registeredService;
     }
 
@@ -136,7 +134,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @return the entity id from request
      */
     protected String getEntityIdFromRequest(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameter(this.entityIdParameterName);
     }
 }

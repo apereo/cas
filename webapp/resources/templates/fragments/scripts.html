@@ -55,3 +55,8 @@ function notifyResourcesAreLoaded(callback) {
     /*]]>*/
 </script>
 
+<script type="text/javascript" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey AND recaptchaInvisible}" th:inline="javascript">
+    function onSubmit(token) {
+        $('#fm1').submit();
+    }
+</script>

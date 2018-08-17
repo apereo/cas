@@ -12,6 +12,7 @@ CAS can act as a client using the [pac4j security engine](https://github.com/pac
 * OAuth2 providers such as Facebook, Twitter, Google, LinkedIn, Yahoo, etc
 * OpenID providers
 * OpenID Connect identity providers
+* [ADFS](ADFS-Integration.html)
 
 Support is enabled by including the following dependency in the WAR overlay:
 

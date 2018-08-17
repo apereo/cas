@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.validation.ValidationResponseType;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,8 +20,6 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
 
-
-
     /**
      * Determine web application format boolean.
      *
@@ -29,10 +29,10 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      */
     private static AbstractWebApplicationService determineWebApplicationFormat(final HttpServletRequest request,
                                                                                final AbstractWebApplicationService webApplicationService) {
-        final String format = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_FORMAT) : null;
+        val format = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_FORMAT) : null;
         try {
             if (StringUtils.isNotBlank(format)) {
-                final ValidationResponseType formatType = ValidationResponseType.valueOf(format.toUpperCase());
+                val formatType = ValidationResponseType.valueOf(format.toUpperCase());
                 webApplicationService.setFormat(formatType);
             }
         } catch (final Exception e) {
@@ -50,10 +50,12 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      */
     protected static AbstractWebApplicationService newWebApplicationService(final HttpServletRequest request,
                                                                             final String serviceToUse) {
-        final String artifactId = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_TICKET) : null;
-        final String id = cleanupUrl(serviceToUse);
-        final AbstractWebApplicationService newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);
+        val artifactId = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_TICKET) : null;
+        val id = cleanupUrl(serviceToUse);
+        val newService = new SimpleWebApplicationServiceImpl(id, serviceToUse, artifactId);
         determineWebApplicationFormat(request, newService);
+        val source = getSourceParameter(request, CasProtocolConstants.PARAMETER_TARGET_SERVICE, CasProtocolConstants.PARAMETER_SERVICE);
+        newService.setSource(source);
         return newService;
     }
 
@@ -65,34 +67,30 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
      * @return the requested service
      */
     protected String getRequestedService(final HttpServletRequest request) {
-        final String targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
-        final String service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
-        final Object serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+        val targetService = request.getParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE);
+        val service = request.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
+        val serviceAttribute = request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
 
-        String serviceToUse = null;
         if (StringUtils.isNotBlank(targetService)) {
-            serviceToUse = targetService;
-        } else if (StringUtils.isNotBlank(service)) {
-            serviceToUse = service;
-        } else if (serviceAttribute != null) {
+            return targetService;
+        }
+        if (StringUtils.isNotBlank(service)) {
+            return service;
+        }
+        if (serviceAttribute != null) {
             if (serviceAttribute instanceof Service) {
-                serviceToUse = ((Service) serviceAttribute).getId();
-            } else {
-                serviceToUse = serviceAttribute.toString();
+                return ((Service) serviceAttribute).getId();
             }
+            return serviceAttribute.toString();
         }
-
-        if (StringUtils.isBlank(serviceToUse)) {
-            return null;
-        }
-        return serviceToUse;
+        return null;
     }
 
     @Override
     public WebApplicationService createService(final HttpServletRequest request) {
-        final String serviceToUse = getRequestedService(request);
+        val serviceToUse = getRequestedService(request);
         if (StringUtils.isBlank(serviceToUse)) {
-            LOGGER.debug("No service is specified in the request. Skipping service creation");
+            LOGGER.trace("No service is specified in the request. Skipping service creation");
             return null;
         }
         return newWebApplicationService(request, serviceToUse);
@@ -102,4 +100,6 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
     public WebApplicationService createService(final String id) {
         return newWebApplicationService(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(), id);
     }
+
+
 }

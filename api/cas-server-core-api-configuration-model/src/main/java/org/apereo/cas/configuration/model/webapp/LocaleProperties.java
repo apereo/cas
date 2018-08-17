@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.webapp;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for locale.
@@ -13,7 +14,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-web")
-@Slf4j
 @Getter
 @Setter
 public class LocaleProperties implements Serializable {

@@ -1,8 +1,5 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.authentication.Credential;
@@ -12,11 +9,16 @@ import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
+
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-import lombok.Setter;
 
 /**
  * This is {@link BasePrincipalFromNonInteractiveCredentialsAction}.
@@ -33,10 +35,8 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
      * The principal factory used to construct the final principal.
      */
     protected final PrincipalFactory principalFactory;
-
-    private int order = Integer.MAX_VALUE;
-
     private final RemoteRequestPrincipalAttributesExtractor principalAttributesExtractor;
+    private int order = Integer.MAX_VALUE;
 
     public BasePrincipalFromNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                             final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
@@ -49,11 +49,11 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
 
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final String remoteUser = getRemotePrincipalId(request);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val remoteUser = getRemotePrincipalId(request);
         if (StringUtils.isNotBlank(remoteUser)) {
             LOGGER.debug("User [{}] found in HttpServletRequest", remoteUser);
-            final Map<String, Object> attributes = principalAttributesExtractor.getAttributes(request);
+            val attributes = principalAttributesExtractor.getAttributes(request);
             LOGGER.debug("Attributes [{}] found in HttpServletRequest", attributes);
             return new PrincipalBearingCredential(this.principalFactory.createPrincipal(remoteUser, attributes));
         }

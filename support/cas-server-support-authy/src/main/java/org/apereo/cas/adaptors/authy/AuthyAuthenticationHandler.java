@@ -1,16 +1,16 @@
 package org.apereo.cas.adaptors.authy;
 
-import com.authy.api.Token;
-import com.authy.api.User;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
+
+import com.authy.api.Token;
+import com.authy.api.User;
+import lombok.SneakyThrows;
+import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -24,7 +24,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final boolean forceVerification;
@@ -39,33 +38,43 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final AuthyTokenCredential tokenCredential = (AuthyTokenCredential) credential;
+        val tokenCredential = (AuthyTokenCredential) credential;
 
-        final Authentication authentication = WebUtils.getInProgressAuthentication();
+        val authentication = WebUtils.getInProgressAuthentication();
         if (authentication == null) {
             throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
         }
-        final Principal principal = authentication.getPrincipal();
+        val principal = authentication.getPrincipal();
 
-        final User user = instance.getOrCreateUser(principal);
+        val user = instance.getOrCreateUser(principal);
         if (!user.isOk()) {
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(user.getError()));
         }
 
-        final Map<String, String> options = new HashMap<>(1);
+        val options = new HashMap<String, String>(1);
         options.put("force", Boolean.toString(this.forceVerification));
 
-        final Token verification = this.instance.getAuthyTokens().verify(user.getId(), tokenCredential.getToken(), options);
-
+        val verification = verifyAuthyToken(tokenCredential, user, options);
         if (!verification.isOk()) {
             throw new FailedLoginException(AuthyClientInstance.getErrorMessage(verification.getError()));
         }
 
         return createHandlerResult(tokenCredential, principal, new ArrayList<>());
     }
-    
+
+    @SneakyThrows
+    private Token verifyAuthyToken(final AuthyTokenCredential tokenCredential, final User user, final Map<String, String> options) {
+        return this.instance.getAuthyTokens()
+            .verify(user.getId(), tokenCredential.getToken(), options);
+    }
+
     @Override
     public boolean supports(final Credential credential) {
         return AuthyTokenCredential.class.isAssignableFrom(credential.getClass());
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return AuthyTokenCredential.class.isAssignableFrom(clazz);
     }
 }

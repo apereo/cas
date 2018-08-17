@@ -1,14 +1,15 @@
 package org.apereo.cas.ticket;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.OrderComparator;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link DefaultTicketCatalog}.
@@ -24,8 +25,11 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public TicketDefinition find(final String ticketId) {
-        final TicketDefinition defn = ticketMetadataMap.values().stream()
-            .filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().orElse(null);
+        val defn = ticketMetadataMap.values()
+            .stream()
+            .filter(md -> ticketId.startsWith(md.getPrefix()))
+            .findFirst()
+            .orElse(null);
         if (defn == null) {
             LOGGER.error("Ticket definition for [{}] cannot be found in the ticket catalog "
                 + "which only contains the following ticket types: [{}]", ticketId, ticketMetadataMap.keySet());
@@ -41,7 +45,9 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public Collection<TicketDefinition> find(final Class<Ticket> ticketClass) {
-        final List list = ticketMetadataMap.values().stream().filter(t -> t.getImplementationClass().isAssignableFrom(ticketClass)).collect(Collectors.toList());
+        val list = ticketMetadataMap.values().stream()
+            .filter(t -> t.getImplementationClass().isAssignableFrom(ticketClass))
+            .collect(Collectors.toList());
         OrderComparator.sort(list);
         LOGGER.debug("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);
         return list;
@@ -66,7 +72,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public Collection<TicketDefinition> findAll() {
-        final List list = new ArrayList<>(ticketMetadataMap.values());
+        val list = new ArrayList<TicketDefinition>(ticketMetadataMap.values());
         OrderComparator.sort(list);
         LOGGER.debug("Located all registered and known sorted ticket definitions [{}]", list);
         return list;

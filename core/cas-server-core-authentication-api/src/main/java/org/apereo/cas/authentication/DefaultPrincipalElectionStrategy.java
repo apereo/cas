@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Collection;
 import java.util.Map;
@@ -17,23 +19,33 @@ import java.util.Map;
  * @since 4.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrategy {
 
     private static final long serialVersionUID = 6704726217030836315L;
-    
+
     private final PrincipalFactory principalFactory;
 
     public DefaultPrincipalElectionStrategy() {
-        this(new DefaultPrincipalFactory());
+        this(PrincipalFactoryUtils.newPrincipalFactory());
     }
 
     @Override
-    public Principal nominate(final Collection<Authentication> authentications, 
+    public Principal nominate(final Collection<Authentication> authentications,
                               final Map<String, Object> principalAttributes) {
-        final Principal principal = authentications.iterator().next().getPrincipal();
-        final Principal finalPrincipal = this.principalFactory.createPrincipal(principal.getId(), principalAttributes);
+        val principal = getPrincipalFromAuthentication(authentications);
+        val finalPrincipal = this.principalFactory.createPrincipal(principal.getId(), principalAttributes);
         LOGGER.debug("Nominated [{}] as the primary principal", finalPrincipal);
         return finalPrincipal;
+    }
+
+    /**
+     * Gets principal from authentication.
+     *
+     * @param authentications the authentications
+     * @return the principal from authentication
+     */
+    protected Principal getPrincipalFromAuthentication(final Collection<Authentication> authentications) {
+        return authentications.iterator().next().getPrincipal();
     }
 }

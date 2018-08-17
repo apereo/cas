@@ -1,10 +1,12 @@
 package org.apereo.cas.support.oauth.web.views;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,7 +20,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewResolver {
 
     /**
@@ -28,7 +30,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
 
     @Override
     public ModelAndView resolve(final J2EContext context, final OAuthRegisteredService service) {
-        final Object bypassApprovalParameter = context.getSessionStore().get(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT);
+        val bypassApprovalParameter = context.getSessionStore().get(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT);
         LOGGER.debug("Bypassing approval prompt for service [{}]: [{}]", service, bypassApprovalParameter);
 
         /*
@@ -59,11 +61,11 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      * @return the model and view
      */
     protected ModelAndView redirectToApproveView(final J2EContext ctx, final OAuthRegisteredService svc) {
-        final String callbackUrl = ctx.getFullRequestURL();
+        val callbackUrl = ctx.getFullRequestURL();
         ctx.getSessionStore().set(ctx, OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE);
         LOGGER.debug("callbackUrl: [{}]", callbackUrl);
 
-        final Map<String, Object> model = new HashMap<>();
+        val model = new HashMap<String, Object>();
         model.put("service", svc);
         model.put("callbackUrl", callbackUrl);
         model.put("serviceName", svc.getName());

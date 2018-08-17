@@ -1,10 +1,5 @@
 package org.apereo.cas.ticket.code;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;
@@ -12,6 +7,12 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import org.apache.commons.lang3.ObjectUtils;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -33,8 +34,8 @@ import java.util.HashSet;
 @Table(name = "OAUTH_TOKENS")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(OAuthCode.PREFIX)
-@Slf4j
 @NoArgsConstructor
+@Getter
 public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
 
     private static final long serialVersionUID = -8072724186202305800L;
@@ -64,27 +65,32 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     @Column(name = "AUTHENTICATION", nullable = false, length = Integer.MAX_VALUE)
     private Authentication authentication;
 
+    @Column(name = "code_challenge")
+    private String codeChallenge;
+
+    @Column(name = "code_challenge_method")
+    private String codeChallengeMethod;
+
     public OAuthCodeImpl(final String id,
                          @NonNull final Service service,
                          @NonNull final Authentication authentication,
                          final ExpirationPolicy expirationPolicy,
                          final TicketGrantingTicket ticketGrantingTicket,
-                         final Collection<String> scopes) {
+                         final Collection<String> scopes,
+                         final String codeChallenge,
+                         final String codeChallengeMethod) {
         super(id, expirationPolicy);
         this.service = service;
         this.authentication = authentication;
         this.ticketGrantingTicket = ticketGrantingTicket;
         this.scopes.addAll(scopes);
+        this.codeChallenge = codeChallenge;
+        this.codeChallengeMethod = codeChallengeMethod;
     }
 
     @Override
     public boolean isFromNewLogin() {
         return true;
-    }
-
-    @Override
-    public Service getService() {
-        return this.service;
     }
 
     @Override
@@ -96,16 +102,6 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
         throw new UnsupportedOperationException("No PGT grant is available in OAuth");
-    }
-
-    @Override
-    public Authentication getAuthentication() {
-        return this.authentication;
-    }
-
-    @Override
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return this.ticketGrantingTicket;
     }
 
     @Override

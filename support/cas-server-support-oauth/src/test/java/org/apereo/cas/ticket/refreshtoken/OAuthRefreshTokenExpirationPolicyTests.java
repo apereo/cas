@@ -1,9 +1,8 @@
 package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.accesstoken.AccessToken;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
 
@@ -18,9 +17,9 @@ import static org.junit.Assert.*;
 public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
     @Test
     public void verifyRefreshTokenExpiryWhenTgtIsExpired() {
-        final TicketGrantingTicket tgt = newTicketGrantingTicket();
-        final AccessToken at = newAccessToken(tgt);
-        final RefreshToken rt = newRefreshToken(at);
+        val tgt = newTicketGrantingTicket();
+        val at = newAccessToken(tgt);
+        val rt = newRefreshToken(at);
 
         assertFalse("Refresh token should not be expired", rt.isExpired());
         tgt.markTicketExpired();
@@ -29,9 +28,9 @@ public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationP
 
     @Test
     public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws Exception {
-        final OAuthRefreshTokenExpirationPolicy policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
+        val policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
-        final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, OAuthRefreshTokenExpirationPolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, OAuthRefreshTokenExpirationPolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 }

@@ -1,10 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.query;
 
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -13,8 +9,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
@@ -24,8 +18,10 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.jasig.cas.client.validation.Assertion;
-import org.opensaml.messaging.context.MessageContext;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
@@ -34,8 +30,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link Saml2AttributeQueryProfileHandlerController}.
@@ -68,8 +62,8 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
                                                        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
                                                        final Service callbackService) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager,
-                webApplicationServiceFactory, metadataResolver, configBean,
-                responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
+            webApplicationServiceFactory, metadataResolver, configBean,
+            responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
         this.ticketRegistry = ticketRegistry;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.samlAttributeQueryTicketFactory = samlAttributeQueryTicketFactory;
@@ -86,29 +80,29 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
     protected void handlePostRequest(final HttpServletResponse response,
                                      final HttpServletRequest request) {
 
-        final MessageContext ctx = decodeSoapRequest(request);
-        final AttributeQuery query = (AttributeQuery) ctx.getMessage();
+        val ctx = decodeSoapRequest(request);
+        val query = (AttributeQuery) ctx.getMessage();
         try {
-            final String issuer = query.getIssuer().getValue();
-            final SamlRegisteredService service = verifySamlRegisteredService(issuer);
-            final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor = getSamlMetadataFacadeFor(service, query);
+            val issuer = query.getIssuer().getValue();
+            val service = verifySamlRegisteredService(issuer);
+            val adaptor = getSamlMetadataFacadeFor(service, query);
             if (!adaptor.isPresent()) {
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
             }
 
-            final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
+            val facade = adaptor.get();
             verifyAuthenticationContextSignature(ctx, request, query, facade);
 
-            final Map<String, Object> attrs = new LinkedHashMap<>();
+            val attrs = new LinkedHashMap<String, Object>();
             if (query.getAttributes().isEmpty()) {
-                final String id = this.samlAttributeQueryTicketFactory.createTicketIdFor(query.getSubject().getNameID().getValue());
-                final SamlAttributeQueryTicket ticket = this.ticketRegistry.getTicket(id, SamlAttributeQueryTicket.class);
+                val id = this.samlAttributeQueryTicketFactory.createTicketIdFor(query.getSubject().getNameID().getValue());
+                val ticket = this.ticketRegistry.getTicket(id, SamlAttributeQueryTicket.class);
 
-                final Authentication authentication = ticket.getTicketGrantingTicket().getAuthentication();
-                final Principal principal = authentication.getPrincipal();
+                val authentication = ticket.getTicketGrantingTicket().getAuthentication();
+                val principal = authentication.getPrincipal();
 
-                final Map<String, Object> authnAttrs = authentication.getAttributes();
-                final Map<String, Object> principalAttrs = principal.getAttributes();
+                val authnAttrs = authentication.getAttributes();
+                val principalAttrs = principal.getAttributes();
 
                 query.getAttributes().forEach(a -> {
                     if (authnAttrs.containsKey(a.getName())) {
@@ -119,12 +113,12 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
                 });
             }
 
-            final Assertion casAssertion = buildCasAssertion(issuer, service, attrs);
-            this.responseBuilder.build(query, request, response, casAssertion, service, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI);
+            val casAssertion = buildCasAssertion(issuer, service, attrs);
+            this.responseBuilder.build(query, request, response, casAssertion, service, facade, SAMLConstants.SAML2_SOAP11_BINDING_URI, ctx);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR, e.getMessage());
-            samlFaultResponseBuilder.build(query, request, response, null, null, null, SAMLConstants.SAML2_SOAP11_BINDING_URI);
+            samlFaultResponseBuilder.build(query, request, response, null, null, null, SAMLConstants.SAML2_SOAP11_BINDING_URI, ctx);
         }
     }
 }

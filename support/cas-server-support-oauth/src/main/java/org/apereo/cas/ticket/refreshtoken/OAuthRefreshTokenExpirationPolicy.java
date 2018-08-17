@@ -1,14 +1,15 @@
 package org.apereo.cas.ticket.refreshtoken;
 
+import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.ticket.TicketState;
-import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
+import lombok.val;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -20,8 +21,7 @@ import java.time.temporal.ChronoUnit;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-@Slf4j
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
@@ -45,7 +45,7 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final boolean expired = isRefreshTokenExpired(ticketState);
+        val expired = isRefreshTokenExpired(ticketState);
         if (!expired) {
             return super.isExpired(ticketState);
         }
@@ -71,7 +71,7 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
      */
     @JsonIgnore
     protected boolean isRefreshTokenExpired(final TicketState ticketState) {
-        final ZonedDateTime expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         return ticketState == null || expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 
@@ -81,8 +81,7 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
      * of the TGT that lent a hand in issuing them. If the refresh token is considered expired
      * by this policy, the parent ticket's expiration policy is not consulted, making the RT independent.
      */
-    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-    @Slf4j
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
     @NoArgsConstructor
     @EqualsAndHashCode(callSuper = true)
     public static class OAuthRefreshTokenSovereignExpirationPolicy extends OAuthRefreshTokenExpirationPolicy {

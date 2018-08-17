@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.client;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.regex.Pattern;
 
@@ -46,11 +47,11 @@ public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnow
      */
     @Override
     protected boolean shouldDoSpnego(final String remoteIp) {
-        final boolean ipCheck = ipPatternCanBeChecked(remoteIp);
+        val ipCheck = ipPatternCanBeChecked(remoteIp);
         if (ipCheck && !ipPatternMatches(remoteIp)) {
             return false;
         }
-        final String hostName = getRemoteHostName(remoteIp);
+        val hostName = getRemoteHostName(remoteIp);
         LOGGER.debug("Retrieved host name for the remote ip is [{}]", hostName);
         return this.hostNamePatternString.matcher(hostName).find();
     }

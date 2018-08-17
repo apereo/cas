@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.support.saml;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link SamlCoreProperties}.
@@ -13,7 +14,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml")
-@Slf4j
 @Getter
 @Setter
 public class SamlCoreProperties implements Serializable {
@@ -48,5 +48,5 @@ public class SamlCoreProperties implements Serializable {
     /**
      * Qualified name of the security manager class used for creating a SAML parser pool.
      */
-    private String securityManager = "com.sun.org.apache.xerces.internal.util.SecurityManager";
+    private String securityManager = "org.apache.xerces.util.SecurityManager";
 }

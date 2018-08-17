@@ -1,9 +1,11 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
+
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,25 +16,26 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
+@NoArgsConstructor(force = true)
 public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> {
 
     private final String openIdPrefixUrl;
 
     @Override
     public OpenIdService createService(final HttpServletRequest request) {
-        final String service = request.getParameter(OpenIdProtocolConstants.OPENID_RETURNTO);
-        final String openIdIdentity = request.getParameter(OpenIdProtocolConstants.OPENID_IDENTITY);
+        val service = request.getParameter(OpenIdProtocolConstants.OPENID_RETURNTO);
+        val openIdIdentity = request.getParameter(OpenIdProtocolConstants.OPENID_IDENTITY);
 
         if (openIdIdentity == null || !StringUtils.hasText(service)) {
             return null;
         }
 
-        final String id = cleanupUrl(service);
-        final String artifactId = request.getParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
-        final OpenIdService s = new OpenIdService(id, service, artifactId, openIdIdentity);
+        val id = cleanupUrl(service);
+        val artifactId = request.getParameter(OpenIdProtocolConstants.OPENID_ASSOCHANDLE);
+        val s = new OpenIdService(id, service, artifactId, openIdIdentity);
         s.setLoggedOutAlready(true);
+        s.setSource(OpenIdProtocolConstants.OPENID_RETURNTO);
         return s;
     }
 

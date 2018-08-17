@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.NoArgsConstructor;
 
 /**
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @NoArgsConstructor
 public class NoOpTicketRegistryCleaner implements TicketRegistryCleaner {
 

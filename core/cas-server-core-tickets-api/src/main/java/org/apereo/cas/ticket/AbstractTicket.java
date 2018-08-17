@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.authentication.Authentication;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -7,10 +9,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
+import lombok.val;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -38,7 +38,6 @@ import java.time.ZonedDateTime;
 @MappedSuperclass
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Setter
@@ -97,7 +96,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     private Boolean expired = Boolean.FALSE;
 
 
-    public AbstractTicket(@NonNull final String id, @NonNull final ExpirationPolicy expirationPolicy) {
+    public AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
         this.id = id;
         this.creationTime = ZonedDateTime.now(ZoneOffset.UTC);
         this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
@@ -109,8 +108,10 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         this.previousTimeUsed = this.lastTimeUsed;
         this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
         this.countOfUses++;
-        if (getTicketGrantingTicket() != null && !getTicketGrantingTicket().isExpired()) {
-            final TicketState state = TicketState.class.cast(getTicketGrantingTicket());
+
+        val ticketGrantingTicket = getTicketGrantingTicket();
+        if (ticketGrantingTicket != null && !ticketGrantingTicket.isExpired()) {
+            val state = TicketState.class.cast(ticketGrantingTicket);
             state.update();
         }
     }
@@ -137,7 +138,10 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     @Override
     public Authentication getAuthentication() {
-        return getTicketGrantingTicket().getAuthentication();
+        val ticketGrantingTicket = getTicketGrantingTicket();
+        return ticketGrantingTicket != null
+            ? ticketGrantingTicket.getAuthentication()
+            : null;
     }
 
     @Override
@@ -149,5 +153,4 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     public void markTicketExpired() {
         this.expired = Boolean.TRUE;
     }
-
 }

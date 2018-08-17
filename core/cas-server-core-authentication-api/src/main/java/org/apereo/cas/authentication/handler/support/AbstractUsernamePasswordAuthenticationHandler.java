@@ -1,11 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -13,12 +9,20 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -32,6 +36,10 @@ import java.security.GeneralSecurityException;
 @Setter
 @Getter
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+    /**
+     * Decide how to execute password policy handling, if at all.
+     */
+    protected AuthenticationPasswordPolicyHandlingStrategy passwordPolicyHandlingStrategy = (o, o2) -> new ArrayList<>(0);
 
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
@@ -39,19 +47,20 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
+
     public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
-        final UsernamePasswordCredential originalUserPass = (UsernamePasswordCredential) credential;
-        final UsernamePasswordCredential userPass = new UsernamePasswordCredential(originalUserPass.getUsername(), originalUserPass.getPassword());
+        val originalUserPass = (UsernamePasswordCredential) credential;
+        val userPass = new UsernamePasswordCredential(originalUserPass.getUsername(), originalUserPass.getPassword());
         if (StringUtils.isBlank(userPass.getUsername())) {
             throw new AccountNotFoundException("Username is null.");
         }
         LOGGER.debug("Transforming credential username via [{}]", this.principalNameTransformer.getClass().getName());
-        final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
+        val transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
         if (StringUtils.isBlank(transformedUsername)) {
             throw new AccountNotFoundException("Transformed username is null.");
         }
@@ -60,7 +69,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         }
         LOGGER.debug("Attempting to encode credential password via [{}] for [{}]", this.passwordEncoder.getClass().getName(),
             transformedUsername);
-        final String transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
+        val transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
         if (StringUtils.isBlank(transformedPsw)) {
             throw new AccountNotFoundException("Encoded password is null.");
         }
@@ -85,6 +94,11 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
                                                                                                  String originalPassword) throws GeneralSecurityException, PreventedException;
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return UsernamePasswordCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
         if (!UsernamePasswordCredential.class.isInstance(credential)) {
             LOGGER.debug("Credential is not one of username/password and is not accepted by handler [{}]", getName());
@@ -95,7 +109,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
             return true;
         }
         LOGGER.debug("Examining credential [{}] eligibility for authentication handler [{}]", credential, getName());
-        final boolean result = this.credentialSelectionPredicate.test(credential);
+        val result = this.credentialSelectionPredicate.test(credential);
         LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]", credential, getName(), BooleanUtils.toStringTrueFalse(result));
         return result;
     }

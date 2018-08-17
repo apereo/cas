@@ -1,15 +1,16 @@
 package org.apereo.cas.configuration.model.support.ehcache;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link EhcacheProperties}.
@@ -18,7 +19,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ehcache-ticket-registry")
-@Slf4j
 @Getter
 @Setter
 public class EhcacheProperties implements Serializable {
@@ -90,7 +90,7 @@ public class EhcacheProperties implements Serializable {
      * or if not found, "ehcache-failsafe.xml" in the EhCache jar (default EhCache initialization).
      */
     @RequiredProperty
-    private Resource configLocation = new ClassPathResource("ehcache-replicated.xml");
+    private transient Resource configLocation = new ClassPathResource("ehcache-replicated.xml");
 
     /**
      * Set whether the EhCache CacheManager should be shared (as a singleton at the ClassLoader level)

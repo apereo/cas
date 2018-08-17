@@ -1,14 +1,15 @@
 package org.apereo.cas.impl.calcs;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
@@ -33,17 +34,17 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
     @Override
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
                                         final RegisteredService service, final Collection<CasEvent> events) {
-        final ZonedDateTime timestamp = ZonedDateTime.now(ZoneOffset.UTC);
+        val timestamp = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Filtering authentication events for timestamp [{}]", timestamp);
-        
-        final int hoursFromNow = timestamp.plusHours(windowInHours).getHour();
-        final int hoursBeforeNow = timestamp.minusHours(windowInHours).getHour();
 
-        final long count = events
+        val hoursFromNow = timestamp.plusHours(windowInHours).getHour();
+        val hoursBeforeNow = timestamp.minusHours(windowInHours).getHour();
+
+        val count = events
             .stream()
             .map(time -> {
-                final Instant instant = ChronoZonedDateTime.from(time.getCreationTime()).toInstant();
-                final ZonedDateTime zdt = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
+                val instant = ChronoZonedDateTime.from(time.getCreationTime()).toInstant();
+                val zdt = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
                 return zdt.getHour();
             })
             .filter(hour -> hour <= hoursFromNow && hour >= hoursBeforeNow)

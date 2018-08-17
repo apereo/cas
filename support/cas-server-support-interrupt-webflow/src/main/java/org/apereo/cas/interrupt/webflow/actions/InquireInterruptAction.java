@@ -1,15 +1,14 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.interrupt.InterruptInquirer;
-import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -19,23 +18,23 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class InquireInterruptAction extends AbstractAction {
     private final InterruptInquirer interruptInquirer;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final Authentication authentication = WebUtils.getAuthentication(requestContext);
-        final Service service = WebUtils.getService(requestContext);
-        final RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
-        
-        final InterruptResponse response = this.interruptInquirer.inquire(authentication, registeredService, service);
+        val authentication = WebUtils.getAuthentication(requestContext);
+        val service = WebUtils.getService(requestContext);
+        val registeredService = WebUtils.getRegisteredService(requestContext);
+        val credential = WebUtils.getCredential(requestContext);
+
+        val response = this.interruptInquirer.inquire(authentication, registeredService, service, credential);
         if (response == null || !response.isInterrupt()) {
-            return no();
+            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED);
         }
         InterruptUtils.putInterruptIn(requestContext, response);
         WebUtils.putPrincipal(requestContext, authentication.getPrincipal());
-        return yes();
+        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED);
     }
 }

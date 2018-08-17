@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * Configuration properties class for tgc.
@@ -13,8 +13,7 @@ import lombok.Setter;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@RequiresModule(name = "cas-server-support-cookie", automated = true)
-@Slf4j
+@RequiresModule(name = "cas-server-core-cookie", automated = true)
 @Getter
 @Setter
 public class TicketGrantingCookieProperties extends CookieProperties {

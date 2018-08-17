@@ -1,11 +1,11 @@
 package org.apereo.cas.monitor.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.monitor.JdbcDataSourceHealthIndicator;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -28,7 +28,6 @@ import java.util.concurrent.ExecutorService;
  */
 @Configuration("casJdbcMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasJdbcMonitorConfiguration {
 
     @Autowired
@@ -44,7 +43,7 @@ public class CasJdbcMonitorConfiguration {
     @Bean
     @RefreshScope
     public HealthIndicator dataSourceHealthIndicator(@Qualifier("pooledJdbcMonitorExecutorService") final ExecutorService executor) {
-        final MonitorProperties.Jdbc jdbc = casProperties.getMonitor().getJdbc();
+        val jdbc = casProperties.getMonitor().getJdbc();
         return new JdbcDataSourceHealthIndicator(Beans.newDuration(jdbc.getMaxWait()).toMillis(),
             monitorDataSource(), executor, jdbc.getValidationQuery());
     }

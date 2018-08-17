@@ -1,11 +1,12 @@
 package org.apereo.cas.configuration.model.support.sms;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link TextMagicProperties}.
@@ -14,7 +15,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-sms-textmagic")
-@Slf4j
 @Getter
 @Setter
 public class TextMagicProperties implements Serializable {
@@ -32,4 +32,9 @@ public class TextMagicProperties implements Serializable {
      */
     @RequiredProperty
     private String username;
+
+    /**
+     * API url, if any.
+     */
+    private String url;
 }

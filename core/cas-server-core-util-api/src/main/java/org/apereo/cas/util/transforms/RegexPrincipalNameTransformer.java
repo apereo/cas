@@ -1,11 +1,12 @@
 package org.apereo.cas.util.transforms;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.util.RegexUtils;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import lombok.Setter;
+import lombok.val;
+
+import java.util.regex.Pattern;
 
 /**
  * A transformer that extracts the principal by a provided regex pattern.
@@ -13,7 +14,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Setter
 public class RegexPrincipalNameTransformer implements PrincipalNameTransformer {
 
@@ -27,7 +27,7 @@ public class RegexPrincipalNameTransformer implements PrincipalNameTransformer {
 
     @Override
     public String transform(final String username) {
-        final Matcher matcher = this.pattern.matcher(username);
+        val matcher = this.pattern.matcher(username);
         if (matcher.find()) {
             return matcher.group(1);
         }

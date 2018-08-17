@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.support.services.yaml;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
-import org.springframework.core.io.ClassPathResource;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * This is {@link YamlServiceRegistryProperties}.
@@ -14,7 +14,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-yaml-service-registry")
-@Slf4j
 @Getter
 @Setter
 public class YamlServiceRegistryProperties extends SpringResourceProperties {

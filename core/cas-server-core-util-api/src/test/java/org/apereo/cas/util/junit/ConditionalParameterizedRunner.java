@@ -1,7 +1,9 @@
 package org.apereo.cas.util.junit;
 
-import lombok.SneakyThrows;
 import org.apereo.cas.util.SocketUtils;
+
+import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Parameterized;
@@ -21,21 +23,30 @@ public class ConditionalParameterizedRunner extends Parameterized {
     @Override
     @SneakyThrows
     protected void runChild(final Runner runner, final RunNotifier notifier) {
-        boolean runTests = true;
-        final ConditionalIgnore ignore = ((ParentRunner<Object>) runner).getTestClass().getAnnotation(ConditionalIgnore.class);
-        if (ignore != null) {
-            final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
-            runTests = condition.isSatisfied();
+        val ignore = ((ParentRunner<Object>) runner).getTestClass().getAnnotation(ConditionalIgnore.class);
 
-            if (runTests) {
-                if (ignore.port() > 0) {
-                    runTests = !SocketUtils.isTcpPortAvailable(ignore.port());
-                }
-            }
-        }
-
-        if (runTests) {
+        if (shouldRunTestsWithCondition(ignore)) {
             super.runChild(runner, notifier);
         }
+    }
+
+    @SneakyThrows
+    private boolean shouldRunTestsWithCondition(final ConditionalIgnore ignore) {
+        if (ignore == null) {
+            return true;
+        }
+        var shouldRun = false;
+
+        if (ignore.condition() == null) {
+            shouldRun = true;
+        } else {
+            val condition = ignore.condition().getDeclaredConstructor().newInstance();
+            shouldRun = condition.isSatisfied();
+        }
+
+        if (shouldRun && ignore.port() > 0) {
+            shouldRun = !SocketUtils.isTcpPortAvailable(ignore.port());
+        }
+        return shouldRun;
     }
 }

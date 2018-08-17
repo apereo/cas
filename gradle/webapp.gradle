@@ -1,0 +1,68 @@
+description = "Apereo CAS Web Application"
+
+apply plugin: "war"
+
+project.ext["mainClassName"] = "org.apereo.cas.web.CasWebApplication"
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "${project.buildDir}/generated-src/main/resources", "${project.projectDir}/../resources"
+        }
+    }
+    /**
+     * Make resources become reloadable.
+     * Application’s static resources are loaded from their source location.
+     */
+    bootRun {
+        resources {
+            srcDirs new File("/etc/cas/templates"), new File(project(":webapp").getProjectDir(), "resources")
+        }
+    }
+}
+
+apply from: rootProject.file("gradle/springboot.gradle")
+apply from: rootProject.file("gradle/node.gradle")
+
+dependencies {
+    implementation project(":core:cas-server-core")
+    implementation project(":core:cas-server-core-monitor")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-logout")
+    implementation project(":core:cas-server-core-audit")
+    implementation project(":core:cas-server-core-logging")
+    implementation project(":core:cas-server-core-tickets")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-validation")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-cookie")
+    implementation project(":core:cas-server-core-events")
+    implementation project(":core:cas-server-core-events-configuration")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-configuration-metadata-repository")
+
+    implementation project(":support:cas-server-support-throttle")
+    implementation project(":support:cas-server-support-person-directory")
+    implementation project(":support:cas-server-support-configuration")
+    implementation project(":support:cas-server-support-geolocation")
+    implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-themes")
+    implementation project(":support:cas-server-support-metrics")
+    implementation project(":support:cas-server-support-reports")
+    implementation project(":support:cas-server-support-validation") 
+    implementation project(":support:cas-server-support-pm-webflow")
+
+    implementation project(":webapp:cas-server-webapp-config")
+    implementation project(":webapp:cas-server-webapp-init")
+
+    implementation libraries.pac4j
+    implementation libraries.thymeleaf
+
+    implementation libraries.cassecurityfilter
+    implementation libraries.metrics
+    implementation libraries.bouncycastle
+    implementation libraries.springcloudconfigclient
+    
+    runtime libraries.webjars
+}

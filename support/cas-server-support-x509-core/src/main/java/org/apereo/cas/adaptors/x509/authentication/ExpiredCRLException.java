@@ -1,42 +1,48 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 import java.security.GeneralSecurityException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
-import lombok.Getter;
 
 /**
  * Exception describing an expired CRL condition.
  *
  * @author Marvin S. Addison
  * @since 3.4.6
- *
  */
-@Slf4j
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ExpiredCRLException extends GeneralSecurityException {
 
-    /** Serialization version marker. */
+    /**
+     * Serialization version marker.
+     */
     private static final long serialVersionUID = 5157864033250359972L;
 
-    /** Identifier/name of CRL. */
+    /**
+     * Identifier/name of CRL.
+     */
     private final String id;
 
-    /** CRL expiration date. */
+    /**
+     * CRL expiration date.
+     */
     private final ZonedDateTime expirationDate;
 
-    /** Leniency of expiration. */
+    /**
+     * Leniency of expiration.
+     */
     private final int leniency;
 
     /**
      * Creates a new instance describing a CRL that expired on the given date.
      *
-     * @param identifier Identifier or name that describes CRL.
+     * @param identifier     Identifier or name that describes CRL.
      * @param expirationDate CRL expiration date.
      */
     public ExpiredCRLException(final String identifier, final ZonedDateTime expirationDate) {
@@ -47,10 +53,10 @@ public class ExpiredCRLException extends GeneralSecurityException {
      * Creates a new instance describing a CRL that expired on a date that is
      * more than leniency seconds beyond its expiration date.
      *
-     * @param identifier Identifier or name that describes CRL.
+     * @param identifier     Identifier or name that describes CRL.
      * @param expirationDate CRL expiration date.
-     * @param leniency Number of seconds beyond the expiration date at which
-     * the CRL is considered expired.  MUST be non-negative integer.
+     * @param leniency       Number of seconds beyond the expiration date at which
+     *                       the CRL is considered expired.  MUST be non-negative integer.
      */
     public ExpiredCRLException(final String identifier, final ChronoZonedDateTime expirationDate, final int leniency) {
         this.id = identifier;
@@ -65,10 +71,10 @@ public class ExpiredCRLException extends GeneralSecurityException {
      * Creates a new instance describing a CRL that expired on a date that is
      * more than leniency seconds beyond its expiration date.
      *
-     * @param identifier Identifier or name that describes CRL.
+     * @param identifier     Identifier or name that describes CRL.
      * @param expirationDate CRL expiration date.
-     * @param leniency Number of seconds beyond the expiration date at which
-     * the CRL is considered expired.  MUST be non-negative integer.
+     * @param leniency       Number of seconds beyond the expiration date at which
+     *                       the CRL is considered expired.  MUST be non-negative integer.
      */
     public ExpiredCRLException(final String identifier, final Instant expirationDate, final int leniency) {
         this.id = identifier;
@@ -85,7 +91,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
     public ZonedDateTime getExpirationDate() {
         return this.expirationDate == null ? null : ZonedDateTime.from(this.expirationDate);
     }
-    
+
     @Override
     public String getMessage() {
         if (this.leniency > 0) {

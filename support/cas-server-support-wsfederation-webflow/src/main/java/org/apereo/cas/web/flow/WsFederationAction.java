@@ -1,19 +1,19 @@
 package org.apereo.cas.web.flow;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class represents an action in the webflow to retrieve WsFederation information on the callback url which is
@@ -51,8 +51,8 @@ public class WsFederationAction extends AbstractAuthenticationAction {
     @Override
     protected Event doExecute(final RequestContext context) {
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            final String wa = request.getParameter(WA);
+            val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+            val wa = request.getParameter(WA);
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
                 wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context);
                 return super.doExecute(context);

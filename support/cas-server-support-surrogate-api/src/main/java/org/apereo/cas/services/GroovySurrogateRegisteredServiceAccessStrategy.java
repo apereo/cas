@@ -1,12 +1,13 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.ScriptingUtils;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.ScriptingUtils;
-import org.springframework.core.io.Resource;
+import lombok.val;
 
 import java.util.Map;
 
@@ -30,7 +31,7 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
         if (isSurrogateAuthenticationSession(principalAttributes)) {
             try {
                 final Object[] args = {principal, principalAttributes, LOGGER};
-                final Resource resource = ResourceUtils.getResourceFrom(this.groovyScript);
+                val resource = ResourceUtils.getResourceFrom(this.groovyScript);
                 return ScriptingUtils.executeGroovyScript(resource, args, Boolean.class);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);

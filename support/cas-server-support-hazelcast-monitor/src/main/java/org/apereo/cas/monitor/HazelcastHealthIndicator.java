@@ -1,16 +1,13 @@
 package org.apereo.cas.monitor;
 
 import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import com.hazelcast.monitor.LocalMapStats;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
+import lombok.val;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link HazelcastHealthIndicator}.
@@ -21,23 +18,27 @@ import java.util.List;
 @Slf4j
 @ToString
 public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
+    private final String instanceName;
+    private final long clusterSize;
 
-    public HazelcastHealthIndicator(final CasConfigurationProperties casProperties) {
-        super(casProperties);
+    public HazelcastHealthIndicator(final long evictionThreshold, final long threshold,
+                                    final String instanceName, final long clusterSize) {
+        super(evictionThreshold, threshold);
+        this.instanceName = instanceName;
+        this.clusterSize = clusterSize;
     }
 
     @Override
     protected CacheStatistics[] getStatistics() {
-        final List<CacheStatistics> statsList = new ArrayList<>();
-        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        LOGGER.debug("Locating hazelcast instance [{}]...", hz.getCluster().getInstanceName());
-        final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(hz.getCluster().getInstanceName());
+        val statsList = new ArrayList<CacheStatistics>();
+        LOGGER.debug("Locating hazelcast instance [{}]...", instanceName);
+        @NonNull val instance = Hazelcast.getHazelcastInstanceByName(this.instanceName);
         instance.getConfig().getMapConfigs().keySet().forEach(key -> {
-            final IMap map = instance.getMap(key);
+            val map = instance.getMap(key);
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
-            statsList.add(new HazelcastStatistics(map, hz.getCluster().getMembers().size()));
+            statsList.add(new HazelcastStatistics(map, clusterSize));
         });
-        return statsList.toArray(new CacheStatistics[statsList.size()]);
+        return statsList.toArray(new CacheStatistics[0]);
     }
 
     /**
@@ -48,10 +49,9 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         private static final int PERCENTAGE_VALUE = 100;
 
         private final IMap map;
+        private final long clusterSize;
 
-        private final int clusterSize;
-
-        protected HazelcastStatistics(final IMap map, final int clusterSize) {
+        protected HazelcastStatistics(final IMap map, final long clusterSize) {
             this.map = map;
             this.clusterSize = clusterSize;
         }
@@ -80,8 +80,8 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         }
 
         @Override
-        public int getPercentFree() {
-            final long capacity = getCapacity();
+        public long getPercentFree() {
+            val capacity = getCapacity();
             if (capacity == 0) {
                 return 0;
             }
@@ -89,25 +89,40 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         }
 
         @Override
-        public void toString(final StringBuilder builder) {
-            final LocalMapStats localMapStats = map.getLocalMapStats();
-            builder.append("Creation time: ").append(localMapStats.getCreationTime()).append(", ")
-                .append("Cluster size: ").append(clusterSize).append(", ").append("Owned entry count: ")
-                .append(localMapStats.getOwnedEntryCount()).append(", ").append("Backup entry count: ")
-                .append(localMapStats.getBackupEntryCount()).append(", ").append("Backup count: ")
-                .append(localMapStats.getBackupCount()).append(", ").append("Hits count: ")
-                .append(localMapStats.getHits()).append(", ").append("Last update time: ")
-                .append(localMapStats.getLastUpdateTime()).append(", ").append("Last access time: ")
-                .append(localMapStats.getLastAccessTime()).append(", ").append("Locked entry count: ")
-                .append(localMapStats.getLockedEntryCount()).append(", ").append("Dirty entry count: ")
-                .append(localMapStats.getDirtyEntryCount()).append(", ").append("Total get latency: ")
-                .append(localMapStats.getMaxGetLatency()).append(", ").append("Total put latency: ")
-                .append(localMapStats.getTotalPutLatency()).append(", ").append("Total remove latency: ")
-                .append(localMapStats.getTotalRemoveLatency()).append(", ").append("Heap cost: ")
+        public String toString(final StringBuilder builder) {
+            val localMapStats = map.getLocalMapStats();
+            builder.append("Creation time: ")
+                .append(localMapStats.getCreationTime())
+                .append(", Cluster size: ")
+                .append(clusterSize)
+                .append(", Owned entry count: ")
+                .append(localMapStats.getOwnedEntryCount())
+                .append(", Backup entry count: ")
+                .append(localMapStats.getBackupEntryCount())
+                .append(", Backup count: ")
+                .append(localMapStats.getBackupCount())
+                .append(", Hits count: ")
+                .append(localMapStats.getHits())
+                .append(", Last update time: ")
+                .append(localMapStats.getLastUpdateTime())
+                .append(", Last access time: ")
+                .append(localMapStats.getLastAccessTime())
+                .append(", Locked entry count: ")
+                .append(localMapStats.getLockedEntryCount())
+                .append(", Dirty entry count: ")
+                .append(localMapStats.getDirtyEntryCount())
+                .append(", Total get latency: ")
+                .append(localMapStats.getMaxGetLatency())
+                .append(", Total put latency: ")
+                .append(localMapStats.getTotalPutLatency())
+                .append(", Total remove latency: ")
+                .append(localMapStats.getTotalRemoveLatency())
+                .append(", Heap cost: ")
                 .append(localMapStats.getHeapCost());
             if (localMapStats.getNearCacheStats() != null) {
                 builder.append(", Misses: ").append(localMapStats.getNearCacheStats().getMisses());
             }
+            return builder.toString();
         }
     }
 }

@@ -1,11 +1,12 @@
 package org.apereo.cas.authentication.metadata;
 
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeCredential;
+
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Determines if the credential provided are for Remember Me Services and then sets the appropriate

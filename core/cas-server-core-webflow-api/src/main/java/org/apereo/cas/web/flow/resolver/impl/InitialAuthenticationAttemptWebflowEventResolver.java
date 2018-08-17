@@ -1,17 +1,11 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.audit.AuditableExecutionResult;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
@@ -23,16 +17,22 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -48,10 +48,8 @@ import java.util.stream.Collectors;
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver implements CasDelegatingWebflowEventResolver {
 
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
-
-    private CasWebflowEventResolver selectiveResolver;
-
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private CasWebflowEventResolver selectiveResolver;
 
     public InitialAuthenticationAttemptWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                             final CentralAuthenticationService centralAuthenticationService,
@@ -70,62 +68,71 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
         try {
-            final Credential credential = getCredentialFromContext(context);
-            final Service service = WebUtils.getService(context);
+            val credential = getCredentialFromContext(context);
+            val service = WebUtils.getService(context);
             if (credential != null) {
-                final AuthenticationResultBuilder builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
+                val builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
                 if (builder.getInitialAuthentication().isPresent()) {
                     WebUtils.putAuthenticationResultBuilder(builder, context);
                     WebUtils.putAuthentication(builder.getInitialAuthentication().get(), context);
                 }
             }
-            final RegisteredService registeredService = determineRegisteredServiceForEvent(context, service);
+            val registeredService = determineRegisteredServiceForEvent(context, service);
             LOGGER.debug("Attempting to resolve candidate authentication events for service [{}]", service);
-            final Set<Event> resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
+            val resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
             if (!resolvedEvents.isEmpty()) {
                 LOGGER.debug("The set of authentication events resolved for [{}] are [{}]. Beginning to select the final event...", service, resolvedEvents);
                 putResolvedEventsAsAttribute(context, resolvedEvents);
-                final Event finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
+                val finalResolvedEvent = this.selectiveResolver.resolveSingle(context);
                 LOGGER.debug("The final authentication event resolved for [{}] is [{}]", service, finalResolvedEvent);
                 if (finalResolvedEvent != null) {
                     return CollectionUtils.wrapSet(finalResolvedEvent);
                 }
+            } else {
+                LOGGER.debug("No candidate authentication events were resolved for service [{}]", service);
             }
-            final AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(context);
+
+            val builder = WebUtils.getAuthenticationResultBuilder(context);
             if (builder == null) {
                 throw new IllegalArgumentException("No authentication result builder can be located in the context");
             }
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
-            Event event = returnAuthenticationExceptionEventIfNeeded(e);
+            var event = returnAuthenticationExceptionEventIfNeeded(e);
             if (event == null) {
                 LOGGER.warn(e.getMessage(), e);
                 event = newEvent(CasWebflowConstants.TRANSITION_ID_ERROR, e);
             }
-            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return CollectionUtils.wrapSet(event);
         }
     }
 
     private RegisteredService determineRegisteredServiceForEvent(final RequestContext context, final Service service) {
-        RegisteredService registeredService = null;
-        if (service != null) {
-            LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
-            registeredService = this.servicesManager.findServiceBy(service);
-            LOGGER.debug("Locating authentication event in the request context...");
-            final Authentication authn = WebUtils.getAuthentication(context);
-
-            LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
-
-            final AuditableContext audit = AuditableContext.builder().service(service)
-                .authentication(authn)
-                .registeredService(registeredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
-                .build();
-            final AuditableExecutionResult result = this.registeredServiceAccessStrategyEnforcer.execute(audit);
-            result.throwExceptionIfNeeded();
+        if (service == null) {
+            return null;
         }
+
+        LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
+        val registeredService = this.servicesManager.findServiceBy(service);
+        LOGGER.debug("Locating authentication event in the request context...");
+        val authn = WebUtils.getAuthentication(context);
+
+        LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
+        val unauthorizedRedirectUrl = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
+        if (unauthorizedRedirectUrl != null) {
+            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, unauthorizedRedirectUrl);
+        }
+
+        val audit = AuditableContext.builder()
+            .service(service)
+            .authentication(authn)
+            .registeredService(registeredService)
+            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
+            .build();
+        val result = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        result.throwExceptionIfNeeded();
         return registeredService;
     }
 
@@ -138,11 +145,20 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      * @return the set
      */
     protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context,
-                                                              final Service service, final RegisteredService registeredService) {
-        return this.orderedResolvers.stream()
-            .map(resolver -> resolver.resolveSingle(context))
+                                                              final Service service,
+                                                              final RegisteredService registeredService) {
+
+        val byEventId = Comparator.comparing(Event::getId);
+        val supplier = (Supplier<TreeSet<Event>>) () -> new TreeSet<>(byEventId);
+
+        return this.orderedResolvers
+            .stream()
+            .map(resolver -> {
+                LOGGER.debug("Resolving candidate authentication event for service [{}] using [{}]", service, resolver.getName());
+                return resolver.resolveSingle(context);
+            })
             .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(supplier));
     }
 
     @Override
@@ -160,15 +176,16 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
     }
 
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
-        final Exception ex;
         if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
-            ex = e;
-        } else if (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException) {
-            ex = (Exception) e.getCause();
-        } else {
-            return null;
+            LOGGER.debug(e.getMessage(), e);
+            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
-        LOGGER.debug(ex.getMessage(), ex);
-        return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
+
+        if (e.getCause() instanceof AuthenticationException || e.getCause() instanceof AbstractTicketException) {
+            val ex = e.getCause();
+            LOGGER.debug(ex.getMessage(), ex);
+            return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
+        }
+        return null;
     }
 }

@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
 
 /**
  * This is {@link LdapAuthorizationProperties}.
@@ -12,7 +12,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Getter
 @Setter
 public class LdapAuthorizationProperties implements Serializable {

@@ -1,10 +1,11 @@
 package org.apereo.cas.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegexRegisteredService;
+
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +28,6 @@ import static org.mockito.Mockito.*;
  * @author Daniel Frett
  * @since 5.0.0
  */
-@Slf4j
 public class DefaultMultifactorTriggerSelectionStrategyTests {
 
     private static final String MFA_INVALID = "mfaInvalid";
@@ -57,8 +57,35 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     private MultifactorAuthenticationProperties mfaConfiguration;
     private DefaultMultifactorTriggerSelectionStrategy strategy;
 
+    private static HttpServletRequest mockRequest() {
+        return mock(HttpServletRequest.class);
+    }
+
+    private static HttpServletRequest mockRequest(final String provider) {
+        val request = mockRequest();
+        when(request.getParameter(REQUEST_PARAM)).thenReturn(provider);
+        return request;
+    }
+
+    private static RegexRegisteredService mockService(final String... providers) {
+        val policy = new DefaultRegisteredServiceMultifactorPolicy();
+        policy.setMultifactorAuthenticationProviders(Stream.of(providers).collect(Collectors.toCollection(LinkedHashSet::new)));
+        val service = new RegexRegisteredService();
+        service.setMultifactorPolicy(policy);
+        return service;
+    }
+
+    private static RegexRegisteredService mockPrincipalService(final String provider, final String attrName, final String attrValue) {
+        val service = mockService(provider);
+        val policy = (DefaultRegisteredServiceMultifactorPolicy) service.getMultifactorPolicy();
+        policy.setPrincipalAttributeNameTrigger(attrName);
+        policy.setPrincipalAttributeValueToMatch(attrValue);
+
+        return service;
+    }
+
     @Before
-    public void setUp() {
+    public void initialize() {
         mfaConfiguration = new MultifactorAuthenticationProperties();
         mfaConfiguration.setRequestParameter(REQUEST_PARAM);
         mfaConfiguration.setGlobalPrincipalAttributeNameTriggers(P_ATTRS_12);
@@ -71,7 +98,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     @Test
     public void verifyNoProviders() {
         assertThat(strategy.resolve(NO_PROVIDERS, mockRequest(MFA_PROVIDER_ID_1), mockService(MFA_PROVIDER_ID_1), null).isPresent(),
-                is(false));
+            is(false));
     }
 
     @Test
@@ -89,46 +116,46 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_PROVIDER_ID_2), null).orElse(null), is(MFA_PROVIDER_ID_2));
 
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID, MFA_PROVIDER_ID_1, MFA_PROVIDER_ID_2), null).get(),
-                is(MFA_PROVIDER_ID_1));
+            is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockService(MFA_INVALID), null).isPresent(), is(false));
 
         // Principal attribute activated RegisteredService trigger - direct match
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTR_1, VALUE_1),
-                getAuthentication(mockPrincipal(RS_ATTR_1, VALUE_1))).orElse(null),
-                is(MFA_PROVIDER_ID_1));
+            getAuthentication(mockPrincipal(RS_ATTR_1, VALUE_1))).orElse(null),
+            is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTR_1, VALUE_1),
-                getAuthentication(mockPrincipal(RS_ATTR_1, VALUE_2))).orElse(null),
-                nullValue());
+            getAuthentication(mockPrincipal(RS_ATTR_1, VALUE_2))).orElse(null),
+            nullValue());
 
         // Principal attribute activated RegisteredService trigger - multiple attrs
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12, VALUE_1),
-                getAuthentication(mockPrincipal(RS_ATTR_1, VALUE_1))).orElse(null),
-                is(MFA_PROVIDER_ID_1));
+            getAuthentication(mockPrincipal(RS_ATTR_1, VALUE_1))).orElse(null),
+            is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12, VALUE_1),
-                getAuthentication(mockPrincipal(RS_ATTR_2, VALUE_1))).orElse(null),
-                is(MFA_PROVIDER_ID_1));
+            getAuthentication(mockPrincipal(RS_ATTR_2, VALUE_1))).orElse(null),
+            is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12, VALUE_1),
-                getAuthentication(mockPrincipal(RS_ATTR_3, VALUE_1))).orElse(null),
-                nullValue());
+            getAuthentication(mockPrincipal(RS_ATTR_3, VALUE_1))).orElse(null),
+            nullValue());
 
         // Principal attribute activated RegisteredService trigger - pattern value
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12,
-                VALUE_PATTERN), getAuthentication(mockPrincipal(RS_ATTR_2, VALUE_1))).orElse(null),
-                is(MFA_PROVIDER_ID_1));
+            VALUE_PATTERN), getAuthentication(mockPrincipal(RS_ATTR_2, VALUE_1))).orElse(null),
+            is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12,
-                VALUE_PATTERN), getAuthentication(mockPrincipal(RS_ATTR_2, VALUE_2))).orElse(null),
-                is(MFA_PROVIDER_ID_1));
+            VALUE_PATTERN), getAuthentication(mockPrincipal(RS_ATTR_2, VALUE_2))).orElse(null),
+            is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, mockPrincipalService(MFA_PROVIDER_ID_1, RS_ATTRS_12, VALUE_PATTERN),
-                getAuthentication(mockPrincipal(RS_ATTR_2, VALUE_NOMATCH))).isPresent(), is(false));
+            getAuthentication(mockPrincipal(RS_ATTR_2, VALUE_NOMATCH))).isPresent(), is(false));
     }
 
     @Test
     public void verifyPrincipalAttributeTrigger() {
         // Principal attribute trigger
         assertThat(strategy.resolve(VALID_PROVIDERS, null, null, getAuthentication(mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_1))).orElse(null),
-                is(MFA_PROVIDER_ID_1));
+            is(MFA_PROVIDER_ID_1));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, null, getAuthentication(mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_2))).orElse(null),
-                is(MFA_PROVIDER_ID_2));
+            is(MFA_PROVIDER_ID_2));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, null, getAuthentication(mockPrincipal(P_ATTR_1, MFA_INVALID))).isPresent(), is(false));
     }
 
@@ -137,46 +164,19 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
         mfaConfiguration.setGlobalPrincipalAttributeValueRegex(VALUE_PATTERN);
 
         assertThat(strategy.resolve(SINGLE_PROVIDER, null, null, getAuthentication(mockPrincipal(P_ATTR_1, VALUE_1))).orElse(null),
-                is(MFA_PROVIDER_ID_1));
+            is(MFA_PROVIDER_ID_1));
     }
 
     @Test
     public void verifyMultipleTriggers() {
         // opt-in overrides everything
         assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_PROVIDER_ID_1), mockService(MFA_PROVIDER_ID_2),
-                getAuthentication(mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_2))).orElse(null),
-                is(MFA_PROVIDER_ID_1));
+            getAuthentication(mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_2))).orElse(null),
+            is(MFA_PROVIDER_ID_1));
 
         // RegisteredService overrides Principal attribute
         assertThat(strategy.resolve(VALID_PROVIDERS, mockRequest(MFA_INVALID), mockService(MFA_PROVIDER_ID_1),
-                getAuthentication(mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_2))).orElse(null),
-                is(MFA_PROVIDER_ID_1));
-    }
-
-    private static HttpServletRequest mockRequest() {
-        return mock(HttpServletRequest.class);
-    }
-
-    private static HttpServletRequest mockRequest(final String provider) {
-        final HttpServletRequest request = mockRequest();
-        when(request.getParameter(REQUEST_PARAM)).thenReturn(provider);
-        return request;
-    }
-
-    private static RegexRegisteredService mockService(final String... providers) {
-        final DefaultRegisteredServiceMultifactorPolicy policy = new DefaultRegisteredServiceMultifactorPolicy();
-        policy.setMultifactorAuthenticationProviders(Stream.of(providers).collect(Collectors.toCollection(LinkedHashSet::new)));
-        final RegexRegisteredService service = new RegexRegisteredService();
-        service.setMultifactorPolicy(policy);
-        return service;
-    }
-
-    private static RegexRegisteredService mockPrincipalService(final String provider, final String attrName, final String attrValue) {
-        final RegexRegisteredService service = mockService(provider);
-        final DefaultRegisteredServiceMultifactorPolicy policy = (DefaultRegisteredServiceMultifactorPolicy) service.getMultifactorPolicy();
-        policy.setPrincipalAttributeNameTrigger(attrName);
-        policy.setPrincipalAttributeValueToMatch(attrValue);
-
-        return service;
+            getAuthentication(mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_2))).orElse(null),
+            is(MFA_PROVIDER_ID_1));
     }
 }

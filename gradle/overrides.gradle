@@ -2,34 +2,34 @@
   Override the version used by Spring boot to match CAS.
   As boot is upgraded, some of these enforcements below
   may become unnecessary when/if version numbers match.
- */
-/*
-  Override the version used by Spring boot to match CAS.
-  As boot is upgraded, some of these enforcements below
-  may become unnecessary when/if version numbers match.
   
   Versions are explicitly kept here so that gradle-based
   overlays could use and pull this file and have their 
   dependencies match that of CAS. 
  */
-ext["hibernateVersion"] = "5.2.16.Final"
-ext["springBootTomcatVersion"] = "8.5.29"
-ext["hazelcastVersion"] = "3.9.3"
-ext["infinispanVersion"] = "9.1.1.Final"
-ext["springVersion"] = "4.3.15.RELEASE"
-ext["jacksonDatabindVersion"] = "2.9.5"
+ext["hibernateVersion"] = "5.3.4.Final"
+ext["springBootTomcatVersion"] = "9.0.10"
+ext["hazelcastVersion"] = "3.10.4"
+ext["infinispanVersion"] = "9.3.0.Final"
+ext["springVersion"] = "5.0.8.RELEASE"
+ext["jacksonDatabindVersion"] = "2.9.6"
 ext["thymeleafVersion"] = "3.0.9.RELEASE"
 ext["thymeleafDialectVersion"] = "2.3.0"
 ext["springSessionVersion"] = "1.3.1.RELEASE"
-ext["hsqlVersion"] = "2.4.0"
-ext["httpCoreVersion"] = "4.4.9"
-ext["hikariVersion"] = "3.0.0"
-ext["groovyVersion"] = "2.4.15"
-ext["log4jVersion"] = "2.11.0"
+ext["hsqlVersion"] = "2.4.1"
+ext["httpCoreVersion"] = "4.4.10"
+ext["hikariVersion"] = "3.2.0"
+ext["groovyVersion"] = "3.0.0-alpha-3"
+ext["log4jVersion"] = "2.11.1"
 ext["commonsBeansVersion"] = "1.9.3"
 ext["dropwizardMetricsVersion"] = "3.2.5"
 ext["caffeinVersion"] = "2.6.2"
-ext["couchbaseVersion"] = "2.5.5"
+ext["couchbaseVersion"] = "2.6.1"
+ext["mysqlVersion"] = "8.0.12"
+ext["postgresqlVersion"] = "42.2.4"
+ext["mariaDbVersion"] = "2.2.6"
+ext["jtdsVersion"] = "1.3.1"
+ext["mssqlServerVersion"] = "7.0.0.jre10"
 
 ext["couchbase-client.version"] = ext["couchbaseVersion"]
 ext["caffeine.version"] = ext["caffeinVersion"]
@@ -50,3 +50,8 @@ ext["groovy.version"] = ext["groovyVersion"]
 ext["log4j2.version"] = ext["log4jVersion"]
 ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
 ext["dropwizard-metrics.version"] = ext["dropwizardMetricsVersion"]
+ext["mysql.version"] = ext["mysqlVersion"]
+ext["postgresql.version"] = ext["postgresqlVersion"]
+ext["mariadb.version"] = ext["mariaDbVersion"]
+ext["jtds.version"] = ext["jtdsVersion"]
+ext["mssql-jdbc.version"] = ext["mssqlServerVersion"]

@@ -1,12 +1,13 @@
 package org.apereo.cas.configuration.model.support.generic;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for remote.authn.
@@ -15,7 +16,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-generic-remote-webflow")
-@Slf4j
 @Getter
 @Setter
 public class RemoteAddressAuthenticationProperties implements Serializable {

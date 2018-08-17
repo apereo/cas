@@ -57,6 +57,12 @@ Duo Security altogether and shall not challenge the user and will also **NOT** r
 
 <div class="alert alert-warning"><strong>YMMV</strong><p>In recent conversations with Duo Security, it turns out that the API behavior has changed (for security reasons) where it may no longer accurately report back account status. This means even if the above conditions hold true, CAS may continue to route the user to Duo Security having received an eligibility status from the API. Duo Security is reportedly working on a fix to restore the AP behavior in a more secure way. In the meanwhile, YMMV.</p></div>
 
+## Health Status
+
+CAS is able to contact Duo Security, on demand, in order to inquire the health status of the service using Duo Security's `ping` API. 
+The results of the operations are recorded and reported using `health` endpoint provided by [CAS Monitoring endpoints](Monitoring-Statistics.html).
+Of course, the same result throughout the Duo authentication flow is also used to determine failure modes.
+ 
 ## Non-Browser MFA
 
 The Duo Security module of CAS is able to also support [non-browser based multifactor authentication](https://duo.com/docs/authapi) requests.

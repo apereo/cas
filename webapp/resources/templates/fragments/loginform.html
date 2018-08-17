@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title>Login Form Fragment</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 </head>
 <body>
 <main role="main" class="container mt-3 mb-3">
@@ -29,6 +29,27 @@
 
                         <h3 th:utext="#{screen.welcome.instructions}">Enter your Username and Password</h3>
 
+                        <section class="form-group">
+                            <span th:if="${availableAuthenticationHandlerNames.size() > 1}">
+                                <label for="source" th:utext="#{screen.welcome.label.source}">Source</label>
+                                <div>
+                                    <select class="form-control required"
+                                            id="source"
+                                            name="source"
+                                            tabindex="0"
+                                            th:field="*{source}">
+                                        <option th:each="handler : ${availableAuthenticationHandlerNames}" th:value="${handler}" th:text="${handler}">Source</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <span th:if="${availableAuthenticationHandlerNames.size() == 1}">
+                                 <input type="hidden"
+                                        id="source"
+                                        name="source"
+                                        th:value="${availableAuthenticationHandlerNames.get(0)}"/>
+                            </span>
+                        </section>
+                       
                         <section class="form-group">
                             <label for="username" th:utext="#{screen.welcome.label.netid}">Username</label>
 
@@ -75,9 +96,10 @@
                             </div>
                         </section>
 
-                        <section class="form-check" th:if="${passwordManagementEnabled}">
+                        <section class="form-check" th:if="${passwordManagementEnabled && param.doChangePassword != null}">
                             <p>
-                                <input type="checkbox" name="doChangePassword" id="doChangePassword" value="true" th:checked="${param.doChangePassword != null}" tabindex="4"/>
+                                <input type="checkbox" name="doChangePassword" id="doChangePassword"
+                                       value="true" th:checked="${param.doChangePassword != null}" tabindex="4"/>
                                 <label for="doChangePassword" th:text="#{screen.button.changePassword}">Change Password</label>
                             </p>
                         </section>
@@ -89,7 +111,7 @@
                             </p>
                         </section>
 
-                        <section class="row" th:if="${recaptchaSiteKey}">
+                        <section class="row" th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey AND !recaptchaInvisible}">
                             <div class="g-recaptcha" th:attr="data-sitekey=${recaptchaSiteKey}"/>
                         </section>
 
@@ -97,12 +119,22 @@
                         <input type="hidden" name="_eventId" value="submit"/>
                         <input type="hidden" name="geolocation"/>
                         <input class="btn btn-block btn-submit"
+                               th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey AND recaptchaInvisible}"
                                name="submit"
                                accesskey="l"
                                th:value="#{screen.welcome.button.login}"
                                tabindex="6"
                                type="submit"
                                value="Login3"
+                        />
+                        <button class="btn btn-block btn-submit g-recaptcha"
+                                th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaSiteKey AND recaptchaInvisible}"
+                                th:attr="data-sitekey=${recaptchaSiteKey}, data-badge=${recaptchaPosition}"
+                                data-callback="onSubmit"
+                                name="submitBtn"
+                                accesskey="l"
+                                th:text="#{screen.welcome.button.login}"
+                                tabindex="6"
                         />
                     </form>
 
@@ -111,6 +143,14 @@
                         <input type="hidden" name="_eventId" value="resetPassword"/>
                         <span class="fa fa-unlock"></span>
                         <a th:utext="#{screen.pm.button.resetPassword}" href="javascript:void(0)" onclick="$('#passwordManagementForm').submit();"/>
+                        <p/>
+                    </form>
+
+                    <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementUserForm">
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="forgotUsername"/>
+                        <span class="fa fa-unlock"></span>
+                        <a th:utext="#{screen.pm.button.forgotUsername}" href="javascript:void(0)" onclick="$('#passwordManagementUserForm').submit();"/>
                         <p/>
                     </form>
 
@@ -126,7 +166,6 @@
                             $("#fm1").submit(function () {
                                 $(":submit").attr("disabled", true);
                                 $(":submit").attr("value", i);
-                                console.log(i);
                                 return true;
                             });
                         });

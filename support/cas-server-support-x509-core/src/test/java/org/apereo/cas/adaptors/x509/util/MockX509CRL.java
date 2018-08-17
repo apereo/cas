@@ -1,7 +1,11 @@
 package org.apereo.cas.adaptors.x509.util;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.val;
+
+import javax.security.auth.x500.X500Principal;
 import java.math.BigInteger;
 import java.security.Principal;
 import java.security.PublicKey;
@@ -11,30 +15,31 @@ import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Set;
-import javax.security.auth.x500.X500Principal;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * Mock implementation of X.509 CRL.
  *
  * @author Marvin S. Addison
  * @since 3.4.6
- *
  */
-@Slf4j
 @ToString
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MockX509CRL extends X509CRL {
 
-    /** Issuer name */
+    /**
+     * Issuer name
+     */
     private final X500Principal issuer;
 
-    /** Instant CRL was issued. */
+    /**
+     * Instant CRL was issued.
+     */
     private final Date thisUpdate;
 
-    /** Instant on which next CRL update expected. */
+    /**
+     * Instant on which next CRL update expected.
+     */
     private final Date nextUpdate;
 
     @Override
@@ -46,7 +51,7 @@ public class MockX509CRL extends X509CRL {
     public Set<String> getCriticalExtensionOIDs() {
         return null;
     }
-    
+
     @Override
     public boolean hasUnsupportedCriticalExtension() {
         return false;
@@ -66,7 +71,7 @@ public class MockX509CRL extends X509CRL {
     public Set<String> getNonCriticalExtensionOIDs() {
         return null;
     }
-    
+
     @Override
     public X509CRLEntry getRevokedCertificate(final BigInteger serialNumber) {
         return null;
@@ -114,7 +119,7 @@ public class MockX509CRL extends X509CRL {
 
     @Override
     public void verify(final PublicKey key) {
-    // Do nothing to indicate valid signature
+        // Do nothing to indicate valid signature
     }
 
     @Override
@@ -128,7 +133,7 @@ public class MockX509CRL extends X509CRL {
     @Override
     public boolean isRevoked(final Certificate cert) {
         if (cert instanceof X509Certificate) {
-            final X509Certificate xcert = (X509Certificate) cert;
+            val xcert = (X509Certificate) cert;
             return getRevokedCertificates().stream().anyMatch(entry -> entry.getSerialNumber().equals(xcert.getSerialNumber()));
         }
         return false;

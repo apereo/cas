@@ -1,11 +1,12 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Before;
@@ -32,7 +33,6 @@ import static org.mockito.Mockito.*;
  */
 @DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
-@Slf4j
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";
@@ -62,14 +62,14 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Test
     public void verifyTgtToSet() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr(LOCALHOST_IP);
         request.setLocalAddr(LOCALHOST_IP);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
         request.addHeader("User-Agent", "Test");
-        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TEST_STRING);
 
         WebUtils.putTicketGrantingTicketInScopes(this.context, tgt);
@@ -82,15 +82,15 @@ public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenti
 
     @Test
     public void verifyTgtToSetRemovingOldTgt() throws Exception {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setRemoteAddr(LOCALHOST_IP);
         request.setLocalAddr(LOCALHOST_IP);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
 
-        final MockHttpServletResponse response = new MockHttpServletResponse();
+        val response = new MockHttpServletResponse();
         request.addHeader("User-Agent", "Test");
 
-        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn(TEST_STRING);
 
         request.setCookies(new Cookie("TGT", "test5"));

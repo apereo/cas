@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title>CAS Resource List Fragment</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 </head>
 <body>
 <main role="main" class="container mt-3 mb-3">
@@ -14,14 +14,14 @@
         <div class="card-body">
             <h3 class="card-title" th:text="#{cas.login.resources.header}">Links to CAS Resources</h3>
             <ul class="list-group">
-                <li class="list-group-item">
-                    <a th:href="@{/status/dashboard}" th:inline="text">
-                        <i class="fa fa-cogs"></i>[[#{cas.login.resources.dashboard}]]
-                    </a>
-                </li>
                 <li class="list-group-item" th:if="${attributeConsentEnabled}">
                     <a th:href="@{/consentReview}" th:inline="text">
                         <i class="fa fa-cogs"></i>[[#{screen.consent.title}]]
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a th:href="@{/actuator}" th:inline="text">
+                        <i class="fa fa-cogs"></i>[[#{cas.login.resources.endpoints}]]
                     </a>
                 </li>
                 <li class="list-group-item">

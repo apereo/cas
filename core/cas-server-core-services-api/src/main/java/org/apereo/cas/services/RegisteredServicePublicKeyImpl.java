@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -7,9 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.annotation.Transient;
@@ -23,7 +24,6 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 @ToString
 @Getter
 @Setter
@@ -55,7 +55,7 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     @SneakyThrows
     @Override
     public PublicKey createInstance() {
-        final PublicKeyFactoryBean factory = this.publicKeyFactoryBeanClass.getDeclaredConstructor().newInstance();
+        val factory = this.publicKeyFactoryBeanClass.getDeclaredConstructor().newInstance();
         if (this.location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
             factory.setResource(new ClassPathResource(StringUtils.removeStart(this.location, ResourceUtils.CLASSPATH_URL_PREFIX)));
         } else {

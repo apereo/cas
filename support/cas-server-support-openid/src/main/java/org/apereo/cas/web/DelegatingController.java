@@ -1,14 +1,16 @@
 package org.apereo.cas.web;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
+
+import lombok.Setter;
+import lombok.val;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import lombok.Setter;
 
 /**
  * Delegating controller.
@@ -18,7 +20,6 @@ import lombok.Setter;
  * @author Frederic Esnault
  * @since 3.5
  */
-@Slf4j
 @Setter
 public class DelegatingController extends AbstractController {
 
@@ -47,7 +48,7 @@ public class DelegatingController extends AbstractController {
      */
     @Override
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        for (final AbstractDelegateController delegate : this.delegates) {
+        for (val delegate : this.delegates) {
             if (delegate.canHandle(request, response)) {
                 return delegate.handleRequestInternal(request, response);
             }
@@ -63,8 +64,8 @@ public class DelegatingController extends AbstractController {
      * @return the model and view
      */
     private ModelAndView generateErrorView(final String code, final Object[] args) {
-        final ModelAndView modelAndView = new ModelAndView(this.failureView);
-        final String convertedDescription = getMessageSourceAccessor().getMessage(code, args, code);
+        val modelAndView = new ModelAndView(this.failureView);
+        val convertedDescription = getMessageSourceAccessor().getMessage(code, args, code);
         modelAndView.addObject("code", StringEscapeUtils.escapeHtml4(code));
         modelAndView.addObject("description", StringEscapeUtils.escapeHtml4(convertedDescription));
         return modelAndView;

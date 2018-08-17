@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.support.jpa.serviceregistry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-jpa-service-registry")
-@Slf4j
 @Getter
 @Setter
 public class JpaServiceRegistryProperties extends AbstractJpaProperties {

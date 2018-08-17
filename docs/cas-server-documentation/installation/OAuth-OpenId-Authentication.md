@@ -29,11 +29,13 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 After enabling OAuth support, the following endpoints will be available:
 
-| Endpoint                        | Description                                                           | Method
-|---------------------------------|-----------------------------------------------------------------------|---------
-| `/oauth2.0/authorize`       | Authorize the user and start the CAS authentication flow.                 | `GET`
-| `/oauth2.0/accessToken`,`/oauth2.0/token`      | Get an access token in plain-text or JSON           | `POST`
-| `/oauth2.0/profile`         | Get the authenticated user profile in JSON via `access_token` parameter.  | `GET`
+| Endpoint                  | Description                                                           | Method
+|---------------------------|-----------------------------------------------------------------------|---------
+| `/oauth2.0/authorize`     | Authorize the user and start the CAS authentication flow.                   | `GET`
+| `/oauth2.0/accessToken`,`/oauth2.0/token`      | Get an access token in plain-text or JSON              | `POST`
+| `/oauth2.0/profile`       | Get the authenticated user profile in JSON via `access_token` parameter.    | `GET`
+| `/oauth2.0/introspect`    | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662).  | `POST`
+| `/oauth2.0/device`        | Approve device user codes via the [device flow protocol](https://tools.ietf.org/html/draft-denniss-oauth-device-flow). | `POST`
 
 ## Response/Grant Types
 
@@ -48,6 +50,28 @@ The authorization code type is made for UI interactions: the user will enter cre
 |-------------------------|----------------------------------------------------------|---------------------------
 | `/oauth2.0/authorize`   | `response_type=code&client_id=<ID>&redirect_uri=<CALLBACK>`  | OAuth code as a parameter of the `CALLBACK` url.
 | `/oauth2.0/accessToken` | `grant_type=authorization_code&client_id=ID`<br/>`&client_secret=SECRET&code=CODE&redirect_uri=CALLBACK`  | The access token.
+
+#### Proof Key Code Exchange (PKCE)
+
+The [Proof Key for Code Exchange](https://tools.ietf.org/html/rfc7636) (PKCE, pronounced pixie) extension describes a technique for public clients to mitigate the threat of having the authorization code intercepted. The technique involves the client first creating a secret, and then using that secret again when exchanging the authorization code for an access token. This way if the code is intercepted, it will not be useful since the token request relies on the initial secret.
+
+The authorization code type at the authorization endpoint `/oauth2.0/authorize` is able to accept the following parameters to activate PKCE:
+
+| Parameter                | Description                                            
+|-------------------------|------------------------------------------------------
+| `code_challenge`        |  The code challenge generated using the method below.
+| `code_challenge_method` | `plain`, `S256`. This parameter is optional, where `plain` is assumed by default.
+
+The `/oauth2.0/accessToken`  endpoint is able to accept the following parameters to activate PKCE:
+
+| Parameter                | Description                                            
+|-------------------------|------------------------------------------------------
+| `code_verifier`        | The original code verifier for the PKCE request, that the app originally generated before the authorization request.
+
+If the method is `plain`, then the CAS needs only to check that the provided `code_verifier` matches the expected `code_challenge` string. 
+If the method is `S256`, then the CAS should take the provided `code_verifier` and transform it using the same method the client will have used initially. This means calculating the SHA256 hash of the verifier and base64-url-encoding it, then comparing it to the stored `code_challenge`.
+
+If the verifier matches the expected value, then the CAS can continue on as normal, issuing an access token and responding appropriately.
 
 ### Token/Implicit
 
@@ -86,7 +110,14 @@ when this previous access token is expired.
 
 | Endpoint                | Parameters                                               | Response
 |-------------------------|----------------------------------------------------------|---------------------------
-| `/oauth2.0/accessToken`   | `grant_type=refresh_token&client_id=ID`<br/>`&client_secret=SECRET&refresh_token=REFRESH_TOKEN` | The new access token.
+| `/oauth2.0/accessToken`   | `grant_type=refresh_token&client_id=<ID>`<br/>`&client_secret=SECRET&refresh_token=REFRESH_TOKEN` | The new access token.
+
+### Device Flow
+
+| Endpoint                | Parameters                                               | Response
+|-------------------------|----------------------------------------------------------|---------------------------
+| `/oauth2.0/accessToken`   | `response_type=device_code&client_id=<ID>` | Device authorization url, device code and user code.
+| `/oauth2.0/accessToken`   | `response_type=device_code&client_id=<ID>&code=<DEVICE_CODE>` | New access token once the user code is approved.
 
 ## Grant Type Selection
 
@@ -107,7 +138,9 @@ Every OAuth client must be defined as a CAS service (notice the new *clientId* a
   "clientSecret": "clientSecret",
   "serviceId" : "^(https|imaps)://<redirect-uri>.*",
   "name" : "OAuthService",
-  "id" : 100
+  "id" : 100,
+  "supportedGrantTypes": [ "java.util.HashSet", [ "...", "..." ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "...", "..." ] ]
 }
 ```
 
@@ -121,7 +154,6 @@ The following fields are supported:
 | `supportedResponseTypes`          | Collection of supported response types for this service.
 | `bypassApprovalPrompt`            | Whether approval prompt/consent screen should be bypassed. Default is `false`.
 | `generateRefreshToken`            | Whether a refresh token should be generated along with the access token. Default is `false`.
-| `jsonFormat`                      | Whether oauth responses for access tokens, etc should be produced as JSON. Default is `false`.
 | `serviceId`                       | The pattern that authorizes the redirect URI(s), or same as `clientId` in case `redirect_uri` is not required by the grant type (i.e `client_credentials`, etc).
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a particular integration. It is <strong>UNNECESSARY</strong> to grab a copy of all service fields and try to configure them yet again based on their default. While you may wish to keep a copy as a reference, this strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>

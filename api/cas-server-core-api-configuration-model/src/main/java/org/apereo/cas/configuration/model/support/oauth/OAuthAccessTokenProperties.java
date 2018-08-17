@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link OAuthAccessTokenProperties}.
@@ -13,7 +14,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-oauth")
-@Slf4j
 @Getter
 @Setter
 public class OAuthAccessTokenProperties implements Serializable {
@@ -30,10 +30,4 @@ public class OAuthAccessTokenProperties implements Serializable {
      * Essentially, this is an idle time out.
      */
     private String timeToKillInSeconds = "PT7200S";
-
-    /**
-     * Whether CAS authentication/protocol attributes
-     * should be released as part of this access token's validation.
-     */
-    private boolean releaseProtocolAttributes = true;
 }

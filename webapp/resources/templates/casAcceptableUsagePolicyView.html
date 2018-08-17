@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title th:text="#{cas.acceptableusagepolicyview.pagetitle}"></title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 </head>
 
 <body id="cas">
@@ -14,7 +14,7 @@
     <div layout:fragment="content" id="login" class="card">
         <form method="post" id="fm1">
             <div class="card-header text-center">
-                <h3 th:text="screen.aup.heading">Acceptable Usage Policy</h3>
+                <h3 th:text="#{screen.aup.heading}">Acceptable Usage Policy</h3>
             </div>
             <div class="card-body">
                 <div>
@@ -22,19 +22,23 @@
                     network resources in conjunction with the established culture of ethical and lawful behavior,
                     openness, trust, and
                     integrity.
-                    <p>By using these resources, you agree to abide by the Acceptable Usage Policy.</p>
+                    <div>
+                        <p/>
+                        <p>By using these resources, you agree to abide by the Acceptable Usage Policy.</p>
+                    </div>
                 </div>
 
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="submit"/>
-                <input class="btn btn-primary"
+                <input class="btn btn-success"
                        name="submit"
                        accesskey="s"
                        th:value="#{screen.aup.button.accept}"
                        value="ACCEPT"
                        type="submit"/>
+                <span style="width: 3px"></span>
                 <input
-                        class="btn btn-default"
+                        class="btn btn-warning"
                         name="cancel"
                         accesskey="c"
                         th:value="#{screen.aup.button.cancel}"

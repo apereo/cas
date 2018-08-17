@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.query;
 
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+
 import org.opensaml.saml.common.SAMLObject;
 
 /**
@@ -21,7 +22,7 @@ public interface SamlAttributeQueryTicketFactory extends TicketFactory {
      * @param ticketGrantingTicket the ticket granting ticket
      * @return the access token
      */
-    SamlAttributeQueryTicket create(String id, SAMLObject samlObject, 
+    SamlAttributeQueryTicket create(String id, SAMLObject samlObject,
                                     String relyingParty, TicketGrantingTicket ticketGrantingTicket);
 
     /**
@@ -31,6 +32,6 @@ public interface SamlAttributeQueryTicketFactory extends TicketFactory {
      * @return the string
      */
     default String createTicketIdFor(final String id) {
-        return SamlAttributeQueryTicket.PREFIX + "-" + id;
+        return SamlAttributeQueryTicket.PREFIX + '-' + id;
     }
 }

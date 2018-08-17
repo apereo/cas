@@ -1,7 +1,8 @@
 package org.apereo.cas.authentication;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Principal;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -29,7 +30,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface Authentication extends Serializable {
 
     /**
@@ -53,7 +54,7 @@ public interface Authentication extends Serializable {
      * @return the map of attributes.
      */
     Map<String, Object> getAttributes();
-    
+
     /**
      * Add attribute to the authentication object and update the instance.
      *

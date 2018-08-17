@@ -1,7 +1,10 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.saml.OpenSamlConfigBean;
+
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -10,8 +13,6 @@ import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
 import org.apache.velocity.runtime.resource.loader.StringResourceLoader;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;
@@ -25,7 +26,6 @@ import org.springframework.context.annotation.Lazy;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -36,7 +36,6 @@ import java.util.Properties;
  */
 @Configuration("coreSamlConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CoreSamlConfiguration {
 
     private static final int POOL_SIZE = 100;
@@ -47,7 +46,7 @@ public class CoreSamlConfiguration {
     @Lazy
     @Bean(name = "shibboleth.VelocityEngine")
     public VelocityEngine velocityEngineFactoryBean() {
-        final Properties properties = new Properties();
+        val properties = new Properties();
         properties.put(RuntimeConstants.INPUT_ENCODING, StandardCharsets.UTF_8.name());
         properties.put(RuntimeConstants.ENCODING_DEFAULT, StandardCharsets.UTF_8.name());
         properties.put(RuntimeConstants.RESOURCE_LOADER, "file, classpath, string");
@@ -68,7 +67,7 @@ public class CoreSamlConfiguration {
     @SneakyThrows
     @Bean(name = "shibboleth.ParserPool", initMethod = "initialize")
     public BasicParserPool parserPool() {
-        final BasicParserPool pool = new BasicParserPool();
+        val pool = new BasicParserPool();
         pool.setMaxPoolSize(POOL_SIZE);
         pool.setCoalescing(true);
         pool.setIgnoreComments(true);
@@ -77,12 +76,12 @@ public class CoreSamlConfiguration {
         pool.setIgnoreComments(true);
         pool.setNamespaceAware(true);
 
-        final Map<String, Object> attributes = new HashMap<>();
-        final Class clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
+        val attributes = new HashMap<String, Object>();
+        val clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
         attributes.put("http://apache.org/xml/properties/security-manager", clazz.getDeclaredConstructor().newInstance());
         pool.setBuilderAttributes(attributes);
 
-        final Map<String, Boolean> features = new HashMap<>();
+        val features = new HashMap<String, Boolean>();
         features.put("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);
         features.put("http://apache.org/xml/features/validation/schema/normalized-value", Boolean.FALSE);
         features.put("http://javax.xml.XMLConstants/feature/secure-processing", Boolean.TRUE);

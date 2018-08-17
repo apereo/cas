@@ -1,12 +1,13 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
-import lombok.ToString;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link GeoLocationResponse} that represents a particular geo location
@@ -15,7 +16,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @ToString
 @Getter
 @Setter
@@ -31,9 +31,13 @@ public class GeoLocationResponse {
      * Add address.
      *
      * @param address the address
+     * @return the geo location response
      */
-    public void addAddress(final String address) {
-        this.addresses.add(address);
+    public GeoLocationResponse addAddress(final String address) {
+        if (StringUtils.isNotBlank(address)) {
+            this.addresses.add(address);
+        }
+        return this;
     }
 
     /**

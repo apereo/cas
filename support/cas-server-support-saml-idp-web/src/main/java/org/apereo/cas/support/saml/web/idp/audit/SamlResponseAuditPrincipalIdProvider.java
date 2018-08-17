@@ -1,8 +1,9 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
-import org.apereo.cas.audit.spi.DefaultAuditPrincipalIdProvider;
+import org.apereo.cas.audit.spi.principal.DefaultAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
-import org.opensaml.saml.saml2.core.Assertion;
+
+import lombok.val;
 import org.opensaml.saml.saml2.core.Response;
 
 /**
@@ -19,11 +20,12 @@ public class SamlResponseAuditPrincipalIdProvider extends DefaultAuditPrincipalI
 
     @Override
     public String getPrincipalIdFrom(final Authentication authentication, final Object returnValue, final Exception exception) {
-        final Response response = (Response) returnValue;
+        val response = (Response) returnValue;
         if (response.getAssertions().size() > 0) {
-            final Assertion assertion = response.getAssertions().get(0);
-            if (assertion.getSubject() != null && assertion.getSubject().getNameID() != null) {
-                return assertion.getSubject().getNameID().getValue();
+            val assertion = response.getAssertions().get(0);
+            val subject = assertion.getSubject();
+            if (subject != null && subject.getNameID() != null) {
+                return subject.getNameID().getValue();
             }
         }
         return super.getPrincipalIdFrom(authentication, returnValue, exception);

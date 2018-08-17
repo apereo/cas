@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Getter
-@Slf4j
 public class ChainingServiceRegistry extends AbstractServiceRegistry {
     private final Collection<ServiceRegistry> serviceRegistries;
 
@@ -33,9 +31,9 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
     public boolean delete(final RegisteredService registeredService) {
         return serviceRegistries.stream()
             .map(registry -> registry.delete(registeredService))
-            .filter(result -> result)
+            .filter(Boolean::booleanValue)
             .findAny()
-            .orElse(false);
+            .orElse(Boolean.FALSE);
     }
 
     @Override
@@ -85,7 +83,7 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public long size() {
-        final Predicate filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
+        val filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
         return serviceRegistries.stream()
             .filter(filter::test)
             .map(ServiceRegistry::size)
@@ -95,7 +93,7 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public String getName() {
-        final Predicate filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
+        val filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
         return serviceRegistries.stream()
             .filter(filter::test)
             .map(ServiceRegistry::getName)

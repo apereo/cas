@@ -8,6 +8,6 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-configuration-api")
     
-    implementation libraries.groovy
+
     implementation libraries.bouncycastle
 }

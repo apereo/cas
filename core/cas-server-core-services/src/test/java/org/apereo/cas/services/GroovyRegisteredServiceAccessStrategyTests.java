@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -18,7 +18,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class GroovyRegisteredServiceAccessStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceAccessStrategyTests.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
@@ -26,7 +25,7 @@ public class GroovyRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkDefaultAuthzStrategyConfig() {
-        final GroovyRegisteredServiceAccessStrategy authz = new GroovyRegisteredServiceAccessStrategy();
+        val authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
 
         assertTrue(authz.isServiceAccessAllowed());
@@ -38,11 +37,11 @@ public class GroovyRegisteredServiceAccessStrategyTests {
 
     @Test
     public void verifySerializationToJson() throws IOException {
-        final GroovyRegisteredServiceAccessStrategy authz = new GroovyRegisteredServiceAccessStrategy();
+        val authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
         MAPPER.writeValue(JSON_FILE, authz);
 
-        final RegisteredServiceAccessStrategy strategyRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceAccessStrategy.class);
+        val strategyRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceAccessStrategy.class);
         assertEquals(authz, strategyRead);
     }
 }

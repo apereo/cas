@@ -1,13 +1,15 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
+import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.hibernate.cfg.Environment;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
@@ -51,25 +53,24 @@ public class JpaBeans {
      */
     @SneakyThrows
     public static DataSource newDataSource(final AbstractJpaProperties jpaProperties) {
-        final String dataSourceName = jpaProperties.getDataSourceName();
-        final boolean proxyDataSource = jpaProperties.isDataSourceProxy();
+        val dataSourceName = jpaProperties.getDataSourceName();
+        val proxyDataSource = jpaProperties.isDataSourceProxy();
 
         if (StringUtils.isNotBlank(dataSourceName)) {
             try {
-                final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+                val dsLookup = new JndiDataSourceLookup();
                 dsLookup.setResourceRef(false);
-                final DataSource containerDataSource = dsLookup.getDataSource(dataSourceName);
+                val containerDataSource = dsLookup.getDataSource(dataSourceName);
                 if (!proxyDataSource) {
                     return containerDataSource;
                 }
                 return new DataSourceProxy(containerDataSource);
             } catch (final DataSourceLookupFailureException e) {
-                LOGGER.warn("Lookup of datasource [{}] failed due to {} "
-                    + "falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
+                LOGGER.warn("Lookup of datasource [{}] failed due to {} falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
             }
         }
 
-        final HikariDataSource bean = new HikariDataSource();
+        val bean = new HikariDataSource();
         if (StringUtils.isNotBlank(jpaProperties.getDriverClass())) {
             bean.setDriverClassName(jpaProperties.getDriverClass());
         }
@@ -97,7 +98,7 @@ public class JpaBeans {
      * @return the hibernate jpa vendor adapter
      */
     public static HibernateJpaVendorAdapter newHibernateJpaVendorAdapter(final DatabaseProperties databaseProperties) {
-        final HibernateJpaVendorAdapter bean = new HibernateJpaVendorAdapter();
+        val bean = new HibernateJpaVendorAdapter();
         bean.setGenerateDdl(databaseProperties.isGenDdl());
         bean.setShowSql(databaseProperties.isShowSql());
         return bean;
@@ -113,7 +114,7 @@ public class JpaBeans {
      */
     public static LocalContainerEntityManagerFactoryBean newHibernateEntityManagerFactoryBean(final JpaConfigDataHolder config,
                                                                                               final AbstractJpaProperties jpaProperties) {
-        final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
+        val bean = new LocalContainerEntityManagerFactoryBean();
         bean.setJpaVendorAdapter(config.getJpaVendorAdapter());
 
         if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
@@ -125,7 +126,7 @@ public class JpaBeans {
             bean.setDataSource(config.getDataSource());
         }
 
-        final Properties properties = new Properties();
+        val properties = new Properties();
         properties.put(Environment.DIALECT, jpaProperties.getDialect());
         properties.put(Environment.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
         properties.put(Environment.STATEMENT_BATCH_SIZE, jpaProperties.getBatchSize());
@@ -137,6 +138,9 @@ public class JpaBeans {
         }
         properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
         properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
+        properties.put("hibernate.connection.useUnicode", Boolean.TRUE);
+        properties.put("hibernate.connection.characterEncoding", "UTF-8");
+        properties.put("hibernate.connection.charSet", "UTF-8");
         properties.putAll(jpaProperties.getProperties());
         bean.setJpaProperties(properties);
 

@@ -1,9 +1,7 @@
 package org.apereo.cas.monitor;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 
@@ -18,8 +16,6 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@RunWith(JUnit4.class)
-@Slf4j
 public class PoolHealthIndicatorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
@@ -41,7 +37,7 @@ public class PoolHealthIndicatorTests {
                 return 2;
             }
         };
-        final Health health = monitor.health();
+        val health = monitor.health();
         assertEquals(health.getStatus(), Status.UP);
     }
 
@@ -64,7 +60,7 @@ public class PoolHealthIndicatorTests {
                 return 1;
             }
         };
-        final Health health = monitor.health();
+        val health = monitor.health();
         assertEquals(Status.DOWN, health.getStatus());
     }
 
@@ -86,7 +82,7 @@ public class PoolHealthIndicatorTests {
                 return 1;
             }
         };
-        final Health health = monitor.health();
+        val health = monitor.health();
         assertEquals(health.getStatus(), Status.OUT_OF_SERVICE);
     }
 }

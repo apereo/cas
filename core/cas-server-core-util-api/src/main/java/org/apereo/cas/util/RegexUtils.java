@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.Collection;
 import java.util.regex.Matcher;
@@ -50,7 +51,7 @@ public class RegexUtils {
      * @return the pattern
      */
     public static Pattern concatenate(final Collection<?> requiredValues, final boolean caseInsensitive) {
-        final String pattern = requiredValues
+        val pattern = requiredValues
             .stream()
             .map(Object::toString)
             .collect(Collectors.joining("|", "(", ")"));
@@ -110,7 +111,7 @@ public class RegexUtils {
      * @return the boolean
      */
     public static boolean matches(final Pattern pattern, final String value, final boolean completeMatch) {
-        final Matcher matcher = pattern.matcher(value);
+        val matcher = pattern.matcher(value);
         LOGGER.debug("Matching value [{}] against pattern [{}]", value, pattern.pattern());
         if (completeMatch) {
             return matcher.matches();

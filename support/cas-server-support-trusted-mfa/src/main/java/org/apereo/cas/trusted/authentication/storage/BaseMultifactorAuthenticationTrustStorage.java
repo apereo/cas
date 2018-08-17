@@ -1,19 +1,22 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
+
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
-import lombok.ToString;
-import lombok.Setter;
 
 /**
  * This is {@link BaseMultifactorAuthenticationTrustStorage}.
@@ -41,14 +44,14 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDate onOrAfterDate) {
-        final Set<MultifactorAuthenticationTrustRecord> res = get(principal);
+    public Set<MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDateTime onOrAfterDate) {
+        val res = get(principal);
         res.removeIf(entry -> {
             if (entry.getRecordDate().isBefore(onOrAfterDate)) {
                 return true;
             }
-            final String decodedKey = this.cipherExecutor.decode(entry.getRecordKey());
-            final String currentKey = MultifactorAuthenticationTrustUtils.generateKey(entry);
+            val decodedKey = this.cipherExecutor.decode(entry.getRecordKey());
+            val currentKey = MultifactorAuthenticationTrustUtils.generateKey(entry);
             if (StringUtils.isBlank(decodedKey)) {
                 return true;
             }

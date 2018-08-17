@@ -134,7 +134,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-You may also need to declare the following Maven repository in
+You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:
 
 ```xml
@@ -229,6 +229,12 @@ will resort to actually resolving the metadata by loading or contacting the conf
 Each service provider definition that is registered with CAS may optionally also specifically an expiration period of 
 metadata resolution to override the default global value.
 
+#### Dynamic Metadata
+
+In addition to the more traditional means of managing service provider metadata such as direct XML files or URLs, CAS 
+provides support for a number of other strategies to fetch metadata more dynamically with the likes of MDQ and more.
+To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.md).
+
 ### Attribute Name Formats
 
 Attribute name formats can be specified per relying party in the service registry.
@@ -282,11 +288,6 @@ decide to configure CAS to return a particular attribute as
 [the authenticated user name for this service](../integration/Attribute-Release-PrincipalId.md),
 that value will then be used to construct the Name ID along with the right format.
 
-### Dynamic Metadata
-
-In addition to the more traditional means of managing service provider metadata such as direct XML files or URLs, CAS 
-provides support for a number of other strategies to fetch metadata more dynamically with the likes of MDQ and more.
-To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.md).
 
 ## SP Integrations
 

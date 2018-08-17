@@ -5,7 +5,7 @@ title: CAS - JAAS Authentication
 
 # JAAS Authentication
 
-[JAAS](http://docs.oracle.com/javase/8/docs/technotes/guides/security/jaas/JAASRefGuide.html) is a Java standard
+[JAAS](https://docs.oracle.com/javase/9/security/java-authentication-and-authorization-service-jaas1.htm) is a Java standard
 authentication and authorization API. JAAS is configured via externalized plain text configuration file.
 Using JAAS with CAS allows modification of the authentication process without having to rebuild and redeploy CAS
 and allows for PAM-style multi-module "stacked" authentication.
@@ -59,13 +59,21 @@ For a list of all other options and more comprehensive documentation, please see
 
 ### Kerberos
 
-This module authenticates users using Kerberos protocols. The configuration entry for module has several options that control the authentication process and additions to the `Subject`'s private credential set. Irrespective of these options, the `Subject`'s principal set and private credentials set are updated only when commit is called. When commit is called, the `KerberosPrincipal` is added to the `Subject`'s principal set and KerberosTicket is added to the `Subject`'s private credentials.
+This module authenticates users using Kerberos protocols. The configuration entry for module has several options that control the 
+authentication process and additions to the `Subject`'s private credential set. Irrespective of these options, the `Subject`'s principal set and private credentials set are updated only when commit is called. When commit is called, the `KerberosPrincipal` is added to the `Subject`'s principal set and KerberosTicket is added to the `Subject`'s private credentials.
 
-If the configuration entry for module has the option `storeKey` set to true, then `KerberosKey` will also be added to the subject's private credentials. `KerberosKey`, the principal's key will be either obtained from the keytab or derived from user's password.
+If the configuration entry for module has the option `storeKey` set to true, then `KerberosKey` will also be added to 
+the subject's private credentials. `KerberosKey`, the principal's key will be either obtained from the keytab or derived from user's password.
 
-This module also recognizes the `doNotPrompt` option. If set to true the user will not be prompted for the password. The user can specify the location of the ticket cache by using the option `ticketCache` in the configuration entry. The user can specify the keytab location by using the option `keyTab` in the configuration entry.
+This module also recognizes the `doNotPrompt` option. If set to true the user will not be prompted for the password. 
+The user can specify the location of the ticket cache by using the option `ticketCache` in the configuration entry. The user can specify the keytab location by using the option `keyTab` in the configuration entry.
 
-The principal name can be specified in the configuration entry by using the option `principal`. The principal name can either be a simple user name or a service name such as `host/mission.eng.sun.com`. The principal can also be set using the system property `sun.security.krb5.principal`. This property is checked during login. If this property is not set, then the principal name from the configuration is used. In the case where the principal property is not set and the principal entry also does not exist, the user is prompted for the name. When this property of entry is set, and `useTicketCache` is set to true, only TGT belonging to this principal is used.
+The principal name can be specified in the configuration entry by using the option `principal`. The principal name can 
+either be a simple user name or a service name such as `host/mission.eng.sun.com`. The principal can also be set using 
+the system property `sun.security.krb5.principal`. This property is checked during login. If this property is not set, 
+then the principal name from the configuration is used. In the case where the principal property is not set and the principal 
+entry also does not exist, the user is prompted for the name. When this property of entry is set, and `useTicketCache` is set to 
+true, only TGT belonging to this principal is used.
 
 Note that a valid `krb5.conf` must be supplied to the JVM for Kerberos auth via setting `-Djava.security.krb5.conf=/etc/krb5.conf`.
 
@@ -205,12 +213,16 @@ CAS {
 
 For a list of all other options and more comprehensive documentation, please see [this guide](http://docs.oracle.com/javase/8/docs/jre/api/security/jaas/spec/com/sun/security/auth/module/KeyStoreLoginModule.html) for more info.
 
-## Embedded Deployments
+## Deployments
 
-If your deployment strategy ultimately uses an [embedded container](Configuring-Servlet-Container.html#embedded), you can pass along the location of the JAAS configuration file in form of a system property as such:
+If your deployment strategy ultimately uses an [embedded container](Configuring-Servlet-Container.html#embedded), 
+you can pass along the location of the JAAS configuration file in form of a system property as such:
 
 ```bash
 java -Djava.security.auth.login.config=file:/etc/cas/config/jaas.config -jar ...
 ```
+
+Alternatively, you may activate the login configuration type to be `JavaLoginConfig` in the CAS settings and simply specify the path
+to the jaas configuration file there in the settings directly.
 
 For more information on configuration management, please [review this guide](Configuration-Management.html).

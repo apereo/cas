@@ -2,7 +2,7 @@ package org.apereo.cas.util;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -16,7 +16,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 @UtilityClass
 public class JsonUtils {
     /**
@@ -27,9 +26,9 @@ public class JsonUtils {
      */
     @SneakyThrows
     public static void render(final Object model, final HttpServletResponse response) {
-        final MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+        val jsonConverter = new MappingJackson2HttpMessageConverter();
         jsonConverter.setPrettyPrint(true);
-        final MediaType jsonMimeType = MediaType.APPLICATION_JSON;
+        val jsonMimeType = MediaType.APPLICATION_JSON;
         jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
     }
 
@@ -40,7 +39,7 @@ public class JsonUtils {
      */
     @SneakyThrows
     public static void render(final HttpServletResponse response) {
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         response.setStatus(HttpServletResponse.SC_OK);
         render(map, response);
     }
@@ -53,7 +52,7 @@ public class JsonUtils {
      * @param response the response
      */
     public static void renderException(final Exception ex, final HttpServletResponse response) {
-        final Map<String, String> map = new HashMap<>();
+        val map = new HashMap<String, String>();
         map.put("error", ex.getMessage());
         map.put("stacktrace", Arrays.deepToString(ex.getStackTrace()));
         renderException(map, response);

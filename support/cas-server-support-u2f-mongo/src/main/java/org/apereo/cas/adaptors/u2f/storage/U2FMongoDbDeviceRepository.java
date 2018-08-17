@@ -1,9 +1,11 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.util.DateTimeUtils;
+
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.DateTimeUtils;
+import lombok.val;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -25,7 +27,7 @@ import java.util.stream.Collectors;
 public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
 
 
-    private final MongoTemplate mongoTemplate;
+    private final transient MongoTemplate mongoTemplate;
     private final long expirationTime;
     private final TimeUnit expirationTimeUnit;
     private final String collectionName;
@@ -45,8 +47,8 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
         try {
-            final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
-            final Query query = new Query();
+            val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            val query = new Query();
             query.addCriteria(Criteria.where("username").is(username).and("createdDate").gte(expirationDate));
             return this.mongoTemplate.find(query, U2FDeviceRegistration.class, this.collectionName)
                 .stream()
@@ -73,7 +75,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
 
     @Override
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
-        final U2FDeviceRegistration record = new U2FDeviceRegistration();
+        val record = new U2FDeviceRegistration();
         record.setUsername(username);
         record.setRecord(getCipherExecutor().encode(registration.toJson()));
         record.setCreatedDate(LocalDate.now());
@@ -88,10 +90,10 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     public void clean() {
         try {
-            final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+            val expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
 
-            final Query query = new Query();
+            val query = new Query();
             query.addCriteria(Criteria.where("createdDate").lte(expirationDate));
             this.mongoTemplate.remove(query, U2FDeviceRegistration.class, this.collectionName);
         } catch (final Exception e) {

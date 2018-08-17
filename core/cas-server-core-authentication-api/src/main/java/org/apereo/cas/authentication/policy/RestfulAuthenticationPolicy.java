@@ -1,19 +1,20 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,30 +31,32 @@ import java.security.GeneralSecurityException;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
-    private final RestTemplate restTemplate;
+    private final transient RestTemplate restTemplate;
     private final String endpoint;
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
+        val principal = authentication.getPrincipal();
         try {
-            final HttpHeaders acceptHeaders = new HttpHeaders();
+            val acceptHeaders = new HttpHeaders();
             acceptHeaders.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            final HttpEntity<Principal> entity = new HttpEntity<>(authentication.getPrincipal(), acceptHeaders);
-            LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", authentication.getPrincipal(), this.endpoint);
-            final ResponseEntity<String> resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
+            val entity = new HttpEntity<>(principal, acceptHeaders);
+            LOGGER.warn("Checking authentication policy for [{}] via POST at [{}]", principal, this.endpoint);
+            val resp = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, String.class);
             if (resp == null) {
                 LOGGER.warn("[{}] returned no responses", this.endpoint);
                 throw new GeneralSecurityException("No response returned from REST endpoint to determine authentication policy");
             }
-            if (resp.getStatusCode() != HttpStatus.OK) {
-                final Exception ex = handleResponseStatusCode(resp.getStatusCode(), authentication.getPrincipal());
+            val statusCode = resp.getStatusCode();
+            if (statusCode != HttpStatus.OK) {
+                val ex = handleResponseStatusCode(statusCode, principal);
                 throw new GeneralSecurityException(ex);
             }
             return true;
         } catch (final HttpClientErrorException e) {
-            final Exception ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
+            val ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
             throw new GeneralSecurityException(ex);
         }
     }

@@ -1,19 +1,22 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.util.ResourceUtils;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.util.ResourceUtils;
+import lombok.val;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,14 +48,13 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public void expire(final LocalDate onOrBefore) {
-        final Set<MultifactorAuthenticationTrustRecord> results = storage
+    public void expire(final LocalDateTime onOrBefore) {
+        val results = storage
             .values()
             .stream()
             .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))
             .sorted()
-            .distinct()
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
 
         LOGGER.info("Found [{}] expired records", results.size());
         if (!results.isEmpty()) {
@@ -63,15 +65,14 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         expire(onOrAfterDate);
         return storage
             .values()
             .stream()
             .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
             .sorted()
-            .distinct()
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -81,8 +82,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             .stream()
             .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
             .sorted()
-            .distinct()
-            .collect(Collectors.toSet());
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
 
@@ -99,7 +99,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         if (ResourceUtils.doesResourceExist(location)) {
             try (Reader reader = new InputStreamReader(location.getInputStream(), StandardCharsets.UTF_8)) {
                 final TypeReference<Map<String, MultifactorAuthenticationTrustRecord>> personList =
-                    new TypeReference<Map<String, MultifactorAuthenticationTrustRecord>>() {
+                    new TypeReference<>() {
                     };
                 this.storage = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
             }
@@ -108,7 +108,12 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     @SneakyThrows
     private void writeTrustedRecordsToResource() {
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.location.getFile(), this.storage);
+        val file = this.location.getFile();
+        val res = file.createNewFile();
+        if (res) {
+            LOGGER.debug("Created JSON resource @ [{}]", this.location);
+        }
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(file, this.storage);
         readTrustedRecordsFromResource();
     }
 }

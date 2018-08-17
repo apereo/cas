@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
     @Override
     @SneakyThrows
     public List<DeviceRegistration> getRegisteredDevices(final String username) {
-        final List<DeviceRegistration> registrations = userStorage.get(username).values()
+        val registrations = userStorage.get(username).values()
             .stream()
             .map(r -> {
                 try {

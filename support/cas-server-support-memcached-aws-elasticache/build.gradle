@@ -1,0 +1,4 @@
+description = "Apereo CAS Memcached Support via AWS Elasticache"
+dependencies {
+    api libraries.awselasticachememcached
+}

@@ -1,16 +1,18 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ScriptingUtils;
-import org.springframework.core.io.Resource;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.io.ResourceLoader;
 
 import java.security.GeneralSecurityException;
-import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Matcher;
 
 /**
  * This is {@link GroovyScriptAuthenticationPolicy}.
@@ -19,26 +21,30 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
     private final ResourceLoader resourceLoader;
     private final String script;
 
     @Override
     public boolean isSatisfiedBy(final Authentication auth) throws Exception {
-        final Exception ex;
-        if (ScriptingUtils.isInlineGroovyScript(script)) {
-            final Map<String, Object> args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
-            ex = ScriptingUtils.executeGroovyShellScript(script, args, Exception.class);
-        } else {
-            final Resource res = this.resourceLoader.getResource(script);
-            final Object[] args = {auth.getPrincipal(), LOGGER};
-            ex = ScriptingUtils.executeGroovyScript(res, args, Exception.class);
-        }
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
+        val ex = getScriptExecutionResult(auth, matcherInline);
 
-        if (ex != null) {
-            throw new GeneralSecurityException(ex);
+        if (ex != null && ex.isPresent()) {
+            throw new GeneralSecurityException(ex.get());
         }
         return true;
+    }
+
+    private Optional<Exception> getScriptExecutionResult(final Authentication auth, final Matcher matcherInline) {
+        if (matcherInline.find()) {
+            val args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
+            val inlineScript = matcherInline.group(1);
+            return ScriptingUtils.executeGroovyShellScript(inlineScript, args, Optional.class);
+        }
+        val res = this.resourceLoader.getResource(script);
+        final Object[] args = {auth.getPrincipal(), LOGGER};
+        return ScriptingUtils.executeGroovyScript(res, args, Optional.class);
     }
 }

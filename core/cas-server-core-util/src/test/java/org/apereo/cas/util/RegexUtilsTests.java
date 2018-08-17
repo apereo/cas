@@ -1,6 +1,6 @@
 package org.apereo.cas.util;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -11,20 +11,17 @@ import static org.junit.Assert.*;
  * @author David Rodriguez
  * @since 5.1.0
  */
-@Slf4j
 public class RegexUtilsTests {
 
     @Test
     public void verifyNotValidRegex() {
-        final String notValidRegex = "***";
+        val notValidRegex = "***";
 
         assertFalse(RegexUtils.isValidRegex(notValidRegex));
     }
 
     @Test
     public void verifyNullRegex() {
-        final String nullRegex = null;
-
-        assertFalse(RegexUtils.isValidRegex(nullRegex));
+        assertFalse(RegexUtils.isValidRegex(null));
     }
 }

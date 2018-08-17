@@ -1,18 +1,18 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.Principal;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.Principal;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * Contains information about a successful authentication produced by an {@link AuthenticationHandler}.
@@ -22,7 +22,6 @@ import lombok.Getter;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @ToString
 @NoArgsConstructor
 @Getter
@@ -54,7 +53,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     /**
      * List of warnings issued by the authentication source while authenticating the credential.
      */
-    private List<MessageDescriptor> warnings;
+    private List<MessageDescriptor> warnings = new ArrayList<>();
 
     /**
      * Instantiates a new handler result.

@@ -3,8 +3,8 @@ package org.apereo.cas.ticket.registry;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,10 +15,10 @@ import java.util.Date;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @Getter
 @AllArgsConstructor
 @ToString
+@Document
 public class TicketHolder implements Serializable {
 
     /**

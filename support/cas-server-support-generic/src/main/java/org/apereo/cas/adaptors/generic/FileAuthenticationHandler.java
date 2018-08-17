@@ -1,13 +1,14 @@
 package org.apereo.cas.adaptors.generic;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.stream.Stream;
 
 /**
  * Class designed to read data from a file in the format of USERNAME SEPARATOR
@@ -32,7 +32,6 @@ import java.util.stream.Stream;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Slf4j
 public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     /**
@@ -66,8 +65,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             if (this.fileName == null) {
                 throw new FileNotFoundException("Filename does not exist");
             }
-            final String username = transformedCredential.getUsername();
-            final String passwordOnRecord = getPasswordOnRecord(username);
+            val username = transformedCredential.getUsername();
+            val passwordOnRecord = getPasswordOnRecord(username);
             if (StringUtils.isBlank(passwordOnRecord)) {
                 throw new AccountNotFoundException(username + " not found in backing file.");
             }
@@ -88,10 +87,10 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      * @throws IOException Signals that an I/O exception has occurred.
      */
     private String getPasswordOnRecord(final String username) throws IOException {
-        try (Stream<String> stream = Files.lines(fileName.getFile().toPath())) {
+        try (val stream = Files.lines(fileName.getFile().toPath())) {
             return stream.map(line -> line.split(this.separator))
                 .filter(lineFields -> {
-                    final String userOnRecord = lineFields[0];
+                    val userOnRecord = lineFields[0];
                     return username.equals(userOnRecord);
                 })
                 .map(lineFields -> lineFields[1])

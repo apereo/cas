@@ -2,10 +2,12 @@ package org.apereo.cas.util.io;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.IOUtils;
 
 import java.io.Closeable;
 import java.io.File;
+import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -24,13 +26,11 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 public class PathWatcherService implements Runnable, Closeable {
 
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
-
-    private Thread thread;
-
     private final WatchService watcher;
     private final Consumer<File> onCreate;
     private final Consumer<File> onModify;
     private final Consumer<File> onDelete;
+    private Thread thread;
 
     public PathWatcherService(final File watchablePath, final Consumer<File> onModify) {
         this(watchablePath.toPath(),
@@ -62,20 +62,19 @@ public class PathWatcherService implements Runnable, Closeable {
     @Override
     public void run() {
         try {
-            WatchKey key;
+            var key = (WatchKey) null;
             while ((key = watcher.take()) != null) {
                 handleEvent(key);
-                /*
-                    Reset the key -- this step is critical to receive
-                    further watch events. If the key is no longer valid, the directory
-                    is inaccessible so exit the loop.
-                 */
-                final boolean valid = key != null && key.reset();
+                val valid = key != null && key.reset();
                 if (!valid) {
                     LOGGER.info("Directory key is no longer valid. Quitting watcher service");
                 }
             }
         } catch (final InterruptedException e) {
+            LOGGER.trace(e.getMessage(), e);
+            return;
+        } catch (final ClosedWatchServiceException e) {
+            LOGGER.trace(e.getMessage(), e);
             return;
         }
     }
@@ -88,15 +87,15 @@ public class PathWatcherService implements Runnable, Closeable {
     private void handleEvent(final WatchKey key) {
         try {
             key.pollEvents().forEach(event -> {
-                final String eventName = event.kind().name();
+                val eventName = event.kind().name();
 
                 // The filename is the context of the event.
-                final WatchEvent<Path> ev = (WatchEvent<Path>) event;
-                final Path filename = ev.context();
+                val ev = (WatchEvent<Path>) event;
+                val filename = ev.context();
 
-                final Path parent = (Path) key.watchable();
-                final Path fullPath = parent.resolve(filename);
-                final File file = fullPath.toFile();
+                val parent = (Path) key.watchable();
+                val fullPath = parent.resolve(filename);
+                val file = fullPath.toFile();
 
                 LOGGER.trace("Detected event [{}] on file [{}]", eventName, file);
                 if (eventName.equals(ENTRY_CREATE.name()) && file.exists()) {
@@ -119,7 +118,7 @@ public class PathWatcherService implements Runnable, Closeable {
             thread.interrupt();
         }
     }
-    
+
     /**
      * Start thread.
      *

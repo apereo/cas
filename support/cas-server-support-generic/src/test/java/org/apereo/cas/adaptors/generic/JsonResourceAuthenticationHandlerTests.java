@@ -1,20 +1,19 @@
 package org.apereo.cas.adaptors.generic;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -29,7 +28,6 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -40,7 +38,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 public class JsonResourceAuthenticationHandlerTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -49,9 +46,9 @@ public class JsonResourceAuthenticationHandlerTests {
     private JsonResourceAuthenticationHandler handler;
 
     public JsonResourceAuthenticationHandlerTests() throws Exception {
-        final Map<String, CasUserAccount> accounts = new LinkedHashMap<>();
+        val accounts = new LinkedHashMap<String, CasUserAccount>();
 
-        CasUserAccount acct = new CasUserAccount();
+        var acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setExpirationDate(LocalDate.now(ZoneOffset.UTC).plusWeeks(2));
         acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
@@ -89,7 +86,7 @@ public class JsonResourceAuthenticationHandlerTests {
 
         this.resource = new FileSystemResource(File.createTempFile("account", ".json"));
 
-        final ObjectMapper mapper = Jackson2ObjectMapperBuilder.json()
+        val mapper = Jackson2ObjectMapperBuilder.json()
             .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .build();
@@ -107,15 +104,15 @@ public class JsonResourceAuthenticationHandlerTests {
 
     @Test
     public void verifyExpiringAccount() throws Exception {
-        final UsernamePasswordCredential c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpiring", "Mellon");
-        final AuthenticationHandlerExecutionResult result = handler.authenticate(c);
+        val result = handler.authenticate(c);
         assertFalse(result.getWarnings().isEmpty());
     }
 
     @Test
     public void verifyOkAccount() throws Exception {
-        final UsernamePasswordCredential c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         assertNotNull(handler.authenticate(c));
     }
@@ -123,7 +120,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyNotFoundAccount() throws Exception {
         this.thrown.expect(AccountNotFoundException.class);
-        final UsernamePasswordCredential c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("nobody", "Mellon");
         handler.authenticate(c);
     }
@@ -131,7 +128,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyExpiredAccount() throws Exception {
         this.thrown.expect(AccountExpiredException.class);
-        final UsernamePasswordCredential c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpired", "Mellon");
         handler.authenticate(c);
     }
@@ -139,7 +136,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyDisabledAccount() throws Exception {
         this.thrown.expect(AccountDisabledException.class);
-        final UsernamePasswordCredential c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casdisabled", "Mellon");
         handler.authenticate(c);
     }
@@ -147,7 +144,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyLockedAccount() throws Exception {
         this.thrown.expect(AccountLockedException.class);
-        final UsernamePasswordCredential c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("caslocked", "Mellon");
         handler.authenticate(c);
     }
@@ -155,7 +152,7 @@ public class JsonResourceAuthenticationHandlerTests {
     @Test
     public void verifyMustChangePswAccount() throws Exception {
         this.thrown.expect(AccountPasswordMustChangeException.class);
-        final UsernamePasswordCredential c =
+        val c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casmustchange", "Mellon");
         handler.authenticate(c);
     }

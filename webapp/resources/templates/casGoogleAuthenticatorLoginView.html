@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title th:text="#{cas.mfa.googleauth.pagetitle}">Google Authentication View</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 </head>
 
 <body>
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
-        <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}">
+        <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}" th:action="@{/login}">
             <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
             </div>

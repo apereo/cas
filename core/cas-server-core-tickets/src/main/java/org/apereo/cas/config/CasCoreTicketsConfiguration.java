@@ -1,13 +1,9 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
-import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
-import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -53,9 +49,16 @@ import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
+import org.jasig.cas.client.validation.Cas10TicketValidator;
+import org.jasig.cas.client.validation.Cas20ServiceTicketValidator;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -95,8 +98,6 @@ import java.util.Map;
 @AutoConfigureAfter(value = {CasCoreUtilConfiguration.class, CasCoreTicketIdGeneratorsConfiguration.class})
 @Slf4j
 public class CasCoreTicketsConfiguration implements TransactionManagementConfigurer {
-
-
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -114,36 +115,48 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
-    private HttpClient httpClient;
+    private ObjectProvider<HttpClient> httpClient;
 
     @Autowired
     @Qualifier("hostnameVerifier")
-    private HostnameVerifier hostnameVerifier;
+    private ObjectProvider<HostnameVerifier> hostnameVerifier;
 
     @Autowired
     @Qualifier("sslContext")
-    private SSLContext sslContext;
+    private ObjectProvider<SSLContext> sslContext;
 
     @ConditionalOnMissingBean(name = "casClientTicketValidator")
     @Bean
     public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-        final String prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
-        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(prefix);
+        val prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
+        val validator = buildCasClientTicketValidator(prefix);
+
         final HttpURLConnectionFactory factory = new HttpURLConnectionFactory() {
             private static final long serialVersionUID = 3692658214483917813L;
 
             @Override
             public HttpURLConnection buildHttpURLConnection(final URLConnection conn) {
                 if (conn instanceof HttpsURLConnection) {
-                    final HttpsURLConnection httpsConnection = (HttpsURLConnection) conn;
-                    httpsConnection.setSSLSocketFactory(sslContext.getSocketFactory());
-                    httpsConnection.setHostnameVerifier(hostnameVerifier);
+                    val httpsConnection = (HttpsURLConnection) conn;
+                    httpsConnection.setSSLSocketFactory(sslContext.getIfAvailable().getSocketFactory());
+                    httpsConnection.setHostnameVerifier(hostnameVerifier.getIfAvailable());
                 }
                 return (HttpURLConnection) conn;
             }
         };
         validator.setURLConnectionFactory(factory);
         return validator;
+    }
+
+    private AbstractUrlBasedTicketValidator buildCasClientTicketValidator(final String prefix) {
+        val validatorType = casProperties.getClient().getValidatorType();
+        if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.CAS10) {
+            return new Cas10TicketValidator(prefix);
+        }
+        if (validatorType == CasJavaClientProperties.ClientTicketValidatorTypes.CAS20) {
+            return new Cas20ServiceTicketValidator(prefix);
+        }
+        return new Cas30ServiceTicketValidator(prefix);
     }
 
     @ConditionalOnMissingBean(name = "defaultProxyGrantingTicketFactory")
@@ -160,7 +173,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @Lazy
     public ProxyTicketFactory defaultProxyTicketFactory() {
-        final boolean onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
+        val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
         return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy(),
             uniqueIdGeneratorsMap,
             protocolTicketCipherExecutor(),
@@ -202,7 +215,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @Lazy
     public ServiceTicketFactory defaultServiceTicketFactory() {
-        final boolean onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
+        val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
         return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy(),
             uniqueIdGeneratorsMap,
             onlyTrackMostRecentSession,
@@ -220,7 +233,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "defaultTicketFactory")
     @Bean
     public TicketFactory defaultTicketFactory() {
-        final DefaultTicketFactory factory = new DefaultTicketFactory();
+        val factory = new DefaultTicketFactory();
         factory.addTicketFactory(TransientSessionTicket.class, defaultTransientSessionTicketFactory())
             .addTicketFactory(ProxyGrantingTicket.class, defaultProxyGrantingTicketFactory())
             .addTicketFactory(TicketGrantingTicket.class, defaultTicketGrantingTicketFactory())
@@ -240,7 +253,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy20Handler() {
-        return new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator());
+        return new Cas20ProxyHandler(httpClient.getIfAvailable(), proxy20TicketUniqueIdGenerator());
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistry")
@@ -248,11 +261,11 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public TicketRegistry ticketRegistry() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
             + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
-        final TicketRegistryProperties.InMemory mem = casProperties.getTicket().getRegistry().getInMemory();
-        final CipherExecutor cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
+        val mem = casProperties.getTicket().getRegistry().getInMemory();
+        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
 
         if (mem.isCache()) {
-            final LogoutManager logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);
+            val logoutManager = applicationContext.getBean("logoutManager", LogoutManager.class);
             return new CachingTicketRegistry(cipher, logoutManager);
         }
         return new DefaultTicketRegistry(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency(), cipher);
@@ -267,7 +280,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "grantingTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy() {
-        final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
+        val tgt = casProperties.getTicket().getTgt();
         if (tgt.getRememberMe().isEnabled()) {
             return rememberMeExpirationPolicy();
         }
@@ -276,10 +289,10 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @Bean
     public ExpirationPolicy rememberMeExpirationPolicy() {
-        final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
+        val tgt = casProperties.getTicket().getTgt();
 
-        final HardTimeoutExpirationPolicy rememberMePolicy = new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds());
-        final RememberMeDelegatingExpirationPolicy p = new RememberMeDelegatingExpirationPolicy(ticketGrantingTicketExpirationPolicy());
+        val rememberMePolicy = new HardTimeoutExpirationPolicy(tgt.getRememberMe().getTimeToKillInSeconds());
+        val p = new RememberMeDelegatingExpirationPolicy(ticketGrantingTicketExpirationPolicy());
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.REMEMBER_ME, rememberMePolicy);
         p.addPolicy(RememberMeDelegatingExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy());
         return p;
@@ -317,7 +330,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @ConditionalOnMissingBean(name = "protocolTicketCipherExecutor")
     public CipherExecutor protocolTicketCipherExecutor() {
-        final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getTicket().getCrypto();
+        val crypto = casProperties.getTicket().getCrypto();
         if (crypto.isEnabled()) {
             return new ProtocolTicketCipherExecutor(
                 crypto.getEncryption().getKey(),
@@ -331,7 +344,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "ticketGrantingTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy ticketGrantingTicketExpirationPolicy() {
-        final TicketGrantingTicketProperties tgt = casProperties.getTicket().getTgt();
+        val tgt = casProperties.getTicket().getTgt();
         if (tgt.getMaxTimeToLiveInSeconds() <= 0 && tgt.getTimeToKillInSeconds() <= 0) {
             LOGGER.warn("Ticket-granting ticket expiration policy is set to NEVER expire tickets.");
             return new NeverExpiresExpirationPolicy();
@@ -351,7 +364,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
         if (tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds() > 0
             && tgt.getThrottledTimeout().getTimeToKillInSeconds() > 0) {
-            final ThrottledUseAndTimeoutExpirationPolicy p = new ThrottledUseAndTimeoutExpirationPolicy();
+            val p = new ThrottledUseAndTimeoutExpirationPolicy();
             p.setTimeToKillInSeconds(tgt.getThrottledTimeout().getTimeToKillInSeconds());
             p.setTimeInBetweenUsesInSeconds(tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds());
             LOGGER.debug("Ticket-granting ticket expiration policy is based on throttled timeouts");
@@ -376,9 +389,9 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Autowired
     @Bean
     public TicketCatalog ticketCatalog(final List<TicketCatalogConfigurer> configurers) {
-        final DefaultTicketCatalog plan = new DefaultTicketCatalog();
+        val plan = new DefaultTicketCatalog();
         configurers.forEach(c -> {
-            final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring ticket metadata registration plan [{}]", name);
             c.configureTicketCatalog(plan);
         });

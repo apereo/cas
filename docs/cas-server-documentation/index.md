@@ -14,8 +14,7 @@ title: CAS - Home
 [OAuth2](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html), [REST](protocol/REST-Protocol.html))
 * Support for [multifactor authentication](installation/Configuring-Multifactor-Authentication.html) via a variety of 
 providers ([Duo Security](installation/DuoSecurity-Authentication.html), [FIDO U2F](installation/FIDO-U2F-Authentication.html), 
-[YubiKey](installation/YubiKey-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), [Microsoft Azure](installation/MicrosoftAzure-Authentication.html), 
-[Authy](installation/AuthyAuthenticator-Authentication.html) etc)
+[YubiKey](installation/YubiKey-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), [Authy](installation/AuthyAuthenticator-Authentication.html) etc)
 * Support for [delegated authentication](integration/Delegate-Authentication.html) to external providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, etc.
 * Built-in support for [password management](installation/Password-Management.html), [notifications](installation/Webflow-Customization-Interrupt.html), [terms of use](installation/Webflow-Customization-AUP.html) and [impersonation](installation/Surrogate-Authentication.html).
 * Support for [attribute release](integration/Attribute-Release.html) including [user consent](integration/Attribute-Release-Consent.html).
@@ -35,7 +34,7 @@ We recommend reading the following documentation in order to plan and execute a 
 * [Architecture](planning/Architecture.html)
 * [Getting Started](planning/Getting-Started.html)
 * [Installation Requirements](planning/Installation-Requirements.html)
-* [Installation](installation/Maven-Overlay-Installation.html)
+* [Installation](installation/WAR-Overlay-Installation.html)
 
 ## Demos
 
@@ -45,8 +44,8 @@ and integration tests. They are <strong>NOT</strong> set up for internal demos a
 The following demos are provided by the Apereo CAS project:
 
 | Topic                                                                                      | Source Branch            | Location | Heroku
-|-------------------------------------|-------------- --------|--------------------------------------------------------|---------------------------------------
-| [CAS Overlay Project Initializr](installation/Maven-Overlay-Installation.html)            | `heroku-casinitializr`   | [Link](https://casinitializr.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinitializr)
+|-------------------------------------|----------------------|--------------------------------------------------------|---------------------------------------
+| [CAS Overlay Project Initializr](installation/WAR-Overlay-Installation.html)            | `heroku-casinitializr`   | [Link](https://casinitializr.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinitializr)
 | [CAS Web Application Server](index.html)                                                  | `heroku-caswebapp`       | [Link](https://casserver.herokuapp.com/cas) | ![](https://heroku-badge.herokuapp.com/?app=casserver&root=cas)
 | [CAS Management Server](installation/Installing-ServicesMgmt-Webapp.html)        | `heroku-mgmtwebapp` | [Link](https://casservermgmt.herokuapp.com/cas-management)  | ![](https://heroku-badge.herokuapp.com/?app=casservermgmt&root=cas-management)
 | [CAS Boot Administration Server](installation/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [Link](https://casbootadminserver.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=casbootadminserver)

@@ -1,22 +1,21 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.AllArgsConstructor;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
+import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.cryptacular.x509.dn.Attribute;
 import org.cryptacular.x509.dn.AttributeType;
 import org.cryptacular.x509.dn.NameReader;
-import org.cryptacular.x509.dn.RDN;
 import org.cryptacular.x509.dn.RDNSequence;
 import org.cryptacular.x509.dn.StandardAttributeType;
+
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -28,7 +27,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @ToString(callSuper = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /**
@@ -82,36 +81,6 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
     }
 
     /**
-     * Replaces placeholders in the descriptor with values extracted from attribute
-     * values in relative distinguished name components of the DN.
-     *
-     * @param certificate X.509 certificate credential.
-     * @return Resolved principal ID.
-     */
-    @Override
-    protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        LOGGER.debug("Resolving principal for [{}]", certificate);
-        final StringBuffer sb = new StringBuffer();
-        final Matcher m = ATTR_PATTERN.matcher(this.descriptor);
-        final Map<String, AttributeContext> attrMap = new HashMap<>();
-        final RDNSequence rdnSequence = new NameReader(certificate).readSubject();
-        String name;
-        String[] values;
-        AttributeContext context;
-        while (m.find()) {
-            name = m.group(1);
-            if (!attrMap.containsKey(name)) {
-                values = getAttributeValues(rdnSequence, StandardAttributeType.fromName(name));
-                attrMap.put(name, new AttributeContext(values));
-            }
-            context = attrMap.get(name);
-            m.appendReplacement(sb, context.nextValue());
-        }
-        m.appendTail(sb);
-        return sb.toString();
-    }
-
-    /**
      * Gets the values of the given attribute contained in the DN.
      * <p>
      * <p><strong>NOTE:</strong> no escaping is done on special characters in the
@@ -127,22 +96,48 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      */
     private static String[] getAttributeValues(final RDNSequence rdnSequence, final AttributeType attribute) {
         // Iterates sequence in reverse order as specified in section 2.1 of RFC 2253
-        final List<String> values = new ArrayList<>();
-        for (final RDN rdn : rdnSequence.backward()) {
-            for (final Attribute attr : rdn.getAttributes()) {
+        val values = new ArrayList<String>();
+        for (val rdn : rdnSequence.backward()) {
+            for (val attr : rdn.getAttributes()) {
                 if (attr.getType().equals(attribute)) {
                     values.add(attr.getValue());
                 }
             }
         }
-        return values.toArray(new String[values.size()]);
+        return values.toArray(new String[0]);
+    }
+
+    /**
+     * Replaces placeholders in the descriptor with values extracted from attribute
+     * values in relative distinguished name components of the DN.
+     *
+     * @param certificate X.509 certificate credential.
+     * @return Resolved principal ID.
+     */
+    @Override
+    protected String resolvePrincipalInternal(final X509Certificate certificate) {
+        LOGGER.debug("Resolving principal for [{}]", certificate);
+        val sb = new StringBuffer();
+        val m = ATTR_PATTERN.matcher(this.descriptor);
+        val attrMap = new HashMap<String, AttributeContext>();
+        val rdnSequence = new NameReader(certificate).readSubject();
+        while (m.find()) {
+            val name = m.group(1);
+            if (!attrMap.containsKey(name)) {
+                val values = getAttributeValues(rdnSequence, StandardAttributeType.fromName(name));
+                attrMap.put(name, new AttributeContext(values));
+            }
+            val context = attrMap.get(name);
+            m.appendReplacement(sb, context.nextValue());
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 
     private static class AttributeContext {
 
+        private final Object[] values;
         private int currentIndex;
-
-        private final String[] values;
 
         /**
          * Instantiates a new attribute context.
@@ -150,7 +145,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
          * @param values the values
          */
         AttributeContext(final String[] values) {
-            this.values = values;
+            this.values = ArrayUtils.clone(values);
         }
 
         /**
@@ -163,7 +158,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
             if (this.currentIndex == this.values.length) {
                 throw new IllegalStateException("No values remaining for attribute");
             }
-            return this.values[this.currentIndex++];
+            return this.values[this.currentIndex++].toString();
         }
     }
 }

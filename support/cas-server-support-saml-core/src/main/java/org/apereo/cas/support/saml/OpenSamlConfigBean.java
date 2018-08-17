@@ -1,10 +1,12 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.core.config.InitializationService;
@@ -37,16 +39,15 @@ public class OpenSamlConfigBean {
         LOGGER.debug("Initializing OpenSaml configuration...");
         InitializationService.initialize();
 
-        XMLObjectProviderRegistry registry;
-        synchronized (ConfigurationService.class) {
-            registry = ConfigurationService.get(XMLObjectProviderRegistry.class);
-            if (registry == null) {
-                LOGGER.debug("XMLObjectProviderRegistry did not exist in ConfigurationService, will be created");
-                registry = new XMLObjectProviderRegistry();
-                ConfigurationService.register(XMLObjectProviderRegistry.class, registry);
-            }
-        }
-
+        val currentProvider = ConfigurationService.get(XMLObjectProviderRegistry.class);
+        val registry = FunctionUtils.doIfNull(currentProvider,
+            () -> {
+                LOGGER.debug("XMLObjectProviderRegistry did not exist in ConfigurationService and it will be created");
+                var provider = new XMLObjectProviderRegistry();
+                ConfigurationService.register(XMLObjectProviderRegistry.class, provider);
+                return provider;
+            },
+            () -> currentProvider).get();
         registry.setParserPool(this.parserPool);
 
         this.builderFactory = registry.getBuilderFactory();

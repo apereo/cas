@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.duo.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoAuthenticationWebflowAction;
@@ -13,6 +12,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,10 +30,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("duoSecurityConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class DuoSecurityConfiguration {
-
-
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -53,10 +51,9 @@ public class DuoSecurityConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
-    @Autowired(required = false)
+    @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
-    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
-            new RankedMultifactorAuthenticationProviderSelector();
+    private ObjectProvider<MultifactorAuthenticationProviderSelector> multifactorAuthenticationProviderSelector;
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -71,15 +68,17 @@ public class DuoSecurityConfiguration {
     public Action duoAuthenticationWebflowAction() {
         return new DuoAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver());
     }
-    
+
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {
         return new DuoAuthenticationWebflowEventResolver(authenticationSystemSupport,
-                centralAuthenticationService,
-                servicesManager,
-                ticketRegistrySupport,
-                warnCookieGenerator,
-                authenticationRequestServiceSelectionStrategies,
-                multifactorAuthenticationProviderSelector);
+            centralAuthenticationService,
+            servicesManager,
+            ticketRegistrySupport,
+            warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+            multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
     }
+
+
 }

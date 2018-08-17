@@ -1,8 +1,7 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -14,9 +13,13 @@ import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -26,7 +29,6 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -39,7 +41,6 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @Import(CasSupportActionsConfiguration.class)
-@Slf4j
 public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String CONST_CONTEXT_PATH = "/test";
@@ -49,35 +50,41 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private InitialFlowSetupAction action;
     private CookieRetrievingCookieGenerator warnCookieGenerator;
     private CookieRetrievingCookieGenerator tgtCookieGenerator;
 
     @Before
-    public void setUp() throws Exception {
+    public void initialize() throws Exception {
         this.warnCookieGenerator = new CookieRetrievingCookieGenerator("warn", "", 2,
-                false, null, false);
+            false, null, false);
         this.warnCookieGenerator.setCookiePath(StringUtils.EMPTY);
-        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator("tgt", "", 2, 
-                false, null, false);
+        this.tgtCookieGenerator = new CookieRetrievingCookieGenerator("tgt", "", 2,
+            false, null, false);
         this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
 
-        final List<ArgumentExtractor> argExtractors = Collections.singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
-        final ServicesManager servicesManager = mock(ServicesManager.class);
+        val argExtractors = Collections.<ArgumentExtractor>singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
+        val servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
-        this.action = new InitialFlowSetupAction(argExtractors, servicesManager, authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
-                warnCookieGenerator, casProperties);
+        this.action = new InitialFlowSetupAction(argExtractors, servicesManager,
+            authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
+            warnCookieGenerator, casProperties, authenticationEventExecutionPlan);
 
         this.action.afterPropertiesSet();
     }
 
     @Test
     public void verifySettingContextPath() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setContextPath(CONST_CONTEXT_PATH);
-        final MockRequestContext context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         this.action.doExecute(context);
@@ -88,9 +95,9 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
 
     @Test
     public void verifyResettingContextPath() {
-        final MockHttpServletRequest request = new MockHttpServletRequest();
+        val request = new MockHttpServletRequest();
         request.setContextPath(CONST_CONTEXT_PATH);
-        final MockRequestContext context = new MockRequestContext();
+        val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         this.action.doExecute(context);

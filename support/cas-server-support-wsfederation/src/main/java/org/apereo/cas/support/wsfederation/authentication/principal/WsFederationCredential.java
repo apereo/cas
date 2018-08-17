@@ -1,16 +1,19 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
+import org.apereo.cas.authentication.Credential;
+
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Credential;
+import lombok.val;
+
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * This class represents the basic elements of the WsFederation token.
@@ -45,7 +48,7 @@ public class WsFederationCredential implements Credential {
     private ZonedDateTime retrievedOn;
 
     private Map<String, List<Object>> attributes;
-    
+
     /**
      * isValid validates the credential.
      *
@@ -63,12 +66,12 @@ public class WsFederationCredential implements Credential {
             LOGGER.warn("Issuer [{}] is invalid since the expected issuer should be [{}]", this.issuer, expectedIssuer);
             return false;
         }
-        final ZonedDateTime retrievedOnTimeDrift = this.getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);
+        val retrievedOnTimeDrift = this.getRetrievedOn().minus(timeDrift, ChronoUnit.MILLIS);
         if (this.issuedOn.isBefore(retrievedOnTimeDrift)) {
             LOGGER.warn("Ticket is issued before the allowed drift. Issued on [{}] while allowed drift is [{}]", this.issuedOn, retrievedOnTimeDrift);
             return false;
         }
-        final ZonedDateTime retrievedOnTimeAfterDrift = this.retrievedOn.plus(timeDrift, ChronoUnit.MILLIS);
+        val retrievedOnTimeAfterDrift = this.retrievedOn.plus(timeDrift, ChronoUnit.MILLIS);
         if (this.issuedOn.isAfter(retrievedOnTimeAfterDrift)) {
             LOGGER.warn("Ticket is issued after the allowed drift. Issued on [{}] while allowed drift is [{}]", this.issuedOn, retrievedOnTimeAfterDrift);
             return false;

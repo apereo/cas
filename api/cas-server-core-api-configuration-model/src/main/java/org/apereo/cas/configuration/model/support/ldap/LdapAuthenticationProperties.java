@@ -1,15 +1,15 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
-import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.util.ArrayList;
-import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link LdapAuthenticationProperties}.
@@ -18,7 +18,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ldap")
-@Slf4j
 @Getter
 @Setter
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
@@ -29,7 +28,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * Password policy settings.
      */
     @NestedConfigurationProperty
-    private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
+    private LdapPasswordPolicyProperties passwordPolicy = new LdapPasswordPolicyProperties();
 
     /**
      * Principal transformation settings.
@@ -76,7 +75,6 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * This flag only has an effect if {@link #principalAttributeId} is configured. If multiple values are detected
      * when the flag is false, the first value is used and a warning is logged. If multiple values are detected
      * when the flag is true, an exception is raised.
-     *
      */
     private boolean allowMultiplePrincipalAttributeValues;
 

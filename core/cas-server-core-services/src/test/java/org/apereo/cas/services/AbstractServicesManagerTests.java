@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -17,17 +17,16 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public abstract class AbstractServicesManagerTests {
 
 
     private static final String TEST = "test";
+    protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
     protected ServiceRegistry serviceRegistry;
     protected ServicesManager servicesManager;
-    protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
 
     public AbstractServicesManagerTests() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        val r = new RegexRegisteredService();
         r.setId(2500);
         r.setServiceId("serviceId");
         r.setName("serviceName");
@@ -36,7 +35,7 @@ public abstract class AbstractServicesManagerTests {
     }
 
     @Before
-    public void setUp() {
+    public void initialize() {
         this.serviceRegistry = getServiceRegistryInstance();
         this.servicesManager = getServicesManagerInstance();
         this.servicesManager.load();
@@ -52,7 +51,7 @@ public abstract class AbstractServicesManagerTests {
 
     @Test
     public void verifySaveAndGet() {
-        final RegexRegisteredService r = new RegexRegisteredService();
+        val r = new RegexRegisteredService();
         r.setId(1000);
         r.setName(TEST);
         r.setServiceId(TEST);

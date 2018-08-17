@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * This is {@link BaseMultifactorProviderProperties}.
@@ -12,7 +12,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 @Setter
 public abstract class BaseMultifactorProviderProperties implements Serializable {

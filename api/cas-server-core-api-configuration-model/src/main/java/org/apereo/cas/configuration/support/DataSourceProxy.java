@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.support;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.datasource.AbstractDataSource;
 
 import javax.sql.DataSource;
@@ -15,8 +14,8 @@ import java.sql.SQLException;
  * proxying that occurs (e.g. {@link org.springframework.cloud.context.config.annotation.RefreshScope} annotation)
  * doesn't encounter
  * problems if another proxying library somewhere else uses the container
- * class loader and encounters other proxying classes in the application. 
- *
+ * class loader and encounters other proxying classes in the application.
+ * <p>
  * Extends {@link AbstractDataSource} but it could probably
  * just delegate all methods to the wrapped datasource if anything
  * that AbstractDataSource is doing causes a problem.
@@ -24,8 +23,7 @@ import java.sql.SQLException;
  * @author Hal Deadman
  * @since 5.1
  */
-@Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DataSourceProxy extends AbstractDataSource {
 
     private final DataSource dataSource;

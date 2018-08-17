@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -14,6 +12,10 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.io.Resource;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
@@ -77,7 +79,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
             return null;
         }
 
-        final MultifactorAuthenticationProvider provider = providers
+        val provider = providers
             .stream()
             .filter(predicate)
             .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))

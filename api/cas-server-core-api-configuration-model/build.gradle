@@ -1,35 +1,37 @@
 description = "Apereo CAS Core Configuration Model"
+def skipConfigurationMetadata = Boolean.getBoolean("skipNestedConfigMetadataGen")
 
 dependencies {
-    implementation libraries.springsecurity
-    implementation libraries.mongo
     implementation libraries.jasypt
-    implementation libraries.groovy
+
     implementation libraries.bouncycastle
 
     compile libraries.springbootconfigmetadata
-    
+
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")
-}
 
-task generateConfigurationMetadata(type: JavaExec) {
-    doFirst {
-        println "\nRunning CAS Spring configuration metadata processor in addition to the native " +
-                "Spring Boot metadata processor, to create configuration " +
-                "metadata for nested and indexed properties. The process starts with the build directory " +
-                "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
+    if (!skipConfigurationMetadata) {
+        annotationProcessor libraries.springbootconfigmetadata
     }
-    main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
-    classpath = sourceSets.main.runtimeClasspath
-    args buildDir, projectDir.canonicalPath
+    
 }
 
-compileJava.dependsOn(processResources)
 
-if (!Boolean.getBoolean("skipNestedConfigMetadataGen")) {
+if (!skipConfigurationMetadata) {
+    task generateConfigurationMetadata(type: JavaExec) {
+        doFirst {
+            logger.info "\nRunning CAS Spring configuration metadata processor in addition to the native " +
+                    "Spring Boot metadata processor, to create configuration " +
+                    "metadata for nested and indexed properties. The process starts with the build directory " +
+                    "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
+        }
+        main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
+        classpath = sourceSets.main.runtimeClasspath
+        args buildDir, projectDir.canonicalPath
+    }
+
+    compileJava.dependsOn(processResources)
     jar.dependsOn(generateConfigurationMetadata)
 }
-
-

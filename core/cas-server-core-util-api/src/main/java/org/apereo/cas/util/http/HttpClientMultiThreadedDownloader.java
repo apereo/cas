@@ -3,9 +3,10 @@ package org.apereo.cas.util.http;
 import com.github.axet.wget.SpeedInfo;
 import com.github.axet.wget.WGet;
 import com.github.axet.wget.info.DownloadInfo;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;
 
@@ -19,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class HttpClientMultiThreadedDownloader {
     private final Resource resourceToDownload;
     private final File targetDestination;
@@ -29,23 +30,18 @@ public class HttpClientMultiThreadedDownloader {
      */
     @SneakyThrows
     public void download() {
-        final AtomicBoolean stop = new AtomicBoolean(false);
-        final DownloadInfo info = new DownloadInfo(resourceToDownload.getURL());
-        final DownloadStatusListener status = new DownloadStatusListener(info);
+        val stop = new AtomicBoolean(false);
+        val info = new DownloadInfo(resourceToDownload.getURL());
+        val status = new DownloadStatusListener(info);
 
-        // extract information from the web
         info.extract(stop, status);
 
-        // enable multipart download
         info.enableMultipart();
 
-        // create downloader
-        final WGet w = new WGet(info, this.targetDestination);
+        val w = new WGet(info, this.targetDestination);
 
-        // init speed info
         status.speedInfo.start(0);
 
-        // will blocks until download finishes
         LOGGER.info("Starting to download resource [{}] into [{}]", this.resourceToDownload, targetDestination);
         w.download(stop, status);
 
@@ -81,11 +77,11 @@ public class HttpClientMultiThreadedDownloader {
 
                 case DOWNLOADING:
                     speedInfo.step(info.getCount());
-                    final long now = System.currentTimeMillis();
+                    val now = System.currentTimeMillis();
                     if (now - 1_000 > last) {
                         last = now;
 
-                        final StringBuilder partBuilder = new StringBuilder();
+                        val partBuilder = new StringBuilder();
                         if (info.getParts() != null) {
                             info.getParts().forEach(p -> {
                                 switch (p.getState()) {
@@ -104,7 +100,7 @@ public class HttpClientMultiThreadedDownloader {
                             });
                         }
 
-                        final float p = info.getCount() / (float) info.getLength();
+                        val p = info.getCount() / (float) info.getLength();
                         LOGGER.debug(String.format("%.2f %s (%s / %s)", p, partBuilder.toString(),
                             FileUtils.byteCountToDisplaySize(speedInfo.getCurrentSpeed()),
                             FileUtils.byteCountToDisplaySize(speedInfo.getAverageSpeed())));

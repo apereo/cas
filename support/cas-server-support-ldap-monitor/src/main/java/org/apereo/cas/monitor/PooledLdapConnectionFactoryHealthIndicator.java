@@ -1,6 +1,6 @@
 package org.apereo.cas.monitor;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ldaptive.Connection;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.Validator;
@@ -14,7 +14,6 @@ import java.util.concurrent.ExecutorService;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 public class PooledLdapConnectionFactoryHealthIndicator extends AbstractPoolHealthIndicator {
 
     /**
@@ -39,7 +38,7 @@ public class PooledLdapConnectionFactoryHealthIndicator extends AbstractPoolHeal
     @Override
     protected Health.Builder checkPool(final Health.Builder builder) throws Exception {
         if (this.connectionFactory != null && this.validator != null) {
-            try (Connection conn = this.connectionFactory.getConnection()) {
+            try (val conn = this.connectionFactory.getConnection()) {
                 return this.validator.validate(conn) ? builder.up() : builder.down();
             }
         }

@@ -1,16 +1,15 @@
 package org.apereo.cas.adaptors.ldap.services.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapServiceRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.util.LdapUtils;
-import org.ldaptive.ConnectionFactory;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,7 +25,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ldapServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class LdapServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
     @Autowired
@@ -42,8 +40,8 @@ public class LdapServiceRegistryConfiguration implements ServiceRegistryExecutio
     @Bean
     @RefreshScope
     public ServiceRegistry ldapServiceRegistry() {
-        final LdapServiceRegistryProperties ldap = casProperties.getServiceRegistry().getLdap();
-        final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+        val ldap = casProperties.getServiceRegistry().getLdap();
+        val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(), ldap);
     }
 

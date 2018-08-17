@@ -19,6 +19,7 @@
  * validating, so an AuthenticationHandler recognizing such an object will indicate
  * that it is valid without inspecting its contents.</li>
  * </ul>
+ *
  * @since 3.0
  */
 package org.apereo.cas.authentication.handler;

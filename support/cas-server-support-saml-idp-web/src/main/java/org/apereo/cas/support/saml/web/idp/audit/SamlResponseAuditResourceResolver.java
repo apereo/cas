@@ -1,16 +1,14 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
-import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Fault;
-
-import java.util.List;
 
 /**
  * This is {@link SamlResponseAuditResourceResolver}.
@@ -33,11 +31,11 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     }
 
     private String[] getPrincipalIdFromSamlEcpResponse(final Envelope envelope) {
-        final List<XMLObject> objects = envelope.getBody().getUnknownXMLObjects();
+        val objects = envelope.getBody().getUnknownXMLObjects();
         if (objects.isEmpty()) {
             return new String[]{};
         }
-        final XMLObject object = objects.get(0);
+        val object = objects.get(0);
         if (object instanceof Response) {
             return getPrincipalIdFromSamlResponse((Response) object);
         }
@@ -48,7 +46,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     }
 
     private String[] getPrincipalIdFromSamlResponse(final Response response) {
-        final String result =
+        val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("issuer", response.getIssuer().getValue())
                 .append("destination", response.getDestination())
@@ -57,7 +55,7 @@ public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResour
     }
 
     private String[] getPrincipalIdFromSamlEcpFault(final Fault fault) {
-        final String result =
+        val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("actor", fault.getActor().getValue())
                 .append("message", fault.getMessage().getValue())

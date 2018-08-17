@@ -8,10 +8,10 @@
     <!-- TreeWalker module checks -->
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
-        <module name="SuppressionCommentFilter"/>
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
+        <module name="LambdaParameterName"/>
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
@@ -40,6 +40,9 @@
         <module name="JavadocStyle">
             <property name="severity" value="error"/>
         </module>
+        <module name="EmptyCatchBlock">
+            <property name="severity" value="error"/>
+        </module>
         <module name="ClassFanOutComplexity">
             <property name="max" value="120"/>
             <property name="severity" value="error"/>
@@ -61,7 +64,7 @@
         -->
         <module name="AnnotationLocation">
             <property name="severity" value="error"/>
-            <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>
+            <property name="allowSamelineSingleParameterlessAnnotation" value="true"/>
         </module>
         <module name="ConstantName">
             <property name="severity" value="error"/>
@@ -78,9 +81,6 @@
             <property name="ignoreFieldDeclaration" value="true"/>
             <property name="severity" value="error"/>
             <property name="ignoreNumbers" value="-1, 0, 1, 2, 1000"/>
-        </module>
-        <module name="LocalFinalVariableName">
-            <property name="severity" value="error"/>
         </module>
         <module name="LocalVariableName">
             <property name="severity" value="error"/>
@@ -118,7 +118,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="AbbreviationAsWordInName">
-            <property name="allowedAbbreviationLength" value="5" />
+            <property name="allowedAbbreviationLength" value="5"/>
         </module>
         <module name="TypeName">
             <property name="severity" value="error"/>
@@ -331,11 +331,11 @@
         </module>
         <module name="FinalParameters">
             <property name="severity" value="error"/>
-            <property name="tokens" value="METHOD_DEF, CTOR_DEF, LITERAL_CATCH, FOR_EACH_CLAUSE"/>
+            <property name="tokens" value="METHOD_DEF,CTOR_DEF,LITERAL_CATCH"/>
         </module>
         <module name="FinalLocalVariable">
             <property name="severity" value="error"/>
-            <property name="tokens" value="PARAMETER_DEF, VARIABLE_DEF"/>
+            <property name="tokens" value="PARAMETER_DEF"/>
             <property name="validateEnhancedForLoopVariable" value="true"/>
         </module>
         <module name="TodoComment">
@@ -362,10 +362,10 @@
             <metadata name="net.sf.eclipsecs.core.comment" value="Do not create a standalone instance of SecureRandom"/>
             <property name="severity" value="error"/>
             <property name="format" value="new SecureRandom\(.*\)"/>
-            <property name="message" 
+            <property name="message"
                       value="Do not create a standalone instance of SecureRandom. Use RandomUtils instead."/>
         </module>
-        
+
         <module name="RegexpSinglelineJava">
             <property name="id" value="collectionsEmpty"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Avoid using an empty immutable collection"/>
@@ -383,7 +383,7 @@
             <property name="message"
                       value="Returning an unmodifiable collection is specially problematic for serialization tasks. To avoid future side effects try using an empty collection of size zero instead"/>
         </module>
-        
+
         <module name="RegexpSinglelineJava">
             <property name="id" value="namedAnnotations"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Component/Controller/Configuration annotations must be named"/>
@@ -453,7 +453,7 @@
             <metadata name="net.sf.eclipsecs.core.comment" value="The logger object must be named &quot;logger&quot;"/>
             <property name="severity" value="error"/>
             <property name="format" value="(private|public|protected)\s+(static\s)*(final\s)*(static\s)*Logger\s+(log|LOG|LOGGER|logger)\b"/>
-            <property name="message"  value="Use the Lombok @Slf4j annotation to obtain a logger object instead." />
+            <property name="message" value="Use the Lombok @Slf4j annotation to obtain a logger object instead."/>
         </module>
         <module name="RegexpSinglelineJava">
             <property name="id" value="finalNonUtilClass"/>
@@ -489,11 +489,44 @@
                       value="Consider not checking for logging levels. Let the logging framework handle that."/>
         </module>
         <module name="RegexpSinglelineJava">
-            <metadata name="net.sf.eclipsecs.core.comment" value="Using PostConstruct annotation"/>
+            <property name="id" value="useLombokVarForGenerics"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
-            <property name="format" value=".+InitializingBean.+"/>
-            <property name="message"
-                      value="Use the @PostConstruct annotation instead of implementing InitializingBean"/>
+            <property name="format" value="^(?!private|public)*\s+final\s+\w+&lt;.+&gt;\s+\w+(\s+)*(=.+)*;"/>
+            <property name="message" value="Use lombok.val when declaring collections with generics"/>
+        </module>
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="useLombokVaLForFinalVar"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="final\s+var\s+"/>
+            <property name="message" value="Use lombok.val when declaring final variable definitions."/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="useLombokVar"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="^\s*(?!return|throw|private|public|protected|val)(final\s+)*\b(?!var)\w+\b\s*(\b[a-z]\w*\b)(\s*=\s+(?!null).+)*;"/>
+            <property name="message" value="Use lombok.val or JDK var keyword when declaring variable definitions."/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="valForLoop"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="\s*for\s*\((final\s+)*(?!val|var)\w+\s+\w+\s*:"/>
+            <property name="message" value="Use lombok.val when declaring variable definitions for loops."/>
+        </module>
+
+        <module name="CustomImportOrder">
+            <property name="severity" value="error"/>
+            <property name="customImportOrderRules"
+                      value="SAME_PACKAGE(3)###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS###STANDARD_JAVA_PACKAGE###STATIC"/>
+            <property name="specialImportsRegExp" value="^javax\."/>
+            <property name="standardPackageRegExp" value="^java\."/>
+            <property name="sortImportsInGroupAlphabetically" value="true"/>
+            <property name="separateLineBetweenGroups" value="false"/>
         </module>
     </module>
 
@@ -525,8 +558,9 @@
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Forbidden annotations"/>
         <property name="severity" value="error"/>
+        <property name="id" value="forbiddenAnnotations"/>
         <property name="format" value="@Component|@Value"/>
-        <property name="message" value="Avoid using the indicated annotations."/>
+        <property name="message" value="Avoid using the indicated annotations such as @Component, @Value, etc."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use Java streams"/>
@@ -558,14 +592,12 @@
         <property name="format" value="import\s+static\s+org\.junit\.Assert\.\w+"/>
         <property name="message" value="JUnit Assert methods MUST be imported statically with a *"/>
     </module>
-
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Arrays.asList() method call"/>
         <property name="severity" value="error"/>
         <property name="format" value="Lists\.newArrayList\(.+"/>
         <property name="message" value="Use Arrays.asList() or Collections.singletonList() instead."/>
     </module>
-
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Mockito static import"/>
         <property name="severity" value="error"/>
@@ -583,6 +615,12 @@
         <property name="severity" value="error"/>
         <property name="format" value="@Test\(expect"/>
         <property name="message" value="Use @Rule ExpectedException instead of expecting an exception"/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="@RunWith\((Conditional)?SpringRunner\.class\)"/>
+        <property name="message" value="Use Spring @Rule and @ClassRule instead of the Spring test runner."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>

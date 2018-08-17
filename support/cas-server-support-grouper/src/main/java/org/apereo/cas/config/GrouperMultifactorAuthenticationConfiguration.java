@@ -1,22 +1,24 @@
 package org.apereo.cas.config;
 
-import edu.internet2.middleware.grouperClientExt.org.apache.commons.lang3.StringUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.NoOpCasWebflowEventResolver;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -31,16 +33,13 @@ import org.springframework.web.util.CookieGenerator;
  */
 @Configuration("grouperMultifactorAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnClass(value = CasWebflowEventResolver.class)
 @Slf4j
+@ConditionalOnProperty(name = "cas.authn.mfa.grouperGroupField")
 public class GrouperMultifactorAuthenticationConfiguration {
-
-
-
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
@@ -69,22 +68,29 @@ public class GrouperMultifactorAuthenticationConfiguration {
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+    @Bean
+    @ConditionalOnMissingBean(name = "grouperFacade")
+    public GrouperFacade grouperFacade() {
+        return new GrouperFacade();
+    }
+
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") 
-                                                                                            final AuthenticationSystemSupport authenticationSystemSupport) {
-        final AbstractCasWebflowEventResolver r;
-        if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGrouperGroupField())) {
-            r = new GrouperMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                    ticketRegistrySupport, warnCookieGenerator, 
-                    authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector,
-                    casProperties);
-            LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
-        } else {
-            r = new NoOpCasWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-                    warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
-        }
-
+    public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver() {
+        val r = new GrouperMultifactorAuthenticationPolicyEventResolver(
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService,
+            servicesManager,
+            ticketRegistrySupport,
+            warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+            multifactorAuthenticationProviderSelector,
+            casProperties,
+            grouperFacade());
+        LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
         return r;
     }

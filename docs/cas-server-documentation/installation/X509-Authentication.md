@@ -83,8 +83,8 @@ The Tomcat server is configured in `$CATALINA_HOME/conf/server.xml` with one or 
 
 One strategy if you are planning to support both X.509 and userid/password validation through the same port is to put a public (VeriSign, Thawte) certificate for this server in the `keystoreFile`, but then put only the institutional internal CA certificate in the `truststoreFile`. Logically and in all the documentation, the Certificate Authority that issues the certificate to the server which the browser trusts is completely and logically independent of the Certificate Authority that issues the certificate to the user which the server then trusts. Java keeps them separate, Tomcat keeps them separate, and browsers should not be confused if, during SSL negotiation, the server requests a user certificate from a CA other than the one that issued the server's own identifying certificate. In this configuration, the Server issues a public certificate every browser will accept and the browser is strongly urged to send only a private institutional certificate that can be mapped to a Principal name.
 
-<div class="alert alert-info"><strong>Almost There</strong><p>If you previously configured CAS without X.509 authentication, then you probably have the `keystoreFile` already configured and
-loaded with a certificate identifying this server. All you need to add is the `truststoreFile` part.</p></div>
+<div class="alert alert-info"><strong>Almost There</strong><p>If you previously configured CAS without X.509 authentication, then you probably have the <code>keystoreFile</code> already configured and
+loaded with a certificate identifying this server. All you need to add is the <code>truststoreFile</code> part.</p></div>
 
 The configured connector will look something like:
 

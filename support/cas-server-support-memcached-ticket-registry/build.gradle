@@ -1,10 +1,11 @@
 description = "Apereo CAS Memcached Integration"
 dependencies {
-    
-    implementation libraries.memcached
     implementation libraries.kryo
 
     api project(":api:cas-server-core-api-logout")
+
+    provided project(":support:cas-server-support-memcached-spy")
+    
     implementation project(":core:cas-server-core-logging")
     implementation project(":support:cas-server-support-memcached-core")
     implementation project(":core:cas-server-core-authentication-attributes")
@@ -17,6 +18,8 @@ dependencies {
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-tickets")
+    
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")

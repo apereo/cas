@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -21,8 +21,11 @@ import org.apereo.cas.config.CouchbaseTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+
+import org.junit.Rule;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +42,11 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(ConditionalParameterizedRunner.class)
+@RunWith(Parameterized.class)
+@Category(CouchbaseCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-@SpringBootTest(classes = {CouchbaseTicketRegistryConfiguration.class,
+@SpringBootTest(classes = {
+    CouchbaseTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -62,8 +67,11 @@ import java.util.Collection;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class},
     properties = {"cas.ticket.registry.couchbase.password=password", "cas.ticket.registry.couchbase.bucket=testbucket"})
-@Slf4j
-public class CouchbaseTicketRegistryTests extends AbstractTicketRegistryTests {
+public class CouchbaseTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
+
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;

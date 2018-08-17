@@ -1,15 +1,17 @@
 package org.apereo.cas.services.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 
 import java.io.File;
@@ -35,26 +37,26 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
     private static final String SERVICES_KEY = "services";
 
     private final ObjectMapper objectMapper = new ObjectMapper().findAndRegisterModules();
-    
+
     @Override
     public Collection<RegisteredService> load(final InputStream stream) {
-        final List<RegisteredService> results = new ArrayList<>();
+        val results = new ArrayList<RegisteredService>();
         try {
-            final Map<String, List> servicesMap = this.objectMapper.readValue(stream, Map.class);
-            final Iterator<Map> it = servicesMap.get(SERVICES_KEY).iterator();
+            val servicesMap = (Map<String, List>) this.objectMapper.readValue(stream, Map.class);
+            val it = (Iterator<Map>) servicesMap.get(SERVICES_KEY).iterator();
             while (it.hasNext()) {
-                final Map<?, ?> record = it.next();
-                final RegisteredService svc = convertServiceProperties(record);
+                val record = it.next();
+                val svc = convertServiceProperties(record);
                 LOGGER.debug("Loaded service [{}] from legacy syntax", svc);
                 results.add(svc);
             }
             LOGGER.warn("CAS has successfully loaded [{}] service(s) which contain definitions designed in a legacy syntax provided by cas-addons. "
                     + "While this behavior is strictly kept for backward-compatibility reasons, it is STRONGLY recommended that "
                     + "you convert these definitions into the official syntax to take full advantage of the service capabilities. "
-                    + "Future CAS version may decide to entirely ignore the legacy syntax altogether.", 
-                    results.size());
+                    + "Future CAS versions may decide to entirely ignore the legacy syntax altogether.",
+                results.size());
             results.forEach(Unchecked.consumer(s -> {
-                final File fileName = new File(FileUtils.getTempDirectory(), s.getName() + "-" + s.getId() + ".json");
+                val fileName = new File(FileUtils.getTempDirectory(), s.getName() + '-' + s.getId() + ".json");
                 to(fileName, s);
                 LOGGER.warn("Converted legacy service definition for [{}] may be reviewed at [{}]", s.getServiceId(), fileName);
             }));
@@ -65,8 +67,8 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
     }
 
     private RegisteredService convertServiceProperties(final Map serviceDataMap) {
-        final RegexRegisteredService service = new RegexRegisteredService();
-        
+        val service = new RegexRegisteredService();
+
         service.setId(Long.parseLong(serviceDataMap.get("id").toString()));
         service.setName(serviceDataMap.get("name").toString());
         service.setDescription(serviceDataMap.getOrDefault("description", StringUtils.EMPTY).toString());
@@ -74,10 +76,10 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
         service.setTheme(serviceDataMap.getOrDefault("theme", StringUtils.EMPTY).toString());
         service.setEvaluationOrder(Integer.parseInt(serviceDataMap.getOrDefault("evaluationOrder", Integer.MAX_VALUE).toString()));
 
-        final boolean allowedProxy = Boolean.parseBoolean(serviceDataMap.getOrDefault("allowedToProxy", Boolean.FALSE).toString());
-        final boolean enabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("enabled", Boolean.TRUE).toString());
-        final boolean ssoEnabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("ssoEnabled", Boolean.TRUE).toString());
-        final boolean anonymousAccess = Boolean.parseBoolean(serviceDataMap.getOrDefault("anonymousAccess", Boolean.TRUE).toString());
+        val allowedProxy = Boolean.parseBoolean(serviceDataMap.getOrDefault("allowedToProxy", Boolean.FALSE).toString());
+        val enabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("enabled", Boolean.TRUE).toString());
+        val ssoEnabled = Boolean.parseBoolean(serviceDataMap.getOrDefault("ssoEnabled", Boolean.TRUE).toString());
+        val anonymousAccess = Boolean.parseBoolean(serviceDataMap.getOrDefault("anonymousAccess", Boolean.TRUE).toString());
 
         if (allowedProxy) {
             service.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy(".+"));
@@ -86,7 +88,7 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
         if (anonymousAccess) {
             service.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider());
         }
-        final List<String> attributes = (List<String>) serviceDataMap.getOrDefault("allowedAttributes", new ArrayList<>());
+        val attributes = (List<String>) serviceDataMap.getOrDefault("allowedAttributes", new ArrayList<>());
         service.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(attributes));
         return service;
     }

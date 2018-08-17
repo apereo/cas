@@ -1,5 +1,8 @@
 package org.apereo.cas.ticket.support;
 
+import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.TicketState;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -7,9 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketState;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,7 +27,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @Getter
 @Setter
@@ -77,15 +79,34 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        final Optional<ExpirationPolicy> match = getExpirationPolicyFor(ticketState);
+        val match = getExpirationPolicyFor(ticketState);
         if (!match.isPresent()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
                 + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
             return super.isExpired(ticketState);
         }
-        final ExpirationPolicy policy = match.get();
+        val policy = match.get();
         LOGGER.debug("Activating expiration policy [{}] for ticket [{}]", policy, ticketState);
         return policy.isExpired(ticketState);
+    }
+
+    /**
+     * Checks the given ticketState and gets the timeToLive for the relevant expiration policy.
+     *
+     * @param ticketState The ticketState to get the delegated expiration policy for
+     * @return The TTL for the relevant expiration policy
+     */
+    @Override
+    public Long getTimeToLive(final TicketState ticketState) {
+        val match = getExpirationPolicyFor(ticketState);
+        if (!match.isPresent()) {
+            LOGGER.warn("No expiration policy was found for ticket state [{}]. "
+                + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
+            return super.getTimeToLive(ticketState);
+        }
+        val policy = match.get();
+        LOGGER.debug("Getting TTL from policy [{}] for ticket [{}]", policy, ticketState);
+        return policy.getTimeToLive(ticketState);
     }
 
     @JsonIgnore
@@ -113,10 +134,10 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      * @return the expiration policy for
      */
     protected Optional<ExpirationPolicy> getExpirationPolicyFor(final TicketState ticketState) {
-        final String name = getExpirationPolicyNameFor(ticketState);
+        val name = getExpirationPolicyNameFor(ticketState);
         LOGGER.debug("Received expiration policy name [{}] to activate", name);
         if (StringUtils.isNotBlank(name) && policies.containsKey(name)) {
-            final ExpirationPolicy policy = policies.get(name);
+            val policy = policies.get(name);
             LOGGER.debug("Located expiration policy [{}] by name [{}]", policy, name);
             return Optional.of(policy);
         }

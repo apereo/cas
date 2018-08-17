@@ -1,20 +1,22 @@
 package org.apereo.cas.configuration.model.support.surrogate;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link SurrogateAuthenticationProperties}.
@@ -23,7 +25,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-surrogate-webflow")
-@Slf4j
 @Getter
 @Setter
 public class SurrogateAuthenticationProperties implements Serializable {
@@ -64,6 +65,12 @@ public class SurrogateAuthenticationProperties implements Serializable {
      * Settings related to tickets issued for surrogate session, their expiration policy, etc.
      */
     private Tgt tgt = new Tgt();
+
+    /**
+     * Principal construction settings.
+     */
+    @NestedConfigurationProperty
+    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
 
     /**
      * Email settings for notifications.
@@ -122,8 +129,8 @@ public class SurrogateAuthenticationProperties implements Serializable {
         private String surrogateSearchFilter;
 
         /**
-         *  Attribute that must be found on the LDAP entry linked to the admin user
-         *  that tags the account as authorized for impersonation.
+         * Attribute that must be found on the LDAP entry linked to the admin user
+         * that tags the account as authorized for impersonation.
          */
         @RequiredProperty
         private String memberAttributeName;

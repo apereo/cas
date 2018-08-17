@@ -1,10 +1,9 @@
 package org.apereo.cas.web.view;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.services.web.view.AbstractCasView;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,16 +17,13 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class Cas10ResponseView extends AbstractCasView {
 
     public Cas10ResponseView(final boolean successResponse,
                              final ProtocolAttributeEncoder protocolAttributeEncoder,
                              final ServicesManager servicesManager,
-                             final String authenticationContextAttribute,
                              final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-                authenticationAttributeReleasePolicy);
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationAttributeReleasePolicy);
     }
 
     @Override

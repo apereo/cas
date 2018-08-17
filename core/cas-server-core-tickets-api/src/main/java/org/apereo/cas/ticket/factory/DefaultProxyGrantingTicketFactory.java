@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket.factory;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -14,6 +12,10 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 /**
  * The {@link DefaultProxyGrantingTicketFactory} is responsible
  * for creating {@link ProxyGrantingTicket} objects.
@@ -22,28 +24,28 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
  * @since 4.2
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory {
     /**
      * Used to generate ids for {@link TicketGrantingTicket}s
      * created.
      */
-    protected UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
+    protected final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     /**
      * Expiration policy for ticket granting tickets.
      */
-    protected ExpirationPolicy ticketGrantingTicketExpirationPolicy;
+    protected final ExpirationPolicy ticketGrantingTicketExpirationPolicy;
 
     /**
      * The ticket cipher.
      */
-    protected CipherExecutor<String, String> cipherExecutor;
+    protected final CipherExecutor<String, String> cipherExecutor;
 
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
                                                     final Authentication authentication, final Class<T> clazz) throws AbstractTicketException {
-        final String pgtId = produceTicketIdentifier();
+        val pgtId = produceTicketIdentifier();
         return produceTicket(serviceTicket, authentication, pgtId, clazz);
     }
 
@@ -59,8 +61,8 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      */
     protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
                                                               final String pgtId, final Class<T> clazz) {
-        final ProxyGrantingTicket result = serviceTicket.grantProxyGrantingTicket(pgtId,
-                authentication, this.ticketGrantingTicketExpirationPolicy);
+        val result = serviceTicket.grantProxyGrantingTicket(pgtId,
+            authentication, this.ticketGrantingTicketExpirationPolicy);
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result
                 + " is of type " + result.getClass()
@@ -75,13 +77,14 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      * @return the ticket
      */
     protected String produceTicketIdentifier() {
-        String pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
-        if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to encode proxy-granting ticket [{}]", pgtId);
-            pgtId = this.cipherExecutor.encode(pgtId);
-            LOGGER.debug("Encoded proxy-granting ticket id [{}]", pgtId);
+        val pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
+        if (this.cipherExecutor == null) {
+            return pgtId;
         }
-        return pgtId;
+        LOGGER.debug("Attempting to encode proxy-granting ticket [{}]", pgtId);
+        val pgtEncoded = this.cipherExecutor.encode(pgtId);
+        LOGGER.debug("Encoded proxy-granting ticket id [{}]", pgtEncoded);
+        return pgtEncoded;
     }
 
     @Override

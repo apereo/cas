@@ -1,8 +1,5 @@
 package org.apereo.cas.adaptors.jdbc.config;
 
-import com.google.common.collect.Multimap;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler;
@@ -10,21 +7,24 @@ import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandle
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.BindJdbcAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.QueryEncodeJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -47,24 +47,6 @@ import java.util.HashSet;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasJdbcAuthenticationConfiguration {
-
-
-    @Autowired(required = false)
-    @Qualifier("queryAndEncodePasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration queryAndEncodePasswordPolicyConfiguration;
-
-    @Autowired(required = false)
-    @Qualifier("searchModePasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration searchModePasswordPolicyConfiguration;
-
-    @Autowired(required = false)
-    @Qualifier("queryPasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration queryPasswordPolicyConfiguration;
-
-    @Autowired(required = false)
-    @Qualifier("bindSearchPasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration bindSearchPasswordPolicyConfiguration;
-
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -80,8 +62,8 @@ public class CasJdbcAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Collection<AuthenticationHandler> jdbcAuthenticationHandlers() {
-        final Collection<AuthenticationHandler> handlers = new HashSet<>();
-        final JdbcAuthenticationProperties jdbc = casProperties.getAuthn().getJdbc();
+        val handlers = new HashSet<AuthenticationHandler>();
+        val jdbc = casProperties.getAuthn().getJdbc();
         jdbc.getBind().forEach(b -> handlers.add(bindModeSearchDatabaseAuthenticationHandler(b)));
         jdbc.getEncode().forEach(b -> handlers.add(queryAndEncodeDatabaseAuthenticationHandler(b)));
         jdbc.getQuery().forEach(b -> handlers.add(queryDatabaseAuthenticationHandler(b)));
@@ -90,15 +72,11 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final BindJdbcAuthenticationProperties b) {
-        final BindModeSearchDatabaseAuthenticationHandler h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
+        val h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
             jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b));
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
-
-        if (bindSearchPasswordPolicyConfiguration != null) {
-            h.setPasswordPolicyConfiguration(bindSearchPasswordPolicyConfiguration);
-        }
-
+        h.setPasswordPolicyConfiguration(bindSearchPasswordPolicyConfiguration());
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
@@ -110,17 +88,14 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryAndEncodeDatabaseAuthenticationHandler(final QueryEncodeJdbcAuthenticationProperties b) {
-        final QueryAndEncodeDatabaseAuthenticationHandler h = new QueryAndEncodeDatabaseAuthenticationHandler(b.getName(), servicesManager,
+        val h = new QueryAndEncodeDatabaseAuthenticationHandler(b.getName(), servicesManager,
             jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b.getAlgorithmName(), b.getSql(), b.getPasswordFieldName(),
             b.getSaltFieldName(), b.getExpiredFieldName(), b.getDisabledFieldName(), b.getNumberOfIterationsFieldName(), b.getNumberOfIterations(),
             b.getStaticSalt());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
-
-        if (queryAndEncodePasswordPolicyConfiguration != null) {
-            h.setPasswordPolicyConfiguration(queryAndEncodePasswordPolicyConfiguration);
-        }
+        h.setPasswordPolicyConfiguration(queryAndEncodePasswordPolicyConfiguration());
 
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
@@ -133,10 +108,10 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final QueryJdbcAuthenticationProperties b) {
-        final Multimap<String, Object> attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(b.getPrincipalAttributeList());
+        val attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(b.getPrincipalAttributeList());
         LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getUrl());
 
-        final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager,
+        val h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager,
             jdbcPrincipalFactory(), b.getOrder(),
             JpaBeans.newDataSource(b), b.getSql(), b.getFieldPassword(),
             b.getFieldExpired(), b.getFieldDisabled(), CollectionUtils.wrap(attributes));
@@ -144,10 +119,7 @@ public class CasJdbcAuthenticationConfiguration {
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
-        if (queryPasswordPolicyConfiguration != null) {
-            h.setPasswordPolicyConfiguration(queryPasswordPolicyConfiguration);
-        }
-
+        h.setPasswordPolicyConfiguration(queryPasswordPolicyConfiguration());
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
@@ -159,16 +131,13 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler searchModeSearchDatabaseAuthenticationHandler(final SearchJdbcAuthenticationProperties b) {
-        final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
+        val h = new SearchModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
             jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b.getFieldUser(), b.getFieldPassword(), b.getTableUsers());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
-
-        if (searchModePasswordPolicyConfiguration != null) {
-            h.setPasswordPolicyConfiguration(searchModePasswordPolicyConfiguration);
-        }
+        h.setPasswordPolicyConfiguration(searchModePasswordPolicyConfiguration());
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
             h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(b.getCredentialCriteria()));
@@ -182,7 +151,31 @@ public class CasJdbcAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public PrincipalFactory jdbcPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
+    }
+
+    @ConditionalOnMissingBean(name = "queryAndEncodePasswordPolicyConfiguration")
+    @Bean
+    public PasswordPolicyConfiguration queryAndEncodePasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
+    }
+
+    @ConditionalOnMissingBean(name = "searchModePasswordPolicyConfiguration")
+    @Bean
+    public PasswordPolicyConfiguration searchModePasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
+    }
+
+    @ConditionalOnMissingBean(name = "queryPasswordPolicyConfiguration")
+    @Bean
+    public PasswordPolicyConfiguration queryPasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
+    }
+
+    @ConditionalOnMissingBean(name = "bindSearchPasswordPolicyConfiguration")
+    @Bean
+    public PasswordPolicyConfiguration bindSearchPasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
     }
 
     @ConditionalOnMissingBean(name = "jdbcAuthenticationEventExecutionPlanConfigurer")

@@ -1,12 +1,13 @@
 package org.apereo.cas.ticket.proxy.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
+
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -21,7 +22,6 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 public class Cas20ProxyHandlerTests {
 
     private Cas20ProxyHandler handler;
@@ -34,8 +34,8 @@ public class Cas20ProxyHandlerTests {
     }
 
     @Before
-    public void setUp() {
-        final SimpleHttpClientFactoryBean factory = new SimpleHttpClientFactoryBean();
+    public void initialize() {
+        val factory = new SimpleHttpClientFactoryBean();
         factory.setConnectionTimeout(10000);
         factory.setReadTimeout(10000);
         this.handler = new Cas20ProxyHandler(factory.getObject(), new DefaultUniqueTicketIdGenerator());
@@ -56,7 +56,7 @@ public class Cas20ProxyHandlerTests {
 
     @Test
     public void verifyNonValidProxyTicket() throws Exception {
-        final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
+        val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
 
         this.handler = new Cas20ProxyHandler(clientFactory.getObject(), new DefaultUniqueTicketIdGenerator());

@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication;
 
-
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Generic CAS exception that sits at the top of the exception hierarchy. Provides
@@ -13,9 +12,8 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class RootCasException extends RuntimeException {
 
     private static final long serialVersionUID = -2384466176716541689L;
@@ -55,7 +53,7 @@ public abstract class RootCasException extends RuntimeException {
      * the code itself.
      */
     public String getCode() {
-        final Throwable cause = this.getCause();
+        val cause = this.getCause();
         if (cause instanceof RootCasException) {
             return ((RootCasException) cause).getCode();
         }

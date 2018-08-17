@@ -1,6 +1,6 @@
 package org.apereo.cas.digest;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -14,7 +14,6 @@ import static org.junit.Assert.*;
  * @author David Rodriguez
  * @since 5.1.0
  */
-@Slf4j
 public class DefaultDigestHashedCredentialRetrieverTests {
 
     @Rule
@@ -22,20 +21,20 @@ public class DefaultDigestHashedCredentialRetrieverTests {
 
     @Test
     public void verifyCanFindAnExistingUser() throws Exception {
-        final String expectedPassword = "password";
-        final DefaultDigestHashedCredentialRetriever credentialRetriever = new DefaultDigestHashedCredentialRetriever(
-                Collections.singletonMap("user", expectedPassword));
+        val expectedPassword = "password";
+        val credentialRetriever = new DefaultDigestHashedCredentialRetriever(
+            Collections.singletonMap("user", expectedPassword));
 
-        final String credential = credentialRetriever.findCredential("user", "ignored");
+        val credential = credentialRetriever.findCredential("user", "ignored");
 
         assertEquals(expectedPassword, credential);
     }
 
     @Test
     public void verifyAnExceptionIsThrownIfUsedDoesNotExist() throws Exception {
-        final String username = "user";
-        final DefaultDigestHashedCredentialRetriever credentialRetriever = new DefaultDigestHashedCredentialRetriever(
-                Collections.singletonMap("anotherUsername", "password"));
+        val username = "user";
+        val credentialRetriever = new DefaultDigestHashedCredentialRetriever(
+            Collections.singletonMap("anotherUsername", "password"));
 
         thrown.expect(AccountNotFoundException.class);
 

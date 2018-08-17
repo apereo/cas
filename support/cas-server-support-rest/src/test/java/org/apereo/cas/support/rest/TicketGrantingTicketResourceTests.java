@@ -1,6 +1,5 @@
 package org.apereo.cas.support.rest;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -11,33 +10,31 @@ import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
+import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.security.auth.login.LoginException;
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Unit tests for {@link TicketGrantingTicketResource}.
@@ -46,7 +43,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 4.0.0
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
-@Slf4j
 public class TicketGrantingTicketResourceTests {
 
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
@@ -66,13 +62,14 @@ public class TicketGrantingTicketResourceTests {
     private MockMvc mockMvc;
 
     @Before
-    public void setUp() {
-        final AuthenticationManager mgmr = mock(AuthenticationManager.class);
-        when(mgmr.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+    public void initialize() {
+        val publisher = mock(ApplicationEventPublisher.class);
+        val manager = mock(AuthenticationManager.class);
+        when(manager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
         this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(
-            new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr),
+            new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(publisher, manager),
                 new DefaultPrincipalElectionStrategy()), new UsernamePasswordRestHttpRequestCredentialFactory(),
             casMock, new WebApplicationServiceFactory(), new DefaultTicketGrantingTicketResourceEntityResponseFactory());
 
@@ -85,7 +82,7 @@ public class TicketGrantingTicketResourceTests {
 
     @Test
     public void verifyNormalCreationOfTGT() throws Exception {
-        final String expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
+        val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
             + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
             + "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
@@ -104,7 +101,7 @@ public class TicketGrantingTicketResourceTests {
 
     @Test
     public void defaultCreationOfTGT() throws Throwable {
-        final String expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
+        val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
             + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
             + "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
@@ -123,7 +120,7 @@ public class TicketGrantingTicketResourceTests {
 
     @Test
     public void verifyHtmlCreationOfTGT() throws Throwable {
-        final String expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
+        val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
             + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
             + "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
@@ -142,7 +139,7 @@ public class TicketGrantingTicketResourceTests {
 
     @Test
     public void verifyJsonCreationOfTGT() throws Throwable {
-        final String expectedReturnEntityBody = "TGT-1";
+        val expectedReturnEntityBody = "TGT-1";
 
         configureCasMockToCreateValidTGT();
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
@@ -159,7 +156,7 @@ public class TicketGrantingTicketResourceTests {
     public void creationOfTGTWithAuthenticationException() throws Exception {
         configureCasMockTGTCreationToThrowAuthenticationException();
 
-        final String content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+        val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
             .param(USERNAME, TEST_VALUE)
             .param(PASSWORD, TEST_VALUE))
             .andExpect(status().isUnauthorized())
@@ -194,13 +191,13 @@ public class TicketGrantingTicketResourceTests {
     }
 
     private void configureCasMockToCreateValidTGT() {
-        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
+        val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-1");
         when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
     }
 
     private void configureCasMockTGTCreationToThrowAuthenticationException() {
-        final Map<String, Throwable> handlerErrors = new HashMap<>(1);
+        val handlerErrors = new HashMap<String, Throwable>(1);
         handlerErrors.put("TestCaseAuthenticationHandler", new LoginException("Login failed"));
         when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class)))
             .thenThrow(new AuthenticationException(handlerErrors));

@@ -1,9 +1,7 @@
 package org.apereo.cas.digest.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.digest.DefaultDigestHashedCredentialRetriever;
 import org.apereo.cas.digest.DigestHashedCredentialRetriever;
 import org.apereo.cas.digest.web.flow.DigestAuthenticationAction;
@@ -13,6 +11,8 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link DigestAuthenticationConfiguration}.
@@ -33,7 +34,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Configuration("digestAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class DigestAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
@@ -70,8 +70,7 @@ public class DigestAuthenticationConfiguration implements CasWebflowExecutionPla
 
     @Autowired
     @Bean
-    public DigestAuthenticationAction digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever")
-                                                                     final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
+    public Action digestAuthenticationAction(@Qualifier("defaultDigestCredentialRetriever") final DigestHashedCredentialRetriever defaultDigestCredentialRetriever) {
         return new DigestAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
             serviceTicketRequestWebflowEventResolver,
             adaptiveAuthenticationPolicy,
@@ -84,7 +83,7 @@ public class DigestAuthenticationConfiguration implements CasWebflowExecutionPla
     @Bean
     @RefreshScope
     public DigestHashedCredentialRetriever defaultDigestCredentialRetriever() {
-        final DigestProperties digest = casProperties.getAuthn().getDigest();
+        val digest = casProperties.getAuthn().getDigest();
         return new DefaultDigestHashedCredentialRetriever(digest.getUsers());
     }
 

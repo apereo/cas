@@ -1,13 +1,16 @@
 package org.apereo.cas.configuration.model.support.jaas;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
+import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * This is {@link JaasAuthenticationProperties}.
@@ -15,7 +18,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @Getter
 @Setter
 public class JaasAuthenticationProperties implements Serializable {
@@ -74,10 +76,29 @@ public class JaasAuthenticationProperties implements Serializable {
     private String credentialCriteria;
 
     /**
+     * Typically set to {@code JavaLoginConfig} which is the default Configuration implementation
+     * from the SUN provider. This type accepts a URI/path to a configuration file as a valid parameter type specified via {@link #loginConfigurationFile}.
+     * If this parameter is not specified, then the configuration information is loaded from the sources described
+     * in the ConfigFile class specification. If this parameter is specified, the configuration information is loaded solely from the specified URI.
+     */
+    private String loginConfigType;
+
+    /**
+     * Path to the location of configuration file (i.e. jaas.conf) that contains the realms and login modules.
+     */
+    private String loginConfigurationFile;
+
+    /**
      * Principal transformation settings.
      */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
+
+    /**
+     * Password policy settings.
+     */
+    @NestedConfigurationProperty
+    private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
 
     /**
      * Password encoder settings for JAAS authentication.
@@ -86,7 +107,18 @@ public class JaasAuthenticationProperties implements Serializable {
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
     /**
+     * Principal construction settings.
+     */
+    @NestedConfigurationProperty
+    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
+
+    /**
      * Name of the authentication handler.
      */
     private String name;
+
+    /**
+     * Order of the authentication handler in the chain.
+     */
+    private int order = Integer.MAX_VALUE;
 }

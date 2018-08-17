@@ -23,5 +23,14 @@ public interface AuthenticationServiceSelectionPlan {
      * @return the service
      */
     Service resolveService(Service service);
-       
+
+    /**
+     * Resolve service t.
+     *
+     * @param <T>     the type parameter
+     * @param service the service
+     * @param clazz   the clazz
+     * @return the t
+     */
+    <T extends Service> T resolveService(Service service, Class<T> clazz);
 }

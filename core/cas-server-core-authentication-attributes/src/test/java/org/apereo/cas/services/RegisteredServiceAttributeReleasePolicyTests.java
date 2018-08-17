@@ -1,27 +1,23 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
+
+import com.google.common.collect.ArrayListMultimap;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.*;
@@ -33,8 +29,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RunWith(JUnit4.class)
-@Slf4j
 public class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String ATTR_1 = "attr1";
@@ -47,42 +41,42 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
     @Test
     public void verifyMappedAttributeFilterMappedAttributesIsCaseInsensitive() {
-        final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        final Multimap<String, Object> mappedAttr = ArrayListMultimap.create();
+        val policy = new ReturnMappedAttributeReleasePolicy();
+        val mappedAttr = ArrayListMultimap.<String, Object>create();
         mappedAttr.put(ATTR_1, NEW_ATTR_1_VALUE);
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
 
-        final Principal p = mock(Principal.class);
-        final Map<String, Object> map = new HashMap<>();
+        val p = mock(Principal.class);
+        val map = new HashMap<String, Object>();
         map.put("ATTR1", VALUE_1);
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p,
-                CoreAttributesTestUtils.getService(),
-                CoreAttributesTestUtils.getRegisteredService());
+        val attr = policy.getAttributes(p,
+            CoreAttributesTestUtils.getService(),
+            CoreAttributesTestUtils.getRegisteredService());
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
     }
 
     @Test
     public void verifyAttributeFilterMappedAttributesIsCaseInsensitive() {
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
-        final List<String> attrs = new ArrayList<>();
+        val policy = new ReturnAllowedAttributeReleasePolicy();
+        val attrs = new ArrayList<String>();
         attrs.add(ATTR_1);
         attrs.add(ATTR_2);
 
         policy.setAllowedAttributes(attrs);
 
-        final Principal p = mock(Principal.class);
-        final Map<String, Object> map = new HashMap<>();
+        val p = mock(Principal.class);
+        val map = new HashMap<String, Object>();
         map.put("ATTR1", VALUE_1);
         map.put("ATTR2", VALUE_2);
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
-                CoreAttributesTestUtils.getRegisteredService());
+        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
+            CoreAttributesTestUtils.getRegisteredService());
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_2));
@@ -90,14 +84,14 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
     @Test
     public void verifyAttributeFilterMappedAttributes() {
-        final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        final Multimap<String, Object> mappedAttr = ArrayListMultimap.create();
+        val policy = new ReturnMappedAttributeReleasePolicy();
+        val mappedAttr = ArrayListMultimap.<String, Object>create();
         mappedAttr.put(ATTR_1, NEW_ATTR_1_VALUE);
 
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
-        final Principal p = mock(Principal.class);
+        val p = mock(Principal.class);
 
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(ATTR_1, VALUE_1);
         map.put(ATTR_2, VALUE_2);
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
@@ -105,24 +99,24 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
-                CoreAttributesTestUtils.getRegisteredService());
+        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
+            CoreAttributesTestUtils.getRegisteredService());
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
 
-        final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnMappedAttributeReleasePolicy p2 = SerializationUtils.deserializeAndCheckObject(data, ReturnMappedAttributeReleasePolicy.class);
+        val data = SerializationUtils.serialize(policy);
+        val p2 = SerializationUtils.deserializeAndCheckObject(data, ReturnMappedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
 
     @Test
     public void verifyServiceAttributeFilterAllowedAttributes() {
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
-        final Principal p = mock(Principal.class);
+        val p = mock(Principal.class);
 
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(ATTR_1, VALUE_1);
         map.put(ATTR_2, VALUE_2);
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
@@ -130,40 +124,39 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
-                CoreAttributesTestUtils.getRegisteredService());
+        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
+            CoreAttributesTestUtils.getRegisteredService());
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_3));
 
-        final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllowedAttributeReleasePolicy p2 =
-                SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
+        val data = SerializationUtils.serialize(policy);
+        val p2 =
+            SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
     }
 
     @Test
     public void verifyServiceAttributeDenyAllAttributes() {
-        final DenyAllAttributeReleasePolicy policy = new DenyAllAttributeReleasePolicy();
-        final Principal p = mock(Principal.class);
-        final Map<String, Object> map = new HashMap<>();
+        val policy = new DenyAllAttributeReleasePolicy();
+        val p = mock(Principal.class);
+        val map = new HashMap<String, Object>();
         map.put("ATTR1", VALUE_1);
         map.put("ATTR2", VALUE_2);
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
-                CoreAttributesTestUtils.getRegisteredService());
+        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), CoreAttributesTestUtils.getRegisteredService());
         assertTrue(attr.isEmpty());
     }
 
     @Test
     public void verifyServiceAttributeFilterAllAttributes() {
-        final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
-        final Principal p = mock(Principal.class);
+        val policy = new ReturnAllAttributeReleasePolicy();
+        val p = mock(Principal.class);
 
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put(ATTR_1, VALUE_1);
         map.put(ATTR_2, VALUE_2);
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
@@ -171,41 +164,39 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn(PRINCIPAL_ID);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
-                CoreAttributesTestUtils.getRegisteredService());
+        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(), CoreAttributesTestUtils.getRegisteredService());
         assertEquals(attr.size(), map.size());
 
-        final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllAttributeReleasePolicy p2 =
-                SerializationUtils.deserializeAndCheckObject(data, ReturnAllAttributeReleasePolicy.class);
+        val data = SerializationUtils.serialize(policy);
+        val p2 = SerializationUtils.deserializeAndCheckObject(data, ReturnAllAttributeReleasePolicy.class);
         assertNotNull(p2);
     }
 
     @Test
     public void checkServiceAttributeFilterAllAttributesWithCachingTurnedOn() {
-        final ReturnAllAttributeReleasePolicy policy = new ReturnAllAttributeReleasePolicy();
+        val policy = new ReturnAllAttributeReleasePolicy();
 
-        final Map<String, List<Object>> attributes = new HashMap<>();
+        val attributes = new HashMap<String, List<Object>>();
         attributes.put("values", Arrays.asList(new Object[]{"v1", "v2", "v3"}));
         attributes.put("cn", Arrays.asList(new Object[]{"commonName"}));
         attributes.put("username", Arrays.asList(new Object[]{"uid"}));
 
-        final IPersonAttributeDao dao = new StubPersonAttributeDao(attributes);
-        final IPersonAttributes person = mock(IPersonAttributes.class);
+        val dao = new StubPersonAttributeDao(attributes);
+        val person = mock(IPersonAttributes.class);
         when(person.getName()).thenReturn("uid");
         when(person.getAttributes()).thenReturn(attributes);
 
-        final CachingPrincipalAttributesRepository repository =
-                new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
+        val repository =
+            new CachingPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100);
         repository.setAttributeRepository(dao);
 
-        final Principal p = new DefaultPrincipalFactory().createPrincipal("uid",
-                Collections.singletonMap("mail", "final@example.com"));
+        val p = new DefaultPrincipalFactory().createPrincipal("uid",
+            Collections.singletonMap("mail", "final@example.com"));
 
         policy.setPrincipalAttributesRepository(repository);
 
-        final Map<String, Object> attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
-                CoreAttributesTestUtils.getRegisteredService());
+        val attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
+            CoreAttributesTestUtils.getRegisteredService());
         assertEquals(attr.size(), attributes.size());
     }
 }

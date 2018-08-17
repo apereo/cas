@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
 import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,7 +14,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 @NoArgsConstructor
 public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapter {
     /**
@@ -27,8 +25,8 @@ public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapt
         super(metadataResources);
     }
 
-    @Scheduled(initialDelayString="${cas.saml.mdui.schedule.startDelay:PT30S}",
-               fixedDelayString = "${cas.saml.mdui.schedule.repeatInterval:PT90S}")
+    @Scheduled(initialDelayString = "${cas.saml.mdui.schedule.startDelay:PT30S}",
+        fixedDelayString = "${cas.saml.mdui.schedule.repeatInterval:PT90S}")
     @Override
     public void buildMetadataResolverAggregate() {
         super.buildMetadataResolverAggregate();

@@ -1,11 +1,8 @@
 package org.apereo.cas.web.flow.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
@@ -18,6 +15,7 @@ import org.apereo.cas.web.flow.WsFederationResponseValidator;
 import org.apereo.cas.web.flow.WsFederationWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,12 +39,7 @@ import java.util.Collection;
  */
 @Configuration("wsFederationAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class WsFederationAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -64,10 +57,6 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
     @Autowired
     @Qualifier("wsFederationCookieManager")
     private WsFederationCookieManager wsFederationCookieManager;
-
-    @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -123,7 +112,7 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
     @ConditionalOnMissingBean(name = "wsFederationResponseValidator")
     public WsFederationResponseValidator wsFederationResponseValidator() {
         return new WsFederationResponseValidator(wsFederationHelper, wsFederationConfigurations,
-            centralAuthenticationService, authenticationSystemSupport, wsFederationCookieManager);
+            authenticationSystemSupport, wsFederationCookieManager);
     }
 
     @Override

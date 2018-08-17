@@ -1,7 +1,8 @@
 package org.apereo.cas.support.realm;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.sts.RealmParser;
 import org.apache.cxf.sts.token.realm.RealmProperties;
@@ -17,26 +18,21 @@ import java.util.StringTokenizer;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UriRealmParser implements RealmParser {
 
     private final Map<String, RealmProperties> realmMap;
 
     @Override
     public String parseRealm(final Map<String, Object> messageContext) throws STSException {
-        final String url = (String) messageContext.get("org.apache.cxf.request.url");
-
-        final StringTokenizer st = new StringTokenizer(url, "/");
-        String realm = null;
-        int count = st.countTokens();
+        val url = (String) messageContext.get("org.apache.cxf.request.url");
+        val st = new StringTokenizer(url, "/");
+        var count = st.countTokens();
         if (count <= 1) {
             return null;
         }
         count--;
-        for (int i = 0; i < count; i++) {
-            realm = st.nextToken();
-        }
-        realm = realm.toUpperCase();
+        val realm = getRealm(st, count);
         if (StringUtils.isBlank(realm) || !realmMap.containsKey(realm)) {
             LOGGER.warn("Unknown realm: [{}]", realm);
             throw new STSException("Unknown realm: " + realm);
@@ -44,6 +40,14 @@ public class UriRealmParser implements RealmParser {
 
         LOGGER.debug("URI realm parsed: [{}]", realm);
         return realm.trim();
+    }
+
+    private String getRealm(final StringTokenizer st, final int count) {
+        var realm = StringUtils.EMPTY;
+        for (var i = 0; i < count; i++) {
+            realm = st.nextToken();
+        }
+        return realm.toUpperCase();
     }
 }
 

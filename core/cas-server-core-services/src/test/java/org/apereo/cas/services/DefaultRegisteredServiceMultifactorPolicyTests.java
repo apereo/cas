@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
@@ -15,7 +15,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
 public class DefaultRegisteredServiceMultifactorPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultRegisteredServiceMultifactorPolicy.json");
@@ -23,16 +22,16 @@ public class DefaultRegisteredServiceMultifactorPolicyTests {
 
     @Test
     public void verifySerializeADefaultRegisteredServiceMultifactorPolicyToJson() throws IOException {
-        final DefaultRegisteredServiceMultifactorPolicy policyWritten = new DefaultRegisteredServiceMultifactorPolicy();
+        val policyWritten = new DefaultRegisteredServiceMultifactorPolicy();
         policyWritten.setPrincipalAttributeNameTrigger("trigger");
         policyWritten.setPrincipalAttributeValueToMatch("attribute");
-        final HashSet<String> providers = new HashSet<>();
+        val providers = new HashSet<String>();
         providers.add("providerOne");
         policyWritten.setMultifactorAuthenticationProviders(providers);
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
 
-        final RegisteredServiceMultifactorPolicy policyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceMultifactorPolicy.class);
+        val policyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceMultifactorPolicy.class);
 
         assertEquals(policyWritten, policyRead);
     }

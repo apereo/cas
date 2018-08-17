@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.factory;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -12,6 +11,10 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.util.Map;
 
 /**
@@ -22,39 +25,19 @@ import java.util.Map;
  * @since 4.2
  */
 @Slf4j
+@RequiredArgsConstructor
 public class DefaultProxyTicketFactory implements ProxyTicketFactory {
-
-
-
-    /**
-     * Default instance for the ticket id generator.
-     */
     private final UniqueTicketIdGenerator defaultTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
-    /**
-     * Map to contain the mappings of service to {@link UniqueTicketIdGenerator}s.
-     */
-    private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
-
-    /**
-     * ExpirationPolicy for Service Tickets.
-     */
     private final ExpirationPolicy proxyTicketExpirationPolicy;
+    private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
     private final CipherExecutor<String, String> cipherExecutor;
     private final boolean onlyTrackMostRecentSession;
-
-    public DefaultProxyTicketFactory(final ExpirationPolicy expirationPolicy, final Map<String, UniqueTicketIdGenerator> ticketIdGenerators,
-                                     final CipherExecutor<String, String> cipherExecutor, final boolean onlyTrackMostRecentSession) {
-        this.proxyTicketExpirationPolicy = expirationPolicy;
-        this.uniqueTicketIdGeneratorsForService = ticketIdGenerators;
-        this.cipherExecutor = cipherExecutor;
-        this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
-    }
 
     @Override
     public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket, final Service service,
                                        final Class<T> clazz) {
-        final String ticketId = produceTicketIdentifier(service);
+        val ticketId = produceTicketIdentifier(service);
         return produceTicket(proxyGrantingTicket, service, ticketId, clazz);
     }
 
@@ -70,7 +53,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
      */
     protected <T extends Ticket> T produceTicket(final ProxyGrantingTicket proxyGrantingTicket,
                                                  final Service service, final String ticketId, final Class<T> clazz) {
-        final ProxyTicket result = proxyGrantingTicket.grantProxyTicket(
+        val result = proxyGrantingTicket.grantProxyTicket(
             ticketId,
             service,
             this.proxyTicketExpirationPolicy,
@@ -91,21 +74,22 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
      * @return the ticket id
      */
     protected String produceTicketIdentifier(final Service service) {
-        final String uniqueTicketIdGenKey = service.getClass().getName();
+        val uniqueTicketIdGenKey = service.getClass().getName();
         LOGGER.debug("Looking up ticket id generator for [{}]", uniqueTicketIdGenKey);
-        UniqueTicketIdGenerator generator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
+        var generator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         if (generator == null) {
             generator = this.defaultTicketIdGenerator;
             LOGGER.debug("Ticket id generator not found for [{}]. Using the default generator...", uniqueTicketIdGenKey);
         }
 
-        String ticketId = generator.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX);
-        if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to encode proxy ticket [{}]", ticketId);
-            ticketId = this.cipherExecutor.encode(ticketId);
-            LOGGER.debug("Encoded proxy ticket id [{}]", ticketId);
+        val ticketId = generator.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX);
+        if (this.cipherExecutor == null) {
+            return ticketId;
         }
-        return ticketId;
+        LOGGER.debug("Attempting to encode proxy ticket [{}]", ticketId);
+        val encodedId = this.cipherExecutor.encode(ticketId);
+        LOGGER.debug("Encoded proxy ticket id [{}]", encodedId);
+        return encodedId;
     }
 
     @Override

@@ -1,0 +1,4 @@
+description = "Apereo CAS Memcached Support via Memcached"
+dependencies {
+    api libraries.memcached
+}

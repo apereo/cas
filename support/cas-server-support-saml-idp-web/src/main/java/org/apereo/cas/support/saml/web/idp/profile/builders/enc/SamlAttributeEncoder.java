@@ -1,12 +1,14 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 
-import java.util.HashMap;
+import com.google.common.collect.Maps;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Map;
 
 /**
@@ -18,13 +20,12 @@ import java.util.Map;
 @Slf4j
 public class SamlAttributeEncoder implements ProtocolAttributeEncoder {
 
-
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService service) {
-        final Map<String, Object> finalAttributes = new HashMap<>(attributes.size());
+        val finalAttributes = Maps.<String, Object>newHashMapWithExpectedSize(attributes.size());
 
         attributes.forEach((k, v) -> {
-            final String attributeName = EncodingUtils.hexDecode(k);
+            val attributeName = EncodingUtils.hexDecode(k);
             if (StringUtils.isNotBlank(attributeName)) {
                 LOGGER.debug("Decoded SAML attribute [{}] to [{}] with value(s) [{}]", k, attributeName, v);
                 finalAttributes.put(attributeName, v);

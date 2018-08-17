@@ -2,14 +2,14 @@
 <Configuration shutdownHook="disable">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%m%n"/>
+            <PatternLayout pattern="%highlight{%m%n}"/>
         </Console>
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Root level="off">
+        <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

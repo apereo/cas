@@ -11,14 +11,16 @@ import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.auth.PropertiesFileCredentialsProvider;
 import com.amazonaws.auth.SystemPropertiesCredentialsProvider;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * This is {@link ChainingAWSCredentialsProvider}.
@@ -27,41 +29,10 @@ import java.util.List;
  * @since 5.3.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Getter
 public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
     private final List<AWSCredentialsProvider> chain;
-
-    @Override
-    public AWSCredentials getCredentials() {
-        LOGGER.debug("Attempting to locate AWS credentials from the chain...");
-        for (final AWSCredentialsProvider p : this.chain) {
-            AWSCredentials c;
-            try {
-                LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
-                c = p.getCredentials();
-            } catch (final Throwable e) {
-                LOGGER.trace(e.getMessage(), e);
-                c = null;
-            }
-            if (c != null) {
-                LOGGER.debug("Fetched credentials from [{}] provider successfully.", p.getClass().getSimpleName());
-                return c;
-            }
-        }
-        LOGGER.warn("No AWS credentials could be determined from the chain. Using anonymous credentials...");
-        return new AnonymousAWSCredentials();
-    }
-
-    @Override
-    public void refresh() {
-        for (final AWSCredentialsProvider p : this.chain) {
-            try {
-                p.refresh();
-            } catch (final Throwable e) {
-                LOGGER.trace(e.getMessage(), e);
-            }
-        }
-    }
 
     /**
      * Gets instance.
@@ -112,29 +83,90 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
 
         LOGGER.debug("Attempting to locate AWS credentials...");
 
-        final List<AWSCredentialsProvider> chain = new ArrayList<>();
+        val chain = new ArrayList<AWSCredentialsProvider>();
         chain.add(new InstanceProfileCredentialsProvider(false));
 
         if (credentialPropertiesFile != null) {
             try {
-                final File f = credentialPropertiesFile.getFile();
+                val f = credentialPropertiesFile.getFile();
                 chain.add(new PropertiesFileCredentialsProvider(f.getCanonicalPath()));
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
         }
         if (StringUtils.isNotBlank(profilePath) && StringUtils.isNotBlank(profileName)) {
-            chain.add(new ProfileCredentialsProvider(profilePath, profileName));
+            addProviderToChain(nothing -> {
+                chain.add(new ProfileCredentialsProvider(profilePath, profileName));
+                return null;
+            });
         }
-        chain.add(new SystemPropertiesCredentialsProvider());
-        chain.add(new EnvironmentVariableCredentialsProvider());
-        chain.add(new ClasspathPropertiesFileCredentialsProvider("awscredentials.properties"));
+        addProviderToChain(nothing -> {
+            chain.add(new SystemPropertiesCredentialsProvider());
+            return null;
+        });
+
+        addProviderToChain(nothing -> {
+            chain.add(new EnvironmentVariableCredentialsProvider());
+            return null;
+        });
+
+        addProviderToChain(nothing -> {
+            chain.add(new ClasspathPropertiesFileCredentialsProvider("awscredentials.properties"));
+            return null;
+        });
+
         if (StringUtils.isNotBlank(credentialAccessKey) && StringUtils.isNotBlank(credentialSecretKey)) {
-            final BasicAWSCredentials credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
-            chain.add(new AWSStaticCredentialsProvider(credentials));
+            addProviderToChain(nothing -> {
+                val credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
+                chain.add(new AWSStaticCredentialsProvider(credentials));
+                return null;
+            });
         }
 
         LOGGER.debug("AWS chained credential providers are configured as [{}]", chain);
         return new ChainingAWSCredentialsProvider(chain);
+    }
+
+    private static void addProviderToChain(final Function<Void, Void> func) {
+        try {
+            func.apply(null);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public AWSCredentials getCredentials() {
+        LOGGER.debug("Attempting to locate AWS credentials from the chain...");
+        for (val p : this.chain) {
+            val c = getCredentialsFromProvider(p);
+            if (c != null) {
+                LOGGER.debug("Fetched credentials from [{}] provider successfully.", p.getClass().getSimpleName());
+                return c;
+            }
+        }
+        LOGGER.warn("No AWS credentials could be determined from the chain. Using anonymous credentials...");
+        return new AnonymousAWSCredentials();
+    }
+
+    private AWSCredentials getCredentialsFromProvider(final AWSCredentialsProvider p) {
+        try {
+            LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
+            return p.getCredentials();
+        } catch (final Throwable e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    @Override
+    public void refresh() {
+        for (val p : this.chain) {
+            try {
+                p.refresh();
+            } catch (final Throwable e) {
+                LOGGER.trace(e.getMessage(), e);
+            }
+        }
     }
 }

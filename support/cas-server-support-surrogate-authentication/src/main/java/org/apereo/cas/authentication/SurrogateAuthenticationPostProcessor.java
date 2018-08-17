@@ -1,20 +1,20 @@
 package org.apereo.cas.authentication;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 
 import javax.security.auth.login.CredentialNotFoundException;
@@ -29,71 +29,69 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SurrogateAuthenticationPostProcessor implements AuthenticationPostProcessor {
-    private final PrincipalFactory principalFactory;
     private final SurrogateAuthenticationService surrogateAuthenticationService;
     private final ServicesManager servicesManager;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
     private final AuditableExecution surrogateEligibilityAuditableExecution;
+    private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
 
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
-        final Authentication authentication = builder.build();
-        final Principal principal = authentication.getPrincipal();
-        final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
-        final String targetUserId = surrogateCredentials.getSurrogateUsername();
+        val authentication = builder.build();
+        val primaryPrincipal = authentication.getPrincipal();
+
+        @NonNull
+        val surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
+        val targetUserId = surrogateCredentials.getSurrogateUsername();
 
         try {
-
             if (StringUtils.isBlank(targetUserId)) {
                 LOGGER.error("No surrogate username was specified as part of the credential");
                 throw new CredentialNotFoundException("Missing surrogate username in credential");
             }
-
-            LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next...", principal);
+            LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next for [{}]...", primaryPrincipal, targetUserId);
             if (transaction.getService() != null) {
-                final RegisteredService svc = this.servicesManager.findServiceBy(transaction.getService());
+                val svc = this.servicesManager.findServiceBy(transaction.getService());
 
-                final AuditableContext serviceAccessAudit = AuditableContext.builder().service(transaction.getService())
+                val serviceAccessAudit = AuditableContext.builder()
+                    .service(transaction.getService())
                     .authentication(authentication)
                     .registeredService(svc)
                     .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
 
-                final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(serviceAccessAudit);
+                val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(serviceAccessAudit);
                 accessResult.throwExceptionIfNeeded();
             }
 
-            if (this.surrogateAuthenticationService.canAuthenticateAs(targetUserId, principal, transaction.getService())) {
-                LOGGER.debug("Principal [{}] is authorized to authenticate as [{}]", principal, targetUserId);
-                builder.setPrincipal(this.principalFactory.createPrincipal(targetUserId));
-                publishSuccessEvent(principal, targetUserId);
+            if (this.surrogateAuthenticationService.canAuthenticateAs(targetUserId, primaryPrincipal, transaction.getService())) {
+                LOGGER.debug("Principal [{}] is authorized to authenticate as [{}]", primaryPrincipal, targetUserId);
+                publishSuccessEvent(primaryPrincipal, targetUserId);
 
-                final AuditableContext surrogateEligibleAudit = AuditableContext.builder()
+                val surrogateEligibleAudit = AuditableContext.builder()
                     .service(transaction.getService())
                     .authentication(authentication)
-                    .properties(CollectionUtils.wrap("targetUserId", targetUserId, "eligible", true))
+                    .properties(CollectionUtils.wrap("targetUserId", targetUserId, "eligible", Boolean.TRUE))
                     .build();
 
-                // We don't care about capturing audit execution result here
                 this.surrogateEligibilityAuditableExecution.execute(surrogateEligibleAudit);
                 return;
             }
-            LOGGER.error("Principal [{}] is unable/unauthorized to authenticate as [{}]", principal, targetUserId);
+            LOGGER.error("Principal [{}] is unable/unauthorized to authenticate as [{}]", primaryPrincipal, targetUserId);
             throw new FailedLoginException();
         } catch (final Exception e) {
-            publishFailureEvent(principal, targetUserId);
+            publishFailureEvent(primaryPrincipal, targetUserId);
             final Map<String, Throwable> map = CollectionUtils.wrap(getClass().getSimpleName(),
-                new SurrogateAuthenticationException("Principal " + principal + " is unauthorized to authenticate as " + targetUserId));
+                new SurrogateAuthenticationException("Principal " + primaryPrincipal + " is unauthorized to authenticate as " + targetUserId));
 
-            final AuditableContext surrogateIneligibleAudit = AuditableContext.builder()
+            val surrogateIneligibleAudit = AuditableContext.builder()
                 .service(transaction.getService())
                 .authentication(authentication)
                 .build();
 
-            //We don't care about capturing audit execution result here
             this.surrogateEligibilityAuditableExecution.execute(surrogateIneligibleAudit);
             throw new AuthenticationException(map);
         }
@@ -105,12 +103,12 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     }
 
     private void publishFailureEvent(final Principal principal, final String surrogate) {
-        final AbstractCasEvent event = new CasSurrogateAuthenticationFailureEvent(this, principal, surrogate);
+        val event = new CasSurrogateAuthenticationFailureEvent(this, principal, surrogate);
         publishEvent(event);
     }
 
     private void publishSuccessEvent(final Principal principal, final String surrogate) {
-        final AbstractCasEvent event = new CasSurrogateAuthenticationSuccessfulEvent(this, principal, surrogate);
+        val event = new CasSurrogateAuthenticationSuccessfulEvent(this, principal, surrogate);
         publishEvent(event);
     }
 

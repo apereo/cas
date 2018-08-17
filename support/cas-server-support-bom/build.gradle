@@ -7,7 +7,7 @@ artifacts {
 def generateBom() {
     def pom = pom {
     }.whenConfigured {
-        println "Creating BOM with all project dependencies"
+        logger.info "Creating BOM with all project dependencies"
         
         packaging = "pom"
         artifactId = project.name

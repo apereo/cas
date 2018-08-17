@@ -1,15 +1,16 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
@@ -32,10 +33,9 @@ import java.util.List;
  */
 @Slf4j
 public class SpnegoNegotiateCredentialsAction extends AbstractAction {
-
-
-
-    /** Whether this is using the NTLM protocol or not. */
+    /**
+     * Whether this is using the NTLM protocol or not.
+     */
     private final boolean ntlm;
 
     /**
@@ -66,16 +66,15 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
      * Instantiates a new Spnego negociate credentials action.
      * Also add to the list of supported browser user agents the following:
      * <ul>
-     *     <li>{@code MSIE}</li>
-     *     <li>{@code Trident}</li>
-     *     <li>{@code Firefox}</li>
-     *     <li>{@code AppleWebKit}</li>
+     * <li>{@code MSIE}</li>
+     * <li>{@code Trident}</li>
+     * <li>{@code Firefox}</li>
+     * <li>{@code AppleWebKit}</li>
      * </ul>
      *
-     * @param supportedBrowser the supported browsers list
-     * @param ntlm Sets the ntlm. Generates the message prefix as well.
+     * @param supportedBrowser               the supported browsers list
+     * @param ntlm                           Sets the ntlm. Generates the message prefix as well.
      * @param mixedModeAuthenticationEnabled should mixed mode authentication be allowed. Default is false.
-     *
      * @since 4.1
      */
     public SpnegoNegotiateCredentialsAction(final List<String> supportedBrowser, final boolean ntlm, final boolean mixedModeAuthenticationEnabled) {
@@ -84,19 +83,15 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
         this.mixedModeAuthentication = mixedModeAuthenticationEnabled;
 
         this.supportedBrowser = supportedBrowser;
-        this.supportedBrowser.add("MSIE");
-        this.supportedBrowser.add("Trident");
-        this.supportedBrowser.add("Firefox");
-        this.supportedBrowser.add("AppleWebKit");
     }
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
-        final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
-        final String userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
+        val authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
+        val userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
 
         LOGGER.debug("Authorization header [{}], User Agent header [{}]", authorizationHeader, userAgent);
         if (!StringUtils.hasText(userAgent) || this.supportedBrowser.isEmpty()) {
@@ -106,18 +101,17 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
 
         if (!isSupportedBrowser(userAgent)) {
             LOGGER.warn("User Agent header [{}] is not supported in the list of supported browsers [{}]",
-                    userAgent, this.supportedBrowser);
+                userAgent, this.supportedBrowser);
             return error();
         }
 
         if (!StringUtils.hasText(authorizationHeader)
-                || !authorizationHeader.startsWith(this.messageBeginPrefix)
-                || authorizationHeader.length() <= this.messageBeginPrefix
-                .length()) {
+            || !authorizationHeader.startsWith(this.messageBeginPrefix)
+            || authorizationHeader.length() <= this.messageBeginPrefix.length()) {
 
-            final String wwwHeader = this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE;
+            val wwwHeader = this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE;
             LOGGER.debug("Authorization header not found or does not match the message prefix [{}]. Sending [{}] header [{}]",
-                    this.messageBeginPrefix, SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
+                this.messageBeginPrefix, SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
 
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

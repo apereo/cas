@@ -2,10 +2,8 @@ package org.apereo.cas.interrupt;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -17,13 +15,15 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @ToString
 @Getter
 @Setter
-@NoArgsConstructor
 @EqualsAndHashCode
 public class InterruptResponse implements Serializable {
+    /**
+     * The default message when flows are interrupted.
+     */
+    public static final String DEFAULT_MESSAGE = "Authentication flow is interrupted";
 
     private static final long serialVersionUID = 2558836528840508196L;
 
@@ -41,22 +41,45 @@ public class InterruptResponse implements Serializable {
 
     private long autoRedirectAfterSeconds = -1;
 
-    public InterruptResponse(final String message, final boolean block, final boolean ssoEnabled) {
-        this.message = message;
-        this.block = block;
-        this.ssoEnabled = ssoEnabled;
-        this.interrupt = true;
-    }
-
     public InterruptResponse(final boolean interrupt) {
         this.interrupt = interrupt;
     }
 
-    public InterruptResponse(final String message, final Map<String, String> links, final boolean block, final boolean ssoEnabled) {
+    public InterruptResponse(final String message, final boolean block, final boolean ssoEnabled) {
+        this(true);
         this.message = message;
-        this.links = links;
         this.block = block;
         this.ssoEnabled = ssoEnabled;
-        this.interrupt = true;
+    }
+
+    public InterruptResponse(final String message) {
+        this(message, false, true);
+    }
+
+    public InterruptResponse() {
+        this(DEFAULT_MESSAGE, false, true);
+    }
+
+    public InterruptResponse(final String message, final Map<String, String> links, final boolean block, final boolean ssoEnabled) {
+        this(message, block, ssoEnabled);
+        this.links = links;
+    }
+
+    /**
+     * No interruptions interrupt response.
+     *
+     * @return the interrupt response
+     */
+    public static InterruptResponse none() {
+        return new InterruptResponse(false);
+    }
+
+    /**
+     * Interrupt interrupt response.
+     *
+     * @return the interrupt response
+     */
+    public static InterruptResponse interrupt() {
+        return new InterruptResponse(DEFAULT_MESSAGE);
     }
 }

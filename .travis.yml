@@ -3,72 +3,143 @@
 # Generate the OAUTH-TOKEN at https://github.com/settings/applications
 # Install travis: gem install travis
 # Login to travis: travis login
-# Encrypt the token: travis encrypt VAR_NAME=[OAUTH-TOKEN] -r apereo/cas --add env.global
-# Encrypted settings include SONATYPE_USER, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN
+# Encrypt the token: travis encrypt VAR_NAME=VAR_VALUE -r apereo/cas --add env.global
+# Encrypted settings include SONATYPE_USER, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN, COVERALLS_REPO_TOKEN
 
 language: java
-sudo: true
+sudo: required
 dist: trusty
 services:
-  - docker
+- docker
 branches:
   only:
   - master
-jdk:
-- oraclejdk8
+# Enable once Travis CI fixed JDK setup
+#jdk:
+  #- oraclejdk11
+  #- oraclejdk10
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+# Remove once Travis CI fixes JDK setup
+before_script:
+ - unset -v _JAVA_OPTIONS
+ - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
+ - source install-jdk.sh -F 10 -L BCL
 cache:
+  bundler: false
+  cargo: false
   directories:
-    - $HOME/.m2
-    - $HOME/.npm/
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/    
+  - $HOME/.m2
+  - $HOME/.npm/
+  - $HOME/.gradle/caches/
+  - $HOME/.gradle/wrapper/
 git:
-  depth: 1
+  depth: 2
 notifications:
-  slack: apereo:tUFPsW9tmnzVSADu1LqqSUV8
+  slack:
+    secure: "gNFUOGd0isowSwPfQ9VqGQWhWRDAjzX9tfH0xGe2gyg1kiOhq3Odb8fdcUg9f3DhAbiMxGDu08IgmDbeEyncB42Zdqk/DFvD3F958WaVy0O9TF2iAzO+ftBG0+slFHPDZ8qAy97+mV/be7KBkLYP+BydYTVfO84NvpLNiylmOVU="
+  webhooks:
+    # Coveralls: https://docs.coveralls.io/parallel-build-webhook
+    secure: "e3Lkn/iMpq9IjNrBQqMAKAxCbKUcd5t6zbow+l39a5n7trIUcBzgK9YXlSBigRyVnKXwNmI08WQN0GMJuWoT2u9cda5qttgZ5C8p/RFWxGKz6qhlmKwcwmipasU0ykvMARB6nrTMwMeMV/O5btt2xko8KfsRQdmqyZGJBglhDsc="
 matrix:
   fast_finish: true
 env:
   global:
-  - JAVA_OPTS="-Xms512M -Xmx2048M -Xss2M -XX:ReservedCodeCacheSize=512m"
+  - JAVA_OPTS="-Xms512m -Xmx2048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
+  - GRADLE_OPTS="-Xms512m -Xmx1024m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
   - SPRING_MAIN_BANNER-MODE="off"
+  - COVERALLS_PARALLEL=true
   - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="
   - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
   - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
-  matrix:
-  - MATRIX_JOB_TYPE=BUILD
-  - MATRIX_JOB_TYPE=STYLE
-  - MATRIX_JOB_TYPE=JAVADOC
-  - MATRIX_JOB_TYPE=TEST
-  - MATRIX_JOB_TYPE=SNAPSHOT
-  - MATRIX_JOB_TYPE=DEPUPDATE
-  - MATRIX_JOB_TYPE=CFGMETADATA
+  - secure: "A0B1HJoHzvYGT4pPWPW1bQDS3Ne755vZ/VZ20OtVRgJHTTQfK13eKgH0VbYpEyZKJAFIexmaDVQ0XUdNukzrAoI6rKSm5vwam6qjELrvrKH2ovMgd1xvS2a5a1no5OT3QP3TXKKlmOTdS+Q5ZspjslBxpay3q7aKA9GMNvzChko="
+  - secure: "o+KTglDoN49U9YawUsInKZ/83xxyeSB+WexfztRR+2dfCr049VXlJyurcE2/FygkentOY5DJU2UAnyZOEjyWoHth0q4MQOjIn0BE53yBFojxvcQPufgIR1Bc/BNaNeU2xRunNf8Rha/E/Dlwg5WdQT60Z0mdyDm7jHwodKxh7d4="
 before_install:
-- chmod -R 777 ./ci/run-ldap-server.sh
-- ./ci/run-ldap-server.sh
-- chmod -R 777 ./ci/run-influxdb-server.sh
-- ./ci/run-influxdb-server.sh
-- chmod -R 777 ./ci/run-dynamodb-server.sh
-- ./ci/run-dynamodb-server.sh
-- chmod -R 777 ./ci/run-couchbase-server.sh
-- ./ci/run-couchbase-server.sh
-- chmod -R 777 ./ci/run-cassandra-server.sh
-- ./ci/run-cassandra-server.sh
-- chmod -R 777 ./ci/init-travis-build.sh
+- unset _JAVA_OPTIONS
+- chmod -R 777 ./ci/*.sh
 - ./ci/init-travis-build.sh
-- chmod -R 777 ./ci/push-docs-ghpages.sh
-- ./ci/push-docs-ghpages.sh
-install:
-- chmod -R 777 ./ci/install.sh
-- ./ci/install.sh
+install: true
 script:
-- chmod -R 777 ./ci/script.sh
 - ./ci/script.sh
 after_script:
-- chmod -R 777 ./ci/stop.sh
 - ./ci/stop.sh
-
+stages:
+- initialize
+- publish
+- build
+- test
+- dependencies
+jobs:
+  include:
+  - stage: initialize
+    script: ./ci/download-dependencies.sh
+    ############################################
+  - stage: publish
+    if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    script: ./ci/publish-snapshots.sh
+    ############################################
+  - stage: build
+    script: ./ci/build.sh
+  - stage: build
+    script: ./ci/analyze-style.sh
+  - stage: build
+    script: ./ci/analyze-bugs.sh
+  - stage: build
+    if: type != pull_request
+    script: ./ci/analyze-sonarqube.sh
+  - stage: build
+    script: ./ci/push-docs-ghpages.sh
+    if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+  - stage: build
+    script: ./ci/build-javadocs.sh
+  - stage: build
+    script: ./ci/build-config-metadata.sh
+  - stage: build
+    script: ./ci/check-config-factories.sh
+    ############################################
+  - stage: dependencies
+    script: ./ci/analyze-dependencies.sh
+  - stage: dependencies
+    if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    script: ./ci/report-dependency-updates.sh
+    ############################################
+  - stage: test
+    script: ./ci/tests/run-tests-simple.sh
+  - stage: test
+    script: ./ci/tests/restful/run-tests-restful.sh
+  - stage: test
+    script: ./ci/tests/cassandra/run-tests-cassandra.sh
+  - stage: test
+    script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
+  - stage: test
+    script: ./ci/tests/couchbase/run-tests-couchbase.sh
+  - stage: test
+    script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
+  - stage: test
+    script: ./ci/tests/filesystem/run-tests-filesystem.sh
+  - stage: test
+    script: ./ci/tests/ignite/run-tests-ignite.sh
+  - stage: test
+    script: ./ci/tests/influxdb/run-tests-influxdb.sh
+  - stage: test
+    script: ./ci/tests/ldap/run-tests-ldap.sh
+  - stage: test
+    script: ./ci/tests/mail/run-tests-mail.sh
+  - stage: test
+    script: ./ci/tests/couchdb/run-tests-couchdb.sh
+  - stage: test
+    script: ./ci/tests/memcached/run-tests-memcached.sh
+  - stage: test
+    script: ./ci/tests/mysql/run-tests-mysql.sh
+  - stage: test
+    script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
+  - stage: test
+    script: ./ci/tests/postgres/run-tests-postgres.sh
+  - stage: test
+    script: ./ci/tests/mariadb/run-tests-mariadb.sh
+  - stage: test
+    script: ./ci/tests/mongodb/run-tests-mongodb.sh
+  - stage: test
+    script: ./ci/tests/redis/run-tests-redis.sh
 

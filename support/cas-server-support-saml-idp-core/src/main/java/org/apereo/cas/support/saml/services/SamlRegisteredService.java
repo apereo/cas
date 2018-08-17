@@ -1,14 +1,14 @@
 package org.apereo.cas.support.saml.services;
 
+import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.RegexRegisteredService;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import javax.persistence.CollectionTable;
@@ -28,7 +28,6 @@ import java.util.TreeMap;
  */
 @Entity
 @DiscriminatorValue("saml")
-@Slf4j
 @ToString(callSuper = true)
 @Getter
 @Setter
@@ -50,7 +49,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private long metadataMaxValidity;
 
-    @Column
+    @Column(name = "reqAuthnContextClass")
     private String requiredAuthenticationContextClass;
 
     @Column
@@ -65,7 +64,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private String metadataSignatureLocation;
 
-    @Column
+    @Column(name = "spNameIdQualifier")
     private String serviceProviderNameIdQualifier;
 
     @Column
@@ -77,19 +76,19 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private boolean signAssertions;
 
-    @Column
+    @Column(name = "skipGenAssertionNameId")
     private boolean skipGeneratingAssertionNameId;
 
-    @Column
+    @Column(name = "skipGenSubConfInRespTo")
     private boolean skipGeneratingSubjectConfirmationInResponseTo;
 
-    @Column
+    @Column(name = "skipGenSubConNotOnOrAfter")
     private boolean skipGeneratingSubjectConfirmationNotOnOrAfter;
 
-    @Column
+    @Column(name = "skipGenSubConRecipient")
     private boolean skipGeneratingSubjectConfirmationRecipient;
 
-    @Column
+    @Column(name = "skipGenSubConfNotBefore")
     private boolean skipGeneratingSubjectConfirmationNotBefore = true;
 
     @Column
@@ -101,10 +100,10 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private String metadataCriteriaRoles = SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME;
 
-    @Column
+    @Column(name = "mdCriteriaRmEmptyEntities")
     private boolean metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
 
-    @Column
+    @Column(name = "mdCriteriaRmRolelessEntities")
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
 
     @Column
@@ -115,14 +114,14 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     @ElementCollection
     @CollectionTable(name = "SamlRegisteredService_AttributeNameFormats")
-    @MapKeyColumn(name = "key")
-    @Column(name = "value")
+    @MapKeyColumn(name = "attribute_name")
+    @Column(name = "attribute_value")
     private Map<String, String> attributeNameFormats = new TreeMap<>();
 
     @ElementCollection
     @CollectionTable(name = "SamlRegisteredService_AttributeFriendlyNames")
-    @MapKeyColumn(name = "key")
-    @Column(name = "value")
+    @MapKeyColumn(name = "attribute_name")
+    @Column(name = "attribute_value")
     private Map<String, String> attributeFriendlyNames = new TreeMap<>();
 
     @Override

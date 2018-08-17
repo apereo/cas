@@ -1,15 +1,16 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFingerprintProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -22,7 +23,6 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-trusted-mfa")
-@Slf4j
 @Getter
 @Setter
 public class TrustedDevicesMultifactorProperties implements Serializable {
@@ -94,20 +94,13 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
 
     @Getter
     @Setter
-    public static class Rest implements Serializable {
-
+    public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = 3659099897056632608L;
-
-        /**
-         * Endpoint where trusted device records will be submitted to.
-         */
-        private String endpoint;
     }
 
     @Getter
     @Setter
     public static class Jpa extends AbstractJpaProperties {
-
         private static final long serialVersionUID = -8329950619696176349L;
     }
 

@@ -1,25 +1,24 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import lombok.ToString;
 
 /**
  * Implementation of the ServiceRegistry interface which stores the services in a LDAP Directory.
@@ -71,7 +70,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
 
     private RegisteredService insert(final RegisteredService rs) {
         try {
-            final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
+            val entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
             LdapUtils.executeAddOperation(this.connectionFactory, entry);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -86,18 +85,11 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
      * @return the registered service
      */
     private RegisteredService update(final RegisteredService rs) {
-        String currentDn = null;
-        try {
-            final Response<SearchResult> response = searchForServiceById(rs.getId());
-            if (LdapUtils.containsResultEntry(response)) {
-                currentDn = response.getResult().getEntry().getDn();
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        val currentDn = getCurrentDnForRegisteredService(rs);
+
         if (StringUtils.isNotBlank(currentDn)) {
             LOGGER.debug("Updating registered service at [{}]", currentDn);
-            final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
+            val entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
             LdapUtils.executeModifyOperation(currentDn, this.connectionFactory, entry);
         } else {
             LOGGER.debug("Failed to locate DN for registered service by id [{}]. Attempting to save the service anew", rs.getId());
@@ -106,12 +98,24 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
         return rs;
     }
 
+    private String getCurrentDnForRegisteredService(final RegisteredService rs) {
+        try {
+            val response = searchForServiceById(rs.getId());
+            if (LdapUtils.containsResultEntry(response)) {
+                return response.getResult().getEntry().getDn();
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
     @Override
     public boolean delete(final RegisteredService registeredService) {
         try {
-            final Response<SearchResult> response = searchForServiceById(registeredService.getId());
+            val response = searchForServiceById(registeredService.getId());
             if (LdapUtils.containsResultEntry(response)) {
-                final LdapEntry entry = response.getResult().getEntry();
+                val entry = response.getResult().getEntry();
                 return LdapUtils.executeDeleteOperation(this.connectionFactory, entry);
             }
         } catch (final LdapException e) {
@@ -133,7 +137,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
     @Override
     public long size() {
         try {
-            final Response<SearchResult> response = getSearchResultResponse();
+            val response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
                 return response.getResult().size();
             }
@@ -145,9 +149,9 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public List<RegisteredService> load() {
-        final List<RegisteredService> list = new ArrayList<>();
+        val list = new ArrayList<RegisteredService>();
         try {
-            final Response<SearchResult> response = getSearchResultResponse();
+            val response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
                 response.getResult().getEntries()
                     .stream()
@@ -171,7 +175,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
     @Override
     public RegisteredService findServiceById(final long id) {
         try {
-            final Response<SearchResult> response = searchForServiceById(id);
+            val response = searchForServiceById(id);
             if (LdapUtils.containsResultEntry(response)) {
                 return this.ldapServiceMapper.mapToRegisteredService(response.getResult().getEntry());
             }
@@ -194,7 +198,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
      * @throws LdapException the ldap exception
      */
     private Response<SearchResult> searchForServiceById(final Long id) throws LdapException {
-        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
+        val filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }

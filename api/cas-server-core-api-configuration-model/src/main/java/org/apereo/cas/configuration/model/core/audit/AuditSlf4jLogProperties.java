@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
+
 import java.io.Serializable;
 
 /**
@@ -14,7 +14,6 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-core-audit")
-@Slf4j
 @Getter
 @Setter
 public class AuditSlf4jLogProperties implements Serializable {
@@ -36,6 +35,7 @@ public class AuditSlf4jLogProperties implements Serializable {
 
     /**
      * The audit format to use in the logs.
+     * Accepted value are: DEFAULT, JSON.
      */
-    private AbstractStringAuditTrailManager.AuditFormats auditFormat = AbstractStringAuditTrailManager.AuditFormats.DEFAULT;
+    private String auditFormat = "DEFAULT";
 }

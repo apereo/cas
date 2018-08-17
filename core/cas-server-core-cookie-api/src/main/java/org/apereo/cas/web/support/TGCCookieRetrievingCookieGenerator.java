@@ -1,6 +1,5 @@
 package org.apereo.cas.web.support;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Generates the tgc cookie.
@@ -8,8 +7,9 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 public class TGCCookieRetrievingCookieGenerator extends CookieRetrievingCookieGenerator {
+
+    private static final long serialVersionUID = -1239028220717183717L;
 
     /**
      * Instantiates a new TGC cookie retrieving cookie generator.

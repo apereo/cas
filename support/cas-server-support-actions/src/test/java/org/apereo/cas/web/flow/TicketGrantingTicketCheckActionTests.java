@@ -1,18 +1,16 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.val;
 import org.junit.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
@@ -25,45 +23,34 @@ import static org.junit.Assert.*;
  */
 @DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
-@Slf4j
 public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthenticationServiceTests {
 
     @Test
-    public void verifyNullTicket() {
-        final MockRequestContext ctx = new MockRequestContext();
-        final TicketGrantingTicketCheckAction action = new
-            TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
-        final Event event = action.doExecute(ctx);
-        assertEquals(TicketGrantingTicketCheckAction.NOT_EXISTS, event.getId());
+    public void verifyNullTicket() throws Exception {
+        val ctx = new MockRequestContext();
+        val action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
+        val event = action.execute(ctx);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_TGT_NOT_EXISTS, event.getId());
     }
 
     @Test
-    public void verifyInvalidTicket() {
-
-        final MockRequestContext ctx = new MockRequestContext();
-        final MockTicketGrantingTicket tgt = new MockTicketGrantingTicket("user");
-
+    public void verifyInvalidTicket() throws Exception {
+        val ctx = new MockRequestContext();
+        val tgt = new MockTicketGrantingTicket("user");
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
-        final TicketGrantingTicketCheckAction action = new
-            TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
-        final Event event = action.doExecute(ctx);
-        assertEquals(TicketGrantingTicketCheckAction.INVALID, event.getId());
+        val action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
+        val event = action.execute(ctx);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_TGT_INVALID, event.getId());
     }
 
     @Test
-    public void verifyValidTicket() {
-
-        final MockRequestContext ctx = new MockRequestContext();
-        final AuthenticationResult ctxAuthN = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
-
-        final TicketGrantingTicket tgt = this.getCentralAuthenticationService().createTicketGrantingTicket(ctxAuthN);
-
+    public void verifyValidTicket() throws Exception {
+        val ctx = new MockRequestContext();
+        val ctxAuthN = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
+        val tgt = this.getCentralAuthenticationService().createTicketGrantingTicket(ctxAuthN);
         WebUtils.putTicketGrantingTicketInScopes(ctx, tgt);
-        final TicketGrantingTicketCheckAction action = new
-            TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
-        final Event event = action.doExecute(ctx);
-        assertEquals(TicketGrantingTicketCheckAction.VALID, event.getId());
+        val action = new TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
+        val event = action.execute(ctx);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_TGT_VALID, event.getId());
     }
-
-
 }

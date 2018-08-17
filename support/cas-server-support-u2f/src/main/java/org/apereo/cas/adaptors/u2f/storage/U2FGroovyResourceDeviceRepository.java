@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.util.ScriptingUtils;
+
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.ScriptingUtils;
 import org.springframework.core.io.Resource;
 
 import java.util.List;
@@ -17,8 +18,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class U2FGroovyResourceDeviceRepository extends BaseResourceU2FDeviceRepository {
-
-
     private final Resource groovyScript;
 
     public U2FGroovyResourceDeviceRepository(final LoadingCache<String, String> requestStorage,

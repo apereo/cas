@@ -1,7 +1,7 @@
 package org.apereo.cas.pm;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
+
 
 /**
  * This is {@link PasswordResetTokenCipherExecutor}.
@@ -9,7 +9,6 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class PasswordResetTokenCipherExecutor extends BaseStringCipherExecutor {
     /**
      * Instantiates a new pm cipher executor.
@@ -27,7 +26,7 @@ public class PasswordResetTokenCipherExecutor extends BaseStringCipherExecutor {
     public String getName() {
         return "Password Reset Token";
     }
-    
+
     @Override
     protected String getEncryptionKeySetting() {
         return "cas.authn.pm.reset.crypto.encryption.key";

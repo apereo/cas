@@ -1,11 +1,15 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
+
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +22,14 @@ import java.util.List;
  */
 @Slf4j
 public class YubiKeyRestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
-
+    /**
+     * OTP token found in the request body.
+     */
+    public static final String PARAMETER_NAME_YUBIKEY_OTP = "yubikeyotp";
 
     @Override
-    public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
-        final String otp = requestBody.getFirst("yubikeyotp");
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
+        val otp = requestBody.getFirst(PARAMETER_NAME_YUBIKEY_OTP);
         LOGGER.debug("YubiKey token in the request body: [{}]", otp);
         if (StringUtils.isBlank(otp)) {
             return new ArrayList<>(0);

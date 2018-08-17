@@ -1,9 +1,9 @@
 package org.apereo.cas.configuration.model.core.util;
 
-import lombok.extern.slf4j.Slf4j;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * Common properties for all cryptography related configs.
@@ -15,7 +15,6 @@ import lombok.Setter;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-@Slf4j
 @Getter
 @Setter
 public class EncryptionRandomizedSigningJwtCryptographyProperties implements Serializable {

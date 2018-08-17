@@ -2,6 +2,8 @@ package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.Credential;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,6 +38,16 @@ public interface PasswordManagementService {
     }
 
     /**
+     * Find username linked to the email.
+     *
+     * @param email the email
+     * @return the string
+     */
+    default String findUsername(String email) {
+        return null;
+    }
+
+    /**
      * Create token string.
      *
      * @param username the username
@@ -57,10 +69,10 @@ public interface PasswordManagementService {
 
     /**
      * Gets security questions.
-     *
+     * <p>
      * The return object must have predictable iteration (use LinkedHashMap
      * instead of HashMap, for example).
-     * 
+     *
      * @param username the username
      * @return the security questions
      */
@@ -73,12 +85,12 @@ public interface PasswordManagementService {
      *
      * @param username the username
      * @param question the text of the question
-     * @param answer stored answer
-     * @param input user response to question
+     * @param answer   stored answer
+     * @param input    user response to question
      * @return whether the answer is correct
      */
-    default boolean isValidSecurityQuestionAnswer(String username, String question, String answer, String input) {
-        if (answer != null) {
+    default boolean isValidSecurityQuestionAnswer(final String username, final String question, final String answer, final String input) {
+        if (StringUtils.isNotBlank(answer)) {
             return answer.equals(input);
         }
         return false;

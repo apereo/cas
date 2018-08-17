@@ -1,19 +1,20 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.springframework.util.StringUtils;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Default implementation of {@link LdapRegisteredServiceMapper} that is able
@@ -42,20 +43,20 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
         if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             svc.setId(System.currentTimeMillis());
         }
-        final String newDn = getDnForRegisteredService(dn, svc);
+        val newDn = getDnForRegisteredService(dn, svc);
         LOGGER.debug("Creating entry DN [{}]", newDn);
 
-        final Collection<LdapAttribute> attrs = new ArrayList<>();
+        val attrs = new ArrayList<LdapAttribute>();
         attrs.add(new LdapAttribute(ldap.getIdAttribute(), String.valueOf(svc.getId())));
 
-        try (StringWriter writer = new StringWriter()) {
+        try (val writer = new StringWriter()) {
             this.jsonSerializer.to(writer, svc);
             attrs.add(new LdapAttribute(ldap.getServiceDefinitionAttribute(), writer.toString()));
             attrs.add(new LdapAttribute(LdapUtils.OBJECT_CLASS_ATTRIBUTE, "top", ldap.getObjectClass()));
         }
         LOGGER.debug("LDAP attributes assigned to the DN [{}] are [{}]", newDn, attrs);
 
-        final LdapEntry entry = new LdapEntry(newDn, attrs);
+        val entry = new LdapEntry(newDn, attrs);
         LOGGER.debug("Created LDAP entry [{}]", entry);
         return entry;
 
@@ -65,7 +66,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
     @SneakyThrows
     public RegisteredService mapToRegisteredService(final LdapEntry entry) {
 
-        final String value = LdapUtils.getString(entry, ldap.getServiceDefinitionAttribute());
+        val value = LdapUtils.getString(entry, ldap.getServiceDefinitionAttribute());
         if (StringUtils.hasText(value)) {
             LOGGER.debug("Transforming LDAP entry [{}] into registered service definition", entry);
             return this.jsonSerializer.from(value);

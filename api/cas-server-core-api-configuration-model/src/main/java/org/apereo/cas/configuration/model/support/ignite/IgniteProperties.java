@@ -1,16 +1,17 @@
 package org.apereo.cas.configuration.model.support.ignite;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link IgniteProperties}.
@@ -19,7 +20,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ignite-ticket-registry")
-@Slf4j
 @Getter
 @Setter
 public class IgniteProperties implements Serializable {
@@ -139,6 +139,26 @@ public class IgniteProperties implements Serializable {
     private int threadPriority = 10;
 
     /**
+     * By default, Ignite nodes consume up to 20% of the RAM available locally,
+     * and in most cases, ​this is the only parameter you might need to change.
+     * Using the below setting allows you to change the default region memory size.
+     */
+    private long defaultRegionMaxSize = 4L * 1024 * 1024 * 1024;
+
+    /**
+     * Ignite native persistence is a distributed ACID and SQL-compliant disk store that transparently
+     * integrates with Ignite's durable memory. Ignite persistence is optional and can be turned on and off.
+     * When turned off Ignite becomes a pure in-memory store.
+     * With the native persistence enabled, Ignite always stores a superset of data on disk, and as much as it
+     * can in RAM based on the capacity of the latter. For example, if there are 100 entries and RAM has the
+     * capacity to store only 20, then all 100 will be stored on disk and only 20 will be cached in RAM for better performance.
+     * Also, it is worth mentioning that as with a pure in-memory use case, when the persistence is turned on,
+     * every individual cluster node persists only a subset of the data, only including partitions for which the node is
+     * either primary or backup. Collectively, the whole cluster contains the full data set.
+     */
+    private boolean defaultPersistenceEnabled;
+
+    /**
      * Start in client mode.
      * If true the local node is started as a client.
      */
@@ -213,7 +233,7 @@ public class IgniteProperties implements Serializable {
          * <ul>
          * <li>
          * {@code FULL_ASYNC}: Flag indicating that Ignite will not wait for write or commit responses from participating nodes, which means that
-         * remote nodes may get their state updated a bit after any of the cache write methods complete, 
+         * remote nodes may get their state updated a bit after any of the cache write methods complete,
          * or after {@code Transaction.commit()} method completes.
          * </li>
          * <li>

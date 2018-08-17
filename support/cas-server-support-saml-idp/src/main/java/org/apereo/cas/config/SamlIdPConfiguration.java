@@ -1,13 +1,11 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.velocity.app.VelocityEngine;
+import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPAlgorithmsProperties;
 import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -47,6 +45,9 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.val;
+import org.apache.velocity.app.VelocityEngine;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -57,6 +58,7 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.ecp.Response;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -75,12 +77,11 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("samlIdPConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
-    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    private ObjectProvider<CookieRetrievingCookieGenerator> ticketGrantingTicketCookieGenerator;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -122,8 +123,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     private UrlValidator urlValidator;
 
     @Autowired
-    @Qualifier("samlMetadataLocator")
-    private SamlIdPMetadataLocator samlMetadataLocator;
+    @Qualifier("samlIdPMetadataLocator")
+    private SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
@@ -142,7 +143,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             samlObjectEncrypter(),
             ticketRegistry,
             samlArtifactTicketFactory(),
-            ticketGrantingTicketCookieGenerator,
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
             samlArtifactMap(),
             samlAttributeQueryTicketFactory());
     }
@@ -165,8 +166,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @RefreshScope
     public SAMLArtifactMap samlArtifactMap() {
-        final CasSamlArtifactMap map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory(),
-            ticketGrantingTicketCookieGenerator);
+        val map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory(),
+            ticketGrantingTicketCookieGenerator.getIfAvailable());
         map.setArtifactLifetime(TimeUnit.SECONDS.toMillis(samlArtifactTicketExpirationPolicy().getTimeToLive()));
         return map;
     }
@@ -257,7 +258,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder() {
-        return new SamlProfileSamlAssertionBuilder(openSamlConfigBean,
+        return new SamlProfileSamlAssertionBuilder(
+            openSamlConfigBean,
+            casProperties,
             samlProfileSamlAuthNStatementBuilder(),
             samlProfileSamlAttributeStatementBuilder(),
             samlProfileSamlSubjectBuilder(),
@@ -283,7 +286,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlObjectEncrypter samlObjectEncrypter() {
-        final SamlIdPAlgorithmsProperties algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
         return new SamlObjectEncrypter(algs.getOverrideDataEncryptionAlgorithms(),
             algs.getOverrideKeyEncryptionAlgorithms(),
             algs.getOverrideBlackListedEncryptionAlgorithms(),
@@ -294,7 +297,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlIdPObjectSigner samlObjectSigner() {
-        final SamlIdPAlgorithmsProperties algs = casProperties.getAuthn().getSamlIdp().getAlgs();
+        val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
         return new SamlIdPObjectSigner(
             algs.getOverrideSignatureReferenceDigestMethods(),
             algs.getOverrideSignatureAlgorithms(),
@@ -302,7 +305,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
             this.casSamlIdPMetadataResolver,
             casProperties,
-            this.samlMetadataLocator);
+            this.samlIdPMetadataLocator);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryFaultResponseBuilder")
@@ -349,11 +352,11 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
         plan.registerAuditResourceResolver("SAML2_RESPONSE_RESOURCE_RESOLVER", new SamlResponseAuditResourceResolver());
         plan.registerAuditActionResolver("SAML2_RESPONSE_ACTION_RESOLVER",
-            new DefaultAuditActionResolver("_CREATED", "_FAILED"));
+            new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
 
         plan.registerAuditResourceResolver("SAML2_REQUEST_RESOURCE_RESOLVER", new SamlRequestAuditResourceResolver());
         plan.registerAuditActionResolver("SAML2_REQUEST_ACTION_RESOLVER",
-            new DefaultAuditActionResolver("_CREATED", "_FAILED"));
+            new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
     }
 
     @Bean

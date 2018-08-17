@@ -1,30 +1,30 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.crypto.hash.DefaultHashService;
-import org.apache.shiro.crypto.hash.HashRequest;
-import org.apache.shiro.util.ByteSource;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
+
+import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.shiro.crypto.hash.DefaultHashService;
+import org.apache.shiro.crypto.hash.HashRequest;
+import org.apache.shiro.util.ByteSource;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,8 +33,6 @@ import javax.persistence.Id;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.Statement;
 
 import static org.junit.Assert.*;
 
@@ -42,11 +40,14 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class})
-@ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
-@Slf4j
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    DatabaseAuthenticationTestConfiguration.class
+})
+@DirtiesContext
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
     private static final String ALG_NAME = "SHA-512";
     private static final String SQL = "SELECT * FROM users where %s";
@@ -58,20 +59,50 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static final String NUM_ITERATIONS_FIELD_NAME = "numIterations";
 
     @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("dataSource")
     private DataSource dataSource;
 
+    private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
+        val psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
+
+        return String.format(
+            "insert into users (username, password, salt, numIterations, expired, disabled) values('%s', '%s', '%s', %s, '%s', '%s');",
+            "user" + i, psw, "salt" + i, NUM_ITERATIONS, expired, disabled);
+    }
+
+    private static String buildSql(final String where) {
+        return String.format(SQL, where);
+    }
+
+    private static String buildSql() {
+        return String.format(SQL, "username=?;");
+    }
+
+    @SneakyThrows
+    private static String genPassword(final String psw, final String salt, final int iter) {
+        val hash = new DefaultHashService();
+        hash.setPrivateSalt(ByteSource.Util.bytes(STATIC_SALT));
+        hash.setHashIterations(iter);
+        hash.setGeneratePublicSalt(false);
+        hash.setHashAlgorithmName(ALG_NAME);
+
+        return hash.computeHash(new HashRequest.Builder().setSource(psw).setSalt(salt).setIterations(iter).build()).toHex();
+    }
+
     @Before
-    public void setUp() throws Exception {
-        final Connection c = this.dataSource.getConnection();
-        final Statement s = c.createStatement();
+    public void initialize() throws Exception {
+        val c = this.dataSource.getConnection();
+        val s = c.createStatement();
         c.setAutoCommit(true);
 
         s.execute(getSqlInsertStatementToCreateUserAccount(0, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
-        for (int i = 0; i < 10; i++) {
+        for (var i = 0; i < 10; i++) {
             s.execute(getSqlInsertStatementToCreateUserAccount(i, Boolean.FALSE.toString(), Boolean.FALSE.toString()));
         }
         s.execute(getSqlInsertStatementToCreateUserAccount(20, Boolean.TRUE.toString(), Boolean.FALSE.toString()));
@@ -80,29 +111,18 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         c.close();
     }
 
-    private static String getSqlInsertStatementToCreateUserAccount(final int i, final String expired, final String disabled) {
-        final String psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
-
-        return String.format(
-            "insert into users (username, password, salt, numIterations, expired, disabled) values('%s', '%s', '%s', %s, '%s', '%s');",
-            "user" + i, psw, "salt" + i, NUM_ITERATIONS, expired, disabled);
-    }
-
     @After
-    public void tearDown() throws Exception {
-        final Connection c = this.dataSource.getConnection();
-        final Statement s = c.createStatement();
+    public void afterEachTest() throws Exception {
+        val c = this.dataSource.getConnection();
+        val s = c.createStatement();
         c.setAutoCommit(true);
-
-        for (int i = 0; i < 5; i++) {
-            s.execute("delete from users;");
-        }
+        s.execute("delete from users;");
         c.close();
     }
 
     @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(AccountNotFoundException.class);
@@ -113,33 +133,29 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationInvalidSql() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql("makesNoSenseInSql"), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(PreventedException.class);
-
-
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test
     public void verifyAuthenticationMultipleAccounts() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(FailedLoginException.class);
-
-
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
     }
 
     @Test
     public void verifyAuthenticationSuccessful() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
-        final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
-        final AuthenticationHandlerExecutionResult r = q.authenticate(c);
+        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
+        val r = q.authenticate(c);
 
         assertNotNull(r);
         assertEquals("user1", r.getPrincipal().getId());
@@ -147,31 +163,27 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifyAuthenticationWithExpiredField() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", EXPIRED_FIELD_NAME, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         this.thrown.expect(AccountPasswordMustChangeException.class);
-
-
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user20"));
         throw new AssertionError("Shouldn't get here");
     }
 
     @Test
     public void verifyAuthenticationWithDisabledField() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, DISABLED_FIELD_NAME, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         this.thrown.expect(AccountDisabledException.class);
-
-
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user21"));
         throw new AssertionError("Shouldn't get here");
     }
 
     @Test
     public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
-        final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
+        val q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
@@ -186,30 +198,11 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         });
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
-        final AuthenticationHandlerExecutionResult r = q.authenticate(
+        val r = q.authenticate(
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);
         assertEquals("user1", r.getPrincipal().getId());
-    }
-
-    private static String buildSql(final String where) {
-        return String.format(SQL, where);
-    }
-
-    private static String buildSql() {
-        return String.format(SQL, "username=?;");
-    }
-
-    @SneakyThrows
-    private static String genPassword(final String psw, final String salt, final int iter) {
-        final DefaultHashService hash = new DefaultHashService();
-        hash.setPrivateSalt(ByteSource.Util.bytes(STATIC_SALT));
-        hash.setHashIterations(iter);
-        hash.setGeneratePublicSalt(false);
-        hash.setHashAlgorithmName(ALG_NAME);
-
-        return hash.computeHash(new HashRequest.Builder().setSource(psw).setSalt(salt).setIterations(iter).build()).toHex();
     }
 
     @Entity(name = "users")

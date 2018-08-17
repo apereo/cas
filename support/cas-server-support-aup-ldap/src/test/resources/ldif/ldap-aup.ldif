@@ -1,0 +1,10 @@
+dn: cn=casaup,ou=people,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+objectClass: account
+cn: casaup
+userPassword: 123456
+sn: casaup
+uid: casaup
+mail: casaup@example.org

@@ -1,8 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
@@ -25,6 +22,7 @@ import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
@@ -36,10 +34,14 @@ import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationP
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.uma.UmaProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -53,12 +55,17 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class AuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1233126985007049516L;
+
+    /**
+     * Passwordless authentication settings.
+     */
+    @NestedConfigurationProperty
+    private PasswordlessAuthenticationProperties passwordless = new PasswordlessAuthenticationProperties();
 
     /**
      * JSON authentication settings.
@@ -241,6 +248,12 @@ public class AuthenticationProperties implements Serializable {
     private OAuthProperties oauth = new OAuthProperties();
 
     /**
+     * OAuth UMA authentication settings.
+     */
+    @NestedConfigurationProperty
+    private UmaProperties uma = new UmaProperties();
+
+    /**
      * OpenID Connect authentication settings.
      */
     @NestedConfigurationProperty
@@ -305,10 +318,4 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuthenticationAttributeReleaseProperties authenticationAttributeRelease = new AuthenticationAttributeReleaseProperties();
-
-    /**
-     * Whether CAS authentication/protocol attributes
-     * should be released as part of ticket validation.
-     */
-    private boolean releaseProtocolAttributes = true;
 }

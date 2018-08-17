@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-swivel")
-@Slf4j
 @Getter
 @Setter
 public class SwivelMultifactorProperties extends BaseMultifactorProviderProperties {
@@ -47,6 +46,11 @@ public class SwivelMultifactorProperties extends BaseMultifactorProviderProperti
      * Control whether SSL errors should be ignored by the swivel server.
      */
     private boolean ignoreSslErrors;
+
+    /**
+     * Indicates whether this provider should support trusted devices.
+     */
+    private boolean trustedDeviceEnabled;
 
     public SwivelMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);

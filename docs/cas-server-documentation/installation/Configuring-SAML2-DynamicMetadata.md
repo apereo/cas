@@ -29,7 +29,7 @@ MDQ may be configured using the below snippet as an example:
 
 ## REST
 
-Similar to the Dynamic Metadata Query Protocol (MDQ), SAML sevice provider metadata may also be fetched using a more traditional REST interface. This is a simpler option that does not require one to deploy a compliant MDQ server and provides the flexibility of producing SP metadata using any programming language or framework.
+Similar to the Dynamic Metadata Query Protocol (MDQ), SAML service provider metadata may also be fetched using a more traditional REST interface. This is a simpler option that does not require one to deploy a compliant MDQ server and provides the flexibility of producing SP metadata using any programming language or framework.
 
 Support is enabled by including the following module in the overlay:
 
@@ -106,14 +106,32 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 ```
 
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
-The metadata location in the registration record above simply needs to be specified as <code>mongodb://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from MongoDb data sources defined in CAS configuration. 
+The metadata location in the registration record above simply needs to be specified as <code>mongodb://</code> to signal to CAS that 
+SAML metadata for registered service provider must be fetched from MongoDb data sources defined in CAS configuration. 
 </p></div>
+
+To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-mongodb).
+
+### Identity Provider Metadata
+
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via MongoDb. Artifacts such as the metadata, signing and encryption keys, etc are kept
+inside a MongoDb collection taught to CAS via settings as a single document that would have the following structure:
+
+```json
+{
+    "signingCertificate": "...",
+    "signingKey": "...",
+    "encryptionCertificate": "...",
+    "encryptionKey": "...",
+    "metadata": ""
+}
+```
 
 To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-mongodb).
 
 ## JPA
 
-Metadata documents may also be stored in and fetched from a relational database instance.  This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined table  (i.e. `SamlMetadataDocument`) whose connection information is taught to CAS via settings and is automatically generated.  The outline of the table is as follows:
+Metadata documents may also be stored in and fetched from a relational database instance. This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined table  (i.e. `SamlMetadataDocument`) whose connection information is taught to CAS via settings and is automatically generated.  The outline of the table is as follows:
 
 | Field                     | Description
 |--------------|---------------------------------------------------
@@ -151,6 +169,22 @@ The metadata location in the registration record above simply needs to be specif
 
 To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-jpa).
 
+### Identity Provider Metadata
+
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via JPA. Artifacts such as the metadata, signing and encryption keys, etc are kept
+inside a database table that would have the following structure:
+
+| Field                     | Description
+|---------------------------|---------------------------------------------------
+| `id`                      | The identifier of the record.
+| `signingCertificate`      | The signing certificate.
+| `signingKey`              | The signing key.
+| `encryptionCertificate`   | The encryption certificate.
+| `encryptionKey`           | The encryption key.
+| `metadata`                | The SAML2 identity provider metadata.
+
+To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-jpa).
+
 ## Groovy
 
 A metadata location for a SAML service definition may  point to an external Groovy script, allowing the script to programmatically determine and build the metadata resolution machinery to be added to the collection of the existing resolvers. 
@@ -170,9 +204,9 @@ The outline of the script may be as follows:
 
 ```groovy
 import java.util.*
-import org.apereo.cas.support.saml.*;
-import org.apereo.cas.support.saml.services.*;
-import org.opensaml.saml.metadata.resolver.*;
+import org.apereo.cas.support.saml.*
+import org.apereo.cas.support.saml.services.*
+import org.opensaml.saml.metadata.resolver.*
 
 def Collection<MetadataResolver> run(final Object... args) {
     def registeredService = args[0]
@@ -186,15 +220,52 @@ def Collection<MetadataResolver> run(final Object... args) {
      A null or empty collection will be ignored by CAS.
   */
   def metadataResolver = ...
-   return CollectionUtils.wrap(metadataResolver);
+   return CollectionUtils.wrap(metadataResolver)
 }
 ```
 
 The parameters passed are as follows:
 
 | Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `registeredService`             | The object representing the corresponding service definition in the registry.
-| `samlConfigBean`            | The object representing the OpenSAML configuration class holding various builder and marshaller factory instances.
-| `samlProperties`         | The object responsible for capturing the CAS SAML IdP properties defined in the configuration.
+|-----------------------|--------------------------------------------------------------------------------------------------------------------
+| `registeredService`   | The object representing the corresponding service definition in the registry.
+| `samlConfigBean`      | The object representing the OpenSAML configuration class holding various builder and marshaller factory instances.
+| `samlProperties`      | The object responsible for capturing the CAS SAML IdP properties defined in the configuration.
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+## Amazon S3
+
+Metadata documents may also be stored in and fetched from a MongoDb instance.
+This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs 
+to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a 
+single pre-defined bucket that is taught to CAS via settings.
+
+Support is enabled by including the following module in the overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-saml-idp-metadata-aws-s3</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from MongoDb instances:
+
+```json
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "the-entity-id-of-the-sp(s)",
+  "name" : "SAMLService",
+  "id" : 10000003,
+  "description" : "Amazon S3-based metadata resolver",
+  "metadataLocation" : "awss3://"
+}
+```
+
+<div class="alert alert-info"><strong>Metadata Location</strong><p>
+The metadata location in the registration record above simply needs to be specified as <code>awss3://</code> to signal to CAS that 
+SAML metadata for registered service provider must be fetched from Amazon S3 defined in CAS configuration. 
+</p></div>
+
+To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-amazon-s3).

@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.principal.Service;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -16,14 +17,14 @@ import java.util.Map;
  * <p>
  * Note that objects/values put into the session ticket are required to be serializable,
  * just as normal ticket properties would be, depending on the design of the underlying ticket registry.
- *
+ * <p>
  * Transient tickets generally have prominent use when CAS is acting as a proxy to another identity provider
  * where the results of current application session/request need to be stored across the cluster and remembered later.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface TransientSessionTicket extends Ticket {
     /**
      * Ticket prefix for the delegated authentication request.

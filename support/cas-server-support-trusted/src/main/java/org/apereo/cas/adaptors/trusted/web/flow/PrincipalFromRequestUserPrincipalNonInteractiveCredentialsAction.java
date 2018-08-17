@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -9,8 +8,10 @@ import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 
 /**
  * Implementation of the {@link AbstractNonInteractiveCredentialsAction} that looks for a user
@@ -27,19 +28,19 @@ public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction ex
 
 
     public PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(
-            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
-            final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
-            final PrincipalFactory principalFactory,
-            final RemoteRequestPrincipalAttributesExtractor extractor) {
+        final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+        final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+        final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+        final PrincipalFactory principalFactory,
+        final RemoteRequestPrincipalAttributesExtractor extractor) {
         super(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
-                principalFactory, extractor);
+            serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy,
+            principalFactory, extractor);
     }
 
     @Override
     protected String getRemotePrincipalId(final HttpServletRequest request) {
-        final Principal principal = request.getUserPrincipal();
+        val principal = request.getUserPrincipal();
 
         if (principal != null) {
             LOGGER.debug("Principal [{}] found in HttpServletRequest", principal.getName());

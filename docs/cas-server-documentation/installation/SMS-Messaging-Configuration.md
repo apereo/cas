@@ -50,3 +50,31 @@ To learn more, [visit this site](http://www.clickatell.com/).
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#clickatell).
+
+## Amazon SNS
+
+To learn more, [visit this site](https://docs.aws.amazon.com/sns).
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-sms-aws-sns</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#amazon-sns).
+
+## Nexmo
+
+To learn more, [visit this site](https://dashboard.nexmo.com/).
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-sms-nexmo</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#nexmo).

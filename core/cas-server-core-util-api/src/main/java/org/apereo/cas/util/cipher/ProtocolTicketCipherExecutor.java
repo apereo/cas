@@ -1,6 +1,5 @@
 package org.apereo.cas.util.cipher;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link ProtocolTicketCipherExecutor}.
@@ -8,19 +7,19 @@ import lombok.extern.slf4j.Slf4j;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
 
-    /**
-     * Instantiates a new Protocol ticket cipher executor.
-     *
-     * @param secretKeyEncryption                  the secret key encryption
-     * @param secretKeySigning                     the secret key signing
-     * @param contentEncryptionAlgorithmIdentifier the content encryption algorithm identifier
-     */
-    public ProtocolTicketCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, 
+    public ProtocolTicketCipherExecutor() {
+        super(null, null, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+    }
+
+    public ProtocolTicketCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                         final String contentEncryptionAlgorithmIdentifier) {
         super(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier);
+    }
+
+    public ProtocolTicketCipherExecutor(final String secretKeyEncryption, final String secretKeySigning) {
+        super(secretKeyEncryption, secretKeySigning, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
     }
 
     @Override

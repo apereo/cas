@@ -1,25 +1,25 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.support.events.service.CasRegisteredServicesDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
-import org.apereo.cas.util.DateTimeUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
  * @since 5.2.0
  */
 @Slf4j
-public abstract class AbstractServicesManager implements ServicesManager {
+public abstract class AbstractServicesManager implements ServicesManager, InitializingBean {
 
     private static final long serialVersionUID = -8581398063126547772L;
 
@@ -57,6 +57,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .stream()
             .filter(getRegisteredServicesFilteringPredicate())
             .sorted()
+            .peek(RegisteredService::initialize)
             .collect(Collectors.toList());
     }
 
@@ -70,7 +71,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
             .stream()
             .filter(getRegisteredServicesFilteringPredicate(predicate))
             .sorted()
-            .collect(Collectors.toSet());
+            .peek(RegisteredService::initialize)
+            .collect(Collectors.toList());
+
     }
 
     @Override
@@ -79,13 +82,16 @@ public abstract class AbstractServicesManager implements ServicesManager {
             return null;
         }
 
-        final RegisteredService service = getCandidateServicesToMatch(serviceId)
+        val service = getCandidateServicesToMatch(serviceId)
             .stream()
             .filter(r -> r.matches(serviceId))
             .findFirst()
             .orElse(null);
-        final RegisteredService result = validateRegisteredService(service);
-        return result;
+
+        if (service != null) {
+            service.initialize();
+        }
+        return validateRegisteredService(service);
     }
 
     @Override
@@ -98,7 +104,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         if (StringUtils.isBlank(serviceId)) {
             return null;
         }
-        final RegisteredService service = findServiceBy(serviceId);
+        val service = findServiceBy(serviceId);
         if (service != null && service.getClass().isAssignableFrom(clazz)) {
             return (T) service;
         }
@@ -135,7 +141,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         resourceResolverName = "DELETE_SERVICE_RESOURCE_RESOLVER")
     @Override
     public synchronized RegisteredService delete(final long id) {
-        final RegisteredService service = findServiceBy(id);
+        val service = findServiceBy(id);
         return delete(service);
     }
 
@@ -168,7 +174,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
-        final RegisteredService r = this.serviceRegistry.save(registeredService);
+        val r = this.serviceRegistry.save(registeredService);
         this.services.put(r.getId(), r);
         saveInternal(registeredService);
 
@@ -178,14 +184,18 @@ public abstract class AbstractServicesManager implements ServicesManager {
         return r;
     }
 
+    @Override
+    public void afterPropertiesSet() {
+        load();
+    }
+
     /**
      * Load services that are provided by the DAO.
      */
     @Scheduled(initialDelayString = "${cas.serviceRegistry.schedule.startDelay:20000}",
         fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:60000}")
     @Override
-    @PostConstruct
-    public void load() {
+    public Collection<RegisteredService> load() {
         LOGGER.debug("Loading services from [{}]", this.serviceRegistry);
         this.services = this.serviceRegistry.load()
             .stream()
@@ -197,6 +207,14 @@ public abstract class AbstractServicesManager implements ServicesManager {
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();
         LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistry.getName());
+        return services.values();
+    }
+
+    @Override
+    public synchronized void deleteAll() {
+        this.services.forEach((k, v) -> delete(v));
+        this.services.clear();
+        publishEvent(new CasRegisteredServicesDeletedEvent(this));
     }
 
     private void evaluateExpiredServiceDefinitions() {
@@ -208,64 +226,26 @@ public abstract class AbstractServicesManager implements ServicesManager {
     }
 
     private Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
-        final List<Predicate<RegisteredService>> predicates = new ArrayList<>();
-
-        final Predicate<RegisteredService> expirationPolicyPredicate = getRegisteredServiceExpirationPolicyPredicate();
-        predicates.add(expirationPolicyPredicate);
+        val predicates = new ArrayList<Predicate<RegisteredService>>();
 
         predicates.addAll(Stream.of(p).collect(Collectors.toList()));
         return predicates.stream().reduce(x -> true, Predicate::and);
     }
 
-    /**
-     * Returns a predicate that determined whether a service has expired.
-     *
-     * @return true if the service is still valid. false if service has expired.
-     */
-    private Predicate<RegisteredService> getRegisteredServiceExpirationPolicyPredicate() {
-        return service -> {
-            try {
-                if (service == null) {
-                    return false;
-                }
-                final RegisteredServiceExpirationPolicy policy = service.getExpirationPolicy();
-                if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
-                    return true;
-                }
-                final LocalDateTime now = getCurrentSystemTime();
-                final LocalDateTime expirationDate = DateTimeUtils.localDateTimeOf(policy.getExpirationDate());
-                LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
-                return !now.isAfter(expirationDate);
-            } catch (final Exception e) {
-                LOGGER.warn(e.getMessage(), e);
-            }
-            return false;
-        };
-    }
-
-    /**
-     * Gets current system time.
-     *
-     * @return the current system time
-     */
-    protected LocalDateTime getCurrentSystemTime() {
-        return LocalDateTime.now();
-    }
-
     private RegisteredService validateRegisteredService(final RegisteredService registeredService) {
-        final RegisteredService result = checkServiceExpirationPolicyIfAny(registeredService);
+        val result = checkServiceExpirationPolicyIfAny(registeredService);
         return result;
     }
 
     private RegisteredService checkServiceExpirationPolicyIfAny(final RegisteredService registeredService) {
-        if (registeredService == null || getRegisteredServiceExpirationPolicyPredicate().test(registeredService)) {
+        if (registeredService == null || RegisteredServiceAccessStrategyUtils.ensureServiceIsNotExpired(registeredService)) {
             return registeredService;
         }
         return processExpiredRegisteredService(registeredService);
     }
 
     private RegisteredService processExpiredRegisteredService(final RegisteredService registeredService) {
-        final RegisteredServiceExpirationPolicy policy = registeredService.getExpirationPolicy();
+        val policy = registeredService.getExpirationPolicy();
         LOGGER.warn("Registered service [{}] has expired on [{}]", registeredService.getServiceId(), policy.getExpirationDate());
 
         if (policy.isDeleteWhenExpired()) {
@@ -277,9 +257,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
             delete(registeredService);
             return null;
         }
-        LOGGER.debug("Disabling expired registered service [{}].", registeredService.getServiceId());
-        registeredService.getAccessStrategy().setServiceAccessAllowed(false);
-        return save(registeredService);
+        return registeredService;
     }
 
     /**

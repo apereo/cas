@@ -1,8 +1,9 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+
+import lombok.val;
 
 import java.util.Collection;
 import java.util.Map;
@@ -15,7 +16,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     /**
      * Device registrations.
@@ -36,7 +36,7 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         if (devices.containsKey(uid)) {
-            final String pubId = devices.get(uid);
+            val pubId = devices.get(uid);
             return getCipherExecutor().decode(pubId).equals(yubikeyPublicId);
         }
         return false;
@@ -45,8 +45,8 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (getAccountValidator().isValid(uid, token)) {
-            final String yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
-            final String pubId = getCipherExecutor().encode(yubikeyPublicId);
+            val yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            val pubId = getCipherExecutor().encode(yubikeyPublicId);
             devices.put(uid, pubId);
             return isYubiKeyRegisteredFor(uid, yubikeyPublicId);
         }
@@ -65,7 +65,7 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
     @Override
     public Optional<YubiKeyAccount> getAccount(final String uid) {
         if (devices.containsKey(uid)) {
-            final String publicId = getCipherExecutor().decode(devices.get(uid));
+            val publicId = getCipherExecutor().decode(devices.get(uid));
             return Optional.of(new YubiKeyAccount(System.currentTimeMillis(), publicId, uid));
         }
         return Optional.empty();

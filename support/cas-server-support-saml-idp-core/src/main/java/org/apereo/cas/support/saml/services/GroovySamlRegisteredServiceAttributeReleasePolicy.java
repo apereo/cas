@@ -1,21 +1,21 @@
 package org.apereo.cas.support.saml.services;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import lombok.Setter;
 
 /**
  * This is {@link GroovySamlRegisteredServiceAttributeReleasePolicy}.
@@ -42,7 +42,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
                                                                         final EntityDescriptor entityDescriptor) {
         try {
             final Object[] args = {attributes, service, resolver, facade, entityDescriptor, applicationContext, LOGGER};
-            final Resource resource = ResourceUtils.getResourceFrom(this.groovyScript);
+            val resource = ResourceUtils.getResourceFrom(this.groovyScript);
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

@@ -1,16 +1,18 @@
 package org.apereo.cas.util.http;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+
+import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.io.File;
 
@@ -22,22 +24,26 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {
-                AopAutoConfiguration.class,
-                CasCoreUtilConfiguration.class})
+    classes = {
+        AopAutoConfiguration.class,
+        CasCoreUtilConfiguration.class})
 @EnableScheduling
-@Slf4j
 public class HttpClientMultiThreadedDownloaderTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Autowired
     private ResourceLoader resourceLoader;
 
     @Test
     public void verify() throws Exception {
-        final Resource resource = resourceLoader.getResource("https://raw.githubusercontent.com/apereo/cas/master/NOTICE");
-        final File target = File.createTempFile("notice", ".md");
-        final HttpClientMultiThreadedDownloader downloader = new HttpClientMultiThreadedDownloader(resource, target);
+        val resource = resourceLoader.getResource("https://raw.githubusercontent.com/apereo/cas/master/NOTICE");
+        val target = File.createTempFile("notice", ".md");
+        val downloader = new HttpClientMultiThreadedDownloader(resource, target);
         downloader.download();
         assertTrue(target.exists());
     }

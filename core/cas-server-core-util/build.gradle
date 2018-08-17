@@ -1,4 +1,5 @@
 description = "Apereo CAS Core Utilities"
+
 dependencies {
     api libraries.jose4j
     api project(":api:cas-server-core-api-authentication")
@@ -8,11 +9,13 @@ dependencies {
 
     api project(":core:cas-server-core-util-api")
     
-
     implementation libraries.pac4j
     implementation libraries.zxingbarcode
     implementation libraries.bouncycastle
-    implementation libraries.groovy
+
     implementation libraries.semver
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 }
 

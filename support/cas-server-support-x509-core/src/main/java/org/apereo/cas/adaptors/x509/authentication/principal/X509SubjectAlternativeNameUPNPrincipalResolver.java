@@ -1,23 +1,26 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.util.function.FunctionUtils;
+
+import com.google.common.base.Predicates;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
-import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -44,36 +47,6 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     }
 
     /**
-     * Retrieves Subject Alternative Name UPN extension as a principal id String.
-     *
-     * @param certificate X.509 certificate credential.
-     * @return Resolved principal ID or null if no SAN UPN extension is available in provided certificate.
-     * @see java.security.cert.X509Certificate#getSubjectAlternativeNames()
-     */
-    @Override
-    protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        LOGGER.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);
-        try {
-            final Collection<List<?>> subjectAltNames = certificate.getSubjectAlternativeNames();
-            if (subjectAltNames != null) {
-                for (final List<?> sanItem : subjectAltNames) {
-                    final ASN1Sequence seq = getAltnameSequence(sanItem);
-                    final String upnString = getUPNStringFromSequence(seq);
-                    if (upnString != null) {
-                        return upnString;
-                    }
-                }
-            }
-        } catch (final CertificateParsingException e) {
-            LOGGER.error("Error is encountered while trying to retrieve subject alternative names collection from certificate", e);
-            LOGGER.debug("Returning null principal...");
-            return null;
-        }
-        LOGGER.debug("Returning null principal id...");
-        return null;
-    }
-
-    /**
      * Get UPN String.
      *
      * @param seq ASN1Sequence abstraction representing subject alternative name.
@@ -83,14 +56,16 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
     private static String getUPNStringFromSequence(final ASN1Sequence seq) {
         if (seq != null) {
             // First in sequence is the object identifier, that we must check
-            final ASN1ObjectIdentifier id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
+            val id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
             if (id != null && UPN_OBJECTID.equals(id.getId())) {
-                final ASN1TaggedObject obj = (ASN1TaggedObject) seq.getObjectAt(1);
-                ASN1Primitive prim = obj.getObject();
-                // Due to bug in java cert.getSubjectAltName, it can be tagged an extra time
-                if (prim instanceof ASN1TaggedObject) {
-                    prim = ASN1TaggedObject.getInstance(prim).getObject();
-                }
+                val obj = (ASN1TaggedObject) seq.getObjectAt(1);
+                val primitiveObj = obj.getObject();
+
+                val func = FunctionUtils.doIf(Predicates.instanceOf(ASN1TaggedObject.class),
+                    () -> ASN1TaggedObject.getInstance(primitiveObj).getObject(),
+                    () -> primitiveObj);
+                val prim = func.apply(primitiveObj);
+
                 if (prim instanceof ASN1OctetString) {
                     return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
                 }
@@ -119,9 +94,9 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         if (sanItem.size() < 2) {
             LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
         }
-        final Integer itemType = (Integer) sanItem.get(0);
+        val itemType = (Integer) sanItem.get(0);
         if (itemType == 0) {
-            final byte[] altName = (byte[]) sanItem.get(1);
+            val altName = (byte[]) sanItem.get(1);
             return getAltnameSequence(altName);
         }
         return null;
@@ -136,17 +111,42 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * X509Certificate#getSubjectAlternativeNames</a>
      */
     private static ASN1Sequence getAltnameSequence(final byte[] sanValue) {
-        ASN1Primitive oct = null;
-        try (ByteArrayInputStream bInput = new ByteArrayInputStream(sanValue)) {
-            try (ASN1InputStream input = new ASN1InputStream(bInput)) {
-                oct = input.readObject();
-            } catch (final IOException e) {
-                LOGGER.error("Error on getting Alt Name as a DERSEquence: [{}]", e.getMessage(), e);
-            }
-            return ASN1Sequence.getInstance(oct);
+        try (val bInput = new ByteArrayInputStream(sanValue);
+             val input = new ASN1InputStream(bInput)) {
+            return ASN1Sequence.getInstance(input.readObject());
         } catch (final IOException e) {
             LOGGER.error("An error has occurred while reading the subject alternative name value", e);
         }
+        return null;
+    }
+
+    /**
+     * Retrieves Subject Alternative Name UPN extension as a principal id String.
+     *
+     * @param certificate X.509 certificate credential.
+     * @return Resolved principal ID or null if no SAN UPN extension is available in provided certificate.
+     * @see java.security.cert.X509Certificate#getSubjectAlternativeNames()
+     */
+    @Override
+    protected String resolvePrincipalInternal(final X509Certificate certificate) {
+        LOGGER.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);
+        try {
+            val subjectAltNames = certificate.getSubjectAlternativeNames();
+            if (subjectAltNames != null) {
+                for (val sanItem : subjectAltNames) {
+                    val seq = getAltnameSequence(sanItem);
+                    val upnString = getUPNStringFromSequence(seq);
+                    if (upnString != null) {
+                        return upnString;
+                    }
+                }
+            }
+        } catch (final CertificateParsingException e) {
+            LOGGER.error("Error is encountered while trying to retrieve subject alternative names collection from certificate", e);
+            LOGGER.debug("Returning null principal...");
+            return null;
+        }
+        LOGGER.debug("Returning null principal id...");
         return null;
     }
 }

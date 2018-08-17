@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Optional;
 

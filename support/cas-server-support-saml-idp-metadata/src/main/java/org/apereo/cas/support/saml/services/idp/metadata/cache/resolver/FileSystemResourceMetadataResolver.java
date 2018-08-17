@@ -1,17 +1,19 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.opensaml.core.xml.persist.FilesystemLoadSaveManager;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.AbstractMetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.LocalDynamicMetadataResolver;
-import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -27,9 +29,7 @@ import java.util.Collection;
  */
 @Slf4j
 public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-
-
-    public FileSystemResourceMetadataResolver(final SamlIdPProperties samlIdPProperties, 
+    public FileSystemResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                               final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
     }
@@ -37,17 +37,12 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
+            val metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
-            final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
 
-            final File metadataFile = metadataResource.getFile();
-            final AbstractMetadataResolver metadataResolver;
-            if (metadataFile.isDirectory()) {
-                metadataResolver = new LocalDynamicMetadataResolver(new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool()));
-            } else {
-                metadataResolver = new ResourceBackedMetadataResolver(ResourceHelper.of(metadataResource));
-            }
+            val metadataFile = metadataResource.getFile();
+            val metadataResolver = getMetadataResolver(metadataResource, metadataFile);
             configureAndInitializeSingleMetadataResolver(metadataResolver, service);
             return CollectionUtils.wrap(metadataResolver);
         } catch (final Exception e) {
@@ -56,15 +51,28 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
         return new ArrayList<>(0);
     }
 
+    @SneakyThrows
+    private AbstractMetadataResolver getMetadataResolver(final AbstractResource metadataResource, final File metadataFile) {
+        if (metadataFile.isDirectory()) {
+            return new LocalDynamicMetadataResolver(new FilesystemLoadSaveManager<>(metadataFile, configBean.getParserPool()));
+        }
+        return new InMemoryResourceMetadataResolver(metadataResource, configBean);
+    }
+
     @Override
     public boolean supports(final SamlRegisteredService service) {
         try {
-            final String metadataLocation = service.getMetadataLocation();
-            final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
+            val metadataLocation = service.getMetadataLocation();
+            val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof FileSystemResource;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    @Override
+    public boolean isAvailable(final SamlRegisteredService service) {
+        return supports(service);
     }
 }

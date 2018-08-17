@@ -2,11 +2,10 @@ package org.apereo.cas.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
-
-import lombok.ToString;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * This is {@link BasicIdentifiableCredential}, a simple credential implementation
@@ -16,14 +15,13 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Slf4j
 @ToString
 @Getter
 @Setter
 @AllArgsConstructor
 @EqualsAndHashCode
-public class BasicIdentifiableCredential implements Credential {
-
+@NoArgsConstructor
+public class BasicIdentifiableCredential extends AbstractCredential {
     private static final long serialVersionUID = -700605020472810939L;
 
     private String id;

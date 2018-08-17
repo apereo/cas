@@ -1,17 +1,18 @@
 package org.apereo.cas.config;
 
-import com.microsoft.azure.documentdb.ConsistencyLevel;
-import com.microsoft.azure.documentdb.RequestOptions;
-import com.microsoft.azure.spring.data.documentdb.DocumentDbFactory;
-import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.services.CosmosDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+
+import com.microsoft.azure.documentdb.ConsistencyLevel;
+import com.microsoft.azure.documentdb.IndexingMode;
+import com.microsoft.azure.documentdb.IndexingPolicy;
+import com.microsoft.azure.documentdb.RequestOptions;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -43,14 +44,14 @@ public class CosmosDbServiceRegistryConfiguration implements ServiceRegistryExec
     @Bean
     @RefreshScope
     public ServiceRegistry cosmosDbServiceRegistry() {
-        final CosmosDbObjectFactory factory = new CosmosDbObjectFactory(this.applicationContext);
-        final CosmosDbServiceRegistryProperties cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
-        final DocumentDbFactory dbFactory = factory.createDocumentDbFactory(cosmosDb);
-        final DocumentDbTemplate db = factory.createDocumentDbTemplate(dbFactory, cosmosDb);
+        val factory = new CosmosDbObjectFactory(this.applicationContext);
+        val cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
+        val dbFactory = factory.createDocumentDbFactory(cosmosDb);
+        val db = factory.createDocumentDbTemplate(dbFactory, cosmosDb);
 
         if (cosmosDb.isDropCollection()) {
-            final String collectionLink = CosmosDbObjectFactory.getCollectionLink(cosmosDb.getDatabase(), cosmosDb.getCollection());
-            final RequestOptions options = new RequestOptions();
+            val collectionLink = CosmosDbObjectFactory.getCollectionLink(cosmosDb.getDatabase(), cosmosDb.getCollection());
+            val options = new RequestOptions();
             options.setConsistencyLevel(ConsistencyLevel.valueOf(cosmosDb.getConsistencyLevel()));
             options.setOfferThroughput(cosmosDb.getThroughput());
             try {
@@ -59,7 +60,11 @@ public class CosmosDbServiceRegistryConfiguration implements ServiceRegistryExec
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME, cosmosDb.getThroughput());
+        val indexingPolicy = new IndexingPolicy();
+        indexingPolicy.setAutomatic(true);
+        indexingPolicy.setIndexingMode(IndexingMode.valueOf(cosmosDb.getIndexingMode()));
+        db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME,
+            cosmosDb.getThroughput(), indexingPolicy);
         return new CosmosDbServiceRegistry(db, dbFactory, cosmosDb.getCollection(), cosmosDb.getDatabase());
     }
 

@@ -6,7 +6,6 @@ package org.apereo.cas.util.io;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@FunctionalInterface
 public interface SmsSender {
 
     /**
@@ -17,5 +16,7 @@ public interface SmsSender {
      * @param message the message
      * @return the boolean
      */
-    boolean send(String from, String to, String message);
+    default boolean send(final String from, final String to, final String message) {
+        return false;
+    }
 }

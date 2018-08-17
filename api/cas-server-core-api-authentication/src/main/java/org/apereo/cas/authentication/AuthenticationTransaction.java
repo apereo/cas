@@ -1,19 +1,10 @@
 package org.apereo.cas.authentication;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -22,47 +13,29 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@Slf4j
-@Getter
-@AllArgsConstructor
-@ToString
-public class AuthenticationTransaction implements Serializable {
-
-    private static final long serialVersionUID = 6213904009424725484L;
-
-    private final Service service;
-    private final Collection<Credential> credentials;
+public interface AuthenticationTransaction extends Serializable {
 
     /**
-     * Wrap credentials into an authentication transaction, as a factory method,
-     * and return the final result.
+     * Gets service linked to this transaction.
      *
-     * @param service     the service
-     * @param credentials the credentials
-     * @return the authentication transaction
+     * @return the service
      */
-    public static AuthenticationTransaction of(final Service service, final Credential... credentials) {
-        return new AuthenticationTransaction(service, sanitizeCredentials(credentials));
-    }
+    Service getService();
 
     /**
-     * Wrap credentials into an authentication transaction, as a factory method,
-     * and return the final result.
+     * Gets credentials.
      *
-     * @param credentials the credentials
-     * @return the authentication transaction
+     * @return the credentials
      */
-    public static AuthenticationTransaction of(final Credential... credentials) {
-        return of(null, credentials);
-    }
+    Collection<Credential> getCredentials();
 
     /**
      * Gets the first (primary) credential in the chain.
      *
      * @return the credential
      */
-    public Optional<Credential> getPrimaryCredential() {
-        return credentials.stream().findFirst();
+    default Optional<Credential> getPrimaryCredential() {
+        return getCredentials().stream().findFirst();
     }
 
     /**
@@ -71,25 +44,19 @@ public class AuthenticationTransaction implements Serializable {
      * @param type the credential type to check for
      * @return true if this AuthenticationTransaction contains a credential of the specified type
      */
-    public boolean hasCredentialOfType(final Class<? extends Credential> type) {
-        return credentials.stream()
-                .anyMatch(type::isInstance);
+    default boolean hasCredentialOfType(final Class<? extends Credential> type) {
+        return getCredentials().stream().anyMatch(type::isInstance);
     }
 
     /**
-     * Sanitize credentials set. It's important to keep the order of
-     * the credentials in the final set as they were presented.
+     * Gets credentials of type.
      *
-     * @param credentials the credentials
-     * @return the set
+     * @param <T>  the type parameter
+     * @param type the type
+     * @return the credentials of type
      */
-    private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
-        if (credentials != null && credentials.length > 0) {
-            return Arrays.stream(credentials)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-        }
-        return new HashSet<>(0);
+    default <T extends Credential> Collection<T> getCredentialsOfType(final Class<T> type) {
+        return getCredentials().stream().filter(type::isInstance).map(c -> (T) c).collect(Collectors.toList());
     }
 }
 

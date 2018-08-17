@@ -84,7 +84,7 @@ Note the trailing comma at the end. See the above link for more info on the alte
 
 ## Legacy Syntax
 
-A number of legacy service definitions, supported by CAs automatically, are listed below.
+A number of legacy service definitions, supported by CAS automatically, are listed below.
 
 ## CAS Add-ons
 
@@ -122,7 +122,7 @@ A few things to note:
 
 ### Jasig Namespace
 
-CAS automatically should remain backwards compatible with service definitions
+CAS automatically should remain backward compatible with service definitions
 that were created by a CAS `4.2.x` instance. Warnings should show up in the logs
 when such deprecated service definitions are found. Deployers are advised to review each definition
 and consult the docs to apply the new syntax.

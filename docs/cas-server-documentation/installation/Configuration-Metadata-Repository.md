@@ -7,23 +7,16 @@ title: CAS Configuration Metadata Repository
 
 CAS ships with meta-data files that provide details of all supported configuration properties and settings. The repository of all configuration metadata
 is generated automatically at build and release time by processing all items annotated with `@ConfigurationProperties` within the codebase. This repository
-is then made available for additional querying and filtering to look up definitions of a given property or locate relevant settings that apply to a particular group of functionality in CAS, such as LDAP authentication.
+is then made available for additional querying and filtering to look up definitions of a given property or locate relevant settings 
+that apply to a particular group of functionality in CAS, such as LDAP authentication.
 
-Configuration metadata may also be accessed and queried using the CAS dashboard UIs. [See this guide](Monitoring-Statistics.html) to learn more.
+Configuration metadata may also be accessed and queried using the CAS actuator endpoints. [See this guide](Monitoring-Statistics.html) to learn more.
 
-## Metadata via REST
+## Metadata Endpoint
 
-Configuration metadata can be queried via the following REST endpoint that are prefixed at `/status/configmetadata`:
-
-| Endpoint              | Method      | Description
-|-----------------------|-------------|----------------------------------------------------------
-| `/properties`         | `GET`       | List all properties available in the metadata repository.
-| `/groups`             | `GET`       | List all groups available in the metadata repository. 
-| `/group`              | `GET`       | Look up a group by its name using a `name` request parameter.
-| `/property`           | `GET`       | Look up a property by its name using a `name` request parameter.
-| `/search`             | `GET`       | Search for a property by its relaxed `name` and aggregated results.
-
-This interface ships with CAS by default and you need not do anything special to configure it.
+Configuration metadata can be queried via the following endpoint that are prefixed at `/actuator/configuration-metadata/{name}`. The default endpoint present a list of all settings
+recognized by CAS, with the added capability to search for specific CAS setting by its partial `name`. This interface ships with CAS by default and you need 
+not do anything special to enable it.
 
 ## Metadata via Commandline
 

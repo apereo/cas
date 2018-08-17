@@ -19,6 +19,13 @@ public interface VariegatedMultifactorAuthenticationProvider extends Multifactor
     void addProvider(MultifactorAuthenticationProvider provider);
 
     /**
+     * Add providers.
+     *
+     * @param provider the provider
+     */
+    void addProviders(MultifactorAuthenticationProvider... provider);
+
+    /**
      * Gets providers.
      *
      * @return the providers

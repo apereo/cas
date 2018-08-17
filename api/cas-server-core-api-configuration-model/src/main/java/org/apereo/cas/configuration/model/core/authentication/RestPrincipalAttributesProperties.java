@@ -1,8 +1,8 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +13,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class RestPrincipalAttributesProperties extends RestEndpointProperties {

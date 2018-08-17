@@ -1,10 +1,5 @@
 package org.apereo.cas.util;
 
-import com.google.common.collect.Multimap;
-import lombok.SneakyThrows;
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
@@ -14,18 +9,21 @@ import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
-import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.StreamSupport;
@@ -55,13 +53,12 @@ public class SamlSPUtils {
             return null;
         }
 
-        final SamlRegisteredService service = new SamlRegisteredService();
+        val service = new SamlRegisteredService();
         service.setName(sp.getName());
         service.setDescription(sp.getDescription());
         service.setEvaluationOrder(Integer.MIN_VALUE);
         service.setMetadataLocation(sp.getMetadata());
-
-        final List<String> attributesToRelease = new ArrayList<>(sp.getAttributes());
+        val attributesToRelease = new ArrayList<String>(sp.getAttributes());
         if (StringUtils.isNotBlank(sp.getNameIdAttribute())) {
             attributesToRelease.add(sp.getNameIdAttribute());
             service.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider(sp.getNameIdAttribute()));
@@ -70,8 +67,8 @@ public class SamlSPUtils {
             service.setRequiredNameIdFormat(sp.getNameIdFormat());
         }
 
-        final Multimap<String, Object> attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributesToRelease);
-        final ChainingAttributeReleasePolicy policy = new ChainingAttributeReleasePolicy();
+        val attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributesToRelease);
+        val policy = new ChainingAttributeReleasePolicy();
         policy.addPolicy(new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(attributes)));
         service.setAttributeReleasePolicy(policy);
 
@@ -83,13 +80,13 @@ public class SamlSPUtils {
             service.setMetadataSignatureLocation(sp.getSignatureLocation());
         }
 
-        final List<String> entityIDList = determineEntityIdList(sp, resolver, service);
+        val entityIDList = determineEntityIdList(sp, resolver, service);
 
         if (entityIDList.isEmpty()) {
             LOGGER.warn("Skipped registration of [{}] since no metadata entity ids could be found", sp.getName());
             return null;
         }
-        final String entityIds = org.springframework.util.StringUtils.collectionToDelimitedString(entityIDList, "|");
+        val entityIds = org.springframework.util.StringUtils.collectionToDelimitedString(entityIDList, "|");
         service.setMetadataCriteriaDirection(PredicateFilter.Direction.INCLUDE.name());
         service.setMetadataCriteriaPattern(entityIds);
 
@@ -105,11 +102,11 @@ public class SamlSPUtils {
     private static List<String> determineEntityIdList(final AbstractSamlSPProperties sp,
                                                       final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                       final SamlRegisteredService service) {
-        final List<String> entityIDList = sp.getEntityIds();
+        val entityIDList = sp.getEntityIds();
         if (entityIDList.isEmpty()) {
-            final MetadataResolver metadataResolver = resolver.resolve(service);
+            val metadataResolver = resolver.resolve(service);
 
-            final List<MetadataResolver> resolvers = new ArrayList<>();
+            val resolvers = new ArrayList<MetadataResolver>();
             if (metadataResolver instanceof ChainingMetadataResolver) {
                 resolvers.addAll(((ChainingMetadataResolver) metadataResolver).getResolvers());
             } else {
@@ -118,8 +115,8 @@ public class SamlSPUtils {
 
             resolvers.forEach(r -> {
                 if (r instanceof AbstractBatchMetadataResolver) {
-                    final Iterator<EntityDescriptor> it = ((AbstractBatchMetadataResolver) r).iterator();
-                    final Optional<EntityDescriptor> descriptor =
+                    val it = ((AbstractBatchMetadataResolver) r).iterator();
+                    val descriptor =
                         StreamSupport.stream(Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED), false)
                             .filter(e -> e.getSPSSODescriptor(SAMLConstants.SAML20P_NS) != null)
                             .findFirst();

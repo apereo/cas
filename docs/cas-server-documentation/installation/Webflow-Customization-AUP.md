@@ -25,6 +25,12 @@ Customize the policy by modifying the `src/main/resources/templates/casAcceptabl
 to learn more about user interface customizations. Note that the view here should have full access to the resolved principal and attributes,
 if you wish to dynamically alter the page to present different text, etc.
 
+<div class="alert alert-info"><strong>Webflow Sequence</strong><p>Remember that acceptable usage policy executes
+after a successful authentication event where CAS has already established the authentication principal, since the 
+policy record is strongly tied to the identified user record. Implement this feature before the authentication event
+would require heavy modifications to the CAS webflow as well as alternative means of storing and remembering decisions
+such as cookies or browser storage, etc.</p></div>
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
 
 ## Storage Mechanism

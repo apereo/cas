@@ -1,8 +1,5 @@
 package org.apereo.cas.adaptors.x509.config;
 
-import lombok.extern.slf4j.Slf4j;
-import net.sf.ehcache.Cache;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
@@ -23,14 +20,18 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationP
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RegexUtils;
+
+import lombok.val;
+import net.sf.ehcache.Cache;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,10 +40,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -55,7 +54,6 @@ import java.util.stream.Collectors;
  */
 @Configuration("x509AuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class X509AuthenticationConfiguration {
 
     private static final int HEX = 16;
@@ -92,21 +90,21 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public RevocationChecker crlDistributionPointRevocationChecker() {
-        final X509Properties x509 = casProperties.getAuthn().getX509();
-        final Cache cache = new Cache("CRL".concat(UUID.randomUUID().toString()),
-                x509.getCacheMaxElementsInMemory(),
-                x509.isCacheDiskOverflow(),
-                x509.isCacheEternal(),
-                x509.getCacheTimeToLiveSeconds(),
-                x509.getCacheTimeToIdleSeconds());
+        val x509 = casProperties.getAuthn().getX509();
+        val cache = new Cache("CRL".concat(UUID.randomUUID().toString()),
+            x509.getCacheMaxElementsInMemory(),
+            x509.isCacheDiskOverflow(),
+            x509.isCacheEternal(),
+            x509.getCacheTimeToLiveSeconds(),
+            x509.getCacheTimeToIdleSeconds());
 
         return new CRLDistributionPointRevocationChecker(
-                x509.isCheckAll(),
-                getRevocationPolicy(x509.getCrlUnavailablePolicy()),
-                getRevocationPolicy(x509.getCrlExpiredPolicy()),
-                cache,
-                crlFetcher(),
-                x509.isThrowOnFetchFailure());
+            x509.isCheckAll(),
+            getRevocationPolicy(x509.getCrlUnavailablePolicy()),
+            getRevocationPolicy(x509.getCrlExpiredPolicy()),
+            cache,
+            crlFetcher(),
+            x509.isThrowOnFetchFailure());
     }
 
     @Bean
@@ -121,19 +119,19 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public RevocationChecker resourceCrlRevocationChecker() {
-        final X509Properties x509 = casProperties.getAuthn().getX509();
-        final Set<Resource> x509CrlResources = x509.getCrlResources()
-                .stream()
-                .map(s -> this.resourceLoader.getResource(s))
-                .collect(Collectors.toSet());
+        val x509 = casProperties.getAuthn().getX509();
+        val x509CrlResources = x509.getCrlResources()
+            .stream()
+            .map(s -> this.resourceLoader.getResource(s))
+            .collect(Collectors.toSet());
 
         return new ResourceCRLRevocationChecker(
-                x509.isCheckAll(),
-                getRevocationPolicy(x509.getCrlResourceUnavailablePolicy()),
-                getRevocationPolicy(x509.getCrlResourceExpiredPolicy()),
-                x509.getRefreshIntervalSeconds(),
-                crlFetcher(),
-                x509CrlResources);
+            x509.isCheckAll(),
+            getRevocationPolicy(x509.getCrlResourceUnavailablePolicy()),
+            getRevocationPolicy(x509.getCrlResourceExpiredPolicy()),
+            x509.getRefreshIntervalSeconds(),
+            crlFetcher(),
+            x509CrlResources);
     }
 
     private RevocationPolicy getRevocationPolicy(final String policy) {
@@ -150,7 +148,7 @@ public class X509AuthenticationConfiguration {
 
     @Bean
     public CRLFetcher crlFetcher() {
-        final X509Properties x509 = casProperties.getAuthn().getX509();
+        val x509 = casProperties.getAuthn().getX509();
         switch (x509.getCrlFetcher().toLowerCase()) {
             case "ldap":
                 return ldaptiveResourceCRLFetcher();
@@ -163,163 +161,163 @@ public class X509AuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler x509CredentialsAuthenticationHandler() {
-        final X509Properties x509 = casProperties.getAuthn().getX509();
-        final RevocationChecker revChecker;
-        switch (x509.getRevocationChecker().trim().toLowerCase()) {
-            case "resource":
-                revChecker = resourceCrlRevocationChecker();
-                break;
-            case "crl":
-                revChecker = crlDistributionPointRevocationChecker();
-                break;
-            case "none":
-            default:
-                revChecker = noOpRevocationChecker();
-                break;
-        }
-
+        val x509 = casProperties.getAuthn().getX509();
+        val revChecker = getRevocationCheckerFrom(x509);
         return new X509CredentialsAuthenticationHandler(
-                x509.getName(),
-                servicesManager,
-                x509PrincipalFactory(),
-                StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern())
-                        ? RegexUtils.createPattern(x509.getRegExTrustedIssuerDnPattern()) : null,
-                x509.getMaxPathLength(),
-                x509.isMaxPathLengthAllowUnspecified(),
-                x509.isCheckKeyUsage(),
-                x509.isRequireKeyUsage(),
-                StringUtils.isNotBlank(x509.getRegExSubjectDnPattern())
-                        ? RegexUtils.createPattern(x509.getRegExSubjectDnPattern()) : null,
-                revChecker);
+            x509.getName(),
+            servicesManager,
+            x509PrincipalFactory(),
+            StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern())
+                ? RegexUtils.createPattern(x509.getRegExTrustedIssuerDnPattern())
+                : null,
+            x509.getMaxPathLength(),
+            x509.isMaxPathLengthAllowUnspecified(),
+            x509.isCheckKeyUsage(),
+            x509.isRequireKeyUsage(),
+            StringUtils.isNotBlank(x509.getRegExSubjectDnPattern())
+                ? RegexUtils.createPattern(x509.getRegExSubjectDnPattern())
+                : null,
+            revChecker);
+    }
+
+    private RevocationChecker getRevocationCheckerFrom(final X509Properties x509) {
+        val checker = x509.getRevocationChecker().trim().toLowerCase();
+        if ("resource".equals(checker)) {
+            return resourceCrlRevocationChecker();
+        }
+        if ("crl".equals(checker)) {
+            return crlDistributionPointRevocationChecker();
+        }
+        return noOpRevocationChecker();
     }
 
     @Bean
     public CRLFetcher ldaptiveResourceCRLFetcher() {
-        final X509Properties x509 = casProperties.getAuthn().getX509();
+        val x509 = casProperties.getAuthn().getX509();
         return new LdaptiveResourceCRLFetcher(LdapUtils.newLdaptiveConnectionConfig(x509.getLdap()),
-                LdapUtils.newLdaptiveSearchExecutor(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
-                x509.getLdap().getCertificateAttribute());
+            LdapUtils.newLdaptiveSearchExecutor(x509.getLdap().getBaseDn(), x509.getLdap().getSearchFilter()),
+            x509.getLdap().getCertificateAttribute());
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
-        final X509Properties x509 = casProperties.getAuthn().getX509();
-        final X509SubjectPrincipalResolver r = new X509SubjectPrincipalResolver(attributeRepository, 
-                x509PrincipalFactory(),
-                x509.getPrincipal().isReturnNull(),
-                x509.getPrincipal().getPrincipalAttribute(),
-                x509.getPrincipalDescriptor());
+        val x509 = casProperties.getAuthn().getX509();
+        val r = new X509SubjectPrincipalResolver(attributeRepository,
+            x509PrincipalFactory(),
+            x509.getPrincipal().isReturnNull(),
+            x509.getPrincipal().getPrincipalAttribute(),
+            x509.getPrincipalDescriptor());
         return r;
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectDNPrincipalResolver() {
-        final X509Properties x509 = casProperties.getAuthn().getX509();
-        final X509SubjectDNPrincipalResolver r = new X509SubjectDNPrincipalResolver(attributeRepository,
-                x509PrincipalFactory(),
-                x509.getPrincipal().isReturnNull(),
-                x509.getPrincipal().getPrincipalAttribute());
+        val x509 = casProperties.getAuthn().getX509();
+        val r = new X509SubjectDNPrincipalResolver(attributeRepository,
+            x509PrincipalFactory(),
+            x509.getPrincipal().isReturnNull(),
+            x509.getPrincipal().getPrincipalAttribute());
         return r;
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
-        final X509Properties x509 = casProperties.getAuthn().getX509();
-        final X509SubjectAlternativeNameUPNPrincipalResolver r = new X509SubjectAlternativeNameUPNPrincipalResolver(attributeRepository,
-                x509PrincipalFactory(),
-                x509.getPrincipal().isReturnNull(),
-                x509.getPrincipal().getPrincipalAttribute());
+        val x509 = casProperties.getAuthn().getX509();
+        val r = new X509SubjectAlternativeNameUPNPrincipalResolver(attributeRepository,
+            x509PrincipalFactory(),
+            x509.getPrincipal().isReturnNull(),
+            x509.getPrincipal().getPrincipalAttribute());
         return r;
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberPrincipalResolver() {
-        final X509Properties x509 = casProperties.getAuthn().getX509();
-        final X509SerialNumberPrincipalResolver r;
-        final int radix = x509.getPrincipalSNRadix();
+        val x509 = casProperties.getAuthn().getX509();
+        return getX509SerialNumberPrincipalResolver(x509);
+    }
+
+    private X509SerialNumberPrincipalResolver getX509SerialNumberPrincipalResolver(final X509Properties x509) {
+        val radix = x509.getPrincipalSNRadix();
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
-                r = new X509SerialNumberPrincipalResolver(attributeRepository,
-                        x509PrincipalFactory(),
-                        x509.getPrincipal().isReturnNull(),
-                        x509.getPrincipal().getPrincipalAttribute(),
-                        radix, x509.isPrincipalHexSNZeroPadding());
-            } else {
-                r = new X509SerialNumberPrincipalResolver(attributeRepository,
-                        x509PrincipalFactory(),
-                        x509.getPrincipal().isReturnNull(),
-                        x509.getPrincipal().getPrincipalAttribute(),
-                        radix, false);
-            }
-        } else {
-            r = new X509SerialNumberPrincipalResolver(attributeRepository,
+                return new X509SerialNumberPrincipalResolver(attributeRepository,
                     x509PrincipalFactory(),
                     x509.getPrincipal().isReturnNull(),
-                    x509.getPrincipal().getPrincipalAttribute());
+                    x509.getPrincipal().getPrincipalAttribute(),
+                    radix, x509.isPrincipalHexSNZeroPadding());
+            }
+            return new X509SerialNumberPrincipalResolver(attributeRepository,
+                x509PrincipalFactory(),
+                x509.getPrincipal().isReturnNull(),
+                x509.getPrincipal().getPrincipalAttribute(),
+                radix, false);
         }
-        return r;
+        return new X509SerialNumberPrincipalResolver(attributeRepository,
+            x509PrincipalFactory(),
+            x509.getPrincipal().isReturnNull(),
+            x509.getPrincipal().getPrincipalAttribute());
     }
 
     @ConditionalOnMissingBean(name = "x509PrincipalFactory")
     @Bean
     public PrincipalFactory x509PrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver() {
-        final X509Properties x509 = casProperties.getAuthn().getX509();
+        val x509 = casProperties.getAuthn().getX509();
         return new X509SerialNumberAndIssuerDNPrincipalResolver(attributeRepository,
-                x509PrincipalFactory(),
-                x509.getPrincipal().isReturnNull(),
-                x509.getPrincipal().getPrincipalAttribute(),
-                x509.getSerialNumberPrefix(), x509.getValueDelimiter());
+            x509PrincipalFactory(),
+            x509.getPrincipal().isReturnNull(),
+            x509.getPrincipal().getPrincipalAttribute(),
+            x509.getSerialNumberPrefix(), x509.getValueDelimiter());
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509CommonNameEDIPIPrincipalResolver() {
-        final X509Properties x509 = casProperties.getAuthn().getX509();
+        val x509 = casProperties.getAuthn().getX509();
         return new X509CommonNameEDIPIPrincipalResolver(attributeRepository,
-                x509PrincipalFactory(),
-                x509.getPrincipal().isReturnNull(),
-                x509.getPrincipal().getPrincipalAttribute());
+            x509PrincipalFactory(),
+            x509.getPrincipal().isReturnNull(),
+            x509.getPrincipal().getPrincipalAttribute());
     }
 
     @ConditionalOnMissingBean(name = "x509AuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer x509AuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            PrincipalResolver resolver = null;
-            if (casProperties.getAuthn().getX509().getPrincipalType() != null) {
-                switch (casProperties.getAuthn().getX509().getPrincipalType()) {
-                    case SERIAL_NO:
-                        resolver = x509SerialNumberPrincipalResolver();
-                        break;
-                    case SERIAL_NO_DN:
-                        resolver = x509SerialNumberAndIssuerDNPrincipalResolver();
-                        break;
-                    case SUBJECT:
-                        resolver = x509SubjectPrincipalResolver();
-                        break;
-                    case SUBJECT_ALT_NAME:
-                        resolver = x509SubjectAlternativeNameUPNPrincipalResolver();
-                        break;
-                    case CN_EDIPI:
-                        resolver = x509CommonNameEDIPIPrincipalResolver();
-                        break;
-                    default:
-                        resolver = x509SubjectDNPrincipalResolver();
-                        break;
-                }
-            }
-
+            val resolver = getPrincipalResolver();
             plan.registerAuthenticationHandlerWithPrincipalResolver(x509CredentialsAuthenticationHandler(), resolver);
         };
+    }
+
+    private PrincipalResolver getPrincipalResolver() {
+        val type = casProperties.getAuthn().getX509().getPrincipalType();
+        if (type == null) {
+            return null;
+        }
+        if (type == X509Properties.PrincipalTypes.SERIAL_NO) {
+            return x509SerialNumberPrincipalResolver();
+        }
+        if (type == X509Properties.PrincipalTypes.SERIAL_NO_DN) {
+            return x509SerialNumberAndIssuerDNPrincipalResolver();
+        }
+        if (type == X509Properties.PrincipalTypes.SUBJECT) {
+            return x509SubjectPrincipalResolver();
+        }
+        if (type == X509Properties.PrincipalTypes.SUBJECT_ALT_NAME) {
+            return x509SubjectAlternativeNameUPNPrincipalResolver();
+        }
+        if (type == X509Properties.PrincipalTypes.CN_EDIPI) {
+            return x509CommonNameEDIPIPrincipalResolver();
+        }
+        return x509SubjectDNPrincipalResolver();
     }
 }

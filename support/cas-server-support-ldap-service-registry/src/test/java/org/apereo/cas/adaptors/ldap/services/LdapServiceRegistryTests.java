@@ -1,12 +1,15 @@
 package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.util.junit.RunningStandaloneCondition;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
+
+import lombok.val;
+import org.junit.Test;
 import org.springframework.test.context.TestPropertySource;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link LdapServiceRegistry} class.
@@ -16,12 +19,27 @@ import org.springframework.test.context.TestPropertySource;
  * @since 4.0.0
  */
 @TestPropertySource(locations = "classpath:/ldapsvc.properties")
-@RunWith(ConditionalSpringRunner.class)
 @ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
 
-    @BeforeClass
+    public LdapServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+        super(registeredServiceClass);
+    }
+
     public static void bootstrap() throws Exception {
         LdapIntegrationTestsOperations.initDirectoryServer(1390);
+    }
+
+    @Test
+    public void verifySavingServiceChangesDn() {
+        getServiceRegistry().save(buildRegisteredServiceInstance(8080));
+        val services = getServiceRegistry().load();
+        assertFalse(services.isEmpty());
+        val rs = getServiceRegistry().findServiceById(services.get(0).getId());
+        val originalId = rs.getId();
+        assertNotNull(rs);
+        rs.setId(666);
+        assertNotNull(getServiceRegistry().save(rs));
+        assertNotEquals(rs.getId(), originalId);
     }
 }

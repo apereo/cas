@@ -1,7 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
@@ -10,9 +8,6 @@ import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.RiskBasedAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.email.EmailProperties;
-import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
@@ -20,12 +15,16 @@ import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.engine.DefaultAuthenticationRiskEvaluator;
 import org.apereo.cas.impl.engine.DefaultAuthenticationRiskMitigator;
 import org.apereo.cas.impl.notify.AuthenticationRiskEmailNotifier;
-import org.apereo.cas.impl.notify.AuthenticationRiskTwilioSmsNotifier;
+import org.apereo.cas.impl.notify.AuthenticationRiskSmsNotifier;
 import org.apereo.cas.impl.plans.BaseAuthenticationRiskContingencyPlan;
 import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.io.CommunicationsManager;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This is {@link ElectronicFenceConfiguration}.
@@ -78,14 +76,14 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRiskNotifier authenticationRiskSmsNotifier() {
-        return new AuthenticationRiskTwilioSmsNotifier(communicationsManager);
+        return new AuthenticationRiskSmsNotifier(communicationsManager);
     }
 
     @ConditionalOnMissingBean(name = "blockAuthenticationContingencyPlan")
     @Bean
     @RefreshScope
     public AuthenticationRiskContingencyPlan blockAuthenticationContingencyPlan() {
-        final BlockAuthenticationContingencyPlan b = new BlockAuthenticationContingencyPlan();
+        val b = new BlockAuthenticationContingencyPlan();
         configureContingencyPlan(b);
         return b;
     }
@@ -94,7 +92,7 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRiskContingencyPlan multifactorAuthenticationContingencyPlan() {
-        final MultifactorAuthenticationContingencyPlan b = new MultifactorAuthenticationContingencyPlan();
+        val b = new MultifactorAuthenticationContingencyPlan();
         configureContingencyPlan(b);
         return b;
     }
@@ -142,8 +140,8 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRiskEvaluator authenticationRiskEvaluator() {
-        final RiskBasedAuthenticationProperties risk = casProperties.getAuthn().getAdaptive().getRisk();
-        final Set<AuthenticationRequestRiskCalculator> calculators = new HashSet<>();
+        val risk = casProperties.getAuthn().getAdaptive().getRisk();
+        val calculators = new HashSet<AuthenticationRequestRiskCalculator>();
 
         if (risk.getIp().isEnabled()) {
             calculators.add(ipAddressAuthenticationRequestRiskCalculator());
@@ -166,12 +164,12 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     }
 
     private void configureContingencyPlan(final BaseAuthenticationRiskContingencyPlan b) {
-        final EmailProperties mail = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
+        val mail = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
         if (StringUtils.isNotBlank(mail.getText()) && StringUtils.isNotBlank(mail.getFrom()) && StringUtils.isNotBlank(mail.getSubject())) {
             b.getNotifiers().add(authenticationRiskEmailNotifier());
         }
 
-        final SmsProperties sms = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
+        val sms = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
         if (StringUtils.isNotBlank(sms.getText()) && StringUtils.isNotBlank(sms.getFrom())) {
             b.getNotifiers().add(authenticationRiskSmsNotifier());
         }

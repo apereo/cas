@@ -9,7 +9,7 @@ import org.apache.cxf.ws.security.tokenstore.SecurityToken;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface SecurityTokenTicketFactory extends TicketFactory {
 
     /**

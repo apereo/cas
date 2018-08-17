@@ -1,12 +1,12 @@
 package org.apereo.cas.configuration.model.support.geo.maxmind;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.model.support.geo.BaseGeoLocationProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import org.springframework.core.io.Resource;
-import java.io.Serializable;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.io.Resource;
 
 /**
  * This is {@link MaxmindProperties}.
@@ -15,10 +15,9 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-geolocation-maxmind")
-@Slf4j
 @Getter
 @Setter
-public class MaxmindProperties implements Serializable {
+public class MaxmindProperties extends BaseGeoLocationProperties {
 
     private static final long serialVersionUID = 7883029275219817797L;
 
@@ -26,11 +25,11 @@ public class MaxmindProperties implements Serializable {
      * Path to the location of the database file containing cities.
      */
     @RequiredProperty
-    private Resource cityDatabase;
+    private transient Resource cityDatabase;
 
     /**
      * Path to the location of the database file containing countries.
      */
     @RequiredProperty
-    private Resource countryDatabase;
+    private transient Resource countryDatabase;
 }

@@ -1,19 +1,22 @@
 package org.apereo.cas.services.support;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import lombok.ToString;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern
@@ -27,7 +30,7 @@ import lombok.NoArgsConstructor;
 @Setter
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(of={"pattern", "order"})
+@EqualsAndHashCode(of = {"pattern", "order"})
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 403015306984610128L;
@@ -46,7 +49,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         this.compiledPattern = Pattern.compile(regex);
         this.pattern = regex;
     }
-    
+
     /**
      * {@inheritDoc}
      * <p>
@@ -66,36 +69,36 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     @Override
     @SuppressWarnings("unchecked")
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
-        final Map<String, Object> attributesToRelease = new HashMap<>();
+        val attributesToRelease = new HashMap<String, Object>();
         givenAttributes.entrySet().stream().filter(entry -> {
-            final String attributeName = entry.getKey();
-            final Object attributeValue = entry.getValue();
+            val attributeName = entry.getKey();
+            val attributeValue = entry.getValue();
             LOGGER.debug("Received attribute [{}] with value [{}]", attributeName, attributeValue);
             return attributeValue != null;
         }).forEach(entry -> {
-            final String attributeName = entry.getKey();
-            final Object attributeValue = entry.getValue();
+            val attributeName = entry.getKey();
+            val attributeValue = entry.getValue();
             if (attributeValue instanceof Collection) {
                 LOGGER.trace("Attribute value [{}] is a collection", attributeValue);
-                final List filteredAttributes = filterAttributes((Collection<String>) attributeValue, attributeName);
+                val filteredAttributes = filterAttributes((Collection<String>) attributeValue, attributeName);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else if (attributeValue.getClass().isArray()) {
                 LOGGER.trace("Attribute value [{}] is an array", attributeValue);
-                final List filteredAttributes = filterAttributes(CollectionUtils.wrapList((String[]) attributeValue), attributeName);
+                val filteredAttributes = filterAttributes(CollectionUtils.wrapList((String[]) attributeValue), attributeName);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else if (attributeValue instanceof Map) {
                 LOGGER.trace("Attribute value [{}] is a map", attributeValue);
-                final Map<String, String> filteredAttributes = filterAttributes((Map<String, String>) attributeValue);
+                val filteredAttributes = filterAttributes((Map<String, String>) attributeValue);
                 if (!filteredAttributes.isEmpty()) {
                     attributesToRelease.put(attributeName, filteredAttributes);
                 }
             } else {
                 LOGGER.trace("Attribute value [{}] is a string", attributeValue);
-                final String attrValue = attributeValue.toString();
+                val attrValue = attributeValue.toString();
                 if (patternMatchesAttributeValue(attrValue)) {
                     logReleasedAttributeEntry(attributeName, attrValue);
                     attributesToRelease.put(attributeName, attrValue);

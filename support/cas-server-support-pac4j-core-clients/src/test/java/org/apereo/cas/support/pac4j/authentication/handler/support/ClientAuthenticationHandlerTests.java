@@ -1,17 +1,15 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.val;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.credentials.Credentials;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
@@ -36,7 +34,6 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
-@Slf4j
 public class ClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
@@ -50,26 +47,26 @@ public class ClientAuthenticationHandlerTests {
     private ClientCredential clientCredential;
 
     @Before
-    public void setUp() {
+    public void initialize() {
         this.fbClient = new FacebookClient();
-        final Clients clients = new Clients(CALLBACK_URL, fbClient);
+        val clients = new Clients(CALLBACK_URL, fbClient);
         this.handler = new ClientAuthenticationHandler("", mock(ServicesManager.class), null, clients);
         this.handler.setTypedIdUsed(true);
 
-        final Credentials credentials = new OAuth20Credentials(null);
+        val credentials = new OAuth20Credentials(null);
         this.clientCredential = new ClientCredential(credentials, fbClient.getName());
-        final ServletExternalContext mock = new ServletExternalContext(new MockServletContext(),
+        val mock = new ServletExternalContext(new MockServletContext(),
             new MockHttpServletRequest(), new MockHttpServletResponse());
         ExternalContextHolder.setExternalContext(mock);
     }
 
     @Test
     public void verifyOk() throws GeneralSecurityException, PreventedException {
-        final FacebookProfile facebookProfile = new FacebookProfile();
+        val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
-        final AuthenticationHandlerExecutionResult result = this.handler.authenticate(this.clientCredential);
-        final Principal principal = result.getPrincipal();
+        val result = this.handler.authenticate(this.clientCredential);
+        val principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
     }
 
@@ -77,11 +74,11 @@ public class ClientAuthenticationHandlerTests {
     public void verifyOkWithSimpleIdentifier() throws GeneralSecurityException, PreventedException {
         this.handler.setTypedIdUsed(false);
 
-        final FacebookProfile facebookProfile = new FacebookProfile();
+        val facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
-        final AuthenticationHandlerExecutionResult result = this.handler.authenticate(this.clientCredential);
-        final Principal principal = result.getPrincipal();
+        val result = this.handler.authenticate(this.clientCredential);
+        val principal = result.getPrincipal();
         assertEquals(ID, principal.getId());
     }
 

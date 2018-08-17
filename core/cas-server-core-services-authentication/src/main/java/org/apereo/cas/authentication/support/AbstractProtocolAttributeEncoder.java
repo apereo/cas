@@ -1,17 +1,20 @@
 package org.apereo.cas.authentication.support;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
+import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
+
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Setter;
 
 /**
  * Abstract class to define common attribute encoding operations.
@@ -21,31 +24,31 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttributeEncoder {
 
     /**
      * The Services manager.
      */
-    protected ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
-    private RegisteredServiceCipherExecutor cipherExecutor;
+    private final RegisteredServiceCipherExecutor cipherExecutor;
 
     /**
      * Instantiates a new attribute encoder with the default
-     * cipher as {@link DefaultRegisteredServiceCipherExecutor}.
+     * cipher as {@link RegisteredServicePublicKeyCipherExecutor}.
      *
      * @param servicesManager the services manager
      */
     public AbstractProtocolAttributeEncoder(final ServicesManager servicesManager) {
-        this(servicesManager, new DefaultRegisteredServiceCipherExecutor());
+        this(servicesManager, new RegisteredServicePublicKeyCipherExecutor());
     }
 
     @Override
     public Map<String, Object> encodeAttributes(final Map<String, Object> attributes, final RegisteredService registeredService) {
         LOGGER.debug("Starting to encode attributes for release to service [{}]", registeredService);
-        final Map<String, Object> newEncodedAttributes = new HashMap<>(attributes);
-        final Map<String, String> cachedAttributesToEncode = initialize(newEncodedAttributes);
+        val newEncodedAttributes = new HashMap<String, Object>(attributes);
+        val cachedAttributesToEncode = initialize(newEncodedAttributes);
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             encodeAttributesInternal(newEncodedAttributes, cachedAttributesToEncode, this.cipherExecutor, registeredService);
             LOGGER.debug("[{}] encoded attributes are available for release to [{}]: [{}]", newEncodedAttributes.size(), registeredService, newEncodedAttributes.keySet());
@@ -79,8 +82,8 @@ public abstract class AbstractProtocolAttributeEncoder implements ProtocolAttrib
      * @return a map of attributes that are to be encoded and encrypted
      */
     protected Map<String, String> initialize(final Map<String, Object> attributes) {
-        final Map<String, String> cachedAttributesToEncode = new HashMap<>(attributes.size());
-        final String messageFormat = "Removed [{}] as an authentication attribute and cached it locally.";
+        val cachedAttributesToEncode = new HashMap<String, String>();
+        val messageFormat = "Removed [{}] as an authentication attribute and cached it locally.";
         Collection<?> collection = (Collection<?>) attributes.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
         if (collection != null && collection.size() == 1) {
             cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, collection.iterator().next().toString());

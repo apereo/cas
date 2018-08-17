@@ -1,15 +1,16 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasVersion;
+
+import lombok.val;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.PropertiesPropertySource;
 
-import javax.annotation.PostConstruct;
 import java.util.Properties;
 
 /**
@@ -20,18 +21,17 @@ import java.util.Properties;
  */
 @Configuration("casPropertiesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
-public class CasPropertiesConfiguration {
+public class CasPropertiesConfiguration implements InitializingBean {
     @Autowired
     private ConfigurableEnvironment environment;
 
     /**
      * Init.
      */
-    @PostConstruct
-    public void init() {
-        final Properties sysProps = System.getProperties();
-        final Properties properties = new Properties();
+    @Override
+    public void afterPropertiesSet() {
+        val sysProps = System.getProperties();
+        val properties = new Properties();
         if (CasVersion.getVersion() != null) {
             properties.put("info.cas.version", CasVersion.getVersion());
         }
@@ -39,7 +39,7 @@ public class CasPropertiesConfiguration {
         properties.put("info.cas.java.home", sysProps.get("java.home"));
         properties.put("info.cas.java.vendor", sysProps.get("java.vendor"));
         properties.put("info.cas.java.version", sysProps.get("java.version"));
-        final PropertiesPropertySource src = new PropertiesPropertySource(CasVersion.class.getName(), properties);
+        val src = new PropertiesPropertySource(CasVersion.class.getName(), properties);
         this.environment.getPropertySources().addFirst(src);
     }
 }

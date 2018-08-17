@@ -1,13 +1,15 @@
 package org.apereo.cas.authentication;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.val;
+
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -18,7 +20,6 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @NoArgsConstructor
 @Getter
 public class DefaultVariegatedMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements VariegatedMultifactorAuthenticationProvider {
@@ -47,8 +48,14 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     }
 
     @Override
+    public void addProviders(final MultifactorAuthenticationProvider... provider) {
+        Arrays.stream(provider).forEach(this::addProvider);
+    }
+
+
+    @Override
     public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
-        final long count = this.providers.stream().filter(p -> p.isAvailable(service)).count();
+        val count = this.providers.stream().filter(p -> p.isAvailable(service)).count();
         return count == providers.size();
     }
 
@@ -64,13 +71,16 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
 
     @Override
     public MultifactorAuthenticationProvider findProvider(final String identifier) {
-        return this.providers.stream().filter(p -> p.matches(identifier)).findFirst().orElse(null);
+        return this.providers.stream()
+            .filter(p -> p.matches(identifier))
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
     public <T extends MultifactorAuthenticationProvider> T findProvider(final String identifier, @NonNull final Class<T> clazz) {
 
-        final MultifactorAuthenticationProvider provider = findProvider(identifier);
+        val provider = findProvider(identifier);
         if (provider == null) {
             return null;
         }

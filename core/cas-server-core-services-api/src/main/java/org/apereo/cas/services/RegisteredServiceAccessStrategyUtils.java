@@ -1,19 +1,22 @@
 package org.apereo.cas.services;
 
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.PrincipalException;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.DateTimeUtils;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+
+import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyUtils} that encapsulates common
@@ -46,14 +49,19 @@ public class RegisteredServiceAccessStrategyUtils {
      */
     public static void ensureServiceAccessIsAllowed(final String service, final RegisteredService registeredService) {
         if (registeredService == null) {
-            final String msg = String.format("Unauthorized Service Access. Service [%s] is not found in service registry.", service);
+            val msg = String.format("Unauthorized Service Access. Service [%s] is not found in service registry.", service);
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            final String msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry.", service);
+            val msg = String.format("Unauthorized Service Access. Service [%s] is not enabled in service registry.", service);
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
+        }
+        if (!ensureServiceIsNotExpired(registeredService)) {
+            val msg = String.format("Expired Service Access. Service [%s] has been expired", service);
+            LOGGER.warn(msg);
+            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_EXPIRED_SERVICE, msg);
         }
     }
 
@@ -65,6 +73,16 @@ public class RegisteredServiceAccessStrategyUtils {
      */
     public static void ensureServiceAccessIsAllowed(final Service service, final RegisteredService registeredService) {
         ensureServiceAccessIsAllowed(service.getId(), registeredService);
+    }
+
+    /**
+     * Ensure service is not expired.
+     *
+     * @param registeredService the service
+     * @return boolean - true if service is not expired
+     */
+    public static boolean ensureServiceIsNotExpired(final RegisteredService registeredService) {
+        return getRegisteredServiceExpirationPolicyPredicate().test(registeredService);
     }
 
     /**
@@ -82,9 +100,10 @@ public class RegisteredServiceAccessStrategyUtils {
         ensureServiceAccessIsAllowed(service, registeredService);
         if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalId, attributes)) {
             LOGGER.warn("Cannot grant access to service [{}] because it is not authorized for use by [{}].", service.getId(), principalId);
-            final Map<String, Throwable> handlerErrors = new HashMap<>();
-            handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(),
-                new UnauthorizedServiceForPrincipalException(String.format("Cannot grant service access to %s", principalId)));
+            val handlerErrors = new HashMap<String, Throwable>();
+            val message = String.format("Cannot grant service access to %s", principalId);
+            val exception = new UnauthorizedServiceForPrincipalException(message, registeredService, principalId, attributes);
+            handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(), exception);
 
             throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap<>());
         }
@@ -122,14 +141,12 @@ public class RegisteredServiceAccessStrategyUtils {
         throws UnauthorizedServiceException, PrincipalException {
         ensureServiceAccessIsAllowed(service, registeredService);
 
-        final Principal principal = authentication.getPrincipal();
-        final Map<String, Object> principalAttrs;
-        if (retrievePrincipalAttributesFromReleasePolicy && registeredService != null && registeredService.getAttributeReleasePolicy() != null) {
-            principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
-        } else {
-            principalAttrs = authentication.getPrincipal().getAttributes();
-        }
-        final Map<String, Object> attributes = new LinkedHashMap<>(principalAttrs);
+        val principal = authentication.getPrincipal();
+        val principalAttrs =
+            retrievePrincipalAttributesFromReleasePolicy && registeredService != null && registeredService.getAttributeReleasePolicy() != null
+                ? registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService)
+                : authentication.getPrincipal().getAttributes();
+        val attributes = new HashMap<String, Object>(principalAttrs);
         attributes.putAll(authentication.getAttributes());
         ensurePrincipalAccessIsAllowedForService(service, registeredService, principal.getId(), attributes);
     }
@@ -200,7 +217,7 @@ public class RegisteredServiceAccessStrategyUtils {
                                                        final TicketGrantingTicket ticketGrantingTicket) {
         ensureServiceSsoAccessIsAllowed(registeredService, service, ticketGrantingTicket, false);
     }
-    
+
     /**
      * Ensure service sso access is allowed.
      *
@@ -221,12 +238,47 @@ public class RegisteredServiceAccessStrategyUtils {
             }
             if (ticketGrantingTicket.getProxiedBy() == null && ticketGrantingTicket.getCountOfUses() > 0 && !credentialsProvided) {
                 LOGGER.warn("Service [{}] is not allowed to use SSO. The ticket-granting ticket [{}] is not proxied and it's been used at least once. "
-                    +"The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(), service.getId());
+                    + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(), service.getId());
                 throw new UnauthorizedSsoServiceException();
             }
         }
         LOGGER.debug("Current authentication via ticket [{}] allows service [{}] to participate in the existing SSO session",
             ticketGrantingTicket.getId(), service.getId());
+    }
+
+    /**
+     * Returns a predicate that determined whether a service has expired.
+     *
+     * @return true if the service is still valid. false if service has expired.
+     */
+    public static Predicate<RegisteredService> getRegisteredServiceExpirationPolicyPredicate() {
+        return service -> {
+            try {
+                if (service == null) {
+                    return false;
+                }
+                val policy = service.getExpirationPolicy();
+                if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
+                    return true;
+                }
+                val now = getCurrentSystemTime();
+                val expirationDate = DateTimeUtils.localDateTimeOf(policy.getExpirationDate());
+                LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
+                return !now.isAfter(expirationDate);
+            } catch (final Exception e) {
+                LOGGER.warn(e.getMessage(), e);
+            }
+            return false;
+        };
+    }
+
+    /**
+     * Gets current system time.
+     *
+     * @return the current system time
+     */
+    protected static LocalDateTime getCurrentSystemTime() {
+        return LocalDateTime.now();
     }
 
 }

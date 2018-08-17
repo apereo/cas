@@ -1,15 +1,17 @@
 package org.apereo.cas.support.events.mongo;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
+
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+
 import java.time.ZonedDateTime;
 import java.util.Collection;
-import lombok.ToString;
 
 /**
  * This is {@link MongoDbCasEventRepository} that stores event data into a mongodb database.
@@ -17,9 +19,8 @@ import lombok.ToString;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
     private final MongoOperations mongoTemplate;
@@ -37,49 +38,49 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public Collection<CasEvent> load(final ZonedDateTime dateTime) {
-        final Query query = new Query();
+        val query = new Query();
         query.addCriteria(Criteria.where(CREATION_TIME_PARAM).gte(dateTime.toString()));
         return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }
 
     @Override
     public Collection<CasEvent> getEventsOfType(final String type) {
-        final Query query = new Query();
+        val query = new Query();
         query.addCriteria(Criteria.where(TYPE_PARAM).is(type));
         return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }
 
     @Override
     public Collection<CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
-        final Query query = new Query();
+        val query = new Query();
         query.addCriteria(Criteria.where(TYPE_PARAM).is(type).and(CREATION_TIME_PARAM).gte(dateTime.toString()));
         return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }
 
     @Override
     public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
-        final Query query = new Query();
+        val query = new Query();
         query.addCriteria(Criteria.where(TYPE_PARAM).is(type).and(PRINCIPAL_ID_PARAM).is(principal));
         return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }
 
     @Override
     public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
-        final Query query = new Query();
+        val query = new Query();
         query.addCriteria(Criteria.where(TYPE_PARAM).is(type).and(PRINCIPAL_ID_PARAM).is(principal).and(CREATION_TIME_PARAM).gte(dateTime.toString()));
         return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }
 
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String id) {
-        final Query query = new Query();
+        val query = new Query();
         query.addCriteria(Criteria.where(PRINCIPAL_ID_PARAM).is(id));
         return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }
 
     @Override
     public Collection<CasEvent> getEventsForPrincipal(final String principal, final ZonedDateTime dateTime) {
-        final Query query = new Query();
+        val query = new Query();
         query.addCriteria(Criteria.where(PRINCIPAL_ID_PARAM).is(principal).and(CREATION_TIME_PARAM).gte(dateTime.toString()));
         return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }

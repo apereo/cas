@@ -1,10 +1,11 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+
+import lombok.val;
 import org.springframework.boot.test.context.TestConfiguration;
 
 import java.util.HashMap;
@@ -16,16 +17,15 @@ import java.util.HashMap;
  * @since 5.1.0
  */
 @TestConfiguration("CasMultifactorTestAuthenticationEventExecutionPlanConfiguration")
-@Slf4j
 public class CasMultifactorTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {
-        final HashMap<String, String> users = new HashMap<>();
+        val users = new HashMap<String, String>();
         users.put("alice", "alice");
         users.put("bob", "bob");
         users.put("mallory", "mallory");
 
-        final HashMap<String, String> credentials = new HashMap<>();
+        val credentials = new HashMap<String, String>();
         credentials.put("alice", "31415");
         credentials.put("bob", "62831");
         credentials.put("mallory", "14142");

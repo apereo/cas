@@ -1,11 +1,13 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -18,13 +20,13 @@ import java.io.Serializable;
  */
 @Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Serializable {
     private static final long serialVersionUID = -8581398063126547772L;
 
-    private final LockingStrategy lockingStrategy;
-    private final LogoutManager logoutManager;
-    private final TicketRegistry ticketRegistry;
+    private final transient LockingStrategy lockingStrategy;
+    private final transient LogoutManager logoutManager;
+    private final transient TicketRegistry ticketRegistry;
 
     @Override
     public void clean() {
@@ -54,7 +56,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
      * Clean tickets.
      */
     protected void cleanInternal() {
-        final int ticketsDeleted = ticketRegistry.getTicketsStream()
+        val ticketsDeleted = ticketRegistry.getTicketsStream()
             .filter(Ticket::isExpired)
             .mapToInt(this::cleanTicket)
             .sum();

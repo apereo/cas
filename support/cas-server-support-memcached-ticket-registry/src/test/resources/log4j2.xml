@@ -27,8 +27,6 @@
         <Logger name="org.hibernate.validator" level="error" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-
-
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.support.themes;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link ThemeProperties}.
@@ -13,7 +14,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-themes", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class ThemeProperties implements Serializable {

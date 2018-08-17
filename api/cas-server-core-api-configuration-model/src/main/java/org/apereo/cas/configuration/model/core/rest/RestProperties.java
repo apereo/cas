@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.core.rest;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link RestProperties}.
@@ -13,7 +14,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-rest", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class RestProperties implements Serializable {
@@ -33,4 +33,13 @@ public class RestProperties implements Serializable {
      */
     private String attributeValue;
 
+    /**
+     * Flag that enables X509Certificate extraction from the request headers for authentication.
+     */
+    private boolean headerAuth = true;
+    
+    /**
+     * Flag that enables X509Certificate extraction from the request body for authentication.
+     */
+    private boolean bodyAuth;
 }

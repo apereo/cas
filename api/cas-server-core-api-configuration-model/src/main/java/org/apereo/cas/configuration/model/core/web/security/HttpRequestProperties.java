@@ -1,13 +1,14 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link HttpRequestProperties}.
@@ -16,7 +17,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class HttpRequestProperties implements Serializable {

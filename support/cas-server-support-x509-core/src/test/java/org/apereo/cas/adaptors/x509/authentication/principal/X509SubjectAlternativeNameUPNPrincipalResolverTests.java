@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,27 +20,26 @@ import java.util.Collection;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
-@Slf4j
 public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
 
-    private X509Certificate certificate;
     private final X509SubjectAlternativeNameUPNPrincipalResolver resolver;
     private final String expected;
+    private X509Certificate certificate;
 
     /**
      * Creates a new test instance with the given parameters.
      *
-     * @param certPath path to the cert
+     * @param certPath       path to the cert
      * @param expectedResult the result expected from the test
      */
     public X509SubjectAlternativeNameUPNPrincipalResolverTests(
-            final String certPath,
-            final String expectedResult) {
+        final String certPath,
+        final String expectedResult) {
 
         this.resolver = new X509SubjectAlternativeNameUPNPrincipalResolver();
         try {
             this.certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
-                    new FileInputStream(getClass().getResource(certPath).getPath()));
+                new FileInputStream(getClass().getResource(certPath).getPath()));
         } catch (final Exception e) {
             Assert.fail(String.format("Error parsing certificate %s: %s", certPath, e.getMessage()));
         }
@@ -54,11 +53,11 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
      */
     @Parameters
     public static Collection<Object[]> getTestParameters() {
-        final Collection<Object[]> params = new ArrayList<>();
+        val params = new ArrayList<Object[]>();
 
-        params.add(new Object[] {
-                "/x509-san-upn-resolver.crt",
-                "test-user@some-company-domain"
+        params.add(new Object[]{
+            "/x509-san-upn-resolver.crt",
+            "test-user@some-company-domain"
         });
         return params;
     }

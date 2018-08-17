@@ -13,7 +13,7 @@ import java.io.Serializable;
  * @see Ticket
  * @since 3.0.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface ExpirationPolicy extends Serializable {
 
     /**
@@ -23,6 +23,16 @@ public interface ExpirationPolicy extends Serializable {
      * @return true if the ticket is expired, false otherwise.
      */
     boolean isExpired(TicketState ticketState);
+
+    /**
+     * Method to determine the actual TTL of a ticket, based on the policy.
+     *
+     * @param ticketState The snapshot of the current ticket state
+     * @return The time to live in seconds. A zero value indicates the time duration is not supported or is inactive.
+     */
+    default Long getTimeToLive(final TicketState ticketState) {
+        return getTimeToLive();
+    }
 
     /**
      * Describes the time duration where this policy should consider the item alive.

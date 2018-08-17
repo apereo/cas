@@ -1,11 +1,12 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link HttpWebRequestProperties}.
@@ -14,7 +15,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class HttpWebRequestProperties implements Serializable {

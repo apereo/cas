@@ -3,9 +3,7 @@ dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-events")
     api project(":api:cas-server-core-api-web")
-
-    implementation libraries.groovy
-
+    
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-authentication-api")
 

@@ -1,6 +1,5 @@
 package org.apereo.cas.pm.impl;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
@@ -16,10 +15,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 public class NoOpPasswordManagementService extends BasePasswordManagementService {
-    public NoOpPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor, 
-                                         final String issuer, 
+    public NoOpPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
+                                         final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties) {
         super(passwordManagementProperties, cipherExecutor, issuer);
     }

@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -28,6 +27,9 @@ import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.openid4java.server.InMemoryServerAssociationStore;
 import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,7 +132,7 @@ public class OpenIdConfiguration {
     @RefreshScope
     @Bean
     public ServerManager serverManager() {
-        final ServerManager manager = new ServerManager();
+        val manager = new ServerManager();
         manager.setOPEndpointUrl(casProperties.getServer().getLoginUrl());
         manager.setEnforceRpId(casProperties.getAuthn().getOpenid().isEnforceRpId());
         manager.setSharedAssociations(new InMemoryServerAssociationStore());
@@ -141,7 +143,7 @@ public class OpenIdConfiguration {
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
-        final String openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
+        val openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
         return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService, servicesManager);
     }
 
@@ -173,7 +175,7 @@ public class OpenIdConfiguration {
     @Autowired
     @Bean
     public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
-        final OpenIdValidateController c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
+        val c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
             authenticationSystemSupport, servicesManager,
             centralAuthenticationService, proxy20Handler,
             argumentExtractor, multifactorTriggerSelectionStrategy,
@@ -182,12 +184,12 @@ public class OpenIdConfiguration {
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             serverManager(), validationAuthorizers, casProperties.getSso().isRenewAuthnEnabled());
 
-        final DelegatingController controller = new DelegatingController();
+        val controller = new DelegatingController();
         controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), c));
 
-        final OpenIdPostUrlHandlerMapping m = new OpenIdPostUrlHandlerMapping();
+        val m = new OpenIdPostUrlHandlerMapping();
         m.setOrder(1);
-        final Properties mappings = new Properties();
+        val mappings = new Properties();
         mappings.put("/login", controller);
         m.setMappings(mappings);
         return m;

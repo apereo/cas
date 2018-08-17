@@ -1,12 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationContext;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultWebApplicationResponseBuilderLocator}.
@@ -14,17 +10,11 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
+@RequiredArgsConstructor
 public class DefaultWebApplicationResponseBuilderLocator implements ResponseBuilderLocator<WebApplicationService> {
-
     private static final long serialVersionUID = 388417797622191740L;
-    private final transient List<ResponseBuilder> builders;
 
-    public DefaultWebApplicationResponseBuilderLocator(final ApplicationContext applicationContext) {
-        final Map<String, ResponseBuilder> beans = applicationContext.getBeansOfType(ResponseBuilder.class, false, true);
-        this.builders = beans.values().stream().collect(Collectors.toList());
-        AnnotationAwareOrderComparator.sortIfNecessary(builders);
-    }
+    private final List<ResponseBuilder> builders;
 
     @Override
     public ResponseBuilder locate(final WebApplicationService service) {

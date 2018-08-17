@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,40 +22,90 @@ public interface CipherExecutor<I, O> {
     Logger LOGGER = LoggerFactory.getLogger(CipherExecutor.class);
 
     /**
-     * Default content encryption algorithm.
+     * The default content encryption algorithm.
      */
     String DEFAULT_CONTENT_ENCRYPTION_ALGORITHM =
         ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
 
     /**
+     * Factory method.
+     *
+     * @return Strongly -typed Noop {@code CipherExecutor Serializable -> Serializable}
+     */
+    static CipherExecutor<Serializable, Serializable> noOp() {
+        return NoOpCipherExecutor.getInstance();
+    }
+
+    /**
+     * Factory method.
+     *
+     * @return Strongly -typed Noop {@code CipherExecutor String -> String}
+     */
+    static CipherExecutor<String, String> noOpOfStringToString() {
+        return NoOpCipherExecutor.getInstance();
+    }
+
+    /**
+     * Factory method.
+     *
+     * @return Strongly -typed Noop {@code CipherExecutor Serializable -> String}
+     */
+    static CipherExecutor<Serializable, String> noOpOfSerializableToString() {
+        return NoOpCipherExecutor.getInstance();
+    }
+
+    /**
      * Encrypt the value. Implementations may
      * choose to also sign the final value.
+     *
+     * @param value      the value
+     * @param parameters the parameters
+     * @return the encrypted value or null
+     */
+    O encode(I value, Object[] parameters);
+
+    /**
+     * Encrypt the value.
      *
      * @param value the value
      * @return the encrypted value or null
      */
-    O encode(I value);
+    default O encode(final I value) {
+        return encode(value, new Object[]{});
+    }
 
     /**
      * Decode the value. Signatures may also be verified.
      *
-     * @param value encrypted value
+     * @param value      encrypted value
+     * @param parameters the parameters
      * @return the decoded value.
      */
-    O decode(I value);
+    O decode(I value, Object[] parameters);
+
+    /**
+     * Decode the value.
+     *
+     * @param value the value
+     * @return the decoded value or null
+     */
+    default O decode(final I value) {
+        return decode(value, new Object[]{});
+    }
 
     /**
      * Decode map.
      *
      * @param properties the properties
+     * @param parameters the parameters
      * @return the map
      */
-    default Map<String, Object> decode(Map<String, Object> properties) {
-        final Map<String, Object> decrypted = new HashMap<>();
+    default Map<String, Object> decode(Map<String, Object> properties, final Object[] parameters) {
+        val decrypted = new HashMap<String, Object>();
         properties.forEach((key, value) -> {
             try {
                 LOGGER.debug("Attempting to decode key [{}]", key);
-                final Object result = decode((I) value);
+                val result = decode((I) value, parameters);
                 if (result != null) {
                     LOGGER.debug("Decrypted key [{}] successfully", key);
                     decrypted.put(key, result);
@@ -84,35 +135,6 @@ public interface CipherExecutor<I, O> {
     default String getName() {
         return getClass().getSimpleName();
     }
-
-    /**
-     * Factory method.
-     *
-     * @return Strongly-typed Noop {@code CipherExecutor Serializable -> Serializable}
-     */
-    static CipherExecutor<Serializable, Serializable> noOp() {
-        return NoOpCipherExecutor.getInstance();
-    }
-
-    /**
-     * Factory method.
-     *
-     * @return Strongly-typed Noop {@code CipherExecutor String -> String}
-     */
-    static CipherExecutor<String, String> noOpOfStringToString() {
-        return NoOpCipherExecutor.getInstance();
-    }
-
-    /**
-     * Factory method.
-     *
-     * @return Strongly-typed Noop {@code CipherExecutor Serializable -> String}
-     */
-    static CipherExecutor<Serializable, String> noOpOfSerializableToString() {
-        return NoOpCipherExecutor.getInstance();
-    }
-
-
 
 
 }

@@ -97,6 +97,7 @@ Available drivers are:
 | `org.hibernate.dialect.MySQLMyISAMDialect`   
 | `org.hibernate.dialect.MySQL5InnoDBDialect`   
 | `org.hibernate.dialect.MySQL57InnoDBDialect`  
+| `org.hibernate.dialect.MySQL8Dialect`
 
 ### PostgreSQL
 
@@ -114,6 +115,7 @@ Available drivers are:
 | `org.hibernate.dialect.PostgreSQL93Dialect`   
 | `org.hibernate.dialect.PostgreSQL94Dialect`   
 | `org.hibernate.dialect.PostgreSQL95Dialect`   
+| `org.hibernate.dialect.PostgresPlusDialect`
 
 ### MariaDB
 
@@ -124,13 +126,17 @@ Available drivers are:
 | Dialects             
 |------------------------------------------------
 | `org.hibernate.dialect.MariaDBDialect`   
-| `org.hibernate.dialect.MariaDBDialect`   
+| `org.hibernate.dialect.MariaDB53Dialect`   
+| `org.hibernate.dialect.MariaDB10Dialect`   
+| `org.hibernate.dialect.MariaDB102Dialect`   
+| `org.hibernate.dialect.MariaDB103Dialect`   
 
-### Microsoft SQL Server (JTDS)
+### Microsoft SQL Server 
 
 Available drivers are:
 
 1. `net.sourceforge.jtds.jdbc.Driver`
+2. `com.microsoft.sqlserver.jdbc.SQLServerDriver`
 
 | Dialects             
 |------------------------------------------------

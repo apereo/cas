@@ -1,0 +1,6 @@
+description = "Apereo CAS Configuration - Cloud Bus AMQP"
+dependencies {
+    implementation libraries.springcloudbusamqp
+    implementation libraries.springintegrationamqp
+    runtimeOnly project(":core:cas-server-core-events-configuration-cloud-bus")
+}

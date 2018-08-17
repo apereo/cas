@@ -1,11 +1,15 @@
 package org.apereo.cas.support.saml;
 
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.resolver.ResolverException;
-import net.shibboleth.utilities.java.support.resource.Resource;
-import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
+import org.springframework.core.io.Resource;
+import org.w3c.dom.Element;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 
 /**
  * This is {@link InMemoryResourceMetadataResolver}.
@@ -13,23 +17,23 @@ import java.io.IOException;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
-public class InMemoryResourceMetadataResolver extends ResourceBackedMetadataResolver {
+public class InMemoryResourceMetadataResolver extends DOMMetadataResolver {
 
-    private final Resource metadataResource;
-
-    public InMemoryResourceMetadataResolver(final Resource resource) throws IOException {
-        super(resource);
-        this.metadataResource = resource;
+    public InMemoryResourceMetadataResolver(final Resource metadataResource, final OpenSamlConfigBean configBean) throws IOException {
+        super(getMetadataRootElement(metadataResource.getInputStream(), configBean));
     }
 
-    @Override
-    protected byte[] fetchMetadata() throws ResolverException {
-        try {
-            return inputstreamToByteArray(metadataResource.getInputStream());
-        } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new ResolverException(e.getMessage(), e);
-        }
+    public InMemoryResourceMetadataResolver(final InputStream metadataResource, final OpenSamlConfigBean configBean) {
+        super(getMetadataRootElement(metadataResource, configBean));
+    }
+
+    public InMemoryResourceMetadataResolver(final File metadataResource, final OpenSamlConfigBean configBean) throws IOException {
+        super(getMetadataRootElement(Files.newInputStream(metadataResource.toPath()), configBean));
+    }
+
+    @SneakyThrows
+    private static Element getMetadataRootElement(final InputStream metadataResource, final OpenSamlConfigBean configBean) {
+        val document = configBean.getParserPool().parse(metadataResource);
+        return document.getDocumentElement();
     }
 }

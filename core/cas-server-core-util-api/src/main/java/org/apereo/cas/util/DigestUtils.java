@@ -1,7 +1,7 @@
 package org.apereo.cas.util;
 
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,7 +17,6 @@ import java.util.Arrays;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
-@Slf4j
 @UtilityClass
 public class DigestUtils {
     private static final int ABBREVIATE_MAX_WIDTH = 125;
@@ -76,16 +75,44 @@ public class DigestUtils {
     /**
      * Sha base 64 string.
      *
-     * @param salt the salt
-     * @param data the data
+     * @param salt      the salt
+     * @param data      the data
      * @param separator a string separator, if any
+     * @param chunked   the chunked
+     * @return the string
+     */
+    public static String shaBase64(final String salt, final String data, final String separator, final boolean chunked) {
+        val result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
+        return EncodingUtils.encodeBase64(result, chunked);
+    }
+
+    /**
+     * Sha base 64 string.
+     *
+     * @param salt      the salt
+     * @param data      the data
+     * @param separator the separator
      * @return the string
      */
     public static String shaBase64(final String salt, final String data, final String separator) {
-        final byte[] result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
+        val result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
         return EncodingUtils.encodeBase64(result);
     }
-    
+
+    /**
+     * Sha base 32 string.
+     *
+     * @param salt      the salt
+     * @param data      the data
+     * @param separator a string separator, if any
+     * @param chunked   the chunked
+     * @return the string
+     */
+    public static String shaBase32(final String salt, final String data, final String separator, final boolean chunked) {
+        val result = rawDigest(MessageDigestAlgorithms.SHA_1, salt, separator == null ? data : data + separator);
+        return EncodingUtils.encodeBase32(result, chunked);
+    }
+
     /**
      * Computes hex encoded digest.
      *
@@ -117,14 +144,14 @@ public class DigestUtils {
      */
     public static byte[] rawDigest(final String alg, final byte[] data) {
         try {
-            final MessageDigest digest = getMessageDigestInstance(alg);
+            val digest = getMessageDigestInstance(alg);
             return digest.digest(data);
         } catch (final Exception cause) {
             throw new SecurityException(cause);
         }
     }
 
-    
+
     /**
      * Raw digest byte [ ].
      *
@@ -135,7 +162,7 @@ public class DigestUtils {
      */
     public static byte[] rawDigest(final String alg, final String salt, final String... data) {
         try {
-            final MessageDigest digest = getMessageDigestInstance(alg);
+            val digest = getMessageDigestInstance(alg);
             Arrays.stream(data).forEach(d -> digest.update(d.getBytes(StandardCharsets.UTF_8)));
             return digest.digest(salt.getBytes(StandardCharsets.UTF_8));
         } catch (final Exception cause) {
@@ -152,9 +179,9 @@ public class DigestUtils {
     public static String abbreviate(final String str) {
         return StringUtils.abbreviate(str, ABBREVIATE_MAX_WIDTH);
     }
-    
+
     private static MessageDigest getMessageDigestInstance(final String alg) throws Exception {
-        final MessageDigest digest = MessageDigest.getInstance(alg);
+        val digest = MessageDigest.getInstance(alg);
         digest.reset();
         return digest;
     }

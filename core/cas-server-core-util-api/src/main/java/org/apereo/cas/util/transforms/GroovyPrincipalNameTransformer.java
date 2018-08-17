@@ -1,9 +1,10 @@
 package org.apereo.cas.util.transforms;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.util.ScriptingUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.core.io.Resource;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GroovyPrincipalNameTransformer implements PrincipalNameTransformer {
     private static final long serialVersionUID = 5167914936775326709L;
 
@@ -22,7 +23,7 @@ public class GroovyPrincipalNameTransformer implements PrincipalNameTransformer 
     @Override
     public String transform(final String formUserId) {
         return ScriptingUtils.executeGroovyScript(this.script,
-                new Object[]{formUserId, LOGGER},
-                String.class);
+            new Object[]{formUserId, LOGGER},
+            String.class);
     }
 }

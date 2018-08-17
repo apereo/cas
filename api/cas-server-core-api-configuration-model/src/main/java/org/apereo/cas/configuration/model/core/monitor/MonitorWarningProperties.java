@@ -1,11 +1,12 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link MonitorWarningProperties}.
@@ -14,7 +15,6 @@ import lombok.NoArgsConstructor;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-core-monitor", automated = true)
-@Slf4j
 @Getter
 @Setter
 @NoArgsConstructor

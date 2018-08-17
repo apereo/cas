@@ -1,17 +1,15 @@
 package org.apereo.cas.support.saml.authentication;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.DefaultAuthenticationTransaction;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+
+import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -19,49 +17,47 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 public class SamlAuthenticationMetaDataPopulatorTests {
 
     private SamlAuthenticationMetaDataPopulator populator;
 
     @Before
-    public void setUp() {
+    public void initialize() {
         this.populator = new SamlAuthenticationMetaDataPopulator();
     }
 
     @Test
     public void verifyAuthenticationTypeFound() {
-        final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
-        final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
-        final Authentication auth = builder.build();
+        val credentials = new UsernamePasswordCredential();
+        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
+        val auth = builder.build();
 
         assertEquals(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD,
             auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
     }
 
     @Test
-    public void verifyAuthenticationTypeNotFound() {
-        final CustomCredential credentials = new CustomCredential();
-        final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
-        final Authentication auth = builder.build();
-
-        assertNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
+    public void verifyAuthenticationTypeFoundByDefault() {
+        val credentials = new CustomCredential();
+        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
+        val auth = builder.build();
+        assertNotNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
     }
 
     @Test
     public void verifyAuthenticationTypeFoundCustom() {
-        final CustomCredential credentials = new CustomCredential();
+        val credentials = new CustomCredential();
 
-        final Map<String, String> added = new HashMap<>();
+        val added = new HashMap<String, String>();
         added.put(CustomCredential.class.getName(), "FF");
 
         this.populator.setUserDefinedMappings(added);
 
-        final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
-        final Authentication auth = builder.build();
+        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        this.populator.populateAttributes(builder, DefaultAuthenticationTransaction.of(credentials));
+        val auth = builder.build();
 
         assertEquals(
             "FF",

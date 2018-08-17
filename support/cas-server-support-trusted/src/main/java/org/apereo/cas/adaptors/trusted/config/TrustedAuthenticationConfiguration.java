@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.trusted.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.trusted.authentication.handler.support.PrincipalBearingCredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingPrincipalResolver;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
@@ -13,17 +12,18 @@ import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipa
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,7 +43,6 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("trustedAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class TrustedAuthenticationConfiguration {
 
     @Autowired
@@ -72,26 +71,26 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationHandler principalBearingCredentialsAuthenticationHandler() {
-        final TrustedAuthenticationProperties trusted = casProperties.getAuthn().getTrusted();
+        val trusted = casProperties.getAuthn().getTrusted();
         return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(), servicesManager, trustedPrincipalFactory());
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver trustedPrincipalResolver() {
-        final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
+        val resolver = new ChainingPrincipalResolver();
 
-        final TrustedAuthenticationProperties trusted = casProperties.getAuthn().getTrusted();
-        final PrincipalBearingPrincipalResolver bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(attributeRepository,
-                trustedPrincipalFactory(), trusted.isReturnNull(), trusted.getPrincipalAttribute());
-        resolver.setChain(CollectionUtils.wrapList(bearingPrincipalResolver, new EchoingPrincipalResolver()));
+        val trusted = casProperties.getAuthn().getTrusted();
+        val bearingPrincipalResolver = new PrincipalBearingPrincipalResolver(attributeRepository,
+            trustedPrincipalFactory(), trusted.isReturnNull(), trusted.getPrincipalAttribute());
+        resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver(), bearingPrincipalResolver));
         return resolver;
     }
 
     @ConditionalOnMissingBean(name = "trustedPrincipalFactory")
     @Bean
     public PrincipalFactory trustedPrincipalFactory() {
-        return new DefaultPrincipalFactory();
+        return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
     @ConditionalOnMissingBean(name = "remoteRequestPrincipalAttributesExtractor")
@@ -103,41 +102,41 @@ public class TrustedAuthenticationConfiguration {
     @Bean
     public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteUserAction() {
         return new PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy,
-                trustedPrincipalFactory(),
-                remoteRequestPrincipalAttributesExtractor());
+            serviceTicketRequestWebflowEventResolver,
+            adaptiveAuthenticationPolicy,
+            trustedPrincipalFactory(),
+            remoteRequestPrincipalAttributesExtractor());
     }
 
     @Bean
     public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteUserPrincipalAction() {
         return new PrincipalFromRequestUserPrincipalNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy,
-                trustedPrincipalFactory(),
-                remoteRequestPrincipalAttributesExtractor());
+            serviceTicketRequestWebflowEventResolver,
+            adaptiveAuthenticationPolicy,
+            trustedPrincipalFactory(),
+            remoteRequestPrincipalAttributesExtractor());
     }
 
     @Bean
     public BasePrincipalFromNonInteractiveCredentialsAction principalFromRemoteHeaderPrincipalAction() {
-        final TrustedAuthenticationProperties trusted = casProperties.getAuthn().getTrusted();
+        val trusted = casProperties.getAuthn().getTrusted();
         return new PrincipalFromRequestHeaderNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy,
-                trustedPrincipalFactory(),
-                remoteRequestPrincipalAttributesExtractor(),
-                trusted.getRemotePrincipalHeader());
+            serviceTicketRequestWebflowEventResolver,
+            adaptiveAuthenticationPolicy,
+            trustedPrincipalFactory(),
+            remoteRequestPrincipalAttributesExtractor(),
+            trusted.getRemotePrincipalHeader());
     }
 
     @ConditionalOnMissingBean(name = "remoteUserAuthenticationAction")
     @Bean
     public Action remoteUserAuthenticationAction() {
-        final ChainingPrincipalFromRequestNonInteractiveCredentialsAction chain =
-                new ChainingPrincipalFromRequestNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-                        serviceTicketRequestWebflowEventResolver,
-                        adaptiveAuthenticationPolicy,
-                        trustedPrincipalFactory(),
-                        remoteRequestPrincipalAttributesExtractor());
+        val chain =
+            new ChainingPrincipalFromRequestNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                trustedPrincipalFactory(),
+                remoteRequestPrincipalAttributesExtractor());
         chain.addAction(principalFromRemoteUserAction());
         chain.addAction(principalFromRemoteUserPrincipalAction());
         chain.addAction(principalFromRemoteHeaderPrincipalAction());

@@ -1,14 +1,10 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPLogoutProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -21,6 +17,11 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import net.shibboleth.utilities.java.support.xml.ParserPool;
+import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
@@ -70,7 +71,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     protected void handleSloProfileRequest(final HttpServletResponse response,
                                            final HttpServletRequest request,
                                            final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        final SamlIdPLogoutProperties logout = casProperties.getAuthn().getSamlIdp().getLogout();
+        val logout = casProperties.getAuthn().getSamlIdp().getLogout();
         if (logout.isSingleLogoutCallbacksDisabled()) {
             LOGGER.info("Processing SAML IdP SLO requests is disabled");
             return;
@@ -78,17 +79,17 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
 
         final Pair<? extends SignableSAMLObject, MessageContext> pair =
             this.samlHttpRequestExtractor.extract(request, decoder, LogoutRequest.class);
-        final LogoutRequest logoutRequest = LogoutRequest.class.cast(pair.getKey());
-        final MessageContext ctx = pair.getValue();
+        val logoutRequest = (LogoutRequest) pair.getKey();
+        val ctx = pair.getValue();
 
         if (logout.isForceSignedLogoutRequests() && !SAMLBindingSupport.isMessageSigned(ctx)) {
             throw new SAMLException("Logout request is not signed but should be.");
         }
 
         if (SAMLBindingSupport.isMessageSigned(ctx)) {
-            final String entityId = SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest);
-            final SamlRegisteredService registeredService = this.servicesManager.findServiceBy(entityId, SamlRegisteredService.class);
-            final SamlRegisteredServiceServiceProviderMetadataFacade facade = SamlRegisteredServiceServiceProviderMetadataFacade
+            val entityId = SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest);
+            val registeredService = this.servicesManager.findServiceBy(entityId, SamlRegisteredService.class);
+            val facade = SamlRegisteredServiceServiceProviderMetadataFacade
                 .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId).get();
             this.samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }

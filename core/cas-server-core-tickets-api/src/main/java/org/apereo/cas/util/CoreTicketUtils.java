@@ -1,11 +1,14 @@
 package org.apereo.cas.util;
 
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
+
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This is {@link CoreTicketUtils}.
@@ -40,27 +43,31 @@ public class CoreTicketUtils {
                                                                  final boolean forceIfBlankKeys,
                                                                  final String registryName) {
 
-        boolean enabled = registry.isEnabled();
-        if (!enabled && (StringUtils.isNotBlank(registry.getEncryption().getKey())) && StringUtils.isNotBlank(registry.getSigning().getKey())) {
-            LOGGER.warn("Ticket registry encryption/signing for [{}] is not enabled explicitly in the configuration, yet signing/encryption keys "
+        val enabled = FunctionUtils.doIf(
+            !registry.isEnabled() && (StringUtils.isNotBlank(registry.getEncryption().getKey())) && StringUtils.isNotBlank(registry.getSigning().getKey()),
+            () -> {
+                LOGGER.warn("Ticket registry encryption/signing for [{}] is not enabled explicitly in the configuration, yet signing/encryption keys "
                     + "are defined for ticket operations. CAS will proceed to enable the ticket registry encryption/signing functionality. "
                     + "If you intend to turn off this behavior, consider removing/disabling the signing/encryption keys defined in settings", registryName);
-            enabled = true;
-        }
+                return Boolean.TRUE;
+            },
+            registry::isEnabled
+        ).get();
+
 
         if (enabled || forceIfBlankKeys) {
             LOGGER.debug("Ticket registry encryption/signing is enabled for [{}]", registryName);
             return new DefaultTicketCipherExecutor(
-                    registry.getEncryption().getKey(),
-                    registry.getSigning().getKey(),
-                    registry.getAlg(),
-                    registry.getSigning().getKeySize(),
-                    registry.getEncryption().getKeySize(),
-                    registryName);
+                registry.getEncryption().getKey(),
+                registry.getSigning().getKey(),
+                registry.getAlg(),
+                registry.getSigning().getKeySize(),
+                registry.getEncryption().getKeySize(),
+                registryName);
         }
         LOGGER.info("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a clustered production environment. "
-                + "Consider using other choices to handle encryption, signing and verification of "
-                + "ticket registry tickets, and verify the chosen ticket registry does support this behavior.");
+            + "Consider using other choices to handle encryption, signing and verification of "
+            + "ticket registry tickets, and verify the chosen ticket registry does support this behavior.");
         return CipherExecutor.noOp();
     }
 }

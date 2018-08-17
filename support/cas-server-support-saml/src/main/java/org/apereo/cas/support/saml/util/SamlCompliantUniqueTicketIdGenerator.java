@@ -1,10 +1,11 @@
 package org.apereo.cas.support.saml.util;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RandomUtils;
+
+import lombok.Setter;
+import lombok.val;
 import org.opensaml.saml.common.binding.artifact.AbstractSAMLArtifact;
 import org.opensaml.saml.saml1.binding.artifact.SAML1ArtifactType0001;
 import org.opensaml.saml.saml2.binding.artifact.SAML2ArtifactType0004;
@@ -20,7 +21,6 @@ import java.security.SecureRandom;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @Setter
 public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
@@ -38,16 +38,14 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      * SAML defines the source id as the server name.
      */
     private final byte[] sourceIdDigest;
-
-    /**
-     * Flag to indicate SAML2 compliance. Default is SAML1.1.
-     */
-    private boolean saml2compliant;
-
     /**
      * Random generator to construct the AssertionHandle.
      */
     private final SecureRandom random;
+    /**
+     * Flag to indicate SAML2 compliance. Default is SAML1.1.
+     */
+    private boolean saml2compliant;
 
     /**
      * Instantiates a new SAML compliant unique ticket id generator.
@@ -69,13 +67,15 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      */
     @Override
     public String getNewTicketId(final String prefix) {
-        final AbstractSAMLArtifact artifact;
-        if (this.saml2compliant) {
-            artifact = new SAML2ArtifactType0004(ENDPOINT_ID, newAssertionHandle(), this.sourceIdDigest);
-        } else {
-            artifact = new SAML1ArtifactType0001(this.sourceIdDigest, newAssertionHandle());
-        }
+        val artifact = getSAMLArtifactType();
         return prefix + '-' + artifact.base64Encode();
+    }
+
+    private AbstractSAMLArtifact getSAMLArtifactType() {
+        if (this.saml2compliant) {
+            return new SAML2ArtifactType0004(ENDPOINT_ID, newAssertionHandle(), this.sourceIdDigest);
+        }
+        return new SAML1ArtifactType0001(this.sourceIdDigest, newAssertionHandle());
     }
 
     /**
@@ -84,7 +84,7 @@ public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGener
      * @return the byte[] array of size {@link #ASSERTION_HANDLE_SIZE}
      */
     private byte[] newAssertionHandle() {
-        final byte[] handle = new byte[ASSERTION_HANDLE_SIZE];
+        val handle = new byte[ASSERTION_HANDLE_SIZE];
         this.random.nextBytes(handle);
         return handle;
     }

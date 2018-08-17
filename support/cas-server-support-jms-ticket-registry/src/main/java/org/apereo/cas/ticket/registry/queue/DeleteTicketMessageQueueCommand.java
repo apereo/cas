@@ -1,12 +1,13 @@
 package org.apereo.cas.ticket.registry.queue;
 
+import org.apereo.cas.StringBean;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.StringBean;
-import org.apereo.cas.ticket.registry.TicketRegistry;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link DeleteTicketMessageQueueCommand}.
@@ -14,10 +15,12 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @Getter
 public class DeleteTicketMessageQueueCommand extends BaseMessageQueueCommand {
+
+    private static final long serialVersionUID = 8183330712274484245L;
 
     @JsonProperty
     private String ticketId;

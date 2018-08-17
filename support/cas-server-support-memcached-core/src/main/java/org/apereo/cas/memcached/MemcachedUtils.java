@@ -1,15 +1,17 @@
 package org.apereo.cas.memcached;
 
+import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
+import org.apereo.cas.memcached.kryo.CasKryoPool;
+import org.apereo.cas.memcached.kryo.CasKryoTranscoder;
+
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.spy.memcached.transcoders.SerializingTranscoder;
 import net.spy.memcached.transcoders.Transcoder;
 import net.spy.memcached.transcoders.WhalinTranscoder;
 import net.spy.memcached.transcoders.WhalinV1Transcoder;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
-import org.apereo.cas.memcached.kryo.CasKryoPool;
-import org.apereo.cas.memcached.kryo.CasKryoTranscoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,27 +47,27 @@ public class MemcachedUtils {
                                            final Collection<Class> kryoSerializableClasses) {
         switch (StringUtils.trimToEmpty(memcachedProperties.getTranscoder()).toLowerCase()) {
             case "serial":
-                final SerializingTranscoder serial = new SerializingTranscoder();
+                val serial = new SerializingTranscoder();
                 serial.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", serial.getClass().getName());
                 return serial;
             case "whalin":
-                final WhalinTranscoder whalin = new WhalinTranscoder();
+                val whalin = new WhalinTranscoder();
                 whalin.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", whalin.getClass().getName());
                 return whalin;
             case "whalinv1":
-                final WhalinV1Transcoder whalinv1 = new WhalinV1Transcoder();
+                val whalinv1 = new WhalinV1Transcoder();
                 whalinv1.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", whalinv1.getClass().getName());
                 return whalinv1;
             case "kryo":
             default:
-                final CasKryoPool kryoPool = new CasKryoPool(kryoSerializableClasses, true,
-                        memcachedProperties.isKryoRegistrationRequired(),
-                        memcachedProperties.isKryoObjectsByReference(),
-                        memcachedProperties.isKryoAutoReset());
-                final CasKryoTranscoder kryo = new CasKryoTranscoder(kryoPool);
+                val kryoPool = new CasKryoPool(kryoSerializableClasses, true,
+                    memcachedProperties.isKryoRegistrationRequired(),
+                    memcachedProperties.isKryoObjectsByReference(),
+                    memcachedProperties.isKryoAutoReset());
+                val kryo = new CasKryoTranscoder(kryoPool);
                 LOGGER.debug("Creating memcached transcoder [{}]", kryo.getClass().getName());
                 return kryo;
         }

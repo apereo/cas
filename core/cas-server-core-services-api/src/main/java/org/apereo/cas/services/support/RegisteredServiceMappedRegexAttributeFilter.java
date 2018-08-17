@@ -1,13 +1,15 @@
 package org.apereo.cas.services.support;
 
+import org.apereo.cas.services.RegisteredServiceAttributeFilter;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.RegisteredServiceAttributeFilter;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.RegexUtils;
+import lombok.val;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,16 +54,16 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
 
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
-        final Map<String, Object> attributesToRelease = new HashMap<>();
+        val attributesToRelease = new HashMap<String, Object>();
         givenAttributes.entrySet().stream().filter(filterProvidedGivenAttributes()).forEach(entry -> {
-            final String attributeName = entry.getKey();
+            val attributeName = entry.getKey();
             if (patterns.containsKey(attributeName)) {
-                final Set<Object> attributeValues = CollectionUtils.toCollection(entry.getValue());
+                val attributeValues = CollectionUtils.toCollection(entry.getValue());
                 LOGGER.debug("Found attribute [{}] in pattern definitions with value(s) [{}]", attributeName, attributeValues);
-                final Collection<Pattern> patterns = createPatternForMappedAttribute(attributeName);
+                val patterns = createPatternForMappedAttribute(attributeName);
                 patterns.forEach(pattern -> {
                     LOGGER.debug("Found attribute [{}] in the pattern definitions. Processing pattern [{}]", attributeName, pattern.pattern());
-                    final List<Object> filteredValues = filterAttributeValuesByPattern(attributeValues, pattern);
+                    val filteredValues = filterAttributeValuesByPattern(attributeValues, pattern);
                     LOGGER.debug("Filtered attribute values for [{}] are [{}]", attributeName, filteredValues);
                     if (filteredValues.isEmpty()) {
                         LOGGER.debug("Attribute [{}] has no values remaining and shall be excluded", attributeName);
@@ -101,8 +103,8 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
      * @return the pattern
      */
     protected Collection<Pattern> createPatternForMappedAttribute(final String attributeName) {
-        final String matchingPattern = patterns.get(attributeName).toString();
-        final Pattern pattern = RegexUtils.createPattern(matchingPattern, this.caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
+        val matchingPattern = patterns.get(attributeName).toString();
+        val pattern = RegexUtils.createPattern(matchingPattern, this.caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
         LOGGER.debug("Created pattern for mapped attribute filter [{}]", pattern.pattern());
         return CollectionUtils.wrap(pattern);
     }
@@ -126,8 +128,8 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
      */
     protected Predicate<Map.Entry<String, Object>> filterProvidedGivenAttributes() {
         return entry -> {
-            final String attributeName = entry.getKey();
-            final Object attributeValue = entry.getValue();
+            val attributeName = entry.getKey();
+            val attributeValue = entry.getValue();
             LOGGER.debug("Received attribute [{}] with value(s) [{}]", attributeName, attributeValue);
             return attributeValue != null;
         };

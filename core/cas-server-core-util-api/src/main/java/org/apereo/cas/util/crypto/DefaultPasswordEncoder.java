@@ -1,7 +1,8 @@
 package org.apereo.cas.util.crypto;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -17,7 +18,7 @@ import java.nio.charset.Charset;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultPasswordEncoder implements PasswordEncoder {
     private final String encodingAlgorithm;
     private final String characterEncoding;
@@ -33,16 +34,16 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
             return null;
         }
 
-        final String encodingCharToUse = StringUtils.isNotBlank(this.characterEncoding)
-                ? this.characterEncoding : Charset.defaultCharset().name();
+        val encodingCharToUse = StringUtils.isNotBlank(this.characterEncoding)
+            ? this.characterEncoding : Charset.defaultCharset().name();
 
         LOGGER.debug("Using [{}] as the character encoding algorithm to update the digest", encodingCharToUse);
 
         try {
-            final byte[] pswBytes = password.toString().getBytes(encodingCharToUse);
-            final String encoded = Hex.encodeHexString(DigestUtils.getDigest(this.encodingAlgorithm).digest(pswBytes));
+            val pswBytes = password.toString().getBytes(encodingCharToUse);
+            val encoded = Hex.encodeHexString(DigestUtils.getDigest(this.encodingAlgorithm).digest(pswBytes));
             LOGGER.debug("Encoded password via algorithm [{}] and character-encoding [{}] is [{}]", this.encodingAlgorithm,
-                    encodingCharToUse, encoded);
+                encodingCharToUse, encoded);
             return encoded;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -52,8 +53,8 @@ public class DefaultPasswordEncoder implements PasswordEncoder {
 
     @Override
     public boolean matches(final CharSequence rawPassword, final String encodedPassword) {
-        final String encodedRawPassword = StringUtils.isNotBlank(rawPassword) ? encode(rawPassword.toString()) : null;
-        final boolean matched = StringUtils.equals(encodedRawPassword, encodedPassword);
+        val encodedRawPassword = StringUtils.isNotBlank(rawPassword) ? encode(rawPassword.toString()) : null;
+        val matched = StringUtils.equals(encodedRawPassword, encodedPassword);
         LOGGER.debug("Provided password does{}match the encoded password", BooleanUtils.toString(matched, StringUtils.EMPTY, " not "));
         return matched;
     }

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.validation.ValidationResponseType;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -7,8 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.validation.ValidationResponseType;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -16,6 +16,7 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,6 @@ import java.util.Map;
 @Inheritance
 @DiscriminatorColumn(name = "service_type", length = 50, discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'simple'")
 @Table(name = "WebApplicationServices")
-@Slf4j
 @ToString
 @Getter
 @Setter
@@ -39,16 +39,11 @@ import java.util.Map;
 public abstract class AbstractWebApplicationService implements WebApplicationService {
     private static final long serialVersionUID = 610105280927740076L;
 
-    /**
-     * The id of the service.
-     */
     @Id
     @JsonProperty
+    @Column
     private String id;
 
-    /**
-     * The original url provided, used to reconstruct the redirect url.
-     */
     @JsonProperty
     @Column(nullable = false)
     private String originalUrl;
@@ -57,13 +52,22 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     private String artifactId;
 
     @JsonProperty
+    @Column
     private String principal;
+
+    @JsonProperty
+    @Column
+    private String source;
 
     @Column
     private boolean loggedOutAlready;
 
     @Column
     private ValidationResponseType format = ValidationResponseType.XML;
+
+    @Column
+    @Lob
+    private HashMap<String, Object> attributes = new HashMap<>(0);
 
     /**
      * Instantiates a new abstract web application service.
@@ -81,7 +85,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @JsonIgnore
     @Override
     public Map<String, Object> getAttributes() {
-        return new HashMap<>(0);
+        return this.attributes;
     }
 
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import lombok.val;
+
 import java.io.Closeable;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
     /**
      * update key/item from the cache and overwrite.
      *
-     * @param key the key
+     * @param key  the key
      * @param item the item
      */
     default void update(final K key, final V item) {
@@ -71,7 +73,7 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
     /**
      * Remove key/item from the cache.
      *
-     * @param key the key
+     * @param key  the key
      * @param item the item
      */
     default void remove(final K key, final V item) {
@@ -103,7 +105,7 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
      * @return the collection
      */
     default Optional<V> find(final Predicate<V> filter) {
-        final Collection<V> results = findAll(filter);
+        val results = findAll(filter);
         if (results.isEmpty()) {
             return Optional.empty();
         }

@@ -1,21 +1,20 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FMongoDbDeviceRepository;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
-import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
  * This is {@link U2FMongoDbConfiguration}.
@@ -25,7 +24,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("u2fMongoDbConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class U2FMongoDbConfiguration {
 
     @Autowired
@@ -34,23 +32,23 @@ public class U2FMongoDbConfiguration {
     @Autowired
     @Qualifier("u2fRegistrationRecordCipherExecutor")
     private CipherExecutor u2fRegistrationRecordCipherExecutor;
-    
+
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
-        final U2FMultifactorProperties u2f = casProperties.getAuthn().getMfa().getU2f();
-        
-        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
-        final U2FMultifactorProperties.MongoDb mongoProps = u2f.getMongo();
-        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongoProps);
+        val u2f = casProperties.getAuthn().getMfa().getU2f();
+
+        val factory = new MongoDbConnectionFactory();
+        val mongoProps = u2f.getMongo();
+        val mongoTemplate = factory.buildMongoTemplate(mongoProps);
 
         factory.createCollection(mongoTemplate, mongoProps.getCollection(), mongoProps.isDropCollection());
-        
+
         final LoadingCache<String, String> requestStorage =
-                Caffeine.newBuilder()
-                        .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
-                        .build(key -> StringUtils.EMPTY);
-        final U2FMongoDbDeviceRepository repo = new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireRegistrations(),
-                u2f.getExpireDevicesTimeUnit(), mongoProps.getCollection());
+            Caffeine.newBuilder()
+                .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
+                .build(key -> StringUtils.EMPTY);
+        val repo = new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireRegistrations(),
+            u2f.getExpireDevicesTimeUnit(), mongoProps.getCollection());
         repo.setCipherExecutor(this.u2fRegistrationRecordCipherExecutor);
         return repo;
     }

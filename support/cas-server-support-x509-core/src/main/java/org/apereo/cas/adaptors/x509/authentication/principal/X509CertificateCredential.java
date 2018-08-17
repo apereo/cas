@@ -1,17 +1,18 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonDeserializer;
+import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializer;
+import org.apereo.cas.authentication.AbstractCredential;
+import org.apereo.cas.util.crypto.CertUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.util.crypto.CertUtils;
-import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonDeserializer;
-import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializer;
-import org.apereo.cas.authentication.AbstractCredential;
+import lombok.Setter;
+
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import lombok.Setter;
 
 /**
  * An X.509 certificate credential.
@@ -23,8 +24,7 @@ import lombok.Setter;
 @JsonSerialize(using = X509CertificateCredentialJsonSerializer.class)
 @JsonDeserialize(using = X509CertificateCredentialJsonDeserializer.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-@Slf4j
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Setter
 public class X509CertificateCredential extends AbstractCredential {
 
@@ -62,14 +62,11 @@ public class X509CertificateCredential extends AbstractCredential {
 
     @Override
     public String getId() {
-        X509Certificate cert = null;
         if (this.certificate != null) {
-            cert = this.certificate;
-        } else if (this.certificates.length > 0) {
-            cert = this.certificates[0];
+            return CertUtils.toString(this.certificate);
         }
-        if (cert != null) {
-            return CertUtils.toString(cert);
+        if (this.certificates.length > 0) {
+            return CertUtils.toString(this.certificates[0]);
         }
         return UNKNOWN_ID;
     }

@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.support.saml.shibboleth;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link ShibbolethIdPProperties}.
@@ -13,7 +14,6 @@ import lombok.Setter;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-shibboleth")
-@Slf4j
 @Getter
 @Setter
 public class ShibbolethIdPProperties implements Serializable {

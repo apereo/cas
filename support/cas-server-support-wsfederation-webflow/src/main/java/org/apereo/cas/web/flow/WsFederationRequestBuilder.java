@@ -1,13 +1,17 @@
 package org.apereo.cas.web.flow;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -15,7 +19,6 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,11 +27,37 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @RequiredArgsConstructor
 public class WsFederationRequestBuilder {
+    /**
+     * Flow scope parameter pointing to client instances.
+     */
+    public static final String PARAMETER_NAME_WSFED_CLIENTS = "wsfedUrls";
+
     private final Collection<WsFederationConfiguration> configurations;
     private final WsFederationHelper wsFederationHelper;
+
+    /**
+     * Gets redirect url for.
+     *
+     * @param config  the config
+     * @param service the service
+     * @param request the request
+     * @return the redirect url for
+     */
+    @SneakyThrows
+    private static String getRelativeRedirectUrlFor(final WsFederationConfiguration config, final Service service, final HttpServletRequest request) {
+        val builder = new URIBuilder(WsFederationNavigationController.ENDPOINT_REDIRECT);
+        builder.addParameter(WsFederationNavigationController.PARAMETER_NAME, config.getId());
+        if (service != null) {
+            builder.addParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+        }
+        val method = request.getParameter(CasProtocolConstants.PARAMETER_METHOD);
+        if (StringUtils.isNotBlank(method)) {
+            builder.addParameter(CasProtocolConstants.PARAMETER_METHOD, method);
+        }
+        return builder.toString();
+    }
 
     /**
      * Build authentication request event event.
@@ -37,22 +66,26 @@ public class WsFederationRequestBuilder {
      * @return the event
      */
     public Event buildAuthenticationRequestEvent(final RequestContext context) {
-        final List<WsFedClient> clients = new ArrayList<>();
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        final Service service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
+        val clients = new ArrayList<WsFedClient>();
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        val service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
         this.configurations.forEach(cfg -> {
-            final WsFedClient c = new WsFedClient();
+            val c = new WsFedClient();
             c.setName(cfg.getName());
-            final String id = UUID.randomUUID().toString();
-            final String rpId = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
+            val id = UUID.randomUUID().toString();
+            val rpId = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
             c.setAuthorizationUrl(cfg.getAuthorizationUrl(rpId, id));
             c.setReplyingPartyId(rpId);
             c.setId(id);
-            c.setRedirectUrl(WsFederationNavigationController.getRelativeRedirectUrlFor(cfg, service, request));
+            c.setRedirectUrl(getRelativeRedirectUrlFor(cfg, service, request));
             c.setAutoRedirect(cfg.isAutoRedirect());
             clients.add(c);
+
+            if (cfg.isAutoRedirect()) {
+                WebUtils.putDelegatedAuthenticationProviderDominant(context, cfg);
+            }
         });
-        context.getFlowScope().put("wsfedUrls", clients);
+        context.getFlowScope().put(PARAMETER_NAME_WSFED_CLIENTS, clients);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
     }
 }

@@ -1,15 +1,17 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
+import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.Getter;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
+
 import java.nio.file.Path;
-import lombok.Getter;
 
 /**
  * Implementation of {@code ServiceRegistry} that reads services definition from JSON
@@ -23,7 +25,6 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 @Getter
 public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
 
@@ -41,11 +42,13 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * @param enableWatcher                        the enable watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
+     * @param resourceNamingStrategy               the registered service namimg strategy
      */
     public JsonServiceRegistry(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
-                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
+                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
+                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
         super(configDirectory, new DefaultRegisteredServiceJsonSerializer(), enableWatcher,
-            eventPublisher, registeredServiceReplicationStrategy);
+            eventPublisher, registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     /**
@@ -57,12 +60,15 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
      * @param enableWatcher                        the enable watcher
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
+     * @param resourceNamingStrategy               the registered service naming strategy
      * @throws Exception the IO exception
      */
     public JsonServiceRegistry(final Resource configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
-                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
+                               final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
+                               final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
         super(configDirectory, CollectionUtils.wrapList(new CasAddonsRegisteredServicesJsonSerializer(),
-            new DefaultRegisteredServiceJsonSerializer()), enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
+            new DefaultRegisteredServiceJsonSerializer()), enableWatcher, eventPublisher,
+            registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
 
     @Override

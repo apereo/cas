@@ -1,6 +1,5 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -10,6 +9,8 @@ import org.apereo.cas.services.JpaServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+
+import lombok.val;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -30,7 +31,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
 @Configuration("jpaServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-@Slf4j
 public class JpaServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
     @Autowired
@@ -57,11 +56,11 @@ public class JpaServiceRegistryConfiguration implements ServiceRegistryExecution
 
     @Bean
     public List<String> jpaServicePackagesToScan() {
-        final Reflections reflections =
+        val reflections =
             new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
                 .setScanners(new SubTypesScanner(false)));
-        final Set<Class<? extends AbstractRegisteredService>> subTypes = reflections.getSubTypesOf(AbstractRegisteredService.class);
+        val subTypes = reflections.getSubTypesOf(AbstractRegisteredService.class);
         return subTypes.stream().map(t -> t.getPackage().getName()).collect(Collectors.toList());
     }
 
@@ -80,7 +79,7 @@ public class JpaServiceRegistryConfiguration implements ServiceRegistryExecution
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerServiceReg(@Qualifier("serviceEntityManagerFactory") final EntityManagerFactory emf) {
-        final JpaTransactionManager mgmr = new JpaTransactionManager();
+        val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }

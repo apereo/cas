@@ -1,25 +1,26 @@
 package org.apereo.cas.web.flow.client;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.spnego.util.ReverseDNSRunnable;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import javax.servlet.http.HttpServletRequest;
-import java.util.regex.Matcher;
+
 import java.util.regex.Pattern;
-import lombok.ToString;
-import lombok.Setter;
 
 /**
  * Abstract class for defining a simple binary filter to determine whether a
  * given client system should be prompted for SPNEGO / KRB / NTLM credentials.
- *
+ * <p>
  * Envisioned implementations would include LDAP and DNS based determinations,
  * but of course others may have value as well for local architectures.
  *
@@ -34,10 +35,14 @@ import lombok.Setter;
 @AllArgsConstructor
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
 
-    /** Pattern of ip addresses to check. **/
+    /**
+     * Pattern of ip addresses to check.
+     **/
     private Pattern ipsToCheckPattern;
 
-    /** Alternative remote host attribute. **/
+    /**
+     * Alternative remote host attribute.
+     **/
     private String alternativeRemoteHostAttribute;
 
     /**
@@ -54,7 +59,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern) {
         setIpsToCheckPattern(RegexUtils.createPattern(ipsToCheckPattern));
     }
-    
+
 
     /**
      * {@inheritDoc}
@@ -66,7 +71,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      */
     @Override
     protected Event doExecute(final RequestContext context) {
-        final String remoteIp = getRemoteIp(context);
+        val remoteIp = getRemoteIp(context);
         LOGGER.debug("Current user IP [{}]", remoteIp);
         if (shouldDoSpnego(remoteIp)) {
             LOGGER.info("Spnego should be activated for [{}]", remoteIp);
@@ -78,6 +83,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
 
     /**
      * Default implementation -- simply check the IP filter.
+     *
      * @param remoteIp the remote ip
      * @return true boolean
      */
@@ -87,6 +93,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
 
     /**
      * Base class definition for whether the IP should be checked or not; overridable.
+     *
      * @param remoteIp the remote ip
      * @return whether or not the IP can / should be matched against the pattern
      */
@@ -98,11 +105,12 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * Simple pattern match to determine whether an IP should be checked.
      * Could stand to be extended to support "real" IP addresses and patterns, but
      * for the local / first implementation regex made more sense.
+     *
      * @param remoteIp the remote ip
      * @return whether the remote ip received should be queried
      */
     protected boolean ipPatternMatches(final String remoteIp) {
-        final Matcher matcher = this.ipsToCheckPattern.matcher(remoteIp);
+        val matcher = this.ipsToCheckPattern.matcher(remoteIp);
         if (matcher.find()) {
             LOGGER.debug("Remote IP address [{}] should be checked based on the defined pattern [{}]", remoteIp, this.ipsToCheckPattern.pattern());
             return true;
@@ -116,12 +124,13 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * for the specified alternative attribute (say, for proxied requests).  Falls
      * back to providing the "normal" remote address if no value can be retrieved
      * from the specified alternative header value.
+     *
      * @param context the context
      * @return the remote ip
      */
     private String getRemoteIp(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        String userAddress = request.getRemoteAddr();
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        var userAddress = request.getRemoteAddr();
         LOGGER.debug("Remote Address = [{}]", userAddress);
         if (StringUtils.isNotBlank(this.alternativeRemoteHostAttribute)) {
             userAddress = request.getHeader(this.alternativeRemoteHostAttribute);
@@ -138,19 +147,20 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * Convenience method to perform a reverse DNS lookup. Threads the request
      * through a custom Runnable class in order to prevent inordinately long
      * user waits while performing reverse lookup.
+     *
      * @param remoteIp the remote ip
      * @return the remote host name
      */
     protected String getRemoteHostName(final String remoteIp) {
-        final ReverseDNSRunnable revDNS = new ReverseDNSRunnable(remoteIp);
-        final Thread t = new Thread(revDNS);
+        val revDNS = new ReverseDNSRunnable(remoteIp);
+        val t = new Thread(revDNS);
         t.start();
         try {
             t.join(this.timeout);
         } catch (final InterruptedException e) {
             LOGGER.debug("Threaded lookup failed.  Defaulting to IP [{}].", remoteIp, e);
         }
-        final String remoteHostName = revDNS.getHostName();
+        val remoteHostName = revDNS.getHostName();
         LOGGER.debug("Found remote host name [{}].", remoteHostName);
         return StringUtils.isNotBlank(remoteHostName) ? remoteHostName : remoteIp;
     }

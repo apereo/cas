@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasSimpleMultifactorAuthenticationConfiguration,\
+  org.apereo.cas.config.CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration

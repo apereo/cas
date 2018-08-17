@@ -1,15 +1,15 @@
 package org.apereo.cas.configuration.model.core.web.view;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import org.apereo.cas.configuration.support.RestEndpointProperties;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link ViewProperties}.
@@ -18,7 +18,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class ViewProperties implements Serializable {
@@ -47,4 +46,16 @@ public class ViewProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private Cas30ViewProperties cas3 = new Cas30ViewProperties();
+
+    /**
+     * Resolve CAS views via REST.
+     */
+    private Rest rest = new Rest();
+
+    @RequiresModule(name = "cas-server-core-web", automated = true)
+    @Getter
+    @Setter
+    public static class Rest extends RestEndpointProperties {
+        private static final long serialVersionUID = -8102345678378393382L;
+    }
 }

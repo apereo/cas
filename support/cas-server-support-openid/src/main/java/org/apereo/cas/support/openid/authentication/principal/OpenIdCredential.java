@@ -1,19 +1,18 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import org.apereo.cas.authentication.Credential;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.Credential;
 import lombok.ToString;
-import lombok.Getter;
 
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
-@Slf4j
 @ToString
 @Setter
 @Getter

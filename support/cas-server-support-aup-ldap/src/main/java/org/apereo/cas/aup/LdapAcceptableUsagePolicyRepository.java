@@ -1,14 +1,15 @@
 package org.apereo.cas.aup;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -24,17 +25,15 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
-
-
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private final ConnectionFactory connectionFactory;
+    private final transient ConnectionFactory connectionFactory;
     private final String searchFilter;
     private final String baseDn;
 
     public LdapAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                final String aupAttributeName,
-                                               final ConnectionFactory connectionFactory, 
+                                               final ConnectionFactory connectionFactory,
                                                final String searchFilter, final String baseDn) {
         super(ticketRegistrySupport, aupAttributeName);
         this.connectionFactory = connectionFactory;
@@ -45,12 +44,12 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
         try {
-            final Response<SearchResult> response = searchForId(credential.getId());
+            val response = searchForId(credential.getId());
             if (LdapUtils.containsResultEntry(response)) {
-                final String currentDn = response.getResult().getEntry().getDn();
+                val currentDn = response.getResult().getEntry().getDn();
                 LOGGER.debug("Updating [{}]", currentDn);
                 return LdapUtils.executeModifyOperation(currentDn, this.connectionFactory,
-                        CollectionUtils.wrap(this.aupAttributeName, CollectionUtils.wrap(Boolean.TRUE.toString())));
+                    CollectionUtils.wrap(this.aupAttributeName, CollectionUtils.wrapSet(Boolean.TRUE.toString())));
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -66,9 +65,9 @@ public class LdapAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
      * @throws LdapException the ldap exception
      */
     private Response<SearchResult> searchForId(final String id) throws LdapException {
-        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
-                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                CollectionUtils.wrap(id));
+        val filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
+            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+            CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }
 }

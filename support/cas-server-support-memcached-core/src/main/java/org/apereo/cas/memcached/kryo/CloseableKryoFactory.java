@@ -1,30 +1,12 @@
 package org.apereo.cas.memcached.kryo;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.pool.KryoFactory;
-import com.esotericsoftware.kryo.serializers.DefaultSerializers;
-import de.javakaffee.kryoserializers.ArraysAsListSerializer;
-import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
-import de.javakaffee.kryoserializers.CollectionsEmptyMapSerializer;
-import de.javakaffee.kryoserializers.CollectionsEmptySetSerializer;
-import de.javakaffee.kryoserializers.EnumMapSerializer;
-import de.javakaffee.kryoserializers.EnumSetSerializer;
-import de.javakaffee.kryoserializers.RegexSerializer;
-import de.javakaffee.kryoserializers.URISerializer;
-import de.javakaffee.kryoserializers.UUIDSerializer;
-import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableListSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableMapSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableMultimapSerializer;
-import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
@@ -60,6 +42,7 @@ import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ProxyTicketImpl;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.registry.EncodedTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.BaseDelegatingExpirationPolicy;
@@ -71,7 +54,36 @@ import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
+
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.pool.KryoFactory;
+import com.esotericsoftware.kryo.serializers.DefaultSerializers;
+import de.javakaffee.kryoserializers.ArraysAsListSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptyMapSerializer;
+import de.javakaffee.kryoserializers.CollectionsEmptySetSerializer;
+import de.javakaffee.kryoserializers.DateSerializer;
+import de.javakaffee.kryoserializers.EnumMapSerializer;
+import de.javakaffee.kryoserializers.EnumSetSerializer;
+import de.javakaffee.kryoserializers.GregorianCalendarSerializer;
+import de.javakaffee.kryoserializers.RegexSerializer;
+import de.javakaffee.kryoserializers.URISerializer;
+import de.javakaffee.kryoserializers.UUIDSerializer;
+import de.javakaffee.kryoserializers.UnmodifiableCollectionsSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableListSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableMapSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableMultimapSerializer;
+import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
+import de.javakaffee.kryoserializers.jodatime.JodaDateTimeSerializer;
+import de.javakaffee.kryoserializers.jodatime.JodaLocalDateSerializer;
+import de.javakaffee.kryoserializers.jodatime.JodaLocalDateTimeSerializer;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 import org.objenesis.strategy.StdInstantiatorStrategy;
+
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
@@ -79,23 +91,26 @@ import java.net.URI;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import lombok.Setter;
 
 /**
  * This is {@link CloseableKryoFactory}.
@@ -107,17 +122,12 @@ import lombok.Setter;
 @Setter
 public class CloseableKryoFactory implements KryoFactory {
 
-    private Collection<Class> classesToRegister = new ArrayList<>();
-
-    private boolean warnUnregisteredClasses = true;
-
-    private boolean registrationRequired;
-
-    private boolean replaceObjectsByReferences;
-
-    private boolean autoReset;
-
     private final CasKryoPool kryoPool;
+    private Collection<Class> classesToRegister = new ArrayList<>();
+    private boolean warnUnregisteredClasses = true;
+    private boolean registrationRequired;
+    private boolean replaceObjectsByReferences;
+    private boolean autoReset;
 
     public CloseableKryoFactory(final CasKryoPool kryoPool) {
         this.kryoPool = kryoPool;
@@ -125,7 +135,7 @@ public class CloseableKryoFactory implements KryoFactory {
 
     @Override
     public Kryo create() {
-        final Kryo kryo = new CloseableKryo(this.kryoPool);
+        val kryo = new CloseableKryo(this.kryoPool);
         kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
         kryo.setWarnUnregisteredClasses(this.warnUnregisteredClasses);
         kryo.setAutoReset(this.autoReset);
@@ -151,20 +161,25 @@ public class CloseableKryoFactory implements KryoFactory {
 
     private void registerImmutableOrEmptyCollectionsWithKryo(final Kryo kryo) {
         LOGGER.debug("Registering immutable/empty collections with Kryo");
+
         UnmodifiableCollectionsSerializer.registerSerializers(kryo);
         ImmutableListSerializer.registerSerializers(kryo);
         ImmutableSetSerializer.registerSerializers(kryo);
         ImmutableMapSerializer.registerSerializers(kryo);
         ImmutableMultimapSerializer.registerSerializers(kryo);
+
         kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
         kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
         kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
+
         // Can't directly access Collections classes (private class), so instantiate one and do a getClass().
-        final Set singletonSet = Collections.singleton("key");
+        val singletonSet = Collections.singleton("key");
         kryo.register(singletonSet.getClass());
-        final Map singletonMap = Collections.singletonMap("key", "value");
+
+        val singletonMap = Collections.singletonMap("key", "value");
         kryo.register(singletonMap.getClass());
-        final List list = Arrays.asList("key");
+
+        val list = Arrays.asList("key");
         kryo.register(list.getClass(), new ArraysAsListSerializer());
     }
 
@@ -219,23 +234,37 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(ProxyGrantingTicketImpl.class);
         kryo.register(ProxyTicketImpl.class);
         kryo.register(EncodedTicket.class);
+        kryo.register(TransientSessionTicketImpl.class);
     }
 
     private void registerNativeJdkComponentsWithKryo(final Kryo kryo) {
         kryo.register(Class.class, new DefaultSerializers.ClassSerializer());
-        kryo.register(ZonedDateTime.class, new ZonedDateTimeSerializer());
         kryo.register(ArrayList.class);
+        kryo.register(LinkedList.class);
         kryo.register(HashMap.class);
         kryo.register(LinkedHashMap.class);
-        kryo.register(byte[].class);
         kryo.register(LinkedHashSet.class);
-        kryo.register(ByteBuffer.class);
+        kryo.register(TreeMap.class);
+        kryo.register(TreeSet.class);
         kryo.register(HashSet.class);
+        kryo.register(EnumMap.class, new EnumMapSerializer());
+        kryo.register(EnumSet.class, new EnumSetSerializer());
+
+        kryo.register(byte[].class);
+        kryo.register(ByteBuffer.class);
+
         kryo.register(URL.class, new URLSerializer());
         kryo.register(URI.class, new URISerializer());
         kryo.register(Pattern.class, new RegexSerializer());
         kryo.register(UUID.class, new UUIDSerializer());
-        kryo.register(EnumMap.class, new EnumMapSerializer());
+
+        kryo.register(ZonedDateTime.class, new ZonedDateTimeSerializer());
+        kryo.register(Date.class, new DateSerializer(Date.class));
+        kryo.register(Calendar.class, new GregorianCalendarSerializer());
+        kryo.register(GregorianCalendar.class, new GregorianCalendarSerializer());
+        kryo.register(LocalDate.class, new JodaLocalDateSerializer());
+        kryo.register(DateTime.class, new JodaDateTimeSerializer());
+        kryo.register(LocalDateTime.class, new JodaLocalDateTimeSerializer());
         kryo.register(EnumSet.class, new EnumSetSerializer());
     }
 

@@ -1,18 +1,18 @@
 package org.apereo.cas.services;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
-import org.springframework.core.io.Resource;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link GroovyScriptAttributeReleasePolicy} that attempts to release attributes
@@ -36,7 +36,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
         try {
             final Object[] args = {attributes, LOGGER, principal, service};
-            final Resource resource = ResourceUtils.getResourceFrom(this.groovyScript);
+            val resource = ResourceUtils.getResourceFrom(this.groovyScript);
             return ScriptingUtils.executeGroovyScript(resource, args, Map.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

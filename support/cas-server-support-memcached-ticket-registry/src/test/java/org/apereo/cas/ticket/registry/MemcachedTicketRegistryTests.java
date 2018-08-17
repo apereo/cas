@@ -1,8 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.category.CouchbaseCategory;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
+
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +25,21 @@ import java.util.Collection;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
-@SpringBootTest(classes = {MemcachedTicketRegistryConfiguration.class, 
-        RefreshAutoConfiguration.class,
-        CasCoreUtilSerializationConfiguration.class})
-@TestPropertySource(locations = {"classpath:/memcached.properties"})
-@Slf4j
-public class MemcachedTicketRegistryTests extends AbstractTicketRegistryTests {
-  
+@SpringBootTest(classes = {
+    MemcachedTicketRegistryConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreUtilSerializationConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class
+})
+@TestPropertySource(properties = {
+    "cas.ticket.registry.memcached.servers=localhost:11211",
+    "cas.ticket.registry.memcached.failureMode=Redistribute",
+    "cas.ticket.registry.memcached.locatorType=ARRAY_MOD",
+    "cas.ticket.registry.memcached.hashAlgorithm=FNV1A_64_HASH"
+})
+@Category(CouchbaseCategory.class)
+public class MemcachedTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry registry;
@@ -45,7 +57,6 @@ public class MemcachedTicketRegistryTests extends AbstractTicketRegistryTests {
     public TicketRegistry getNewTicketRegistry() {
         return registry;
     }
-
 
     @Override
     protected boolean isIterableRegistry() {

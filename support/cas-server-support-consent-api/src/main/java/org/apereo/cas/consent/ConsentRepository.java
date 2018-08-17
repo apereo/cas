@@ -41,7 +41,7 @@ public interface ConsentRepository extends Serializable {
      * @return the consent decision
      */
     Collection<ConsentDecision> findConsentDecisions();
-    
+
     /**
      * Store consent decision.
      *
@@ -53,7 +53,7 @@ public interface ConsentRepository extends Serializable {
     /**
      * Delete consent decision.
      *
-     * @param id the decicion's id
+     * @param id        the decicion's id
      * @param principal the principal
      * @return true / false
      */

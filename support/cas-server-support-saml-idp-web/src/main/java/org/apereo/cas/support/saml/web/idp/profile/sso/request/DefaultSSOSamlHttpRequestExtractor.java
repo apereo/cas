@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.inspektr.audit.annotation.Audit;
@@ -41,10 +42,10 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
         decoder.initialize();
         decoder.decode();
 
-        final MessageContext messageContext = decoder.getMessageContext();
+        val messageContext = decoder.getMessageContext();
         LOGGER.debug("Locating SAML object from message context...");
         @NonNull
-        final SignableSAMLObject object = (SignableSAMLObject) messageContext.getMessage();
+        val object = (SignableSAMLObject) messageContext.getMessage();
         if (!clazz.isAssignableFrom(object.getClass())) {
             throw new ClassCastException("SAML object [" + object.getClass().getName() + " type does not match " + clazz);
         }

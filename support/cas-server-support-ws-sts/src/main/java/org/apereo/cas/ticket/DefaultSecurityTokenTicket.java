@@ -1,17 +1,19 @@
 package org.apereo.cas.ticket;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.SerializationUtils;
-import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.EncodingUtils;
+
+import lombok.NoArgsConstructor;
+import lombok.val;
+import org.apache.commons.lang3.SerializationUtils;
+import org.apache.cxf.ws.security.tokenstore.SecurityToken;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link DefaultSecurityTokenTicket}.
@@ -23,7 +25,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "SECURITYTOKENTICKET")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(SecurityTokenTicket.PREFIX)
-@Slf4j
 @NoArgsConstructor
 public class DefaultSecurityTokenTicket extends AbstractTicket implements SecurityTokenTicket {
 
@@ -58,7 +59,7 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
 
     @Override
     public SecurityToken getSecurityToken() {
-        final byte[] securityTokenBin = EncodingUtils.decodeBase64(this.securityToken);
+        val securityTokenBin = EncodingUtils.decodeBase64(this.securityToken);
         return SerializationUtils.deserialize(securityTokenBin);
     }
 }

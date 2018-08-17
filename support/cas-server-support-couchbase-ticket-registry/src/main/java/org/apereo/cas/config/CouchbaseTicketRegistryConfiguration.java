@@ -1,8 +1,6 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -11,6 +9,8 @@ import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,8 +18,6 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
-
-import java.util.Set;
 
 /**
  * This is {@link CouchbaseTicketRegistryConfiguration}.
@@ -29,7 +27,6 @@ import java.util.Set;
  */
 @Configuration("couchbaseTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CouchbaseTicketRegistryConfiguration {
 
     @Autowired
@@ -38,8 +35,8 @@ public class CouchbaseTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public CouchbaseClientFactory ticketRegistryCouchbaseClientFactory() {
-        final CouchbaseTicketRegistryProperties cb = casProperties.getTicket().getRegistry().getCouchbase();
-        final Set<String> nodes = StringUtils.commaDelimitedListToSet(cb.getNodeSet());
+        val cb = casProperties.getTicket().getRegistry().getCouchbase();
+        val nodes = StringUtils.commaDelimitedListToSet(cb.getNodeSet());
         return new CouchbaseClientFactory(nodes, cb.getBucket(),
             cb.getPassword(),
             Beans.newDuration(cb.getTimeout()).toMillis(),
@@ -51,8 +48,8 @@ public class CouchbaseTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        final CouchbaseTicketRegistryProperties couchbase = casProperties.getTicket().getRegistry().getCouchbase();
-        final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry(ticketCatalog, ticketRegistryCouchbaseClientFactory());
+        val couchbase = casProperties.getTicket().getRegistry().getCouchbase();
+        val c = new CouchbaseTicketRegistry(ticketCatalog, ticketRegistryCouchbaseClientFactory());
         c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchbase.getCrypto(), "couchbase"));
         return c;
     }

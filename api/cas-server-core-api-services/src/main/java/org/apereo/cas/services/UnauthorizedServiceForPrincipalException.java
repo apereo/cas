@@ -1,7 +1,8 @@
 package org.apereo.cas.services;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import lombok.Getter;
+
+import java.util.Map;
 
 /**
  * This is {@link UnauthorizedServiceForPrincipalException}
@@ -12,38 +13,33 @@ import org.apache.commons.lang3.StringUtils;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
+@Getter
 public class UnauthorizedServiceForPrincipalException extends UnauthorizedServiceException {
 
     private static final long serialVersionUID = 8909291297815558561L;
 
-    /** The code description. */
+    /**
+     * The code description.
+     */
     private static final String CODE = "service.not.authorized.missing.attr";
 
-    /**
-     * Instantiates a new unauthorized sso service exception.
-     */
-    public UnauthorizedServiceForPrincipalException() {
-        super(CODE, StringUtils.EMPTY);
-    }
+    private final RegisteredService registeredService;
+    private final String principalId;
+    private final Map<String, Object> attributes;
 
     /**
      * Instantiates a new unauthorized sso service exception.
      *
-     * @param message the message
-     * @param cause the cause
+     * @param message           the message
+     * @param registeredService the registered service
+     * @param principalId       the principal id
+     * @param attributes        the attributes
      */
-    public UnauthorizedServiceForPrincipalException(final String message,
-                                                    final Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * Instantiates a new unauthorized sso service exception.
-     *
-     * @param message the message
-     */
-    public UnauthorizedServiceForPrincipalException(final String message) {
-        super(message);
+    public UnauthorizedServiceForPrincipalException(final String message, final RegisteredService registeredService,
+                                                    final String principalId, final Map<String, Object> attributes) {
+        super(CODE, message);
+        this.registeredService = registeredService;
+        this.principalId = principalId;
+        this.attributes = attributes;
     }
 }

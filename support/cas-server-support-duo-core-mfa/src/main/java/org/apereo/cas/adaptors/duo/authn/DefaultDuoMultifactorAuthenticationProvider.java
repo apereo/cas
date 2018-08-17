@@ -1,5 +1,11 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
+import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.services.RegisteredService;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -7,15 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.adaptors.duo.DuoUserAccount;
-import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
-import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
-import org.apereo.cas.services.RegisteredService;
-import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
 
 /**
@@ -41,7 +40,6 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
 
     @Override
     protected boolean isAvailable() {
-        Assert.notNull(this.duoAuthenticationService, "duoAuthenticationService cannot be null");
         return this.duoAuthenticationService.ping();
     }
 
@@ -55,8 +53,8 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
         if (!super.supportsInternal(e, authentication, registeredService)) {
             return false;
         }
-        final Principal principal = authentication.getPrincipal();
-        final DuoUserAccount acct = this.duoAuthenticationService.getDuoUserAccount(principal.getId());
+        val principal = authentication.getPrincipal();
+        val acct = this.duoAuthenticationService.getDuoUserAccount(principal.getId());
         LOGGER.debug("Found duo user account status [{}] for [{}]", acct, principal);
         if (acct.getStatus() == DuoUserAccountAuthStatus.ALLOW) {
             LOGGER.debug("Account status is set for allow/bypass for [{}]", principal);

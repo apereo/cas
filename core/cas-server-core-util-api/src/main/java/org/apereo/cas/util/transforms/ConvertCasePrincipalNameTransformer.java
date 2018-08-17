@@ -1,10 +1,11 @@
 package org.apereo.cas.util.transforms;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import lombok.Setter;
+
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.val;
 
 /**
  * A transformer that converts the form uid to either lowercase or
@@ -15,7 +16,6 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +25,7 @@ public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransfo
 
     @Override
     public String transform(final String formUserId) {
-        final String result = formUserId.trim();
+        val result = formUserId.trim();
         return this.toUpperCase ? result.toUpperCase() : result.toLowerCase();
     }
 }

@@ -1,12 +1,14 @@
 package org.apereo.cas.ticket.registry.queue;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import lombok.ToString;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+
+import java.io.Serializable;
 
 /**
  * This is {@link BaseMessageQueueCommand}.
@@ -14,15 +16,16 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-@Slf4j
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @ToString
 @Getter
-@AllArgsConstructor
-public abstract class BaseMessageQueueCommand {
+@RequiredArgsConstructor
+public abstract class BaseMessageQueueCommand implements Serializable {
+
+    private static final long serialVersionUID = 7050449807845156228L;
 
     private final StringBean id;
-    
+
     /**
      * Execute.
      *

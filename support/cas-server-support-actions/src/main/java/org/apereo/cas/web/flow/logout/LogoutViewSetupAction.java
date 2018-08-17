@@ -1,8 +1,9 @@
 package org.apereo.cas.web.flow.logout;
 
-import lombok.AllArgsConstructor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class LogoutViewSetupAction extends AbstractLogoutAction {
     private final CasConfigurationProperties casProperties;
 

@@ -1,12 +1,13 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.Serializable;
 
 /**
  * This is {@link CasEmbeddedApacheTomcatRewriteValveProperties}.
@@ -15,7 +16,6 @@ import lombok.Setter;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
-@Slf4j
 @Getter
 @Setter
 public class CasEmbeddedApacheTomcatRewriteValveProperties implements Serializable {
@@ -26,5 +26,5 @@ public class CasEmbeddedApacheTomcatRewriteValveProperties implements Serializab
      * Location of a rewrite valve specifically by Apache Tomcat
      * to activate URL rewriting.
      */
-    private Resource location = new ClassPathResource("container/tomcat/rewrite.config");
+    private transient Resource location = new ClassPathResource("container/tomcat/rewrite.config");
 }

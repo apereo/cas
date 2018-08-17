@@ -1,21 +1,19 @@
 package org.apereo.cas.logging;
 
+import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
+
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClient;
-import com.amazonaws.services.logs.AWSLogsClientBuilder;
 import com.amazonaws.services.logs.model.CreateLogGroupRequest;
 import com.amazonaws.services.logs.model.CreateLogStreamRequest;
 import com.amazonaws.services.logs.model.DataAlreadyAcceptedException;
 import com.amazonaws.services.logs.model.DescribeLogGroupsRequest;
-import com.amazonaws.services.logs.model.DescribeLogGroupsResult;
 import com.amazonaws.services.logs.model.DescribeLogStreamsRequest;
-import com.amazonaws.services.logs.model.DescribeLogStreamsResult;
 import com.amazonaws.services.logs.model.InputLogEvent;
 import com.amazonaws.services.logs.model.InvalidSequenceTokenException;
-import com.amazonaws.services.logs.model.LogStream;
 import com.amazonaws.services.logs.model.PutLogEventsRequest;
-import com.amazonaws.services.logs.model.PutLogEventsResult;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
@@ -25,13 +23,11 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -52,11 +48,10 @@ public class CloudWatchAppender extends AbstractAppender {
     private static final int AWS_LOG_STREAM_FLUSH_PERIOD_IN_SECONDS = 5;
 
     private final BlockingQueue<InputLogEvent> queue = new LinkedBlockingQueue<>(AWS_LOG_STREAM_MAX_QUEUE_DEPTH);
+    private final Object monitor = new Object();
     private volatile boolean shutdown;
     private int flushPeriodMillis;
     private Thread deliveryThread;
-    private final Object monitor = new Object();
-
     /**
      * Every PutLogEvents request must include the sequenceToken obtained from the response of the previous request.
      */
@@ -78,14 +73,14 @@ public class CloudWatchAppender extends AbstractAppender {
                               final Layout<Serializable> layout) {
         super(name, null, layout == null ? PatternLayout.createDefaultLayout() : layout, false);
         try {
-            int flushPeriod = AWS_LOG_STREAM_FLUSH_PERIOD_IN_SECONDS;
+            var flushPeriod = AWS_LOG_STREAM_FLUSH_PERIOD_IN_SECONDS;
             if (awsLogStreamFlushPeriodInSeconds != null) {
                 flushPeriod = Integer.parseInt(awsLogStreamFlushPeriodInSeconds);
             }
             flushPeriodMillis = flushPeriod * 1_000;
 
             LOGGER.debug("Connecting to AWS CloudWatch...");
-            final AWSLogsClientBuilder builder = AWSLogsClient.builder();
+            val builder = AWSLogsClient.builder();
             builder.setCredentials(ChainingAWSCredentialsProvider.getInstance(credentialAccessKey, credentialSecretKey));
             builder.setRegion(awsLogRegionName);
 
@@ -98,9 +93,42 @@ public class CloudWatchAppender extends AbstractAppender {
         }
     }
 
+    /**
+     * Create appender cloud watch appender.
+     *
+     * @param name                             the name
+     * @param awsLogStreamName                 the aws log stream name
+     * @param awsLogGroupName                  the aws log group name
+     * @param awsLogStreamFlushPeriodInSeconds the aws log stream flush period in seconds
+     * @param credentialAccessKey              the credential access key
+     * @param credentialSecretKey              the credential secret key
+     * @param awsLogRegionName                 the aws log region name
+     * @param layout                           the layout
+     * @return the cloud watch appender
+     */
+    @PluginFactory
+    public static CloudWatchAppender createAppender(@PluginAttribute("name") final String name,
+                                                    @PluginAttribute("awsLogStreamName") final String awsLogStreamName,
+                                                    @PluginAttribute("awsLogGroupName") final String awsLogGroupName,
+                                                    @PluginAttribute("awsLogStreamFlushPeriodInSeconds") final String awsLogStreamFlushPeriodInSeconds,
+                                                    @PluginAttribute("credentialAccessKey") final String credentialAccessKey,
+                                                    @PluginAttribute("credentialSecretKey") final String credentialSecretKey,
+                                                    @PluginAttribute("awsLogRegionName") final String awsLogRegionName,
+                                                    @PluginElement("Layout") final Layout<Serializable> layout) {
+        return new CloudWatchAppender(
+            name,
+            awsLogGroupName,
+            awsLogStreamName,
+            awsLogStreamFlushPeriodInSeconds,
+            StringUtils.defaultIfBlank(credentialAccessKey, System.getProperty("AWS_ACCESS_KEY")),
+            StringUtils.defaultIfBlank(credentialSecretKey, System.getProperty("AWS_SECRET_KEY")),
+            StringUtils.defaultIfBlank(awsLogRegionName, System.getProperty("AWS_REGION_NAME")),
+            layout);
+    }
+
     private void flush() {
-        int drained;
-        final List<InputLogEvent> logEvents = new ArrayList<>(AWS_DRAIN_LIMIT);
+        var drained = 0;
+        val logEvents = new ArrayList<InputLogEvent>(AWS_DRAIN_LIMIT);
         do {
             drained = queue.drainTo(logEvents, AWS_DRAIN_LIMIT);
             if (logEvents.isEmpty()) {
@@ -108,7 +136,7 @@ public class CloudWatchAppender extends AbstractAppender {
             }
             logEvents.sort(Comparator.comparing(InputLogEvent::getTimestamp));
             if (lastReportedTimestamp > 0) {
-                for (final InputLogEvent event : logEvents) {
+                for (val event : logEvents) {
                     if (event.getTimestamp() < lastReportedTimestamp) {
                         event.setTimestamp(lastReportedTimestamp);
                     }
@@ -116,10 +144,10 @@ public class CloudWatchAppender extends AbstractAppender {
             }
 
             lastReportedTimestamp = logEvents.get(logEvents.size() - 1).getTimestamp();
-            final PutLogEventsRequest putLogEventsRequest = new PutLogEventsRequest(logGroupName, logStreamName, logEvents);
+            val putLogEventsRequest = new PutLogEventsRequest(logGroupName, logStreamName, logEvents);
             putLogEventsRequest.setSequenceToken(sequenceTokenCache);
             try {
-                final PutLogEventsResult putLogEventsResult = awsLogsClient.putLogEvents(putLogEventsRequest);
+                val putLogEventsResult = awsLogsClient.putLogEvents(putLogEventsRequest);
                 sequenceTokenCache = putLogEventsResult.getNextSequenceToken();
             } catch (final DataAlreadyAcceptedException daae) {
                 sequenceTokenCache = daae.getExpectedSequenceToken();
@@ -134,10 +162,10 @@ public class CloudWatchAppender extends AbstractAppender {
 
     @Override
     public void append(final LogEvent logEvent) {
-        final LogEvent event = LoggingUtils.prepareLogEvent(logEvent);
-        final InputLogEvent awsLogEvent = new InputLogEvent();
-        final long timestamp = event.getTimeMillis();
-        final String message = new String(getLayout().toByteArray(event), StandardCharsets.UTF_8);
+        val event = LoggingUtils.prepareLogEvent(logEvent);
+        val awsLogEvent = new InputLogEvent();
+        val timestamp = event.getTimeMillis();
+        val message = new String(getLayout().toByteArray(event), StandardCharsets.UTF_8);
         awsLogEvent.setTimestamp(timestamp);
         awsLogEvent.setMessage(message);
         if (!queue.offer(awsLogEvent) && !queueFull) {
@@ -149,24 +177,24 @@ public class CloudWatchAppender extends AbstractAppender {
 
     private String createLogGroupAndLogStreamIfNeeded() {
         LOGGER.debug("Attempting to locate the log group [{}]", logGroupName);
-        final DescribeLogGroupsResult describeLogGroupsResult =
+        val describeLogGroupsResult =
             awsLogsClient.describeLogGroups(new DescribeLogGroupsRequest().withLogGroupNamePrefix(logGroupName));
-        boolean createLogGroup = true;
+        var createLogGroup = true;
         if (describeLogGroupsResult != null && describeLogGroupsResult.getLogGroups() != null && !describeLogGroupsResult.getLogGroups().isEmpty()) {
             createLogGroup = !describeLogGroupsResult.getLogGroups().stream().anyMatch(g -> g.getLogGroupName().equals(logGroupName));
         }
         if (createLogGroup) {
             LOGGER.debug("Creating log group [{}]", logGroupName);
-            final CreateLogGroupRequest createLogGroupRequest = new CreateLogGroupRequest(logGroupName);
+            val createLogGroupRequest = new CreateLogGroupRequest(logGroupName);
             awsLogsClient.createLogGroup(createLogGroupRequest);
         }
-        String logSequenceToken = null;
-        boolean createLogStream = true;
+        var logSequenceToken = StringUtils.EMPTY;
+        var createLogStream = true;
         LOGGER.debug("Attempting to locate the log stream [{}] for group [{}]", logStreamName, logGroupName);
-        final DescribeLogStreamsRequest describeLogStreamsRequest = new DescribeLogStreamsRequest(logGroupName).withLogStreamNamePrefix(logStreamName);
-        final DescribeLogStreamsResult describeLogStreamsResult = awsLogsClient.describeLogStreams(describeLogStreamsRequest);
+        val describeLogStreamsRequest = new DescribeLogStreamsRequest(logGroupName).withLogStreamNamePrefix(logStreamName);
+        val describeLogStreamsResult = awsLogsClient.describeLogStreams(describeLogStreamsRequest);
         if (describeLogStreamsResult != null && describeLogStreamsResult.getLogStreams() != null && !describeLogStreamsResult.getLogStreams().isEmpty()) {
-            for (final LogStream ls : describeLogStreamsResult.getLogStreams()) {
+            for (val ls : describeLogStreamsResult.getLogStreams()) {
                 if (logStreamName.equals(ls.getLogStreamName())) {
                     createLogStream = false;
                     logSequenceToken = ls.getUploadSequenceToken();
@@ -178,7 +206,7 @@ public class CloudWatchAppender extends AbstractAppender {
 
         if (createLogStream) {
             LOGGER.debug("Creating log stream [{}] for group [{}]", logStreamName, logGroupName);
-            final CreateLogStreamRequest createLogStreamRequest = new CreateLogStreamRequest(logGroupName, logStreamName);
+            val createLogStreamRequest = new CreateLogStreamRequest(logGroupName, logStreamName);
             awsLogsClient.createLogStream(createLogStreamRequest);
         }
         return logSequenceToken;
@@ -229,38 +257,5 @@ public class CloudWatchAppender extends AbstractAppender {
         if (queue.size() > 0) {
             flush();
         }
-    }
-
-    /**
-     * Create appender cloud watch appender.
-     *
-     * @param name                             the name
-     * @param awsLogStreamName                 the aws log stream name
-     * @param awsLogGroupName                  the aws log group name
-     * @param awsLogStreamFlushPeriodInSeconds the aws log stream flush period in seconds
-     * @param credentialAccessKey              the credential access key
-     * @param credentialSecretKey              the credential secret key
-     * @param awsLogRegionName                 the aws log region name
-     * @param layout                           the layout
-     * @return the cloud watch appender
-     */
-    @PluginFactory
-    public static CloudWatchAppender createAppender(@PluginAttribute("name") final String name,
-                                                    @PluginAttribute("awsLogStreamName") final String awsLogStreamName,
-                                                    @PluginAttribute("awsLogGroupName") final String awsLogGroupName,
-                                                    @PluginAttribute("awsLogStreamFlushPeriodInSeconds") final String awsLogStreamFlushPeriodInSeconds,
-                                                    @PluginAttribute("credentialAccessKey") final String credentialAccessKey,
-                                                    @PluginAttribute("credentialSecretKey") final String credentialSecretKey,
-                                                    @PluginAttribute("awsLogRegionName") final String awsLogRegionName,
-                                                    @PluginElement("Layout") final Layout<Serializable> layout) {
-        return new CloudWatchAppender(
-            name,
-            awsLogGroupName,
-            awsLogStreamName,
-            awsLogStreamFlushPeriodInSeconds,
-            StringUtils.defaultIfBlank(credentialAccessKey, System.getProperty("AWS_ACCESS_KEY")),
-            StringUtils.defaultIfBlank(credentialSecretKey, System.getProperty("AWS_SECRET_KEY")),
-            StringUtils.defaultIfBlank(awsLogRegionName, System.getProperty("AWS_REGION_NAME")),
-            layout);
     }
 }

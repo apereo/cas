@@ -1,14 +1,15 @@
 package org.apereo.cas.services.support;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.util.serialization.SerializationUtils;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -30,7 +31,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@Slf4j
 public class RegisteredServiceRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceRegexAttributeFilter.json");
@@ -59,7 +59,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         this.givenAttributesMap.put("arrayAttribute", new String[]{"math", "science", "chemistry"});
         this.givenAttributesMap.put("setAttribute", Stream.of("math", "science", "chemistry").collect(Collectors.toSet()));
 
-        final Map<String, String> mapAttributes = new HashMap<>();
+        val mapAttributes = new HashMap<String, String>();
         mapAttributes.put(UID, "loggedInTestUid");
         mapAttributes.put(PHONE, "890");
         mapAttributes.put(FAMILY_NAME, "Smith");
@@ -67,7 +67,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     }
 
     @Before
-    public void setUp() {
+    public void initialize() {
         MockitoAnnotations.initMocks(this);
 
         when(this.registeredService.getName()).thenReturn("sample test service");
@@ -77,7 +77,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     @Test
     public void verifyPatternFilter() {
 
-        final Map<String, Object> attrs = this.filter.filter(this.givenAttributesMap);
+        val attrs = this.filter.filter(this.givenAttributesMap);
         assertEquals(7, attrs.size());
 
         assertFalse(attrs.containsKey(PHONE));
@@ -87,23 +87,23 @@ public class RegisteredServiceRegexAttributeFilterTests {
         assertTrue(attrs.containsKey("memberOf"));
         assertTrue(attrs.containsKey("mapAttribute"));
 
-        final Map<String, String> mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
+        val mapAttributes = (Map<String, String>) attrs.get("mapAttribute");
         assertTrue(mapAttributes.containsKey(UID));
         assertTrue(mapAttributes.containsKey(FAMILY_NAME));
         assertFalse(mapAttributes.containsKey(PHONE));
 
-        final List<?> obj = (List<?>) attrs.get("memberOf");
+        val obj = (List<?>) attrs.get("memberOf");
         assertEquals(2, obj.size());
     }
 
     @Test
     public void verifyServiceAttributeFilterAllowedAttributesWithARegexFilter() {
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList("attr1", "attr3", "another"));
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("v3"));
-        final Principal p = mock(Principal.class);
+        val p = mock(Principal.class);
 
-        final Map<String, Object> map = new HashMap<>();
+        val map = new HashMap<String, Object>();
         map.put("attr1", "value1");
         map.put("attr2", "value2");
         map.put("attr3", Arrays.asList("v3", "v4"));
@@ -111,14 +111,14 @@ public class RegisteredServiceRegexAttributeFilterTests {
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
 
-        final Map<String, Object> attr = policy.getAttributes(p, RegisteredServiceTestUtils.getService(),
-                RegisteredServiceTestUtils.getRegisteredService("test"));
+        val attr = policy.getAttributes(p, RegisteredServiceTestUtils.getService(),
+            RegisteredServiceTestUtils.getRegisteredService("test"));
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey("attr3"));
 
-        final byte[] data = SerializationUtils.serialize(policy);
-        final ReturnAllowedAttributeReleasePolicy p2 =
-                SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
+        val data = SerializationUtils.serialize(policy);
+        val p2 =
+            SerializationUtils.deserializeAndCheckObject(data, ReturnAllowedAttributeReleasePolicy.class);
         assertNotNull(p2);
         assertEquals(p2.getAllowedAttributes(), policy.getAllowedAttributes());
         assertEquals(p2.getAttributeFilter(), policy.getAttributeFilter());
@@ -126,9 +126,9 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
     @Test
     public void verifySerialization() {
-        final byte[] data = SerializationUtils.serialize(this.filter);
-        final RegisteredServiceAttributeFilter secondFilter =
-                SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
+        val data = SerializationUtils.serialize(this.filter);
+        val secondFilter =
+            SerializationUtils.deserializeAndCheckObject(data, RegisteredServiceAttributeFilter.class);
         assertEquals(secondFilter, this.filter);
     }
 
@@ -136,7 +136,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     public void verifySerializeARegisteredServiceRegexAttributeFilterToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, filter);
 
-        final RegisteredServiceAttributeFilter filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceRegexAttributeFilter.class);
+        val filterRead = MAPPER.readValue(JSON_FILE, RegisteredServiceRegexAttributeFilter.class);
 
         assertEquals(filter, filterRead);
     }

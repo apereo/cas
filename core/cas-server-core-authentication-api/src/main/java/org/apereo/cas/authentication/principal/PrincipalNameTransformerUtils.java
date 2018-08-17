@@ -1,8 +1,5 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.util.transforms.ChainingPrincipalNameTransformer;
@@ -12,13 +9,16 @@ import org.apereo.cas.util.transforms.NoOpPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.PrefixSuffixPrincipalNameTransformer;
 import org.apereo.cas.util.transforms.RegexPrincipalNameTransformer;
 
+import lombok.experimental.UtilityClass;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * This is {@link PrincipalNameTransformerUtils}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @UtilityClass
 public class PrincipalNameTransformerUtils {
 
@@ -29,20 +29,20 @@ public class PrincipalNameTransformerUtils {
      * @return the principal name transformer
      */
     public static PrincipalNameTransformer newPrincipalNameTransformer(final PrincipalTransformationProperties p) {
-        final ChainingPrincipalNameTransformer chain = new ChainingPrincipalNameTransformer();
+        val chain = new ChainingPrincipalNameTransformer();
 
         if (p.getGroovy().getLocation() != null) {
-            final GroovyPrincipalNameTransformer t = new GroovyPrincipalNameTransformer(p.getGroovy().getLocation());
+            val t = new GroovyPrincipalNameTransformer(p.getGroovy().getLocation());
             chain.addTransformer(t);
         }
-        
+
         if (StringUtils.isNotBlank(p.getPattern())) {
-            final RegexPrincipalNameTransformer t = new RegexPrincipalNameTransformer(p.getPattern());
+            val t = new RegexPrincipalNameTransformer(p.getPattern());
             chain.addTransformer(t);
         }
 
         if (StringUtils.isNotBlank(p.getPrefix()) || StringUtils.isNotBlank(p.getSuffix())) {
-            final PrefixSuffixPrincipalNameTransformer t = new PrefixSuffixPrincipalNameTransformer();
+            val t = new PrefixSuffixPrincipalNameTransformer();
             t.setPrefix(p.getPrefix());
             t.setSuffix(p.getSuffix());
             chain.addTransformer(t);
@@ -51,13 +51,13 @@ public class PrincipalNameTransformerUtils {
         }
 
         if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.UPPERCASE) {
-            final ConvertCasePrincipalNameTransformer t = new ConvertCasePrincipalNameTransformer();
+            val t = new ConvertCasePrincipalNameTransformer();
             t.setToUpperCase(true);
             chain.addTransformer(t);
         }
 
         if (p.getCaseConversion() == PrincipalTransformationProperties.CaseConversion.LOWERCASE) {
-            final ConvertCasePrincipalNameTransformer t = new ConvertCasePrincipalNameTransformer();
+            val t = new ConvertCasePrincipalNameTransformer();
             t.setToUpperCase(false);
             chain.addTransformer(t);
         }

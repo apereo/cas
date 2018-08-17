@@ -1,5 +1,12 @@
 package org.apereo.cas.pm.impl;
 
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
+import org.apereo.cas.pm.BasePasswordManagementService;
+import org.apereo.cas.pm.PasswordChangeBean;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
@@ -7,13 +14,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
-import org.apereo.cas.pm.BasePasswordManagementService;
-import org.apereo.cas.pm.PasswordChangeBean;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 
@@ -48,19 +50,20 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         readAccountsFromJsonResource();
     }
 
-    @SneakyThrows
     private void readAccountsFromJsonResource() {
         try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-            final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<Map<String, JsonBackedAccount>>() {
+            final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<>() {
             };
             this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
     @Override
     public boolean changeInternal(@NonNull final Credential credential, @NonNull final PasswordChangeBean bean) {
-        final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
-        if (StringUtils.isBlank(c.getPassword()) || StringUtils.isBlank(bean.getPassword())) {
+        val c = (UsernamePasswordCredential) credential;
+        if (StringUtils.isBlank(bean.getPassword())) {
             LOGGER.error("Password cannot be blank");
             return false;
         }
@@ -68,7 +71,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
             LOGGER.error("Password does not match and cannot be confirmed");
             return false;
         }
-        final JsonBackedAccount account = this.jsonBackedAccounts.getOrDefault(c.getId(), null);
+        val account = this.jsonBackedAccounts.getOrDefault(c.getId(), null);
         if (account == null) {
             LOGGER.error("User account [{}] cannot be found", c.getId());
             return false;
@@ -87,13 +90,22 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
 
     @Override
     public String findEmail(final String username) {
-        final JsonBackedAccount account = this.jsonBackedAccounts.getOrDefault(username, null);
+        val account = this.jsonBackedAccounts.getOrDefault(username, null);
         return account == null ? null : account.getEmail();
     }
 
     @Override
+    public String findUsername(final String email) {
+        val result = this.jsonBackedAccounts.entrySet()
+            .stream()
+            .filter(entry -> entry.getValue().getEmail().equalsIgnoreCase(email))
+            .findFirst();
+        return result.isPresent() ? result.get().getKey() : null;
+    }
+
+    @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        final JsonBackedAccount account = this.jsonBackedAccounts.getOrDefault(username, null);
+        val account = this.jsonBackedAccounts.getOrDefault(username, null);
         if (account != null) {
             return account.getSecurityQuestions();
         }

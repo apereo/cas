@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionCompletedEvent;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -15,23 +17,18 @@ import org.springframework.context.ApplicationEventPublisher;
  */
 @Slf4j
 @Getter
+@RequiredArgsConstructor
 public class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
 
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
+    private final ApplicationEventPublisher eventPublisher;
     private final AuthenticationManager authenticationManager;
-
-    public DefaultAuthenticationTransactionManager(final AuthenticationManager authenticationManager) {
-        this.authenticationManager = authenticationManager;
-    }
 
     @Override
     public AuthenticationTransactionManager handle(final AuthenticationTransaction authenticationTransaction,
                                                    final AuthenticationResultBuilder authenticationResult)
-            throws AuthenticationException {
+        throws AuthenticationException {
         if (!authenticationTransaction.getCredentials().isEmpty()) {
-            final Authentication authentication = this.authenticationManager.authenticate(authenticationTransaction);
+            val authentication = this.authenticationManager.authenticate(authenticationTransaction);
             LOGGER.debug("Successful authentication; Collecting authentication result [{}]", authentication);
             publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication));
             authenticationResult.collect(authentication);

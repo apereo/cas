@@ -13,12 +13,12 @@ import java.io.Serializable;
  * inject all sorts of components into builders to accommodate for various use cases
  * and not have to worry about whether a given field in a builder is serialization friendly.
  *
- * @author Misagh Moayyed
  * @param <T> the type parameter
+ * @author Misagh Moayyed
  * @since 5.1.0
  */
 @FunctionalInterface
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface ResponseBuilderLocator<T extends WebApplicationService> extends Serializable {
 
     /**

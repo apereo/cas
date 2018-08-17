@@ -3,6 +3,7 @@ dependencies {
     implementation libraries.thymeleaf
 
     implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -26,7 +27,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testCompileOnly "javax.servlet:jstl:$javaxJstlVersion"
     testImplementation project(path: ":core:cas-server-core-validation", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(":core:cas-server-core-cookie")
@@ -40,6 +40,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-web-api")
 
+    testCompileOnly "javax.servlet:jstl:$javaxJstlVersion"
+    
     testImplementation libraries.thymeleaf
     testImplementation libraries.thymeleafdialect
 }

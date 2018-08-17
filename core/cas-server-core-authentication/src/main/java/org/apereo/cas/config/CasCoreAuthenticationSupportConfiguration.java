@@ -1,18 +1,19 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
-import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
-import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,7 +33,6 @@ import org.springframework.context.annotation.Lazy;
  */
 @Configuration("casCoreAuthenticationSupportConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class CasCoreAuthenticationSupportConfiguration {
 
     @Autowired
@@ -52,15 +52,15 @@ public class CasCoreAuthenticationSupportConfiguration {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "authenticationContextValidator")
     public AuthenticationContextValidator authenticationContextValidator() {
-        final MultifactorAuthenticationProperties mfa = casProperties.getAuthn().getMfa();
-        final String contextAttribute = mfa.getAuthenticationContextAttribute();
-        final String failureMode = mfa.getGlobalFailureMode();
-        final String authnAttributeName = mfa.getTrusted().getAuthenticationContextAttribute();
+        val mfa = casProperties.getAuthn().getMfa();
+        val contextAttribute = mfa.getAuthenticationContextAttribute();
+        val failureMode = mfa.getGlobalFailureMode();
+        val authnAttributeName = mfa.getTrusted().getAuthenticationContextAttribute();
         return new DefaultMultifactorAuthenticationContextValidator(contextAttribute, failureMode, authnAttributeName, applicationContext);
     }
 
@@ -77,9 +77,19 @@ public class CasCoreAuthenticationSupportConfiguration {
         return new RegisteredServiceAuthenticationHandlerResolver(servicesManager.getIfAvailable());
     }
 
+    @Bean
+    @Lazy
+    @ConditionalOnMissingBean(name = "byCredentialSourceAuthenticationHandlerResolver")
+    public AuthenticationHandlerResolver byCredentialSourceAuthenticationHandlerResolver() {
+        return new ByCredentialSourceAuthenticationHandlerResolver();
+    }
+
     @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
+        return plan -> {
+            plan.registerAuthenticationHandlerResolver(byCredentialSourceAuthenticationHandlerResolver());
+            plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
+        };
     }
 }

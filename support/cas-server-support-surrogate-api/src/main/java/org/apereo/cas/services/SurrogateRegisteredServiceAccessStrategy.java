@@ -46,11 +46,13 @@ public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegis
      */
     protected boolean doPrincipalAttributesAllowSurrogateServiceAccess(final Map<String, Object> principalAttributes) {
         if (!enoughRequiredAttributesAvailableToProcess(principalAttributes, this.surrogateRequiredAttributes)) {
-            LOGGER.debug("Surrogate access is denied. There are not enough attributes available to satisfy requirements");
+            LOGGER.debug("Surrogate access is denied. There are not enough attributes available to satisfy the requirements [{}]",
+                this.surrogateRequiredAttributes);
             return false;
         }
         if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes, this.surrogateRequiredAttributes)) {
-            LOGGER.debug("Surrogate access is denied. The principal does not have the required attributes specified by this strategy");
+            LOGGER.debug("Surrogate access is denied. The principal does not have the required attributes [{}] specified by this strategy",
+                this.surrogateRequiredAttributes);
             return false;
         }
         return true;

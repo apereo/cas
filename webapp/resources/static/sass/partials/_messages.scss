@@ -1,5 +1,5 @@
 /*
- * Since switching to the Bootstrap alerts, has this become depricated?
+ * Since switching to the Bootstrap alerts, has this become deprecated?
  */
 
 #msg {
@@ -8,11 +8,13 @@
   padding: 20px 20px 20px 100px;
   background-repeat: no-repeat;
   background-position: 20px center;
+  border-radius: 20px;
 
   .errors {
     border-color: #BB0000;
     color: #BB0000;
     background-image: url(../images/error.png);
+    background-color: #F2BBBB;
   }
 
   .success {

@@ -1,11 +1,12 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.core.io.Resource;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.io.Resource;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for http.client.truststore.
@@ -14,7 +15,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class HttpClientProperties implements Serializable {
@@ -75,7 +75,7 @@ public class HttpClientProperties implements Serializable {
          * In the event that local certificates are to be imported into the CAS running environment,
          * a local truststore is provided by CAS to improve portability of configuration across environments.
          */
-        private Resource file;
+        private transient Resource file;
 
         /**
          * The truststore password.

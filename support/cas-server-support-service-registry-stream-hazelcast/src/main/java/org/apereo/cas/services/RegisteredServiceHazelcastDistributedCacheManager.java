@@ -1,9 +1,11 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.DistributedCacheObject;
+
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.DistributedCacheObject;
+import lombok.val;
 
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -26,9 +28,19 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
     public RegisteredServiceHazelcastDistributedCacheManager(final HazelcastInstance instance) {
         this.instance = instance;
 
-        final String mapName = instance.getConfig().getMapConfigs().keySet().iterator().next();
+        val mapName = instance.getConfig().getMapConfigs().keySet().iterator().next();
         LOGGER.debug("Retrieving Hazelcast map [{}] for service replication", mapName);
         this.mapInstance = instance.getMap(mapName);
+    }
+
+    /**
+     * Gets key.
+     *
+     * @param service the service
+     * @return the key
+     */
+    public static String buildKey(final RegisteredService service) {
+        return service.getId() + ";" + service.getName() + ';' + service.getServiceId();
     }
 
     @Override
@@ -44,7 +56,7 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
     @Override
     public DistributedCacheObject<RegisteredService> get(final RegisteredService service) {
         if (contains(service)) {
-            final String key = buildKey(service);
+            val key = buildKey(service);
             return this.mapInstance.get(key);
         }
         return null;
@@ -58,13 +70,13 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
 
     @Override
     public boolean contains(final RegisteredService service) {
-        final String key = buildKey(service);
+        val key = buildKey(service);
         return this.mapInstance.containsKey(key);
     }
 
     @Override
     public void remove(final RegisteredService service, final DistributedCacheObject<RegisteredService> item) {
-        final String key = buildKey(service);
+        val key = buildKey(service);
         this.mapInstance.remove(key);
     }
 
@@ -78,15 +90,5 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
     public Collection<DistributedCacheObject<RegisteredService>> findAll(
         final Predicate<DistributedCacheObject<RegisteredService>> filter) {
         return getAll().stream().filter(filter).collect(Collectors.toList());
-    }
-
-    /**
-     * Gets key.
-     *
-     * @param service the service
-     * @return the key
-     */
-    public static String buildKey(final RegisteredService service) {
-        return service.getId() + ";" + service.getName() + ";" + service.getServiceId();
     }
 }

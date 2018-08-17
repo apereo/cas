@@ -1,19 +1,20 @@
 package org.apereo.cas.services;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.util.CollectionUtils;
+
+import com.google.common.collect.ArrayListMultimap;
+import lombok.Setter;
+import lombok.val;
 import org.junit.Test;
+
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-import lombok.Setter;
 
 /**
  * Unit test for {@link AbstractRegisteredService}.
@@ -21,7 +22,6 @@ import lombok.Setter;
  * @author Marvin S. Addison
  * @since 3.4.12
  */
-@Slf4j
 @Setter
 public class AbstractRegisteredServiceTests {
 
@@ -48,7 +48,7 @@ public class AbstractRegisteredServiceTests {
     private static final String ATTR_2 = "attr2";
 
     private static final String ATTR_3 = "attr3";
-    
+
     private final AbstractRegisteredService r = new AbstractRegisteredService() {
         private static final long serialVersionUID = 1L;
 
@@ -75,9 +75,9 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void verifyAllowToProxyIsFalseByDefault() {
-        final RegexRegisteredService regexRegisteredService = new RegexRegisteredService();
+        val regexRegisteredService = new RegexRegisteredService();
         assertFalse(regexRegisteredService.getProxyPolicy().isAllowedToProxy());
-        final RegexRegisteredService service = new RegexRegisteredService();
+        val service = new RegexRegisteredService();
         assertFalse(service.getProxyPolicy().isAllowedToProxy());
     }
 
@@ -111,14 +111,14 @@ public class AbstractRegisteredServiceTests {
     public void verifyServiceAttributeFilterAllAttributes() {
         prepareService();
         this.r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final Principal p = mock(Principal.class);
-        final Map<String, Object> map = new HashMap<>();
+        val p = mock(Principal.class);
+        val map = new HashMap<String, Object>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+        val attr = this.r.getAttributeReleasePolicy().getAttributes(p,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(attr.size(), map.size());
     }
@@ -126,17 +126,17 @@ public class AbstractRegisteredServiceTests {
     @Test
     public void verifyServiceAttributeFilterAllowedAttributes() {
         prepareService();
-        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        val policy = new ReturnAllowedAttributeReleasePolicy();
         policy.setAllowedAttributes(Arrays.asList(ATTR_1, ATTR_3));
         this.r.setAttributeReleasePolicy(policy);
-        final Principal p = mock(Principal.class);
-        final Map<String, Object> map = new HashMap<>();
+        val p = mock(Principal.class);
+        val map = new HashMap<String, Object>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+        val attr = this.r.getAttributeReleasePolicy().getAttributes(p,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
@@ -146,19 +146,19 @@ public class AbstractRegisteredServiceTests {
     @Test
     public void verifyServiceAttributeFilterMappedAttributes() {
         prepareService();
-        final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        final Multimap<String, Object> mappedAttr = ArrayListMultimap.create();
+        val policy = new ReturnMappedAttributeReleasePolicy();
+        val mappedAttr = ArrayListMultimap.<String, Object>create();
         mappedAttr.put(ATTR_1, "newAttr1");
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
         this.r.setAttributeReleasePolicy(policy);
-        final Principal p = mock(Principal.class);
-        final Map<String, Object> map = new HashMap<>();
+        val p = mock(Principal.class);
+        val map = new HashMap<String, Object>();
         map.put(ATTR_1, "value1");
         map.put(ATTR_2, "value2");
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+        val attr = this.r.getAttributeReleasePolicy().getAttributes(p,
             RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey("newAttr1"));
@@ -166,15 +166,15 @@ public class AbstractRegisteredServiceTests {
 
     @Test
     public void verifyServiceEquality() {
-        final RegisteredService svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
-        final RegisteredService svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
+        val svc1 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
+        val svc2 = RegisteredServiceTestUtils.getRegisteredService(SERVICEID);
         assertEquals(svc1, svc2);
     }
 
     @Test
     public void verifyServiceWithInvalidIdStillHasTheSameIdAfterCallingMatches() {
-        final String invalidId = "***";
-        final AbstractRegisteredService service = RegisteredServiceTestUtils.getRegisteredService(invalidId);
+        val invalidId = "***";
+        val service = RegisteredServiceTestUtils.getRegisteredService(invalidId);
         service.matches("notRelevant");
         assertEquals(invalidId, service.getServiceId());
     }

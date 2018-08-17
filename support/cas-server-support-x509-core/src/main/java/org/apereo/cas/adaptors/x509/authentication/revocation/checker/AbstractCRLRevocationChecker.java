@@ -1,20 +1,20 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.util.crypto.CertUtils;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
-import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -59,9 +59,9 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
                                         final RevocationPolicy<X509CRL> expiredCRLPolicy) {
         this.checkAll = checkAll;
         this.unavailableCRLPolicy = unavailableCRLPolicy == null
-                ? new DenyRevocationPolicy() : unavailableCRLPolicy;
+            ? new DenyRevocationPolicy() : unavailableCRLPolicy;
         this.expiredCRLPolicy = expiredCRLPolicy == null
-                ? new ThresholdExpiredCRLRevocationPolicy(0) : expiredCRLPolicy;
+            ? new ThresholdExpiredCRLRevocationPolicy(0) : expiredCRLPolicy;
     }
 
     @Override
@@ -70,7 +70,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
             throw new IllegalArgumentException("Certificate cannot be null.");
         }
         LOGGER.debug("Evaluating certificate revocation status for [{}]", CertUtils.toString(cert));
-        final Collection<X509CRL> crls = getCRLs(cert);
+        val crls = getCRLs(cert);
 
         if (crls == null || crls.isEmpty()) {
             LOGGER.warn("CRL data is not available for [{}]", CertUtils.toString(cert));
@@ -78,8 +78,7 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
             return;
         }
 
-        final List<X509CRL> expiredCrls = new ArrayList<>();
-        final List<X509CRLEntry> revokedCrls;
+        val expiredCrls = new ArrayList<X509CRL>();
 
         crls.stream().filter(CertUtils::isExpired).forEach(crl -> {
             LOGGER.warn("CRL data expired on [{}]", crl.getNextUpdate());
@@ -88,17 +87,16 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
 
         if (crls.size() == expiredCrls.size()) {
             LOGGER.warn("All CRLs retrieved have expired. Applying CRL expiration policy...");
-            for (final X509CRL crl : expiredCrls) {
+            for (val crl : expiredCrls) {
                 this.expiredCRLPolicy.apply(crl);
             }
         } else {
             crls.removeAll(expiredCrls);
             LOGGER.debug("Valid CRLs [{}] found that are not expired yet", crls);
 
-            revokedCrls = crls.stream().map(crl -> crl.getRevokedCertificate(cert)).filter(Objects::nonNull).collect(Collectors.toList());
-
+            val revokedCrls = crls.stream().map(crl -> crl.getRevokedCertificate(cert)).filter(Objects::nonNull).collect(Collectors.toList());
             if (revokedCrls.size() == crls.size()) {
-                final X509CRLEntry entry = revokedCrls.get(0);
+                val entry = revokedCrls.get(0);
                 LOGGER.warn("All CRL entries have been revoked. Rejecting the first entry [{}]", entry);
                 throw new RevokedCertificateException(entry);
             }

@@ -1,0 +1,73 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases  && !rootProject.publishSnapshots && !rootProject.skipBootifulArtifact)) {
+    println "Applying Spring Boot plugin to bootify web application artifact for project $project.name..."
+
+    apply plugin: "org.springframework.boot"
+    
+    sourceSets {
+        bootRun {
+            resources {
+            }
+        }
+    }
+
+    springBoot {
+        mainClassName = project.ext.mainClassName
+        buildInfo()
+    }
+
+    if (plugins.hasPlugin("war")) {
+        javadoc {
+            enabled false
+        }
+
+        bootWar {
+            mainClassName = project.ext.mainClassName
+            manifest {
+                attributes(
+                        "Automatic-Module-Name": project.name,
+                        "Implementation-Title": project.name,
+                        "Implementation-Vendor": project.group,
+                        "Created-By": project.group,
+                        "Implementation-Date": java.time.ZonedDateTime.now(),
+                        "Specification-Version": rootProject.currentRevision,
+                        "Implementation-Version": project.version)
+            }
+            from "${buildDir}/resources/main", { into "WEB-INF/classes" }
+            launchScript()
+        }
+
+    } else {
+        bootJar {
+            mainClassName = project.ext.mainClassName
+            from "${buildDir}/resources/main", { into "WEB-INF/classes" }
+            launchScript()
+        }
+    }
+
+    bootRun {
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            dependsOn pathingJar
+            doFirst {
+                classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+            }
+        }
+
+        sourceResources sourceSets.bootRun
+        systemProperties = System.properties
+
+        def list = []
+        list.add("-XX:TieredStopAtLevel=1")
+        list.add("-Xverify:none")
+        if (rootProject.enableRemoteDebugging) {
+            list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
+        }
+        jvmArgs = list
+    }
+} else {
+    println """
+Ignoring application of Spring Boot plugin, since the build is preparing to publish SNAPSHOTs or releases,
+or the build is signaled to skip the plugin explicitly.
+    """
+}

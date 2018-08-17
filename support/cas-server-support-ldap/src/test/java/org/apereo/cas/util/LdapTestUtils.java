@@ -3,11 +3,14 @@ package org.apereo.cas.util;
 import com.unboundid.ldap.sdk.AddRequest;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.LDAPConnection;
+import com.unboundid.ldap.sdk.LDAPException;
+import com.unboundid.ldap.sdk.ResultCode;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
-import org.ldaptive.Connection;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -56,8 +59,8 @@ public class LdapTestUtils {
      * @throws IOException On IO errors reading LDIF.
      */
     public static Collection<LdapEntry> readLdif(final InputStream ldif, final String baseDn) throws IOException {
-        final String ldapString;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(ldif, StandardCharsets.UTF_8))) {
+        var ldapString = StringUtils.EMPTY;
+        try (val reader = new BufferedReader(new InputStreamReader(ldif, StandardCharsets.UTF_8))) {
             ldapString = reader.lines()
                 .map(line -> {
                     if (line.contains(BASE_DN_PLACEHOLDER)) {
@@ -78,19 +81,44 @@ public class LdapTestUtils {
      */
     public static void createLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
         try {
-            for (final LdapEntry entry : entries) {
-                final Collection<Attribute> attrs = new ArrayList<>(entry.getAttributeNames().length);
+            for (val entry : entries) {
+                val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
                 attrs.addAll(entry.getAttributes().stream()
                     .map(a -> new Attribute(a.getName(), a.getStringValues()))
                     .collect(Collectors.toList()));
 
-                final AddRequest ad = new AddRequest(entry.getDn(), attrs);
+                val ad = new AddRequest(entry.getDn(), attrs);
                 LOGGER.debug("Creating entry [{}] with attributes [{}]", entry, attrs);
                 connection.add(ad);
+            }
+        } catch (final LDAPException e) {
+            if (e.getResultCode().equals(ResultCode.ENTRY_ALREADY_EXISTS)) {
+                modifyLdapEntries(connection, entries);
+            } else {
+                LOGGER.error(e.getMessage(), e);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Modify ldap entries.
+     *
+     * @param connection the connection
+     * @param entries    the entries
+     */
+    public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
+        for (val entry : entries) {
+            val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
+            attrs.addAll(entry.getAttributes().stream()
+                .map(a -> new Attribute(a.getName(), a.getStringValues()))
+                .collect(Collectors.toList()));
+            for (val ldapAttribute : entry.getAttributes()) {
+                modifyLdapEntry(connection, entry, ldapAttribute);
+            }
+        }
+
     }
 
     /**
@@ -104,11 +132,11 @@ public class LdapTestUtils {
     public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn, final LdapAttribute attr,
                                        final AttributeModificationType add) {
         try {
-            final String address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
-            try (Connection conn = DefaultConnectionFactory.getConnection(address)) {
+            val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
+            try (val conn = DefaultConnectionFactory.getConnection(address)) {
                 try {
                     conn.open();
-                    final ModifyOperation modify = new ModifyOperation(conn);
+                    val modify = new ModifyOperation(conn);
                     modify.execute(new ModifyRequest(dn, new AttributeModification(add, attr)));
                 } catch (final Exception e) {
                     LOGGER.debug(e.getMessage(), e);

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title th:text="#{cas.login.pagetitle}">Gua Display User Graphics View</title>
-    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
 </head>
 
 <body>
@@ -29,7 +29,7 @@
                 <p/>
             </div>
 
-            <form method="post" id="fm1" class="fm-v clearfix">
+            <form method="post" id="fm1" class="fm-v clearfix" th:action="@{/login}">
                 <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
                        th:value="#{screen.button.continue}" tabindex="4" type="submit" value="Continue"/>
                 <div class="row btn-row">

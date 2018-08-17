@@ -1,17 +1,18 @@
 package org.apereo.cas.configuration.model.support.consent;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
-import java.time.temporal.ChronoUnit;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
+import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link ConsentProperties}.
@@ -20,7 +21,6 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-consent-webflow")
-@Slf4j
 @Getter
 @Setter
 public class ConsentProperties implements Serializable {
@@ -31,7 +31,7 @@ public class ConsentProperties implements Serializable {
      * Global reminder time unit, to reconfirm consent
      * in cases no changes are detected.
      */
-    private int reminder = 30;
+    private long reminder = 30;
 
     /**
      * Global reminder time unit of measure, to reconfirm consent

@@ -1,30 +1,34 @@
 package org.apereo.cas.consent;
 
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.category.LdapCategory;
+import org.apereo.cas.config.CasConsentLdapConfiguration;
+import org.apereo.cas.services.AbstractRegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.CollectionUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
 import com.unboundid.ldap.sdk.ResultCode;
-import com.unboundid.ldap.sdk.SearchResult;
 import com.unboundid.ldap.sdk.SearchScope;
-import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.config.CasConsentLdapConfiguration;
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import lombok.val;
 import org.junit.After;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -35,9 +39,13 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {CasConsentLdapConfiguration.class, RefreshAutoConfiguration.class})
+@Category(LdapCategory.class)
 public abstract class BaseLdapConsentRepositoryTests {
+
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
 
@@ -53,18 +61,21 @@ public abstract class BaseLdapConsentRepositoryTests {
     private static final Map<String, Object> ATTR = CollectionUtils.wrap("attribute", "value");
     private static final String DEF_FILTER = "(objectClass=*)";
 
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Autowired
     @Qualifier("consentRepository")
     private ConsentRepository repository;
 
     @After
     public void cleanDecisions() throws Exception {
-        final LDAPConnection conn = getConnection();
-        final SearchResult res = conn.search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        val conn = getConnection();
+        val res = conn.search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         if (res.getEntryCount() != 0 && res.getSearchEntry(USER_DN).hasAttribute(ATTR_NAME)) {
             conn.modify(USER_DN, new Modification(ModificationType.DELETE, ATTR_NAME));
         }
-        final SearchResult res2 = conn.search(USER2_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        val res2 = conn.search(USER2_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         if (res2.getEntryCount() != 0 && res2.getSearchEntry(USER2_DN).hasAttribute(ATTR_NAME)) {
             conn.modify(USER2_DN, new Modification(ModificationType.DELETE, ATTR_NAME));
         }
@@ -72,49 +83,49 @@ public abstract class BaseLdapConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionIsNotFound() {
-        final ConsentDecision d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(USER_CN));
+        val d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(USER_CN));
         assertNull(d);
     }
 
     @Test
     public void verifyConsentDecisionIsNotMistaken() throws Exception {
-        final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
-        final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
+        val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER_DN, mod).getResultCode());
 
-        final ConsentDecision d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication("unknownUser"));
+        val d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication("unknownUser"));
         assertNull(d);
 
-        final ConsentDecision d2 = this.repository.findConsentDecision(RegisteredServiceTestUtils.getService2(),
+        val d2 = this.repository.findConsentDecision(RegisteredServiceTestUtils.getService2(),
             REG_SVC, CoreAuthenticationTestUtils.getAuthentication(USER_CN));
         assertNull(d2);
     }
 
     @Test
     public void verifyConsentDecisionIsFound() throws Exception {
-        final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
-        final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
+        val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER_DN, mod).getResultCode());
 
-        final ConsentDecision d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(USER_CN));
+        val d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(USER_CN));
         assertNotNull(d);
         assertEquals(USER_CN, d.getPrincipal());
     }
 
     @Test
     public void verifyAllConsentDecisionsAreFoundForSingleUser() throws Exception {
-        final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
-        final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
+        val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER_DN, mod).getResultCode());
-        final ConsentDecision decision2 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
+        val decision2 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
         decision2.setId(2);
-        final Modification mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
+        val mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER2_DN, mod2).getResultCode());
 
-        final Collection<ConsentDecision> d = this.repository.findConsentDecisions(USER_CN);
+        val d = this.repository.findConsentDecisions(USER_CN);
         assertNotNull(d);
         assertEquals(1, d.size());
         assertEquals(USER_CN, d.iterator().next().getPrincipal());
@@ -122,16 +133,16 @@ public abstract class BaseLdapConsentRepositoryTests {
 
     @Test
     public void verifyAllConsentDecisionsAreFoundForAllUsers() throws Exception {
-        final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
-        final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
+        val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER_DN, mod).getResultCode());
-        final ConsentDecision decision2 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
+        val decision2 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
         decision2.setId(2);
-        final Modification mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
+        val mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER2_DN, mod2).getResultCode());
 
-        final Collection<ConsentDecision> d = this.repository.findConsentDecisions();
+        val d = this.repository.findConsentDecisions();
         assertNotNull(d);
         assertFalse(d.isEmpty());
         assertEquals(2, d.size());
@@ -139,30 +150,30 @@ public abstract class BaseLdapConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionIsStored() throws Exception {
-        final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         assertTrue(this.repository.storeConsentDecision(decision));
-        final SearchResult r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        val r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         assertTrue(r.getEntryCount() > 0);
-        final ConsentDecision d = MAPPER.readValue(r.getSearchEntry(USER_DN).getAttributeValue(ATTR_NAME), ConsentDecision.class);
+        val d = MAPPER.readValue(r.getSearchEntry(USER_DN).getAttributeValue(ATTR_NAME), ConsentDecision.class);
         assertNotNull(d);
         assertEquals(USER_CN, d.getPrincipal());
     }
 
     @Test
     public void verifyConsentDecisionIsUpdated() throws Exception {
-        final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
-        final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
+        val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER_DN, mod).getResultCode());
 
-        final LocalDateTime t = LocalDateTime.now();
+        val t = LocalDateTime.now();
         assertNotEquals(t, decision.getCreatedDate());
         decision.setCreatedDate(t);
         this.repository.storeConsentDecision(decision);
 
-        final SearchResult r2 = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        val r2 = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         assertTrue(r2.getEntryCount() > 0);
-        final ConsentDecision d = MAPPER.readValue(r2.getSearchEntry(USER_DN).getAttributeValue(ATTR_NAME), ConsentDecision.class);
+        val d = MAPPER.readValue(r2.getSearchEntry(USER_DN).getAttributeValue(ATTR_NAME), ConsentDecision.class);
         assertNotNull(d);
         assertEquals(d.getId(), decision.getId());
         assertEquals(d.getCreatedDate(), t);
@@ -170,22 +181,22 @@ public abstract class BaseLdapConsentRepositoryTests {
 
     @Test
     public void verifyConsentDecisionIsDeleted() throws Exception {
-        final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
-        final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
+        val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER_DN, mod).getResultCode());
-        final ConsentDecision decision2 = BUILDER.build(SVC2, REG_SVC2, USER_CN, ATTR);
+        val decision2 = BUILDER.build(SVC2, REG_SVC2, USER_CN, ATTR);
         decision2.setId(2);
-        final Modification mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
+        val mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER_DN, mod2).getResultCode());
-        final ConsentDecision decision3 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
+        val decision3 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
         decision3.setId(3);
-        final Modification mod3 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision3));
+        val mod3 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision3));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER2_DN, mod3).getResultCode());
 
         assertTrue(this.repository.deleteConsentDecision(decision2.getId(), USER_CN));
 
-        final SearchResult r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        val r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         assertTrue(r.getEntryCount() > 0);
         assertEquals(1, r.getSearchEntry(USER_DN).getAttributeValues(ATTR_NAME).length);
     }

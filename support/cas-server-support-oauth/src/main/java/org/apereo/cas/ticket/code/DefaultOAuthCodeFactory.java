@@ -1,7 +1,5 @@
 package org.apereo.cas.ticket.code;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -11,6 +9,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import lombok.RequiredArgsConstructor;
+import lombok.val;
+
 import java.util.Collection;
 
 /**
@@ -19,8 +20,7 @@ import java.util.Collection;
  * @author Jerome Leleu
  * @since 5.0.0
  */
-@Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
 
     /**
@@ -36,13 +36,15 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
     public DefaultOAuthCodeFactory(final ExpirationPolicy expirationPolicy) {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy);
     }
-    
+
     @Override
     public OAuthCode create(final Service service, final Authentication authentication,
-                            final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
-        final String codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
+                            final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes,
+                            final String codeChallenge, final String codeChallengeMethod) {
+        val codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
         return new OAuthCodeImpl(codeId, service, authentication,
-            this.expirationPolicy, ticketGrantingTicket, scopes);
+            this.expirationPolicy, ticketGrantingTicket, scopes,
+            codeChallenge, codeChallengeMethod);
     }
 
     @Override

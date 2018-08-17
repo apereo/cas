@@ -1,7 +1,5 @@
 package org.apereo.cas.support.saml.util;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -9,11 +7,14 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.util.DateTimeUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLVersion;
-import org.opensaml.saml.saml1.binding.encoding.impl.HTTPSOAP11Encoder;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.Attribute;
 import org.opensaml.saml.saml1.core.AttributeStatement;
@@ -58,6 +59,22 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     }
 
     /**
+     * Sets in response to for saml 1 response.
+     *
+     * @param service      the service
+     * @param samlResponse the saml 1 response
+     */
+    private static void setInResponseToForSamlResponseIfNeeded(final Service service, final Response samlResponse) {
+        if (service instanceof SamlService) {
+            val samlService = (SamlService) service;
+            val requestId = samlService.getRequestId();
+            if (StringUtils.isNotBlank(requestId)) {
+                samlResponse.setInResponseTo(requestId);
+            }
+        }
+    }
+
+    /**
      * Create a new SAML response object.
      *
      * @param id           the id
@@ -69,29 +86,13 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public Response newResponse(final String id, final ZonedDateTime issueInstant,
                                 final String recipient, final WebApplicationService service) {
 
-        final Response samlResponse = newSamlObject(Response.class);
+        val samlResponse = newSamlObject(Response.class);
         samlResponse.setID(id);
         samlResponse.setIssueInstant(DateTimeUtils.dateTimeOf(issueInstant));
         samlResponse.setVersion(SAMLVersion.VERSION_11);
         samlResponse.setInResponseTo(recipient);
         setInResponseToForSamlResponseIfNeeded(service, samlResponse);
         return samlResponse;
-    }
-
-    /**
-     * Sets in response to for saml 1 response.
-     *
-     * @param service      the service
-     * @param samlResponse the saml 1 response
-     */
-    private static void setInResponseToForSamlResponseIfNeeded(final Service service, final Response samlResponse) {
-        if (service instanceof SamlService) {
-            final SamlService samlService = (SamlService) service;
-            final String requestId = samlService.getRequestId();
-            if (StringUtils.isNotBlank(requestId)) {
-                samlResponse.setInResponseTo(requestId);
-            }
-        }
     }
 
     /**
@@ -105,7 +106,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      */
     public Assertion newAssertion(final AuthenticationStatement authnStatement, final String issuer,
                                   final ZonedDateTime issuedAt, final String id) {
-        final Assertion assertion = newSamlObject(Assertion.class);
+        val assertion = newSamlObject(Assertion.class);
 
         assertion.setID(id);
         assertion.setIssueInstant(DateTimeUtils.dateTimeOf(issuedAt));
@@ -123,11 +124,11 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the conditions
      */
     public Conditions newConditions(final ZonedDateTime issuedAt, final String audienceUri, final long issueLength) {
-        final Conditions conditions = newSamlObject(Conditions.class);
+        val conditions = newSamlObject(Conditions.class);
         conditions.setNotBefore(DateTimeUtils.dateTimeOf(issuedAt));
         conditions.setNotOnOrAfter(DateTimeUtils.dateTimeOf(issuedAt.plus(issueLength, ChronoUnit.SECONDS)));
-        final AudienceRestrictionCondition audienceRestriction = newSamlObject(AudienceRestrictionCondition.class);
-        final Audience audience = newSamlObject(Audience.class);
+        val audienceRestriction = newSamlObject(AudienceRestrictionCondition.class);
+        val audience = newSamlObject(Audience.class);
         audience.setUri(audienceUri);
         audienceRestriction.getAudiences().add(audience);
         conditions.getAudienceRestrictionConditions().add(audienceRestriction);
@@ -152,12 +153,12 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the status
      */
     public Status newStatus(final QName codeValue, final String statusMessage) {
-        final Status status = newSamlObject(Status.class);
-        final StatusCode code = newSamlObject(StatusCode.class);
+        val status = newSamlObject(Status.class);
+        val code = newSamlObject(StatusCode.class);
         code.setValue(codeValue);
         status.setStatusCode(code);
         if (StringUtils.isNotBlank(statusMessage)) {
-            final StatusMessage message = newSamlObject(StatusMessage.class);
+            val message = newSamlObject(StatusMessage.class);
             message.setMessage(statusMessage);
             status.setStatusMessage(message);
         }
@@ -176,13 +177,13 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                                                               final Collection<Object> authenticationMethod,
                                                               final String subjectId) {
 
-        final AuthenticationStatement authnStatement = newSamlObject(AuthenticationStatement.class);
+        val authnStatement = newSamlObject(AuthenticationStatement.class);
         authnStatement.setAuthenticationInstant(DateTimeUtils.dateTimeOf(authenticationDate));
 
         authnStatement.setAuthenticationMethod(
-                authenticationMethod != null && !authenticationMethod.isEmpty()
-                        ? authenticationMethod.iterator().next().toString()
-                        : SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_UNSPECIFIED);
+            authenticationMethod != null && !authenticationMethod.isEmpty()
+                ? authenticationMethod.iterator().next().toString()
+                : SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_UNSPECIFIED);
         authnStatement.setSubject(newSubject(subjectId));
         return authnStatement;
     }
@@ -206,13 +207,13 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @return the subject
      */
     public Subject newSubject(final String identifier, final String confirmationMethod) {
-        final SubjectConfirmation confirmation = newSamlObject(SubjectConfirmation.class);
-        final ConfirmationMethod method = newSamlObject(ConfirmationMethod.class);
+        val confirmation = newSamlObject(SubjectConfirmation.class);
+        val method = newSamlObject(ConfirmationMethod.class);
         method.setConfirmationMethod(confirmationMethod);
         confirmation.getConfirmationMethods().add(method);
-        final NameIdentifier nameIdentifier = newSamlObject(NameIdentifier.class);
+        val nameIdentifier = newSamlObject(NameIdentifier.class);
         nameIdentifier.setNameIdentifier(identifier);
-        final Subject subject = newSamlObject(Subject.class);
+        val subject = newSamlObject(Subject.class);
         subject.setNameIdentifier(nameIdentifier);
         subject.setSubjectConfirmation(confirmation);
         return subject;
@@ -243,14 +244,14 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
                                                     final Map<String, Object> attributes,
                                                     final String attributeNamespace) {
 
-        final AttributeStatement attrStatement = newSamlObject(AttributeStatement.class);
+        val attrStatement = newSamlObject(AttributeStatement.class);
         attrStatement.setSubject(subject);
-        for (final Map.Entry<String, Object> e : attributes.entrySet()) {
+        for (val e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
                 LOGGER.info("Skipping attribute [{}] because it does not have any values.", e.getKey());
                 continue;
             }
-            final Attribute attribute = newSamlObject(Attribute.class);
+            val attribute = newSamlObject(Attribute.class);
             attribute.setAttributeName(e.getKey());
 
             if (StringUtils.isNotBlank(attributeNamespace)) {
@@ -279,8 +280,8 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
 
         SamlUtils.logSamlObject(this.configBean, samlMessage);
 
-        final HTTPSOAP11Encoder encoder = new CasHttpSoap11Encoder();
-        final MessageContext<SAMLObject> context = new MessageContext();
+        val encoder = new CasHttpSoap11Encoder();
+        val context = new MessageContext<SAMLObject>();
         context.setMessage(samlMessage);
         encoder.setHttpServletResponse(httpResponse);
         encoder.setMessageContext(context);

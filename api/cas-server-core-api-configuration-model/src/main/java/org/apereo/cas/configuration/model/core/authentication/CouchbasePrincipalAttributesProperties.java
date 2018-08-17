@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link CouchbasePrincipalAttributesProperties}.
@@ -14,7 +14,6 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-couchbase-authentication")
-@Slf4j
 @Getter
 @Setter
 public class CouchbasePrincipalAttributesProperties extends BaseCouchbaseProperties {

@@ -1,19 +1,16 @@
 package org.apereo.cas.gua.impl;
 
-import com.google.common.io.ByteSource;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
-
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
-import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapEntry;
+
+import com.google.common.io.ByteSource;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.ReturnAttributes;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -34,11 +31,11 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
     @Override
     public ByteSource getGraphics(final String username) {
         try {
-            final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
-            final Response<SearchResult> response = searchForId(username);
+            val gua = casProperties.getAuthn().getGua();
+            val response = searchForId(username);
             if (LdapUtils.containsResultEntry(response)) {
-                final LdapEntry entry = response.getResult().getEntry();
-                final LdapAttribute attribute = entry.getAttribute(gua.getLdap().getImageAttribute());
+                val entry = response.getResult().getEntry();
+                val attribute = entry.getAttribute(gua.getLdap().getImageAttribute());
                 if (attribute != null && attribute.isBinary()) {
                     return ByteSource.wrap(attribute.getBinaryValue());
                 }
@@ -50,15 +47,15 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
     }
 
     private Response<SearchResult> searchForId(final String id) throws LdapException {
-        final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
-        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getSearchFilter(),
-                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                CollectionUtils.wrap(id));
+        val gua = casProperties.getAuthn().getGua();
+        val filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getSearchFilter(),
+            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+            CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(
-                LdapUtils.newLdaptiveConnectionFactory(gua.getLdap()),
-                gua.getLdap().getBaseDn(), filter,
-                new String[]{gua.getLdap().getImageAttribute()},
-                ReturnAttributes.NONE.value());
+            LdapUtils.newLdaptiveConnectionFactory(gua.getLdap()),
+            gua.getLdap().getBaseDn(), filter,
+            new String[]{gua.getLdap().getImageAttribute()},
+            ReturnAttributes.ALL_USER.value());
     }
 
 }

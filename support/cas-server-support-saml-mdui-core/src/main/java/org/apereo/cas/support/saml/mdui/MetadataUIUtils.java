@@ -1,16 +1,16 @@
 package org.apereo.cas.support.saml.mdui;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
-import org.opensaml.core.xml.XMLObject;
+
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link MetadataUIUtils}.
@@ -30,7 +30,7 @@ public class MetadataUIUtils {
      */
     public static SPSSODescriptor getSPSsoDescriptor(final EntityDescriptor entityDescriptor) {
         LOGGER.trace("Locating SP SSO descriptor for SAML2 protocol...");
-        SPSSODescriptor spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
+        var spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
         if (spssoDescriptor == null) {
             LOGGER.trace("Locating SP SSO descriptor for SAML11 protocol...");
             spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML11P_NS);
@@ -65,7 +65,7 @@ public class MetadataUIUtils {
      */
     public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final MetadataResolverAdapter metadataAdapter,
                                                                             final String entityId, final RegisteredService registeredService, final HttpServletRequest requestContext) {
-        final EntityDescriptor entityDescriptor = metadataAdapter.getEntityDescriptorForEntityId(entityId);
+        val entityDescriptor = metadataAdapter.getEntityDescriptorForEntityId(entityId);
         return locateMetadataUserInterfaceForEntityId(entityDescriptor, entityId, registeredService, requestContext);
     }
 
@@ -80,28 +80,28 @@ public class MetadataUIUtils {
      */
     public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final EntityDescriptor entityDescriptor, final String entityId,
                                                                             final RegisteredService registeredService, final HttpServletRequest requestContext) {
-        final SamlMetadataUIInfo mdui = new SamlMetadataUIInfo(registeredService, requestContext.getLocale().getLanguage());
+        val mdui = new SamlMetadataUIInfo(registeredService, requestContext.getLocale().getLanguage());
         if (entityDescriptor == null) {
             LOGGER.trace("Entity descriptor not found for [{}]", entityId);
             return mdui;
         }
-        final SPSSODescriptor spssoDescriptor = getSPSsoDescriptor(entityDescriptor);
+        val spssoDescriptor = getSPSsoDescriptor(entityDescriptor);
         if (spssoDescriptor == null) {
             LOGGER.trace("SP SSO descriptor not found for [{}]", entityId);
             return mdui;
         }
-        final Extensions extensions = spssoDescriptor.getExtensions();
+        val extensions = spssoDescriptor.getExtensions();
         if (extensions == null) {
             LOGGER.trace("No extensions in the SP SSO descriptor are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
             return mdui;
         }
-        final List<XMLObject> spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
+        val spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
         if (spExtensions.isEmpty()) {
             LOGGER.trace("No extensions in the SP SSO descriptor are located for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
             return mdui;
         }
         spExtensions.stream().filter(UIInfo.class::isInstance).forEach(obj -> {
-            final UIInfo uiInfo = (UIInfo) obj;
+            val uiInfo = (UIInfo) obj;
             LOGGER.trace("Found MDUI info for [{}]", entityId);
             mdui.setUiInfo(uiInfo);
         });

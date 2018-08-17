@@ -1,7 +1,9 @@
 package org.apereo.cas.util.junit;
 
-import lombok.SneakyThrows;
 import org.apereo.cas.util.SocketUtils;
+
+import lombok.SneakyThrows;
+import lombok.val;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
@@ -27,15 +29,13 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     @Override
     @SneakyThrows
     protected boolean isTestMethodIgnored(final FrameworkMethod frameworkMethod) {
-        ConditionalIgnore ignore = frameworkMethod.getDeclaringClass().getAnnotation(ConditionalIgnore.class);
+        var ignore = frameworkMethod.getDeclaringClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
-            final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
-            return !isIgnoreConditionSatisfied(ignore, condition);
+            return !isIgnoreConditionSatisfied(ignore);
         }
         ignore = frameworkMethod.getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
-            final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
-            return !isIgnoreConditionSatisfied(ignore, condition);
+            return !isIgnoreConditionSatisfied(ignore);
         }
         return super.isTestMethodIgnored(frameworkMethod);
     }
@@ -43,10 +43,10 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     @Override
     @SneakyThrows
     protected Statement withBeforeClasses(final Statement statement) {
-        final ConditionalIgnore ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
+        val ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
-            final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
-            if (!isIgnoreConditionSatisfied(ignore, condition)) {
+            if (!isIgnoreConditionSatisfied(ignore)) {
+                val condition = ignore.condition().getDeclaredConstructor().newInstance();
                 return new ConditionalIgnoreRule.IgnoreStatement(condition);
             }
         }
@@ -56,21 +56,28 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
     @Override
     @SneakyThrows
     protected Statement withAfterClasses(final Statement statement) {
-        final ConditionalIgnore ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
+        val ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
         if (ignore != null) {
-            final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
-            if (!isIgnoreConditionSatisfied(ignore, condition)) {
+            if (!isIgnoreConditionSatisfied(ignore)) {
+                val condition = ignore.condition().getDeclaredConstructor().newInstance();
                 return new ConditionalIgnoreRule.IgnoreStatement(condition);
             }
         }
         return super.withAfterClasses(statement);
     }
 
-    private boolean isIgnoreConditionSatisfied(final ConditionalIgnore ignore, final IgnoreCondition ignoreCondition) {
-        boolean runTests = ignoreCondition.isSatisfied();
-        if (runTests && ignore.port() > 0) {
-            runTests = !SocketUtils.isTcpPortAvailable(ignore.port());
+    private boolean isIgnoreConditionSatisfied(final ConditionalIgnore ignore) throws Exception {
+        if (ignore.condition() == null) {
+            return !SocketUtils.isTcpPortAvailable(ignore.port());
         }
-        return runTests;
+
+        val portRunning = !SocketUtils.isTcpPortAvailable(ignore.port());
+
+        val condition = ignore.condition().getDeclaredConstructor().newInstance();
+        val satisfied = condition.isSatisfied();
+        if (satisfied == null || satisfied) {
+            return portRunning;
+        }
+        return satisfied;
     }
 }

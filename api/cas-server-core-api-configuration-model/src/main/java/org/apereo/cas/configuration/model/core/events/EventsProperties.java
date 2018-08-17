@@ -1,13 +1,14 @@
 package org.apereo.cas.configuration.model.core.events;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for events.
@@ -16,7 +17,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-events", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class EventsProperties implements Serializable {
@@ -51,7 +51,7 @@ public class EventsProperties implements Serializable {
      * Track authentication events inside a mongodb instance.
      */
     private MongoDb mongo = new MongoDb();
-    
+
     @RequiresModule(name = "cas-server-support-events-jpa")
     @Getter
     @Setter

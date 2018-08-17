@@ -12,7 +12,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceConsentPolicy extends Serializable {
 
     /**
@@ -39,7 +39,7 @@ public interface RegisteredServiceConsentPolicy extends Serializable {
      * If specified, consent should only be applied to the listed attributes
      * and not everything the attribute release policy may indicate.
      *
-     * @return the include-only attributes. If the return collection is null or empty, 
+     * @return the include-only attributes. If the return collection is null or empty,
      * attribute release policy is consulted to determine all of included attributes.
      */
     default Set<String> getIncludeOnlyAttributes() {

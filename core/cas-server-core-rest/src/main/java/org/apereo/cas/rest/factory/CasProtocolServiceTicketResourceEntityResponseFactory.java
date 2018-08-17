@@ -1,12 +1,13 @@
 package org.apereo.cas.rest.factory;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.ticket.ServiceTicket;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -17,7 +18,7 @@ import org.springframework.http.ResponseEntity;
  * @since 5.2.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CasProtocolServiceTicketResourceEntityResponseFactory implements ServiceTicketResourceEntityResponseFactory {
     /**
      * The central authentication service implementation.
@@ -26,7 +27,7 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
 
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
-        final String serviceTicketId = grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        val serviceTicketId = grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
         return new ResponseEntity<>(serviceTicketId, HttpStatus.OK);
     }
 
@@ -39,7 +40,7 @@ public class CasProtocolServiceTicketResourceEntityResponseFactory implements Se
      * @return the service ticket
      */
     protected String grantServiceTicket(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
-        final ServiceTicket ticket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
+        val ticket = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
 
         LOGGER.debug("Generated service ticket [{}]", ticket.getId());
         return ticket.getId();

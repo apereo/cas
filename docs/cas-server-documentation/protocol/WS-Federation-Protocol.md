@@ -155,7 +155,7 @@ is identified by the value of the `givenName` attribute that is already retrieve
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#ws-federation).
 
-You may also need to declare the following Maven repository in
+You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:
 
 ```xml

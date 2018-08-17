@@ -1,8 +1,10 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PreventedException;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Authentication policy that defines success as at least one authentication success and no authentication attempts
@@ -22,7 +24,7 @@ public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
-        final boolean fail = authentication.getFailures().values()
+        val fail = authentication.getFailures().values()
             .stream()
             .anyMatch(failure -> failure.getClass().isAssignableFrom(PreventedException.class));
         if (fail) {

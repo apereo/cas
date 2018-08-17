@@ -1,12 +1,11 @@
 package org.apereo.cas.web.view;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.AbstractTemplateResolver;
-import org.thymeleaf.templateresolver.TemplateResolution;
 import org.thymeleaf.templateresource.ITemplateResource;
 
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Slf4j
 @Getter
 public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateResolver {
     private List<AbstractTemplateResolver> resolvers = new ArrayList<>();
@@ -38,6 +36,13 @@ public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateRe
         this.resolvers.add(resolver);
     }
 
+    /**
+     * Initialize and sort resolvers here before computing templates.
+     */
+    public void initialize() {
+        AnnotationAwareOrderComparator.sortIfNecessary(this.resolvers);
+    }
+
     @Override
     protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration,
                                                         final String ownerTemplate,
@@ -45,9 +50,8 @@ public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateRe
                                                         final String resourceName,
                                                         final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
-        AnnotationAwareOrderComparator.sortIfNecessary(this.resolvers);
-        for (final AbstractTemplateResolver r : this.resolvers) {
-            final TemplateResolution resource = r.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes);
+        for (val r : this.resolvers) {
+            val resource = r.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes);
             if (resource != null && resource.isTemplateResourceExistenceVerified()) {
                 return resource.getTemplateResource();
             }

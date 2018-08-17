@@ -1,11 +1,10 @@
 package org.apereo.cas.api;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 import java.math.BigDecimal;
-import lombok.ToString;
 
 /**
  * This is {@link AuthenticationRiskScore}.
@@ -13,9 +12,8 @@ import lombok.ToString;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 public class AuthenticationRiskScore {
 

@@ -1,15 +1,19 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
+import org.apereo.cas.ticket.registry.EncodedTicket;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.StringSerializer;
+
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.apereo.cas.ticket.proxy.ProxyTicket;
-import org.apereo.cas.ticket.registry.EncodedTicket;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
-import org.apereo.cas.util.serialization.StringSerializer;
+import org.jooq.lambda.Unchecked;
 
 import java.io.StringWriter;
 import java.util.Map;
@@ -28,55 +32,50 @@ public abstract class BaseTicketSerializers {
     private static final Map<String, Class> TICKET_TYPE_CACHE = new ConcurrentHashMap<>();
     private static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
 
-    private static final StringSerializer<ProxyGrantingTicket> PROXY_GRANTING_TICKET_SERIALIZER
-        = new AbstractJacksonBackedStringSerializer<ProxyGrantingTicket>(MINIMAL_PRETTY_PRINTER) {
-            private static final long serialVersionUID = 7089208351327601379L;
+    private static final StringSerializer<ProxyGrantingTicket> PROXY_GRANTING_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        private static final long serialVersionUID = 7089208351327601379L;
 
-            @Override
-            protected Class<ProxyGrantingTicket> getTypeToSerialize() {
-                return ProxyGrantingTicket.class;
-            }
-        };
+        @Override
+        protected Class<ProxyGrantingTicket> getTypeToSerialize() {
+            return ProxyGrantingTicket.class;
+        }
+    };
 
-    private static final StringSerializer<ProxyTicket> PROXY_TICKET_SERIALIZER
-        = new AbstractJacksonBackedStringSerializer<ProxyTicket>(MINIMAL_PRETTY_PRINTER) {
-            private static final long serialVersionUID = -6343596853082798477L;
+    private static final StringSerializer<ProxyTicket> PROXY_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        private static final long serialVersionUID = -6343596853082798477L;
 
-            @Override
-            protected Class<ProxyTicket> getTypeToSerialize() {
-                return ProxyTicket.class;
-            }
-        };
+        @Override
+        protected Class<ProxyTicket> getTypeToSerialize() {
+            return ProxyTicket.class;
+        }
+    };
 
-    private static final StringSerializer<TicketGrantingTicket> TICKET_GRANTING_TICKET_SERIALIZER
-        = new AbstractJacksonBackedStringSerializer<TicketGrantingTicket>(MINIMAL_PRETTY_PRINTER) {
-            private static final long serialVersionUID = 1527874389457723545L;
+    private static final StringSerializer<TicketGrantingTicket> TICKET_GRANTING_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        private static final long serialVersionUID = 1527874389457723545L;
 
-            @Override
-            protected Class<TicketGrantingTicket> getTypeToSerialize() {
-                return TicketGrantingTicket.class;
-            }
-        };
+        @Override
+        protected Class<TicketGrantingTicket> getTypeToSerialize() {
+            return TicketGrantingTicket.class;
+        }
+    };
 
-    private static final StringSerializer<ServiceTicket> SERVICE_TICKET_SERIALIZER
-        = new AbstractJacksonBackedStringSerializer<ServiceTicket>(MINIMAL_PRETTY_PRINTER) {
-            private static final long serialVersionUID = 8959617299162115085L;
+    private static final StringSerializer<ServiceTicket> SERVICE_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        private static final long serialVersionUID = 8959617299162115085L;
 
-            @Override
-            protected Class<ServiceTicket> getTypeToSerialize() {
-                return ServiceTicket.class;
-            }
-        };
+        @Override
+        protected Class<ServiceTicket> getTypeToSerialize() {
+            return ServiceTicket.class;
+        }
+    };
 
-    private static final StringSerializer<EncodedTicket> ENCODED_TICKET_SERIALIZER
-        = new AbstractJacksonBackedStringSerializer<EncodedTicket>(MINIMAL_PRETTY_PRINTER) {
-            private static final long serialVersionUID = 8959835299162115085L;
+    private static final StringSerializer<EncodedTicket> ENCODED_TICKET_SERIALIZER = new AbstractJacksonBackedStringSerializer<>(MINIMAL_PRETTY_PRINTER) {
+        private static final long serialVersionUID = 8959835299162115085L;
 
-            @Override
-            protected Class<EncodedTicket> getTypeToSerialize() {
-                return EncodedTicket.class;
-            }
-        };
+        @Override
+        protected Class<EncodedTicket> getTypeToSerialize() {
+            return EncodedTicket.class;
+        }
+    };
 
     /**
      * Gets proxy granting ticket serializer.
@@ -125,7 +124,7 @@ public abstract class BaseTicketSerializers {
      * @return the string
      */
     public static String serializeTicket(final Ticket ticket) {
-        final StringWriter writer = new StringWriter();
+        val writer = new StringWriter();
         if (ticket instanceof TicketGrantingTicket) {
             getTicketGrantingTicketSerializer().to(writer, TicketGrantingTicket.class.cast(ticket));
         } else if (ticket instanceof ServiceTicket) {
@@ -151,14 +150,15 @@ public abstract class BaseTicketSerializers {
         if (StringUtils.isBlank(type)) {
             throw new InvalidTicketException("Invalid ticket type [blank] specified");
         }
-        final Class clazz;
-        if (TICKET_TYPE_CACHE.containsKey(type)) {
-            clazz = TICKET_TYPE_CACHE.get(type);
-        } else {
-            clazz = Class.forName(type);
-            TICKET_TYPE_CACHE.put(type, clazz);
-        }
-        return deserializeTicket(ticketContent, clazz);
+        val clazz = FunctionUtils.doIf(TICKET_TYPE_CACHE.containsKey(type),
+            () -> TICKET_TYPE_CACHE.get(type),
+            Unchecked.supplier(() -> {
+                val clz = Class.forName(type);
+                TICKET_TYPE_CACHE.put(type, clz);
+                return clz;
+            }))
+            .get();
+        return deserializeTicket(ticketContent, (Class) clazz);
     }
 
     /**
@@ -170,14 +170,7 @@ public abstract class BaseTicketSerializers {
      * @return the ticket instance
      */
     public static <T extends Ticket> T deserializeTicket(final String ticketContent, final Class<T> clazz) {
-        Ticket ticket = null;
-        if (TicketGrantingTicket.class.isAssignableFrom(clazz)) {
-            ticket = getTicketGrantingTicketSerializer().from(ticketContent);
-        } else if (ServiceTicket.class.isAssignableFrom(clazz)) {
-            ticket = getServiceTicketSerializer().from(ticketContent);
-        } else if (EncodedTicket.class.isAssignableFrom(clazz)) {
-            ticket = getEncodedTicketSerializer().from(ticketContent);
-        }
+        val ticket = getTicketDeserializerFor(clazz).from(ticketContent);
         if (ticket == null) {
             throw new InvalidTicketException(clazz.getName());
         }
@@ -189,4 +182,16 @@ public abstract class BaseTicketSerializers {
         return (T) ticket;
     }
 
+    private static StringSerializer<? extends Ticket> getTicketDeserializerFor(final Class clazz) {
+        if (TicketGrantingTicket.class.isAssignableFrom(clazz)) {
+            return getTicketGrantingTicketSerializer();
+        }
+        if (ServiceTicket.class.isAssignableFrom(clazz)) {
+            return getServiceTicketSerializer();
+        }
+        if (EncodedTicket.class.isAssignableFrom(clazz)) {
+            return getEncodedTicketSerializer();
+        }
+        return null;
+    }
 }

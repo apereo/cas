@@ -1,21 +1,21 @@
 package org.apereo.cas.config;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.flow.SurrogateWebflowEventResolver;
+import org.apereo.cas.web.flow.SurrogateMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+
+import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
@@ -28,8 +28,9 @@ import org.springframework.web.util.CookieGenerator;
  */
 @Configuration("SurrogateWebflowEventResolutionConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class SurrogateWebflowEventResolutionConfiguration {
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -48,10 +49,6 @@ public class SurrogateWebflowEventResolutionConfiguration {
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
-    @Qualifier("surrogateAuthenticationService")
-    private SurrogateAuthenticationService surrogateAuthenticationService;
-
-    @Autowired
     @Qualifier("warnCookieGenerator")
     private CookieGenerator warnCookieGenerator;
 
@@ -63,14 +60,20 @@ public class SurrogateWebflowEventResolutionConfiguration {
     @Qualifier("multifactorAuthenticationProviderSelector")
     private MultifactorAuthenticationProviderSelector selector;
 
-    @ConditionalOnMissingBean(name = "surrogateWebflowEventResolver")
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
     @Bean
-    public CasWebflowEventResolver surrogateWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
-                                                                 final AuthenticationSystemSupport authenticationSystemSupport) {
-        final CasWebflowEventResolver r = new SurrogateWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
-                servicesManager, ticketRegistrySupport, warnCookieGenerator,
-                authenticationRequestServiceSelectionStrategies,
-                selector, surrogateAuthenticationService);
+    @RefreshScope
+    public CasWebflowEventResolver surrogateMultifactorAuthenticationWebflowEventResolver() {
+        val r = new SurrogateMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
+            centralAuthenticationService, servicesManager,
+            ticketRegistrySupport,
+            warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+            selector,
+            casProperties);
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
         return r;
     }

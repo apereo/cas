@@ -1,12 +1,12 @@
 package org.apereo.cas.config.authentication.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfigurer;
 import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryPlan;
 import org.apereo.cas.support.saml.authentication.SamlRestServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("samlRestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 @ConditionalOnClass(ServiceTicketResourceEntityResponseFactoryConfigurer.class)
 public class SamlRestConfiguration implements ServiceTicketResourceEntityResponseFactoryConfigurer {
 

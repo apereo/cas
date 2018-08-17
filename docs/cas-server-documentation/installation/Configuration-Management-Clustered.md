@@ -48,7 +48,7 @@ Support is enabled by including the following dependency in the final overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-amqp</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-amqp</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
@@ -67,7 +67,7 @@ Support is enabled by including the following dependency in the final overlay:
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-configuration-cloud-kafka</artifactId>
+     <artifactId>cas-server-support-configuration-cloud-kafka</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```

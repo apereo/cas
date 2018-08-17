@@ -1,15 +1,16 @@
 package org.apereo.cas.configuration.model.support.aup;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * This is {@link AcceptableUsagePolicyProperties}.
@@ -18,7 +19,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-aup-webflow")
-@Slf4j
 @Getter
 @Setter
 public class AcceptableUsagePolicyProperties implements Serializable {
@@ -44,6 +44,12 @@ public class AcceptableUsagePolicyProperties implements Serializable {
      * Keep consent decisions stored via a MongoDb database resource.
      */
     private MongoDb mongo = new MongoDb();
+
+    /**
+     * AUP enabled allows AUP to be turned off on startup.
+     */
+    @RequiredProperty
+    private boolean enabled = true;
 
     /**
      * AUP attribute to choose in order to determine whether policy
@@ -81,7 +87,6 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @Getter
     @Setter
     public static class Rest extends RestEndpointProperties {
-
         private static final long serialVersionUID = -8102345678378393382L;
     }
 

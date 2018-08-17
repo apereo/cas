@@ -1,21 +1,21 @@
 package org.apereo.cas.oidc.util;
 
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jasig.cas.client.util.URIBuilder;
-import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 
 import java.time.ZonedDateTime;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class OidcAuthorizationRequestSupport {
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;
@@ -44,10 +44,10 @@ public class OidcAuthorizationRequestSupport {
      */
     public static Set<String> getOidcPromptFromAuthorizationRequest(@NonNull final String url) {
         return new URIBuilder(url).getQueryParams().stream()
-                .filter(p -> OidcConstants.PROMPT.equals(p.getName()))
-                .map(param -> param.getValue().split(" "))
-                .flatMap(Arrays::stream)
-                .collect(Collectors.toSet());
+            .filter(p -> OidcConstants.PROMPT.equals(p.getName()))
+            .map(param -> param.getValue().split(" "))
+            .flatMap(Arrays::stream)
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -67,13 +67,13 @@ public class OidcAuthorizationRequestSupport {
      * @return the oidc max age from authorization request
      */
     public static Optional<Long> getOidcMaxAgeFromAuthorizationRequest(final WebContext context) {
-        final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
-        final Optional<URIBuilder.BasicNameValuePair> parameter = builderContext.getQueryParams()
-                .stream().filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
-                .findFirst();
+        val builderContext = new URIBuilder(context.getFullRequestURL());
+        val parameter = builderContext.getQueryParams()
+            .stream().filter(p -> OidcConstants.MAX_AGE.equals(p.getName()))
+            .findFirst();
 
         if (parameter.isPresent()) {
-            final long maxAge = NumberUtils.toLong(parameter.get().getValue(), -1);
+            val maxAge = NumberUtils.toLong(parameter.get().getValue(), -1);
             return Optional.of(maxAge);
         }
         return Optional.empty();
@@ -86,7 +86,7 @@ public class OidcAuthorizationRequestSupport {
      * @return the optional user profile
      */
     public static Optional<UserProfile> isAuthenticationProfileAvailable(final WebContext context) {
-        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(context);
+        val manager = Pac4jUtils.getPac4jProfileManager(context);
         return manager.get(true);
     }
 
@@ -97,12 +97,12 @@ public class OidcAuthorizationRequestSupport {
      * @return the optional authn
      */
     public Optional<Authentication> isCasAuthenticationAvailable(final WebContext context) {
-        final J2EContext j2EContext = (J2EContext) context;
+        val j2EContext = (J2EContext) context;
         if (j2EContext != null) {
-            final String tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(j2EContext.getRequest());
+            val tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(j2EContext.getRequest());
 
             if (StringUtils.isNotBlank(tgtId)) {
-                final Authentication authentication = ticketRegistrySupport.getAuthenticationFrom(tgtId);
+                val authentication = ticketRegistrySupport.getAuthenticationFrom(tgtId);
                 if (authentication != null) {
                     return Optional.of(authentication);
                 }
@@ -120,14 +120,14 @@ public class OidcAuthorizationRequestSupport {
      */
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final ZonedDateTime authenticationDate) {
-        final Optional<Long> maxAge = getOidcMaxAgeFromAuthorizationRequest(context);
+        val maxAge = getOidcMaxAgeFromAuthorizationRequest(context);
         if (maxAge.isPresent() && maxAge.get() > 0) {
-            final long now = ZonedDateTime.now().toEpochSecond();
-            final long authTime = authenticationDate.toEpochSecond();
-            final long diffInSeconds = now - authTime;
+            val now = ZonedDateTime.now().toEpochSecond();
+            val authTime = authenticationDate.toEpochSecond();
+            val diffInSeconds = now - authTime;
             if (diffInSeconds > maxAge.get()) {
                 LOGGER.info("Authentication is too old: [{}] and was created [{}] seconds ago.",
-                        authTime, diffInSeconds);
+                    authTime, diffInSeconds);
                 return true;
             }
         }
@@ -147,6 +147,18 @@ public class OidcAuthorizationRequestSupport {
     }
 
     /**
+     * Is cas authentication available and old for max age authorization request?
+     *
+     * @param context the context
+     * @return true/false
+     */
+    public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context) {
+        return isCasAuthenticationAvailable(context)
+            .filter(a -> isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, a))
+            .isPresent();
+    }
+
+    /**
      * Is cas authentication old for max age authorization request?
      *
      * @param context the context
@@ -156,55 +168,11 @@ public class OidcAuthorizationRequestSupport {
     public boolean isCasAuthenticationOldForMaxAgeAuthorizationRequest(final WebContext context,
                                                                        final UserProfile profile) {
 
-        final Object authTime =
-                profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
+        val authTime = profile.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
         if (authTime == null) {
             return false;
         }
-        final ZonedDateTime dt = ZonedDateTime.parse(authTime.toString());
+        val dt = ZonedDateTime.parse(authTime.toString());
         return isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, dt);
-    }
-
-    /**
-     * Configure client for max age authorization request.
-     * Sets the CAS client to ask for renewed authentication if
-     * the authn time is too old based on the requested max age.
-     *
-     * @param casClient      the cas client
-     * @param context        the context
-     * @param authentication the authentication
-     */
-    public void configureClientForMaxAgeAuthorizationRequest(final CasClient casClient, final WebContext context,
-                                                             final Authentication authentication) {
-        if (isCasAuthenticationOldForMaxAgeAuthorizationRequest(context, authentication)) {
-            casClient.getConfiguration().setRenew(true);
-        }
-    }
-
-    /**
-     * Configure client for prompt login authorization request.
-     *
-     * @param casClient the cas client
-     * @param context   the context
-     */
-    public static void configureClientForPromptLoginAuthorizationRequest(final CasClient casClient, final WebContext context) {
-        final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
-        if (prompts.contains(OidcConstants.PROMPT_LOGIN)) {
-            casClient.getConfiguration().setRenew(true);
-        }
-    }
-
-    /**
-     * Configure client for prompt none authorization request.
-     *
-     * @param casClient the cas client
-     * @param context   the context
-     */
-    public static void configureClientForPromptNoneAuthorizationRequest(final CasClient casClient, final WebContext context) {
-        final Set<String> prompts = getOidcPromptFromAuthorizationRequest(context);
-        if (prompts.contains(OidcConstants.PROMPT_NONE)) {
-            casClient.getConfiguration().setRenew(false);
-            casClient.getConfiguration().setGateway(true);
-        }
     }
 }

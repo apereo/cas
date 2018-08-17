@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.webapp;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+
+import java.io.Serializable;
 
 /**
  * This is {@link WebflowSessionManagementProperties}.
@@ -13,7 +13,6 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 @Setter
 public class WebflowSessionManagementProperties implements Serializable {
@@ -55,5 +54,5 @@ public class WebflowSessionManagementProperties implements Serializable {
      * file that defines how state should be replicated.
      * Only relevant if session storage is done on the server.
      */
-    private Resource hzLocation = new ClassPathResource("hazelcast.xml");
+    private transient Resource hzLocation = new ClassPathResource("hazelcast.xml");
 }

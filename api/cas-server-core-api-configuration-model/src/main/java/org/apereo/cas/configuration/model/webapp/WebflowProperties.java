@@ -1,13 +1,14 @@
 package org.apereo.cas.configuration.model.webapp;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for webflow.
@@ -16,7 +17,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-webflow")
-@Slf4j
 @Getter
 @Setter
 public class WebflowProperties implements Serializable {
@@ -57,6 +57,12 @@ public class WebflowProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private WebflowSessionManagementProperties session = new WebflowSessionManagementProperties();
+
+    /**
+     * Configuration settings relevant for login flow and view decoration.
+     */
+    @NestedConfigurationProperty
+    private WebflowLoginDecoratorProperties loginDecorator = new WebflowLoginDecoratorProperties();
 
     /**
      * Path to groovy resource that may auto-configure the webflow context

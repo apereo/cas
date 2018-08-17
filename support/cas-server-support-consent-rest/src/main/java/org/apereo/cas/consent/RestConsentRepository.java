@@ -1,23 +1,24 @@
 package org.apereo.cas.consent;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import lombok.ToString;
 
 /**
  * This is {@link RestConsentRepository}.
@@ -27,23 +28,23 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class RestConsentRepository implements ConsentRepository {
 
     private static final long serialVersionUID = 6583408864586270206L;
 
-    private final RestTemplate restTemplate;
+    private final transient RestTemplate restTemplate;
 
     private final String endpoint;
 
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {
         try {
-            final HttpHeaders headers = new HttpHeaders();
+            val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             headers.put("principal", CollectionUtils.wrap(principal));
-            final HttpEntity<String> entity = new HttpEntity<>(headers);
-            final ResponseEntity<List> result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
+            val entity = new HttpEntity<>(headers);
+            val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
             }
@@ -56,10 +57,10 @@ public class RestConsentRepository implements ConsentRepository {
     @Override
     public Collection<ConsentDecision> findConsentDecisions() {
         try {
-            final HttpHeaders headers = new HttpHeaders();
+            val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            final HttpEntity<String> entity = new HttpEntity<>(headers);
-            final ResponseEntity<List> result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
+            val entity = new HttpEntity<>(headers);
+            val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, List.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
             }
@@ -72,12 +73,12 @@ public class RestConsentRepository implements ConsentRepository {
     @Override
     public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService, final Authentication authentication) {
         try {
-            final HttpHeaders headers = new HttpHeaders();
+            val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             headers.put("service", CollectionUtils.wrap(service.getId()));
             headers.put("principal", CollectionUtils.wrap(authentication.getPrincipal().getId()));
-            final HttpEntity<String> entity = new HttpEntity<>(headers);
-            final ResponseEntity<ConsentDecision> result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, ConsentDecision.class);
+            val entity = new HttpEntity<>(headers);
+            val result = restTemplate.exchange(this.endpoint, HttpMethod.GET, entity, ConsentDecision.class);
             if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
                 return result.getBody();
             }
@@ -90,10 +91,10 @@ public class RestConsentRepository implements ConsentRepository {
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
         try {
-            final HttpHeaders headers = new HttpHeaders();
+            val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            final HttpEntity<ConsentDecision> entity = new HttpEntity<>(decision, headers);
-            final ResponseEntity<ConsentDecision> result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, ConsentDecision.class);
+            val entity = new HttpEntity<>(decision, headers);
+            val result = restTemplate.exchange(this.endpoint, HttpMethod.POST, entity, ConsentDecision.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -104,11 +105,11 @@ public class RestConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
         try {
-            final HttpHeaders headers = new HttpHeaders();
+            val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-            final HttpEntity<Map> entity = new HttpEntity<>(headers);
-            final String deleteEndpoint = this.endpoint.concat("/" + Long.toString(decisionId));
-            final ResponseEntity<Boolean> result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
+            val entity = new HttpEntity<>(headers);
+            val deleteEndpoint = this.endpoint.concat('/' + Long.toString(decisionId));
+            val result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

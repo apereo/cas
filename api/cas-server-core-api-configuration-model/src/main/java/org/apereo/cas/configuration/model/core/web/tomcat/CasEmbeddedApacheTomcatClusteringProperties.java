@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
@@ -16,7 +16,6 @@ import java.io.Serializable;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
-@Slf4j
 @Getter
 @Setter
 public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable {

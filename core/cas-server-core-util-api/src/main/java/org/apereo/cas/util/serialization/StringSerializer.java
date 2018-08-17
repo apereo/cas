@@ -2,6 +2,8 @@ package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.val;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -82,14 +84,15 @@ public interface StringSerializer<T> extends Serializable {
      * @param object the object to serialize
      */
     void to(File out, T object);
-    
+
     /**
      * Return the object as a string in memory.
+     *
      * @param object the object
      * @return string representation of the object.
      */
     String toString(T object);
-    
+
     /**
      * Load a collection of specified objects from the stream.
      *
@@ -97,7 +100,21 @@ public interface StringSerializer<T> extends Serializable {
      * @return the collection
      */
     default Collection<T> load(final InputStream stream) {
-        final T result = from(stream);
+        val result = from(stream);
+        if (result != null) {
+            return CollectionUtils.wrapList(result);
+        }
+        return new ArrayList<>(0);
+    }
+
+    /**
+     * Load collection.
+     *
+     * @param stream the stream
+     * @return the collection
+     */
+    default Collection<T> load(final Reader stream) {
+        val result = from(stream);
         if (result != null) {
             return CollectionUtils.wrapList(result);
         }
@@ -108,7 +125,7 @@ public interface StringSerializer<T> extends Serializable {
      * Supports the input stream for serialization?
      *
      * @param file the file
-     * @return true/false
+     * @return true /false
      */
     default boolean supports(final File file) {
         return true;

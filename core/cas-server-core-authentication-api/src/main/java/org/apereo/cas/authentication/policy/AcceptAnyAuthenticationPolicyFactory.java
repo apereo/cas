@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.policy;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.services.ServiceContext;
+
 
 /**
  * Produces authentication policies that passively satisfy any given {@link Authentication}.
@@ -12,12 +12,11 @@ import org.apereo.cas.services.ServiceContext;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 public class AcceptAnyAuthenticationPolicyFactory implements ContextualAuthenticationPolicyFactory<ServiceContext> {
 
     @Override
     public ContextualAuthenticationPolicy<ServiceContext> createPolicy(final ServiceContext context) {
-        return new ContextualAuthenticationPolicy<ServiceContext>() {
+        return new ContextualAuthenticationPolicy<>() {
 
             @Override
             public ServiceContext getContext() {

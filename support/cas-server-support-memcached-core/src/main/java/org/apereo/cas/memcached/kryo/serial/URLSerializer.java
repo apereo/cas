@@ -5,7 +5,7 @@ import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 import java.net.URL;
 
@@ -15,13 +15,11 @@ import java.net.URL;
  * @author Jerome Leleu
  * @since 4.0.0
  */
-@Slf4j
 public class URLSerializer extends Serializer<URL> {
-
     @Override
     @SneakyThrows
-    public URL read(final Kryo kryo, final Input input, final Class<URL> type) {
-        final String url = kryo.readObject(input, String.class);
+    public URL read(final Kryo kryo, final Input input, final Class<URL> aClass) {
+        val url = kryo.readObject(input, String.class);
         return new URL(url);
     }
 
@@ -29,4 +27,5 @@ public class URLSerializer extends Serializer<URL> {
     public void write(final Kryo kryo, final Output output, final URL url) {
         kryo.writeObject(output, url.toExternalForm());
     }
+
 }

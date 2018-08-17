@@ -5,92 +5,173 @@ title: CAS - Monitoring & Statistics
 
 # Monitoring / Statistics
 
-The following endpoints are available and secured by CAS:
+Actuator endpoints used to monitor and diagnose the internal configuration of the CAS server are typically
+exposed over the endpoint `/actuator`. The following endpoints are secured and available by 
+[Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):
 
-| URL                               | Description
-|-----------------------------------|------------------------------------------
-| `/status/dashboard`               | The control panel to CAS server functionality and management.
-| `/status`                         | [Monitor CAS status and other underlying components](Configuring-Monitoring.html).
-| `/status/sso`                     | Describes if there exists an active SSO session for this request tied to this browser session.
-| `/status/swf`                     | Describes the current configured state of CAS webflow in JSON.
-| `/status/stats`                   | Visual representation of CAS statistics with graphs and charts, etc.
-| `/status/logging`                 | Monitor CAS logs in a streaming fashion and review the audit log.
-| `/status/config`                  | Visual representation of application properties and configuration.
-| `/status/ssosessions`             | Reports active SSO sessions. Examine attributes, services and log users out.
-| `/status/services`                | Reports the collection of [applications registered with CAS](Service-Management.html).
-| `/status/trustedDevs`             | Reports on the [registered trusted devices/browsers](Multifactor-TrustedDevice-Authentication.html).
-| `/status/authnEvents`             | When enabled, reports on the [events captured by CAS](Configuring-Authentication-Events.html).
-| `/status/attrresolution`          | Examine resolution of user attributes via [CAS attribute resolution](../integration/Attribute-Resolution.html).
-| `/status/discovery`               | Advertises the CAS server's profile, features and capabilities for auto-configuration of client applications.
+| Endpoint                  | Description
+|---------------------------|-------------------------------------------------------------------------------------
+| `autoconfig`              | Describes how the CAS application context is auto-configured. 
+| `beans`                   | Displays all CAS application context **internal** Spring beans.
+| `conditions`              | Shows the conditions that were evaluated on configuration and auto-configuration classes and the reasons why they did or did not match.
+| `configprops`             | List of **internal** configuration properties.
+| `threaddump`              | Produces a thread dump for the running CAS server.
+| `env`                     | Produces a collection of all application properties.
+| `health`                  | Reports back general health status of the system, produced by various monitors.
+| `info`                    | CAS version information and other system traits.
+| `metrics`                 | Runtime metrics and stats.
+| `httptrace`               | Displays HTTP trace information (by default, the last 100 HTTP request-response exchanges).
+| `mappings`                | Describes how requests are mapped and handled by CAS.
+| `scheduledtasks`          | Displays the scheduled tasks in CAS.
+| `mappings`                | Describes how requests are mapped and handled by CAS.
+| `shutdown`                | Shut down the application via a `POST`. Disabled by default.
+| `restart`                 | Restart the application via a `POST`. Disabled by default.
+| `refresh`                 | Refresh the application configuration via a `POST` to let components reload and recognize new values.
+| `heapdump`                | Returns a GZip compressed hprof heap dump file.
+| `jolokia`                 | Exposes JMX beans over HTTP when Jolokia is configured and included in CAS.
+| `logfile`                 | Returns the contents of the log file if `logging.file` or `logging.path` properties are set with support for HTTP `Range` header.
+| `prometheus`              | Exposes metrics in a format that can be scraped by a Prometheus server.
 
-The following endpoints are secured and available 
-by [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):
+ The following endpoints are provided by CAS:
+ 
+| Endpoint                  | Description
+|---------------------------|-------------------------------------------------------------------------------------
+| `spring-webflow`          | Provides a JSON representation of the CAS authentication webflows.
+| `events`                  | Provides a JSON representation of all CAS recorded events.
+| `audit-log`               | Provides a JSON representation of all the audit log.
+| `discovery-profile`       | Provides a JSON representation of the [CAS configuration and capabilities](Configuration-Discovery.html).
+| `registered-services`     | Provides a JSON representation of the [CAS service registry](Service-Management.html).
+| `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.
+| `statistics`              | Exposes statistics data on tickets, memory, server availability and uptime, etc.
+| `sso-sessions`            | Review the current single sign-on sessions establishes with CAS and manage each session remotely.
+| `sso`                     | Indicate the current status of the single signon session tied to the browser session and the SSO cookie.
+| `resolve-attributes/{name}`    | Invoke the CAS [attribute resolution](../integration/Attribute-Resolution.html) engine to locate attributes for `{name}`.
+| `release-attributes`           | Invoke the CAS [attribute release](../integration/Attribute-Release.html) engine to release attributes to an application.
+| `multifactor-trusted-devices`  | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine.
+| `attribute-consent`  | Manage and control [attribute consent decisions](../integration/Attribute-Release-Consent.html).
+| `gauth-credential-repository`  | Manage and control [Google Authenticator account records](GoogleAuthenticator-Authentication.html).
+| `yubikey-account-repository`  | Manage and control [Google Authenticator account records](YubiKey-Authentication.html).
+| `oauth-tokens`  | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html).
 
-| URL                               | Description
-|-----------------------------------|-------------------------------------------------------------------------------------
-| `/status/autoconfig`              | Describes how the CAS application context is auto-configured. 
-| `/status/beans`                   | Displays all CAS application context **internal** Spring beans.
-| `/status/configprops`             | List of **internal** configuration properties.
-| `/status/dump`                    | Produces a thread dump for the running CAS server.
-| `/status/env`                     | Produces a collection of all application properties.
-| `/status/health`                  | Reports back general health status of the system, produced by various monitors.
-| `/status/info`                    | CAS version information and other system traits.
-| `/status/metrics`                 | Runtime metrics and stats.
-| `/status/mappings`                | Describes how requests are mapped and handled by CAS.
-| `/status/shutdown`                | Shut down the application via a `POST`. Disabled by default.
-| `/status/restart`                 | Restart the application via a `POST`. Disabled by default.
-| `/status/refresh`                 | Refresh the application configuration via a `POST` to let components reload and recognize new values.
+<div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
+Note that by default the only endpoints exposed over the web are <code>info</code>, <code>status</code>, <code>health</code> and <code>configuration-metadata</code>.
+Other endpoints need to be explicitly enabled and then exposed over the web in CAS settings in order to allow access.
+</p></div>
 
-Actuator endpoints provided by Spring Boot can also be visually managed and monitored via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
+Actuator endpoints provided by Spring Boot can also be visually managed and monitored
+ via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
+<div class="alert alert-info"><strong>Obtaining Health Info</strong><p>Note that <code>/status</code> endpoint is kept mostly 
+as a legacy endpoint. If you wish to obtain health status of each monitor in detail, we recommend the <code>/status/health</code> endpoint instead.</p></div>
+ 
+### Attribute Release Endpoint
+
+Supported parameters are the following:
+
+| Query Parameter           | Description
+|---------------------------|--------------------------------------------
+| `username`                | The username to use for authentication.
+| `password`                | The password to use for authentication.
+| `service`                 | Service to which attributes should be released.
+
+### Single SignOn Sessions Endpoint
+
+A `GET` operation produces a list of current SSO sessions. 
+
+A `DELETE` operation without specifying a ticket id will attempt to destroy all SSO sessions. Specifying a ticket-granting ticket identifier 
+in the URL as a placeholder/selector will attempt to destroy the session controlled by that ticket. (i.e. `sso-sessions/{ticket}`)
+
+### Multifactor Trusted Devices
+
+A `GET` operation produces a list of all trusted devices. Specifying a username in the URL
+as the placeholder/selector will fetch devices registered for that user (i.e. `multifactor-trusted-devices/{/{username}`).
+
+A `DELETE` operation with a device key  id will attempt to remove the trusted device (i.e. `multifactor-trusted-devices/{/{id}`).
+
+### Attribute Release Consent
+
+A `GET` operation produces a list of all consent decisions.
+A `DELETE` operation with a record key id will attempt to remove and revoke the registered device (i.e. `attribute-consent/{principal}/{id}`).
+
+### Google Authenticator Accounts
+
+A `GET` operation produces a list of all account records.
+A `DELETE` operation will delete all account records.
+
+A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user.
+A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
+
+### YubiKey Accounts
+
+A `GET` operation produces a list of all account records.
+A `DELETE` operation will delete all account records.
+
+A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user.
+A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
+
+### OAuth Tokens
+
+A `GET` operation produces a list of all access/refresh tokens.
+A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`)
+A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched acces/refresh token.
+
+### Metrics
+
+Navigating to `/actuator/metrics` displays a list of available meter names. You can drill down to view information about a 
+particular meter by providing its name as a selector, e.g. `/actuator/metrics/jvm.memory.max`.  The name you use here should match 
+the name used in the code, not the name after it has been naming-convention normalized for a monitoring system it is shipped to.
+
+You can also add any number of `tag=KEY:VALUE` query parameters to the end of the URL to dimensionally drill 
+down on a meter, e.g. `/actuator/metrics/jvm.memory.max?tag=area:nonheap`
+
+The reported measurements are the sum of the statistics of all meters matching the meter name and any tags that have been applied. 
+So in the example above, the returned "Value" statistic is the sum of the maximum memory footprints of "Code Cache", 
+"Compressed Class Space", and "Metaspace" areas of the heap. If you just wanted to see the maximum size for the "Metaspace", 
+you could add an additional `tag=id:Metaspace`, i.e. `/actuator/metrics/jvm.memory.max?tag=area:nonheap&tag=id:Metaspace`.
+
+<div class="alert alert-info"><strong>Use `/status/health` instead of `/status` </strong><p>Note that `/status` endpoint is kept for legacy reason. 
+It is advised to use `/status/health` instead of `/status` for the purpose of general health status monitoring</p></div>
 
 ## Security
 
-All urls that are scoped to the `/status` endpoint are modeled after Spring Boot's own actuator endpoints
-and by default are considered `sensitive`. By default, no endpoint is enabled or allowed access.
+Once endpoints are enabled and exposed, the security of all provided endpoints is handled 
+by [Spring Security](https://spring.io/projects/spring-security). Protection and access to each endpoint
+is controlled via CAS settings individually such that you may decide a specific security level and method of authentication for each endpoint independently.
 
-Endpoints may go through multiple levels and layers of security described here:
+If CAS is configured to *NOT* enforce endpoint security rules, then all endpoints are considered sensitive and require authentication, typically handled
+via basic authentication with master credentials defined in CAS settings. 
 
-- All endpoints may be globally considered `sensitive`.
-- Spring Boot's actuator endpoints may be individually marked as `sensitive` or `enabled`.
-- Similarly, CAS endpoints may be individually marked as `sensitive` or `enabled`.
-- In the event that access to an endpoint is allowed, (i.e endpoint is enabled and is not marked as sensitive), CAS will attempt
-to control access by enforcing rules via IP address matching, delegating to itself, etc. The `/status` endpoint is always protected by an IP pattern. The other administrative endpoints however can optionally be protected by the CAS server. Failing to secure these endpoints via a CAS instance will have CAS fallback onto the IP range.
-    - If you decide to protect other administrative endpoints via CAS itself, you will need to provide
-    a reference to the list of authorized users in the CAS configuration. You may also enforce authorization
-    rules via [Service-based Access Strategy](Configuring-Service-Access-Strategy.html) features of CAS.
+If CAS is configured to enforce endpoint security rules, then each endpoint may be tagged with a specific security rule allowing access via authorized IP addresses,
+basic credentials, roles and attributes, etc. 
 
-<div class="alert alert-warning"><strong>Reverse Proxies</strong><p>Allowing access to the <code>/status</code> endpoint
-via IP address matching needs to be very carefully designed, specially in cases where CAS is deployed behind a proxy
-such as Apache. Be sure to test access rules and policies carefully or otherwise devise your own.</p></div>
+Authentication credentials are typically controlled via CAS settings. For basic authentication, the default username is `casuser`. The password 
+may be automatically generated at startup and displayed in CAS logs if it is left undefined in CAS settings. Additional sources may also be defined
+that would authenticate the request via JAAS, LDAP, JDBC, etc.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#admin-status-endpoints).
+Depending on method of access and the `content-type` that is negotiated between the caller and CAS, (i.e. web-based vs. command-line access), 
+credentials may be supplied in headers via `curl` and family or they may be entered into a web-based login form.
 
-### Spring Security
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#actuator-management-endpoints).
 
-Alternatively, you may design the security of CAS `/status` endpoints to take advantage
-of [Spring Security](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-monitoring.html).
-After all, that's what `sensitive` is designed to do. Using this model and via CAS settings, you get to define 
-the authentication scheme (i.e. `BASIC`) as well
-as the protected/ignored paths and pre-defined "master" username/password that is used for authentication.
-If the password is left blank, a random password will be generated/printed in the logs by default.
-Besides the master credentials, backend authentication support via LDAP and JDBC storage facilities are also available.
+### Troubleshooting
 
-Support is enabled by including the following module in the WAR overlay:
+To enable additional logging, configure the log4j configuration file to add the following
+levels:
 
 ```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-webapp-config-security</artifactId>
-  <version>${cas.version}</version>
-</dependency>
+...
+<AsyncLogger name="org.pac4j" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+<AsyncLogger name="org.springframework.security" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+...
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#securing-endpoints-with-spring-security).
 
-## Monitors
-
-Monitors allow you to watch the internal state of a given CAS component.
-See [this guide](Configuring-Monitoring.html) for more info.
+Monitors allow you to watch the internal state of a given CAS component. ````See [this guide](Configuring-Monitoring.html) for more info.
 
 ## Distributed Tracing
 

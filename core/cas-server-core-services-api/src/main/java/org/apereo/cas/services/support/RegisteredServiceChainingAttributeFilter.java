@@ -1,17 +1,19 @@
 package org.apereo.cas.services.support;
 
+import org.apereo.cas.services.RegisteredServiceAttributeFilter;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.RegisteredServiceAttributeFilter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.val;
 import org.springframework.core.OrderComparator;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.ToString;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * The filter that chains other filters inside it.
@@ -19,7 +21,6 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
 @ToString
 @Setter
 @NoArgsConstructor
@@ -34,7 +35,7 @@ public class RegisteredServiceChainingAttributeFilter implements RegisteredServi
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         OrderComparator.sort(this.filters);
-        final Map<String, Object> attributes = new HashMap<>();
+        val attributes = new HashMap<String, Object>();
         filters.forEach(policy -> attributes.putAll(policy.filter(givenAttributes)));
         return attributes;
     }

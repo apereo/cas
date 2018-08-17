@@ -1,11 +1,11 @@
 package org.apereo.cas.rest.audit;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
 /**
@@ -27,12 +27,13 @@ public class RestResponseEntityAuditResourceResolver extends ReturnValueAsString
     }
 
     private String[] getAuditResourceFromResponseEntity(final ResponseEntity entity) {
-        final HttpHeaders headers = entity.getHeaders();
-        final ToStringBuilder result =
+        val headers = entity.getHeaders();
+        val result =
             new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE);
         result.append("status", entity.getStatusCodeValue() + "-" + entity.getStatusCode().name());
-        if (headers.getLocation() != null) {
-            result.append("location", headers.getLocation());
+        val location = headers.getLocation();
+        if (location != null) {
+            result.append("location", location);
         }
         if (this.includeEntityBody && entity.getBody() != null) {
             result.append("body", entity.getBody().toString());

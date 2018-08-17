@@ -4,17 +4,12 @@ dependencies {
     api project(":api:cas-server-core-api-webflow")
 
     implementation project(":core:cas-server-core-audit")
+    implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-web-api")
-    implementation project(":support:cas-server-support-saml")
-    implementation project(":support:cas-server-support-saml-core")
     implementation project(":core:cas-server-core-services-registry")
-    implementation project(":support:cas-server-support-saml-mdui-core")
-    implementation project(":support:cas-server-support-saml-idp-core")
-    implementation project(":support:cas-server-support-saml-idp-metadata")
-    implementation project(":support:cas-server-support-saml-idp-web")
-    implementation project(":support:cas-server-support-saml-idp-ticket")
+    implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
@@ -22,18 +17,34 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-cookie-api")
+
+    implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-saml")
+    implementation project(":support:cas-server-support-saml-mdui-core")
+    implementation project(":support:cas-server-support-saml-idp-core")
+    implementation project(":support:cas-server-support-saml-idp-metadata")
+    implementation project(":support:cas-server-support-saml-idp-web")
+    implementation project(":support:cas-server-support-saml-idp-ticket")
     
     implementation libraries.casclient
     implementation libraries.shibidp
     implementation libraries.pac4j
     implementation libraries.caffein
-    runtimeOnly libraries.groovy
+
     
-    testImplementation project(":core:cas-server-core-util")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+
+    testImplementation project(":support:cas-server-support-json-service-registry")
+    testImplementation project(":support:cas-server-support-jpa-service-registry")
+    testImplementation project(":support:cas-server-support-jdbc-drivers")
+
+    testImplementation project(":support:cas-server-support-person-directory")
+
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")
@@ -41,14 +52,12 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
-    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-api")
     testImplementation project(":core:cas-server-core-cookie-api")
-    testImplementation project(":support:cas-server-support-json-service-registry")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-web-api")

@@ -3,22 +3,7 @@
       xmlns="http://www.springframework.org/schema/webflow"
       xsi:schemaLocation="http://www.springframework.org/schema/webflow
                           http://www.springframework.org/schema/webflow/spring-webflow.xsd">
-    
-    <action-state id="initialAuthenticationRequestValidationCheck">
-        <evaluate expression="initialAuthenticationRequestValidationAction"/>
-        <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
-        <transition on="error" to="initializeLoginForm"/>
-        <transition on="success" to="ticketGrantingTicketCheck"/>
-        <transition on="successWithWarnings" to="ticketGrantingTicketCheck"/>
-    </action-state>
 
-    <action-state id="ticketGrantingTicketCheck">
-        <evaluate expression="ticketGrantingTicketCheckAction"/>
-        <transition on="notExists" to="gatewayRequestCheck"/>
-        <transition on="invalid" to="terminateSession"/>
-        <transition on="valid" to="hasServiceCheck"/>
-    </action-state>
-        
     <action-state id="initializeLoginForm">
         <evaluate expression="initializeLoginAction" />
         <transition on="success" to="viewLoginForm"/>
@@ -28,14 +13,18 @@
         <binder>
             <binding property="username" required="true"/>
             <binding property="password" required="true"/>
+            <binding property="source" required="true" />
         </binder>
+        <on-render>
+            <evaluate expression="renderLoginFormAction" />
+        </on-render>
         <transition on="submit" bind="true" validate="true" to="realSubmit" history="invalidate"/>
     </view-state>
 
     <action-state id="realSubmit">
         <evaluate expression="authenticationViaFormAction"/>
         <transition on="warn" to="warn"/>
-        <transition on="success" to="sendTicketGrantingTicket"/>
+        <transition on="success" to="createTicketGrantingTicket"/>
         <transition on="successWithWarnings" to="showAuthenticationWarningMessages"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
         <transition on="error" to="initializeLoginForm"/>

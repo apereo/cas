@@ -1,17 +1,18 @@
 package org.apereo.cas.web;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
-import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.val;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +22,6 @@ import org.springframework.web.servlet.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
-
-import lombok.Setter;
 
 /**
  * The ProxyController is involved with returning a Proxy Ticket (in CAS 2
@@ -39,10 +38,9 @@ import lombok.Setter;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Slf4j
 @Setter
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProxyController extends AbstractDelegateController {
 
     /**
@@ -63,9 +61,9 @@ public class ProxyController extends AbstractDelegateController {
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
-        final String proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
-        final Service targetService = getTargetService(request);
-        return StringUtils.hasText(proxyGrantingTicket) && targetService != null;
+        val proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
+        val targetService = getTargetService(request);
+        return targetService != null && StringUtils.hasText(proxyGrantingTicket);
     }
 
     /**
@@ -79,15 +77,15 @@ public class ProxyController extends AbstractDelegateController {
     @Override
     @GetMapping(path = "/proxy")
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
-        final String proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
-        final Service targetService = getTargetService(request);
+        val proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
+        val targetService = getTargetService(request);
         if (!StringUtils.hasText(proxyGrantingTicket) || targetService == null) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, null, request);
         }
         try {
-            final ProxyTicket proxyTicket = this.centralAuthenticationService.grantProxyTicket(proxyGrantingTicket, targetService);
-            final Map model = CollectionUtils.wrap(CasProtocolConstants.PARAMETER_TICKET, proxyTicket);
-            return new ModelAndView(this.successView, model);
+            val proxyTicket = this.centralAuthenticationService.grantProxyTicket(proxyGrantingTicket, targetService);
+            val model = CollectionUtils.wrap(CasProtocolConstants.PARAMETER_TICKET, proxyTicket);
+            return new ModelAndView(this.successView, (Map) model);
         } catch (final AbstractTicketException e) {
             return generateErrorView(e.getCode(), new Object[]{proxyGrantingTicket}, request);
         } catch (final UnauthorizedServiceException e) {
@@ -114,9 +112,9 @@ public class ProxyController extends AbstractDelegateController {
      * @return the model and view
      */
     private ModelAndView generateErrorView(final String code, final Object[] args, final HttpServletRequest request) {
-        final ModelAndView modelAndView = new ModelAndView(this.failureView);
+        val modelAndView = new ModelAndView(this.failureView);
         modelAndView.addObject("code", StringEscapeUtils.escapeHtml4(code));
-        final String desc = StringEscapeUtils.escapeHtml4(this.context.getMessage(code, args, code, request.getLocale()));
+        val desc = StringEscapeUtils.escapeHtml4(this.context.getMessage(code, args, code, request.getLocale()));
         modelAndView.addObject("description", desc);
         return modelAndView;
     }

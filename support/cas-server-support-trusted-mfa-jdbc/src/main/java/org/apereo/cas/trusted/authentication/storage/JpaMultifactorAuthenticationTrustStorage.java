@@ -1,16 +1,17 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,19 +24,17 @@ import java.util.Set;
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 @Slf4j
 public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-
-    
-    private static final String TABLE_NAME = "MultifactorAuthenticationTrustRecord";
+    private static final String TABLE_NAME = MultifactorAuthenticationTrustRecord.class.getSimpleName();
 
     @PersistenceContext(unitName = "mfaTrustedAuthnEntityManagerFactory")
-    private EntityManager entityManager;
+    private transient EntityManager entityManager;
 
     @Override
     public void expire(final String key) {
         try {
-            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordKey = :key")
-                    .setParameter("key", key)
-                    .executeUpdate();
+            val count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordKey = :key")
+                .setParameter("key", key)
+                .executeUpdate();
             LOGGER.info("Found and removed [{}] records", count);
         } catch (final NoResultException e) {
             LOGGER.info("No trusted authentication records could be found");
@@ -43,11 +42,11 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     }
 
     @Override
-    public void expire(final LocalDate onOrBefore) {
+    public void expire(final LocalDateTime onOrBefore) {
         try {
-            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordDate <= :date")
-                    .setParameter("date", onOrBefore)
-                    .executeUpdate();
+            val count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordDate <= :date")
+                .setParameter("date", onOrBefore)
+                .executeUpdate();
             LOGGER.info("Found and removed [{}] records", count);
         } catch (final NoResultException e) {
             LOGGER.info("No trusted authentication records could be found");
@@ -55,11 +54,12 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
+    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         try {
-            final List<MultifactorAuthenticationTrustRecord> results =
-                    this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.recordDate >= :date",
-                            MultifactorAuthenticationTrustRecord.class).setParameter("date", onOrAfterDate).getResultList();
+            val query = this.entityManager
+                .createQuery("SELECT r FROM " + TABLE_NAME + " r where r.recordDate >= :date", MultifactorAuthenticationTrustRecord.class)
+                .setParameter("date", onOrAfterDate);
+            val results = query.getResultList();
             return new HashSet<>(results);
         } catch (final NoResultException e) {
             LOGGER.info("No trusted authentication records could be found for [{}]", onOrAfterDate);
@@ -70,9 +70,10 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
         try {
-            final List<MultifactorAuthenticationTrustRecord> results =
-                    this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.principal = :principal",
-                            MultifactorAuthenticationTrustRecord.class).setParameter("principal", principal).getResultList();
+            val query = this.entityManager
+                .createQuery("SELECT r FROM " + TABLE_NAME + " r where r.principal = :principal", MultifactorAuthenticationTrustRecord.class)
+                .setParameter("principal", principal);
+            val results = query.getResultList();
             return new HashSet<>(results);
         } catch (final NoResultException e) {
             LOGGER.info("No trusted authentication records could be found for [{}]", principal);

@@ -1,10 +1,8 @@
 package org.apereo.cas.adaptors.gauth.rest;
 
-import org.apereo.cas.authentication.Credential;
+import lombok.val;
 import org.junit.Test;
 import org.springframework.util.LinkedMultiValueMap;
-
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -18,18 +16,18 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactoryTests {
 
     @Test
     public void verifyNoCredentials() {
-        final GoogleAuthenticatorRestHttpRequestCredentialFactory f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
-        final LinkedMultiValueMap body = new LinkedMultiValueMap<>();
-        final List<Credential> results = f.fromRequestBody(body);
+        val f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
+        val body = new LinkedMultiValueMap<String, String>();
+        val results = f.fromRequest(null, body);
         assertTrue(results.isEmpty());
     }
 
     @Test
     public void verifyCredentials() {
-        final GoogleAuthenticatorRestHttpRequestCredentialFactory f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
-        final LinkedMultiValueMap body = new LinkedMultiValueMap<>();
+        val f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
+        val body = new LinkedMultiValueMap<String, String>();
         body.add(GoogleAuthenticatorRestHttpRequestCredentialFactory.PARAMETER_NAME_GAUTH_OTP, "132456");
-        final List<Credential> results = f.fromRequestBody(body);
+        val results = f.fromRequest(null, body);
         assertFalse(results.isEmpty());
         assertEquals("132456", results.get(0).getId());
     }

@@ -1,18 +1,20 @@
 package org.apereo.cas.authentication;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import lombok.Setter;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -37,13 +39,17 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      */
     private Map<String, String> users;
 
+    public AcceptUsersAuthenticationHandler(final Map<String, String> users) {
+        this(null, null, new DefaultPrincipalFactory(), Integer.MAX_VALUE, users);
+    }
+
     /**
      * Instantiates a new Accept users authentication handler.
      *
      * @param name the name
      */
     public AcceptUsersAuthenticationHandler(final String name) {
-        this(name, null, null, null, new HashMap<>());
+        this(name, null, new DefaultPrincipalFactory(), Integer.MAX_VALUE, new HashMap<>());
     }
 
     /**
@@ -56,7 +62,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      * @param users            the users
      */
     public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                            final PrincipalFactory principalFactory, final Integer order, final Map<String, String> users) {
+                                            final PrincipalFactory principalFactory, final Integer order,
+                                            final Map<String, String> users) {
         super(name, servicesManager, principalFactory, order);
         this.users = users;
     }
@@ -67,8 +74,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");
         }
-        final String username = credential.getUsername();
-        final String cachedPassword = this.users.get(username);
+        val username = credential.getUsername();
+        val cachedPassword = this.users.get(username);
         if (cachedPassword == null) {
             LOGGER.debug("[{}] was not found in the map.", username);
             throw new AccountNotFoundException(username + " not found in backing map.");
@@ -76,7 +83,13 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
         if (!StringUtils.equals(credential.getPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
-        final List<MessageDescriptor> list = new ArrayList<>();
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), list);
+        val strategy = getPasswordPolicyHandlingStrategy();
+        if (strategy != null && StringUtils.isNotBlank(username)) {
+            LOGGER.debug("Attempting to examine and handle password policy via [{}]", strategy.getClass().getSimpleName());
+            val principal = this.principalFactory.createPrincipal(username);
+            val messageList = strategy.handle(principal, getPasswordPolicyConfiguration());
+            return createHandlerResult(credential, principal, messageList);
+        }
+        throw new FailedLoginException("Unable to authenticate " + credential.getId());
     }
 }

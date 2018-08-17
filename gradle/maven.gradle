@@ -31,6 +31,10 @@ def generatePom() {
                     name "Jérôme Leleu"
                 }
                 developer {
+                    id "tduehr"
+                    name "Timur Duehr"
+                }
+                developer {
                     id "mindblender"
                     name "Jeff Sittler"
                 }
@@ -205,7 +209,7 @@ def generatePom() {
         }
 
     }.whenConfigured { pom ->
-        println "POM is fully configured for $project.name"
+        logger.info "POM is fully configured for $project.name"
     }
 }
 

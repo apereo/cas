@@ -1,15 +1,14 @@
 package org.apereo.cas.configuration.model.support.clouddirectory;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.Resource;
-import java.io.Serializable;
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link CloudDirectoryProperties}.
@@ -18,46 +17,11 @@ import lombok.Setter;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-cloud-directory-authentication")
-@Slf4j
 @Getter
 @Setter
-public class CloudDirectoryProperties implements Serializable {
+public class CloudDirectoryProperties extends BaseAmazonWebServicesProperties {
 
     private static final long serialVersionUID = 6725526133973304269L;
-
-    /**
-     * Authenticate and bind into the instance via a credentials properties file.
-     */
-    @RequiredProperty
-    private Resource credentialsPropertiesFile;
-
-    /**
-     * Use access-key provided by AWS to authenticate.
-     */
-    @RequiredProperty
-    private String credentialAccessKey;
-
-    /**
-     * Use secret key provided by AWS to authenticate.
-     */
-    @RequiredProperty
-    private String credentialSecretKey;
-
-    /**
-     * AWS region used.
-     */
-    @RequiredProperty
-    private String region;
-
-    /**
-     * Profile name to use.
-     */
-    private String profileName;
-
-    /**
-     * Profile path.
-     */
-    private String profilePath;
 
     /**
      * Directory ARN.

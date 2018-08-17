@@ -1,10 +1,10 @@
 package org.apereo.cas.ticket.factory;
 
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
+
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,10 +15,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
 @NoArgsConstructor
 public class DefaultTicketFactory implements TicketFactory {
-    private final Map<String, Object> factoryMap = new HashMap<>();
+    private final Map factoryMap = new HashMap<String, Object>();
 
     @Override
     public TicketFactory get(final Class<? extends Ticket> clazz) {

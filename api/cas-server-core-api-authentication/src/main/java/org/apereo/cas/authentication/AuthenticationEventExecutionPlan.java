@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +38,14 @@ public interface AuthenticationEventExecutionPlan {
      * @param processor the populator
      */
     void registerAuthenticationPostProcessor(AuthenticationPostProcessor processor);
+
+    /**
+     * Register authentication pre processor.
+     *
+     * @param processor the populator
+     */
+    void registerAuthenticationPreProcessor(AuthenticationPreProcessor processor);
+
 
     /**
      * Register metadata populators.
@@ -83,12 +92,27 @@ public interface AuthenticationEventExecutionPlan {
     void registerAuthenticationHandlerWithPrincipalResolvers(Collection<AuthenticationHandler> handlers, PrincipalResolver principalResolver);
 
     /**
+     * Register authentication handler with principal resolvers.
+     *
+     * @param handlers          the handlers
+     * @param principalResolver the principal resolver
+     */
+    void registerAuthenticationHandlerWithPrincipalResolvers(List<AuthenticationHandler> handlers, List<PrincipalResolver> principalResolver);
+
+    /**
      * Gets authentication handlers for transaction.
      *
      * @param transaction the transaction
      * @return the authentication handlers for transaction
      */
     Set<AuthenticationHandler> getAuthenticationHandlersForTransaction(AuthenticationTransaction transaction);
+
+    /**
+     * Gets authentication handlers.
+     *
+     * @return the authentication handlers
+     */
+    Set<AuthenticationHandler> getAuthenticationHandlers();
 
     /**
      * Gets authentication metadata populators.
@@ -105,6 +129,14 @@ public interface AuthenticationEventExecutionPlan {
      * @return the authentication metadata populators
      */
     Collection<AuthenticationPostProcessor> getAuthenticationPostProcessors(AuthenticationTransaction transaction);
+
+    /**
+     * Gets authentication pre processors.
+     *
+     * @param transaction the transaction
+     * @return the authentication metadata populators
+     */
+    Collection<AuthenticationPreProcessor> getAuthenticationPreProcessors(AuthenticationTransaction transaction);
 
     /**
      * Gets principal resolver for authentication transaction.

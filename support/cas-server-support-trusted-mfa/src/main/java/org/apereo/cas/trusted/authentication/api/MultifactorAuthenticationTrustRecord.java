@@ -1,21 +1,26 @@
 package org.apereo.cas.trusted.authentication.api;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import org.apereo.cas.util.jpa.SkippingNanoSecondsLocalDateTimeConverter;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link MultifactorAuthenticationTrustRecord}.
@@ -26,7 +31,6 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "MultifactorAuthenticationTrustRecord")
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Slf4j
 @ToString
 @Getter
 @Setter
@@ -46,12 +50,14 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     private String deviceFingerprint;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate recordDate;
+    @Convert(converter = SkippingNanoSecondsLocalDateTimeConverter.class)
+    private LocalDateTime recordDate;
 
+    @Lob
     @Column(length = 10_000, nullable = false)
     private String recordKey;
 
+    @Lob
     @Column(length = 10_000, nullable = false)
     private String name;
 
@@ -68,8 +74,8 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
      * @return the authentication trust record
      */
     public static MultifactorAuthenticationTrustRecord newInstance(final String principal, final String geography, final String fingerprint) {
-        final MultifactorAuthenticationTrustRecord r = new MultifactorAuthenticationTrustRecord();
-        r.setRecordDate(LocalDate.now());
+        val r = new MultifactorAuthenticationTrustRecord();
+        r.setRecordDate(LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS));
         r.setPrincipal(principal);
         r.setDeviceFingerprint(fingerprint);
         r.setName(principal.concat("-").concat(LocalDate.now().toString()).concat("-").concat(geography));

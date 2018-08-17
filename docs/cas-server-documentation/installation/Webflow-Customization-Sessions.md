@@ -49,7 +49,7 @@ This feature is enabled via the following module:
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-webapp-session-hazelcast</artifactId>
+  <artifactId>cas-server-support-session-hazelcast</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
@@ -66,7 +66,7 @@ This feature is enabled via the following module:
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-webapp-session-redis</artifactId>
+  <artifactId>cas-server-support-session-redis</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
@@ -83,7 +83,7 @@ This feature is enabled via the following module:
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-webapp-session-mongo</artifactId>
+  <artifactId>cas-server-support-session-mongo</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```

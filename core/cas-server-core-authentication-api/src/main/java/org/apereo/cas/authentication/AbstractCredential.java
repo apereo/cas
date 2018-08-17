@@ -2,9 +2,12 @@ package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.validation.ValidationContext;
 
 /**
  * Base class for CAS credentials that are safe for long-term storage.
@@ -12,11 +15,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Slf4j
 @ToString
 public abstract class AbstractCredential implements Credential, CredentialMetaData {
 
-    /** Serialization version marker. */
+    /**
+     * Serialization version marker.
+     */
     private static final long serialVersionUID = 8196868021183513898L;
 
     @Override
@@ -30,14 +34,14 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
         if (other == this) {
             return true;
         }
-        final EqualsBuilder builder = new EqualsBuilder();
+        val builder = new EqualsBuilder();
         builder.append(getId(), ((Credential) other).getId());
         return builder.isEquals();
     }
 
     @Override
     public int hashCode() {
-        final HashCodeBuilder builder = new HashCodeBuilder(11, 41);
+        val builder = new HashCodeBuilder(11, 41);
         builder.append(getClass().getName());
         builder.append(getId());
         return builder.toHashCode();
@@ -47,5 +51,26 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
     @Override
     public Class<? extends Credential> getCredentialClass() {
         return this.getClass();
+    }
+
+    @JsonIgnore
+    public boolean isValid() {
+        return StringUtils.isNotBlank(getId());
+    }
+
+    /**
+     * Validate.
+     *
+     * @param context the context
+     */
+    public void validate(final ValidationContext context) {
+        if (!isValid()) {
+            val messages = context.getMessageContext();
+            messages.addMessage(new MessageBuilder()
+                .error()
+                .source("token")
+                .defaultText("Unable to accept credential with an empty or unspecified token")
+                .build());
+        }
     }
 }

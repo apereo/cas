@@ -1,12 +1,12 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+
+import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -17,7 +17,6 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
 public class SamlMetadataUIWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private final Action samlMetadataUIParserAction;
 
@@ -31,9 +30,9 @@ public class SamlMetadataUIWebflowConfigurer extends AbstractCasWebflowConfigure
 
     @Override
     protected void doInitialize() {
-        final Flow flow = getLoginFlow();
+        val flow = getLoginFlow();
         if (flow != null) {
-            final ViewState state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
+            val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             state.getEntryActionList().add(this.samlMetadataUIParserAction);
         }
     }

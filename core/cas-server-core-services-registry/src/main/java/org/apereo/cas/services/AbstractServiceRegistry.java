@@ -1,10 +1,10 @@
 package org.apereo.cas.services;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
-import lombok.Setter;
 
 /**
  * This is {@link AbstractServiceRegistry}, that acts as the base parent class
@@ -27,7 +27,7 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
      */
     public void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
-            LOGGER.debug("Publishing event [{}]", event);
+            LOGGER.trace("Publishing event [{}]", event);
             this.eventPublisher.publishEvent(event);
         }
     }

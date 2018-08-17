@@ -1,9 +1,9 @@
 package org.apereo.cas.monitor.config;
 
-import lombok.extern.slf4j.Slf4j;
-import net.sf.ehcache.CacheManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.EhCacheHealthIndicator;
+
+import net.sf.ehcache.CacheManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ehcacheMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
 public class EhCacheMonitorConfiguration {
 
     @Autowired
@@ -28,6 +27,8 @@ public class EhCacheMonitorConfiguration {
     @Autowired
     @Bean
     public HealthIndicator ehcacheHealthIndicator(@Qualifier("ehcacheTicketCacheManager") final CacheManager ehcacheTicketCacheManager) {
-        return new EhCacheHealthIndicator(ehcacheTicketCacheManager, casProperties);
+        return new EhCacheHealthIndicator(ehcacheTicketCacheManager,
+            casProperties.getMonitor().getWarn().getEvictionThreshold(),
+            casProperties.getMonitor().getWarn().getThreshold());
     }
 }

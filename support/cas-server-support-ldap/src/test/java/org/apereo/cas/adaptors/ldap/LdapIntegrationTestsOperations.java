@@ -1,9 +1,10 @@
 package org.apereo.cas.adaptors.ldap;
 
-import com.unboundid.ldap.sdk.LDAPConnection;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.LdapTestUtils;
 import org.apereo.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
+
+import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.val;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
@@ -18,7 +19,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 public class LdapIntegrationTestsOperations {
     private static Map<Integer, InMemoryTestLdapDirectoryServer> DIRECTORY_MAP = new HashMap<>();
 
@@ -30,11 +30,11 @@ public class LdapIntegrationTestsOperations {
      */
     public static synchronized void initDirectoryServer(final InputStream ldifFile, final int port) {
         try {
-            final InMemoryTestLdapDirectoryServer directory = DIRECTORY_MAP.get(port);
-            final boolean createInstance = directory == null || !directory.isAlive();
+            val directory = DIRECTORY_MAP.get(port);
+            val createInstance = directory == null || !directory.isAlive();
             if (createInstance) {
-                final ClassPathResource properties = new ClassPathResource("ldapserver.properties");
-                final ClassPathResource schema = new ClassPathResource("schema/standard-ldap.schema");
+                val properties = new ClassPathResource("ldapserver.properties");
+                val schema = new ClassPathResource("schema/standard-ldap.schema");
                 DIRECTORY_MAP.put(port, new InMemoryTestLdapDirectoryServer(properties.getInputStream(), ldifFile, schema.getInputStream(), port));
             }
         } catch (final Exception e) {

@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.util;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.ticket.ProxyGrantingTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.ProxyTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.ServiceTicketProperties;
@@ -8,10 +7,12 @@ import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProper
 import org.apereo.cas.configuration.model.core.ticket.TransientSessionTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for {@code ticket}.
@@ -20,7 +21,6 @@ import lombok.Setter;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
-@Slf4j
 @Getter
 @Setter
 public class TicketProperties implements Serializable {

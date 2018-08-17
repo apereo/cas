@@ -1,13 +1,20 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
+
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.lang3.NotImplementedException;
+import org.jdom.Element;
+import org.jdom.Namespace;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.BufferedReader;
 import java.util.stream.Collectors;
 
 /**
@@ -17,88 +24,12 @@ import java.util.stream.Collectors;
  * @since 4.2
  */
 @Slf4j
+@RequiredArgsConstructor
 public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
+    private static final Namespace NAMESPACE_ENVELOPE = Namespace.getNamespace("http://schemas.xmlsoap.org/soap/envelope/");
+    private static final Namespace NAMESPACE_SAML1 = Namespace.getNamespace("urn:oasis:names:tc:SAML:1.0:protocol");
 
-    
-    private static final int CONST_REQUEST_ID_LENGTH = 11;
-
-    private static final String CONST_START_ARTIFACT_XML_TAG_NO_NAMESPACE = "<AssertionArtifact>";
-
-    private static final String CONST_END_ARTIFACT_XML_TAG_NO_NAMESPACE = "</AssertionArtifact>";
-
-    private static final String CONST_START_ARTIFACT_XML_TAG = "<samlp:AssertionArtifact>";
-
-    private static final String CONST_END_ARTIFACT_XML_TAG = "</samlp:AssertionArtifact>";
-
-    @Override
-    public SamlService createService(final HttpServletRequest request) {
-        final String service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
-        final String artifactId;
-        final String requestBody = getRequestBody(request);
-        final String requestId;
-
-        if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
-            LOGGER.debug("Request does not specify a [{}] or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
-            return null;
-        }
-
-        final String id = cleanupUrl(service);
-
-        if (StringUtils.hasText(requestBody)) {
-
-            final String tagStart;
-            final String tagEnd;
-            if (requestBody.contains(CONST_START_ARTIFACT_XML_TAG)) {
-                tagStart = CONST_START_ARTIFACT_XML_TAG;
-                tagEnd = CONST_END_ARTIFACT_XML_TAG;
-            } else {
-                tagStart = CONST_START_ARTIFACT_XML_TAG_NO_NAMESPACE;
-                tagEnd = CONST_END_ARTIFACT_XML_TAG_NO_NAMESPACE;
-            }
-            final int startTagLocation = requestBody.indexOf(tagStart);
-            final int artifactStartLocation = startTagLocation + tagStart.length();
-            final int endTagLocation = requestBody.indexOf(tagEnd);
-
-            artifactId = requestBody.substring(artifactStartLocation, endTagLocation).trim();
-            requestId = extractRequestId(requestBody);
-        } else {
-            artifactId = null;
-            requestId = null;
-        }
-
-        LOGGER.debug("Request Body: [{}]", requestBody);
-        LOGGER.debug("Extracted ArtifactId: [{}]. extracted Request Id: [{}]", artifactId, requestId);
-
-        return new SamlService(id, service, artifactId, requestId);
-    }
-
-    @Override
-    public SamlService createService(final String id) {
-        throw new NotImplementedException("This operation is not supported. ");
-    }
-
-    /**
-     * Extract request id from the body.
-     *
-     * @param requestBody the request body
-     * @return the string
-     */
-    private static String extractRequestId(final String requestBody) {
-        if (!requestBody.contains("RequestID")) {
-            LOGGER.debug("Request body does not contain a request id");
-            return null;
-        }
-
-        try {
-            final int position = requestBody.indexOf("RequestID=\"") + CONST_REQUEST_ID_LENGTH;
-            final int nextPosition = requestBody.indexOf('"', position);
-
-            return requestBody.substring(position, nextPosition);
-        } catch (final Exception e) {
-            LOGGER.debug("Exception parsing RequestID from request.", e);
-            return null;
-        }
-    }
+    private final Saml10ObjectBuilder saml10ObjectBuilder;
 
     /**
      * Gets the request body from the request.
@@ -107,15 +38,85 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
      * @return the request body
      */
     private static String getRequestBody(final HttpServletRequest request) {
-        try(BufferedReader reader = request.getReader()) {
-            if (reader == null) {
-                LOGGER.debug("Request body could not be read because it's empty.");
-                return null;
+        val body = readRequestBodyIfAny(request);
+        if (!StringUtils.hasText(body)) {
+            LOGGER.trace("Looking at the request attribute [{}] to locate SAML request body", SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+            return (String) request.getAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+        }
+        return body;
+    }
+
+    private static String readRequestBodyIfAny(final HttpServletRequest request) {
+        try (val reader = request.getReader()) {
+            if (reader != null) {
+                return reader.lines().collect(Collectors.joining());
             }
-            return reader.lines().collect(Collectors.joining());
+            LOGGER.debug("Request body could not be read because it's empty.");
         } catch (final Exception e) {
             LOGGER.trace("Could not obtain the saml request body from the http request", e);
+        }
+        return null;
+    }
+
+    @Override
+    public SamlService createService(final HttpServletRequest request) {
+        val service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
+        val requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
+
+        if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
+            LOGGER.trace("Request does not specify a [{}] or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
             return null;
         }
+        val id = cleanupUrl(service);
+
+        if (StringUtils.hasText(requestBody)) {
+            request.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, requestBody);
+        }
+        LOGGER.debug("Request Body: [{}]", requestBody);
+        val requestChild = getRequestDocumentElement(requestBody);
+        val artifactId = getArtifactIdFromRequest(requestChild);
+        val requestId = getRequestIdFromRequest(requestChild);
+        LOGGER.debug("Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", artifactId, requestId);
+
+        val samlService = new SamlService(id, service, artifactId, requestId);
+        samlService.setSource(SamlProtocolConstants.CONST_PARAM_TARGET);
+        return samlService;
+    }
+
+    @Override
+    public SamlService createService(final String id) {
+        throw new NotImplementedException("This operation is not supported. ");
+    }
+
+    private Element getRequestDocumentElement(final String requestBody) {
+        if (StringUtils.hasText(requestBody)) {
+            val document = saml10ObjectBuilder.constructDocumentFromXml(requestBody);
+            val root = document.getRootElement();
+
+            @NonNull
+            val body = root.getChild("Body", NAMESPACE_ENVELOPE);
+            return body.getChild("Request", NAMESPACE_SAML1);
+
+        }
+        return null;
+    }
+
+    private String getRequestIdFromRequest(final Element requestChild) {
+        if (requestChild == null) {
+            return null;
+        }
+        val requestIdAttribute = requestChild.getAttribute("RequestID");
+        if (requestIdAttribute == null) {
+            return null;
+        }
+        return requestIdAttribute.getValue();
+    }
+
+    private String getArtifactIdFromRequest(final Element requestChild) {
+        if (requestChild == null) {
+            return null;
+        }
+        val artifactElement = requestChild.getChild("AssertionArtifact", NAMESPACE_SAML1);
+        return artifactElement.getValue();
     }
 }

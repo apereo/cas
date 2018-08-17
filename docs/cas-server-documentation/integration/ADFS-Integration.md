@@ -20,7 +20,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-You may also need to declare the following Maven repository in your
+You may also need to declare the following repository in your
 CAS Overlay to be able to resolve dependencies:
 
 ```xml
@@ -34,7 +34,9 @@ CAS Overlay to be able to resolve dependencies:
 </repositories>
 ```
 
-<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to consume encrypted payloads issued by ADFS. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
+<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle 
+installed in your Java environment that is used by CAS, specially if you need to consume encrypted payloads issued by ADFS. 
+Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
 
 ## WsFed Configuration
 
@@ -63,32 +65,34 @@ in ADFS to use the `certificate.crt` file for encryption.
 
 ## Modifying ADFS Claims
 
-The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but
-before they are inserted into the CAS user principal. For this to happen, you need
-to put together an implementation of `WsFederationAttributeMutator` that changes and manipulates ADFS claims:
+The WsFed configuration optionally may allow you to manipulate claims coming from ADFS but before they are inserted into the CAS user principal.
+The manipulation of the attributes is carried out using an *attribute mutator* where its logic may be implemented inside a Groovy script and whose
+path is taught to CAS via settings.
 
-```java
-package org.apereo.cas.support.wsfederation;
+The script may take on the following form:
 
-@Configuration("myWsFedConfiguration")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MyWsFedConfiguration {
+```groovy
+import org.apereo.cas.*
+import java.util.*
+import org.apereo.cas.authentication.*
 
-  @Bean
-  public WsFederationAttributeMutator wsfedAttributeMutator() {
-      return new WsFederationAttributeMutatorImpl(...);
-  }
-}
-
-public class WsFederationAttributeMutatorImpl implements WsFederationAttributeMutator {
-    public void modifyAttributes(...) {
-        ...
-    }
+def Map run(final Object... args) {
+    def attributes = args[0]
+    def logger = args[1]
+    logger.warn("Mutating attributes {}", attributes)
+    return [upn: ["CASUser"]]
 }
 ```
 
-Finally, ensure that the attributes sent from ADFS are available and mapped in
-your `attributeRepository` configuration.
+The parameters passed to the script are as follows:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `attributes`          | A current `Map` of attributes provided from ADFS.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+Note that the execution result of the script *MUST* ensure that attributes are collected into a `Map`
+where the attribute name, the key, is a simple `String` and the attribute value is transformed into a collection.
 
 ## Handling CAS Logout
 
@@ -97,6 +101,9 @@ An optional step, the `casLogoutView.html` can be modified to place a link to AD
 ```html
 <a href="https://adfs.example.org/adfs/ls/?wa=wsignout1.0">Logout</a>
 ```
+
+Alternatively, you may simply instruct CAS to redirect to the above endpoint after logout operations have executed.
+To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#logout).
 
 ## Per-Service Relying Party Id
 

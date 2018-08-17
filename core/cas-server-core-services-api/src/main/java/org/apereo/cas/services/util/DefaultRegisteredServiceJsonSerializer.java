@@ -1,15 +1,17 @@
 package org.apereo.cas.services.util;
 
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
+import lombok.NoArgsConstructor;
+import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import lombok.NoArgsConstructor;
 
 /**
  * Serializes registered services to JSON based on the Jackson JSON library.
@@ -17,7 +19,6 @@ import lombok.NoArgsConstructor;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Slf4j
 @NoArgsConstructor
 public class DefaultRegisteredServiceJsonSerializer extends AbstractJacksonBackedStringSerializer<RegisteredService> {
 
@@ -40,7 +41,7 @@ public class DefaultRegisteredServiceJsonSerializer extends AbstractJacksonBacke
      */
     @Override
     protected ObjectMapper initializeObjectMapper() {
-        final ObjectMapper mapper = super.initializeObjectMapper();
+        val mapper = super.initializeObjectMapper();
         mapper.addHandler(new JasigRegisteredServiceDeserializationProblemHandler());
         return mapper;
     }

@@ -1,8 +1,7 @@
 #!/bin/bash
 
-if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
-    docker kill $(docker ps -q)
-    docker rm $(docker ps -a -q)
-    docker rmi $(docker images -q)
-fi
+docker kill $(docker ps -q) >/dev/null 2>&1
+docker rm $(docker ps -a -q) >/dev/null 2>&1
+docker rmi $(docker images -q) >/dev/null 2>&1
 
+exit 0
