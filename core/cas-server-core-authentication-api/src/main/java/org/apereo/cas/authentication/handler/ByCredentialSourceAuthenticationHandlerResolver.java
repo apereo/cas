@@ -8,10 +8,10 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ByCredentialSourceAuthenticationHandlerResolver}
@@ -38,11 +38,11 @@ public class ByCredentialSourceAuthenticationHandlerResolver implements Authenti
             .stream()
             .filter(handler -> handler.supports(UsernamePasswordCredential.class))
             .filter(handler -> {
-                final String handlerName = handler.getName();
+                val handlerName = handler.getName();
                 LOGGER.debug("Evaluating authentication handler [{}] for eligibility", handlerName);
                 return upcs.stream().anyMatch(c -> {
                     LOGGER.debug("Comparing credential source [{}] against authentication handler [{}]", c.getSource(), handlerName);
-                    return c.getSource().equalsIgnoreCase(handlerName);
+                    return StringUtils.isNotBlank(c.getSource()) && c.getSource().equalsIgnoreCase(handlerName);
                 });
             })
             .forEach(finalHandlers::add);
