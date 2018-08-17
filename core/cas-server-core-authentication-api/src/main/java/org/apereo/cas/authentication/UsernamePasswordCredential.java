@@ -6,6 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.binding.message.MessageBuilder;
+import org.springframework.binding.validation.ValidationContext;
 
 import javax.validation.constraints.Size;
 
@@ -30,12 +34,13 @@ public class UsernamePasswordCredential implements Credential {
 
     private static final long serialVersionUID = -700605081472810939L;
 
-    @Size(min = 1, message = "required.username")
+    @Size(min = 1, message = "username.required")
     private String username;
 
-    @Size(min = 1, message = "required.password")
+    @Size(min = 1, message = "password.required")
     private String password;
 
+    @Size(min = 1, message = "source.required")
     private String source;
 
     public UsernamePasswordCredential(final String username, final String password) {
@@ -46,5 +51,35 @@ public class UsernamePasswordCredential implements Credential {
     @Override
     public String getId() {
         return this.username;
+    }
+
+    /**
+     * Validate.
+     *
+     * @param context the context
+     */
+    public void validate(final ValidationContext context) {
+        val messages = context.getMessageContext();
+        if (StringUtils.isBlank(username)) {
+            messages.addMessage(new MessageBuilder()
+                .error()
+                .source("username")
+                .code("username.required")
+                .build());
+        }
+        if (StringUtils.isBlank(password)) {
+            messages.addMessage(new MessageBuilder()
+                .error()
+                .source("password")
+                .code("password.required")
+                .build());
+        }
+        if (StringUtils.isBlank(source)) {
+            messages.addMessage(new MessageBuilder()
+                .error()
+                .source("source")
+                .code("source.required")
+                .build());
+        }
     }
 }

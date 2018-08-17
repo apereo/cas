@@ -182,6 +182,11 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return X509CertificateCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
 
         val x509Credential = (X509CertificateCredential) credential;

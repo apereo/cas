@@ -118,8 +118,12 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return DuoCredential.class.isAssignableFrom(clazz) || DuoDirectCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
-        return DuoCredential.class.isAssignableFrom(credential.getClass())
-            || credential instanceof DuoDirectCredential;
+        return supports(credential.getClass());
     }
 }
