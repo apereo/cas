@@ -4,6 +4,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -22,7 +23,7 @@ public class RequestValidatorTestUtils {
                                                     final String name,
                                                     final String clientId,
                                                     final String clientSecret,
-                                                    final HashSet<OAuth20GrantTypes> grantTypes) {
+                                                    final Set<OAuth20GrantTypes> grantTypes) {
         final OAuthRegisteredService registeredService = new OAuthRegisteredService();
         registeredService.setName(name);
         registeredService.setClientId(clientId);

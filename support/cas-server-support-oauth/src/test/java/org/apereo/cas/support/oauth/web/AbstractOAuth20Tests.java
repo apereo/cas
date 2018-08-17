@@ -101,6 +101,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -243,7 +244,7 @@ public abstract class AbstractOAuth20Tests {
         return CoreAuthenticationTestUtils.getPrincipal(ID, map);
     }
 
-    protected OAuthRegisteredService addRegisteredService(final HashSet<OAuth20GrantTypes> grantTypes) {
+    protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes) {
         return addRegisteredService(false, grantTypes);
     }
 
@@ -253,7 +254,7 @@ public abstract class AbstractOAuth20Tests {
 
 
     protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken,
-                                                          final HashSet<OAuth20GrantTypes> grantTypes) {
+                                                          final Set<OAuth20GrantTypes> grantTypes) {
         final OAuthRegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, grantTypes);
         registeredService.setGenerateRefreshToken(generateRefreshToken);
         servicesManager.save(registeredService);
@@ -282,7 +283,7 @@ public abstract class AbstractOAuth20Tests {
 
     protected OAuthRegisteredService getRegisteredService(final String serviceId,
                                                           final String secret,
-                                                          final HashSet<OAuth20GrantTypes> grantTypes) {
+                                                          final Set<OAuth20GrantTypes> grantTypes) {
         final OAuthRegisteredService registeredServiceImpl = new OAuthRegisteredService();
         registeredServiceImpl.setName("The registered service name");
         registeredServiceImpl.setServiceId(serviceId);
