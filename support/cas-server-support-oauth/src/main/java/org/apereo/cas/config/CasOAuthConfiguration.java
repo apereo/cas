@@ -51,6 +51,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpoi
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
+import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpoint;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGenerator;
@@ -109,6 +110,7 @@ import org.pac4j.http.client.direct.DirectFormClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -736,5 +738,11 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         service.setServiceId(oauthCallbackService().getId());
         service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
         plan.registerServiceRegistry(new OAuth20ServiceRegistry(service));
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public OAuth20TokenManagementEndpoint oAuth20TokenManagementEndpoint() {
+        return new OAuth20TokenManagementEndpoint(ticketRegistry.getIfAvailable());
     }
 }
