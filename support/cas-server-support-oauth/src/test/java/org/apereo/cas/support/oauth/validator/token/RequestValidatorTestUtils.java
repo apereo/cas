@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  * Some utils for creating test services for request validator testing.
  *
  * @author Kirill Gagarski
- * @since 5.3.4
+ * @since 5.3.3
  */
 public class RequestValidatorTestUtils {
     public static final String SUPPORTING_CLIENT_ID = "supporting";

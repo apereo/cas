@@ -14,10 +14,9 @@ import java.util.HashSet;
  * the change that adds proper support for supportedGrantTypes does not break existing CAS
  * setups that does not specify allowedGrantTypes. Briefly, it checks that empty supportedGrantTypes
  * is equivalent to supportedGrantTypes with all valid values.
- * This behavior is probably going to change it 6.0 so this suite should be removed.
  *
  * @author Kirill Gagarski
- * @since 5.3.4
+ * @since 5.3.3
  */
 public class OAuth20AccessTokenControllerNoGrantTypeTests extends OAuth20AccessTokenControllerTests {
     @Override
@@ -30,7 +29,7 @@ public class OAuth20AccessTokenControllerNoGrantTypeTests extends OAuth20AccessT
     }
 
     @Override
-    public void verifyClientDisallowedAuthorizationCode() {
+    public void verifyClientDisallowedGrantType() {
         // This test should never fail in this suite, so just doing nothing.
     }
 

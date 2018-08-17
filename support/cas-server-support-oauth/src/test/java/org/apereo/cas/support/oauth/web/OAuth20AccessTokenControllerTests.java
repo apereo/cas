@@ -109,7 +109,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyClientBadAuthorizationCode() throws Exception {
+    public void verifyClientBadGrantType() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
@@ -129,7 +129,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
-    public void verifyClientDisallowedAuthorizationCode() throws Exception {
+    public void verifyClientDisallowedGrantType() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
         mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
         mockRequest.setParameter(OAuth20Constants.REDIRECT_URI, REDIRECT_URI);
