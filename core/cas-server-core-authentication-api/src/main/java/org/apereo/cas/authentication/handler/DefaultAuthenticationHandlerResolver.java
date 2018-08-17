@@ -1,4 +1,6 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.handler;
+
+import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 
 import org.springframework.core.Ordered;
 
