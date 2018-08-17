@@ -357,6 +357,16 @@ public interface CasWebflowConstants {
     String VIEW_ID_SEND_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSendInstructionsView";
 
     /**
+     * View id 'casForgotUsernameSentInfoView'.
+     */
+    String VIEW_ID_SENT_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSentInfoView";
+
+    /**
+     * View id 'casForgotUsernameSendInfoView'.
+     */
+    String VIEW_ID_FORGOT_USERNAME_ACCT_INFO = "casForgotUsernameSendInfoView";
+
+    /**
      * View id 'casBadHoursView'.
      */
     String VIEW_ID_INVALID_AUTHENTICATION_HOURS = "casBadHoursView";
@@ -410,6 +420,11 @@ public interface CasWebflowConstants {
      * Transition id 'resetPassword'.
      */
     String TRANSITION_ID_RESET_PASSWORD = "resetPassword";
+
+    /**
+     * Transition id 'forgotUsername'.
+     */
+    String TRANSITION_ID_FORGOT_USERNAME = "forgotUsername";
 
     /**
      * Transition id 'mustAcceptUsagePolicy'.

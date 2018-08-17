@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.pm.forgotusername.title}">Forgot Username Instructions View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="reset">
+        <h3 th:utext="#{screen.pm.forgotusername.title}">Forgot your username?</h3>
+        <div th:utext="#{screen.pm.forgotusername.instructions}">Please provide your email address. You will receive an email with your username.</div>
+        <p/>
+
+        <div class="alert alert-danger" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+            <p th:each="message : ${flowRequestContext.messageContext.allMessages}" th:utext="#{${message.text}}">Message Text</p>
+        </div>
+
+        <form method="post" id="fm1" class="fm-v clearfix">
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="_eventId" value="findUsername"/>
+            <div class="form-group">
+                <label for="email" class="fl-label" th:utext="#{screen.pm.reset.email}"/>
+                <input type="text" class="form-control" id="email" name="email" size="45" tabindex="1" required/>
+            </div>
+            <input class="btn btn-submit" accesskey="s"
+                   th:value="#{screen.pm.button.submit}" tabindex="2" type="submit" value="SUBMIT"/>
+            &nbsp;
+            <input class="btn btn-danger"
+                   name="cancel"
+                   accesskey="c"
+                   th:value="#{screen.pm.button.cancel}"
+                   type="button"
+                   onclick="location.href = location.href;" value="CANCEL"/>
+
+        </form>
+        <p/>
+    </div>
+
+    <script type="text/javascript" th:inline="javascript">
+        var i = [[#{screen.welcome.button.loginwip}]];
+        $('#fm1').submit(function () {
+            $(':submit').attr('disabled', true);
+            $(':submit').attr('value', i);
+            return true;
+        });
+    </script>
+    </div>
+</main>
+</body>
+</html>

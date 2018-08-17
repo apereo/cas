@@ -74,6 +74,11 @@ public class PasswordManagementProperties implements Serializable {
     private Reset reset = new Reset();
 
     /**
+     * Settings related to fetching usernames.
+     */
+    private ForgotUsername forgotUsername = new ForgotUsername();
+
+    /**
      * Handle password policy via Groovy script.
      */
     private Groovy groovy = new Groovy();
@@ -170,6 +175,26 @@ public class PasswordManagementProperties implements Serializable {
          */
         private String searchFilterUsername;
     }
+
+    @RequiresModule(name = "cas-server-support-pm-webflow")
+    @Getter
+    @Setter
+    public static class ForgotUsername implements Serializable {
+        private static final long serialVersionUID = 4850199066765183587L;
+
+        /**
+         * Email settings for notifications.
+         */
+        @NestedConfigurationProperty
+        private EmailProperties mail = new EmailProperties();
+
+        public ForgotUsername() {
+            this.mail.setAttributeName("mail");
+            this.mail.setText("Your current username is: %s");
+            this.mail.setSubject("Forgot Username");
+        }
+    }
+
 
     @RequiresModule(name = "cas-server-support-pm-webflow")
     @Getter
