@@ -62,6 +62,11 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return U2FTokenCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
         return U2FTokenCredential.class.isAssignableFrom(credential.getClass());
     }

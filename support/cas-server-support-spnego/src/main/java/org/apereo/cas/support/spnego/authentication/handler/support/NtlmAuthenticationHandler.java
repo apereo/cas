@@ -130,6 +130,11 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return SpnegoCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
         return credential instanceof SpnegoCredential;
     }

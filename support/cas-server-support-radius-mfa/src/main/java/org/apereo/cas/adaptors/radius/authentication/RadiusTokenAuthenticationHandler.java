@@ -50,6 +50,11 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return RadiusTokenCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         try {
             val radiusCredential = (RadiusTokenCredential) credential;

@@ -39,5 +39,10 @@ public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
         return credential instanceof DigestCredential;
     }
 
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return DigestCredential.class.isAssignableFrom(clazz);
+    }
+
 
 }

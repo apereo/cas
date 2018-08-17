@@ -50,6 +50,11 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return OpenIdCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
         return credential instanceof OpenIdCredential;
     }

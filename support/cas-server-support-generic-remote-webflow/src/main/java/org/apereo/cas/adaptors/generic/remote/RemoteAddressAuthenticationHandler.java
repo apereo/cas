@@ -99,6 +99,11 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         return credential instanceof RemoteAddressCredential;
     }
 
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return RemoteAddressCredential.class.isAssignableFrom(clazz);
+    }
+
     /**
      * Sets ip network range.
      *

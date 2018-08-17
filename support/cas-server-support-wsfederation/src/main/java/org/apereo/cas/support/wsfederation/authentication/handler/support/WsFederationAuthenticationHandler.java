@@ -38,6 +38,11 @@ public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcess
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return WsFederationCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         val wsFederationCredentials = (WsFederationCredential) credential;
         if (wsFederationCredentials != null) {

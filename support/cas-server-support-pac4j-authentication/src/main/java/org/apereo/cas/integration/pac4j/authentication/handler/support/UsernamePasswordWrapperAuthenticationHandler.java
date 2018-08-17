@@ -68,6 +68,11 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return UsernamePasswordCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     protected Class<UsernamePasswordCredential> getCasCredentialsType() {
         return UsernamePasswordCredential.class;
     }

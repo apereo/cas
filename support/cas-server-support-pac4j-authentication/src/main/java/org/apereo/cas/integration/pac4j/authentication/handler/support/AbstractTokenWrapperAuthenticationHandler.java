@@ -1,6 +1,7 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -51,6 +52,11 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
         val credentials = new TokenCredentials(id);
         LOGGER.debug("pac4j credentials: [{}]", credentials);
         return credentials;
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return BasicIdentifiableCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

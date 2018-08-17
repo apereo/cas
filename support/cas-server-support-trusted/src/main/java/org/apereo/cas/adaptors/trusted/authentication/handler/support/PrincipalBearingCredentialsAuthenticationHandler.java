@@ -35,6 +35,11 @@ public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAu
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return PrincipalBearingCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
         return credential instanceof PrincipalBearingCredential;
     }

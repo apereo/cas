@@ -1,6 +1,7 @@
 package org.apereo.cas.web.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
@@ -62,6 +63,10 @@ public class CasSupportActionsConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
@@ -195,7 +200,8 @@ public class CasSupportActionsConfiguration {
             authenticationRequestServiceSelectionStrategies,
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             warnCookieGenerator.getIfAvailable(),
-            casProperties);
+            casProperties,
+            authenticationEventExecutionPlan);
     }
 
     @RefreshScope

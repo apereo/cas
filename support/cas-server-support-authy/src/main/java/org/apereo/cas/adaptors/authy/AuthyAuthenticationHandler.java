@@ -72,4 +72,9 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     public boolean supports(final Credential credential) {
         return AuthyTokenCredential.class.isAssignableFrom(credential.getClass());
     }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return AuthyTokenCredential.class.isAssignableFrom(clazz);
+    }
 }

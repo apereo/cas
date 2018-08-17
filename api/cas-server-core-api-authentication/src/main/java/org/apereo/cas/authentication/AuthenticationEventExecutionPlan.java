@@ -108,6 +108,13 @@ public interface AuthenticationEventExecutionPlan {
     Set<AuthenticationHandler> getAuthenticationHandlersForTransaction(AuthenticationTransaction transaction);
 
     /**
+     * Gets authentication handlers.
+     *
+     * @return the authentication handlers
+     */
+    Set<AuthenticationHandler> getAuthenticationHandlers();
+
+    /**
      * Gets authentication metadata populators.
      *
      * @param transaction the transaction

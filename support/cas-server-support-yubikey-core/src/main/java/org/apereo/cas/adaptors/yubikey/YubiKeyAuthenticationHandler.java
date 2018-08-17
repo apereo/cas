@@ -108,6 +108,11 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return YubiKeyCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
         return YubiKeyCredential.class.isAssignableFrom(credential.getClass());
     }

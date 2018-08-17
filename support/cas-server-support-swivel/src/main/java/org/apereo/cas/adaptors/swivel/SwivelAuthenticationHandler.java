@@ -133,6 +133,11 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return SwivelTokenCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
         return SwivelTokenCredential.class.isAssignableFrom(credential.getClass());
     }

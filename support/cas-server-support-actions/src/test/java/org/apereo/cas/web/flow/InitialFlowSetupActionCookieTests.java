@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -18,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -48,7 +50,12 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
+    @Autowired
+    @Qualifier("authenticationEventExecutionPlan")
+    private AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
     private InitialFlowSetupAction action;
     private CookieRetrievingCookieGenerator warnCookieGenerator;
@@ -68,7 +75,7 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
         this.action = new InitialFlowSetupAction(argExtractors, servicesManager,
             authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
-            warnCookieGenerator, casProperties);
+            warnCookieGenerator, casProperties, authenticationEventExecutionPlan);
 
         this.action.afterPropertiesSet();
     }
