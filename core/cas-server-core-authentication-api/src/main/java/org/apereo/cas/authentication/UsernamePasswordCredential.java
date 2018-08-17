@@ -59,6 +59,10 @@ public class UsernamePasswordCredential implements Credential {
      * @param context the context
      */
     public void validate(final ValidationContext context) {
+        if (!context.getUserEvent().equalsIgnoreCase("submit")) {
+            return;
+        }
+
         val messages = context.getMessageContext();
         if (StringUtils.isBlank(username)) {
             messages.addMessage(new MessageBuilder()
