@@ -27,7 +27,7 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/tests/mysql/run-mariadb-server.sh
+./ci/tests/mariadb/run-mariadb-server.sh
 
 gradleBuild="$gradleBuild testMariaDb coveralls -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
