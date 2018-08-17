@@ -102,6 +102,11 @@ public class PasswordManagementProperties implements Serializable {
         private String sqlFindEmail;
 
         /**
+         * SQL query to locate the user via email.
+         */
+        private String sqlFindUser;
+
+        /**
          * SQL query to locate security questions for the account, if any.
          */
         private String sqlSecurityQuestions;
@@ -118,6 +123,11 @@ public class PasswordManagementProperties implements Serializable {
          * Endpoint URL to use when locating email addresses.
          */
         private String endpointUrlEmail;
+
+        /**
+         * Endpoint URL to use when locating user names.
+         */
+        private String endpointUrlUser;
 
         /**
          * Endpoint URL to use when locating security questions.
@@ -149,6 +159,16 @@ public class PasswordManagementProperties implements Serializable {
          * based on which update operations will be constructed.
          */
         private LdapType type = LdapType.AD;
+
+        /**
+         * Username attribute required by LDAP.
+         */
+        private String usernameAttribute = "uid";
+
+        /**
+         * Search filter used to look up usernames by email.
+         */
+        private String searchFilterUsername;
     }
 
     @RequiresModule(name = "cas-server-support-pm-webflow")

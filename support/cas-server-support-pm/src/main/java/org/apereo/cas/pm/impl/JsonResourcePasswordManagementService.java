@@ -95,6 +95,15 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     @Override
+    public String findUsername(final String email) {
+        val result = this.jsonBackedAccounts.entrySet()
+            .stream()
+            .filter(entry -> entry.getValue().getEmail().equalsIgnoreCase(email))
+            .findFirst();
+        return result.isPresent() ? result.get().getKey() : null;
+    }
+
+    @Override
     public Map<String, String> getSecurityQuestions(final String username) {
         val account = this.jsonBackedAccounts.getOrDefault(username, null);
         if (account != null) {
