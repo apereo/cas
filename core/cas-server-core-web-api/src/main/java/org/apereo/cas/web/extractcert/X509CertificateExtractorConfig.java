@@ -1,9 +1,9 @@
 package org.apereo.cas.web.extractcert;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
