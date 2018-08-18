@@ -1,5 +1,7 @@
 package org.apereo.cas.support.x509.rest.config;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.factory.ChainingRestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.Lazy;
  */
 @Configuration("x509RestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class X509RestConfiguration implements RestHttpRequestCredentialFactoryConfigurer {
     
     @Autowired
