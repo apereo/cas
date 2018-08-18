@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
 import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -89,13 +88,6 @@ public class X509AuthenticationWebflowConfiguration implements CasWebflowExecuti
         return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver,
             serviceTicketRequestWebflowEventResolver,
             adaptiveAuthenticationPolicy);
-    }
-
-    @ConditionalOnMissingBean(name = "x509CertificateExtractor")
-    @Bean
-    public X509CertificateExtractor x509CertificateExtractor() {
-        val sslHeaderName = casProperties.getAuthn().getX509().getSslHeaderName();
-        return new RequestHeaderX509CertificateExtractor(sslHeaderName);
     }
 
     @Override
