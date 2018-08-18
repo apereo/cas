@@ -2,6 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.Getter;
@@ -10,7 +11,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -54,9 +54,14 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     private final String usernameParameter;
     private final String authenticationFailureCode;
+
     private final AuditTrailExecutionPlan auditTrailExecutionPlan;
+
     private final String applicationCode;
+
     private double thresholdRate = -1;
+
+    private final ThrottledRequestResponseHandler throttledRequestResponseHandler;
 
     /**
      * Configure the threshold rate.
@@ -67,23 +72,16 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         LOGGER.debug("Calculated threshold rate as [{}]", this.thresholdRate);
     }
 
-
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o) throws Exception {
-        // we only care about post because that's the only instance where we can get anything useful besides IP address.
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
+            LOGGER.trace("Letting the request through given http method is [{}]", request.getMethod());
             return true;
         }
+
         if (exceedsThreshold(request)) {
             recordThrottle(request);
-            request.setAttribute(WebUtils.CAS_ACCESS_DENIED_REASON, "screen.blocked.message");
-            val username = StringUtils.isNotBlank(this.usernameParameter)
-                ? StringUtils.defaultString(request.getParameter(this.usernameParameter), "N/A")
-                : "N/A";
-            response.sendError(HttpStatus.SC_LOCKED, "Access Denied for user ["
-                + StringEscapeUtils.escapeHtml4(username) + "] from IP Address ["
-                + request.getRemoteAddr() + ']');
-            return false;
+            return throttledRequestResponseHandler.handle(request, response);
         }
         return true;
     }
