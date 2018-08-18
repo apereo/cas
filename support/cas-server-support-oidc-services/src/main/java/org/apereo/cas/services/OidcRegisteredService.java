@@ -15,6 +15,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -71,6 +72,10 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Lob
     @Column(name = "scopes", length = Integer.MAX_VALUE)
     private HashSet<String> scopes = new HashSet<>();
+
+    @Lob
+    @Column(name = "postLogoutRedirectUris", length = Integer.MAX_VALUE)
+    private ArrayList<String> postLogoutRedirectUris = new ArrayList<>();
 
     /**
      * Gets subject type.
