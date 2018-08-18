@@ -28,6 +28,10 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
 
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
+        if (requestBody == null || requestBody.isEmpty()) {
+            LOGGER.debug("Skipping {} because the requestBody is null or empty", this);
+            return new ArrayList<>(0);
+        }
         final String username = requestBody.getFirst(USERNAME);
         final String password = requestBody.getFirst(PASSWORD);
         if (username == null || password == null) {
