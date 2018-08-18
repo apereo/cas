@@ -1,7 +1,5 @@
 package org.apereo.cas.support.x509.rest.config;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.factory.ChainingRestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
@@ -9,6 +7,10 @@ import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.support.x509.rest.X509RestHttpRequestHeaderCredentialFactory;
 import org.apereo.cas.support.x509.rest.X509RestMultipartBodyCredentialFactory;
 import org.apereo.cas.web.extractcert.X509CertificateExtractor;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -45,9 +47,9 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
     
     @Override
     public void configureCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
-        final X509CertificateExtractor extractor = x509CertificateExtractor.getIfAvailable();
-        final boolean headerAuth = casProperties.getRest().isHeaderAuth();
-        final boolean bodyAuth = casProperties.getRest().isBodyAuth();
+        val extractor = x509CertificateExtractor.getIfAvailable();
+        val headerAuth = casProperties.getRest().isHeaderAuth();
+        val bodyAuth = casProperties.getRest().isBodyAuth();
         LOGGER.debug("is certificate extractor available? = {}, headerAuth = {}, bodyAuth = {}",
             extractor, headerAuth, bodyAuth);
         if (extractor != null && headerAuth) {
