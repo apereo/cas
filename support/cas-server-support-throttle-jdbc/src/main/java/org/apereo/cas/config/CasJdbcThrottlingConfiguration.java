@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.JdbcThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
@@ -34,6 +35,10 @@ public class CasJdbcThrottlingConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("throttledRequestResponseHandler")
+    private ThrottledRequestResponseHandler throttledRequestResponseHandler;
+
     @Bean
     public DataSource inspektrAuditTrailDataSource() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getThrottle().getJdbc());
@@ -45,13 +50,15 @@ public class CasJdbcThrottlingConfiguration {
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
         val throttle = casProperties.getAuthn().getThrottle();
         val failure = throttle.getFailure();
-        return new JdbcThrottledSubmissionHandlerInterceptorAdapter(failure.getThreshold(),
+        return new JdbcThrottledSubmissionHandlerInterceptorAdapter(
+            failure.getThreshold(),
             failure.getRangeSeconds(),
             throttle.getUsernameParameter(),
             auditTrailManager.getIfAvailable(),
             inspektrAuditTrailDataSource(),
             throttle.getAppcode(),
             throttle.getJdbc().getAuditQuery(),
-            failure.getCode());
+            failure.getCode(),
+            throttledRequestResponseHandler);
     }
 }

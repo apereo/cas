@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -34,9 +35,11 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
                                                             final String usernameParameter,
                                                             final AuditTrailExecutionPlan auditTrailManager,
                                                             final DataSource dataSource, final String applicationCode,
-                                                            final String sqlQueryAudit, final String authenticationFailureCode) {
+                                                            final String sqlQueryAudit, final String authenticationFailureCode,
+                                                            final ThrottledRequestResponseHandler throttledRequestResponseHandler) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailManager, applicationCode);
+            authenticationFailureCode, auditTrailManager, applicationCode,
+            throttledRequestResponseHandler);
         this.dataSource = dataSource;
         this.sqlQueryAudit = sqlQueryAudit;
         this.jdbcTemplate = new JdbcTemplate(this.dataSource);
