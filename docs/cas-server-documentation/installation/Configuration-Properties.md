@@ -1539,14 +1539,18 @@ Password encoding  settings for this feature are available [here](Configuration-
 
 ## MongoDb Authentication
 
-To learn more about this topic, [please review this guide](MongoDb-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.mongo`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.mongo`.
+To learn more about this topic, [please review this guide](MongoDb-Authentication.html). 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.mongo`. 
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.mongo`.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn`.
 
 ```properties
-# cas.authn.mongo.mongoHostUri=mongodb://uri
-# cas.authn.mongo.usernameAttribute=username
 # cas.authn.mongo.attributes=
+# cas.authn.mongo.usernameAttribute=username
 # cas.authn.mongo.passwordAttribute=password
-# cas.authn.mongo.collectionName=users
+# cas.authn.mongo.principalIdAttribute=
 # cas.authn.mongo.name=
 ```
 

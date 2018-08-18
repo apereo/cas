@@ -269,7 +269,13 @@ public class MongoDbConnectionFactory {
         return clientOptions.build();
     }
 
-    private MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
+    /**
+     * Build mongo db client.
+     *
+     * @param mongo the mongo
+     * @return the mongo client
+     */
+    public MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {
             LOGGER.debug("Using MongoDb client URI [{}] to connect to MongoDb instance", mongo.getClientUri());
