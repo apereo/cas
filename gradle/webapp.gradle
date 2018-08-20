@@ -52,7 +52,9 @@ dependencies {
     implementation project(":support:cas-server-support-reports")
     implementation project(":support:cas-server-support-validation") 
     implementation project(":support:cas-server-support-pm-webflow")
-    
+
+    implementation project(":support:cas-server-support-duo")
+
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
 

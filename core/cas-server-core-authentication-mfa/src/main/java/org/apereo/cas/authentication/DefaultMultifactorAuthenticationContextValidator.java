@@ -129,10 +129,6 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
                 LOGGER.debug("Service [{}] is configured to use a [{}] failure mode for multifactor authentication policy and "
                     + "since provider [{}] is unavailable at the moment, CAS will consider the authentication satisfied "
                     + "without the presence of [{}]", service.getServiceId(), mode, requestedProvider, requestedContext);
-
-                if (satisfiedProviders != null && !satisfiedProviders.isEmpty()) {
-                    return Pair.of(Boolean.TRUE, satisfiedProviders.stream().findFirst());
-                }
                 return Pair.of(Boolean.TRUE, Optional.empty());
             }
         }
