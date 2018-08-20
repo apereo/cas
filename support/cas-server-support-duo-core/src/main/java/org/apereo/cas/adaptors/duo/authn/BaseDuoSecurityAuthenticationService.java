@@ -7,12 +7,11 @@ import org.apereo.cas.util.http.HttpClient;
 
 import com.duosecurity.client.Http;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.http.HttpMethod;
 
 import java.net.URL;
@@ -27,6 +26,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @RequiredArgsConstructor
+@EqualsAndHashCode(of = "duoProperties")
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
     private static final long serialVersionUID = -8044100706027708789L;
 
@@ -81,36 +81,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     @Override
     public String getApiHost() {
         return duoProperties.getDuoApiHost();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        val rhs = (BaseDuoSecurityAuthenticationService) obj;
-        return new EqualsBuilder()
-            .append(this.duoProperties.getDuoApiHost(), rhs.duoProperties.getDuoApiHost())
-            .append(this.duoProperties.getDuoApplicationKey(), rhs.duoProperties.getDuoApplicationKey())
-            .append(this.duoProperties.getDuoIntegrationKey(), rhs.duoProperties.getDuoIntegrationKey())
-            .append(this.duoProperties.getDuoSecretKey(), rhs.duoProperties.getDuoSecretKey())
-            .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-            .append(this.duoProperties.getDuoApiHost())
-            .append(this.duoProperties.getDuoApplicationKey())
-            .append(this.duoProperties.getDuoIntegrationKey())
-            .append(this.duoProperties.getDuoSecretKey())
-            .toHashCode();
     }
 
     @Override
