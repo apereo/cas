@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
@@ -145,7 +146,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         LOGGER.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
         val service = this.servicesManager.findServiceBy(assertion.getService());
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
-        val providers = this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
         val authentication = assertion.getPrimaryAuthentication();
         val requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request, service, authentication);
 
