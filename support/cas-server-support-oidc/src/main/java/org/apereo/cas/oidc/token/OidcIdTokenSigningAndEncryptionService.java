@@ -5,11 +5,11 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseIdTokenSigningAndEncryptionService;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -23,11 +23,17 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class OidcIdTokenSigningAndEncryptionService extends BaseIdTokenSigningAndEncryptionService {
     private final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache;
     private final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache;
-    private final String issuer;
+
+    public OidcIdTokenSigningAndEncryptionService(final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache,
+                                                  final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
+                                                  final String issuer) {
+        super(issuer);
+        this.defaultJsonWebKeystoreCache = defaultJsonWebKeystoreCache;
+        this.serviceJsonWebKeystoreCache = serviceJsonWebKeystoreCache;
+    }
 
     @Override
     @SneakyThrows
@@ -63,19 +69,24 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseIdTokenSigningAn
     }
 
     private String signIdToken(final OidcRegisteredService svc, final JsonWebSignature jws) throws Exception {
-        val jwks = defaultJsonWebKeystoreCache.get(this.issuer);
-        if (!jwks.isPresent()) {
-            throw new IllegalArgumentException("Service " + svc.getServiceId()
-                + " with client id " + svc.getClientId()
-                + " is configured to sign id tokens, yet no JSON web key is available");
-        }
-        val jsonWebKey = jwks.get();
+        LOGGER.debug("Fetching JSON web key to sign the id token for : [{}]", svc.getClientId());
+        val jsonWebKey = getSigningKey();
         LOGGER.debug("Found JSON web key to sign the id token: [{}]", jsonWebKey);
         if (jsonWebKey.getPrivateKey() == null) {
             throw new IllegalArgumentException("JSON web key used to sign the id token has no associated private key");
         }
         configureJsonWebSignatureForIdTokenSigning(svc, jws, jsonWebKey);
         return jws.getCompactSerialization();
+    }
+
+
+    @Override
+    protected PublicJsonWebKey getSigningKey() {
+        val jwks = defaultJsonWebKeystoreCache.get(getIssuer());
+        if (!jwks.isPresent()) {
+            throw new IllegalArgumentException("No signing key could be found for issuer " + getIssuer());
+        }
+        return jwks.get();
     }
 
     @Override

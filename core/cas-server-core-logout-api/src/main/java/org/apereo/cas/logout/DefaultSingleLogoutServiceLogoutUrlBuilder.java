@@ -9,10 +9,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
+import org.springframework.util.StringUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultSingleLogoutServiceLogoutUrlBuilder} which acts on a registered
@@ -32,7 +36,10 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutS
         val serviceLogoutUrl = registeredService.getLogoutUrl();
         if (serviceLogoutUrl != null) {
             LOGGER.debug("Logout request will be sent to [{}] for service [{}]", serviceLogoutUrl, singleLogoutService);
-            return CollectionUtils.wrap(serviceLogoutUrl);
+
+            return Arrays.stream(StringUtils.commaDelimitedListToStringArray(serviceLogoutUrl))
+                .map(Unchecked.function(URL::new))
+                .collect(Collectors.toList());
         }
         val originalUrl = singleLogoutService.getOriginalUrl();
         if (this.urlValidator.isValid(originalUrl)) {
