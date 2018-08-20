@@ -2453,6 +2453,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.metadata.basicAuthnUsername=
 # cas.authn.samlIdp.metadata.basicAuthnPassword=
 # cas.authn.samlIdp.metadata.supportedContentTypes=
+
 ```
 
 #### SAML Metadata JPA
@@ -2520,6 +2521,13 @@ under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
 # cas.authn.samlIdp.response.signError=false
 # cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
+```
+
+### SAML Ticket
+
+```properties
+# cas.authn.samlIdp.ticket.samlArtifactsCacheStorageName=samlArtifactsCache
+# cas.authn.samlIdp.ticket.samlAttributeQueryCacheStorageName=samlAttributeQueryCache
 ```
 
 ## SAML SPs

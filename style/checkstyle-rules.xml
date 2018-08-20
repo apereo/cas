@@ -11,7 +11,7 @@
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
-        <module name="LambdaParameterName"/>
+        <!--<module name="LambdaParameterName"/>-->
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
