@@ -48,7 +48,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl("http://www.example.com/logout");
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
         val url = builder.determineLogoutUrl(svc, getService("https://www.google.com"));
-        assertEquals(url.iterator().next(), svc.getLogoutUrl());
+        assertEquals(url.iterator().next().toExternalForm(), svc.getLogoutUrl());
     }
 
     @Test
