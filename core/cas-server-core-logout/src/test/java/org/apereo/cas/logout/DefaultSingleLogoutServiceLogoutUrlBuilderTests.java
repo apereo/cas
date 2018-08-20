@@ -57,7 +57,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);
         val url = builder.determineLogoutUrl(svc, getService("https://www.somewhere.com/logout?p=v"));
-        assertEquals(url.iterator().next(), new URL("https://www.somewhere.com/logout?p=v"));
+        assertEquals(new URL("https://www.somewhere.com/logout?p=v"), url.iterator().next());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(true);
         val url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
-        assertEquals(url.iterator().next(), new URL("https://localhost/logout?p=v"));
+        assertEquals(new URL("https://localhost/logout?p=v"), url.iterator().next());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\w*", true);
         val url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
-        assertEquals(url.iterator().next(), new URL("https://localhost/logout?p=v"));
+        assertEquals(new URL("https://localhost/logout?p=v"), url.iterator().next());
     }
 
     @Test
@@ -102,7 +102,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         svc.setLogoutUrl(null);
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(true, "\\d*", true);
         val url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
-        assertEquals(url.iterator().next(), new URL("https://localhost/logout?p=v"));
+        assertEquals(new URL("https://localhost/logout?p=v"), url.iterator().next());
     }
 
     @Test
