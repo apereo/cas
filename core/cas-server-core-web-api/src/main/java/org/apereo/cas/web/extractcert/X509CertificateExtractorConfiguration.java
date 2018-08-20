@@ -2,7 +2,6 @@ package org.apereo.cas.web.extractcert;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,12 +11,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * This class configures the {@link X509CertificateExtractor} for the x509 webflow and x509 rest
+ * authentication modules.
+ *
+ * @author Curtis W Ruck
  * @since 5.3.3
  */
-@Configuration("x509CertificateExtractorConfig")
+@Configuration("x509CertificateExtractorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Slf4j
-class X509CertificateExtractorConfig {
+public class X509CertificateExtractorConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -13,6 +13,7 @@ import lombok.val;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +33,7 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
     private CasConfigurationProperties casProperties;
     
     @Autowired
+    @Qualifier("x509CertificateExtractor")
     @Lazy
     private ObjectProvider<X509CertificateExtractor> x509CertificateExtractor;
 
@@ -47,9 +49,10 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
     
     @Override
     public void configureCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
+        val restProperties = casProperties.getRest();
         val extractor = x509CertificateExtractor.getIfAvailable();
-        val headerAuth = casProperties.getRest().isHeaderAuth();
-        val bodyAuth = casProperties.getRest().isBodyAuth();
+        val headerAuth = restProperties.isHeaderAuth();
+        val bodyAuth = restProperties.isBodyAuth();
         LOGGER.debug("is certificate extractor available? = {}, headerAuth = {}, bodyAuth = {}",
             extractor, headerAuth, bodyAuth);
         if (extractor != null && headerAuth) {
