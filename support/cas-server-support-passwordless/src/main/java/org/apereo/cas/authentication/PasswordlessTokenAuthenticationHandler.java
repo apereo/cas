@@ -42,6 +42,11 @@ public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostPr
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return OneTimePasswordCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
         if (!OneTimePasswordCredential.class.isInstance(credential)) {
             LOGGER.debug("Credential is not one of one-time password and is not accepted by handler [{}]", getName());

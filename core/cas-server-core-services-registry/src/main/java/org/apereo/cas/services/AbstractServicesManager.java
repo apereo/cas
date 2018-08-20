@@ -8,7 +8,6 @@ import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
-import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,7 +18,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -230,46 +228,8 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
     private Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
         val predicates = new ArrayList<Predicate<RegisteredService>>();
 
-        val expirationPolicyPredicate = getRegisteredServiceExpirationPolicyPredicate();
-        predicates.add(expirationPolicyPredicate);
-
         predicates.addAll(Stream.of(p).collect(Collectors.toList()));
         return predicates.stream().reduce(x -> true, Predicate::and);
-    }
-
-    /**
-     * Returns a predicate that determined whether a service has expired.
-     *
-     * @return true if the service is still valid. false if service has expired.
-     */
-    private Predicate<RegisteredService> getRegisteredServiceExpirationPolicyPredicate() {
-        return service -> {
-            try {
-                if (service == null) {
-                    return false;
-                }
-                val policy = service.getExpirationPolicy();
-                if (policy == null || StringUtils.isBlank(policy.getExpirationDate())) {
-                    return true;
-                }
-                val now = getCurrentSystemTime();
-                val expirationDate = DateTimeUtils.localDateTimeOf(policy.getExpirationDate());
-                LOGGER.debug("Service expiration date is [{}] while now is [{}]", expirationDate, now);
-                return !now.isAfter(expirationDate);
-            } catch (final Exception e) {
-                LOGGER.warn(e.getMessage(), e);
-            }
-            return false;
-        };
-    }
-
-    /**
-     * Gets current system time.
-     *
-     * @return the current system time
-     */
-    protected LocalDateTime getCurrentSystemTime() {
-        return LocalDateTime.now();
     }
 
     private RegisteredService validateRegisteredService(final RegisteredService registeredService) {
@@ -278,7 +238,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
     }
 
     private RegisteredService checkServiceExpirationPolicyIfAny(final RegisteredService registeredService) {
-        if (registeredService == null || getRegisteredServiceExpirationPolicyPredicate().test(registeredService)) {
+        if (registeredService == null || RegisteredServiceAccessStrategyUtils.ensureServiceIsNotExpired(registeredService)) {
             return registeredService;
         }
         return processExpiredRegisteredService(registeredService);
@@ -297,9 +257,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
             delete(registeredService);
             return null;
         }
-        LOGGER.debug("Disabling expired registered service [{}].", registeredService.getServiceId());
-        registeredService.getAccessStrategy().setServiceAccessAllowed(false);
-        return save(registeredService);
+        return registeredService;
     }
 
     /**

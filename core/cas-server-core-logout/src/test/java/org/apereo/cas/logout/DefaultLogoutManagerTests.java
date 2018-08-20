@@ -102,7 +102,7 @@ public class DefaultLogoutManagerTests {
 
     @Test
     public void verifyServiceLogoutUrlIsUsed() throws Exception {
-        this.registeredService.setLogoutUrl(new URL("https://www.apereo.org"));
+        this.registeredService.setLogoutUrl("https://www.apereo.org");
         val logoutRequests = this.logoutManager.performLogout(tgt);
         val logoutRequest = logoutRequests.iterator().next();
         assertEquals(logoutRequest.getLogoutUrl(), this.registeredService.getLogoutUrl());

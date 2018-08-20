@@ -13,6 +13,7 @@
         <binder>
             <binding property="username" required="true"/>
             <binding property="password" required="true"/>
+            <binding property="source" required="true" />
         </binder>
         <on-render>
             <evaluate expression="renderLoginFormAction" />

@@ -5,14 +5,12 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20ProofKeyCodeExchangeAut
 import org.apereo.cas.support.oauth.authenticator.OAuth20UsernamePasswordAuthenticatorTests;
 import org.apereo.cas.support.oauth.services.OAuth20WebApplicationServiceTests;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidatorTests;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20PasswordGrantTypeAuthorizationRequestValidatorTests;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20RefreshTokenGrantTypeAuthorizationRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20PasswordGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.validator.token.OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenControllerMemcachedTests;
+import org.apereo.cas.support.oauth.web.OAuth20AccessTokenControllerNoGrantTypeTests;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenControllerTests;
 import org.apereo.cas.support.oauth.web.OAuth20AuthorizeControllerTests;
 import org.apereo.cas.support.oauth.web.OAuth20ProfileControllerTests;
@@ -37,6 +35,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     OAuth20AccessTokenControllerTests.class,
+    OAuth20AccessTokenControllerNoGrantTypeTests.class,
     OAuth20AuthorizeControllerTests.class,
     OAuthAccessTokenExpirationPolicyTests.class,
     OAuthAccessTokenSovereignExpirationPolicyTests.class,
@@ -46,9 +45,6 @@ import org.junit.runners.Suite;
     OAuth20ClientCredentialsGrantTypeTokenRequestValidatorTests.class,
     OAuth20RefreshTokenGrantTypeTokenRequestValidatorTests.class,
     OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidatorTests.class,
-    OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidatorTests.class,
-    OAuth20PasswordGrantTypeAuthorizationRequestValidatorTests.class,
-    OAuth20RefreshTokenGrantTypeAuthorizationRequestValidatorTests.class,
     OAuthRefreshTokenSovereignExpirationPolicyTests.class,
     OAuth20AccessTokenControllerMemcachedTests.class,
     OAuth20ProfileControllerTests.class,

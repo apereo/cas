@@ -104,6 +104,11 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         return credential instanceof SpnegoCredential;
     }
 
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return SpnegoCredential.class.isAssignableFrom(clazz);
+    }
+
     /**
      * Gets the principal from the given name. The principal
      * is created by the factory instance.

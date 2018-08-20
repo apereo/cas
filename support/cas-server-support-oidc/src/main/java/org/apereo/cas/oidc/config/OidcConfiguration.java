@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
@@ -35,14 +36,15 @@ import org.apereo.cas.oidc.web.OidcConsentApprovalViewResolver;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcSecurityInterceptor;
-import org.apereo.cas.oidc.web.controllers.OidcAccessTokenEndpointController;
-import org.apereo.cas.oidc.web.controllers.OidcAuthorizeEndpointController;
-import org.apereo.cas.oidc.web.controllers.OidcDynamicClientRegistrationEndpointController;
-import org.apereo.cas.oidc.web.controllers.OidcIntrospectionEndpointController;
-import org.apereo.cas.oidc.web.controllers.OidcJwksEndpointController;
-import org.apereo.cas.oidc.web.controllers.OidcRevocationEndpointController;
-import org.apereo.cas.oidc.web.controllers.OidcUserProfileEndpointController;
-import org.apereo.cas.oidc.web.controllers.OidcWellKnownEndpointController;
+import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
+import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
+import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointController;
+import org.apereo.cas.oidc.web.controllers.introspection.OidcIntrospectionEndpointController;
+import org.apereo.cas.oidc.web.controllers.jwks.OidcJwksEndpointController;
+import org.apereo.cas.oidc.web.controllers.logout.OidcLogoutEndpointController;
+import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointController;
+import org.apereo.cas.oidc.web.controllers.token.OidcAccessTokenEndpointController;
+import org.apereo.cas.oidc.web.controllers.token.OidcRevocationEndpointController;
 import org.apereo.cas.oidc.web.flow.OidcAuthenticationContextWebflowEventResolver;
 import org.apereo.cas.oidc.web.flow.OidcRegisteredServiceUIAction;
 import org.apereo.cas.oidc.web.flow.OidcWebflowConfigurer;
@@ -64,6 +66,8 @@ import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.IdTokenGeneratorService;
+import org.apereo.cas.ticket.IdTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -210,6 +214,10 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     private ResourceLoader resourceLoader;
 
     @Autowired
+    @Qualifier("singleLogoutServiceLogoutUrlBuilder")
+    private SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
+
+    @Autowired
     @Qualifier("oauthSecConfig")
     private Config oauthSecConfig;
 
@@ -298,11 +306,11 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @RefreshScope
     @Bean
-    public OidcIdTokenGeneratorService oidcIdTokenGenerator() {
+    public IdTokenGeneratorService oidcIdTokenGenerator() {
         return new OidcIdTokenGeneratorService(
             casProperties,
             oidcTokenSigningAndEncryptionService(),
-            servicesManager);
+            servicesManager, ticketRegistry);
     }
 
     @Bean
@@ -348,6 +356,23 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             centralAuthenticationService,
             registeredServiceAccessStrategyEnforcer);
+    }
+
+    @RefreshScope
+    @Bean
+    public OidcLogoutEndpointController oidcLogoutEndpointController() {
+        return new OidcLogoutEndpointController(
+            servicesManager,
+            ticketRegistry,
+            defaultAccessTokenFactory,
+            oidcPrincipalFactory(),
+            webApplicationServiceFactory,
+            profileScopeToAttributesFilter(),
+            casProperties,
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            registeredServiceAccessStrategyEnforcer,
+            oidcTokenSigningAndEncryptionService(),
+            singleLogoutServiceLogoutUrlBuilder);
     }
 
     @RefreshScope
@@ -504,7 +529,7 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
     }
 
     @Bean
-    public OidcIdTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
+    public IdTokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService() {
         val oidc = casProperties.getAuthn().getOidc();
         return new OidcIdTokenSigningAndEncryptionService(oidcDefaultJsonWebKeystoreCache(),
             oidcServiceJsonWebKeystoreCache(),

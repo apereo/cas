@@ -31,11 +31,8 @@ import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20IdTokenResponseTypeAuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20PasswordGrantTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20ProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator;
-import org.apereo.cas.support.oauth.validator.authorization.OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20TokenResponseTypeAuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator;
 import org.apereo.cas.support.oauth.validator.token.OAuth20AuthorizationCodeGrantTypeTokenRequestValidator;
@@ -54,6 +51,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpoi
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20IntrospectionEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
+import org.apereo.cas.support.oauth.web.mgmt.OAuth20TokenManagementEndpoint;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20DefaultTokenGenerator;
@@ -112,6 +110,7 @@ import org.pac4j.http.client.direct.DirectFormClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -124,7 +123,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
 
 /**
  * This this {@link CasOAuthConfiguration}.
@@ -502,10 +500,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         validators.add(oauthProofKeyCodeExchangeResponseTypeAuthorizationRequestValidator());
         validators.add(oauthAuthorizationCodeResponseTypeRequestValidator());
         validators.add(oauthIdTokenResponseTypeRequestValidator());
-        validators.add(oauthPasswordGrantTypeRequestValidator());
-        validators.add(oauthClientCredentialsGrantTypeRequestValidator());
         validators.add(oauthTokenResponseTypeRequestValidator());
-        validators.add(oauthRefreshTokenGrantTypeRequestValidator());
         return validators;
     }
 
@@ -579,14 +574,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         return validators;
     }
 
-    @ConditionalOnMissingBean(name = "oauthClientCredentialsGrantTypeRequestValidator")
-    @Bean
-    @RefreshScope
-    public OAuth20AuthorizationRequestValidator oauthClientCredentialsGrantTypeRequestValidator() {
-        return new OAuth20ClientCredentialsGrantTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
-    }
-
     @ConditionalOnMissingBean(name = "oauthAuthorizationCodeResponseTypeRequestValidator")
     @Bean
     @RefreshScope
@@ -616,22 +603,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @RefreshScope
     public OAuth20AuthorizationRequestValidator oauthIdTokenResponseTypeRequestValidator() {
         return new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
-    }
-
-    @ConditionalOnMissingBean(name = "oauthPasswordGrantTypeRequestValidator")
-    @Bean
-    @RefreshScope
-    public OAuth20AuthorizationRequestValidator oauthPasswordGrantTypeRequestValidator() {
-        return new OAuth20PasswordGrantTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
-    }
-
-    @ConditionalOnMissingBean(name = "oauthRefreshTokenGrantTypeRequestValidator")
-    @Bean
-    @RefreshScope
-    public OAuth20AuthorizationRequestValidator oauthRefreshTokenGrantTypeRequestValidator() {
-        return new OAuth20RefreshTokenGrantTypeAuthorizationRequestValidator(servicesManager.getIfAvailable(),
             webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer);
     }
 
@@ -767,5 +738,11 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         service.setServiceId(oauthCallbackService().getId());
         service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
         plan.registerServiceRegistry(new OAuth20ServiceRegistry(service));
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public OAuth20TokenManagementEndpoint oAuth20TokenManagementEndpoint() {
+        return new OAuth20TokenManagementEndpoint(ticketRegistry.getIfAvailable());
     }
 }

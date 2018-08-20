@@ -47,6 +47,11 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
     }
 
     @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return OneTimePasswordCredential.class.isAssignableFrom(clazz);
+    }
+
+    @Override
     public boolean supports(final Credential credential) {
         return credential instanceof OneTimePasswordCredential;
     }

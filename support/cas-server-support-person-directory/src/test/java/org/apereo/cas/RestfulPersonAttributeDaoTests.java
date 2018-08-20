@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.util.MockWebServer;
 
@@ -10,6 +11,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,7 +35,11 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class})
-@TestPropertySource(locations = {"classpath:/rest-attribute-repository.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.attributeRepository.rest[0].method=GET",
+    "cas.authn.attributeRepository.rest[0].url=http://localhost:8085"
+})
+@Category(RestfulApiCategory.class)
 public class RestfulPersonAttributeDaoTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

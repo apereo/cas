@@ -31,6 +31,42 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
+    public String findUsername(final String email) {
+        try {
+            val ldap = properties.getLdap();
+            val filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilterUsername(),
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+                CollectionUtils.wrap(email));
+            LOGGER.debug("Constructed LDAP filter [{}] to locate user account", filter);
+
+            val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
+            val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(), filter);
+            LOGGER.debug("LDAP response to locate user account is [{}]", response);
+
+            if (LdapUtils.containsResultEntry(response)) {
+                val entry = response.getResult().getEntry();
+                LOGGER.debug("Found LDAP entry [{}] to use for the account email", entry);
+
+                val attributeName = ldap.getUsernameAttribute();
+                val attr = entry.getAttribute(attributeName);
+                if (attr != null) {
+                    val username = attr.getStringValue();
+                    LOGGER.debug("Found username [{}] for email [{}].", username, email);
+                    return username;
+                }
+                LOGGER.error("Could not locate an LDAP attribute [{}] for [{}] and base DN [{}]",
+                    attributeName, filter.format(), ldap.getBaseDn());
+                return null;
+            }
+            LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+
+    @Override
     public String findEmail(final String username) {
         try {
             val ldap = properties.getLdap();
@@ -120,16 +156,19 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             if (LdapUtils.containsResultEntry(response)) {
                 val entry = response.getResult().getEntry();
                 LOGGER.debug("Located LDAP entry [{}] in the response", entry);
-                val qs = properties.getLdap().getSecurityQuestionsAttributes();
-                LOGGER.debug("Security question attributes are defined to be [{}]", qs);
+                val questionsAndAnswers = properties.getLdap().getSecurityQuestionsAttributes();
+                LOGGER.debug("Security question attributes are defined to be [{}]", questionsAndAnswers);
 
-                qs.forEach((k, v) -> {
-                    val q = entry.getAttribute(k);
-                    val a = entry.getAttribute(v);
-                    val value = q.getStringValue();
-                    if (q != null && a != null && StringUtils.isNotBlank(value) && StringUtils.isNotBlank(a.getStringValue())) {
-                        LOGGER.debug("Added security question [{}]", value);
-                        set.put(value, value);
+                questionsAndAnswers.forEach((k, v) -> {
+                    val questionAttribute = entry.getAttribute(k);
+                    val answerAttribute = entry.getAttribute(v);
+
+                    val question = questionAttribute.getStringValue();
+                    val answer = answerAttribute.getStringValue();
+
+                    if (questionAttribute != null && answerAttribute != null && StringUtils.isNotBlank(question) && StringUtils.isNotBlank(answer)) {
+                        LOGGER.debug("Added security question [{}] with answer [{}]", question, answer);
+                        set.put(question, answer);
                     }
                 });
             } else {

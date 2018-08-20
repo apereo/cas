@@ -1,17 +1,16 @@
 package org.apereo.cas.oidc.token;
 
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.ticket.BaseIdTokenSigningAndEncryptionService;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jose4j.jwa.AlgorithmConstraints;
-import org.jose4j.jwe.JsonWebEncryption;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwk.RsaJsonWebKey;
-import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 
@@ -24,29 +23,25 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
-public class OidcIdTokenSigningAndEncryptionService {
+public class OidcIdTokenSigningAndEncryptionService extends BaseIdTokenSigningAndEncryptionService {
     private final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache;
     private final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache;
-    private final String issuer;
 
-    /**
-     * Sign id token claim string.
-     *
-     * @param svc    the service
-     * @param claims the claims
-     * @return the string
-     */
+    public OidcIdTokenSigningAndEncryptionService(final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache,
+                                                  final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
+                                                  final String issuer) {
+        super(issuer);
+        this.defaultJsonWebKeystoreCache = defaultJsonWebKeystoreCache;
+        this.serviceJsonWebKeystoreCache = serviceJsonWebKeystoreCache;
+    }
+
+    @Override
     @SneakyThrows
-    public String encode(final OidcRegisteredService svc, final JwtClaims claims) {
+    public String encode(final OAuthRegisteredService service, final JwtClaims claims) {
+        val svc = OidcRegisteredService.class.cast(service);
         LOGGER.debug("Attempting to produce id token generated for service [{}]", svc);
-        val jws = new JsonWebSignature();
-        val jsonClaims = claims.toJson();
-        jws.setPayload(jsonClaims);
-        LOGGER.debug("Generated claims to put into id token are [{}]", jsonClaims);
-
-        jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.NONE);
-        jws.setAlgorithmConstraints(AlgorithmConstraints.NO_CONSTRAINTS);
+        val jws = createJsonWebSignature(claims);
+        LOGGER.debug("Generated claims to put into id token are [{}]", claims.toJson());
 
         var innerJwt = svc.isSignIdToken() ? signIdToken(svc, jws) : jws.getCompactSerialization();
         if (svc.isEncryptIdToken() && StringUtils.isNotBlank(svc.getIdTokenEncryptionAlg()) && StringUtils.isNotBlank(svc.getIdTokenEncryptionEncoding())) {
@@ -58,10 +53,6 @@ public class OidcIdTokenSigningAndEncryptionService {
 
     private String encryptIdToken(final OidcRegisteredService svc, final JsonWebSignature jws, final String innerJwt) throws Exception {
         LOGGER.debug("Service [{}] is set to encrypt id tokens", svc);
-        val jwe = new JsonWebEncryption();
-        jwe.setAlgorithmHeaderValue(svc.getIdTokenEncryptionAlg());
-        jwe.setEncryptionMethodHeaderParameter(svc.getIdTokenEncryptionEncoding());
-
         val jwks = this.serviceJsonWebKeystoreCache.get(svc);
         if (!jwks.isPresent()) {
             throw new IllegalArgumentException("Service " + svc.getServiceId()
@@ -73,54 +64,36 @@ public class OidcIdTokenSigningAndEncryptionService {
         if (jsonWebKey.getPublicKey() == null) {
             throw new IllegalArgumentException("JSON web key used to sign the id token has no associated public key");
         }
-
-        jwe.setKey(jsonWebKey.getPublicKey());
-        jwe.setKeyIdHeaderValue(jws.getKeyIdHeaderValue());
-        jwe.setContentTypeHeaderValue("JWT");
-        jwe.setPayload(innerJwt);
-        return jwe.getCompactSerialization();
+        return encryptIdToken(svc.getIdTokenEncryptionAlg(), svc.getIdTokenEncryptionEncoding(),
+            jws.getKeyIdHeaderValue(), jsonWebKey.getPublicKey(), innerJwt);
     }
 
     private String signIdToken(final OidcRegisteredService svc, final JsonWebSignature jws) throws Exception {
-        val jwks = defaultJsonWebKeystoreCache.get(this.issuer);
-        if (!jwks.isPresent()) {
-            throw new IllegalArgumentException("Service " + svc.getServiceId()
-                + " with client id " + svc.getClientId()
-                + " is configured to sign id tokens, yet no JSON web key is available");
-        }
-        val jsonWebKey = jwks.get();
+        LOGGER.debug("Fetching JSON web key to sign the id token for : [{}]", svc.getClientId());
+        val jsonWebKey = getSigningKey();
         LOGGER.debug("Found JSON web key to sign the id token: [{}]", jsonWebKey);
         if (jsonWebKey.getPrivateKey() == null) {
             throw new IllegalArgumentException("JSON web key used to sign the id token has no associated private key");
         }
-        prepareJsonWebSignatureForIdTokenSigning(svc, jws, jsonWebKey);
+        configureJsonWebSignatureForIdTokenSigning(svc, jws, jsonWebKey);
         return jws.getCompactSerialization();
     }
 
-    private void prepareJsonWebSignatureForIdTokenSigning(final OidcRegisteredService svc, final JsonWebSignature jws,
-                                                          final RsaJsonWebKey jsonWebKey) {
-        LOGGER.debug("Service [{}] is set to sign id tokens", svc);
 
-        jws.setKey(jsonWebKey.getPrivateKey());
-        jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
-        if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
-            jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
+    @Override
+    protected PublicJsonWebKey getSigningKey() {
+        val jwks = defaultJsonWebKeystoreCache.get(getIssuer());
+        if (!jwks.isPresent()) {
+            throw new IllegalArgumentException("No signing key could be found for issuer " + getIssuer());
         }
-        LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());
-        jws.setAlgorithmHeaderValue(getJsonWebKeySigningAlgorithm(svc));
-
-        LOGGER.debug("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
+        return jwks.get();
     }
 
-    /**
-     * Gets json web key signing algorithm.
-     *
-     * @param svc the svc
-     * @return the json web key signing algorithm
-     */
-    public String getJsonWebKeySigningAlgorithm(final OidcRegisteredService svc) {
+    @Override
+    public String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService service) {
+        val svc = OidcRegisteredService.class.cast(service);
         if (StringUtils.isBlank(svc.getIdTokenSigningAlg())) {
-            return AlgorithmIdentifiers.RSA_USING_SHA256;
+            return super.getJsonWebKeySigningAlgorithm(service);
         }
         return svc.getIdTokenSigningAlg();
     }

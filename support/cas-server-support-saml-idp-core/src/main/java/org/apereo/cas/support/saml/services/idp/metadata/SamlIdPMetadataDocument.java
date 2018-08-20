@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services.idp.metadata;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -35,23 +36,28 @@ public class SamlIdPMetadataDocument {
     private BigInteger id = BigInteger.valueOf(-1);
 
     @Lob
-    @Column(name = "metadata", length = Integer.MAX_VALUE)
+    @Type(type = "org.hibernate.type.StringNVarcharType")
+    @Column(name = "metadata", length = 8_000)
     private String metadata;
 
     @Lob
-    @Column(name = "signingCertificate", length = Integer.MAX_VALUE)
+    @Type(type = "org.hibernate.type.StringNVarcharType")
+    @Column(name = "signingCertificate", length = 3_000)
     private String signingCertificate;
 
     @Lob
-    @Column(name = "signingKey", length = Integer.MAX_VALUE)
+    @Type(type = "org.hibernate.type.StringNVarcharType")
+    @Column(name = "signingKey", length = 3_000)
     private String signingKey;
 
     @Lob
-    @Column(name = "encryptionCertificate", length = Integer.MAX_VALUE)
+    @Type(type = "org.hibernate.type.StringNVarcharType")
+    @Column(name = "encryptionCertificate", length = 3_000)
     private String encryptionCertificate;
 
     @Lob
-    @Column(name = "encryptionKey", length = Integer.MAX_VALUE)
+    @Type(type = "org.hibernate.type.StringNVarcharType")
+    @Column(name = "encryptionKey", length = 3_000)
     private String encryptionKey;
 
     public SamlIdPMetadataDocument() {

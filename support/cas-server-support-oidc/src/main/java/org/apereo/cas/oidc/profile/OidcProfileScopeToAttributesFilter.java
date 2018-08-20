@@ -115,13 +115,13 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         return principal;
     }
 
-    private Map<String, Object> filterAttributesByScope(final Collection<String> stream,
+    private Map<String, Object> filterAttributesByScope(final Collection<String> scopes,
                                                         final Principal principal,
                                                         final Service service,
                                                         final RegisteredService registeredService,
                                                         final AccessToken accessToken) {
         val attributes = new HashMap<String, Object>();
-        stream.stream()
+        scopes.stream()
             .distinct()
             .filter(this.filters::containsKey)
             .forEach(s -> {

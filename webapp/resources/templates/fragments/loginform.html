@@ -30,6 +30,27 @@
                         <h3 th:utext="#{screen.welcome.instructions}">Enter your Username and Password</h3>
 
                         <section class="form-group">
+                            <span th:if="${availableAuthenticationHandlerNames.size() > 1}">
+                                <label for="source" th:utext="#{screen.welcome.label.source}">Source</label>
+                                <div>
+                                    <select class="form-control required"
+                                            id="source"
+                                            name="source"
+                                            tabindex="0"
+                                            th:field="*{source}">
+                                        <option th:each="handler : ${availableAuthenticationHandlerNames}" th:value="${handler}" th:text="${handler}">Source</option>
+                                    </select>
+                                </div>
+                            </span>
+                            <span th:if="${availableAuthenticationHandlerNames.size() == 1}">
+                                 <input type="hidden"
+                                        id="source"
+                                        name="source"
+                                        th:value="${availableAuthenticationHandlerNames.get(0)}"/>
+                            </span>
+                        </section>
+                       
+                        <section class="form-group">
                             <label for="username" th:utext="#{screen.welcome.label.netid}">Username</label>
 
                             <div th:if="${openIdLocalId}">
@@ -125,6 +146,14 @@
                         <p/>
                     </form>
 
+                    <form th:if="${passwordManagementEnabled}" method="post" id="passwordManagementUserForm">
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="forgotUsername"/>
+                        <span class="fa fa-unlock"></span>
+                        <a th:utext="#{screen.pm.button.forgotUsername}" href="javascript:void(0)" onclick="$('#passwordManagementUserForm').submit();"/>
+                        <p/>
+                    </form>
+
                     <div th:unless="${passwordManagementEnabled}">
                         <span class="fa fa-question-circle"></span>
                         <span th:utext="#{screen.pm.button.forgotpwd}">Forgot your password?</span>
@@ -137,7 +166,6 @@
                             $("#fm1").submit(function () {
                                 $(":submit").attr("disabled", true);
                                 $(":submit").attr("value", i);
-                                console.log(i);
                                 return true;
                             });
                         });

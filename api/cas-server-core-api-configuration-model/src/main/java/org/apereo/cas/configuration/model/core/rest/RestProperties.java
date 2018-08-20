@@ -33,4 +33,13 @@ public class RestProperties implements Serializable {
      */
     private String attributeValue;
 
+    /**
+     * Flag that enables X509Certificate extraction from the request headers for authentication.
+     */
+    private boolean headerAuth = true;
+    
+    /**
+     * Flag that enables X509Certificate extraction from the request body for authentication.
+     */
+    private boolean bodyAuth;
 }

@@ -97,6 +97,7 @@ Available drivers are:
 | `org.hibernate.dialect.MySQLMyISAMDialect`   
 | `org.hibernate.dialect.MySQL5InnoDBDialect`   
 | `org.hibernate.dialect.MySQL57InnoDBDialect`  
+| `org.hibernate.dialect.MySQL8Dialect`
 
 ### PostgreSQL
 
@@ -125,7 +126,10 @@ Available drivers are:
 | Dialects             
 |------------------------------------------------
 | `org.hibernate.dialect.MariaDBDialect`   
-| `org.hibernate.dialect.MariaDBDialect`   
+| `org.hibernate.dialect.MariaDB53Dialect`   
+| `org.hibernate.dialect.MariaDB10Dialect`   
+| `org.hibernate.dialect.MariaDB102Dialect`   
+| `org.hibernate.dialect.MariaDB103Dialect`   
 
 ### Microsoft SQL Server 
 

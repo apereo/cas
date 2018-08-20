@@ -45,6 +45,7 @@ public class RegisteredServiceTestUtils {
     public static final String CONST_USERNAME = "test";
     public static final String CONST_TEST_URL = "https://google.com";
     public static final String CONST_TEST_URL2 = "https://example.com";
+    public static final String CONST_TEST_URL3 = "https://another.example.com";
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_TEST_URL);
@@ -131,7 +132,7 @@ public class RegisteredServiceTestUtils {
         s.setAccessStrategy(accessStrategy);
         s.setLogo("https://logo.example.org/logo.png");
         s.setLogoutType(LogoutType.BACK_CHANNEL);
-        s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
+        s.setLogoutUrl("https://sys.example.org/logout.png");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
 
         s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
