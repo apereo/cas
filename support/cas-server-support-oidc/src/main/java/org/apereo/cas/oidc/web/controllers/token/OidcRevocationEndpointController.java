@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc.web.controllers;
+package org.apereo.cas.oidc.web.controllers.token;
 
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;

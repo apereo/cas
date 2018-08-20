@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
+import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,9 +14,10 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class AbstractInspektrAuditHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
     public AbstractInspektrAuditHandlerInterceptorAdapter(final int failureThreshold, final int failureRangeInSeconds,
                                                           final String usernameParameter, final String authenticationFailureCode,
-                                                          final AuditTrailExecutionPlan auditTrailManager, final String applicationCode) {
+                                                          final AuditTrailExecutionPlan auditTrailManager,
+                                                          final String applicationCode, final ThrottledRequestResponseHandler throttledRequestResponseHandler) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailManager, applicationCode);
+            authenticationFailureCode, auditTrailManager, applicationCode, throttledRequestResponseHandler);
     }
 
     @Override

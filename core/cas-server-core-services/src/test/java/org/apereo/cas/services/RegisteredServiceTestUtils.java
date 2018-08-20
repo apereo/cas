@@ -132,7 +132,7 @@ public class RegisteredServiceTestUtils {
         s.setAccessStrategy(accessStrategy);
         s.setLogo("https://logo.example.org/logo.png");
         s.setLogoutType(LogoutType.BACK_CHANNEL);
-        s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
+        s.setLogoutUrl("https://sys.example.org/logout.png");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
 
         s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
