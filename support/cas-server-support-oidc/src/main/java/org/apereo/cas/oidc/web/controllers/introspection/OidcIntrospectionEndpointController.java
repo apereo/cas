@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc.web.controllers;
+package org.apereo.cas.oidc.web.controllers.introspection;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;

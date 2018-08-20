@@ -2,6 +2,7 @@ package org.apereo.cas.uma.ticket.rpt;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
@@ -89,7 +90,8 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         claims.setSubject(profile.getId());
 
         permissionTicket.getClaims().forEach((k, v) -> claims.setStringListClaim(k, v.toString()));
-        claims.setStringListClaim("scopes", new ArrayList<>(permissionTicket.getScopes()));
+        claims.setStringListClaim(OAuth20Constants.SCOPE, new ArrayList<>(permissionTicket.getScopes()));
+        claims.setStringListClaim(OAuth20Constants.CLIENT_ID, service.getClientId());
 
         return claims;
     }

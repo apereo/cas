@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.throttle.ThrottledRequestResponseHandler;
 import org.apereo.cas.web.support.MongoDbThrottledSubmissionHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
@@ -28,6 +29,10 @@ public class CasMongoDbThrottlingConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("throttledRequestResponseHandler")
+    private ThrottledRequestResponseHandler throttledRequestResponseHandler;
+
+    @Autowired
     @Bean
     @RefreshScope
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan) {
@@ -46,6 +51,7 @@ public class CasMongoDbThrottlingConfiguration {
             mongoTemplate,
             failure.getCode(),
             throttle.getAppcode(),
-            mongo.getCollection());
+            mongo.getCollection(),
+            throttledRequestResponseHandler);
     }
 }

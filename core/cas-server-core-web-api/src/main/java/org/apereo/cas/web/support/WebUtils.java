@@ -55,12 +55,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class WebUtils {
-
-    /**
-     * Request attribute that contains message key describing details of authorization failure.
-     */
-    public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
-
     /**
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
