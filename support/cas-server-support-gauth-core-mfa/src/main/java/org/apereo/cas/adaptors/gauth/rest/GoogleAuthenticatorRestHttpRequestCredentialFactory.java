@@ -31,7 +31,7 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactory implements Rest
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
         if (requestBody == null || requestBody.isEmpty()) {
-            LOGGER.debug("Skipping {} because the requestBody is null or empty", this);
+            LOGGER.debug("Skipping {} because the requestBody is null or empty", getClass().getSimpleName());
             return new ArrayList<>(0);
         }
         final String token = requestBody.getFirst(PARAMETER_NAME_GAUTH_OTP);
