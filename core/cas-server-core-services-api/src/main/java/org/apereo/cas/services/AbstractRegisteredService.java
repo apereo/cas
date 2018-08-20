@@ -27,7 +27,6 @@ import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -120,7 +119,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private String logo;
 
     @Column(name = "logout_url")
-    private URL logoutUrl;
+    private String logoutUrl;
 
     @Lob
     @Column(name = "access_strategy", length = Integer.MAX_VALUE)

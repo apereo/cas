@@ -1,4 +1,4 @@
-package org.apereo.cas.oidc.web.controllers;
+package org.apereo.cas.oidc.web.controllers.dynareg;
 
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -47,8 +46,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20Controller {
-
-
     private final StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer;
     private final RandomStringGenerator clientIdGenerator;
     private final RandomStringGenerator clientSecretGenerator;
@@ -115,7 +112,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             registeredService.setClientId(clientIdGenerator.getNewString());
             registeredService.setClientSecret(clientSecretGenerator.getNewString());
             registeredService.setEvaluationOrder(Integer.MIN_VALUE);
-            registeredService.setPostLogoutRedirectUris(new ArrayList<>(registrationRequest.getPostLogoutRedirectUris()));
+            registeredService.setLogoutUrl(org.springframework.util.StringUtils.collectionToCommaDelimitedString(registrationRequest.getPostLogoutRedirectUris()));
 
             val supportedScopes = new HashSet<String>(casProperties.getAuthn().getOidc().getScopes());
             supportedScopes.retainAll(registrationRequest.getScopes());

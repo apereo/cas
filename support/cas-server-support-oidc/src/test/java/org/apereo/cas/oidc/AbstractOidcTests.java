@@ -33,6 +33,7 @@ import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.IdTokenSigningAndEncryptionService;
@@ -163,14 +164,18 @@ public abstract class AbstractOidcTests {
     }
 
     protected OidcRegisteredService getOidcRegisteredService() {
+        return getOidcRegisteredService(true, true);
+    }
+
+    protected OidcRegisteredService getOidcRegisteredService(final boolean sign, final boolean encrypt) {
         val svc = new OidcRegisteredService();
         svc.setClientId("clientid");
         svc.setName("oauth");
         svc.setDescription("description");
         svc.setClientSecret("secret");
         svc.setServiceId("https://oauth\\.example\\.org.*");
-        svc.setSignIdToken(true);
-        svc.setEncryptIdToken(true);
+        svc.setSignIdToken(sign);
+        svc.setEncryptIdToken(encrypt);
         svc.setIdTokenEncryptionAlg(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
         svc.setIdTokenEncryptionEncoding(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         svc.setInformationUrl("info");
@@ -191,6 +196,7 @@ public abstract class AbstractOidcTests {
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(1);
         claims.setSubject("casuser");
+        claims.setStringClaim(OAuth20Constants.CLIENT_ID, "clientid");
         return claims;
     }
 }
