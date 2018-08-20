@@ -51,6 +51,7 @@ public class AccessTokenRequestDataHolder {
 
     private String codeChallenge;
 
+    @Builder.Default
     private String codeChallengeMethod = "plain";
 
     private String codeVerifier;

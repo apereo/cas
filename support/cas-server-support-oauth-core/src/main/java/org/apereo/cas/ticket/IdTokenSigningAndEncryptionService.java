@@ -22,6 +22,14 @@ public interface IdTokenSigningAndEncryptionService {
     String encode(OAuthRegisteredService svc, JwtClaims claims);
 
     /**
+     * Decode jwt claims.
+     *
+     * @param token the token
+     * @return the jwt claims
+     */
+    JwtClaims validate(String token);
+
+    /**
      * Gets json web key signing algorithm.
      *
      * @param svc the svc
@@ -29,5 +37,5 @@ public interface IdTokenSigningAndEncryptionService {
      */
     default String getJsonWebKeySigningAlgorithm(final OAuthRegisteredService svc) {
         return AlgorithmIdentifiers.RSA_USING_SHA256;
-    };
+    }
 }

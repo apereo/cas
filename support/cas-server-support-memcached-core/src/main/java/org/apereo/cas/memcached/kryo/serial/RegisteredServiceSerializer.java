@@ -94,7 +94,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         val emptyUrl = getEmptyUrl();
         kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogo(), emptyUrl));
         kryo.writeObject(output, service.getLogoutType());
-        kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogoutUrl(), emptyUrl));
+        kryo.writeObject(output, ObjectUtils.defaultIfNull(service.getLogoutUrl(), StringUtils.EMPTY));
         kryo.writeObject(output, new HashSet<>(service.getRequiredHandlers()));
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getTheme(), StringUtils.EMPTY));
 
@@ -127,7 +127,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         svc.setEvaluationOrder(kryo.readObject(input, Integer.class));
         svc.setLogo(kryo.readObject(input, String.class));
         svc.setLogoutType(kryo.readObject(input, LogoutType.class));
-        svc.setLogoutUrl(kryo.readObject(input, URL.class));
+        svc.setLogoutUrl(kryo.readObject(input, String.class));
         svc.setRequiredHandlers(kryo.readObject(input, HashSet.class));
         svc.setTheme(kryo.readObject(input, String.class));
 

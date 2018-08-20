@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -209,7 +208,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return the logout url for this service
      * @since 4.1
      */
-    URL getLogoutUrl();
+    String getLogoutUrl();
 
     /**
      * Gets the public key associated with this service

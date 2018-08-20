@@ -79,7 +79,7 @@ public class OidcServerDiscoverySettings {
 
     @JsonProperty("end_session_endpoint")
     public String getEndSessionEndpoint() {
-        return casProperties.getServer().getLogoutUrl();
+        return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.LOGOUT_URL);
     }
 
     @JsonProperty("introspection_endpoint")

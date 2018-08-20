@@ -12,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletResponse;
@@ -62,6 +63,11 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
         val authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
         LOGGER.debug("SPNEGO Authorization header located as [{}]", authorizationHeader);
 
+        if (StringUtils.isBlank(authorizationHeader)) {
+            LOGGER.warn("SPNEGO Authorization header is not found under [{}]", SpnegoConstants.HEADER_AUTHORIZATION);
+            return null;
+        }
+
         val authzHeaderLength = authorizationHeader.length();
         val prefixLength = this.messageBeginPrefix.length();
         if (authzHeaderLength > prefixLength && authorizationHeader.startsWith(this.messageBeginPrefix)) {
@@ -77,7 +83,7 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
             return new SpnegoCredential(token);
         }
 
-        LOGGER.warn("SPNEGO Authorization header not found under [{}] or it does not begin with the prefix [{}]",
+        LOGGER.warn("SPNEGO Authorization header does not begin with the prefix [{}]",
             SpnegoConstants.HEADER_AUTHORIZATION, messageBeginPrefix);
         return null;
     }

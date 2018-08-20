@@ -124,6 +124,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
             claims.setStringListClaim(OidcConstants.AMR, val.toArray(new String[]{}));
         }
 
+        claims.setStringClaim(OAuth20Constants.CLIENT_ID, service.getClientId());
         claims.setClaim(OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE));
         claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE));
         claims.setClaim(OidcConstants.CLAIM_AT_HASH, generateAccessTokenHash(accessTokenId, service));

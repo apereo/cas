@@ -1,18 +1,23 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.util.EncodingUtils;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jwe.JsonWebEncryption;
-import org.jose4j.jwk.RsaJsonWebKey;
+import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 /**
@@ -22,7 +27,10 @@ import java.security.Key;
  * @since 6.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
+@Getter
 public abstract class BaseIdTokenSigningAndEncryptionService implements IdTokenSigningAndEncryptionService {
+    private final String issuer;
 
     /**
      * Gets json web signature.
@@ -51,10 +59,10 @@ public abstract class BaseIdTokenSigningAndEncryptionService implements IdTokenS
      */
     @SneakyThrows
     protected String encryptIdToken(final String encryptionAlg,
-                                               final String encryptionEncoding,
-                                               final String keyIdHeaderValue,
-                                               final Key publicKey,
-                                               final String payload) {
+                                    final String encryptionEncoding,
+                                    final String keyIdHeaderValue,
+                                    final Key publicKey,
+                                    final String payload) {
         val jwe = new JsonWebEncryption();
         jwe.setAlgorithmHeaderValue(encryptionAlg);
         jwe.setEncryptionMethodHeaderParameter(encryptionEncoding);
@@ -75,7 +83,7 @@ public abstract class BaseIdTokenSigningAndEncryptionService implements IdTokenS
      */
     protected JsonWebSignature configureJsonWebSignatureForIdTokenSigning(final OAuthRegisteredService svc,
                                                                           final JsonWebSignature jws,
-                                                                          final RsaJsonWebKey jsonWebKey) {
+                                                                          final PublicJsonWebKey jsonWebKey) {
         LOGGER.debug("Service [{}] is set to sign id tokens", svc);
         jws.setKey(jsonWebKey.getPrivateKey());
         jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
@@ -88,4 +96,38 @@ public abstract class BaseIdTokenSigningAndEncryptionService implements IdTokenS
         LOGGER.debug("Signing id token with algorithm [{}]", jws.getAlgorithmHeaderValue());
         return jws;
     }
+
+    @Override
+    @SneakyThrows
+    public JwtClaims validate(final String token) {
+        val jsonWebKey = getSigningKey();
+        if (jsonWebKey.getPublicKey() == null) {
+            throw new IllegalArgumentException("JSON web key used to validate the id token signature has no associated public key");
+        }
+        val jwt = EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), token);
+        val result = new String(jwt, StandardCharsets.UTF_8);
+        val claims = JwtClaims.parse(result);
+
+        LOGGER.debug("Validated claims as [{}]", claims);
+        if (StringUtils.isBlank(claims.getIssuer())) {
+            throw new IllegalArgumentException("Claims do not container an issuer");
+        }
+
+        if (claims.getIssuer().equalsIgnoreCase(this.issuer)) {
+            throw new IllegalArgumentException("Issuer assigned to claims does not match " + this.issuer);
+        }
+
+        if (StringUtils.isBlank(claims.getStringClaimValue(OAuth20Constants.CLIENT_ID))) {
+            throw new IllegalArgumentException("Claims do not contain a client id claim");
+        }
+        return claims;
+    }
+
+    /**
+     * Gets signing key.
+     *
+     * @return the signing key
+     */
+    protected abstract PublicJsonWebKey getSigningKey();
+
 }
