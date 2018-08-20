@@ -20,7 +20,7 @@ import org.apereo.cas.uma.ticket.permission.UmaPermissionTicketFactory;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 import org.apereo.cas.uma.ticket.resource.repository.impl.DefaultResourceSetRepository;
 import org.apereo.cas.uma.ticket.rpt.UmaIdTokenGeneratorService;
-import org.apereo.cas.uma.ticket.rpt.UmaRequestingPartyTokenGeneratorService;
+import org.apereo.cas.uma.ticket.rpt.UmaRequestingPartyTokenSigningService;
 import org.apereo.cas.uma.web.authn.UmaAuthorizationApiTokenAuthenticator;
 import org.apereo.cas.uma.web.authn.UmaRequestingPartyTokenAuthenticator;
 import org.apereo.cas.uma.web.controllers.authz.UmaAuthorizationRequestEndpointController;
@@ -101,9 +101,10 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @Bean
     @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
     public IdTokenGeneratorService umaRequestingPartyTokenGenerator() {
-        val jwks = casProperties.getAuthn().getUma().getRequestingPartyToken().getJwksFile();
-        return new UmaIdTokenGeneratorService(casProperties,
-            new UmaRequestingPartyTokenGeneratorService(jwks), servicesManager, ticketRegistry);
+        val uma = casProperties.getAuthn().getUma();
+        val jwks = uma.getRequestingPartyToken().getJwksFile();
+        val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getIssuer());
+        return new UmaIdTokenGeneratorService(casProperties, signingService, servicesManager, ticketRegistry);
     }
 
     @Bean
