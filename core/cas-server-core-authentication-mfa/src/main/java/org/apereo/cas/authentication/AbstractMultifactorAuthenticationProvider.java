@@ -17,7 +17,7 @@ import org.springframework.webflow.execution.Event;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
-import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.NOT_SET;
+import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.UNDEFINED;
 
 /**
  * The {@link AbstractMultifactorAuthenticationProvider} is responsible for
@@ -85,7 +85,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
         if (service != null) {
             LOGGER.debug("Evaluating multifactor authentication policy for service [{}}", service);
             val policy = service.getMultifactorPolicy();
-            if (policy != null && policy.getFailureMode() != NOT_SET) {
+            if (policy != null && policy.getFailureMode() != UNDEFINED) {
                 failureMode = policy.getFailureMode();
                 LOGGER.debug("Multi-factor failure mode for [{}] is defined as [{}]", service.getServiceId(), failureMode);
             }
@@ -100,7 +100,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
                 throw new AuthenticationException();
             }
             LOGGER.warn("[{}] could not be reached. Since the authentication provider is configured for the "
-                + "failure mode of [{}] authentication will proceed without [{}] for service [{}]", providerName, failureMode, providerName, service);
+                + "failure mode of [{}] authentication will proceed without [{}] for service [{}]", providerName, failureMode, providerName, service.getServiceId());
             return false;
         }
         LOGGER.debug("Failure mode is set to [{}]. Assuming the provider is available.", failureMode);
