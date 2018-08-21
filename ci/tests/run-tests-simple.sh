@@ -13,9 +13,11 @@ gradleBuild="$gradleBuild test coveralls --parallel -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-    gradleBuild="$gradleBuild -DshowStandardStreams=true "
-fi
+# if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
+#    gradleBuild="$gradleBuild -DshowStandardStreams=true "
+# fi
+
+gradleBuild="$gradleBuild -DshowStandardStreams=true "
 
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
