@@ -21,6 +21,6 @@ public class GroovyLoginWebflowDecorator implements WebflowDecorator {
 
     @Override
     public void decorate(final RequestContext requestContext, final ApplicationContext applicationContext) {
-        ScriptingUtils.executeGroovyScript(groovyScript, new Object[]{requestContext, applicationContext, LOGGER}, Void.class);
+        ScriptingUtils.executeGroovyScript(groovyScript, new Object[]{requestContext, applicationContext, LOGGER}, Void.class, true);
     }
 }
