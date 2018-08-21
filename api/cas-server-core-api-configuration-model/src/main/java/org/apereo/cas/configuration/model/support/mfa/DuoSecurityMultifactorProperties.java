@@ -16,7 +16,7 @@ import lombok.Setter;
 @RequiresModule(name = "cas-server-support-duo")
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"duoApiHost", "duoIntegrationKey", "duoSecretKey", "duoApplicationKey"})
+@EqualsAndHashCode(of = {"duoApiHost", "duoIntegrationKey", "duoSecretKey", "duoApplicationKey"}, callSuper = true)
 public class DuoSecurityMultifactorProperties extends BaseMultifactorProviderProperties {
 
     /**
