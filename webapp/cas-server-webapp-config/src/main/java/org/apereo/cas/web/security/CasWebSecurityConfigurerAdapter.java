@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.web.security.authentication.LdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
@@ -56,8 +55,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     }
 
     @Override
-    @SneakyThrows
-    protected void configure(final AuthenticationManagerBuilder auth) {
+    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         val jaas = casProperties.getMonitor().getEndpoints().getJaas();
         if (jaas.getLoginConfig() != null) {
             configureJaasAuthenticationProvider(auth, jaas);
@@ -83,9 +81,9 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      *
      * @param auth the auth
      * @param jdbc the jdbc
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected void configureJdbcAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.JdbcSecurity jdbc) {
+    protected void configureJdbcAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.JdbcSecurity jdbc) throws Exception {
         val cfg = auth.jdbcAuthentication();
         cfg.usersByUsernameQuery(jdbc.getQuery());
         cfg.rolePrefix(jdbc.getRolePrefix());
@@ -157,15 +155,14 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      * Configure endpoint access by form login.
      *
      * @param requests the requests
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    protected void configureEndpointAccessByFormLogin(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
+    protected void configureEndpointAccessByFormLogin(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) throws Exception {
         requests.and()
             .formLogin()
             .loginPage("/adminlogin")
             .permitAll();
     }
-
 
     /**
      * Configure endpoint access.
@@ -175,12 +172,13 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      * @param access       the access
      * @param properties   the properties
      * @param endpoint     the endpoint
+     * @throws Exception the exception
      */
     protected void configureEndpointAccess(final HttpSecurity httpSecurity,
                                            final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                            final ActuatorEndpointProperties.EndpointAccessLevel access,
                                            final ActuatorEndpointProperties properties,
-                                           final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                           final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         switch (access) {
             case AUTHORITY:
                 configureEndpointAccessByAuthority(requests, properties, endpoint);
@@ -237,29 +235,26 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             .access(addresses);
     }
 
-    @SneakyThrows
     private void configureEndpointAccessAuthenticated(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
-                                                      final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                                      final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         requests.requestMatchers(endpoint)
             .authenticated()
             .and()
             .httpBasic();
     }
 
-    @SneakyThrows
     private void configureEndpointAccessByRole(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                                final ActuatorEndpointProperties properties,
-                                               final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                               final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         requests.requestMatchers(endpoint)
             .hasAnyRole(properties.getRequiredRoles().toArray(new String[]{}))
             .and()
             .httpBasic();
     }
 
-    @SneakyThrows
     private void configureEndpointAccessByAuthority(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                                     final ActuatorEndpointProperties properties,
-                                                    final EndpointRequest.EndpointRequestMatcher endpoint) {
+                                                    final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         requests.requestMatchers(endpoint)
             .hasAnyAuthority(properties.getRequiredAuthorities().toArray(new String[]{}))
             .and()
