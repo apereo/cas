@@ -41,6 +41,7 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `audit-log`               | Provides a JSON representation of all the audit log.
 | `discovery-profile`       | Provides a JSON representation of the [CAS configuration and capabilities](Configuration-Discovery.html).
 | `registered-services`     | Provides a JSON representation of the [CAS service registry](Service-Management.html).
+| `export-registered-services`     | Provides a ZIP-file representation of the [CAS service registry](Service-Management.html).
 | `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.
 | `statistics`              | Exposes statistics data on tickets, memory, server availability and uptime, etc.
 | `sso-sessions`            | Review the current single sign-on sessions establishes with CAS and manage each session remotely.
@@ -51,6 +52,7 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `attribute-consent`  | Manage and control [attribute consent decisions](../integration/Attribute-Release-Consent.html).
 | `gauth-credential-repository`  | Manage and control [Google Authenticator account records](GoogleAuthenticator-Authentication.html).
 | `yubikey-account-repository`  | Manage and control [Google Authenticator account records](YubiKey-Authentication.html).
+| `oauth-tokens`  | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html).
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>status</code>, <code>health</code> and <code>configuration-metadata</code>.
@@ -106,6 +108,12 @@ A `DELETE` operation will delete all account records.
 
 A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user.
 A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
+
+### OAuth Tokens
+
+A `GET` operation produces a list of all access/refresh tokens.
+A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`)
+A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched acces/refresh token.
 
 ### Metrics
 

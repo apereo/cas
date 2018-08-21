@@ -1539,14 +1539,18 @@ Password encoding  settings for this feature are available [here](Configuration-
 
 ## MongoDb Authentication
 
-To learn more about this topic, [please review this guide](MongoDb-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.mongo`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.mongo`.
+To learn more about this topic, [please review this guide](MongoDb-Authentication.html). 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.mongo`. 
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.mongo`.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn`.
 
 ```properties
-# cas.authn.mongo.mongoHostUri=mongodb://uri
-# cas.authn.mongo.usernameAttribute=username
 # cas.authn.mongo.attributes=
+# cas.authn.mongo.usernameAttribute=username
 # cas.authn.mongo.passwordAttribute=password
-# cas.authn.mongo.collectionName=users
+# cas.authn.mongo.principalIdAttribute=
 # cas.authn.mongo.name=
 ```
 
@@ -4180,6 +4184,8 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ```properties
 # cas.authn.pm.ldap.type=AD|GENERIC|EDirectory|FreeIPA
+# cas.authn.pm.ldap.usernameAttribute=uid
+# cas.authn.pm.ldap.searchFilterUsername=email={user}
 
 # Attributes that should be fetched to indicate security questions and answers
 # cas.authn.pm.ldap.securityQuestionsAttributes.attrQuestion1=attrAnswer1
@@ -4198,6 +4204,7 @@ feature are available [here](Configuration-Properties-Common.html#password-encod
 # cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM table WHERE user=?
 
 # cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
+# cas.authn.pm.jdbc.sqlFindUser=SELECT user FROM table WHERE email=?
 # cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
 ```
 
@@ -4205,6 +4212,7 @@ feature are available [here](Configuration-Properties-Common.html#password-encod
 
 ```properties
 # cas.authn.pm.rest.endpointUrlEmail=
+# cas.authn.pm.rest.endpointUrlUser=
 # cas.authn.pm.rest.endpointUrlSecurityQuestions=
 # cas.authn.pm.rest.endpointUrlChange=
 ```
