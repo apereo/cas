@@ -136,7 +136,6 @@ public class CasCoreServicesConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public RegisteredServicesEventListener registeredServicesEventListener() {
         return new RegisteredServicesEventListener(servicesManager(), casProperties, communicationsManager);
     }

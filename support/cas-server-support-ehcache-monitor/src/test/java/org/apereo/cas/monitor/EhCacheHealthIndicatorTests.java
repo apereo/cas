@@ -44,7 +44,10 @@ import static org.junit.Assert.*;
     CasCoreTicketsConfiguration.class,
     CasCoreHttpConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/ehcache.properties"})
+@TestPropertySource(properties = {
+    "cas.ticket.registry.ehcache.maxElementsOnDisk=100",
+    "cas.ticket.registry.ehcache.maxElementsInMemory=100"
+})
 public class EhCacheHealthIndicatorTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

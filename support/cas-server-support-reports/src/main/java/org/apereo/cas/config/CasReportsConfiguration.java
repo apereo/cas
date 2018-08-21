@@ -14,6 +14,7 @@ import org.apereo.cas.web.report.AuditLogEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
+import org.apereo.cas.web.report.ExportRegisteredServicesEndpoint;
 import org.apereo.cas.web.report.LoggingConfigurationEndpoint;
 import org.apereo.cas.web.report.RegisteredServicesEndpoint;
 import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
@@ -116,6 +117,12 @@ public class CasReportsConfiguration {
     @ConditionalOnEnabledEndpoint
     public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
         return new RegisteredServicesEndpoint(casProperties, servicesManager);
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public ExportRegisteredServicesEndpoint exportRegisteredServicesEndpoint() {
+        return new ExportRegisteredServicesEndpoint(casProperties, servicesManager);
     }
 
     @Bean
