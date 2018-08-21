@@ -820,16 +820,16 @@ public class LdapUtils {
     }
 
     private static SaslConfig getSaslConfigFrom(final AbstractLdapProperties l) {
-        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.DIGEST_MD5) {
+        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.DIGEST_MD5) {
             val sc = new DigestMd5Config();
-            ((DigestMd5Config) sc).setRealm(l.getSaslRealm());
+            sc.setRealm(l.getSaslRealm());
             return sc;
         }
-        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.CRAM_MD5) {
+        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.CRAM_MD5) {
             val sc = new CramMd5Config();
             return sc;
         }
-        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.EXTERNAL) {
+        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.EXTERNAL) {
             val sc = new ExternalConfig();
             return sc;
         }
