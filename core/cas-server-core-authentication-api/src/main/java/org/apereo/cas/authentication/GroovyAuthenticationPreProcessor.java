@@ -24,11 +24,11 @@ public class GroovyAuthenticationPreProcessor implements AuthenticationPreProces
 
     @Override
     public boolean process(final AuthenticationTransaction transaction) throws AuthenticationException {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, new Object[]{transaction, LOGGER}, Boolean.class);
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, new Object[]{transaction, LOGGER}, Boolean.class, true);
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "supports", new Object[]{credential, LOGGER}, Boolean.class);
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, "supports", new Object[]{credential, LOGGER}, Boolean.class, true);
     }
 }

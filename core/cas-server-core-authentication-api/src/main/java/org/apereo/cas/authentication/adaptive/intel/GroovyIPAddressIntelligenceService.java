@@ -24,6 +24,6 @@ public class GroovyIPAddressIntelligenceService extends BaseIPAddressIntelligenc
     @Override
     public IPAddressIntelligenceResponse examineInternal(final RequestContext context, final String clientIpAddress) {
         val groovyResource = adaptiveAuthenticationProperties.getIpIntel().getGroovy().getLocation();
-        return ScriptingUtils.executeGroovyScript(groovyResource, new Object[]{context, clientIpAddress, LOGGER}, IPAddressIntelligenceResponse.class);
+        return ScriptingUtils.executeGroovyScript(groovyResource, new Object[]{context, clientIpAddress, LOGGER}, IPAddressIntelligenceResponse.class, true);
     }
 }

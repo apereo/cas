@@ -25,7 +25,7 @@ public class GroovyWsFederationAttributeMutator implements WsFederationAttribute
 
     @Override
     public Map<String, List<Object>> modifyAttributes(final Map<String, List<Object>> attributes) {
-        val map = ScriptingUtils.executeGroovyScript(this.groovyScript, new Object[]{attributes, LOGGER}, Map.class);
+        val map = ScriptingUtils.executeGroovyScript(this.groovyScript, new Object[]{attributes, LOGGER}, Map.class, true);
         LOGGER.debug("Attributes mutated by [{}] are calculated as [{}]", getClass().getSimpleName(), map);
         return map;
     }

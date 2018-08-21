@@ -24,6 +24,6 @@ public class GroovyPrincipalFactory extends DefaultPrincipalFactory {
 
     @Override
     public Principal createPrincipal(final String id, final Map<String, Object> attributes) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, new Object[]{id, attributes, LOGGER}, Principal.class);
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, new Object[]{id, attributes, LOGGER}, Principal.class, true);
     }
 }

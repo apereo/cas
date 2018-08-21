@@ -32,7 +32,7 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
             try {
                 final Object[] args = {principal, principalAttributes, LOGGER};
                 val resource = ResourceUtils.getResourceFrom(this.groovyScript);
-                return ScriptingUtils.executeGroovyScript(resource, args, Boolean.class);
+                return ScriptingUtils.executeGroovyScript(resource, args, Boolean.class, true);
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }

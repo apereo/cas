@@ -39,7 +39,7 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
                     + "service [{}] and provider [{}] via Groovy script [{}]",
                 principal.getId(), registeredService, provider, this.groovyScript);
             return ScriptingUtils.executeGroovyScript(this.groovyScript,
-                new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
+                new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class, true);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

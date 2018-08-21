@@ -24,7 +24,7 @@ public class GroovyPasswordEncoder extends AbstractPasswordEncoder {
     protected byte[] encode(final CharSequence rawPassword, final byte[] salt) {
         val resource = ApplicationContextProvider.getResourceLoader().getResource(this.scriptFile);
         final Object[] args = {rawPassword, salt, LOGGER, ApplicationContextProvider.getApplicationContext()};
-        val result = ScriptingUtils.executeGroovyScript(resource, args, byte[].class);
+        val result = ScriptingUtils.executeGroovyScript(resource, args, byte[].class, true);
         return result;
     }
 }

@@ -42,7 +42,7 @@ public class ScriptingUtilsTests {
             val resource = new FileSystemResource(file);
 
             val result = ScriptingUtils.executeGroovyScript(resource, "process", String.class, "casuser");
-            assertEquals("casuser", result.toString());
+            assertEquals("casuser", result);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
@@ -51,7 +51,7 @@ public class ScriptingUtilsTests {
     @Test
     public void verifyGroovyResourceEngineExecution() {
         val result = ScriptingUtils.executeGroovyScriptEngine("return name", CollectionUtils.wrap("name", "casuser"), String.class);
-        assertEquals("casuser", result.toString());
+        assertEquals("casuser", result);
     }
 
     @Test

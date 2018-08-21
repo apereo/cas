@@ -28,7 +28,7 @@ public class GroovyWebflowConfigurer extends AbstractCasWebflowConfigurer {
         if (script != null) {
             val args = new Object[]{this, applicationContext, LOGGER};
             LOGGER.debug("Executing Groovy script [{}] to auto-configure the webflow context", script);
-            ScriptingUtils.executeGroovyScript(script, args, Object.class);
+            ScriptingUtils.executeGroovyScript(script, args, Object.class, true);
         }
     }
 }

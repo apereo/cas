@@ -53,7 +53,7 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
             .forEach(groovy -> {
                 final Object[] args = {uid, LOGGER, casProperties, applicationContext};
                 final Map<String, Object> personAttributesMap =
-                    ScriptingUtils.executeGroovyScript(groovy.getLocation(), args, Map.class);
+                    ScriptingUtils.executeGroovyScript(groovy.getLocation(), args, Map.class, true);
                 finalAttributes.putAll(personAttributesMap);
             });
 

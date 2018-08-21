@@ -37,21 +37,21 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
 
     @Override
     public boolean changeInternal(@NonNull final Credential credential, @NonNull final PasswordChangeBean bean) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "change", new Object[]{credential, bean, LOGGER}, Boolean.class);
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, "change", new Object[]{credential, bean, LOGGER}, Boolean.class, true);
     }
 
     @Override
     public String findEmail(final String username) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "findEmail", new Object[]{username, LOGGER}, String.class);
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, "findEmail", new Object[]{username, LOGGER}, String.class, true);
     }
 
     @Override
     public String findUsername(final String email) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "findUsername", new Object[]{email, LOGGER}, String.class);
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, "findUsername", new Object[]{email, LOGGER}, String.class, true);
     }
 
     @Override
     public Map<String, String> getSecurityQuestions(final String username) {
-        return ScriptingUtils.executeGroovyScript(this.groovyResource, "getSecurityQuestions", new Object[]{username, LOGGER}, Map.class);
+        return ScriptingUtils.executeGroovyScript(this.groovyResource, "getSecurityQuestions", new Object[]{username, LOGGER}, Map.class, true);
     }
 }

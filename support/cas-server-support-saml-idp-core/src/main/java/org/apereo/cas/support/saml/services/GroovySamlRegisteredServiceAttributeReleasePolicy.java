@@ -43,7 +43,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
         try {
             final Object[] args = {attributes, service, resolver, facade, entityDescriptor, applicationContext, LOGGER};
             val resource = ResourceUtils.getResourceFrom(this.groovyScript);
-            return ScriptingUtils.executeGroovyScript(resource, args, Map.class);
+            return ScriptingUtils.executeGroovyScript(resource, args, Map.class, true);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
