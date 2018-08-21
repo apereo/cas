@@ -69,6 +69,7 @@ public class CasCoreWebConfiguration {
 
     @RefreshScope
     @Bean
+    @Autowired
     public HierarchicalMessageSource messageSource(@Qualifier("casCommonMessages") final Properties casCommonMessages) {
         val bean = new CasReloadableMessageBundle();
         val mb = casProperties.getMessageBundle();
