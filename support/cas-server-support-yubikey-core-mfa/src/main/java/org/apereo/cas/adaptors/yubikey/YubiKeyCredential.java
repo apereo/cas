@@ -18,7 +18,7 @@ import lombok.ToString;
 @Setter
 @Getter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class YubiKeyCredential extends OneTimeTokenCredential {
     private static final long serialVersionUID = -7570600701132111037L;
 

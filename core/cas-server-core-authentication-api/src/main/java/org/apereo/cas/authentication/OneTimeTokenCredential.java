@@ -18,7 +18,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class OneTimeTokenCredential extends AbstractCredential {
 
     private static final long serialVersionUID = -7570600701132111037L;

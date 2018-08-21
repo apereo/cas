@@ -18,7 +18,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class RadiusTokenCredential extends OneTimeTokenCredential {
     private static final long serialVersionUID = -7570675701132111037L;
 

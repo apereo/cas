@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"username"})
+@EqualsAndHashCode(of = {"username"}, callSuper = true)
 public class DuoCredential extends AbstractCredential {
 
     private static final long serialVersionUID = -7570600733132111037L;

@@ -18,7 +18,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class SwivelTokenCredential extends OneTimeTokenCredential {
     private static final long serialVersionUID = 361318678073819595L;
 
