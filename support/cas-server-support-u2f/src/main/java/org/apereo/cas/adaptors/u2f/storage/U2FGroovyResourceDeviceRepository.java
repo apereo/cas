@@ -28,12 +28,12 @@ public class U2FGroovyResourceDeviceRepository extends BaseResourceU2FDeviceRepo
 
     @Override
     public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
-        return ScriptingUtils.executeGroovyScript(this.groovyScript, "read", new Object[]{LOGGER}, Map.class);
+        return ScriptingUtils.executeGroovyScript(this.groovyScript, "read", new Object[]{LOGGER}, Map.class, true);
     }
 
     @Override
     public void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) {
-        ScriptingUtils.executeGroovyScript(this.groovyScript, "write", new Object[]{list, LOGGER}, Boolean.class);
+        ScriptingUtils.executeGroovyScript(this.groovyScript, "write", new Object[]{list, LOGGER}, Boolean.class, true);
         LOGGER.debug("Saved [{}] device(s) into repository [{}]", list.size(), groovyScript);
     }
 }
