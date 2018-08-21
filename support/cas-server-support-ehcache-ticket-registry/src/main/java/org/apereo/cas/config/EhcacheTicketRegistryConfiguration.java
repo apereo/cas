@@ -40,8 +40,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class EhcacheTicketRegistryConfiguration {
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -135,7 +133,6 @@ public class EhcacheTicketRegistryConfiguration {
     }
 
     @Autowired
-    @RefreshScope
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ehcacheTicketCacheManager") final CacheManager manager,
                                          @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
