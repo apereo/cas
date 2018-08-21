@@ -22,7 +22,7 @@ import java.nio.file.Files;
 @Slf4j
 public class TemporaryFileSystemResource extends FileSystemResource {
 
-    public TemporaryFileSystemResource(File file) {
+    public TemporaryFileSystemResource(final File file) {
         super(file);
     }
 
@@ -42,7 +42,7 @@ public class TemporaryFileSystemResource extends FileSystemResource {
             }
 
             @Override
-            public int read(ByteBuffer dst) throws IOException {
+            public int read(final ByteBuffer dst) throws IOException {
                 return readableChannel.read(dst);
             }
         };
@@ -60,7 +60,7 @@ public class TemporaryFileSystemResource extends FileSystemResource {
         };
     }
 
-    private void closeThenDeleteFile(Closeable closeable) throws IOException {
+    private void closeThenDeleteFile(final Closeable closeable) throws IOException {
         try {
             closeable.close();
         } finally {
@@ -71,7 +71,7 @@ public class TemporaryFileSystemResource extends FileSystemResource {
     private void deleteFile() {
         try {
             Files.delete(getFile().toPath());
-        } catch (IOException ex) {
+        } catch (final IOException ex) {
             LOGGER.warn("Failed to delete temporary heap dump file '" + getFile() + "'", ex);
         }
     }
