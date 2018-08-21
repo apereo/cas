@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.ResourceUtils;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.authenticator.BasicAuthenticator;
@@ -147,13 +146,16 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
             final RewriteValve valve = new RewriteValve() {
                 @Override
-                @SneakyThrows
-                protected synchronized void startInternal() {
-                    super.startInternal();
-                    try (val is = res.getInputStream();
-                         val isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-                         val buffer = new BufferedReader(isr)) {
-                        parse(buffer);
+                public synchronized void startInternal() {
+                    try {
+                        super.startInternal();
+                        try (val is = res.getInputStream();
+                             val isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+                             val buffer = new BufferedReader(isr)) {
+                            parse(buffer);
+                        }
+                    } catch (final Exception e) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
             };
