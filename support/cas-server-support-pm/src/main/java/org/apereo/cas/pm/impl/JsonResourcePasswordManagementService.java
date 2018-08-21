@@ -10,7 +10,6 @@ import org.apereo.cas.pm.PasswordChangeBean;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +32,6 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-@Getter
 public class JsonResourcePasswordManagementService extends BasePasswordManagementService {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

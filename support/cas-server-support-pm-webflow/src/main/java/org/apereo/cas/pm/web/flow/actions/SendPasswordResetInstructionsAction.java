@@ -4,13 +4,16 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -67,21 +70,22 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         communicationsManager.validate();
         if (!communicationsManager.isMailSenderDefined()) {
-            return error();
+            return getErrorEvent("email.failed", "Unable to send email as no mail sender is defined", requestContext);
         }
+
         val pm = casProperties.getAuthn().getPm();
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val username = request.getParameter("username");
 
         if (StringUtils.isBlank(username)) {
             LOGGER.warn("No username is provided");
-            return error();
+            return getErrorEvent("username.required", "No username is provided", requestContext);
         }
 
         val to = passwordManagementService.findEmail(username);
         if (StringUtils.isBlank(to)) {
             LOGGER.warn("No recipient is provided");
-            return error();
+            return getErrorEvent("email.invalid", "Provided email address is invalid", requestContext);
         }
 
         val url = buildPasswordResetUrl(username, passwordManagementService, casProperties);
@@ -94,7 +98,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             LOGGER.error("No password reset URL could be built and sent to [{}]", to);
         }
         LOGGER.error("Failed to notify account [{}]", to);
-        return error();
+        return getErrorEvent("email.failed", "Failed to send the password reset link to the given email address", requestContext);
     }
 
     /**
@@ -112,5 +116,15 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             to,
             reset.getCc(),
             reset.getBcc());
+    }
+
+    private Event getErrorEvent(final String code, final String defaultMessage, final RequestContext requestContext) {
+        val messages = requestContext.getMessageContext();
+        messages.addMessage(new MessageBuilder()
+            .error()
+            .code("screen.pm.reset." + code)
+            .build());
+        LOGGER.error(defaultMessage);
+        return new EventFactorySupport().event(this, CasWebflowConstants.VIEW_ID_ERROR);
     }
 }
