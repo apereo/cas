@@ -19,7 +19,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @AllArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 public class BasicIdentifiableCredential extends AbstractCredential {
     private static final long serialVersionUID = -700605020472810939L;
