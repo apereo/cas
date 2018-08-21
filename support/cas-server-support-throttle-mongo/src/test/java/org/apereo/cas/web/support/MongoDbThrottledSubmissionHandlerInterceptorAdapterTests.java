@@ -21,6 +21,7 @@ import org.apereo.cas.config.CasMongoDbThrottlingConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
+import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
@@ -38,6 +39,7 @@ import org.springframework.test.context.TestPropertySource;
 @Category(MongoDbCategory.class)
 @SpringBootTest(classes = {
     CasMongoDbThrottlingConfiguration.class,
+    CasThrottlingConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
