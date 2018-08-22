@@ -52,10 +52,10 @@ import org.springframework.test.context.TestPropertySource;
  */
 @Category(LdapCategory.class)
 @SpringBootTest(classes = {
+    SurrogateLdapAuthenticationConfiguration.class,
     SurrogateAuthenticationConfiguration.class,
     SurrogateAuthenticationAuditConfiguration.class,
     SurrogateAuthenticationMetadataConfiguration.class,
-    SurrogateLdapAuthenticationConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
