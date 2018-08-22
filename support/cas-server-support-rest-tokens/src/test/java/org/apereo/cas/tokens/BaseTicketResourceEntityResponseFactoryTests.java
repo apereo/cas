@@ -58,6 +58,10 @@ import java.util.List;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    BaseTicketResourceEntityResponseFactoryTests.TicketResourceTestConfiguration.class,
+    CasRestTokensConfiguration.class,
+    CasRestConfiguration.class,
+    TokenCoreConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreHttpConfiguration.class,
@@ -76,13 +80,10 @@ import java.util.List;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    TokenCoreConfiguration.class,
-    BaseTicketResourceEntityResponseFactoryTests.TicketResourceTestConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasRestConfiguration.class,
-    CasRestTokensConfiguration.class})
+    CasWebApplicationServiceFactoryConfiguration.class
+})
 public abstract class BaseTicketResourceEntityResponseFactoryTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
