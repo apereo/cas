@@ -73,6 +73,7 @@ import java.util.Optional;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
+    OidcConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -102,7 +103,6 @@ import java.util.Optional;
     CasThrottlingConfiguration.class,
     CasOAuthThrottleConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
-    OidcConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class})
 @DirtiesContext
 @Category(FileSystemCategory.class)
