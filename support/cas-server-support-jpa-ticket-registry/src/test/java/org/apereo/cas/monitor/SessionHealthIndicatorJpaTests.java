@@ -61,6 +61,7 @@ import static org.junit.Assert.*;
  */
 @Transactional
 @SpringBootTest(classes = {
+    JpaTicketRegistryConfiguration.class,
     SessionHealthIndicatorJpaTests.JpaTestConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
@@ -80,7 +81,6 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    JpaTicketRegistryConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
