@@ -98,8 +98,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
@@ -241,12 +244,18 @@ public abstract class AbstractOAuth20Tests {
         return CoreAuthenticationTestUtils.getPrincipal(ID, map);
     }
 
-    protected OAuthRegisteredService addRegisteredService() {
-        return addRegisteredService(false);
+    protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes) {
+        return addRegisteredService(false, grantTypes);
     }
 
-    protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken) {
-        final OAuthRegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET);
+    protected OAuthRegisteredService addRegisteredService() {
+        return addRegisteredService(false, new HashSet<>());
+    }
+
+
+    protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken,
+                                                          final Set<OAuth20GrantTypes> grantTypes) {
+        final OAuthRegisteredService registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, grantTypes);
         registeredService.setGenerateRefreshToken(generateRefreshToken);
         servicesManager.save(registeredService);
         return registeredService;
@@ -272,13 +281,17 @@ public abstract class AbstractOAuth20Tests {
         return refreshToken;
     }
 
-    protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String secret) {
+    protected OAuthRegisteredService getRegisteredService(final String serviceId,
+                                                          final String secret,
+                                                          final Set<OAuth20GrantTypes> grantTypes) {
         final OAuthRegisteredService registeredServiceImpl = new OAuthRegisteredService();
         registeredServiceImpl.setName("The registered service name");
         registeredServiceImpl.setServiceId(serviceId);
         registeredServiceImpl.setClientId(CLIENT_ID);
         registeredServiceImpl.setClientSecret(secret);
         registeredServiceImpl.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
+        registeredServiceImpl.setSupportedGrantTypes(
+                grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new)));
         return registeredServiceImpl;
     }
 
