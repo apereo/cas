@@ -23,8 +23,9 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
  * @since 5.2.0
  */
 @Category(MongoDbCategory.class)
-@SpringBootTest(classes = {U2FConfiguration.class,
+@SpringBootTest(classes = {
     U2FMongoDbConfiguration.class,
+    U2FConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class})
 @TestPropertySource(properties = {
