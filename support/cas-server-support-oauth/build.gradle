@@ -23,8 +23,6 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-throttle")
     
-    testImplementation project(":support:cas-server-support-memcached-ticket-registry")
-    testImplementation project(":support:cas-server-support-memcached-spy")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
