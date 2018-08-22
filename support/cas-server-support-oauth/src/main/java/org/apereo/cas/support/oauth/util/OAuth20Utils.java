@@ -276,21 +276,34 @@ public class OAuth20Utils {
     /**
      * Is authorized grant type for service?
      *
-     * @param context           the context
+     * @param grantType         the grant type
      * @param registeredService the registered service
      * @return true/false
      */
-    public static boolean isAuthorizedGrantTypeForService(final J2EContext context, final OAuthRegisteredService registeredService) {
-        final String grantType = context.getRequestParameter(OAuth20Constants.GRANT_TYPE);
+    public static boolean isAuthorizedGrantTypeForService(final String grantType,
+                                                          final OAuthRegisteredService registeredService) {
         if (registeredService.getSupportedGrantTypes() != null && !registeredService.getSupportedGrantTypes().isEmpty()) {
             LOGGER.debug("Checking grant type [{}] against supported grant types [{}]", grantType, registeredService.getSupportedGrantTypes());
             return registeredService.getSupportedGrantTypes().stream().anyMatch(s -> s.equalsIgnoreCase(grantType));
         }
 
         LOGGER.warn("Registered service [{}] does not define any authorized/supported grant types. "
-            + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
-            + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
+                + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
+                + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
         return true;
+    }
+
+    /**
+     * Is authorized grant type for service?
+     *
+     * @param context           the context
+     * @param registeredService the registered service
+     * @return true/false
+     */
+    public static boolean isAuthorizedGrantTypeForService(final J2EContext context, final OAuthRegisteredService registeredService) {
+        return isAuthorizedGrantTypeForService(
+                context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
+                registeredService);
     }
 
     /**

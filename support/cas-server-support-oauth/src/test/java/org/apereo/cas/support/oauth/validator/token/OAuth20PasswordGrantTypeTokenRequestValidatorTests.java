@@ -31,20 +31,35 @@ import static org.mockito.Mockito.*;
  */
 public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
     private OAuth20TokenRequestValidator validator;
-    private OAuthRegisteredService registeredService;
+    private OAuthRegisteredService supportingService;
+    private OAuthRegisteredService nonSupportingService;
+    private OAuthRegisteredService promiscuousService;
 
     @Before
     public void before() {
         final Service service = RegisteredServiceTestUtils.getService();
 
         final ServicesManager serviceManager = mock(ServicesManager.class);
-        registeredService = new OAuthRegisteredService();
-        registeredService.setName("OAuth");
-        registeredService.setClientId("client");
-        registeredService.setClientSecret("secret");
-        registeredService.setServiceId(service.getId());
+        supportingService = RequestValidatorTestUtils.getService(
+                RegisteredServiceTestUtils.CONST_TEST_URL,
+                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET,
+                CollectionUtils.wrapSet(getGrantType()));
+        nonSupportingService = RequestValidatorTestUtils.getService(
+                RegisteredServiceTestUtils.CONST_TEST_URL2,
+                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET,
+                CollectionUtils.wrapSet(getWrongGrantType()));
+        promiscuousService = RequestValidatorTestUtils.getPromiscousService(
+                RegisteredServiceTestUtils.CONST_TEST_URL3,
+                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+                RequestValidatorTestUtils.SHARED_SECRET);
 
-        when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(registeredService));
+        when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(
+                supportingService, nonSupportingService, promiscuousService));
 
         this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(new RegisteredServiceAccessStrategyAuditableEnforcer(),
             serviceManager, new WebApplicationServiceFactory());
@@ -60,16 +75,30 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
 
         final CommonProfile profile = new CommonProfile();
         profile.setClientName(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN);
-        profile.setId("client");
+        profile.setId(RequestValidatorTestUtils.SUPPORTING_CLIENT_ID);
         final HttpSession session = request.getSession(true);
         session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
 
         request.setParameter(OAuth20Constants.GRANT_TYPE, getGrantType().getType());
-        request.setParameter(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
+        request.setParameter(OAuth20Constants.CLIENT_ID, supportingService.getClientId());
+        assertTrue(this.validator.validate(new J2EContext(request, response)));
+
+        request.setParameter(OAuth20Constants.CLIENT_ID, nonSupportingService.getClientId());
+        profile.setId(RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
+        assertFalse(this.validator.validate(new J2EContext(request, response)));
+
+        request.setParameter(OAuth20Constants.CLIENT_ID, promiscuousService.getClientId());
+        profile.setId(RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID);
+        session.setAttribute(Pac4jConstants.USER_PROFILES, profile);
         assertTrue(this.validator.validate(new J2EContext(request, response)));
     }
 
     protected OAuth20GrantTypes getGrantType() {
         return OAuth20GrantTypes.PASSWORD;
+    }
+
+    protected OAuth20GrantTypes getWrongGrantType() {
+        return OAuth20GrantTypes.AUTHORIZATION_CODE;
     }
 }
