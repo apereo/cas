@@ -5,6 +5,7 @@ import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import com.google.common.collect.ArrayListMultimap;
 import lombok.Getter;
@@ -58,7 +59,11 @@ public abstract class AbstractServiceRegistryTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
+
     private final Class<? extends RegisteredService> registeredServiceClass;
+
     private ServiceRegistry serviceRegistry;
 
     @Before

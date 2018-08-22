@@ -40,7 +40,7 @@ public class CasJdbcThrottlingConfiguration {
     private ThrottledRequestResponseHandler throttledRequestResponseHandler;
 
     @Bean
-    public DataSource inspektrAuditTrailDataSource() {
+    public DataSource inspektrThrottleDataSource() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getThrottle().getJdbc());
     }
 
@@ -55,7 +55,7 @@ public class CasJdbcThrottlingConfiguration {
             failure.getRangeSeconds(),
             throttle.getUsernameParameter(),
             auditTrailManager.getIfAvailable(),
-            inspektrAuditTrailDataSource(),
+            inspektrThrottleDataSource(),
             throttle.getAppcode(),
             throttle.getJdbc().getAuditQuery(),
             failure.getCode(),

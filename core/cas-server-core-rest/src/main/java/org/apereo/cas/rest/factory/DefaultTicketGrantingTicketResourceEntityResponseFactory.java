@@ -24,7 +24,7 @@ import java.net.URI;
 public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements TicketGrantingTicketResourceEntityResponseFactory {
     private static final String DOCTYPE_AND_TITLE = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>";
     private static final String CLOSE_TITLE_AND_OPEN_FORM = "</title></head><body><h1>TGT Created</h1><form action=\"";
-    private static final String TGT_CREATED_TITLE_CONTENT = HttpStatus.CREATED.toString() + ' ' + HttpStatus.CREATED.getReasonPhrase();
+    private static final String TGT_CREATED_TITLE_CONTENT = HttpStatus.CREATED.toString();
     private static final String DOCTYPE_AND_OPENING_FORM = DOCTYPE_AND_TITLE + TGT_CREATED_TITLE_CONTENT + CLOSE_TITLE_AND_OPEN_FORM;
     private static final String REST_OF_THE_FORM_AND_CLOSING_TAGS = "\" method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\"><br><input "
         + "type=\"submit\" value=\"Submit\"></form></body></html>";

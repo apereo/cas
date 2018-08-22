@@ -21,8 +21,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = {U2FConfiguration.class,
+@SpringBootTest(classes = {
     U2FJpaConfiguration.class,
+    U2FConfiguration.class,
     AopAutoConfiguration.class,
     RefreshAutoConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)

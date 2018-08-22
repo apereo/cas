@@ -48,6 +48,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 @SpringBootTest(classes = {
     BaseSurrogateInitialAuthenticationActionTests.TestAuthenticationConfiguration.class,
     RefreshAutoConfiguration.class,
+    SurrogateAuthenticationConfiguration.class,
     SurrogateAuthenticationWebflowConfiguration.class,
     SurrogateWebflowEventResolutionConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -71,8 +72,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     CasCookieConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    SurrogateAuthenticationConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @TestPropertySource(properties = {"cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"})
 public abstract class BaseSurrogateInitialAuthenticationActionTests {

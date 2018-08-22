@@ -4,6 +4,7 @@ import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -46,6 +47,9 @@ public class CasSupportJdbcAuditConfigurationTests {
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("jdbcAuditTrailManager")

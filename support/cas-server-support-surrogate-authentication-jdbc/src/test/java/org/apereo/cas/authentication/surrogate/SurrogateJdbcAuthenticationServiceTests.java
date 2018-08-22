@@ -22,7 +22,6 @@ import lombok.Getter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +29,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.sql.DataSource;
 
@@ -65,14 +63,11 @@ import javax.sql.DataSource;
     "cas.authn.surrogate.jdbc.surrogateSearchQuery=select count(*) from surrogate_accounts where username=? and surrogateAccount=?",
     "cas.authn.surrogate.jdbc.surrogateAccountQuery=select * from surrogate_accounts where username=?",
     "cas.authn.surrogate.jdbc.autoCommit=true"
-    })
+})
 @Getter
 public class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("surrogateAuthenticationService")
