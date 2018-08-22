@@ -100,9 +100,6 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
         .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("surrogateAuthenticationService")
     private SurrogateAuthenticationService service;

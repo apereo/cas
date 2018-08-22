@@ -46,6 +46,8 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @SpringBootTest(classes = {
+    JpaTicketRegistryTicketCatalogConfiguration.class,
+    JpaTicketRegistryConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -64,8 +66,6 @@ import java.util.Collection;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    JpaTicketRegistryTicketCatalogConfiguration.class,
-    JpaTicketRegistryConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
