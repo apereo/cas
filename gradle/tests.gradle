@@ -180,6 +180,7 @@ test {
         excludeCategories "org.apereo.cas.category.MySQLCategory"
         excludeCategories "org.apereo.cas.category.RestfulApiCategory"
         excludeCategories "org.apereo.cas.category.MariaDbCategory"
+        excludeCategories "org.apereo.cas.category.PostgresCategory"
     }
     onlyIf {
         "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType)
