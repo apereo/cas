@@ -10,6 +10,9 @@
         <cve>CVE-2018-3081</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2018-1257</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2015-5237</cve>
     </suppress>
     <suppress>
