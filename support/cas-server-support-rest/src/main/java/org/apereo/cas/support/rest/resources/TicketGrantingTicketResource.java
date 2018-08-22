@@ -60,7 +60,7 @@ public class TicketGrantingTicketResource {
      * @return ResponseEntity representing RESTful response
      */
     @PostMapping(value = "/v1/tickets", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
+    public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required=false) final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
         try {
             final TicketGrantingTicket tgtId = createTicketGrantingTicketForRequest(requestBody, request);
