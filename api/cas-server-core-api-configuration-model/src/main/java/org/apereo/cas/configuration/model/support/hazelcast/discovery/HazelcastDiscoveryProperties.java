@@ -49,4 +49,9 @@ public class HazelcastDiscoveryProperties implements Serializable {
      * Describe discovery strategy based on Azure.
      */
     private HazelcastAzureDiscoveryProperties azure = new HazelcastAzureDiscoveryProperties();
+
+    /**
+     * Describe discovery strategy based on Kubernetes.
+     */
+    private HazelcastKubernetesDiscoveryProperties kubernetes = new HazelcastKubernetesDiscoveryProperties();
 }
