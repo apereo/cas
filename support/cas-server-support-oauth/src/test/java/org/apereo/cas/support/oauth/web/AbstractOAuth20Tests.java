@@ -60,6 +60,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.SchedulingUtils;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -172,6 +173,9 @@ public abstract class AbstractOAuth20Tests {
     public static final String GOOD_USERNAME = "test";
     public static final String GOOD_PASSWORD = "test";
     public static final int DELTA = 2;
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
