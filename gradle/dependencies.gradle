@@ -2776,6 +2776,18 @@ ext.libraries = [
                     force = true
                 }
         ],
+
+        springsessionmongo : [
+                dependencies.create("org.springframework.session:spring-session-data-mongodb:$springSessionVersion") {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.springframework.session", module: "spring-session")
+                    force = true
+                }
+        ],
+
         springshell             : [
                 dependencies.create("org.springframework.shell:spring-shell-starter:$springShellVersion") {
                     exclude(group: "org.springframework", module: "spring-beans")
