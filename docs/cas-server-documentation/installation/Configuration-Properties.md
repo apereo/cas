@@ -2370,21 +2370,6 @@ To learn more about this topic, [please review this guide](SwivelSecure-Authenti
 
 Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.swivel`.
 
-### Microsoft Azure
-
-To learn more about this topic, [please review this guide](MicrosoftAzure-Authentication.html).
-
-```properties
-# cas.authn.mfa.azure.phoneAttribute=phone
-# cas.authn.mfa.azure.configDir=/etc/cas/azure
-# cas.authn.mfa.azure.privateKeyPassword=
-# cas.authn.mfa.azure.mode=POUND|PIN
-# cas.authn.mfa.azure.rank=0
-# cas.authn.mfa.azure.name=
-# cas.authn.mfa.azure.allowInternationalCalls=false
-```
-
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.azure`.
 
 ### Authy
 
