@@ -50,8 +50,8 @@ import static org.junit.Assert.*;
  */
 @Category(FileSystemCategory.class)
 @SpringBootTest(classes = {
-    YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
     JsonYubiKeyAccountRegistryTests.JsonYubiKeyAccountRegistryTestConfiguration.class,
+    YubiKeyAuthenticationEventExecutionPlanConfiguration.class,
     YubiKeyConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasWebflowContextConfiguration.class,
