@@ -47,7 +47,7 @@ public class SimplePrincipal implements Principal {
     /**
      * Principal attributes.
      **/
-    private Map<String, Object> attributes;
+    private Map<String, Object> attributes = new HashMap<>();
 
     /**
      * Instantiates a new simple principal.
@@ -57,7 +57,7 @@ public class SimplePrincipal implements Principal {
      */
     @JsonCreator
     protected SimplePrincipal(@NonNull @JsonProperty("id") final String id,
-                              @NonNull @JsonProperty("attributes") final Map<String, Object> attributes) {
+                              @JsonProperty("attributes") final Map<String, Object> attributes) {
         this.id = id;
         if (attributes == null) {
             this.attributes = new HashMap<>();

@@ -1,14 +1,15 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
+import org.apereo.cas.util.CollectionUtils;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
-import org.apereo.cas.util.CollectionUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
 
@@ -85,11 +86,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
                 requestedProvider, bypassedId);
         }
         final Collection<MultifactorAuthenticationProvider> satisfiedProviders = getSatisfiedAuthenticationProviders(authentication, providerMap.values());
-        if (satisfiedProviders == null) {
-            LOGGER.warn("No satisfied multifactor authentication providers are recorded in the current authentication context.");
-            return Pair.of(Boolean.FALSE, requestedProvider);
-        }
-        if (!satisfiedProviders.isEmpty()) {
+        if (satisfiedProviders != null && !satisfiedProviders.isEmpty()) {
             final MultifactorAuthenticationProvider[] providers = satisfiedProviders.toArray(new MultifactorAuthenticationProvider[]{});
             OrderComparator.sortIfNecessary(providers);
             final Optional<MultifactorAuthenticationProvider> result = Arrays.stream(providers)
@@ -104,10 +101,18 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
                 return Pair.of(Boolean.TRUE, requestedProvider);
             }
         }
-        LOGGER.debug("No multifactor providers could be located to satisfy the requested context for [{}]", requestedProvider);
+        return handleUnsatisfiedAuthenticationContext(requestedContext, service, requestedProvider, satisfiedProviders);
+    }
+
+    private Pair<Boolean, Optional<MultifactorAuthenticationProvider>> handleUnsatisfiedAuthenticationContext(final String requestedContext,
+                                                                                                              final RegisteredService service,
+                                                                                                              final Optional<MultifactorAuthenticationProvider> requestedProvider,
+                                                                                                              final Collection<MultifactorAuthenticationProvider> satisfiedProviders) {
+        final MultifactorAuthenticationProvider provider = requestedProvider.get();
+        LOGGER.debug("No multifactor providers could be located to satisfy the requested context for [{}]", provider);
         final RegisteredServiceMultifactorPolicy.FailureModes mode = getMultifactorFailureModeForService(service);
         if (mode == RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM) {
-            if (!requestedProvider.get().isAvailable(service)) {
+            if (!provider.isAvailable(service)) {
                 LOGGER.debug("Service [{}] is configured to use a [{}] failure mode for multifactor authentication policy. "
                     + "Since provider [{}] is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
                     + "of the present authentication context", service.getServiceId(), mode, requestedProvider, requestedContext);
@@ -115,11 +120,11 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
             }
         }
         if (mode == RegisteredServiceMultifactorPolicy.FailureModes.OPEN) {
-            if (!requestedProvider.get().isAvailable(service)) {
+            if (!provider.isAvailable(service)) {
                 LOGGER.debug("Service [{}] is configured to use a [{}] failure mode for multifactor authentication policy and "
                     + "since provider [{}] is unavailable at the moment, CAS will consider the authentication satisfied "
                     + "without the presence of [{}]", service.getServiceId(), mode, requestedProvider, requestedContext);
-                return Pair.of(Boolean.TRUE, satisfiedProviders.stream().findFirst());
+                return Pair.of(Boolean.TRUE, Optional.empty());
             }
         }
         return Pair.of(Boolean.FALSE, requestedProvider);
@@ -144,7 +149,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
 
     private RegisteredServiceMultifactorPolicy.FailureModes getMultifactorFailureModeForService(final RegisteredService service) {
         final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
-        if (policy == null || policy.getFailureMode() == null) {
+        if (policy == null || policy.getFailureMode() == null || policy.getFailureMode() == RegisteredServiceMultifactorPolicy.FailureModes.NOT_SET) {
             return RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
         }
         return policy.getFailureMode();
