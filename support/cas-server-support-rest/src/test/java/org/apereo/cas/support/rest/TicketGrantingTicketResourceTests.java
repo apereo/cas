@@ -103,7 +103,7 @@ public class TicketGrantingTicketResourceTests {
     @Test
     public void defaultCreationOfTGT() throws Throwable {
         val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
-            + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
+            + "<html><head><title>201 CREATED</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
             + "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
             + "<br><input type=\"submit\" value=\"Submit\"></form></body></html>";
@@ -122,7 +122,7 @@ public class TicketGrantingTicketResourceTests {
     @Test
     public void verifyHtmlCreationOfTGT() throws Throwable {
         val expectedReturnEntityBody = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">"
-            + "<html><head><title>201 Created</title></head><body><h1>TGT Created</h1>"
+            + "<html><head><title>201 CREATED</title></head><body><h1>TGT Created</h1>"
             + "<form action=\"http://localhost/cas/v1/tickets/TGT-1\" "
             + "method=\"POST\">Service:<input type=\"text\" name=\"service\" value=\"\">"
             + "<br><input type=\"submit\" value=\"Submit\"></form></body></html>";
