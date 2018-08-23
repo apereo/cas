@@ -19,11 +19,6 @@ import org.springframework.session.data.mongo.config.annotation.web.http.EnableM
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MongoSessionConfiguration {
 
-    /**
-     * Jdk mongo session converter jdk mongo session converter.
-     *
-     * @return the jdk mongo session converter
-     */
     @Bean
     public JdkMongoSessionConverter jdkMongoSessionConverter() {
         return new JdkMongoSessionConverter();
