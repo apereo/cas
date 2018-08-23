@@ -505,6 +505,22 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.discovery.jclouds.credentialPath=
 ```
 
+### Kubernetes Discovery
+
+```properties
+# ${configurationKey}.cluster.discovery.enabled=true
+
+# ${configurationKey}.cluster.discovery.kubernetes.serviceDns=
+# ${configurationKey}.cluster.discovery.kubernetes.serviceDnsTimeout=-1
+# ${configurationKey}.cluster.discovery.kubernetes.serviceName=
+# ${configurationKey}.cluster.discovery.kubernetes.serviceLabelName=
+# ${configurationKey}.cluster.discovery.kubernetes.serviceLabelValue=
+# ${configurationKey}.cluster.discovery.kubernetes.namespace=
+# ${configurationKey}.cluster.discovery.kubernetes.resolveNotReadyAddresses=false
+# ${configurationKey}.cluster.discovery.kubernetes.kubernetesMaster=
+# ${configurationKey}.cluster.discovery.kubernetes.apiToken=
+```
+
 ### Microsoft Azure Discovery
 
 ```properties

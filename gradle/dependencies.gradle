@@ -548,19 +548,33 @@ ext.libraries = [
         ],
         hazelcastaws            : [
                 dependencies.create("com.hazelcast:hazelcast-aws:$hazelcastAwsVersion") {
+                    exclude(group: "com.hazelcast", module: "hazelcast")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
         hazelcastazure          : [
                 dependencies.create("com.hazelcast:hazelcast-azure:$hazelcastAzureVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "com.hazelcast", module: "hazelcast")
                     force = true
                 }
+        ],
+        hazelcastkubernetes : [
+                dependencies.create("com.hazelcast:hazelcast-kubernetes:$hazelcastKubernetesVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "log4j", module: "log4j")
+                    exclude(group: "com.hazelcast", module: "hazelcast")
+                    force = true
+                }
+
         ],
         jclouds                 : [
                 dependencies.create("com.hazelcast:hazelcast-jclouds:$hazelcastJCloudsVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.hazelcast", module: "hazelcast")
                     force = true
                 },
                 dependencies.create("org.apache.jclouds:jclouds-compute:$jcloudsVersion") {
@@ -1334,18 +1348,6 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.junit.platform:junit-platform-launcher:$junitPlatformVersion") {
-                    force = true
-                },
-                dependencies.create("com.github.fakemongo:fongo:$fongoVersion") {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    force = true
-                },
-                dependencies.create("de.flapdoodle.embed:de.flapdoodle.embed.memcached:$memcachedEmbeddedVersion") {
-                    exclude(group: "org.apache.commons", module: "commons-lang3")
-                    exclude(group: "net.spy", module: "spymemcached")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-io", module: "commons-io")
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
