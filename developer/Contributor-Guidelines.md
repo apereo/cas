@@ -72,6 +72,14 @@ Reporting an issue and hoping/waiting for someone else to magically come along a
 
 If you insist on being treated like a user, you then need to revisit and realign expectations with [folks and resources](https://www.apereo.org/content/commercial-affiliates) that can provide you with the treatment you need. All of the work that goes into the development of a rich comprehensive software platform is almost exclusively done on a voluntary basis. Therefor, if you have expectations that resemble something of a commercial support agreement with clauses that include promises, guarantee, SLAs and follow-ups, you simply need to level up with an entity that actually provides that sort of functionality.
 
+## I have an idea; It would be nice if...
+
+It _would_ be nice. No, it would be fantastic, superb, marvelous and ultra great. Please consider that lone ideas by themselves are more or less pointless unless they are executed and realized in concrete form. There is no shortage of ideas; good or bad. There is a shortage of folks who are ready and serious enough to execute and deliver the idea. This is very much a call to action and one that allows you to graduate from a think-tank into a doer, a contributor, a promoter and a leader. If you consider something to be worth doing, a very best thing you can do is to demonstrate concretely and seriously, that it is, in fact, worth doing. Doing something about an issue or request does not necessarily equal to you, the individual contributor, writing code. That is only one of many possible options. We hope that you consider that as a good starting place and when all else fails, consider [reaching out for support]((https://www.apereo.org/content/commercial-affiliates).
+
+## I found a problem. Should I...?
+
+Yes, you should. If you find something that you consider to be odd, wrong or wobbly behavior _**and**_ have found an alternative solution that removes the obstacle or delivers the case, please consider reporting and sharing that improvement in form of a patch to the project so it can be discussed and potentially accepted. There is no down-side to this, as you engage and collaborate with community members concretely and in action; It is quite possible that they may have found a better solution and might be able to share that with you for longer prosperity. Be not afraid; the worst that could happen is someone stepping up to help you out with better options.
+
 ## How do I know who's working on what?
 
 - Follow the *WIP Pattern* and submit [early pull requests](https://ben.straub.cc/2015/04/02/wip-pull-request/). This is in fact the recommended strategy from Github:
