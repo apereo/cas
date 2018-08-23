@@ -45,7 +45,7 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    CasCoreHttpConfiguration.class,
+    CasCoreHttpConfiguration.class
 })
 @TestPropertySource(properties = {"cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"})
 public class SurrogateAuthenticationPostProcessorTests {
