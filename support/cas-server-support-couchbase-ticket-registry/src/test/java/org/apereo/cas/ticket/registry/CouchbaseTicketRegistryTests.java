@@ -21,10 +21,8 @@ import org.apereo.cas.config.CouchbaseTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -68,9 +66,6 @@ import java.util.Collection;
     RefreshAutoConfiguration.class},
     properties = {"cas.ticket.registry.couchbase.password=password", "cas.ticket.registry.couchbase.bucket=testbucket"})
 public class CouchbaseTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("ticketRegistry")

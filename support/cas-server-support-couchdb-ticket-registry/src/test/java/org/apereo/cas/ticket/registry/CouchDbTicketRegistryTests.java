@@ -23,11 +23,9 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import org.junit.After;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -71,8 +69,6 @@ import java.util.Collection;
     properties = {"org.ektorp.support.AutoUpdateViewOnChange=true", "cas.ticket.registry.couchDb.username=", "cas.ticket.registry.couchDb.password="})
 @Category(CouchDbCategory.class)
 public class CouchDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("ticketRegistry")

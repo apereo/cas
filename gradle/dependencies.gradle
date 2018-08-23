@@ -1355,13 +1355,6 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     force = true
                 },
-                dependencies.create("de.flapdoodle.embed:de.flapdoodle.embed.memcached:$memcachedEmbeddedVersion") {
-                    exclude(group: "org.apache.commons", module: "commons-lang3")
-                    exclude(group: "net.spy", module: "spymemcached")
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-io", module: "commons-io")
-                    force = true
-                },
                 dependencies.create("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
