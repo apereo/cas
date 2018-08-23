@@ -77,4 +77,10 @@ public class SamlIdPProperties implements Serializable {
     @NestedConfigurationProperty
     private SamlIdPAlgorithmsProperties algs = new SamlIdPAlgorithmsProperties();
     
+    /**
+     * Settings related to naming saml cache storages.
+     */
+    @NestedConfigurationProperty
+    private SamlIdPTicketProperties ticket = new SamlIdPTicketProperties();
+
 }

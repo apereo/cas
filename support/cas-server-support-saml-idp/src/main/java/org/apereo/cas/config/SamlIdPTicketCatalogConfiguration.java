@@ -33,13 +33,13 @@ public class SamlIdPTicketCatalogConfiguration extends BaseTicketCatalogConfigur
     }
 
     protected void buildAndRegisterSamlArtifactDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("samlArtifactsCache");
+        metadata.getProperties().setStorageName(casProperties.getAuthn().getSamlIdp().getTicket().getSamlArtifactsCacheStorageName());
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
         registerTicketDefinition(plan, metadata);
     }
 
     protected void buildAndRegisterSamlAttributeQueryDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("samlAttributeQueryCache");
+        metadata.getProperties().setStorageName(casProperties.getAuthn().getSamlIdp().getTicket().getSamlAttributeQueryCacheStorageName());
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
         registerTicketDefinition(plan, metadata);
     }

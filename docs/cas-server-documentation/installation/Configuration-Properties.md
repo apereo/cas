@@ -2484,6 +2484,13 @@ under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
 ```
 
+### SAML Ticket
+
+```properties
+# cas.authn.samlIdp.ticket.samlArtifactsCacheStorageName=samlArtifactsCache
+# cas.authn.samlIdp.ticket.samlAttributeQueryCacheStorageName=samlAttributeQueryCache
+```
+
 ## SAML SPs
 
 Allow CAS to register and enable a number of built-in SAML service provider integrations.
