@@ -1350,11 +1350,6 @@ ext.libraries = [
                 dependencies.create("org.junit.platform:junit-platform-launcher:$junitPlatformVersion") {
                     force = true
                 },
-                dependencies.create("com.github.fakemongo:fongo:$fongoVersion") {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                    force = true
-                },
                 dependencies.create("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
