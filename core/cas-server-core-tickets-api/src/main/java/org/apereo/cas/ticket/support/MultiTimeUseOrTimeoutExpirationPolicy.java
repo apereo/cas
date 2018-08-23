@@ -105,7 +105,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          * @param timeToKillInSeconds the time to kill in seconds
          */
         @JsonCreator
-        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToKillInSeconds") final long timeToKillInSeconds) {
+        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
