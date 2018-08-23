@@ -29,8 +29,8 @@ import org.junit.runners.Suite;
     AuthenticationCredentialTypeMetaDataPopulatorTests.class,
     DefaultPrincipalFactoryTests.class,
     GroovyAuthenticationPreProcessorTests.class,
-    GroovyPrincipalFactoryTests.class
-
+    GroovyPrincipalFactoryTests.class,
+    OneTimeTokenAccountTests.class
 })
 public class AllAuthenticationTestsSuite {
 }
