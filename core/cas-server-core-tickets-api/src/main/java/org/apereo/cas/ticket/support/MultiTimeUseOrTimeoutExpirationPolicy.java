@@ -31,7 +31,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
 
     private static final long serialVersionUID = -5704993954986738308L;
 
-    @JsonProperty("timeToLive")
+    @JsonProperty(value = "timeToLive")
     private long timeToKillInSeconds;
 
     @JsonProperty("numberOfUses")
@@ -108,7 +108,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          * @param timeToKillInSeconds the time to kill in seconds
          */
         @JsonCreator
-        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToKillInSeconds") final long timeToKillInSeconds) {
+        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }

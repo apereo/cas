@@ -3,6 +3,8 @@ package org.apereo.cas.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -45,7 +47,8 @@ public class SimplePrincipal implements Principal {
     /**
      * Principal attributes.
      **/
-    private Map<String, Object> attributes;
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private Map<String, Object> attributes = new HashMap<>();
 
     /**
      * Instantiates a new simple principal.
@@ -55,7 +58,7 @@ public class SimplePrincipal implements Principal {
      */
     @JsonCreator
     protected SimplePrincipal(@NonNull @JsonProperty("id") final String id,
-                              @NonNull @JsonProperty("attributes") final Map<String, Object> attributes) {
+                              @JsonProperty("attributes") final Map<String, Object> attributes) {
         this.id = id;
         if (attributes == null) {
             this.attributes = new HashMap<>();
