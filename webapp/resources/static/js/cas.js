@@ -72,39 +72,6 @@ function areCookiesEnabled() {
 
 }
 
-function disableEmptyInputFormSubmission() {
-    var fields = $('#fm1 input[name="username"],[name="password"]');
-
-    if (fields.length == 2) {
-        fields.on('input', function (event) {
-            var enableSubmission = $('#fm1 input[name="username"]').val().trim() &&
-                $('#fm1 input[name="password"]').val().trim();
-
-            if (enableSubmission) {
-                $('#fm1 input[name=submit]').removeAttr('disabled');
-                event.stopPropagation();
-            } else {
-                $('#fm1 input[name=submit]').attr('disabled', 'true');
-            }
-        });
-    }
-
-    /**
-     * Handle auto-complete events to the extent possible.
-     */
-    if ($('#fm1 input[name="username"]').length > 0) {
-        setTimeout(function () {
-            var uid = $('#username').val();
-            if (uid != null && uid != '') {
-                $('#username').change();
-                $('#username').focus();
-                $('#fm1 input[name=submit]').removeAttr('disabled');
-            }
-
-        }, 100);
-    }
-}
-
 function resourceLoadedSuccessfully() {
     $(document).ready(function () {
 
@@ -122,7 +89,6 @@ function resourceLoadedSuccessfully() {
             $('#cookiesDisabled').show();
         }
 
-        disableEmptyInputFormSubmission();
         preserveAnchorTagOnForm();
 
         $('#capslock-on').hide();
