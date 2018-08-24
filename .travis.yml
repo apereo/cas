@@ -70,6 +70,7 @@ stages:
 - build
 - test
 - dependencies
+- spotbugs
 jobs:
   include:
   - stage: initialize
@@ -83,8 +84,6 @@ jobs:
     script: ./ci/build.sh
   - stage: build
     script: ./ci/analyze-style.sh
-  - stage: build
-    script: ./ci/analyze-bugs.sh
   - stage: build
     if: type != pull_request
     script: ./ci/analyze-sonarqube.sh
@@ -142,4 +141,5 @@ jobs:
     script: ./ci/tests/mongodb/run-tests-mongodb.sh
   - stage: test
     script: ./ci/tests/redis/run-tests-redis.sh
-
+  - stage: spotbugs
+    script: ./ci/analyze-bugs.sh

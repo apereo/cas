@@ -37,6 +37,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest(classes = {
     CasJdbcThrottlingConfiguration.class,
     CasThrottlingConfiguration.class,
+    CasThrottlingConfiguration.class,
     CasCoreAuditConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,

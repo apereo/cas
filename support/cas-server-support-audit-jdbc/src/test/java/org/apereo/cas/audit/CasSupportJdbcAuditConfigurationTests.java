@@ -3,7 +3,6 @@ package org.apereo.cas.audit;
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.val;
@@ -23,6 +22,7 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.LocalDate;
+import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -57,13 +57,13 @@ public class CasSupportJdbcAuditConfigurationTests {
 
     @Test
     public void verifyAuditManager() {
-        val time = LocalDate.now().minusDays(2);
-        val since = DateTimeUtils.dateOf(time);
+        val since = LocalDate.now().minusDays(2);
+        val time = new Date();
         val ctx = new AuditActionContext("casuser", "TEST", "TEST",
-            "CAS", since, "1.2.3.4",
+            "CAS", time, "1.2.3.4",
             "1.2.3.4");
         jdbcAuditTrailManager.record(ctx);
-        val results = jdbcAuditTrailManager.getAuditRecordsSince(time);
+        val results = jdbcAuditTrailManager.getAuditRecordsSince(since);
         assertFalse(results.isEmpty());
     }
 }
