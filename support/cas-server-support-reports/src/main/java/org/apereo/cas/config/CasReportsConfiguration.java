@@ -28,11 +28,14 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration;
 import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ResourceLoader;
 
@@ -163,6 +166,18 @@ public class CasReportsConfiguration {
             authenticationSystemSupport,
             webApplicationServiceFactory,
             principalFactory);
+    }
+
+    /**
+     * This this {@link ConditionalDataSourceHealthIndicatorConfiguration}.
+     *
+     * @author Misagh Moayyed
+     * @since 6.0.0
+     */
+    @ConditionalOnBean(name = "dataSource")
+    @Configuration("conditionalDataSourceHealthIndicatorConfiguration")
+    @Import(DataSourceHealthIndicatorAutoConfiguration.class)
+    public static class ConditionalDataSourceHealthIndicatorConfiguration {
     }
 
     /**

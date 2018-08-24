@@ -661,7 +661,7 @@ To learn more about this topic, [please review this guide](Logging.html).
 
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
-server.servlet.contextParameters.isLog4jAutoInitializationDisabled=true
+# server.servlet.contextParameters.isLog4jAutoInitializationDisabled=true
 
 # Control log levels via properties
 # logging.level.org.apereo.cas=DEBUG
@@ -3775,6 +3775,19 @@ Signing & encryption settings for this feature are available [here](Configuratio
 # spring.redis.host=localhost
 # spring.redis.password=secret
 # spring.redis.port=6379
+```
+
+#### Spring Webflow JDBC Server-Side Session
+
+```properties
+# spring.session.store-type=jdbc
+# spring.session.jdbc.initialize-schema=embedded
+# spring.session.jdbc.schema=classpath:org/springframework/session/jdbc/schema-@@platform@@.sql
+# spring.session.jdbc.table-name=SPRING_SESSION
+
+# spring.datasource.url=jdbc:hsqldb:mem:cas-sessions
+# spring.datasource.username=sa
+# spring.datasource.password=
 ```
 
 ### Authentication Exceptions

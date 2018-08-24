@@ -15,7 +15,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
@@ -99,8 +98,10 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         if (StringUtils.isBlank(shire)) {
             LOGGER.warn("Resolving service provider assertion consumer service URL for [{}] and binding [{}]",
                 providerId, SAMLConstants.SAML2_POST_BINDING_URI);
-            @NonNull
             val acs = facade.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
+            if (acs == null || StringUtils.isBlank(acs.getLocation())) {
+                throw new MessageDecodingException("Unable to resolve SP ACS URL location for binding " + SAMLConstants.SAML2_POST_BINDING_URI);
+            }
             shire = acs.getLocation();
         }
         if (StringUtils.isBlank(shire)) {
