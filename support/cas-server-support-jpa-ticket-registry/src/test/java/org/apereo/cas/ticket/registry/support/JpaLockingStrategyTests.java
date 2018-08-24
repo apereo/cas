@@ -71,6 +71,8 @@ import static org.junit.Assert.*;
     JpaTicketRegistryTicketCatalogConfiguration.class,
     JpaTicketRegistryConfiguration.class,
     JpaLockingStrategyTests.JpaTestConfiguration.class,
+    JpaTicketRegistryTicketCatalogConfiguration.class,
+    JpaTicketRegistryConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreTicketsConfiguration.class,

@@ -11,6 +11,7 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -26,6 +27,7 @@ import javax.sql.DataSource;
  */
 @Configuration("casJdbcThrottlingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@AutoConfigureAfter(CasThrottlingConfiguration.class)
 public class CasJdbcThrottlingConfiguration {
 
     @Autowired

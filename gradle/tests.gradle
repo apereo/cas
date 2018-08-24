@@ -163,7 +163,6 @@ if (project.name =~ /redis/ && "REDIS".equalsIgnoreCase(rootProject.testCategory
 test {
     include "**/*Tests.*"
     useJUnit {
-        excludeCategories "org.apereo.cas.category.MailCategory"
         excludeCategories "org.apereo.cas.category.CassandraCategory"
         excludeCategories "org.apereo.cas.category.CosmosDbCategory"
         excludeCategories "org.apereo.cas.category.CouchbaseCategory"
@@ -174,13 +173,14 @@ test {
         excludeCategories "org.apereo.cas.category.CouchDbCategory"
         excludeCategories "org.apereo.cas.category.LdapCategory"
         excludeCategories "org.apereo.cas.category.MailCategory"
+        excludeCategories "org.apereo.cas.category.MariaDbCategory"
+        excludeCategories "org.apereo.cas.category.MemcachedCategory"
         excludeCategories "org.apereo.cas.category.MongoDbCategory"
-        excludeCategories "org.apereo.cas.category.RedisCategory"
         excludeCategories "org.apereo.cas.category.MsSqlServerCategory"
         excludeCategories "org.apereo.cas.category.MySQLCategory"
-        excludeCategories "org.apereo.cas.category.RestfulApiCategory"
-        excludeCategories "org.apereo.cas.category.MariaDbCategory"
         excludeCategories "org.apereo.cas.category.PostgresCategory"
+        excludeCategories "org.apereo.cas.category.RedisCategory"
+        excludeCategories "org.apereo.cas.category.RestfulApiCategory"
     }
     onlyIf {
         "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType)
