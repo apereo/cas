@@ -80,6 +80,6 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     }
 
     @Override
-    protected void registerDevices() {
+    protected void registerDevices(final U2FDeviceRepository deviceRepository) {
     }
 }
