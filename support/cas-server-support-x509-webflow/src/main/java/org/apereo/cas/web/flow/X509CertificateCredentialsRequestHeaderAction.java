@@ -40,12 +40,16 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
             return x509Credential;
         }
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        val certFromHeader = x509CertificateExtractor.extract(request);
-        if (certFromHeader != null) {
-            LOGGER.debug("Certificate found in HTTP request via {}", x509CertificateExtractor.getClass().getName());
-            return new X509CertificateCredential(certFromHeader);
+        if (x509CertificatExtractor != null) {
+            val certFromHeader = x509CertificateExtractor.extract(request);
+            if (certFromHeader != null) {
+                LOGGER.debug("Certificate found in HTTP request via {}", x509CertificateExtractor.getClass().getName());
+                return new X509CertificateCredential(certFromHeader);
+            }
+            LOGGER.debug("Certificates not found in request header.");
+        } else {
+            LOGGER.debug("No X509CertificateExtractor was configured");
         }
-        LOGGER.debug("Certificates not found in request header.");
         return null;
     }
 }
