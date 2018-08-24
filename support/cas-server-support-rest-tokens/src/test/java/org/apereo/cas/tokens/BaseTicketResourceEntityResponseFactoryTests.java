@@ -63,7 +63,6 @@ import java.util.List;
     CasRestConfiguration.class,
     TokenCoreConfiguration.class,
     CasCoreConfiguration.class,
-    CasCoreTicketsConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -82,7 +81,10 @@ import java.util.List;
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasRestTokensConfiguration.class,
+    CasRestConfiguration.class,
+    CasCoreTicketsConfiguration.class
 })
 public abstract class BaseTicketResourceEntityResponseFactoryTests {
     @ClassRule
