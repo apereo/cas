@@ -25,8 +25,8 @@ public abstract class AbstractU2FDeviceRepositoryTests {
     @Test
     public void verifyDeviceSaved() {
         try {
-            registerDevices();
             val deviceRepository = getDeviceRepository();
+            registerDevices(deviceRepository);
             val devs = deviceRepository.getRegisteredDevices("casuser");
             verifyDevicesAvailable(devs);
         } catch (final Exception e) {
@@ -35,11 +35,10 @@ public abstract class AbstractU2FDeviceRepositoryTests {
     }
 
     @SneakyThrows
-    protected void registerDevices() {
+    protected void registerDevices(final U2FDeviceRepository deviceRepository) {
         val cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
         val r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);
         val r2 = new DeviceRegistration("keyhandle22", "publickey1", cert, 2);
-        val deviceRepository = getDeviceRepository();
         deviceRepository.registerDevice("casuser", r1);
         deviceRepository.registerDevice("casuser", r2);
     }
