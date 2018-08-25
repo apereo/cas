@@ -89,3 +89,20 @@ This feature is enabled via the following module:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-webflow).
+
+### JDBC Session Replication
+
+If you don't wish to use the native container's strategy for session replication,
+you can use CAS's support for JDBC session replication.
+
+This feature is enabled via the following module:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-session-jdbc</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-webflow).
