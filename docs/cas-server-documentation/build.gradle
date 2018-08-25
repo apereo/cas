@@ -3,3 +3,11 @@ description = "Apereo CAS Documentation"
 javadoc {
     enabled false
 }
+
+install {
+    enabled = false
+}
+
+uploadArchives {
+    enabled = false
+}
