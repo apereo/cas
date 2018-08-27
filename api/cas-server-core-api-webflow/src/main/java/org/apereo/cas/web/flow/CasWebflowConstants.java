@@ -71,6 +71,21 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_ENROLL = "enroll";
 
     /**
+     * Provider service is unavailable.
+     */
+    String TRANSITION_ID_UNAVAILABLE = "unavailable";
+
+    /**
+     * User allowed to bypass auth by provider.
+     */
+    String TRANSITION_ID_BYPASS = "bypass";
+
+    /**
+     * User was denied access by provider.
+     */
+    String TRANSITION_ID_DENY = "deny";
+
+    /**
      * The state id 'success'.
      */
     String STATE_ID_SUCCESS = "success";
@@ -535,4 +550,25 @@ public interface CasWebflowConstants {
      * State id to check for do change password manual flag "checkDoChangePassword".
      */
     String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
+
+    /**
+     * State id when MFA provider has been detected as unavailable and failureMode is closed.
+     */
+    String STATE_ID_MFA_UNAVAILABLE = "mfaUnavailable";
+
+    /**
+     * State id when MFA provider has denied access to a user because of account lockout.
+     */
+    String STATE_ID_MFA_DENIED = "mfaDenied";
+
+    /**
+     * View id when MFA provider has been detected as unavailable and failureMode is closed.
+     */
+    String VIEW_ID_MFA_UNAVAILABLE = "mfaUnavailableView";
+
+    /**
+     * View id when MFA provider has denied access to a user because of account lockout.
+     */
+    String VIEW_ID_MFA_DENIED = "mfaDeniedView";
+
 }

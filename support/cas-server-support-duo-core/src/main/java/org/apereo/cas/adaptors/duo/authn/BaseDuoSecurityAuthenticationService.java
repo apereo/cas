@@ -31,11 +31,15 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     private static final long serialVersionUID = -8044100706027708789L;
 
     private static final int AUTH_API_VERSION = 2;
+    private static final int RESULT_CODE_ERROR_THRESHOLD = 49999;
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
     private static final String RESULT_KEY_RESULT = "result";
     private static final String RESULT_KEY_ENROLL_PORTAL_URL = "enroll_portal_url";
     private static final String RESULT_KEY_STATUS_MESSAGE = "status_msg";
+    private static final String RESULT_KEY_CODE = "code";
+    private static final String RESULT_KEY_MESSAGE = "message";
+    private static final String RESULT_KEY_MESSAGE_DETAIL = "message_detail";
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     
@@ -120,8 +124,11 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             LOGGER.debug("Received Duo admin response [{}]", jsonResponse);
 
             final JsonNode result = MAPPER.readTree(jsonResponse);
-            if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
-                && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+            if (!result.has(RESULT_KEY_STAT)) {
+                LOGGER.warn("Duo admin response was received in unknown format : {0}", jsonResponse);
+                throw new Exception("Invalid response format received fro Duo");
+            }
+            if (result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
 
                 final JsonNode response = result.get(RESULT_KEY_RESPONSE);
                 final String authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
@@ -133,10 +140,23 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                     final String enrollUrl = response.get(RESULT_KEY_ENROLL_PORTAL_URL).asText();
                     account.setEnrollPortalUrl(enrollUrl);
                 }
+            } else {
+                final int code = result.get(RESULT_KEY_CODE).asInt();
+                if (code > RESULT_CODE_ERROR_THRESHOLD) {
+                    LOGGER.warn("Duo returned a FAIL response with a code indicating a server error, Duo will be considered unavailable");
+                    throw new Exception("Duo returned code 500");
+                }
+                LOGGER.warn("Duo returned an Invalid request response with message {0} and detail {1} "
+                        + "when determining user account.  This maybe a configuration error in the admin request and Duo will "
+                        + "still be considered available",
+                        result.get(RESULT_KEY_MESSAGE).asText(),
+                        result.get(RESULT_KEY_MESSAGE_DETAIL).asText());
             }
         } catch (final Exception e) {
             LOGGER.warn("Reaching Duo has failed with error: [{}]", e.getMessage(), e);
+            account.setStatus(DuoUserAccountAuthStatus.UNAVAILABLE);
         }
+        account.setStatus(DuoUserAccountAuthStatus.UNAVAILABLE);
         return account;
     }
 
