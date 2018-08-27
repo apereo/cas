@@ -3369,7 +3369,7 @@ This section controls how that process should behave.
 ```properties
 # cas.ticket.registry.cleaner.schedule.startDelay=10000
 # cas.ticket.registry.cleaner.schedule.repeatInterval=60000
-# cas.ticket.registry.cleaner.schedule.enabled=true
+# cas.ticket.registry.cleaner.enabled=true
 ```
 
 ### JPA Ticket Registry
