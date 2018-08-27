@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -16,12 +17,16 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -44,7 +49,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -61,11 +67,17 @@ import static org.junit.Assert.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
-    LdapAuthenticationConfiguration.class})
+    LdapAuthenticationConfiguration.class
+})
+@Category(LdapCategory.class)
 @TestPropertySource(locations = {"classpath:/ldapauthn.properties"})
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class LdapAuthenticationHandlerTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
@@ -82,7 +94,7 @@ public class LdapAuthenticationHandlerTests {
         assertNotEquals(handler.size(), 0);
         this.thrown.expect(FailedLoginException.class);
         try {
-            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("castest1", "bad"))));
+            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("admin", "bad"))));
         } catch (final Exception e) {
             throw e.getCause();
         }
@@ -93,13 +105,13 @@ public class LdapAuthenticationHandlerTests {
         assertNotEquals(handler.size(), 0);
 
         this.handler.forEach(Unchecked.consumer(h -> {
-            val credential = new UsernamePasswordCredential("castest1", "castest1");
+            val credential = new UsernamePasswordCredential("admin", "password");
             val result = h.authenticate(credential);
             assertNotNull(result.getPrincipal());
             assertEquals(credential.getUsername(), result.getPrincipal().getId());
             val attributes = result.getPrincipal().getAttributes();
-            assertTrue(attributes.containsKey("givenName"));
-            assertTrue(attributes.containsKey("mail"));
+            assertTrue(attributes.containsKey("cn"));
+            assertTrue(attributes.containsKey("description"));
         }));
 
     }
