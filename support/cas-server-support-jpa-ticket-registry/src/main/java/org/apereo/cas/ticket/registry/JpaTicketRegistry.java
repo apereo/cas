@@ -89,9 +89,8 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             val result = query.getSingleResult();
             if (result != null && result.isExpired()) {
                 LOGGER.debug("Ticket [{}] has expired and will be removed from the database", result.getId());
-                return null;
+                return result;
             }
-            return result;
         } catch (final Exception e) {
             LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
         }
