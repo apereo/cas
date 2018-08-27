@@ -17,9 +17,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -32,11 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Collection;
 
@@ -70,9 +66,7 @@ import static org.junit.Assert.*;
     LdapAuthenticationConfiguration.class
 })
 @Category(LdapCategory.class)
-@TestPropertySource(locations = {"classpath:/ldapauthn.properties"})
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-public class LdapAuthenticationHandlerTests {
+public abstract class BaseLdapAuthenticationHandlerTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
@@ -87,7 +81,7 @@ public class LdapAuthenticationHandlerTests {
 
     @Autowired
     @Qualifier("ldapAuthenticationHandlers")
-    private Collection<AuthenticationHandler> handler;
+    protected Collection<AuthenticationHandler> handler;
 
     @Test
     public void verifyAuthenticateFailure() throws Throwable {
@@ -114,26 +108,5 @@ public class LdapAuthenticationHandlerTests {
             assertTrue(attributes.containsKey("description"));
         }));
 
-    }
-
-    @Test
-    public void verifyAuthenticateFailureNotFound() throws Throwable {
-        assertNotEquals(handler.size(), 0);
-        this.thrown.expect(AccountNotFoundException.class);
-        try {
-            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad"))));
-        } catch (final Exception e) {
-            throw e.getCause();
-        }
-    }
-
-    @Test
-    public void verifyAuthenticateNotFound() throws Throwable {
-        try {
-            this.thrown.expect(AccountNotFoundException.class);
-            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword"))));
-        } catch (final Exception e) {
-            throw e.getCause();
-        }
     }
 }
