@@ -9,6 +9,8 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -39,11 +41,11 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
         final Principal p = authentication.getPrincipal();
+        final RegisteredService service = WebUtils.getRegisteredService(requestContext);
 
         final Event enrollEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
         final Event denyEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY);
         final Event unavailableEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        final Event bypassEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
         final Collection<String> providerIds = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
         final Collection<MultifactorAuthenticationProvider> providers =
             MultifactorAuthenticationUtils.getMultifactorAuthenticationProvidersByIds(providerIds, applicationContext);
@@ -57,15 +59,23 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
                     requestContext.getFlowScope().put("duoRegistrationUrl", duoProvider.getRegistrationUrl());
                     return enrollEvent;
                 case ALLOW:
-                    authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
-                    authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, duoProvider.getId());
-                    return bypassEvent;
+                    return returnByPass(authentication, duoProvider.getId());
                 case DENY:
                     return denyEvent;
                 case UNAVAILABLE:
+                    final RegisteredServiceMultifactorPolicy.FailureModes failureMode = duoProvider.determineFailureMode(service);
+                    if (failureMode != RegisteredServiceMultifactorPolicy.FailureModes.CLOSED) {
+                        return returnByPass(authentication, duoProvider.getId());
+                    }
                     return unavailableEvent;
             }
         }
         return success();
+    }
+
+    private Event returnByPass(final Authentication authentication, final String providerId) {
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, providerId);
+        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
     }
 }

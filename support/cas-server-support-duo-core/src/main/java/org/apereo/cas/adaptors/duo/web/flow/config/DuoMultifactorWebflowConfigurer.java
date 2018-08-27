@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CasEmbeddedValueResolver;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
@@ -106,7 +105,6 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         createDuoInitializeLoginAction(states);
         createDuoDetermineUserAccountAction(states);
-        createDuoDetermineFailureAction(states);
         createDuoDetermineRequestAction(states);
         createDuoDoNonWebAuthenticationAction(states);
         createDuoFinalizeAuthenticationAction(states);
@@ -114,8 +112,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         createDuoAuthenticationWebflowAction(states);
         createDuoRedirectToRegistrationAction(states);
         createDuoSuccessEndState(states);
-        //createEndViewStates(states);
-        
+
         modelBuilder.setStates(states);
     }
 
@@ -129,16 +126,6 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     private void createDuoRedirectToRegistrationAction(final List<AbstractStateModel> states) {
         final ViewStateModel endModel = new ViewStateModel("redirectToDuoRegistration");
         endModel.setView("externalRedirect:#{flowScope.duoRegistrationUrl}");
-        states.add(endModel);
-    }
-
-    private void createEndViewStates(final List<AbstractStateModel> states) {
-        ViewStateModel endModel = new ViewStateModel(CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
-        endModel.setView(CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE);
-        states.add(endModel);
-
-        endModel = new ViewStateModel(CasWebflowConstants.STATE_ID_MFA_DENIED);
-        endModel.setView(CasWebflowConstants.VIEW_ID_MFA_DENIED);
         states.add(endModel);
     }
 
@@ -281,33 +268,12 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        transModel.setTo("determineDuoFailure");
+        transModel.setTo(CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
         trans.add(transModel);
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_DENY);
         transModel.setTo(CasWebflowConstants.STATE_ID_MFA_DENIED);
-        trans.add(transModel);
-
-        actModel.setTransitions(trans);
-        states.add(actModel);
-    }
-
-    private void createDuoDetermineFailureAction(final List<AbstractStateModel> states) {
-        final ActionStateModel actModel = new ActionStateModel("determineDuoFailure");
-        final LinkedList<AbstractActionModel> actions = new LinkedList<>();
-        actions.add(new EvaluateModel("determineDuoFailureAction"));
-        actModel.setActions(actions);
-
-        final LinkedList<TransitionModel> trans = new LinkedList<>();
-        TransitionModel transModel = new TransitionModel();
-        transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo("finalizeAuthentication");
-        trans.add(transModel);
-
-        transModel = new TransitionModel();
-        transModel.setOn(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        transModel.setTo(CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
         trans.add(transModel);
 
         actModel.setTransitions(trans);
