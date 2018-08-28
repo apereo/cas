@@ -62,12 +62,6 @@ buildscript {
     }
 }
 
-if (rootProject.continuousIntegrationBuild) {
-    buildScan {
-        licenseAgreementUrl = "https://gradle.com/terms-of-service"
-        licenseAgree = "yes"
-    }
-}
 
 allprojects {
     apply plugin: "idea"
@@ -78,6 +72,11 @@ allprojects {
     apply plugin: "groovy"
 
     project.ext["forceBootifulArtifact"] = null
+    
+    buildScan {
+        termsOfServiceUrl = "https://gradle.com/terms-of-service" 
+        termsOfServiceAgree = "yes"
+    }
     
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
         apply plugin: "nebula.lint"
