@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,6 +21,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -99,9 +101,11 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
     
     /**
-     *
      * Get ticket nevertheless it was expired.
      *
+     * @param ticketId the ticket id
+     * @param getIfExpired check to get expired ticket
+     * @return the int
      */
     protected Ticket getTicket(final String ticketId, final boolean getIfExpired) {
         if(!getIfExpired) {
@@ -109,12 +113,12 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         }
         else {
             try {
-                final TicketDefinition tkt = ticketCatalog.find(ticketId);
-                final String sql = String.format("select t from %s t where t.id = :id", getTicketEntityName(tkt));
-                final TypedQuery<? extends Ticket> query = entityManager.createQuery(sql, tkt.getImplementationClass());
+                val tkt = ticketCatalog.find(ticketId);
+                val sql = String.format("select t from %s t where t.id = :id", getTicketEntityName(tkt));
+                val query = entityManager.createQuery(sql, tkt.getImplementationClass());
                 query.setParameter("id", ticketId);
                 query.setLockMode(this.lockType);
-                final Ticket result = query.getSingleResult();
+                val result = query.getSingleResult();
                 if (result != null) {
                     return result;
                 }
@@ -181,14 +185,14 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     
     @Override
     public int deleteTicket(final String ticketId) {
-        final AtomicInteger count = new AtomicInteger(0);
+        val count = new AtomicInteger(0);
 
         try {
-            final Ticket ticket = getTicket(ticketId, true);
+            val ticket = getTicket(ticketId, true);
 
             if (ticket instanceof TicketGrantingTicket) {
                 LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
-                final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
+                val tgt = (TicketGrantingTicket) ticket;
                 count.addAndGet(deleteChildren(tgt));
 
                 if (ticket instanceof ProxyGrantingTicket) {
@@ -201,9 +205,6 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             if (deleteSingleTicket(ticketId)) {
                 count.incrementAndGet();
             }
-        }
-        catch (NoResultException e) {
-            LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
         }
         catch (Exception e) {
             LOGGER.error("Error deleting ticket [{}] from registry.", ticketId, e);
