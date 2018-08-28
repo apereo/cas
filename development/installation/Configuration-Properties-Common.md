@@ -505,6 +505,22 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.discovery.jclouds.credentialPath=
 ```
 
+### Kubernetes Discovery
+
+```properties
+# ${configurationKey}.cluster.discovery.enabled=true
+
+# ${configurationKey}.cluster.discovery.kubernetes.serviceDns=
+# ${configurationKey}.cluster.discovery.kubernetes.serviceDnsTimeout=-1
+# ${configurationKey}.cluster.discovery.kubernetes.serviceName=
+# ${configurationKey}.cluster.discovery.kubernetes.serviceLabelName=
+# ${configurationKey}.cluster.discovery.kubernetes.serviceLabelValue=
+# ${configurationKey}.cluster.discovery.kubernetes.namespace=
+# ${configurationKey}.cluster.discovery.kubernetes.resolveNotReadyAddresses=false
+# ${configurationKey}.cluster.discovery.kubernetes.kubernetesMaster=
+# ${configurationKey}.cluster.discovery.kubernetes.apiToken=
+```
+
 ### Microsoft Azure Discovery
 
 ```properties
@@ -1040,7 +1056,7 @@ The following LDAP validators can be used to test connection health status:
 A number of components/features in CAS allow you to explicitly indicate a `type` for the LDAP server, specially in cases where CAS needs to update an attribute, etc in LDAP (i.e. consent, password management, etc). The relevant setting would be:
 
 ```properties
-#${configurationKey}.type=NONE|SEARCH|COMPARE
+#${configurationKey}.type=AD|FreeIPA|EDirectory|Generic
 ```
 
 The following types are supported:
@@ -1077,7 +1093,7 @@ The following authentication types are supported:
 
 | Type                    | Description                            
 |-------------------------|----------------------------------------------------------------------------------------------------
-| `AD`                    | Acive Directory - Users authenticate with `sAMAccountName` typically using a DN format.     
+| `AD`                    | Active Directory - Users authenticate with `sAMAccountName` typically using a DN format.     
 | `AUTHENTICATED`         | Manager bind/search type of authentication. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
 | `DIRECT`                | Compute user DN from a format string and perform simple bind. This is relevant when no search is required to compute the DN needed for a bind operation. This option is useful when all users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`, or the username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`
 | `ANONYMOUS`             | Similar semantics as `AUTHENTICATED` except no `bindDn` and `bindCredential` may be specified to initialize the connection. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.

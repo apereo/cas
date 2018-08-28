@@ -661,7 +661,7 @@ To learn more about this topic, [please review this guide](Logging.html).
 
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
-server.servlet.contextParameters.isLog4jAutoInitializationDisabled=true
+# server.servlet.contextParameters.isLog4jAutoInitializationDisabled=true
 
 # Control log levels via properties
 # logging.level.org.apereo.cas=DEBUG
@@ -2370,21 +2370,6 @@ To learn more about this topic, [please review this guide](SwivelSecure-Authenti
 
 Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.swivel`.
 
-### Microsoft Azure
-
-To learn more about this topic, [please review this guide](MicrosoftAzure-Authentication.html).
-
-```properties
-# cas.authn.mfa.azure.phoneAttribute=phone
-# cas.authn.mfa.azure.configDir=/etc/cas/azure
-# cas.authn.mfa.azure.privateKeyPassword=
-# cas.authn.mfa.azure.mode=POUND|PIN
-# cas.authn.mfa.azure.rank=0
-# cas.authn.mfa.azure.name=
-# cas.authn.mfa.azure.allowInternationalCalls=false
-```
-
-Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.azure`.
 
 ### Authy
 
@@ -2457,6 +2442,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.metadata.basicAuthnUsername=
 # cas.authn.samlIdp.metadata.basicAuthnPassword=
 # cas.authn.samlIdp.metadata.supportedContentTypes=
+
 ```
 
 #### SAML Metadata JPA
@@ -2524,6 +2510,13 @@ under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
 # cas.authn.samlIdp.response.signError=false
 # cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
+```
+
+### SAML Ticket
+
+```properties
+# cas.authn.samlIdp.ticket.samlArtifactsCacheStorageName=samlArtifactsCache
+# cas.authn.samlIdp.ticket.samlAttributeQueryCacheStorageName=samlAttributeQueryCache
 ```
 
 ## SAML SPs
@@ -3782,6 +3775,19 @@ Signing & encryption settings for this feature are available [here](Configuratio
 # spring.redis.host=localhost
 # spring.redis.password=secret
 # spring.redis.port=6379
+```
+
+#### Spring Webflow JDBC Server-Side Session
+
+```properties
+# spring.session.store-type=jdbc
+# spring.session.jdbc.initialize-schema=embedded
+# spring.session.jdbc.schema=classpath:org/springframework/session/jdbc/schema-@@platform@@.sql
+# spring.session.jdbc.table-name=SPRING_SESSION
+
+# spring.datasource.url=jdbc:hsqldb:mem:cas-sessions
+# spring.datasource.username=sa
+# spring.datasource.password=
 ```
 
 ### Authentication Exceptions
