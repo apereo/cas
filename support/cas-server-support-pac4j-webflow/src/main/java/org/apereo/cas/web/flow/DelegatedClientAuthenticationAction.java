@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -12,6 +13,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.ticket.AbstractTicketException;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.DelegatedClientNavigationController;
@@ -110,6 +113,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
+    private final CentralAuthenticationService centralAuthenticationService;
+
     public DelegatedClientAuthenticationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
@@ -121,7 +126,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                                                final AuthenticationSystemSupport authenticationSystemSupport,
                                                final String localeParamName,
                                                final String themeParamName,
-                                               final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
+                                               final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                               final CentralAuthenticationService centralAuthenticationService) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver, adaptiveAuthenticationPolicy);
         this.clients = clients;
         this.servicesManager = servicesManager;
@@ -132,6 +138,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         this.localeParamName = localeParamName;
         this.themeParamName = themeParamName;
         this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
+        this.centralAuthenticationService = centralAuthenticationService;
     }
 
     /**
@@ -170,6 +177,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
+        if (singleSignOnSessionExists(context)) {
+            LOGGER.debug("An existing single sign-on session already exists. Skipping delegation and routing back to CAS authentication flow");
+            return super.doExecute(context);
+        }
+
         val clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
         LOGGER.debug("Delegated authentication is handled by client name [{}]", clientName);
         if (hasDelegationRequestFailed(request, response.getStatus()).isPresent()) {
@@ -199,7 +211,33 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return error();
     }
 
-    private Credentials getCredentialsFromDelegatedClient(final J2EContext webContext, final BaseClient<Credentials, CommonProfile> client) {
+    private boolean singleSignOnSessionExists(final RequestContext requestContext) {
+        val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
+        if (StringUtils.isBlank(tgtId)) {
+            LOGGER.trace("No ticket-granting ticket could be located in the webflow context");
+            return false;
+        }
+        try {
+            val ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);
+            if (ticket != null && !ticket.isExpired()) {
+                LOGGER.trace("Located a valid ticket-granting ticket, honoring existing single sign-on session");
+                return true;
+            }
+        } catch (final AbstractTicketException e) {
+            LOGGER.trace("Could not retrieve ticket id [{}] from registry.", e.getMessage());
+        }
+        LOGGER.trace("Ticket-granting ticket found in the webflow context is invalid or has expired");
+        return false;
+    }
+
+    /**
+     * Gets credentials from delegated client.
+     *
+     * @param webContext the web context
+     * @param client     the client
+     * @return the credentials from delegated client
+     */
+    protected Credentials getCredentialsFromDelegatedClient(final J2EContext webContext, final BaseClient<Credentials, CommonProfile> client) {
         try {
             val credentials = client.getCredentials(webContext);
             LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
@@ -348,7 +386,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         if (StringUtils.isNotBlank(name)) {
             computedCssClass = computedCssClass.concat(' ' + PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN.matcher(name).replaceAll("-"));
         }
-        LOGGER.debug("cssClass for [{}] is [{}]", name, computedCssClass);
+        LOGGER.debug("CSS class for [{}] is [{}]", name, computedCssClass);
         return computedCssClass;
     }
 
