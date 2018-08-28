@@ -83,13 +83,21 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
     }
 
+    /**
+     * Retrieve a ticket from the registry for deletion.
+     *
+     * @param ticketId the id of the ticket we wish to retrieve
+     * @return the requested ticket.
+     */
+    public abstract Ticket getTicketForDeletion(String ticketId);
+
     @Override
     public int deleteTicket(final String ticketId) {
         val count = new AtomicInteger(0);
         if (StringUtils.isBlank(ticketId)) {
             return count.intValue();
         }
-        val ticket = getTicket(ticketId);
+        val ticket = getTicketForDeletion(ticketId);
         if (ticket == null) {
             return count.intValue();
         }

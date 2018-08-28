@@ -60,6 +60,21 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
+    public Ticket getTicketForDeletion(final String ticketId) {
+        val encTicketId = encodeTicketId(ticketId);
+        if (StringUtils.isBlank(ticketId)) {
+            return null;
+        }
+        val found = getMapInstance().get(encTicketId);
+        if (found == null) {
+            LOGGER.debug("Ticket  [{}] could not be found", encTicketId);
+            return null;
+        }
+
+        return decodeTicket(found);
+    }
+
+    @Override
     public boolean deleteSingleTicket(final String ticketId) {
         val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
