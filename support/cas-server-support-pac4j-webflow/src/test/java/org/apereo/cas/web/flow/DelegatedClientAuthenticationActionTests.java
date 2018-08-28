@@ -260,7 +260,7 @@ public class DelegatedClientAuthenticationActionTests {
             support,
             LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME,
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
+            mock(CentralAuthenticationService.class));
     }
 }
