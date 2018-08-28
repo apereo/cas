@@ -89,12 +89,40 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             val result = query.getSingleResult();
             if (result != null && result.isExpired()) {
                 LOGGER.debug("Ticket [{}] has expired and will be removed from the database", result.getId());
-                return result;
+                return null;
             }
+            return result;
         } catch (final Exception e) {
             LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
         }
         return null;
+    }
+    
+    /**
+     *
+     * Get ticket nevertheless it was expired.
+     *
+     */
+    protected Ticket getTicket(final String ticketId, final boolean getIfExpired) {
+        if(!getIfExpired) {
+            return getTicket(ticketId);
+        }
+        else {
+            try {
+                final TicketDefinition tkt = ticketCatalog.find(ticketId);
+                final String sql = String.format("select t from %s t where t.id = :id", getTicketEntityName(tkt));
+                final TypedQuery<? extends Ticket> query = entityManager.createQuery(sql, tkt.getImplementationClass());
+                query.setParameter("id", ticketId);
+                query.setLockMode(this.lockType);
+                final Ticket result = query.getSingleResult();
+                if (result != null) {
+                    return result;
+                }
+            } catch (final Exception e) {
+                LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
+            }
+            return null;
+        }
     }
 
     @Override
@@ -149,6 +177,39 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
         val sql = String.format("select count(t) from %s t", getTicketEntityName(md));
         val query = this.entityManager.createQuery(sql);
         return countToLong(query.getSingleResult());
+    }
+    
+    @Override
+    public int deleteTicket(final String ticketId) {
+        final AtomicInteger count = new AtomicInteger(0);
+
+        try {
+            final Ticket ticket = getTicket(ticketId, true);
+
+            if (ticket instanceof TicketGrantingTicket) {
+                LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
+                final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
+                count.addAndGet(deleteChildren(tgt));
+
+                if (ticket instanceof ProxyGrantingTicket) {
+                    deleteProxyGrantingTicketFromParent((ProxyGrantingTicket) ticket);
+                } else {
+                    deleteLinkedProxyGrantingTickets(count, tgt);
+                }
+            }
+            LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
+            if (deleteSingleTicket(ticketId)) {
+                count.incrementAndGet();
+            }
+        }
+        catch (NoResultException e) {
+            LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
+        }
+        catch (Exception e) {
+            LOGGER.error("Error deleting ticket [{}] from registry.", ticketId, e);
+        }
+
+        return count.intValue();
     }
 
     @Override
