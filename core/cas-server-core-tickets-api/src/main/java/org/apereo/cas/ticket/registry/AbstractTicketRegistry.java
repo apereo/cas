@@ -131,7 +131,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     /**
-     * Delete linked pgts
+     * Delete linked pgts.
      *
      * @param count the total number of deleted tickets
      * @param tgt ticket granting ticket to get PGT
@@ -148,9 +148,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
     
     /**
-     * Delete pgt from parent
+     * Delete pgt from parent.
      *
-     * @param count the total number of deleted tickets
      * @param ticket pgt to remove
      */
     protected void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
