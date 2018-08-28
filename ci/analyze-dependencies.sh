@@ -34,7 +34,7 @@ echo -e "***********************************************"
 
 echo "Running dependency analysis..."
 
-gradleBuild="$gradleBuild dependencyCheckAnalyze dependencyCheckUpdate -x javadoc -x check \
+gradleBuild="$gradleBuild dependencyCheckAggregate -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true --parallel -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
