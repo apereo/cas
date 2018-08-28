@@ -108,10 +108,9 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return the int
      */
     protected Ticket getTicket(final String ticketId, final boolean getIfExpired) {
-        if(!getIfExpired) {
+        if (!getIfExpired) {
             return getTicket(ticketId);
-        }
-        else {
+        } else {
             try {
                 val tkt = ticketCatalog.find(ticketId);
                 val sql = String.format("select t from %s t where t.id = :id", getTicketEntityName(tkt));
@@ -205,8 +204,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             if (deleteSingleTicket(ticketId)) {
                 count.incrementAndGet();
             }
-        }
-        catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error("Error deleting ticket [{}] from registry.", ticketId, e);
         }
 
