@@ -3,7 +3,7 @@
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon --scan "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -13,7 +13,7 @@ echo -e "Installing NPM...\n"
 ./gradlew npmInstall --stacktrace -q
 
 gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true \
-    -DskipNestedConfigMetadataGen=true --parallel --scan "
+    -DskipNestedConfigMetadataGen=true --parallel "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
