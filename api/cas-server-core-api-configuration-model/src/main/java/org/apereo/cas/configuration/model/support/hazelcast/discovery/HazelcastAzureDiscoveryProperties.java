@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiresModule(name = "cas-server-support-hazelcast-core")
+@RequiresModule(name = "cas-server-support-hazelcast-discovery-azure")
 @Getter
 @Setter
 public class HazelcastAzureDiscoveryProperties implements Serializable {

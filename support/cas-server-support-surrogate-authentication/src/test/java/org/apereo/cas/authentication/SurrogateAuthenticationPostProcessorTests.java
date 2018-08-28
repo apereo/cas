@@ -36,16 +36,16 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    SurrogateAuthenticationConfiguration.class,
+    SurrogateAuthenticationAuditConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
-    SurrogateAuthenticationAuditConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    SurrogateAuthenticationConfiguration.class
+    CasCoreHttpConfiguration.class
 })
 @TestPropertySource(properties = {"cas.authn.surrogate.simple.surrogates.casuser=cassurrogate"})
 public class SurrogateAuthenticationPostProcessorTests {

@@ -76,7 +76,7 @@ import java.util.Map;
  */
 @Configuration("coreWsSecuritySecurityTokenServiceConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ImportResource(locations = {"classpath:jaxws-realms.xml", "classpath:META-INF/cxf/cxf.xml"})
+@ImportResource(locations = {"classpath:jaxws-realms.xml"})
 public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Autowired
@@ -327,4 +327,5 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     public AuthenticationEventExecutionPlanConfigurer coreWsSecuritySecurityTokenServiceAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerMetadataPopulator(securityTokenServiceAuthenticationMetaDataPopulator());
     }
+
 }

@@ -29,7 +29,7 @@ public class InquireInterruptAction extends AbstractAction {
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val credential = WebUtils.getCredential(requestContext);
 
-        val response = this.interruptInquirer.inquire(authentication, registeredService, service, credential);
+        val response = this.interruptInquirer.inquire(authentication, registeredService, service, credential, requestContext);
         if (response == null || !response.isInterrupt()) {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_SKIPPED);
         }

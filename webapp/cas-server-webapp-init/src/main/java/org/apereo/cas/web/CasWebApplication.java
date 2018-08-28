@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import lombok.NoArgsConstructor;
 import lombok.val;
 import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthIndicatorAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -38,6 +39,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     GroovyTemplateAutoConfiguration.class,
     JmxAutoConfiguration.class,
     DataSourceAutoConfiguration.class,
+    DataSourceHealthIndicatorAutoConfiguration.class,
     RedisAutoConfiguration.class,
     MongoAutoConfiguration.class,
     MongoDataAutoConfiguration.class,

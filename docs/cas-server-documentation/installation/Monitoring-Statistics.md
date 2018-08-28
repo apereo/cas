@@ -41,6 +41,7 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `audit-log`               | Provides a JSON representation of all the audit log.
 | `discovery-profile`       | Provides a JSON representation of the [CAS configuration and capabilities](Configuration-Discovery.html).
 | `registered-services`     | Provides a JSON representation of the [CAS service registry](Service-Management.html).
+| `export-registered-services`     | Provides a ZIP-file representation of the [CAS service registry](Service-Management.html).
 | `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.
 | `statistics`              | Exposes statistics data on tickets, memory, server availability and uptime, etc.
 | `sso-sessions`            | Review the current single sign-on sessions establishes with CAS and manage each session remotely.

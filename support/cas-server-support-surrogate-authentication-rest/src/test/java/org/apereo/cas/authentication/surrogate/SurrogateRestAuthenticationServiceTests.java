@@ -37,7 +37,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.val;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,7 +46,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 
@@ -60,6 +58,10 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
+    SurrogateRestAuthenticationConfiguration.class,
+    SurrogateAuthenticationConfiguration.class,
+    SurrogateAuthenticationAuditConfiguration.class,
+    SurrogateAuthenticationMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
@@ -83,11 +85,7 @@ import static org.junit.Assert.*;
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     CasThemesConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    SurrogateAuthenticationConfiguration.class,
-    SurrogateAuthenticationAuditConfiguration.class,
-    SurrogateAuthenticationMetadataConfiguration.class,
-    SurrogateRestAuthenticationConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.surrogate.rest.url=http://localhost:9301")
 @Getter
@@ -99,9 +97,6 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
         .findAndRegisterModules()
         .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("surrogateAuthenticationService")
