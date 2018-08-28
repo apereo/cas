@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 
 import lombok.val;
 import org.junit.Test;
+import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.LinkedHashMap;
 
@@ -26,7 +27,8 @@ public class RegexAttributeInterruptInquirerTests {
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            new MockRequestContext());
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());
@@ -47,7 +49,8 @@ public class RegexAttributeInterruptInquirerTests {
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             registeredService,
             CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            new MockRequestContext());
         assertNotNull(response);
         assertFalse(response.isInterrupt());
     }

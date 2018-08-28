@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
+import org.springframework.webflow.execution.RequestContext;
+
 /**
  * This is {@link InterruptInquirer}.
  *
@@ -21,8 +23,9 @@ public interface InterruptInquirer {
      * @param registeredService the registered service
      * @param service           the service
      * @param credential        the credential
+     * @param requestContext    the request context
      * @return the interrupt response
      */
     InterruptResponse inquire(Authentication authentication, RegisteredService registeredService,
-                              Service service, Credential credential);
+                              Service service, Credential credential, RequestContext requestContext);
 }

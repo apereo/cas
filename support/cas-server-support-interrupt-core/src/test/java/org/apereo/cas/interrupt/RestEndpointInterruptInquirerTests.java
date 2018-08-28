@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
+import org.springframework.webflow.test.MockRequestContext;
 
 import java.nio.charset.StandardCharsets;
 
@@ -62,7 +63,8 @@ public class RestEndpointInterruptInquirerTests {
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            new MockRequestContext());
         assertNotNull(response);
         assertTrue(response.isBlock());
         assertTrue(response.isSsoEnabled());

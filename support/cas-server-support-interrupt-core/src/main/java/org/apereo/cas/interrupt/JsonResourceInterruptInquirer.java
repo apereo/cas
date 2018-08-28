@@ -12,6 +12,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
+import org.springframework.webflow.execution.RequestContext;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -38,7 +39,8 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
 
     @Override
     public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
-                                             final Service service, final Credential credential) {
+                                             final Service service, final Credential credential,
+                                             final RequestContext requestContext) {
         val user = authentication.getPrincipal().getId();
         readResourceForInterrupts();
         if (interrupts.containsKey(user)) {

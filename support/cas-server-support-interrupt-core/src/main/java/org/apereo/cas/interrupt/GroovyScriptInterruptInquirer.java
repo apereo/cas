@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
+import org.springframework.webflow.execution.RequestContext;
 
 import java.util.HashMap;
 
@@ -27,7 +28,8 @@ public class GroovyScriptInterruptInquirer extends BaseInterruptInquirer {
 
     @Override
     public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
-                                             final Service service, final Credential credential) {
+                                             final Service service, final Credential credential,
+                                             final RequestContext requestContext) {
         if (ResourceUtils.doesResourceExist(resource)) {
             val principal = authentication.getPrincipal();
             val attributes = new HashMap<String, Object>(principal.getAttributes());
