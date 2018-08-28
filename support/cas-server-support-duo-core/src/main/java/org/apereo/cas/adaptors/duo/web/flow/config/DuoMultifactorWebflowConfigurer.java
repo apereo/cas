@@ -118,8 +118,8 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
     private void createDuoSuccessEndState(final List<AbstractStateModel> states) {
         states.add(new EndStateModel(CasWebflowConstants.TRANSITION_ID_SUCCESS));
-        states.add(new EndStateModel(CasWebflowConstants.STATE_ID_MFA_DENIED));
-        states.add(new EndStateModel(CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE));
+        states.add(new EndStateModel(CasWebflowConstants.TRANSITION_ID_DENY));
+        states.add(new EndStateModel(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE));
 
     }
 
@@ -149,12 +149,12 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_DENY);
-        transModel.setTo(CasWebflowConstants.STATE_ID_MFA_DENIED);
+        transModel.setTo(CasWebflowConstants.TRANSITION_ID_DENY);
         trans.add(transModel);
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        transModel.setTo(CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
+        transModel.setTo(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
         trans.add(transModel);
 
         actModel.setTransitions(trans);
@@ -268,12 +268,17 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        transModel.setTo(CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE);
+        transModel.setTo(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
         trans.add(transModel);
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_DENY);
-        transModel.setTo(CasWebflowConstants.STATE_ID_MFA_DENIED);
+        transModel.setTo(CasWebflowConstants.TRANSITION_ID_DENY);
+        trans.add(transModel);
+
+        transModel = new TransitionModel();
+        transModel.setOn(CasWebflowConstants.TRANSITION_ID_ERROR);
+        transModel.setTo(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         trans.add(transModel);
 
         actModel.setTransitions(trans);

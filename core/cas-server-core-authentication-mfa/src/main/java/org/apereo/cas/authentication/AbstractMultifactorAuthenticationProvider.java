@@ -110,13 +110,14 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
             LOGGER.debug("Using global multi-factor failure mode for [{}] defined as [{}]", service, failureMode);
         }
         if (service != null) {
-            LOGGER.debug("Evaluating multifactor authentication policy for service [{}}", service);
+            LOGGER.debug("Evaluating multifactor authentication policy for service [{}]", service);
             final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
             if (policy != null && policy.getFailureMode() != NOT_SET) {
                 failureMode = policy.getFailureMode();
                 LOGGER.debug("Multi-factor failure mode for [{}] is defined as [{}]", service.getServiceId(), failureMode);
             }
         }
+        LOGGER.debug("Final failure mode has been determined to be [{}]", failureMode);
         return failureMode;
     }
 

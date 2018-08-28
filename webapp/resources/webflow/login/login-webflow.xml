@@ -24,8 +24,6 @@
         <transition on="successWithWarnings" to="showAuthenticationWarningMessages"/>
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
         <transition on="error" to="initializeLoginForm"/>
-        <transition on="mfaDenied" to="mfaDenied"/>
-        <transition on="mfaUnavailable" to="mfaUnavailable"/>
     </action-state>
 
 </flow>

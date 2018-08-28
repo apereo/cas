@@ -15,6 +15,7 @@ import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -46,6 +47,7 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
         final Event enrollEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
         final Event denyEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY);
         final Event unavailableEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        final Event errorEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
         final Collection<String> providerIds = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
         final Collection<MultifactorAuthenticationProvider> providers =
             MultifactorAuthenticationUtils.getMultifactorAuthenticationProvidersByIds(providerIds, applicationContext);
@@ -56,6 +58,10 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
             final DuoUserAccount account = duoAuthenticationService.getDuoUserAccount(p.getId());
             switch (account.getStatus()) {
                 case ENROLL:
+                    if (!StringUtils.hasText(duoProvider.getRegistrationUrl())) {
+                        LOGGER.error("Duo webflow resolved to event ENROLL, but no registration url was provided.");
+                        return errorEvent;
+                    }
                     requestContext.getFlowScope().put("duoRegistrationUrl", duoProvider.getRegistrationUrl());
                     return enrollEvent;
                 case ALLOW:
@@ -68,6 +74,7 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
                         return returnByPass(authentication, duoProvider.getId());
                     }
                     return unavailableEvent;
+                default:
             }
         }
         return success();
