@@ -573,9 +573,41 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
+   file name: signalfx-java-0.0.41.jar (shaded: org.eclipse.jetty:jetty-util:8.1.19.v20160209)
+   ]]></notes>
+        <filePath regex="true">.*/signalfx-java-0\.0\.41\.jar/META-INF/maven/org\.eclipse\.jetty/jetty-(http|util|websocket)/pom\.xml</filePath>
+        <cve>CVE-2017-7656</cve>
+        <cve>CVE-2017-7657</cve>
+        <cve>CVE-2017-7658</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
    Identifies various current activemq packages as old versions of activemq.
    ]]></notes>
         <gav regex="true">^org\.apache\.activemq:activemq-.*:.*$</gav>
         <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: hazelcast-kubernetes-1.1.0.jar
+   ]]></notes>
+        <gav regex="true">^com\.hazelcast:hazelcast-kubernetes:.*$</gav>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: signalfx-java-0.0.41.jar (shaded: org.eclipse.jetty:jetty-util:8.1.19.v20160209)
+   ]]></notes>
+        <filePath regex="true">.*/ehcache-2\.10\.5\.jar/rest-management-private-classpath/META-INF/maven/org\.eclipse\.jetty/jetty-(security|server|servlet|continuation|http|util|websocket)/pom\.xml</filePath>
+        <cve>CVE-2017-7656</cve>
+        <cve>CVE-2017-7657</cve>
+        <cve>CVE-2017-7658</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: kubernetes-client-3.0.3.jar
+   ]]></notes>
+        <gav regex="true">^io\.fabric8:kubernetes-client:.*$</gav>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
     </suppress>
 </suppressions>
