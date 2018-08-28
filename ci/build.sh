@@ -13,7 +13,7 @@ echo -e "Installing NPM...\n"
 ./gradlew npmInstall --stacktrace -q
 
 gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true \
-    -DskipNestedConfigMetadataGen=true --parallel "
+    -DskipNestedConfigMetadataGen=true --parallel --scan "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
