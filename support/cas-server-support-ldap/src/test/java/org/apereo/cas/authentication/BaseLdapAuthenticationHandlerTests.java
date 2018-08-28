@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -16,22 +17,22 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
-import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Collection;
 
@@ -44,7 +45,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,
@@ -61,11 +63,15 @@ import static org.junit.Assert.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreServicesConfiguration.class,
-    LdapAuthenticationConfiguration.class})
-@TestPropertySource(locations = {"classpath:/ldapauthn.properties"})
-public class LdapAuthenticationHandlerTests {
+    LdapAuthenticationConfiguration.class
+})
+@Category(LdapCategory.class)
+public abstract class BaseLdapAuthenticationHandlerTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
@@ -75,14 +81,14 @@ public class LdapAuthenticationHandlerTests {
 
     @Autowired
     @Qualifier("ldapAuthenticationHandlers")
-    private Collection<AuthenticationHandler> handler;
+    protected Collection<AuthenticationHandler> handler;
 
     @Test
     public void verifyAuthenticateFailure() throws Throwable {
         assertNotEquals(handler.size(), 0);
         this.thrown.expect(FailedLoginException.class);
         try {
-            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("castest1", "bad"))));
+            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("admin", "bad"))));
         } catch (final Exception e) {
             throw e.getCause();
         }
@@ -93,35 +99,14 @@ public class LdapAuthenticationHandlerTests {
         assertNotEquals(handler.size(), 0);
 
         this.handler.forEach(Unchecked.consumer(h -> {
-            val credential = new UsernamePasswordCredential("castest1", "castest1");
+            val credential = new UsernamePasswordCredential("admin", "password");
             val result = h.authenticate(credential);
             assertNotNull(result.getPrincipal());
             assertEquals(credential.getUsername(), result.getPrincipal().getId());
             val attributes = result.getPrincipal().getAttributes();
-            assertTrue(attributes.containsKey("givenName"));
-            assertTrue(attributes.containsKey("mail"));
+            assertTrue(attributes.containsKey("cn"));
+            assertTrue(attributes.containsKey("description"));
         }));
 
-    }
-
-    @Test
-    public void verifyAuthenticateFailureNotFound() throws Throwable {
-        assertNotEquals(handler.size(), 0);
-        this.thrown.expect(AccountNotFoundException.class);
-        try {
-            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad"))));
-        } catch (final Exception e) {
-            throw e.getCause();
-        }
-    }
-
-    @Test
-    public void verifyAuthenticateNotFound() throws Throwable {
-        try {
-            this.thrown.expect(AccountNotFoundException.class);
-            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword"))));
-        } catch (final Exception e) {
-            throw e.getCause();
-        }
     }
 }
