@@ -57,7 +57,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
             if (headers.containsKey(this.remotePrincipalHeader)) {
                 final String header = headers.get(this.remotePrincipalHeader).get(0);
                 LOGGER.debug("Remote user [{}] found in [{}] header", header, this.remotePrincipalHeader);
-                return remoteUser;
+                return header;
             }
         }
         LOGGER.debug("No remote user [{}] could be found", remoteUser);
