@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
 
@@ -21,7 +22,8 @@ public class GroovyScriptInterruptInquirerTests {
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            new MockRequestContext());
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());
