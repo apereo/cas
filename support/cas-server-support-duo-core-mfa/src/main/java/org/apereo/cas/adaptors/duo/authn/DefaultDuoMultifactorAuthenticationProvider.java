@@ -1,15 +1,17 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.RegisteredService;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -27,7 +29,7 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     private static final long serialVersionUID = 4789727148634156909L;
 
     private String registrationUrl;
-    
+
     private DuoSecurityAuthenticationService duoAuthenticationService;
 
     /**
@@ -69,23 +71,23 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
         }
         final DefaultDuoMultifactorAuthenticationProvider rhs = (DefaultDuoMultifactorAuthenticationProvider) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(duoAuthenticationService, rhs.duoAuthenticationService)
-                .isEquals();
+            .appendSuper(super.equals(obj))
+            .append(duoAuthenticationService, rhs.duoAuthenticationService)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(duoAuthenticationService)
-                .toHashCode();
+            .appendSuper(super.hashCode())
+            .append(duoAuthenticationService)
+            .toHashCode();
     }
 
     @Override
     protected boolean supportsInternal(final Event e, final Authentication authentication, final RegisteredService registeredService) {
         Assert.notNull(this.duoAuthenticationService, "duoAuthenticationService cannot be null");
-        
+
         if (!super.supportsInternal(e, authentication, registeredService)) {
             return false;
         }
@@ -96,6 +98,8 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
 
         if (acct.getStatus() == DuoUserAccountAuthStatus.ALLOW) {
             LOGGER.debug("Account status is set for allow/bypass for [{}]", principal);
+            authentication.addAttribute(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
+            authentication.addAttribute(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, getId());
             return false;
         }
         if (acct.getStatus() == DuoUserAccountAuthStatus.DENY) {
