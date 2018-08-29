@@ -8,6 +8,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoDirectCredential;
 import org.apereo.cas.adaptors.duo.web.flow.action.DetermineDuoUserAccountAction;
+import org.apereo.cas.adaptors.duo.web.flow.action.DuoInitializeLoginAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -112,12 +113,17 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
 
     @Bean
     public Action prepareDuoWebLoginFormAction() {
-        return new PrepareDuoWebLoginFormAction(duoMultifactorAuthenticationProvider(), applicationContext);
+        return new PrepareDuoWebLoginFormAction();
     }
 
     @Bean
     public Action determineDuoUserAccountAction() {
-        return new DetermineDuoUserAccountAction(duoMultifactorAuthenticationProvider(), applicationContext);
+        return new DetermineDuoUserAccountAction();
+    }
+
+    @Bean
+    public Action duoInitializeLoginAction() {
+        return new DuoInitializeLoginAction(duoMultifactorAuthenticationProvider());
     }
 
     @Bean

@@ -77,6 +77,7 @@ public class WebUtils {
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
     private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
     private static final String PARAMETER_SERVICE_UI_METADATA = "serviceUIMetadata";
+    private static final String PARAMETER_ACTIVE_MFA_PROVIDER = "activeMFAProvider";
 
     /**
      * Gets the http servlet request from the context.
@@ -725,6 +726,27 @@ public class WebUtils {
      */
     public static Collection<String> getResolvedMultifactorAuthenticationProviders(final RequestContext context) {
         return context.getConversationScope().get("resolvedMultifactorAuthenticationProviders", Collection.class);
+    }
+
+    /**
+     * Sets the MFA provider for the currently active flow into the conversation scope.
+     *
+     * @param context the context
+     * @param provider the provider that matches the current flow definitiion
+     */
+    public static void putActiveMultifactorAuthenticationProvider(final RequestContext context,
+                                                                  final MultifactorAuthenticationProvider provider) {
+        context.getConversationScope().put(PARAMETER_ACTIVE_MFA_PROVIDER, provider);
+    }
+
+    /**
+     * Gets the MFA provider that was set for current flow.
+     *
+     * @param context the context
+     * @return MultifactorAuthenticationProvider
+     */
+    public static MultifactorAuthenticationProvider getActiveMultifactorAuthenticationProvider(final RequestContext context) {
+        return (MultifactorAuthenticationProvider) context.getConversationScope().get(PARAMETER_ACTIVE_MFA_PROVIDER);
     }
 
     /**
