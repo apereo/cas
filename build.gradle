@@ -47,6 +47,7 @@ buildscript {
     }
 
     dependencies {
+        classpath "com.gradle:build-scan-plugin:1.16"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
@@ -64,6 +65,7 @@ buildscript {
 
 
 allprojects {
+    apply plugin: "com.gradle.build-scan"
     apply plugin: "idea"
     apply plugin: "eclipse"
     apply plugin: "maven"
