@@ -12,12 +12,17 @@ package org.apereo.cas.support;
 
 @Configuration("myConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MyConfiguration {
+public class MyConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
   @Bean
   @RefreshScope
   public ServiceRegistryDao serviceRegistry() {
       ...
+  }
+  
+  @Override
+  public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+    plan.registerServiceRegistry(serviceRegistry());
   }
 }
 ```
