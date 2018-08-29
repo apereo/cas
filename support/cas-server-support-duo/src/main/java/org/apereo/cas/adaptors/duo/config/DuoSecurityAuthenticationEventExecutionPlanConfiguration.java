@@ -96,8 +96,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
                 && StringUtils.isNotBlank(duo.getDuoApplicationKey()))
             .forEach(duo -> {
                 val s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
-                val duoP =
-                    new DefaultDuoMultifactorAuthenticationProvider(duo.getRegistrationUrl(), s);
+                val duoP = new DefaultDuoMultifactorAuthenticationProvider(duo.getRegistrationUrl(), s);
                 duoP.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
                 duoP.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
                 duoP.setOrder(duo.getRank());
