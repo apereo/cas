@@ -273,6 +273,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         createInjectHeadersActionState(flow);
         createGenericLoginSuccessEndState(flow);
         createServiceWarningViewState(flow);
+
         createEndWebflowEndState(flow);
     }
 

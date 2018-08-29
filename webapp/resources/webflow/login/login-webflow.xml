@@ -25,4 +25,5 @@
         <transition on="authenticationFailure" to="handleAuthenticationFailure"/>
         <transition on="error" to="initializeLoginForm"/>
     </action-state>
+
 </flow>
