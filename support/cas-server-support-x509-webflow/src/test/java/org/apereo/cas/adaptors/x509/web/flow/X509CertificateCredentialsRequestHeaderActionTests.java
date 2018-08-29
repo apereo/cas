@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.x509.web.flow;
 
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
+import org.apereo.cas.web.extractcert.X509CertificateExtractorConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
 
@@ -28,7 +29,7 @@ import static org.junit.Assert.*;
  */
 @TestPropertySource(locations = {"classpath:/x509.properties"},
     properties = "cas.authn.x509.extractCert=true")
-@Import(value = {X509AuthenticationWebflowConfiguration.class, X509AuthenticationConfiguration.class})
+@Import(value = {X509AuthenticationWebflowConfiguration.class, X509AuthenticationConfiguration.class, X509CertificateExtractorConfiguration.class})
 public class X509CertificateCredentialsRequestHeaderActionTests extends AbstractX509CertificateTests {
 
     @Autowired
