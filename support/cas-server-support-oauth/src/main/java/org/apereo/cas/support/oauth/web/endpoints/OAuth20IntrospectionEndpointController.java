@@ -14,6 +14,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -105,11 +106,14 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
                     request.getParameter(OAuth20Constants.TOKEN));
 
                 LOGGER.debug("Located access token [{}] in the request", accessToken);
-                val ticket = this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
-                if (ticket != null) {
-                    val introspect = createIntrospectionValidResponse(service, ticket);
-                    return new ResponseEntity<>(introspect, HttpStatus.OK);
+                var ticket = (AccessToken) null;
+                try {
+                    ticket = this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
+                } catch (final InvalidTicketException e) {
+                    LOGGER.info("Unable to fetch access token [{}]: [{}]", accessToken, e.getMessage());
                 }
+                val introspect = createIntrospectionValidResponse(service, ticket);
+                return new ResponseEntity<>(introspect, HttpStatus.OK);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -145,29 +149,34 @@ public class OAuth20IntrospectionEndpointController extends BaseOAuth20Controlle
      */
     protected OAuth20IntrospectionAccessTokenResponse createIntrospectionValidResponse(final OAuthRegisteredService service, final AccessToken ticket) {
         val introspect = new OAuth20IntrospectionAccessTokenResponse();
-        introspect.setActive(true);
         introspect.setClientId(service.getClientId());
-        val authentication = ticket.getAuthentication();
-        val subject = authentication.getPrincipal().getId();
-        introspect.setSub(subject);
-        introspect.setUniqueSecurityName(subject);
-        introspect.setExp(ticket.getExpirationPolicy().getTimeToLive());
-        introspect.setIat(ticket.getCreationTime().toInstant().getEpochSecond());
-
-        val methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
-        val realmNames = CollectionUtils.toCollection(methods)
-            .stream()
-            .map(Object::toString)
-            .collect(Collectors.joining(","));
-
-        introspect.setRealmName(realmNames);
-        introspect.setTokenType(OAuth20Constants.TOKEN_TYPE_BEARER);
-
-        val grant = authentication.getAttributes().getOrDefault(OAuth20Constants.GRANT_TYPE, StringUtils.EMPTY).toString().toLowerCase();
-        introspect.setGrantType(grant);
         introspect.setScope("CAS");
         introspect.setAud(service.getServiceId());
         introspect.setIss(casProperties.getAuthn().getOidc().getIssuer());
+
+        if (ticket != null) {
+            introspect.setActive(true);
+            val authentication = ticket.getAuthentication();
+            val subject = authentication.getPrincipal().getId();
+            introspect.setSub(subject);
+            introspect.setUniqueSecurityName(subject);
+            introspect.setExp(ticket.getExpirationPolicy().getTimeToLive());
+            introspect.setIat(ticket.getCreationTime().toInstant().getEpochSecond());
+
+            val methods = authentication.getAttributes().get(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
+            val realmNames = CollectionUtils.toCollection(methods)
+                .stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
+
+            introspect.setRealmName(realmNames);
+            introspect.setTokenType(OAuth20Constants.TOKEN_TYPE_BEARER);
+
+            val grant = authentication.getAttributes().getOrDefault(OAuth20Constants.GRANT_TYPE, StringUtils.EMPTY).toString().toLowerCase();
+            introspect.setGrantType(grant);
+        } else {
+            introspect.setActive(false);
+        }
         return introspect;
     }
 
