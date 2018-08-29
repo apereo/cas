@@ -138,8 +138,12 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
     @Autowired
     @Bean
     public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(final List<RestHttpRequestCredentialFactoryConfigurer> configurers) {
+        LOGGER.debug("building chainingRestHttpRequestCredentialFactory from {}", configurers);
         val factory = new ChainingRestHttpRequestCredentialFactory();
-        configurers.forEach(c -> c.configureCredentialFactory(factory));
+        configurers.forEach(c -> {
+            LOGGER.debug("configuring credential factory: {}", c);
+            c.configureCredentialFactory(factory);
+        });
         return factory;
     }
 
