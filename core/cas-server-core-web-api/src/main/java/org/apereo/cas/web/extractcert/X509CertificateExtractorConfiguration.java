@@ -24,9 +24,9 @@ public class X509CertificateExtractorConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnMissingBean(name = "x509ExtractSSLCertificate")
+    @ConditionalOnMissingBean(name = "x509CertificateExtractor")
     @Bean
-    public X509CertificateExtractor x509ExtractSSLCertificate() {
+    public X509CertificateExtractor x509CertificateExtractor() {
         val sslHeaderName = casProperties.getAuthn().getX509().getSslHeaderName();
         return new RequestHeaderX509CertificateExtractor(sslHeaderName);
     }
