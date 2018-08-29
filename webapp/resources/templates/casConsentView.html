@@ -77,14 +77,6 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>abc</td>
-                                <td>123</td>
-                            </tr>
-                            <tr>
-                                <td>xyz</td>
-                                <td>456</td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -121,7 +113,8 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="option" value="2"
                                            th:checked="${option == 2}"
-                                           onclick="optionSelected()"
+                                           onclick="optionSelected()" />
+
                                     <label class="form-check-label" th:utext="#{screen.consent.options.attributevalue}">Attribute
                                         Value</label>
                                     <span class="help-block" th:utext="#{screen.consent.options.desc.attributevalue.intro} +
