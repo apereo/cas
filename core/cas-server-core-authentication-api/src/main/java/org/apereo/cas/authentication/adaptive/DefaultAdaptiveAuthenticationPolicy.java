@@ -84,7 +84,7 @@ public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticati
         if (ipResult.isRanked()) {
             val threshold = adaptiveAuthenticationProperties.getRisk().getThreshold();
             if (ipResult.getScore() >= threshold) {
-                LOGGER.warn("Client IP [{}] is rejected for authentication because intelligence score [{}] is higher than the configured risk threshold",
+                LOGGER.warn("Client IP [{}] is rejected for authentication because intelligence score [{}] is higher than the configured risk threshold [{}]",
                     clientIp, ipResult.getScore(), threshold);
                 return true;
             }
