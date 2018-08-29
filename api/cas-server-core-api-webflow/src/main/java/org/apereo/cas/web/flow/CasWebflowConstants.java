@@ -38,9 +38,25 @@ public interface CasWebflowConstants {
     String TRANSITION_ID_INTERRUPT_REQUIRED = "interruptRequired";
 
     /**
+     * Provider service is unavailable.
+     */
+    String TRANSITION_ID_UNAVAILABLE = "unavailable";
+
+    /**
+     * User allowed to bypass auth by provider.
+     */
+    String TRANSITION_ID_BYPASS = "bypass";
+
+    /**
+     * User was denied access by provider.
+     */
+    String TRANSITION_ID_DENY = "deny";
+
+    /**
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
+
     /**
      * Transition id 'redirect' .
      */
@@ -60,6 +76,7 @@ public interface CasWebflowConstants {
      * Front transition id.
      */
     String TRANSITION_ID_FRONT = "front";
+
     /**
      * Proceed transition id.
      */
@@ -89,6 +106,7 @@ public interface CasWebflowConstants {
      * The state id 'stopWebflow'.
      */
     String STATE_ID_STOP_WEBFLOW = "stopWebflow";
+
     /**
      * The state id 'clientAction'.
      */
@@ -103,7 +121,6 @@ public interface CasWebflowConstants {
      * The view id 'registerDeviceView'.
      */
     String VIEW_ID_REGISTER_DEVICE = "registerDeviceView";
-
 
     /**
      * The state id 'registerTrustedDevice'.
@@ -154,6 +171,7 @@ public interface CasWebflowConstants {
      * The transition state 'submit'.
      */
     String TRANSITION_ID_SUBMIT = "submit";
+
     /**
      * The transition state 'error'.
      */
@@ -183,11 +201,11 @@ public interface CasWebflowConstants {
      * 'gateway' state id.
      */
     String STATE_ID_GATEWAY = "gateway";
+
     /**
      * 'finishMfaTrustedAuth' state id.
      */
     String STATE_ID_FINISH_MFA_TRUSTED_AUTH = "finishMfaTrustedAuth";
-
 
     /**
      * The transition state 'warn'.
@@ -244,7 +262,6 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_GENERATE_SERVICE_TICKET = "generateServiceTicket";
 
-
     /**
      * The state 'gatewayServicesManagementCheck'.
      */
@@ -285,7 +302,6 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_SERVICE_UNAUTHZ_CHECK = "serviceUnauthorizedCheck";
 
-
     /**
      * The state 'viewGenericLoginSuccess'.
      */
@@ -321,6 +337,26 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_REDIRECT = "redirect";
 
+    /**
+     * State id when MFA provider has been detected as unavailable and failureMode is closed.
+     */
+    String STATE_ID_MFA_UNAVAILABLE = "mfaUnavailable";
+
+    /**
+     * State id when MFA provider has denied access to a user because of account lockout.
+     */
+    String STATE_ID_MFA_DENIED = "mfaDenied";
+
+    /**
+     * View id when MFA provider has been detected as unavailable and failureMode is closed.
+     */
+    String VIEW_ID_MFA_UNAVAILABLE = "casMfaUnavailableView";
+
+    /**
+     * View id when MFA provider has denied access to a user because of account lockout.
+     */
+    String VIEW_ID_MFA_DENIED = "casMfaDeniedView";
+    
     /**
      * The view id 'casPostResponseView'.
      */
