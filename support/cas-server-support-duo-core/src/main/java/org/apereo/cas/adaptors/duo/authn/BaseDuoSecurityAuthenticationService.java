@@ -8,8 +8,9 @@ import org.apereo.cas.util.http.HttpClient;
 import com.duosecurity.client.Http;
 import com.duosecurity.duoweb.DuoWebException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,6 +19,8 @@ import org.springframework.http.HttpMethod;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link BaseDuoSecurityAuthenticationService}.
@@ -26,13 +29,16 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 @Slf4j
-@RequiredArgsConstructor
 @EqualsAndHashCode(of = "duoProperties")
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
     private static final long serialVersionUID = -8044100706027708789L;
 
     private static final int AUTH_API_VERSION = 2;
     private static final int RESULT_CODE_ERROR_THRESHOLD = 49999;
+
+    private static final int USER_ACCOUNT_CACHE_INITIAL_SIZE = 50;
+    private static final long USER_ACCOUNT_CACHE_MAX_SIZE = 100_000_000;
+    private static final int USER_ACCOUNT_CACHE_EXPIRATION_SECONDS = 5;
 
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
@@ -51,6 +57,22 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     protected final DuoSecurityMultifactorProperties duoProperties;
 
     private final transient HttpClient httpClient;
+
+    private final transient Map<String, DuoUserAccount> userAccountCachedMap;
+
+    private final transient Cache<String, DuoUserAccount> userAccountCache;
+
+    public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
+        this.duoProperties = duoProperties;
+        this.httpClient = httpClient;
+
+        this.userAccountCache = Caffeine.newBuilder()
+            .initialCapacity(USER_ACCOUNT_CACHE_INITIAL_SIZE)
+            .maximumSize(USER_ACCOUNT_CACHE_MAX_SIZE)
+            .expireAfterWrite(USER_ACCOUNT_CACHE_EXPIRATION_SECONDS, TimeUnit.SECONDS)
+            .build();
+        this.userAccountCachedMap = this.userAccountCache.asMap();
+    }
 
     private static String buildUrlHttpScheme(final String url) {
         if (!url.startsWith("http")) {
@@ -91,6 +113,12 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     @Override
     public DuoUserAccount getDuoUserAccount(final String username) {
+        if (userAccountCachedMap.containsKey(username)) {
+            val account = userAccountCachedMap.get(username);
+            LOGGER.debug("Found cached duo user account [{}]", account);
+            return account;
+        }
+
         val account = new DuoUserAccount(username);
         account.setStatus(DuoUserAccountAuthStatus.AUTH);
 
@@ -137,6 +165,9 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             LOGGER.warn("Reaching Duo has failed with error: [{}]", e.getMessage(), e);
             account.setStatus(DuoUserAccountAuthStatus.UNAVAILABLE);
         }
+
+        userAccountCachedMap.put(account.getUsername(), account);
+        LOGGER.debug("Fetched and cached duo user account [{}]", account);
         return account;
     }
 
