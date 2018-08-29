@@ -7,6 +7,10 @@ import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.support.x509.rest.X509RestHttpRequestHeaderCredentialFactory;
 import org.apereo.cas.support.x509.rest.X509RestMultipartBodyCredentialFactory;
 import org.apereo.cas.web.extractcert.X509CertificateExtractor;
+
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -14,6 +18,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * @author Dmytro Fedonin
@@ -21,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("x509RestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class X509RestConfiguration implements RestHttpRequestCredentialFactoryConfigurer {
     
     @Autowired
@@ -28,6 +34,7 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
     
     @Autowired
     @Qualifier("x509CertificateExtractor")
+    @Lazy
     private ObjectProvider<X509CertificateExtractor> x509CertificateExtractor;
 
     @Bean
@@ -42,10 +49,16 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
     
     @Override
     public void configureCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
-        if (x509CertificateExtractor.getIfAvailable() != null && casProperties.getRest().isHeaderAuth()) {
+        val restProperties = casProperties.getRest();
+        val extractor = x509CertificateExtractor.getIfAvailable();
+        val headerAuth = restProperties.isHeaderAuth();
+        val bodyAuth = restProperties.isBodyAuth();
+        LOGGER.debug("is certificate extractor available? = {}, headerAuth = {}, bodyAuth = {}",
+            extractor, headerAuth, bodyAuth);
+        if (extractor != null && headerAuth) {
             factory.registerCredentialFactory(x509RestRequestHeader());
         }
-        if (casProperties.getRest().isBodyAuth()) {
+        if (bodyAuth) {
             factory.registerCredentialFactory(x509RestMultipartBody());
         }
     }
