@@ -126,7 +126,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
             final JsonNode result = MAPPER.readTree(jsonResponse);
             if (!result.has(RESULT_KEY_STAT)) {
-                LOGGER.warn("Duo admin response was received in unknown format : {0}", jsonResponse);
+                LOGGER.warn("Duo admin response was received in unknown format: [{}]", jsonResponse);
                 throw new DuoWebException("Invalid response format received from Duo");
             }
             if (result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
