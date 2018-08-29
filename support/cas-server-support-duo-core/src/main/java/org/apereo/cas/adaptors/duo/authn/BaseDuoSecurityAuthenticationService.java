@@ -3,6 +3,8 @@ package org.apereo.cas.adaptors.duo.authn;
 import com.duosecurity.client.Http;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
@@ -17,6 +19,8 @@ import org.springframework.http.HttpMethod;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link BaseDuoSecurityAuthenticationService}.
@@ -28,6 +32,10 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     private static final long serialVersionUID = -8044100706027708789L;
 
     private static final int AUTH_API_VERSION = 2;
+    private static final int USER_ACCOUNT_CACHE_INITIAL_SIZE = 50;
+    private static final long USER_ACCOUNT_CACHE_MAX_SIZE = 100_000_000;
+    private static final int USER_ACCOUNT_CACHE_EXPIRATION_SECONDS = 5;
+
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
     private static final String RESULT_KEY_RESULT = "result";
@@ -45,6 +53,10 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private final transient HttpClient httpClient;
 
+    private final transient Map<String, DuoUserAccount> userAccountCachedMap;
+
+    private final transient Cache<String, DuoUserAccount> userAccountCache;
+
     /**
      * Creates the duo authentication service.
      *
@@ -54,6 +66,13 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
         this.duoProperties = duoProperties;
         this.httpClient = httpClient;
+
+        this.userAccountCache = Caffeine.newBuilder()
+            .initialCapacity(USER_ACCOUNT_CACHE_INITIAL_SIZE)
+            .maximumSize(USER_ACCOUNT_CACHE_MAX_SIZE)
+            .expireAfterWrite(USER_ACCOUNT_CACHE_EXPIRATION_SECONDS, TimeUnit.SECONDS)
+            .build();
+        this.userAccountCachedMap = this.userAccountCache.asMap();
     }
 
     @Override
@@ -118,6 +137,12 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     @Override
     public DuoUserAccount getDuoUserAccount(final String username) {
+        if (userAccountCachedMap.containsKey(username)) {
+            final DuoUserAccount account = userAccountCachedMap.get(username);
+            LOGGER.debug("Found cached duo user account [{}]", account);
+            return account;
+        }
+
         final DuoUserAccount account = new DuoUserAccount(username);
         account.setStatus(DuoUserAccountAuthStatus.AUTH);
 
@@ -147,6 +172,8 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         } catch (final Exception e) {
             LOGGER.warn("Reaching Duo has failed with error: [{}]", e.getMessage(), e);
         }
+        userAccountCachedMap.put(account.getUsername(), account);
+        LOGGER.debug("Fetched and cached duo user account [{}]", account);
         return account;
     }
 
