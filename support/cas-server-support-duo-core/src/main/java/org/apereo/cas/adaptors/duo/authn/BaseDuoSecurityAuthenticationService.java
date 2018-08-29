@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProp
 import org.apereo.cas.util.http.HttpClient;
 
 import com.duosecurity.client.Http;
+import com.duosecurity.duoweb.DuoWebException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,16 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     private static final long serialVersionUID = -8044100706027708789L;
 
     private static final int AUTH_API_VERSION = 2;
+    private static final int RESULT_CODE_ERROR_THRESHOLD = 49999;
+
     private static final String RESULT_KEY_RESPONSE = "response";
     private static final String RESULT_KEY_STAT = "stat";
     private static final String RESULT_KEY_RESULT = "result";
     private static final String RESULT_KEY_ENROLL_PORTAL_URL = "enroll_portal_url";
     private static final String RESULT_KEY_STATUS_MESSAGE = "status_msg";
+    private static final String RESULT_KEY_CODE = "code";
+    private static final String RESULT_KEY_MESSAGE = "message";
+    private static final String RESULT_KEY_MESSAGE_DETAIL = "message_detail";
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
@@ -97,8 +103,12 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             LOGGER.debug("Received Duo admin response [{}]", jsonResponse);
 
             val result = MAPPER.readTree(jsonResponse);
-            if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
-                && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+            if (!result.has(RESULT_KEY_STAT)) {
+                LOGGER.warn("Duo admin response was received in unknown format: [{}]", jsonResponse);
+                throw new DuoWebException("Invalid response format received from Duo");
+            }
+
+            if (result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
 
                 val response = result.get(RESULT_KEY_RESPONSE);
                 val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
@@ -110,9 +120,22 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                     val enrollUrl = response.get(RESULT_KEY_ENROLL_PORTAL_URL).asText();
                     account.setEnrollPortalUrl(enrollUrl);
                 }
+            } else {
+                val code = result.get(RESULT_KEY_CODE).asInt();
+                if (code > RESULT_CODE_ERROR_THRESHOLD) {
+                    LOGGER.warn("Duo returned a FAIL response with a code indicating a server error: [{}], Duo will be considered unavailable",
+                        result.get(RESULT_KEY_MESSAGE));
+                    throw new DuoWebException("Duo returned code 500: " + result.get(RESULT_KEY_MESSAGE));
+                }
+                LOGGER.warn("Duo returned an Invalid request response with message [{}] and detail [{}] "
+                        + "when determining user account.  This maybe a configuration error in the admin request and Duo will "
+                        + "still be considered available",
+                    result.get(RESULT_KEY_MESSAGE).asText(),
+                    result.get(RESULT_KEY_MESSAGE_DETAIL).asText());
             }
         } catch (final Exception e) {
             LOGGER.warn("Reaching Duo has failed with error: [{}]", e.getMessage(), e);
+            account.setStatus(DuoUserAccountAuthStatus.UNAVAILABLE);
         }
         return account;
     }

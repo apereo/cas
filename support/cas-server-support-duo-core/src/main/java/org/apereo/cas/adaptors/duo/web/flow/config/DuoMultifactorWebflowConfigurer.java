@@ -44,6 +44,18 @@ import java.util.List;
 public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
     private static final String STATE_ID_VIEW_LOGIN_FORM_DUO = "viewLoginFormDuo";
+    private static final String STATE_ID_FINALIZE_AUTHENTICATION = "finalizeAuthentication";
+    private static final String STATE_ID_DETERMINE_DUO_USER_ACCOUNT = "determineDuoUserAccount";
+    private static final String STATE_ID_DUO_NON_WEB_AUTHENTICATION = "doNonWebAuthentication";
+    private static final String STATE_ID_DETERMINE_DUO_REQUEST = "determineDuoRequest";
+
+    private static final String ACTION_CHECK_WEB_AUTHENTICATION_REQUEST = "checkWebAuthenticationRequestAction";
+    private static final String ACTION_DUO_AUTHENTICATION_WEBFLOW = "duoAuthenticationWebflowAction";
+    private static final String ACTION_DETERMINE_DUO_USER_ACCOUNT = "determineDuoUserAccountAction";
+    private static final String ACTION_PREPARE_DUO_WEB_LOGIN_FORM_ACTION = "prepareDuoWebLoginFormAction";
+    private static final String ACTION_DUO_NON_WEB_AUTHENTICATION_ACTION = "duoNonWebAuthenticationAction";
+
+    private static final String VIEW_ID_REDIRECT_TO_DUO_REGISTRATION = "redirectToDuoRegistration";
 
     private final VariegatedMultifactorAuthenticationProvider provider;
 
@@ -118,10 +130,12 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
     private void createDuoSuccessEndState(final List<AbstractStateModel> states) {
         states.add(new EndStateModel(CasWebflowConstants.TRANSITION_ID_SUCCESS));
+        states.add(new EndStateModel(CasWebflowConstants.TRANSITION_ID_DENY));
+        states.add(new EndStateModel(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE));
     }
 
     private void createDuoRedirectToRegistrationAction(final List<AbstractStateModel> states) {
-        val endModel = new ViewStateModel("redirectToDuoRegistration");
+        val endModel = new ViewStateModel(VIEW_ID_REDIRECT_TO_DUO_REGISTRATION);
         endModel.setView("externalRedirect:#{flowScope.duoRegistrationUrl}");
         states.add(endModel);
     }
@@ -129,7 +143,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     private void createDuoAuthenticationWebflowAction(final List<AbstractStateModel> states) {
         val actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
         val actions = new LinkedList<AbstractActionModel>();
-        actions.add(new EvaluateModel("duoAuthenticationWebflowAction"));
+        actions.add(new EvaluateModel(ACTION_DUO_AUTHENTICATION_WEBFLOW));
         actModel.setActions(actions);
 
         val trans = new LinkedList<TransitionModel>();
@@ -142,6 +156,16 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_ERROR);
         transModel.setTo(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        trans.add(transModel);
+
+        transModel = new TransitionModel();
+        transModel.setOn(CasWebflowConstants.TRANSITION_ID_DENY);
+        transModel.setTo(CasWebflowConstants.TRANSITION_ID_DENY);
+        trans.add(transModel);
+
+        transModel = new TransitionModel();
+        transModel.setOn(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        transModel.setTo(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
         trans.add(transModel);
 
         actModel.setTransitions(trans);
@@ -160,7 +184,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         viewState.setBinder(bm);
 
         val actions = new LinkedList<AbstractActionModel>();
-        actions.add(new EvaluateModel("prepareDuoWebLoginFormAction"));
+        actions.add(new EvaluateModel(ACTION_PREPARE_DUO_WEB_LOGIN_FORM_ACTION));
         viewState.setOnEntryActions(actions);
 
         val trans = new LinkedList<TransitionModel>();
@@ -177,9 +201,9 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     }
 
     private void createDuoFinalizeAuthenticationAction(final List<AbstractStateModel> states) {
-        val actModel = new ActionStateModel("finalizeAuthentication");
+        val actModel = new ActionStateModel(STATE_ID_FINALIZE_AUTHENTICATION);
         val actions = new LinkedList<AbstractActionModel>();
-        actions.add(new EvaluateModel("duoAuthenticationWebflowAction"));
+        actions.add(new EvaluateModel(ACTION_DUO_AUTHENTICATION_WEBFLOW));
         actModel.setActions(actions);
 
         val trans = new LinkedList<TransitionModel>();
@@ -193,16 +217,16 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     }
 
     private void createDuoDoNonWebAuthenticationAction(final List<AbstractStateModel> states) {
-        val actModel = new ActionStateModel("doNonWebAuthentication");
+        val actModel = new ActionStateModel(STATE_ID_DUO_NON_WEB_AUTHENTICATION);
         val actions = new LinkedList<AbstractActionModel>();
-        actions.add(new EvaluateModel("duoNonWebAuthenticationAction"));
+        actions.add(new EvaluateModel(ACTION_DUO_NON_WEB_AUTHENTICATION_ACTION));
         actModel.setActions(actions);
 
         val trans = new LinkedList<TransitionModel>();
 
         val transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo("finalizeAuthentication");
+        transModel.setTo(STATE_ID_FINALIZE_AUTHENTICATION);
         trans.add(transModel);
 
         actModel.setTransitions(trans);
@@ -210,9 +234,9 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     }
 
     private void createDuoDetermineRequestAction(final List<AbstractStateModel> states) {
-        val actModel = new ActionStateModel("determineDuoRequest");
+        val actModel = new ActionStateModel(STATE_ID_DETERMINE_DUO_REQUEST);
         val actions = new LinkedList<AbstractActionModel>();
-        actions.add(new EvaluateModel("checkWebAuthenticationRequestAction"));
+        actions.add(new EvaluateModel(ACTION_CHECK_WEB_AUTHENTICATION_REQUEST));
         actModel.setActions(actions);
 
         val trans = new LinkedList<TransitionModel>();
@@ -224,7 +248,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_NO);
-        transModel.setTo("doNonWebAuthentication");
+        transModel.setTo(STATE_ID_DUO_NON_WEB_AUTHENTICATION);
         trans.add(transModel);
 
         actModel.setTransitions(trans);
@@ -232,20 +256,40 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     }
 
     private void createDuoDetermineUserAccountAction(final List<AbstractStateModel> states) {
-        val actModel = new ActionStateModel("determineDuoUserAccount");
+        val actModel = new ActionStateModel(STATE_ID_DETERMINE_DUO_USER_ACCOUNT);
         val actions = new LinkedList<AbstractActionModel>();
-        actions.add(new EvaluateModel("determineDuoUserAccountAction"));
+        actions.add(new EvaluateModel(ACTION_DETERMINE_DUO_USER_ACCOUNT));
         actModel.setActions(actions);
 
         val trans = new LinkedList<TransitionModel>();
         var transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo("determineDuoRequest");
+        transModel.setTo(STATE_ID_DETERMINE_DUO_REQUEST);
         trans.add(transModel);
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_ENROLL);
-        transModel.setTo("redirectToDuoRegistration");
+        transModel.setTo(VIEW_ID_REDIRECT_TO_DUO_REGISTRATION);
+        trans.add(transModel);
+
+        transModel = new TransitionModel();
+        transModel.setOn(CasWebflowConstants.TRANSITION_ID_BYPASS);
+        transModel.setTo(STATE_ID_FINALIZE_AUTHENTICATION);
+        trans.add(transModel);
+
+        transModel = new TransitionModel();
+        transModel.setOn(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        transModel.setTo(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        trans.add(transModel);
+
+        transModel = new TransitionModel();
+        transModel.setOn(CasWebflowConstants.TRANSITION_ID_DENY);
+        transModel.setTo(CasWebflowConstants.TRANSITION_ID_DENY);
+        trans.add(transModel);
+
+        transModel = new TransitionModel();
+        transModel.setOn(CasWebflowConstants.TRANSITION_ID_ERROR);
+        transModel.setTo(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         trans.add(transModel);
 
         actModel.setTransitions(trans);
@@ -261,7 +305,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         val trans = new LinkedList<TransitionModel>();
         val transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo("determineDuoUserAccount");
+        transModel.setTo(STATE_ID_DETERMINE_DUO_USER_ACCOUNT);
         trans.add(transModel);
 
         actModel.setTransitions(trans);
@@ -271,7 +315,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
     private void createDuoFlowStartActions(final DynamicFlowModelBuilder modelBuilder) {
         val starts = new ArrayList<AbstractActionModel>();
-        starts.add(new EvaluateModel("initialFlowSetupAction"));
+        starts.add(new EvaluateModel(CasWebflowConstants.ACTION_ID_INIT_FLOW_SETUP));
         modelBuilder.setOnStartActions(starts);
     }
 
