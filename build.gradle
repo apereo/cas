@@ -320,7 +320,7 @@ subprojects {
 
     if (!Boolean.getBoolean("skipFindbugs")) {
         spotbugs {
-            toolVersion = "${findbugsVersion}"
+            toolVersion = "${spotbugsVersion}"
             sourceSets = [sourceSets.main]
             ignoreFailures = true
             reportsDir = file("$project.buildDir/findbugsReports")
