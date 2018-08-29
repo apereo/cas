@@ -123,11 +123,11 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             } else {
                 val code = result.get(RESULT_KEY_CODE).asInt();
                 if (code > RESULT_CODE_ERROR_THRESHOLD) {
-                    LOGGER.warn("Duo returned a FAIL response with a code indicating a server error: [{}], Duo will be considered unavailable",
+                    LOGGER.warn("Duo returned a failure response with a code indicating a server error: [{}], Duo will be considered unavailable",
                         result.get(RESULT_KEY_MESSAGE));
                     throw new DuoWebException("Duo returned code 500: " + result.get(RESULT_KEY_MESSAGE));
                 }
-                LOGGER.warn("Duo returned an Invalid request response with message [{}] and detail [{}] "
+                LOGGER.warn("Duo returned an Invalid response with message [{}] and detail [{}] "
                         + "when determining user account.  This maybe a configuration error in the admin request and Duo will "
                         + "still be considered available",
                     result.get(RESULT_KEY_MESSAGE).asText(),
