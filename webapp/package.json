@@ -26,7 +26,7 @@
     "bootstrap": "^4.0.0",
     "eslint-loader": "^2.0.0",
     "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^5.0.0",
+    "gulp-autoprefixer": "^6.0.0",
     "gulp-sass": "^4.0.1"
   },
   "devDependencies": {
