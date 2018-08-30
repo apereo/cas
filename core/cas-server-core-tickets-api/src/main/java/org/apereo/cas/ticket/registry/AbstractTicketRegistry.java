@@ -130,7 +130,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return tickets.mapToInt(this::deleteTicket).sum();
     }
 
-    private void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
+    /**
+     * Delete linked pgts.
+     *
+     * @param count the total number of deleted tickets
+     * @param tgt ticket granting ticket to get PGT
+     */
+    protected void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
         val pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
         val hasPgts = !pgts.isEmpty();
         count.getAndAdd(deleteTickets(pgts));
@@ -140,8 +146,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             updateTicket(tgt);
         }
     }
-
-    private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
+    
+    /**
+     * Delete pgt from parent.
+     *
+     * @param ticket pgt to remove
+     */
+    protected void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
         val thePgt = ticket;
         thePgt.getTicketGrantingTicket().getProxyGrantingTickets().remove(thePgt.getId());
         updateTicket(thePgt.getTicketGrantingTicket());
