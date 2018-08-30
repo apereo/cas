@@ -99,6 +99,22 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public Ticket getTicketForDeletion(final String ticketId) {
+        try {
+            val tkt = ticketCatalog.find(ticketId);
+            val sql = String.format("select t from %s t where t.id = :id", getTicketEntityName(tkt));
+            val query = entityManager.createQuery(sql, tkt.getImplementationClass());
+            query.setParameter("id", ticketId);
+            query.setLockMode(this.lockType);
+            val result = query.getSingleResult();
+            return result;
+        } catch (final Exception e) {
+            LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
+        }
+        return null;
+    }
+
+    @Override
     public Collection<Ticket> getTickets() {
         return this.ticketCatalog.findAll()
             .stream()
