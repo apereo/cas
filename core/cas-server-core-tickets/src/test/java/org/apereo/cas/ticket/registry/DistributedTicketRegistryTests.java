@@ -18,6 +18,7 @@ import org.junit.Test;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import static org.junit.Assert.*;
 
@@ -135,6 +136,11 @@ public class DistributedTicketRegistryTests {
         @Override
         public Ticket getTicket(final String ticketId) {
             return this.tickets.get(ticketId);
+        }
+
+        @Override
+        public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
+            return getTicket(ticketId);
         }
 
         @Override

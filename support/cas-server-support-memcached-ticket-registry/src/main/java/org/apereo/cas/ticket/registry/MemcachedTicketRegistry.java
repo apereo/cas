@@ -12,6 +12,7 @@ import org.springframework.beans.factory.DisposableBean;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * Key-value ticket registry implementation that stores tickets in memcached keyed on the ticket ID.
@@ -94,19 +95,17 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Ticket getTicket(final String ticketIdToGet) {
+    public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
         val clientFromPool = getClientFromPool();
         val ticketId = encodeTicketId(ticketIdToGet);
         try {
             val ticketFromCache = (Ticket) clientFromPool.get(ticketId);
             if (ticketFromCache != null) {
                 val result = decodeTicket(ticketFromCache);
-                if (result != null && result.isExpired()) {
-                    LOGGER.debug("Ticket [{}] has expired and is now removed from the memcached", result.getId());
-                    deleteSingleTicket(ticketId);
-                    return null;
+                if (predicate.test(result)) {
+                    return result;
                 }
-                return result;
+                return null;
             }
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}] ", ticketId, e);

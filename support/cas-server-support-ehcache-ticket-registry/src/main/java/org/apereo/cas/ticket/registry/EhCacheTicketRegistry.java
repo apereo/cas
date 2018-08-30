@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -113,7 +114,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketIdToGet) {
+    public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
         if (StringUtils.isBlank(ticketIdToGet)) {
             return null;
         }
@@ -138,16 +139,14 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         val ticket = decodeTicket((Ticket) element.getObjectValue());
 
         val config = new CacheConfiguration();
-        config.setTimeToIdleSeconds(ticket.getExpirationPolicy().getTimeToIdle());
-        config.setTimeToLiveSeconds(ticket.getExpirationPolicy().getTimeToLive());
+        val expirationPolicy = ticket.getExpirationPolicy();
+        config.setTimeToIdleSeconds(expirationPolicy.getTimeToIdle());
+        config.setTimeToLiveSeconds(expirationPolicy.getTimeToLive());
 
-        if (element.isExpired(config) || ticket.isExpired()) {
-            ehcache.remove(element);
-            LOGGER.debug("Ticket [{}] has expired and is now evicted from the cache", ticket.getId());
-            return null;
+        if (!element.isExpired(config) && predicate.test(ticket)) {
+            return ticket;
         }
-
-        return ticket;
+        return null;
     }
 
     @Override

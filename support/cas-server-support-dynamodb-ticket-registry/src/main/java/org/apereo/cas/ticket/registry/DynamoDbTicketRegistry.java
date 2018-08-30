@@ -8,6 +8,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * This is {@link DynamoDbTicketRegistry}.
@@ -37,16 +38,15 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         val encTicketId = encodeTicketId(ticketId);
-        if (StringUtils.isNotBlank(encTicketId)) {
-            LOGGER.debug("Retrieving ticket [{}] ", ticketId);
-            val ticket = this.dbTableService.get(ticketId, encTicketId);
-            val decodedTicket = decodeTicket(ticket);
-            if (decodedTicket == null || decodedTicket.isExpired()) {
-                LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
-                return null;
-            }
+        if (StringUtils.isBlank(encTicketId)) {
+            return null;
+        }
+        LOGGER.debug("Retrieving ticket [{}]", ticketId);
+        val ticket = this.dbTableService.get(ticketId, encTicketId);
+        val decodedTicket = decodeTicket(ticket);
+        if (predicate.test(decodedTicket)) {
             return decodedTicket;
         }
         return null;

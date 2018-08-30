@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.code.OAuthCodeExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -49,39 +50,39 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
 
     private void registerTicket(final String name, final OAuthRegisteredService service) {
         val builder = new OAuth20CasAuthenticationBuilder(
-                new DefaultPrincipalFactory(),
-                new WebApplicationServiceFactory(),
-                new DefaultOAuth20ProfileScopeToAttributesFilter(),
-                new CasConfigurationProperties());
+            new DefaultPrincipalFactory(),
+            new WebApplicationServiceFactory(),
+            new DefaultOAuth20ProfileScopeToAttributesFilter(),
+            new CasConfigurationProperties());
         val oauthCasAuthenticationBuilderService = builder.buildService(service, null, false);
         val expirationPolicy = new OAuthCodeExpirationPolicy(1, 60);
         val oauthCode = new DefaultOAuthCodeFactory(expirationPolicy)
-                .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
-                        new MockTicketGrantingTicket("casuser"), new HashSet<>(),
-                        null, null);
-        when(ticketRegistry.getTicket(eq(name), any())).thenReturn(oauthCode);
+            .create(oauthCasAuthenticationBuilderService, RegisteredServiceTestUtils.getAuthentication(),
+                new MockTicketGrantingTicket("casuser"), new HashSet<>(),
+                null, null);
+        when(ticketRegistry.getTicket(eq(name), (Class<Ticket>) any())).thenReturn(oauthCode);
     }
 
     @Before
     public void before() {
         val serviceManager = mock(ServicesManager.class);
         val supportingService = RequestValidatorTestUtils.getService(
-                RegisteredServiceTestUtils.CONST_TEST_URL,
-                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
-                RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
-                RequestValidatorTestUtils.SHARED_SECRET,
-                CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
+            RegisteredServiceTestUtils.CONST_TEST_URL,
+            RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+            RequestValidatorTestUtils.SUPPORTING_CLIENT_ID,
+            RequestValidatorTestUtils.SHARED_SECRET,
+            CollectionUtils.wrapSet(OAuth20GrantTypes.AUTHORIZATION_CODE));
         val nonSupportingService = RequestValidatorTestUtils.getService(
-                RegisteredServiceTestUtils.CONST_TEST_URL2,
-                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
-                RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
-                RequestValidatorTestUtils.SHARED_SECRET,
-                CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
+            RegisteredServiceTestUtils.CONST_TEST_URL2,
+            RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+            RequestValidatorTestUtils.NON_SUPPORTING_CLIENT_ID,
+            RequestValidatorTestUtils.SHARED_SECRET,
+            CollectionUtils.wrapSet(OAuth20GrantTypes.PASSWORD));
         val promiscuousService = RequestValidatorTestUtils.getPromiscousService(
-                RegisteredServiceTestUtils.CONST_TEST_URL3,
-                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
-                RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
-                RequestValidatorTestUtils.SHARED_SECRET);
+            RegisteredServiceTestUtils.CONST_TEST_URL3,
+            RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+            RequestValidatorTestUtils.PROMISCUOUS_CLIENT_ID,
+            RequestValidatorTestUtils.SHARED_SECRET);
 
         this.ticketRegistry = mock(TicketRegistry.class);
 
@@ -90,13 +91,13 @@ public class OAuth20AuthorizationCodeGrantTypeTokenRequestValidatorTests {
         registerTicket(PROMISCUOUS_SERVICE_TICKET, promiscuousService);
 
         when(serviceManager.getAllServices()).thenReturn(
-                CollectionUtils.wrapList(
-                        supportingService,
-                        nonSupportingService,
-                        promiscuousService));
+            CollectionUtils.wrapList(
+                supportingService,
+                nonSupportingService,
+                promiscuousService));
         this.validator = new OAuth20AuthorizationCodeGrantTypeTokenRequestValidator(serviceManager,
-                ticketRegistry, new RegisteredServiceAccessStrategyAuditableEnforcer(),
-                new WebApplicationServiceFactory());
+            ticketRegistry, new RegisteredServiceAccessStrategyAuditableEnforcer(),
+            new WebApplicationServiceFactory());
     }
 
     @Test

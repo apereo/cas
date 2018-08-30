@@ -12,42 +12,55 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreTicketsSchedulingConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.ServiceTicket;
+import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collection;
-
+import static org.junit.Assert.*;
 
 /**
- * Unit test for {@link JpaTicketRegistry} class.
+ * This is {@link JpaTicketRegistryCleanerTests}.
  *
- * @author Marvin S. Addison
- * @since 3.0.0
+ * @author Misagh Moayyed
+ * @since 6.0.0
  */
-@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     JpaTicketRegistryTicketCatalogConfiguration.class,
     JpaTicketRegistryConfiguration.class,
+    CasCoreTicketsSchedulingConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
@@ -71,23 +84,49 @@ import java.util.Collection;
 })
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-public class JpaTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class JpaTicketRegistryCleanerTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
-    public JpaTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
+    @Autowired
+    @Qualifier("ticketRegistryCleaner")
+    private TicketRegistryCleaner ticketRegistryCleaner;
 
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false);
-    }
+    @Autowired
+    @Qualifier("defaultTicketFactory")
+    protected TicketFactory ticketFactory;
 
-    @Override
-    protected TicketRegistry getNewTicketRegistry() {
-        return this.ticketRegistry;
+    @Test
+    public void verifyOperation() {
+        val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
+        val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(), TicketGrantingTicket.class);
+        ticketRegistry.addTicket(tgt);
+
+        val stFactory = (ServiceTicketFactory) ticketFactory.get(ServiceTicket.class);
+        val st = stFactory.create(tgt, RegisteredServiceTestUtils.getService(), true, ServiceTicket.class);
+
+        ticketRegistry.addTicket(st);
+        ticketRegistry.updateTicket(tgt);
+
+        assertEquals(1, ticketRegistry.sessionCount());
+        assertEquals(1, ticketRegistry.serviceTicketCount());
+
+        st.markTicketExpired();
+        tgt.markTicketExpired();
+
+        ticketRegistry.updateTicket(st);
+        ticketRegistry.updateTicket(tgt);
+
+        ticketRegistryCleaner.clean();
+
+        assertEquals(0, ticketRegistry.sessionCount());
+        assertEquals(0, ticketRegistry.serviceTicketCount());
     }
 }

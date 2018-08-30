@@ -4,6 +4,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * This ticket registry only stores one ticket at the same time and offers the ability to update a ticket.
@@ -36,6 +37,11 @@ public class MockOnlyOneTicketRegistry implements TicketRegistry {
 
     @Override
     public Ticket getTicket(final String ticketId) {
+        return this.ticket;
+    }
+
+    @Override
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         return this.ticket;
     }
 

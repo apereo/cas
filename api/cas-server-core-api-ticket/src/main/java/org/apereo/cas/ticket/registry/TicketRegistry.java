@@ -45,6 +45,15 @@ public interface TicketRegistry {
     Ticket getTicket(String ticketId);
 
     /**
+     * Gets ticket from registry using a predicate.
+     *
+     * @param ticketId  the ticket id
+     * @param predicate the predicate that tests the ticket
+     * @return the ticket
+     */
+    Ticket getTicket(String ticketId, Predicate<Ticket> predicate);
+
+    /**
      * Remove a specific ticket from the registry.
      * If ticket to delete is TGT then related service tickets are removed as well.
      *
