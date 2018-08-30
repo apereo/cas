@@ -14,6 +14,7 @@ import org.ektorp.DocumentNotFoundException;
 import org.ektorp.UpdateConflictException;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -76,7 +77,7 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         LOGGER.debug("Locating ticket id [{}]", ticketId);
         val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
@@ -90,11 +91,10 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Got ticket [{}] from the registry.", t);
 
             val decoded = decodeTicket(t);
-            if (decoded == null || decoded.isExpired()) {
-                LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", encTicketId);
-                return null;
+            if (predicate.test(decoded)) {
+                return decoded;
             }
-            return decoded;
+            return null;
         } catch (final DocumentNotFoundException ignored) {
             LOGGER.debug("Ticket [{}] not found in the registry.", encTicketId);
         }
@@ -105,7 +105,6 @@ public class CouchDbTicketRegistry extends AbstractTicketRegistry {
     public long deleteAll() {
         return couchDb.delete(couchDb.getAll());
     }
-
 
     @Override
     public Collection<Ticket> getTickets() {

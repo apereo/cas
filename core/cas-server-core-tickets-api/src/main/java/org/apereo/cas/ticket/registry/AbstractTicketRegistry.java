@@ -43,12 +43,18 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected CipherExecutor cipherExecutor;
 
-    /**
-     * @return specified ticket from the registry
-     * @throws IllegalArgumentException if class is null.
-     * @throws ClassCastException       if class does not match requested ticket
-     *                                  class.
-     */
+    @Override
+    public Ticket getTicket(final String ticketId) {
+        return getTicket(ticketId, ticket -> {
+            if (ticket != null && ticket.isExpired()) {
+                LOGGER.debug("Ticket [{}] has expired and is now removed from the ticket registry", ticket.getId());
+                deleteSingleTicket(ticketId);
+                return false;
+            }
+            return true;
+        });
+    }
+
     @Override
     public <T extends Ticket> T getTicket(final String ticketId, @NonNull final Class<T> clazz) {
         val ticket = this.getTicket(ticketId);
@@ -91,6 +97,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
         val ticket = getTicket(ticketId);
         if (ticket == null) {
+            LOGGER.debug("Ticket [{}] could not be fetched from the registry; it may have been expired and deleted.", ticketId);
             return count.intValue();
         }
         if (ticket instanceof TicketGrantingTicket) {
