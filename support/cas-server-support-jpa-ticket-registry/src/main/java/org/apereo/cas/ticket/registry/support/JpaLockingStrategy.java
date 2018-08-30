@@ -158,7 +158,7 @@ public class JpaLockingStrategy implements LockingStrategy {
     @Table(name = "locks")
     @Getter
     @Setter
-    private static class Lock implements Serializable {
+    public static class Lock implements Serializable {
 
         private static final long serialVersionUID = -5750740484289616656L;
 
