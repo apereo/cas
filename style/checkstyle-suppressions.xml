@@ -24,6 +24,7 @@
     <suppress checks="\w+" files="(\.(crt|crl|class|keystore))|rebel.xml"/>
     <suppress id="finalNonUtilClass" files="(.*(Utils|Constants|Facade|Support|Beans|Tickets))\.java" />
     <suppress id="useLombokVar" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
+    <suppress id="useLombokVar" files="RestConsentRepositoryTests.java" lines="56,81"/>
     <suppress id="useLombokVaLForFinalVar" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
     <suppress id="useLombokVarForGenerics" files="(.*ConfigurationMetadataGenerator|.*ConfigurationMetadataHint|.*RelaxedPropertyNames)\.java" />
     <suppress checks="." files="com[\\/]duosecurity[\\/]duoweb[\\/]"/>

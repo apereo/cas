@@ -42,6 +42,7 @@ public class BaseConsentRepositoryTests {
     protected static final AbstractRegisteredService REG_SVC = RegisteredServiceTestUtils.getRegisteredService(SVC.getId());
 
     protected static final Map<String, Object> ATTR = CollectionUtils.wrap("attribute", "value");
+    protected static final String CASUSER_2 = "casuser2";
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
@@ -67,15 +68,15 @@ public class BaseConsentRepositoryTests {
     @Test
     public void verifyConsentDecisionIsFound() {
         val repo = getRepository("verifyConsentDecisionIsFound");
-        val decision = BUILDER.build(SVC, REG_SVC, "casuser2", ATTR);
+        val decision = BUILDER.build(SVC, REG_SVC, CASUSER_2, ATTR);
         decision.setId(100);
         repo.storeConsentDecision(decision);
 
-        val d = repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication("casuser2"));
+        val d = repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2));
         assertNotNull(d);
-        assertEquals("casuser2", d.getPrincipal());
+        assertEquals(CASUSER_2, d.getPrincipal());
 
         assertTrue(repo.deleteConsentDecision(d.getId(), d.getPrincipal()));
-        assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication("casuser2")));
+        assertNull(repo.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(CASUSER_2)));
     }
 }
