@@ -105,7 +105,13 @@ jobs:
     script: ./ci/report-dependency-updates.sh
     ############################################
   - stage: test
-    script: ./ci/tests/run-tests-simple.sh
+    script: ./ci/tests/run-tests-simple-api.sh
+  - stage: test
+    script: ./ci/tests/run-tests-simple-core.sh
+  - stage: test
+    script: ./ci/tests/run-tests-simple-support.sh
+  - stage: test
+    script: ./ci/tests/run-tests-simple-webapp.sh
   - stage: test
     script: ./ci/tests/restful/run-tests-restful.sh
   - stage: test
