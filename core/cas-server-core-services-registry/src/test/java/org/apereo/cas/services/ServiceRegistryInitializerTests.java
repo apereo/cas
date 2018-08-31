@@ -4,8 +4,10 @@ import lombok.val;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -20,7 +22,7 @@ public class ServiceRegistryInitializerTests {
 
         val servicesManager = mock(ServicesManager.class);
         val jsonServiceRegistry = mock(ServiceRegistry.class);
-        when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService));
+        when(jsonServiceRegistry.load()).thenReturn((Collection) Arrays.asList(initialService));
 
         val serviceRegistry = new InMemoryServiceRegistry();
         val serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
@@ -28,7 +30,7 @@ public class ServiceRegistryInitializerTests {
         assertThat(serviceRegistry.size()).isEqualTo(1);
 
         val initialService2 = newService();
-        when(jsonServiceRegistry.load()).thenReturn(Arrays.asList(initialService2));
+        when(jsonServiceRegistry.load()).thenReturn((Collection) Collections.singletonList(initialService2));
 
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
         assertThat(serviceRegistry.size()).isEqualTo(1);

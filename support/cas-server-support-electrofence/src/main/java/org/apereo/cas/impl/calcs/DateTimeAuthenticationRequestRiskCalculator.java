@@ -33,7 +33,7 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
 
     @Override
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
-                                        final RegisteredService service, final Collection<CasEvent> events) {
+                                        final RegisteredService service, final Collection<? extends CasEvent> events) {
         val timestamp = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Filtering authentication events for timestamp [{}]", timestamp);
 
