@@ -9,7 +9,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,7 +43,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         val responseEntity = restTemplate.exchange(this.url, HttpMethod.GET,
             new HttpEntity<>(this.headers), RegisteredService[].class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {

@@ -56,7 +56,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
     }
 
     @Override
-    public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
+    public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
         try {
             val devices = readDevicesFromResource();
 
