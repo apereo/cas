@@ -35,7 +35,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     }
 
     @Override
-    public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
             val documents = mongoTemplate.findAll(SamlMetadataDocument.class, this.collectionName);
             return documents

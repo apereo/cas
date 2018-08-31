@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 /**
@@ -53,7 +53,7 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         val list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
         list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;

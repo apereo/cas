@@ -35,7 +35,7 @@ public class MultifactorTrustedDevicesReportEndpoint {
      * @return the set
      */
     @ReadOperation
-    public Set<MultifactorAuthenticationTrustRecord> devices() {
+    public Set<? extends MultifactorAuthenticationTrustRecord> devices() {
         val unit = DateTimeUtils.toChronoUnit(properties.getTimeUnit());
         val onOrAfter = LocalDateTime.now().minus(properties.getExpiration(), unit);
         this.mfaTrustEngine.expire(onOrAfter);
@@ -49,7 +49,7 @@ public class MultifactorTrustedDevicesReportEndpoint {
      * @return the set
      */
     @ReadOperation
-    public Set<MultifactorAuthenticationTrustRecord> devicesForUser(@Selector final String username) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> devicesForUser(@Selector final String username) {
         val unit = DateTimeUtils.toChronoUnit(properties.getTimeUnit());
         val onOrAfter = LocalDateTime.now().minus(properties.getExpiration(), unit);
         this.mfaTrustEngine.expire(onOrAfter);

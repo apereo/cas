@@ -122,7 +122,7 @@ public class DefaultCasEventListenerTests {
                 }
 
                 @Override
-                public Collection<? extends CasEvent> load() {
+                public Collection<CasEvent> load() {
                     return events;
                 }
             };

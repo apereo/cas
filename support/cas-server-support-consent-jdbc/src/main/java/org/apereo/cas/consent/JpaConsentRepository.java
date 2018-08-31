@@ -37,7 +37,7 @@ public class JpaConsentRepository implements ConsentRepository {
     private transient EntityManager entityManager;
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+    public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
         try {
             return this.entityManager.createQuery(SELECT_QUERY.concat("where r.principal = :principal"),
                 ConsentDecision.class).setParameter("principal", principal).getResultList();
@@ -50,7 +50,7 @@ public class JpaConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions() {
+    public Collection<? extends ConsentDecision> findConsentDecisions() {
         try {
             return this.entityManager.createQuery(SELECT_QUERY, ConsentDecision.class).getResultList();
         } catch (final NoResultException e) {

@@ -43,7 +43,7 @@ public abstract class AbstractU2FDeviceRepositoryTests {
         deviceRepository.registerDevice("casuser", r2);
     }
 
-    protected void verifyDevicesAvailable(final Collection<DeviceRegistration> devs) {
+    protected void verifyDevicesAvailable(final Collection<? extends DeviceRegistration> devs) {
         assertEquals(2, devs.size());
     }
 

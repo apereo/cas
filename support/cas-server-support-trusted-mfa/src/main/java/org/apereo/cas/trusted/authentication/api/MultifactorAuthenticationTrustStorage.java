@@ -31,7 +31,7 @@ public interface MultifactorAuthenticationTrustStorage {
      * @param onOrAfterDate the on or after date
      * @return the records
      */
-    Set<MultifactorAuthenticationTrustRecord> get(LocalDateTime onOrAfterDate);
+    Set<? extends MultifactorAuthenticationTrustRecord> get(LocalDateTime onOrAfterDate);
 
     /**
      * Get record.
@@ -39,7 +39,7 @@ public interface MultifactorAuthenticationTrustStorage {
      * @param principal the principal id
      * @return the records
      */
-    Set<MultifactorAuthenticationTrustRecord> get(String principal);
+    Set<? extends MultifactorAuthenticationTrustRecord> get(String principal);
 
     /**
      * Get record by date.
@@ -48,7 +48,7 @@ public interface MultifactorAuthenticationTrustStorage {
      * @param onOrAfterDate the on or after date
      * @return the optional
      */
-    Set<MultifactorAuthenticationTrustRecord> get(String principal, LocalDateTime onOrAfterDate);
+    Set<? extends MultifactorAuthenticationTrustRecord> get(String principal, LocalDateTime onOrAfterDate);
 
     /**
      * Set trusted record.
