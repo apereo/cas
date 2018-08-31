@@ -117,7 +117,7 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
     }
 
     @Override
-    public Collection<OneTimeTokenAccount> load() {
+    public Collection<? extends OneTimeTokenAccount> load() {
         try {
             return readAccountsFromJsonRepository();
         } catch (final Exception e) {

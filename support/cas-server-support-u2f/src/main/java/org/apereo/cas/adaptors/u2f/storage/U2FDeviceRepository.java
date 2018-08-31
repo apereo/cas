@@ -18,7 +18,7 @@ public interface U2FDeviceRepository {
      * @param username the username
      * @return the registrations
      */
-    Collection<DeviceRegistration> getRegisteredDevices(String username);
+    Collection<? extends DeviceRegistration> getRegisteredDevices(String username);
 
     /**
      * Add registration.

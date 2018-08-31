@@ -39,7 +39,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint {
      * @return the collection
      */
     @ReadOperation
-    public Collection<OneTimeTokenAccount> load() {
+    public Collection<? extends OneTimeTokenAccount> load() {
         return repository.load();
     }
 

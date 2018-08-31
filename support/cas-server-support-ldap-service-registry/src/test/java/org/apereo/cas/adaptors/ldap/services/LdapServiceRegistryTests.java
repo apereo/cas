@@ -35,7 +35,7 @@ public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
         getServiceRegistry().save(buildRegisteredServiceInstance(8080));
         val services = getServiceRegistry().load();
         assertFalse(services.isEmpty());
-        val rs = getServiceRegistry().findServiceById(services.get(0).getId());
+        val rs = getServiceRegistry().findServiceById(services.stream().findFirst().orElse(null).getId());
         val originalId = rs.getId();
         assertNotNull(rs);
         rs.setId(666);

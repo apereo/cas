@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Registry of all RegisteredServices.
@@ -34,7 +34,7 @@ public interface ServiceRegistry {
      *
      * @return the collection of services.
      */
-    List<RegisteredService> load();
+    Collection<RegisteredService> load();
 
     /**
      * Find service by the numeric id.
