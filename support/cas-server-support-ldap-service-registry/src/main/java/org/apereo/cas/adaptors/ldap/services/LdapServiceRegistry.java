@@ -17,7 +17,7 @@ import org.ldaptive.Response;
 import org.ldaptive.SearchResult;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -148,7 +148,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         val list = new ArrayList<RegisteredService>();
         try {
             val response = getSearchResultResponse();

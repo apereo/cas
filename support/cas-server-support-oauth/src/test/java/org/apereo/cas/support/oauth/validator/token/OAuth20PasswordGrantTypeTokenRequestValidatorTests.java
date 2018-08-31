@@ -60,7 +60,6 @@ public class OAuth20PasswordGrantTypeTokenRequestValidatorTests {
         when(serviceManager.getAllServices()).thenReturn(CollectionUtils.wrapList(
                 supportingService, nonSupportingService, promiscuousService));
 
-
         this.validator = new OAuth20PasswordGrantTypeTokenRequestValidator(new RegisteredServiceAccessStrategyAuditableEnforcer(),
             serviceManager, new WebApplicationServiceFactory());
     }
