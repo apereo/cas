@@ -74,7 +74,7 @@ public interface TicketRegistry {
      *
      * @return collection of tickets currently stored in the registry. Tickets might or might not be valid i.e. expired.
      */
-    Collection<Ticket> getTickets();
+    Collection<? extends Ticket> getTickets();
 
     /**
      * Gets tickets as a stream having applied a predicate.
@@ -82,7 +82,7 @@ public interface TicketRegistry {
      * @param predicate the predicate
      * @return the tickets
      */
-    default Stream<Ticket> getTickets(final Predicate<Ticket> predicate) {
+    default Stream<? extends Ticket> getTickets(final Predicate<Ticket> predicate) {
         return getTicketsStream().filter(predicate);
     }
 
@@ -113,7 +113,7 @@ public interface TicketRegistry {
      *
      * @return the tickets stream
      */
-    default Stream<Ticket> getTicketsStream() {
+    default Stream<? extends Ticket> getTicketsStream() {
         return getTickets().stream();
     }
 

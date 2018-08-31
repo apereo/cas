@@ -19,7 +19,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link CouchbaseServiceRegistry}.
@@ -85,7 +84,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         try {
             val allKeys = executeViewQueryForAllServices();
             val services = new ArrayList<RegisteredService>();
