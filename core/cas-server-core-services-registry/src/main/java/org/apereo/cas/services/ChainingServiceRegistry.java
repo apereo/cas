@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -37,11 +36,11 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         return serviceRegistries.stream()
             .map(ServiceRegistry::load)
             .filter(Objects::nonNull)
-            .flatMap(List::stream)
+            .flatMap(Collection::stream)
             .collect(Collectors.toList());
     }
 

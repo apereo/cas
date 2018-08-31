@@ -31,7 +31,7 @@ public class UserAgentAuthenticationRequestRiskCalculator extends BaseAuthentica
     protected BigDecimal calculateScore(final HttpServletRequest request,
                                         final Authentication authentication,
                                         final RegisteredService service,
-                                        final Collection<CasEvent> events) {
+                                        final Collection<? extends CasEvent> events) {
 
         val agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         LOGGER.debug("Filtering authentication events for user agent [{}]", agent);

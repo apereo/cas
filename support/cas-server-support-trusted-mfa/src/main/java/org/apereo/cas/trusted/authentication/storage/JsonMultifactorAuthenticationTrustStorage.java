@@ -65,7 +65,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         expire(onOrAfterDate);
         return storage
             .values()
@@ -76,7 +76,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         return storage
             .values()
             .stream()

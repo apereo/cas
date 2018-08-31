@@ -33,14 +33,14 @@ public interface ConsentRepository extends Serializable {
      * @param principal the principal
      * @return the consent decision
      */
-    Collection<ConsentDecision> findConsentDecisions(String principal);
+    Collection<? extends ConsentDecision> findConsentDecisions(String principal);
 
     /**
      * Gets consent decisions.
      *
      * @return the consent decision
      */
-    Collection<ConsentDecision> findConsentDecisions();
+    Collection<? extends ConsentDecision> findConsentDecisions();
 
     /**
      * Store consent decision.

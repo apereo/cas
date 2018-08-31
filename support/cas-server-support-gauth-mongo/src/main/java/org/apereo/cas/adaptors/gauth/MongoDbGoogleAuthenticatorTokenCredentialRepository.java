@@ -58,7 +58,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOne
     }
 
     @Override
-    public Collection<OneTimeTokenAccount> load() {
+    public Collection<? extends OneTimeTokenAccount> load() {
         try {
             val r = this.mongoTemplate.findAll(GoogleAuthenticatorAccount.class, this.collectionName);
             return r.stream()

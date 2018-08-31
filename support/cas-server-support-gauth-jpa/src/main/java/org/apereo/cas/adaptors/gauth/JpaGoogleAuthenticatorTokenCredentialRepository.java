@@ -62,7 +62,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     }
 
     @Override
-    public Collection<OneTimeTokenAccount> load() {
+    public Collection<? extends OneTimeTokenAccount> load() {
         try {
             val results = new ArrayList<OneTimeTokenAccount>();
             val r = this.entityManager.createQuery("SELECT r FROM " + ENTITY_NAME + " r", GoogleAuthenticatorAccount.class).getResultList();

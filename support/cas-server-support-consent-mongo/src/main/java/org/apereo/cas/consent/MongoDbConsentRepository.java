@@ -34,13 +34,13 @@ public class MongoDbConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+    public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
         val query = new Query(Criteria.where("principal").is(principal));
         return this.mongoTemplate.find(query, ConsentDecision.class, this.collectionName);
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions() {
+    public Collection<? extends ConsentDecision> findConsentDecisions() {
         return this.mongoTemplate.findAll(ConsentDecision.class, this.collectionName);
     }
 

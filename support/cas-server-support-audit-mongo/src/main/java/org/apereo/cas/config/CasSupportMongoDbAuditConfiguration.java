@@ -31,9 +31,7 @@ public class CasSupportMongoDbAuditConfiguration {
         val factory = new MongoDbConnectionFactory();
         val mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
-        val mgmr = new MongoDbAuditTrailManager(mongoTemplate, mongo.getCollection());
-        mgmr.setAsynchronous(mongo.isAsynchronous());
-        return mgmr;
+        return new MongoDbAuditTrailManager(mongoTemplate, mongo.getCollection(), mongo.isAsynchronous());
     }
 
     @Bean

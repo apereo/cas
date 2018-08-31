@@ -69,7 +69,7 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
     }
 
     @Override
-    public Collection<OneTimeTokenAccount> load() {
+    public Collection<? extends OneTimeTokenAccount> load() {
         return accounts.values();
     }
 }

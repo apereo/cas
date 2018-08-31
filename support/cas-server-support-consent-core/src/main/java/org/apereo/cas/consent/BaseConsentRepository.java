@@ -40,14 +40,14 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+    public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
         return this.consentDecisions.stream()
             .filter(d -> d.getPrincipal().equals(principal))
             .collect(Collectors.toSet());
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions() {
+    public Collection<? extends ConsentDecision> findConsentDecisions() {
         return new ArrayList<>(this.consentDecisions);
     }
 

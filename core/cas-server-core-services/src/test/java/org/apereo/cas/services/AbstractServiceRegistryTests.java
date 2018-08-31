@@ -133,7 +133,7 @@ public abstract class AbstractServiceRegistryTests {
         this.serviceRegistry.save(buildRegisteredServiceInstance(200));
         val services = this.serviceRegistry.load();
         assertFalse(services.isEmpty());
-        val rs = (AbstractRegisteredService) this.serviceRegistry.findServiceById(services.get(0).getId());
+        val rs = (AbstractRegisteredService) this.serviceRegistry.findServiceById(services.stream().findFirst().orElse(null).getId());
         assertNotNull(rs);
         rs.setEvaluationOrder(9999);
         rs.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());

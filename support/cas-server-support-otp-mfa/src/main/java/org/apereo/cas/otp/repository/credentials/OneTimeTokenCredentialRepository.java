@@ -25,7 +25,7 @@ public interface OneTimeTokenCredentialRepository {
      *
      * @return the collection
      */
-    Collection<OneTimeTokenAccount> load();
+    Collection<? extends OneTimeTokenAccount> load();
 
     /**
      * Save.

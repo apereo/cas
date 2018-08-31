@@ -34,12 +34,12 @@ public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Optional<YubiKeyAccount> getAccount(final String uid) {
+    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
         return Optional.empty();
     }
 
     @Override
-    public Collection<YubiKeyAccount> getAccounts() {
+    public Collection<? extends YubiKeyAccount> getAccounts() {
         return new ArrayList<>(0);
     }
 }
