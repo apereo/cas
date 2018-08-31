@@ -20,6 +20,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -79,7 +80,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
             val tkt = ticketCatalog.find(ticketId);
             val sql = String.format("select t from %s t where t.id = :id", getTicketEntityName(tkt));
@@ -87,11 +88,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
             query.setParameter("id", ticketId);
             query.setLockMode(this.lockType);
             val result = query.getSingleResult();
-            if (result != null && result.isExpired()) {
-                LOGGER.debug("Ticket [{}] has expired and will be removed from the database", result.getId());
-                return null;
+            if (predicate.test(result)) {
+                return result;
             }
-            return result;
+            return null;
         } catch (final Exception e) {
             LOGGER.error("Error getting ticket [{}] from registry.", ticketId, e);
         }

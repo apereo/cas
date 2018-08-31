@@ -9,6 +9,7 @@ import org.infinispan.Cache;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 /**
  * This is {@link InfinispanTicketRegistry}. Infinispan is a distributed in-memory
@@ -48,18 +49,16 @@ public class InfinispanTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         val encTicketId = encodeTicketId(ticketId);
         if (ticketId == null) {
             return null;
         }
         val result = decodeTicket(Ticket.class.cast(cache.get(encTicketId)));
-        if (result != null && result.isExpired()) {
-            LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
-            this.cache.remove(encTicketId);
-            return null;
+        if (predicate.test(result)) {
+            return result;
         }
-        return result;
+        return null;
     }
 
     @Override

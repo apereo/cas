@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 /**
  * A Ticket Registry storage backend which uses the memcached protocol.
@@ -117,7 +118,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
             LOGGER.debug("Locating ticket id [{}]", ticketId);
             val encTicketId = encodeTicketId(ticketId);
@@ -132,11 +133,10 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
                 LOGGER.debug("Got ticket [{}] from the registry.", t);
 
                 val decoded = decodeTicket(t);
-                if (decoded == null || decoded.isExpired()) {
-                    LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
-                    return null;
+                if (predicate.test(decoded)) {
+                    return decoded;
                 }
-                return decoded;
+                return null;
             }
             LOGGER.debug("Ticket [{}] not found in the registry.", encTicketId);
             return null;

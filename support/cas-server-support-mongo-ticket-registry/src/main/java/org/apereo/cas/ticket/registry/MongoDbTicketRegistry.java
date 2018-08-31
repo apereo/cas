@@ -26,6 +26,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -180,7 +181,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
             LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
             val encTicketId = encodeTicketId(ticketId);
@@ -200,12 +201,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 val decoded = deserializeTicketFromMongoDocument(d);
                 val result = decodeTicket(decoded);
 
-                if (result != null && result.isExpired()) {
-                    LOGGER.debug("Ticket [{}] has expired and is now removed from the collection", result.getId());
-                    deleteSingleTicket(result.getId());
-                    return null;
+                if (predicate.test(result)) {
+                    return result;
                 }
-                return result;
+                return null;
             }
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}]: [{}]", ticketId, e);
