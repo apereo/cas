@@ -61,9 +61,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      * Makes the assumption that the CAS server date and the Mongo server date are in sync.
      */
     private static Date getExpireAt(final Ticket ticket) {
+        val expirationPolicy = ticket.getExpirationPolicy();
         val ttl = ticket instanceof TicketState
-            ? ticket.getExpirationPolicy().getTimeToLive((TicketState) ticket)
-            : ticket.getExpirationPolicy().getTimeToLive();
+            ? expirationPolicy.getTimeToLive((TicketState) ticket)
+            : expirationPolicy.getTimeToLive();
 
         if (ttl < 1) {
             return null;

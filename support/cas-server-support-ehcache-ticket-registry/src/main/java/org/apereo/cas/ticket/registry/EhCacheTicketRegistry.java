@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 
+import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.ehcache.CacheManager;
@@ -59,16 +60,17 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         val ticket = encodeTicket(ticketToAdd);
         val element = new Element(ticket.getId(), ticket);
 
-        var idleValue = ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue();
+        val expirationPolicy = ticketToAdd.getExpirationPolicy();
+        var idleValue = expirationPolicy.getTimeToIdle().intValue();
         if (idleValue <= 0) {
-            idleValue = ticketToAdd.getExpirationPolicy().getTimeToLive().intValue();
+            idleValue = expirationPolicy.getTimeToLive().intValue();
         }
         if (idleValue <= 0) {
             idleValue = Integer.MAX_VALUE;
         }
         element.setTimeToIdle(idleValue);
 
-        var aliveValue = ticketToAdd.getExpirationPolicy().getTimeToLive().intValue();
+        var aliveValue = expirationPolicy.getTimeToLive().intValue();
         if (aliveValue <= 0) {
             aliveValue = Integer.MAX_VALUE;
         }
@@ -79,14 +81,9 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         cache.put(element);
     }
 
-    /**
-     * Either the element is removed from the cache
-     * or it's not found in the cache and is already removed.
-     * Thus the result of this op would always be true.
-     */
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        val ticket = getTicket(ticketId);
+        val ticket = getTicket(ticketId, Predicates.alwaysTrue());
         if (ticket == null) {
             LOGGER.debug("Ticket [{}] cannot be retrieved from the cache", ticketId);
             return true;
