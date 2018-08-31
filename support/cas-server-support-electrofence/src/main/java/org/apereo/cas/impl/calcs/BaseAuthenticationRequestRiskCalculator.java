@@ -67,7 +67,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
     protected BigDecimal calculateScore(final HttpServletRequest request,
                                         final Authentication authentication,
                                         final RegisteredService service,
-                                        final Collection<CasEvent> events) {
+                                        final Collection<? extends CasEvent> events) {
         return HIGHEST_RISK_SCORE;
     }
 
@@ -77,7 +77,7 @@ public abstract class BaseAuthenticationRequestRiskCalculator implements Authent
      * @param principal the principal
      * @return the cas ticket granting ticket created events for
      */
-    protected Collection<CasEvent> getCasTicketGrantingTicketCreatedEventsFor(final String principal) {
+    protected Collection<? extends CasEvent> getCasTicketGrantingTicketCreatedEventsFor(final String principal) {
         val type = CasTicketGrantingTicketCreatedEvent.class.getName();
         LOGGER.debug("Retrieving events of type [{}] for [{}]", type, principal);
 
