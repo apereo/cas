@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.pac4j.oauth.client.HiOrgServerClient;
 
 /**
  * This is {@link DelegatedClientFactory}.
@@ -481,6 +482,26 @@ public class DelegatedClientFactory {
         cfg.setLogoutUrl(oidc.getLogoutUrl());
         return cfg;
     }
+    
+    /**
+     * Configure HiOrg-Server client.
+     *
+     * @param properties the properties
+     */
+    protected void configureHiOrgServerClient(final Collection<BaseClient> properties) {
+        final Pac4jDelegatedAuthenticationProperties.HiOrgServer hiOrgServer = pac4jProperties.getHiOrgServer();
+        if (StringUtils.isNotBlank(hiOrgServer.getId()) && StringUtils.isNotBlank(hiOrgServer.getSecret())) {
+            final HiOrgServerClient client = new HiOrgServerClient(hiOrgServer.getId(), hiOrgServer.getSecret());
+            configureClient(client, hiOrgServer);
+
+            if (StringUtils.isNotBlank(hiOrgServer.getScope())) {
+                client.getConfiguration().setScope(hiOrgServer.getScope());
+            }
+
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
+            properties.add(client);
+        }
+    }
 
     /**
      * Build set of clients configured.
@@ -507,6 +528,7 @@ public class DelegatedClientFactory {
         configureWordpressClient(clients);
         configureBitbucketClient(clients);
         configureOrcidClient(clients);
+        configureHiOrgServerClient(clients);
 
         return clients;
     }
