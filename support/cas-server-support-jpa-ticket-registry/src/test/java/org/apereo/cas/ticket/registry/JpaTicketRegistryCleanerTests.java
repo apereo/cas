@@ -92,16 +92,16 @@ public class JpaTicketRegistryCleanerTests {
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
+    @Qualifier("defaultTicketFactory")
+    protected TicketFactory ticketFactory;
+
+    @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
     @Autowired
     @Qualifier("ticketRegistryCleaner")
     private TicketRegistryCleaner ticketRegistryCleaner;
-
-    @Autowired
-    @Qualifier("defaultTicketFactory")
-    protected TicketFactory ticketFactory;
 
     @Test
     public void verifyOperation() {
