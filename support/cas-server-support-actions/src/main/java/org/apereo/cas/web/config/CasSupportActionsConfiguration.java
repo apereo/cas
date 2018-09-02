@@ -27,6 +27,7 @@ import org.apereo.cas.web.flow.login.RedirectUnauthorizedServiceUrlAction;
 import org.apereo.cas.web.flow.login.RenderLoginAction;
 import org.apereo.cas.web.flow.login.SendTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
+import org.apereo.cas.web.flow.login.SetServiceUnauthorizedRedirectUrlAction;
 import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutAction;
@@ -181,6 +182,13 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     public Action initializeLoginAction() {
         return new InitializeLoginAction(servicesManager);
+    }
+
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "setServiceUnauthorizedRedirectUrlAction")
+    @Bean
+    public Action setServiceUnauthorizedRedirectUrlAction() {
+        return new SetServiceUnauthorizedRedirectUrlAction(servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "renderLoginFormAction")
