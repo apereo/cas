@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
+
 import java.util.Map;
 
 /**
@@ -9,12 +11,12 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Getter
 public class PrincipalException extends AuthenticationException {
 
-    /**
-     * Serialization metadata.
-     */
     private static final long serialVersionUID = -6590363469748313596L;
+
+    private final String code = "service.principal.resolution.error";
 
     /**
      * Creates a new instance.

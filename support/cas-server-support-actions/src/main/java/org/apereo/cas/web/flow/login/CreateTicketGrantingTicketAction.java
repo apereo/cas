@@ -83,18 +83,25 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
     @Override
     public Event doExecute(final RequestContext context) {
         val service = WebUtils.getService(context);
+        val registeredService = WebUtils.getRegisteredService(context);
         val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
 
         LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
         val authenticationResult = this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
+        LOGGER.debug("Finalizing authentication event...");
         val authentication = buildFinalAuthentication(authenticationResult);
         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicket);
         val tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
 
+        if (registeredService.getAccessStrategy() != null) {
+            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+        }
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthenticationResult(authenticationResult, context);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
 
+        LOGGER.debug("Calculating authentication warning messages...");
         val warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
         if (!warnings.isEmpty()) {
             val attributes = new LocalAttributeMap(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
@@ -125,8 +132,10 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
                                                                       final Authentication authentication, final String ticketGrantingTicket) {
         try {
             if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
+                LOGGER.debug("Attempting to issue a new ticket-granting ticket...");
                 return this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
             }
+            LOGGER.debug("Updating the existing ticket-granting ticket [{}]...", ticketGrantingTicket);
             val tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
             tgt.getAuthentication().update(authentication);
             this.centralAuthenticationService.updateTicket(tgt);
