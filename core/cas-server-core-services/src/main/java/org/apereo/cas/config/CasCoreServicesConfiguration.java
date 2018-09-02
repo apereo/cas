@@ -36,7 +36,7 @@ import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -162,7 +162,7 @@ public class CasCoreServicesConfiguration {
             new ArrayList<ServiceRegistryExecutionPlanConfigurer>(0));
         val plan = new DefaultServiceRegistryExecutionPlan();
         configurers.forEach(c -> {
-            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring service registry [{}]", name);
             c.configureServiceRegistry(plan);
         });

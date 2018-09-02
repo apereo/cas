@@ -52,6 +52,7 @@ import org.apereo.cas.util.http.HttpClient;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
@@ -391,7 +392,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public TicketCatalog ticketCatalog(final List<TicketCatalogConfigurer> configurers) {
         val plan = new DefaultTicketCatalog();
         configurers.forEach(c -> {
-            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring ticket metadata registration plan [{}]", name);
             c.configureTicketCatalog(plan);
         });

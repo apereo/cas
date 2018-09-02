@@ -23,6 +23,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -85,7 +86,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     public AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan(final List<AuditTrailRecordResolutionPlanConfigurer> configurers) {
         val plan = new DefaultAuditTrailRecordResolutionPlan();
         configurers.forEach(c -> {
-            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Registering audit trail manager [{}]", name);
             c.configureAuditTrailRecordResolutionPlan(plan);
         });
@@ -98,7 +99,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     public AuditTrailExecutionPlan auditTrailExecutionPlan(final List<AuditTrailExecutionPlanConfigurer> configurers) {
         val plan = new DefaultAuditTrailExecutionPlan();
         configurers.forEach(c -> {
-            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Registering audit trail manager [{}]", name);
             c.configureAuditTrailExecutionPlan(plan);
         });
