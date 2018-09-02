@@ -66,7 +66,8 @@ public class AuditableContext {
     /**
      * retrievePrincipalAttributesFromReleasePolicy.
      */
-    private Boolean retrievePrincipalAttributesFromReleasePolicy;
+    @Builder.Default
+    private Boolean retrievePrincipalAttributesFromReleasePolicy = Boolean.FALSE;
 
     /**
      * Properties.
