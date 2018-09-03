@@ -1,9 +1,5 @@
 package org.apereo.cas.authentication;
 
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
@@ -15,6 +11,11 @@ import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
 import org.apereo.cas.util.CollectionUtils;
+
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 
 import javax.security.auth.login.CredentialNotFoundException;
@@ -43,8 +44,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
         final Authentication authentication = builder.build();
         final Principal primaryPrincipal = authentication.getPrincipal();
 
-        @NonNull
-        final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
+        @NonNull final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
         final String targetUserId = surrogateCredentials.getSurrogateUsername();
 
         try {
@@ -61,7 +61,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                     .service(transaction.getService())
                     .authentication(authentication)
                     .registeredService(svc)
-                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
+                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
                     .build();
 
                 final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(serviceAccessAudit);
