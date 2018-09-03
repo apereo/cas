@@ -302,7 +302,6 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         return actions;
     }
 
-
     private void createDuoFlowStartActions(final DynamicFlowModelBuilder modelBuilder) {
         final List<AbstractActionModel> starts = new ArrayList<>();
         starts.add(new EvaluateModel("initialFlowSetupAction"));
