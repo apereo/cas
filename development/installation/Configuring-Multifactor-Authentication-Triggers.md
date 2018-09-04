@@ -21,7 +21,8 @@ The execution order of multifactor authentication triggers is outlined below:
 9. Global Authentication Attribute
 10. Applications
 11. Grouper
-12. Other
+12. Entity ID Request Parameter
+13. Other
 
 Each trigger should properly try to ignore the authentication request, if applicable configuration is not found for its activation and execution. Also note that various CAS modules present and inject their own *internal triggers* into the CAS application runtime in order to translate protocol-specific authentication requests (such as those presented by SAML2 or OpenID Connect) into multifactor authentication flows.
 
@@ -268,7 +269,8 @@ class SampleGroovyEventResolver {
         def service = args[0]
         def registeredService = args[1]
         def authentication = args[2]
-        def logger = args[3]
+        def requestContext = args[3]
+        def logger = args[4]
 
         ...
 
