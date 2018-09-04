@@ -47,7 +47,7 @@ public class CasCoreConfiguration {
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
@@ -115,6 +115,6 @@ public class CasCoreConfiguration {
             authenticationPolicyFactory(),
             principalFactory.getIfAvailable(),
             cipherExecutor.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer);
+            registeredServiceAccessStrategyEnforcer.getIfAvailable());
     }
 }
