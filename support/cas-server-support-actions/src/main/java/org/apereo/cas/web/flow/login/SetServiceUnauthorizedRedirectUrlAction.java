@@ -6,6 +6,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -26,7 +27,7 @@ public class SetServiceUnauthorizedRedirectUrlAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
+        val registeredService = WebUtils.getRegisteredService(requestContext);
         if (registeredService != null && registeredService.getAccessStrategy() != null) {
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(requestContext, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
         }
