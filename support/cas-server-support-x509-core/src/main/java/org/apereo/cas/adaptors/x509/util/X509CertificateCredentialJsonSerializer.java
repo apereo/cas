@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.x509.util;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -35,9 +36,9 @@ public class X509CertificateCredentialJsonSerializer extends JsonSerializer<X509
                                   final SerializerProvider serializers, final TypeSerializer typeSer) throws IOException {
         try {
 
-            typeSer.writeTypePrefixForObject(value, generator);
+            typeSer.writeTypePrefix(generator, typeSer.typeId(value, JsonToken.START_OBJECT));
             serialize(value, generator, serializers);
-            typeSer.writeTypeSuffixForObject(value, generator);
+            typeSer.writeTypePrefix(generator, typeSer.typeId(value, JsonToken.START_OBJECT));
         } catch (final Exception e) {
             throw new JsonMappingException(generator, "Unable to serialize X509 certificate", e);
         }
