@@ -33,6 +33,7 @@ import lombok.val;
 import net.sf.ehcache.Cache;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -63,11 +64,11 @@ public class X509AuthenticationConfiguration {
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -165,7 +166,7 @@ public class X509AuthenticationConfiguration {
         val revChecker = getRevocationCheckerFrom(x509);
         return new X509CredentialsAuthenticationHandler(
             x509.getName(),
-            servicesManager,
+            servicesManager.getIfAvailable(),
             x509PrincipalFactory(),
             StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern())
                 ? RegexUtils.createPattern(x509.getRegExTrustedIssuerDnPattern())
@@ -203,34 +204,36 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509SubjectPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
-        val r = new X509SubjectPrincipalResolver(attributeRepository,
+        return new X509SubjectPrincipalResolver(
+            attributeRepository.getIfAvailable(),
             x509PrincipalFactory(),
             x509.getPrincipal().isReturnNull(),
             x509.getPrincipal().getPrincipalAttribute(),
             x509.getPrincipalDescriptor());
-        return r;
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectDNPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
-        val r = new X509SubjectDNPrincipalResolver(attributeRepository,
+        val principal = x509.getPrincipal();
+        return new X509SubjectDNPrincipalResolver(
+            attributeRepository.getIfAvailable(),
             x509PrincipalFactory(),
-            x509.getPrincipal().isReturnNull(),
-            x509.getPrincipal().getPrincipalAttribute());
-        return r;
+            principal.isReturnNull(),
+            principal.getPrincipalAttribute());
     }
 
     @Bean
     @RefreshScope
     public PrincipalResolver x509SubjectAlternativeNameUPNPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
-        val r = new X509SubjectAlternativeNameUPNPrincipalResolver(attributeRepository,
+        val principal = x509.getPrincipal();
+        return new X509SubjectAlternativeNameUPNPrincipalResolver(
+            attributeRepository.getIfAvailable(),
             x509PrincipalFactory(),
-            x509.getPrincipal().isReturnNull(),
-            x509.getPrincipal().getPrincipalAttribute());
-        return r;
+            principal.isReturnNull(),
+            principal.getPrincipalAttribute());
     }
 
     @Bean
@@ -242,24 +245,28 @@ public class X509AuthenticationConfiguration {
 
     private X509SerialNumberPrincipalResolver getX509SerialNumberPrincipalResolver(final X509Properties x509) {
         val radix = x509.getPrincipalSNRadix();
+        val principal = x509.getPrincipal();
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
-                return new X509SerialNumberPrincipalResolver(attributeRepository,
+                return new X509SerialNumberPrincipalResolver(
+                    attributeRepository.getIfAvailable(),
                     x509PrincipalFactory(),
-                    x509.getPrincipal().isReturnNull(),
-                    x509.getPrincipal().getPrincipalAttribute(),
+                    principal.isReturnNull(),
+                    principal.getPrincipalAttribute(),
                     radix, x509.isPrincipalHexSNZeroPadding());
             }
-            return new X509SerialNumberPrincipalResolver(attributeRepository,
+            return new X509SerialNumberPrincipalResolver(
+                attributeRepository.getIfAvailable(),
                 x509PrincipalFactory(),
-                x509.getPrincipal().isReturnNull(),
-                x509.getPrincipal().getPrincipalAttribute(),
+                principal.isReturnNull(),
+                principal.getPrincipalAttribute(),
                 radix, false);
         }
-        return new X509SerialNumberPrincipalResolver(attributeRepository,
+        return new X509SerialNumberPrincipalResolver(
+            attributeRepository.getIfAvailable(),
             x509PrincipalFactory(),
-            x509.getPrincipal().isReturnNull(),
-            x509.getPrincipal().getPrincipalAttribute());
+            principal.isReturnNull(),
+            principal.getPrincipalAttribute());
     }
 
     @ConditionalOnMissingBean(name = "x509PrincipalFactory")
@@ -272,7 +279,7 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
-        return new X509SerialNumberAndIssuerDNPrincipalResolver(attributeRepository,
+        return new X509SerialNumberAndIssuerDNPrincipalResolver(attributeRepository.getIfAvailable(),
             x509PrincipalFactory(),
             x509.getPrincipal().isReturnNull(),
             x509.getPrincipal().getPrincipalAttribute(),
@@ -283,10 +290,11 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509CommonNameEDIPIPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
-        return new X509CommonNameEDIPIPrincipalResolver(attributeRepository,
+        val principal = x509.getPrincipal();
+        return new X509CommonNameEDIPIPrincipalResolver(attributeRepository.getIfAvailable(),
             x509PrincipalFactory(),
-            x509.getPrincipal().isReturnNull(),
-            x509.getPrincipal().getPrincipalAttribute());
+            principal.isReturnNull(),
+            principal.getPrincipalAttribute());
     }
 
     @ConditionalOnMissingBean(name = "x509AuthenticationEventExecutionPlanConfigurer")

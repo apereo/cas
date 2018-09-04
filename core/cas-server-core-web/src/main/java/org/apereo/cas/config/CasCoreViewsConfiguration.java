@@ -8,6 +8,7 @@ import org.apereo.cas.web.view.ThemeFileTemplateResolver;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,7 +33,7 @@ public class CasCoreViewsConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ThymeleafProperties thymeleafProperties;
+    private ObjectProvider<ThymeleafProperties> thymeleafProperties;
 
     @Bean
     public AbstractTemplateResolver chainingTemplateViewResolver() {
@@ -67,12 +68,13 @@ public class CasCoreViewsConfiguration {
     }
 
     private void configureTemplateViewResolver(final AbstractConfigurableTemplateResolver resolver) {
-        resolver.setCacheable(thymeleafProperties.isCache());
-        resolver.setCharacterEncoding(thymeleafProperties.getEncoding().name());
-        resolver.setCheckExistence(thymeleafProperties.isCheckTemplateLocation());
+        val props = thymeleafProperties.getIfAvailable();
+        resolver.setCacheable(props.isCache());
+        resolver.setCharacterEncoding(props.getEncoding().name());
+        resolver.setCheckExistence(props.isCheckTemplateLocation());
         resolver.setForceTemplateMode(true);
         resolver.setOrder(0);
         resolver.setSuffix(".html");
-        resolver.setTemplateMode(thymeleafProperties.getMode());
+        resolver.setTemplateMode(props.getMode());
     }
 }

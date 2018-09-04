@@ -1,10 +1,13 @@
 package org.apereo.cas;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.io.Serializable;
 
 /**
  * This is {@link MongoDbProperty}.
@@ -15,8 +18,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 @Getter
 @Setter
-public class MongoDbProperty {
+@EqualsAndHashCode
+public class MongoDbProperty implements Serializable {
 
+    private static final long serialVersionUID = -8152946700415601078L;
+    
     @Id
     private String id;
 

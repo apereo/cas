@@ -58,18 +58,19 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
-    private HttpClient supportsTrustStoreSslSocketFactoryHttpClient;
+    private ObjectProvider<HttpClient> supportsTrustStoreSslSocketFactoryHttpClient;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
-        return new HttpBasedServiceCredentialsAuthenticationHandler(null, servicesManager,
+        return new HttpBasedServiceCredentialsAuthenticationHandler(null,
+            servicesManager.getIfAvailable(),
             proxyPrincipalFactory(), Integer.MIN_VALUE,
-            supportsTrustStoreSslSocketFactoryHttpClient);
+            supportsTrustStoreSslSocketFactoryHttpClient.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
@@ -88,8 +89,11 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         val props = casProperties.getAuthn().getAccept();
-        val h = new AcceptUsersAuthenticationHandler(props.getName(), servicesManager,
-            acceptUsersPrincipalFactory(), null, getParsedUsers());
+        val h = new AcceptUsersAuthenticationHandler(props.getName(),
+            servicesManager.getIfAvailable(),
+            acceptUsersPrincipalFactory(),
+            null,
+            getParsedUsers());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder()));
         h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration());
         h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(props.getCredentialCriteria()));
@@ -183,7 +187,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
-                    val h = new JaasAuthenticationHandler(jaas.getName(), servicesManager,
+                    val h = new JaasAuthenticationHandler(jaas.getName(), servicesManager.getIfAvailable(),
                         jaasPrincipalFactory(), jaas.getOrder());
 
                     h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
