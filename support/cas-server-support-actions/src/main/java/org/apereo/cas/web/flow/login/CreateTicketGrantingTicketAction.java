@@ -168,6 +168,9 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
     }
 
     private boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
+        if (auth1 == null && auth2 == null) {
+            return false;
+        }
         if ((auth1 == null && auth2 != null) || (auth1 != null && auth2 == null)) {
             return false;
         }
