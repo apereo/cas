@@ -45,21 +45,21 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
+    private ObjectProvider<HttpClient> httpClient;
 
     @Autowired
-    private UrlValidator urlValidator;
+    private ObjectProvider<UrlValidator> urlValidator;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -68,15 +68,15 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @ConditionalOnMissingBean(name = "singleLogoutServiceLogoutUrlBuilder")
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
-        return new DefaultSingleLogoutServiceLogoutUrlBuilder(this.urlValidator);
+        return new DefaultSingleLogoutServiceLogoutUrlBuilder(this.urlValidator.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceMessageHandler")
     @Bean
     public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler() {
-        return new DefaultSingleLogoutServiceMessageHandler(httpClient,
+        return new DefaultSingleLogoutServiceMessageHandler(httpClient.getIfAvailable(),
             logoutBuilder(),
-            servicesManager,
+            servicesManager.getIfAvailable(),
             singleLogoutServiceLogoutUrlBuilder(),
             casProperties.getSlo().isAsynchronous(),
             authenticationServiceSelectionPlan.getIfAvailable());
@@ -118,7 +118,7 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
                 .stream()
                 .forEach(t -> {
                     LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, ticketGrantingTicket.getId());
-                    ticketRegistry.deleteTicket(t);
+                    ticketRegistry.getIfAvailable().deleteTicket(t);
                 }));
         }
     }
