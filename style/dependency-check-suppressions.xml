@@ -1,6 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress>
+        <cve>CVE-2011-4461</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-1131</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-2402</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2011-1068</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-0085</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-8012</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2001-0265</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2001-0381</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2005-0366</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-11040</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-11039</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2013-6870</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-2578</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-3147</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-4857</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-4858</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2016-4859</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2017-5607</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2017-5880</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2018-11409</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2017-12972</cve>
     </suppress>
     <suppress>
@@ -573,9 +633,41 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
+   file name: signalfx-java-0.0.41.jar (shaded: org.eclipse.jetty:jetty-util:8.1.19.v20160209)
+   ]]></notes>
+        <filePath regex="true">.*/signalfx-java-0\.0\.41\.jar/META-INF/maven/org\.eclipse\.jetty/jetty-(http|util|websocket)/pom\.xml</filePath>
+        <cve>CVE-2017-7656</cve>
+        <cve>CVE-2017-7657</cve>
+        <cve>CVE-2017-7658</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
    Identifies various current activemq packages as old versions of activemq.
    ]]></notes>
         <gav regex="true">^org\.apache\.activemq:activemq-.*:.*$</gav>
         <cpe>cpe:/a:apache:activemq</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: hazelcast-kubernetes-1.1.0.jar
+   ]]></notes>
+        <gav regex="true">^com\.hazelcast:hazelcast-kubernetes:.*$</gav>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: signalfx-java-0.0.41.jar (shaded: org.eclipse.jetty:jetty-util:8.1.19.v20160209)
+   ]]></notes>
+        <filePath regex="true">.*/ehcache-2\.10\.5\.jar/rest-management-private-classpath/META-INF/maven/org\.eclipse\.jetty/jetty-(security|server|servlet|continuation|http|util|websocket)/pom\.xml</filePath>
+        <cve>CVE-2017-7656</cve>
+        <cve>CVE-2017-7657</cve>
+        <cve>CVE-2017-7658</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+   file name: kubernetes-client-3.0.3.jar
+   ]]></notes>
+        <gav regex="true">^io\.fabric8:kubernetes-client:.*$</gav>
+        <cpe>cpe:/a:kubernetes:kubernetes</cpe>
     </suppress>
 </suppressions>

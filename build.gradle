@@ -69,6 +69,32 @@ if (rootProject.continuousIntegrationBuild) {
     }
 }
 
+apply plugin: "org.owasp.dependencycheck"
+dependencyCheck {
+    /*
+     * Specifies if the build should be failed if a CVSS score equal
+     * to or above a specified level is identified.
+     */
+    failBuildOnCVSS = 7
+    skipTestGroups = true
+    suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
+    analyzers {
+        assemblyEnabled = false
+        swiftEnabled = false
+        cocoapodsEnabled = false
+        nspEnabled = false
+        autoconfEnabled = false
+        cmakeEnabled = false
+        pathToMono = false
+        nuspecEnabled = false
+        rubygemsEnabled = false
+        pyPackageEnabled = false
+        pyDistributionEnabled = false
+        nexusEnabled = false
+        centralEnabled = false
+    }
+}
+
 allprojects {
     apply plugin: "idea"
     apply plugin: "eclipse"
@@ -78,7 +104,7 @@ allprojects {
     apply plugin: "groovy"
 
     project.ext["forceBootifulArtifact"] = null
-    
+
     if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
         apply plugin: "nebula.lint"
         gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
@@ -132,6 +158,8 @@ allprojects {
 }
 
 subprojects {
+    task dependencyCheckAnalyze(type: org.owasp.dependencycheck.gradle.tasks.Analyze)
+
     task allDependenciesInsight(type: DependencyInsightReportTask,
             description: "Produce insight information for all dependencies") {
         doLast {}
@@ -153,8 +181,7 @@ subprojects {
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
     apply plugin: "propdeps-eclipse"
-    apply plugin: "org.owasp.dependencycheck"
-    
+
     apply from: rootProject.file("gradle/tasks.gradle")
     apply from: rootProject.file("gradle/tests.gradle")
 
@@ -293,34 +320,9 @@ subprojects {
         }
     }
 
-    dependencyCheck {
-        /*
-         * Specifies if the build should be failed if a CVSS score equal
-         * to or above a specified level is identified.
-         */
-        failBuildOnCVSS = 7
-        skipTestGroups = true
-        suppressionFile = file("$rootProject.projectDir/style/dependency-check-suppressions.xml")
-        analyzers {
-            assemblyEnabled = false
-            swiftEnabled = false
-            cocoapodsEnabled = false
-            nspEnabled = false
-            autoconfEnabled = false
-            cmakeEnabled = false
-            pathToMono = false
-            nuspecEnabled = false
-            rubygemsEnabled = false
-            pyPackageEnabled = false
-            pyDistributionEnabled = false
-            nexusEnabled = false
-            centralEnabled = false
-        }
-    }
-
     if (!Boolean.getBoolean("skipFindbugs")) {
         spotbugs {
-            toolVersion = "${findbugsVersion}"
+            toolVersion = "${spotbugsVersion}"
             sourceSets = [sourceSets.main]
             ignoreFailures = true
             reportsDir = file("$project.buildDir/findbugsReports")

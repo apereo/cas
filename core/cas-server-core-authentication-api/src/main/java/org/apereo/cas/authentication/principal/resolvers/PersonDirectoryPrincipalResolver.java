@@ -141,7 +141,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         attributes.entrySet().forEach(entry -> {
             val key = entry.getKey();
             val values = CollectionUtils.toCollection(entry.getValue(), ArrayList.class);
-            LOGGER.debug("Found attribute [{}] with value(s)", key, values);
+            LOGGER.debug("Found attribute [{}] with value(s) [{}]", key, values);
             if (StringUtils.isNotBlank(this.principalAttributeName) && key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {
                     LOGGER.debug("[{}] is empty, using [{}] for principal", this.principalAttributeName, extractedPrincipalId);

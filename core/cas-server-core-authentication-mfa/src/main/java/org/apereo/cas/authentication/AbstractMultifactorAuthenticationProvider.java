@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -15,9 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
-import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.UNDEFINED;
 
 /**
  * The {@link AbstractMultifactorAuthenticationProvider} is responsible for
@@ -77,19 +75,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     @Override
     public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
-        var failureMode = CLOSED;
-        if (StringUtils.isNotBlank(this.globalFailureMode)) {
-            failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
-            LOGGER.debug("Using global multi-factor failure mode for [{}] defined as [{}]", service, failureMode);
-        }
-        if (service != null) {
-            LOGGER.debug("Evaluating multifactor authentication policy for service [{}}", service);
-            val policy = service.getMultifactorPolicy();
-            if (policy != null && policy.getFailureMode() != UNDEFINED) {
-                failureMode = policy.getFailureMode();
-                LOGGER.debug("Multi-factor failure mode for [{}] is defined as [{}]", service.getServiceId(), failureMode);
-            }
-        }
+        val failureMode = determineFailureMode(service);
         if (failureMode != RegisteredServiceMultifactorPolicy.FailureModes.NONE) {
             if (isAvailable()) {
                 return true;
@@ -120,4 +106,24 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     public boolean matches(final String identifier) {
         return StringUtils.isNotBlank(getId()) ? getId().matches(identifier) : false;
     }
+
+    @Override
+    public RegisteredServiceMultifactorPolicy.FailureModes determineFailureMode(final RegisteredService service) {
+        var failureMode = FailureModes.CLOSED;
+        if (StringUtils.isNotBlank(this.globalFailureMode)) {
+            failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
+            LOGGER.debug("Using global multifactor failure mode for [{}] defined as [{}]", service, failureMode);
+        }
+        if (service != null) {
+            LOGGER.debug("Evaluating multifactor authentication policy for service [{}]", service.getServiceId());
+            val policy = service.getMultifactorPolicy();
+            if (policy != null && policy.getFailureMode() != null && policy.getFailureMode() != FailureModes.NONE) {
+                failureMode = policy.getFailureMode();
+                LOGGER.debug("Multifactor failure mode for [{}] is defined as [{}]", service.getServiceId(), failureMode);
+            }
+        }
+        LOGGER.debug("Final failure mode has been determined to be [{}]", failureMode);
+        return failureMode;
+    }
+
 }

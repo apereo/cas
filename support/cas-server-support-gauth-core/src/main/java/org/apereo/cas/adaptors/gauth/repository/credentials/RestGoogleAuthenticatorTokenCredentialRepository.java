@@ -46,7 +46,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
     }
 
     @Override
-    public Collection<OneTimeTokenAccount> load() {
+    public Collection<? extends OneTimeTokenAccount> load() {
         val rest = gauth.getRest();
         val headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));

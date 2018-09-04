@@ -29,18 +29,18 @@ public class ClientCredential implements Credential {
      */
     public static final String AUTHENTICATION_ATTRIBUTE_CLIENT_NAME = "clientName";
 
-    /**
-     * The serialVersionUID.
-     */
     private static final long serialVersionUID = -7883301304291894763L;
+
     /**
      * The internal credentials provided by the authentication at the provider.
      */
     private final transient org.pac4j.core.credentials.Credentials credentials;
+
     /**
      * Name of the client that established the credential.
      */
     private final String clientName;
+
     private boolean typedIdUsed = true;
     /**
      * The user profile after authentication.

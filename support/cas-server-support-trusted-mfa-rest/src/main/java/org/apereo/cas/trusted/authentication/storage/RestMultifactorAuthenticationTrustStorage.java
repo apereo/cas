@@ -30,12 +30,12 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     private final CasConfigurationProperties properties;
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
         return getResults(getEndpointUrl(principal));
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
         return getResults(getEndpointUrl(onOrAfterDate.toString()));
     }
 

@@ -414,10 +414,10 @@ ext.libraries = [
         findbugscontrib         : dependencies.create("com.mebigfatguy.fb-contrib:fb-contrib:$findbugsContribVersion") {
             force = true
         },
-        findbugs                : dependencies.create("com.github.spotbugs:spotbugs:$findbugsVersion") {
+        findbugs                : dependencies.create("com.github.spotbugs:spotbugs:$spotbugsVersion") {
             force = true
         },
-        findbugsannotations     : dependencies.create("com.github.spotbugs:spotbugs-annotations:$findbugsVersion") {
+        findbugsannotations     : dependencies.create("com.github.spotbugs:spotbugs-annotations:$spotbugsVersion") {
             force = true
         },
         findbugssec             : dependencies.create("com.h3xstream.findsecbugs:findsecbugs-plugin:$findbugsSecVersion") {
@@ -429,6 +429,18 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.codehaus.groovy:groovy-console:$groovyVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    force = true
+                },
+                dependencies.create("org.codehaus.groovy:groovy-json:$groovyVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    force = true
+                },
+                dependencies.create("org.codehaus.groovy:groovy-xml:$groovyVersion") {
+                    exclude(group: "commons-cli", module: "commons-cli")
+                    force = true
+                },
+                dependencies.create("org.codehaus.groovy:groovy-datetime:$groovyVersion") {
                     exclude(group: "commons-cli", module: "commons-cli")
                     force = true
                 },
