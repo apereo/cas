@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.apereo.cas.web.report.util.ControllerUtils;
 
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -51,7 +50,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements 
     private static final String FILE_PATTERN_PARAM = "filePattern";
     private final Environment environment;
     private final ResourceLoader resourceLoader;
-    @NonNull
+
     private LoggerContext loggerContext;
     private Resource logConfigurationFile;
 

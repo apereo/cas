@@ -24,7 +24,6 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.data.annotation.Persistent;
 import org.springframework.data.convert.JodaTimeConverters;
 import org.springframework.data.convert.Jsr310Converters;
-import org.springframework.data.mapping.model.CamelCaseAbbreviatingFieldNamingStrategy;
 import org.springframework.data.mapping.model.FieldNamingStrategy;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
 import org.springframework.data.mongodb.MongoDbFactory;
@@ -195,13 +194,8 @@ public class MongoDbConnectionFactory {
         return initialEntitySet;
     }
 
-    private boolean abbreviateFieldNames() {
-        return false;
-    }
-
     private FieldNamingStrategy fieldNamingStrategy() {
-        return abbreviateFieldNames() ? new CamelCaseAbbreviatingFieldNamingStrategy()
-            : PropertyNameFieldNamingStrategy.INSTANCE;
+        return PropertyNameFieldNamingStrategy.INSTANCE;
     }
 
     /**
