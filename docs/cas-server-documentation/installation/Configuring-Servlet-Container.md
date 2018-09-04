@@ -32,7 +32,7 @@ updated usually for every release and surely are meant to and can be used in pro
 You **DO NOT** need to, but can if you want to, configure and deploy to an externally configured container. 
 
 <div class="alert alert-info"><strong>Do Less</strong><p>Remember that most if not all aspects of the embedded 
-container can be controlled via the CAS properties. See <a href="Configuration-Properties.html#embedded-tomcat">this guide</a> for more info.</p></div>
+container can be controlled via the CAS properties. See <a href="Configuration-Properties.html#embedded-apache-tomcat-container">this guide</a> for more info.</p></div>
 
 To see the relevant list of CAS properties, 
 please [review this guide](Configuration-Properties.html#embedded-container).
