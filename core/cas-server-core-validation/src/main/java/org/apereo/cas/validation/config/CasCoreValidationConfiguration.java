@@ -15,6 +15,7 @@ import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RegExUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,7 +38,7 @@ import java.util.List;
 public class CasCoreValidationConfiguration implements ServiceTicketValidationAuthorizerConfigurer {
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Bean
     @Scope(value = "prototype")
@@ -72,7 +73,7 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
 
     @Bean
     public ServiceTicketValidationAuthorizer requiredHandlersServiceTicketValidationAuthorizer() {
-        return new RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer(this.servicesManager);
+        return new RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer(this.servicesManager.getIfAvailable());
     }
 
     @Override
