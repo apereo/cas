@@ -62,7 +62,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicket);
         final TicketGrantingTicket tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
 
-        if (registeredService.getAccessStrategy() != null) {
+        if (registeredService != null && registeredService.getAccessStrategy() != null) {
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
         }
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
