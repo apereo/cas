@@ -27,7 +27,7 @@ public class DuoAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDa
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         if (builder.hasAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
             obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
-            builder.mergeAttribute(this.authenticationContextAttribute, authenticationHandler.getProviderId());
+            builder.mergeAttribute(this.authenticationContextAttribute, authenticationHandler.getName());
         }
     }
 

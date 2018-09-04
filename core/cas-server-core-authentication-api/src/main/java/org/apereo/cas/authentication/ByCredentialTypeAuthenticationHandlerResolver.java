@@ -24,4 +24,6 @@ public class ByCredentialTypeAuthenticationHandlerResolver implements Authentica
     public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
         return credentials.stream().anyMatch(transaction::hasCredentialOfType);
     }
+
+
 }

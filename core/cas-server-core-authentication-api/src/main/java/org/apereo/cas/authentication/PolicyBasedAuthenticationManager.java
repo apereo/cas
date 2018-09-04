@@ -204,8 +204,12 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                                    final AuthenticationHandler handler) throws GeneralSecurityException, PreventedException {
 
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
-
-        final AuthenticationHandlerExecutionResult result = handler.authenticate(credential);
+        final AuthenticationHandlerExecutionResult result = handler.authenticate(crede  plan.registerAuthenticationHandlerResolver(new AuthenticationHandlerResolver() {
+            @Override
+            public Set<AuthenticationHandler> resolve(Set<AuthenticationHandler> candidateHandlers, AuthenticationTransaction transaction) {
+                return CollectionUtils.wrapSet(candidateHandlers.stream().filter(c -> c.getName().equals(activeFlow)).findFirst().get());
+            }
+        });ntial);
         final String authenticationHandlerName = handler.getName();
         builder.addSuccess(authenticationHandlerName, result);
         LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", authenticationHandlerName, credential);
@@ -251,6 +255,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         LOGGER.debug("Candidate/Registered authentication handlers for this transaction are [{}]", handlers);
         final Collection<AuthenticationHandlerResolver> handlerResolvers = authenticationEventExecutionPlan.getAuthenticationHandlerResolvers(transaction);
         LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
+
 
         final Set<AuthenticationHandler> resolvedHandlers = handlerResolvers.stream()
             .filter(r -> r.supports(handlers, transaction))
