@@ -29,11 +29,16 @@ public class TerminateSessionAction extends AbstractAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TerminateSessionAction.class);
 
-    private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
-    private final CentralAuthenticationService centralAuthenticationService;
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    private final CookieRetrievingCookieGenerator warnCookieGenerator;
-    private final LogoutProperties logoutProperties;
+    /** The event factory. */
+    protected final EventFactorySupport eventFactorySupport = new EventFactorySupport();
+    /** The authentication service. */
+    protected final CentralAuthenticationService centralAuthenticationService;
+    /** The TGT cookie generator. */
+    protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    /** The warn cookie generator. */
+    protected final CookieRetrievingCookieGenerator warnCookieGenerator;
+    /** The logout properties. */
+    protected final LogoutProperties logoutProperties;
 
     public TerminateSessionAction(final CentralAuthenticationService centralAuthenticationService,
                                   final CookieRetrievingCookieGenerator tgtCookieGenerator,
@@ -109,7 +114,13 @@ public class TerminateSessionAction extends AbstractAction {
         }
     }
 
-    private static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
+    /**
+     * Check if the logout must be confirmed.
+     *
+     * @param requestContext the request context
+     * @return if the logout must be confirmed
+     */
+    protected static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameterMap().containsKey("LogoutRequestConfirmed");
     }

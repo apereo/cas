@@ -214,6 +214,7 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "terminateSessionAction")
     @RefreshScope
     public Action terminateSessionAction() {
         return new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
