@@ -105,7 +105,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     @Override
     public boolean supports(final Credential credential) {
         return (DuoCredential.class.isAssignableFrom(credential.getClass())
-                ||  credential instanceof DuoDirectCredential)
+                || credential instanceof DuoDirectCredential)
                 && supports((MfaCredential) credential);
     }
 }

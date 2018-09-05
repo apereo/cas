@@ -80,15 +80,15 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     }
 
     public DefaultDuoMultifactorAuthenticationProvider duoMultifactorAuthenticationProviders(final DuoSecurityMultifactorProperties duo) {
-            final BasicDuoSecurityAuthenticationService s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
-            final DefaultDuoMultifactorAuthenticationProvider duoP =
-                    new DefaultDuoMultifactorAuthenticationProvider(duo.getRegistrationUrl(), s);
-            duoP.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-            duoP.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
-            duoP.setOrder(duo.getRank());
-            duoP.setId(duo.getId());
-            applicationContext.getBeanFactory().registerSingleton(duoP.getId()+"-provider", duoP);
-            return duoP;
+        final BasicDuoSecurityAuthenticationService s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
+        final DefaultDuoMultifactorAuthenticationProvider duoP =
+                new DefaultDuoMultifactorAuthenticationProvider(duo.getRegistrationUrl(), s);
+        duoP.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        duoP.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
+        duoP.setOrder(duo.getRank());
+        duoP.setId(duo.getId());
+        applicationContext.getBeanFactory().registerSingleton(duoP.getId()+"-provider", duoP);
+        return duoP;
     }
 
     @Bean
@@ -136,11 +136,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @ConditionalOnMissingBean(name = "duoSecurityAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer duoSecurityAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> { duoAuthenticationHandler().stream().forEach(dh -> {
-                        plan.registerAuthenticationHandler(dh);
-                        plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator(dh));
-                });
+        return plan -> {
+            duoAuthenticationHandler().stream().forEach(dh -> {
+                plan.registerAuthenticationHandler(dh);
+                plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator(dh));
+            });
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(DuoCredential.class, DuoDirectCredential.class));
+
         };
     }
 

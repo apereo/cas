@@ -24,7 +24,7 @@ public class ByCredentialTypeAuthenticationHandlerResolver implements Authentica
     }
 
     @Override
-    public Set<AuthenticationHandler> resolve(Set<AuthenticationHandler> candidateHandlers, AuthenticationTransaction transaction) {
+    public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers, final AuthenticationTransaction transaction) {
         final Set<Credential> supportedCreds = supported(transaction.getCredentials());
         return candidateHandlers.stream().filter(h -> supportedCreds.stream().anyMatch(c -> h.supports(c)))
                 .collect(Collectors.toSet());

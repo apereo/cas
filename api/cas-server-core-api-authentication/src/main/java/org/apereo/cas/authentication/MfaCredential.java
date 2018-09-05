@@ -10,13 +10,15 @@ public interface MfaCredential {
 
     /**
      * Method returns the provider id of the configured provider that created this credential.
+     *
      * @return - the provider id
      */
     String getProviderId();
 
     /**
      * Method sets the provider id of the configured provider that created this credential.
-     * @return - the provider id
+     *
+     * @param providerId - the provider id
      */
     void setProviderId(String providerId);
 

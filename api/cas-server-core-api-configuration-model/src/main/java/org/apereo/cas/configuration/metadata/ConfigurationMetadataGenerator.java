@@ -108,7 +108,7 @@ public class ConfigurationMetadataGenerator {
         }
         final String buildDir = args[0];
         final String projectDir = args[1];
-       // new ConfigurationMetadataGenerator(buildDir, projectDir).execute();
+        new ConfigurationMetadataGenerator(buildDir, projectDir).execute();
     }
 
     /**

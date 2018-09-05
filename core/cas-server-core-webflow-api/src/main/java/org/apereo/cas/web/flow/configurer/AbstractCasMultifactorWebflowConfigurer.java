@@ -35,7 +35,7 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private final String MFA_INITIALIZE_BEAN_ID = "mfaInitializeAction";
+    private static final String MFA_INITIALIZE_BEAN_ID = "mfaInitializeAction";
 
     public AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
