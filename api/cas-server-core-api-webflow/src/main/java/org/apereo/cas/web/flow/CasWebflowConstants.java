@@ -571,4 +571,6 @@ public interface CasWebflowConstants {
      */
     String VIEW_ID_MFA_DENIED = "mfaDeniedView";
 
+    String STATE_ID_MFA_INITIALIZE = "mfaInitialize";
+
 }

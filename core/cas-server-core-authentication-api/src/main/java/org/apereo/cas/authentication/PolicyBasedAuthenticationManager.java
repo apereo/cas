@@ -204,12 +204,8 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                                    final AuthenticationHandler handler) throws GeneralSecurityException, PreventedException {
 
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
-        final AuthenticationHandlerExecutionResult result = handler.authenticate(crede  plan.registerAuthenticationHandlerResolver(new AuthenticationHandlerResolver() {
-            @Override
-            public Set<AuthenticationHandler> resolve(Set<AuthenticationHandler> candidateHandlers, AuthenticationTransaction transaction) {
-                return CollectionUtils.wrapSet(candidateHandlers.stream().filter(c -> c.getName().equals(activeFlow)).findFirst().get());
-            }
-        });ntial);
+
+        final AuthenticationHandlerExecutionResult result = handler.authenticate(credential);
         final String authenticationHandlerName = handler.getName();
         builder.addSuccess(authenticationHandlerName, result);
         LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", authenticationHandlerName, credential);
@@ -256,7 +252,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         final Collection<AuthenticationHandlerResolver> handlerResolvers = authenticationEventExecutionPlan.getAuthenticationHandlerResolvers(transaction);
         LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
 
-
         final Set<AuthenticationHandler> resolvedHandlers = handlerResolvers.stream()
             .filter(r -> r.supports(handlers, transaction))
             .map(r -> r.resolve(handlers, transaction))
@@ -274,7 +269,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         if (resolvedHandlers.isEmpty()) {
             throw new GeneralSecurityException("No authentication handlers could be resolved to support the authentication transaction");
         }
-        LOGGER.debug("Resolved and finalized authentication handlers to carry out this authentication transaction are [{}]", handlerResolvers);
+        LOGGER.debug("Resolved and finalized authentication handlers to carry out this authentication transaction are [{}]", resolvedHandlers);
         return resolvedHandlers;
     }
 

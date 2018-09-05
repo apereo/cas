@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.duo.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.duo.authn.BasicDuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
@@ -9,21 +8,17 @@ import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationMetaDataPopulator;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoDirectCredential;
 import org.apereo.cas.adaptors.duo.web.flow.action.DetermineDuoUserAccountAction;
-import org.apereo.cas.adaptors.duo.web.flow.action.DuoInitializeLoginAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
-import org.apereo.cas.authentication.DefaultVariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -34,7 +29,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -107,11 +101,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         return new DetermineDuoUserAccountAction();
     }
 
-    @Bean
-    public Action duoInitializeLoginAction() {
-        return new DuoInitializeLoginAction();
-    }
-
     private AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(final DuoAuthenticationHandler duoAuthenticationHandler) {
         return new DuoAuthenticationMetaDataPopulator(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 duoAuthenticationHandler);
@@ -148,12 +137,10 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Bean
     public AuthenticationEventExecutionPlanConfigurer duoSecurityAuthenticationEventExecutionPlanConfigurer() {
         return plan -> { duoAuthenticationHandler().stream().forEach(dh -> {
-                    plan.registerAuthenticationHandler(dh);
-                    plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator(dh));
+                        plan.registerAuthenticationHandler(dh);
+                        plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator(dh));
                 });
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(DuoCredential.class, DuoDirectCredential.class));
-            LOGGER.debug("#### Duo Plan Configurer called");
-
         };
     }
 
