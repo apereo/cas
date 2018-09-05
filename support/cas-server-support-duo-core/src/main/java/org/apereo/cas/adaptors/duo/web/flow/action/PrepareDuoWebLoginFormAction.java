@@ -27,10 +27,11 @@ public class PrepareDuoWebLoginFormAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         final Principal p = WebUtils.getAuthentication(requestContext).getPrincipal();
         final DuoMultifactorAuthenticationProvider duoProvider =
-                (DuoMultifactorAuthenticationProvider) WebUtils.getActiveMultifactorAuthenticationProvider(requestContext);
+                 requestContext.getFlowScope().get("provider", DuoMultifactorAuthenticationProvider.class);
 
         final DuoCredential c = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoCredential.class);
         c.setUsername(p.getId());
+        c.setProviderId(duoProvider.getId());
 
         final DuoSecurityAuthenticationService duoAuthenticationService = duoProvider.getDuoAuthenticationService();
         final MutableAttributeMap<Object> viewScope = requestContext.getViewScope();

@@ -23,6 +23,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
@@ -746,7 +747,9 @@ public class WebUtils {
      * @return MultifactorAuthenticationProvider
      */
     public static MultifactorAuthenticationProvider getActiveMultifactorAuthenticationProvider(final RequestContext context) {
-        return (MultifactorAuthenticationProvider) context.getConversationScope().get(PARAMETER_ACTIVE_MFA_PROVIDER);
+        final String flowId = context.getActiveFlow().getId();
+        return ApplicationContextProvider.getApplicationContext().getBean(flowId+"-provider", MultifactorAuthenticationProvider.class);
+        //return (MultifactorAuthenticationProvider) context.getConversationScope().get(PARAMETER_ACTIVE_MFA_PROVIDER);
     }
 
     /**

@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
@@ -45,26 +43,23 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
     private static final String STATE_ID_VIEW_LOGIN_FORM_DUO = "viewLoginFormDuo";
 
-    private final VariegatedMultifactorAuthenticationProvider provider;
 
     public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
                                            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                            final boolean enableDeviceRegistration, 
-                                           final VariegatedMultifactorAuthenticationProvider provider,
                                            final ApplicationContext applicationContext,
                                            final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration, applicationContext, casProperties);
-        this.provider = provider;
     }
 
     @Override
     protected void doInitialize() {
-        provider.getProviders().forEach(p -> {
-            final FlowDefinitionRegistry duoFlowRegistry = buildDuoFlowRegistry(p);
-            applicationContext.getAutowireCapableBeanFactory().initializeBean(duoFlowRegistry, p.getId());
+        casProperties.getAuthn().getMfa().getDuo().forEach(duo -> {
+            final FlowDefinitionRegistry duoFlowRegistry = buildDuoFlowRegistry(duo);
+            applicationContext.getAutowireCapableBeanFactory().initializeBean(duoFlowRegistry, duo.getId());
             final ConfigurableListableBeanFactory cfg = (ConfigurableListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
-            cfg.registerSingleton(p.getId(), duoFlowRegistry);
-            registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), p.getId(), duoFlowRegistry);
+            cfg.registerSingleton(duo.getId(), duoFlowRegistry);
+            registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getId(), duoFlowRegistry);
         });
 
         casProperties.getAuthn().getMfa().getDuo()
@@ -82,21 +77,21 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
                 });
     }
 
-    private FlowDefinitionRegistry buildDuoFlowRegistry(final MultifactorAuthenticationProvider p) {
+    private FlowDefinitionRegistry buildDuoFlowRegistry(final DuoSecurityMultifactorProperties duo) {
         final DynamicFlowModelBuilder modelBuilder = new DynamicFlowModelBuilder();
         
         createDuoFlowVariables(modelBuilder);
         createDuoFlowStartActions(modelBuilder);
         createDuoFlowStates(modelBuilder);
 
-        return createDuoFlowDefinitionRegistry(p, modelBuilder);
+        return createDuoFlowDefinitionRegistry(duo, modelBuilder);
     }
 
-    private FlowDefinitionRegistry createDuoFlowDefinitionRegistry(final MultifactorAuthenticationProvider p, final DynamicFlowModelBuilder modelBuilder) {
+    private FlowDefinitionRegistry createDuoFlowDefinitionRegistry(final DuoSecurityMultifactorProperties duo, final DynamicFlowModelBuilder modelBuilder) {
         final FlowModelHolder holder = new DefaultFlowModelHolder(modelBuilder);
         final FlowBuilder flowBuilder = new FlowModelFlowBuilder(holder);
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices);
-        builder.addFlowBuilder(flowBuilder, p.getId());
+        builder.addFlowBuilder(flowBuilder, duo.getId());
         return builder.build();
     }
 
@@ -288,7 +283,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     private LinkedList<AbstractActionModel> createDuoInitializeLoginAction(final List<AbstractStateModel> states) {
         final ActionStateModel actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         final LinkedList<AbstractActionModel> actions = new LinkedList<>();
-        actions.add(new EvaluateModel("duoInitializeLoginAction"));
+        actions.add(new EvaluateModel("initializeLoginAction"));
         actModel.setActions(actions);
 
         final LinkedList<TransitionModel> trans = new LinkedList<>();

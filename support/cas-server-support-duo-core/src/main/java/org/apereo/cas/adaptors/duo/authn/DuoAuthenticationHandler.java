@@ -3,15 +3,12 @@ package org.apereo.cas.adaptors.duo.authn;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MfaAuthenticationHandler;
+import org.apereo.cas.authentication.MfaCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
-import org.apereo.cas.web.support.WebUtils;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -25,12 +22,13 @@ import java.util.ArrayList;
  * @since 4.2
  */
 @Slf4j
-public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MfaAuthenticationHandler {
 
-    private final VariegatedMultifactorAuthenticationProvider provider;
+    private final DuoMultifactorAuthenticationProvider provider;
 
-    public DuoAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                    final VariegatedMultifactorAuthenticationProvider provider) {
+    public DuoAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                    final PrincipalFactory principalFactory,
+                                    final DuoMultifactorAuthenticationProvider provider) {
         super(name, servicesManager, principalFactory, null);
         this.provider = provider;
     }
@@ -56,7 +54,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
-            final DuoSecurityAuthenticationService duoAuthenticationService = getDuoAuthenticationService();
+            final DuoSecurityAuthenticationService duoAuthenticationService = provider.getDuoAuthenticationService();
             final DuoDirectCredential c = DuoDirectCredential.class.cast(credential);
             if (duoAuthenticationService.authenticate(c).getKey()) {
                 final Principal principal = c.getAuthentication().getPrincipal();
@@ -77,7 +75,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
                     + " and the signed Duo response is configured and passed. Credential received: " + duoCredential);
             }
 
-            final DuoSecurityAuthenticationService duoAuthenticationService = getDuoAuthenticationService();
+            final DuoSecurityAuthenticationService duoAuthenticationService = provider.getDuoAuthenticationService();
             final String duoVerifyResponse = duoAuthenticationService.authenticate(duoCredential).getValue();
             LOGGER.debug("Response from Duo verify: [{}]", duoVerifyResponse);
             final String primaryCredentialsUsername = duoCredential.getUsername();
@@ -99,28 +97,15 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         }
     }
 
-    private DuoSecurityAuthenticationService getDuoAuthenticationService() {
-        final RequestContext requestContext = RequestContextHolder.getRequestContext();
-        if (requestContext == null) {
-            throw new IllegalArgumentException("No request context is held to locate the Duo authentication service");
-        }
-        final MultifactorAuthenticationProvider pr = WebUtils.getActiveMultifactorAuthenticationProvider(requestContext);
-        return provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class).getDuoAuthenticationService();
+    @Override
+    public String getProviderId() {
+        return provider.getId();
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return DuoCredential.class.isAssignableFrom(credential.getClass())
-            || credential instanceof DuoDirectCredential;
-    }
-
-    /**
-     * Returns the id of the provider used for this authentication handler.
-     *
-     * @return - the provider id
-     */
-    public String getProviderId() {
-        final RequestContext requestContext = RequestContextHolder.getRequestContext();
-        return WebUtils.getActiveMultifactorAuthenticationProvider(requestContext).getId();
+        return (DuoCredential.class.isAssignableFrom(credential.getClass())
+                ||  credential instanceof DuoDirectCredential)
+                && supports((MfaCredential) credential);
     }
 }
