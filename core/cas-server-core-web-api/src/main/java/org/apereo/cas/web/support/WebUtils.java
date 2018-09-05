@@ -730,29 +730,6 @@ public class WebUtils {
     }
 
     /**
-     * Sets the MFA provider for the currently active flow into the conversation scope.
-     *
-     * @param context the context
-     * @param provider the provider that matches the current flow definitiion
-     */
-    public static void putActiveMultifactorAuthenticationProvider(final RequestContext context,
-                                                                  final MultifactorAuthenticationProvider provider) {
-        context.getConversationScope().put(PARAMETER_ACTIVE_MFA_PROVIDER, provider);
-    }
-
-    /**
-     * Gets the MFA provider that was set for current flow.
-     *
-     * @param context the context
-     * @return MultifactorAuthenticationProvider
-     */
-    public static MultifactorAuthenticationProvider getActiveMultifactorAuthenticationProvider(final RequestContext context) {
-        final String flowId = context.getActiveFlow().getId();
-        return ApplicationContextProvider.getApplicationContext().getBean(flowId+"-provider", MultifactorAuthenticationProvider.class);
-        //return (MultifactorAuthenticationProvider) context.getConversationScope().get(PARAMETER_ACTIVE_MFA_PROVIDER);
-    }
-
-    /**
      * Sets service user interface metadata.
      *
      * @param requestContext the request context
