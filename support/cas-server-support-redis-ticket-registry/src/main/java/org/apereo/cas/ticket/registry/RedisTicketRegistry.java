@@ -27,7 +27,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     private final RedisTemplate<String, Ticket> client;
 
     /**
-     * If not time out value is specified, expire the ticket immediately.
+     * Set to a negative value to never expire tickets
      *
      * @param ticket the ticket
      * @return timeout
@@ -35,7 +35,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     private static Long getTimeout(final Ticket ticket) {
         val ttl = ticket.getExpirationPolicy().getTimeToLive();
         if (ttl <= 0) {
-            return 1L;
+            return -1L;
         }
         return ttl;
     }
