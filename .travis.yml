@@ -58,6 +58,7 @@ env:
   - secure: "EoYJdh2vb3BIqkfS6UTiVjDci1CMDOgBba8dijE7ebG44rA7BTv/Y9rwi5wSds+bW0m3LvojyxKwD+47tLlRPw7AuuifZJfZvb7cGG+6vXdagU8NNaOuoRc0jMk4R/VlQ4uCN4X7/30FUyFfQl1+BPR/v2Q5YsyBz5kp4romnp8="
 before_install:
 - unset _JAVA_OPTIONS
+- gpg --version
 - echo $GPG_PSW | gpg --passphrase-fd 0 ./ci/gpg-keys.txt.gpg
 - echo $GPG_PSW | gpg --passphrase-fd 0 ./ci/gpg-ownertrust.txt.gpg
 - cat ./ci/gpg-keys.txt | base64 --decode | gpg --import
