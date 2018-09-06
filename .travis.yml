@@ -4,7 +4,7 @@
 # Install travis: gem install travis
 # Login to travis: travis login
 # Encrypt the token: travis encrypt VAR_NAME=VAR_VALUE -r apereo/cas --add env.global
-# Encrypted settings include SONATYPE_USER, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN, COVERALLS_REPO_TOKEN
+# Encrypted settings include GPG_PSW, SONATYPE_USER, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN, COVERALLS_REPO_TOKEN
 
 language: java
 sudo: required
@@ -55,8 +55,14 @@ env:
   - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
   - secure: "A0B1HJoHzvYGT4pPWPW1bQDS3Ne755vZ/VZ20OtVRgJHTTQfK13eKgH0VbYpEyZKJAFIexmaDVQ0XUdNukzrAoI6rKSm5vwam6qjELrvrKH2ovMgd1xvS2a5a1no5OT3QP3TXKKlmOTdS+Q5ZspjslBxpay3q7aKA9GMNvzChko="
   - secure: "o+KTglDoN49U9YawUsInKZ/83xxyeSB+WexfztRR+2dfCr049VXlJyurcE2/FygkentOY5DJU2UAnyZOEjyWoHth0q4MQOjIn0BE53yBFojxvcQPufgIR1Bc/BNaNeU2xRunNf8Rha/E/Dlwg5WdQT60Z0mdyDm7jHwodKxh7d4="
+  - secure: "EoYJdh2vb3BIqkfS6UTiVjDci1CMDOgBba8dijE7ebG44rA7BTv/Y9rwi5wSds+bW0m3LvojyxKwD+47tLlRPw7AuuifZJfZvb7cGG+6vXdagU8NNaOuoRc0jMk4R/VlQ4uCN4X7/30FUyFfQl1+BPR/v2Q5YsyBz5kp4romnp8="
 before_install:
 - unset _JAVA_OPTIONS
+- echo $GPG_PSW | gpg --passphrase-fd 0 ./ci/gpg-keys.txt.gpg
+- echo $GPG_PSW | gpg --passphrase-fd 0 ./ci/gpg-ownertrust.txt.gpg
+- cat ./ci/gpg-keys.txt | base64 --decode | gpg --import
+- cat ./ci/gpg-ownertrust.txt | base64 --decode | gpg --import-ownertrust
+- rm -Rf ./ci/gpg-keys.txt ./ci/gpg-ownertrust.txt
 - chmod -R 777 ./ci/*.sh
 - ./ci/init-travis-build.sh
 install: true
@@ -78,7 +84,7 @@ jobs:
     ############################################
   - stage: publish
     if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-    script: ./ci/publish-snapshots.sh
+    script: ./ci/publish-snapshots-release.sh
     ############################################
   - stage: build
     script: ./ci/build.sh
