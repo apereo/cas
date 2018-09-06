@@ -16,6 +16,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -59,16 +60,19 @@ public class DuoSecurityConfiguration {
     @Qualifier("warnCookieGenerator")
     private ObjectProvider<CookieGenerator> warnCookieGenerator;
 
+    @ConditionalOnMissingBean(name = "duoNonWebAuthenticationAction")
     @Bean
     public Action duoNonWebAuthenticationAction() {
         return new DuoDirectAuthenticationAction();
     }
 
+    @ConditionalOnMissingBean(name = "duoAuthenticationWebflowAction")
     @Bean
     public Action duoAuthenticationWebflowAction() {
         return new DuoAuthenticationWebflowAction(duoAuthenticationWebflowEventResolver());
     }
 
+    @ConditionalOnMissingBean(name = "duoAuthenticationWebflowEventResolver")
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {
         return new DuoAuthenticationWebflowEventResolver(
