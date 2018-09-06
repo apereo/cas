@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.login.mfa;
 
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -17,7 +18,9 @@ public class MfaInitializeAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
+        final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
         final String activeFlow = context.getActiveFlow().getId();
+
         final MultifactorAuthenticationProvider provider =
                 ApplicationContextProvider.getApplicationContext()
                         .getBeansOfType(MultifactorAuthenticationProvider.class)

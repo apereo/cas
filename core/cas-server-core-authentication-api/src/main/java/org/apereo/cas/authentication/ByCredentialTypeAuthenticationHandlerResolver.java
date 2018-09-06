@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ public class ByCredentialTypeAuthenticationHandlerResolver implements Authentica
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers, final AuthenticationTransaction transaction) {
         final Set<Credential> supportedCreds = supported(transaction.getCredentials());
         return candidateHandlers.stream().filter(h -> supportedCreds.stream().anyMatch(c -> h.supports(c)))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @Override
@@ -37,6 +38,6 @@ public class ByCredentialTypeAuthenticationHandlerResolver implements Authentica
 
     private Set<Credential> supported(final Collection<? extends Credential> candidateCredentials) {
         return candidateCredentials.stream().filter(c -> credentials.contains(c.getClass()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

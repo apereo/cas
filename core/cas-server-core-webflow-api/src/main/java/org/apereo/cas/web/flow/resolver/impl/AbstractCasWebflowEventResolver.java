@@ -496,7 +496,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(context);
             LOGGER.debug("Handling authentication transaction for credential [{}]", credential);
             final Service service = WebUtils.getService(context);
-            builder.getInitialAuthentication().get().addAttribute("providerId", context.getActiveFlow().getId());
             builder = this.authenticationSystemSupport.handleAuthenticationTransaction(service, builder, credential);
             LOGGER.debug("Issuing ticket-granting tickets for service [{}]", service);
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));

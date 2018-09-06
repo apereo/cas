@@ -31,7 +31,7 @@ public class PrepareDuoWebLoginFormAction extends AbstractAction {
 
         final DuoCredential c = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoCredential.class);
         c.setUsername(p.getId());
-        c.setProviderId(duoProvider.getId());
+        c.setMultifactorProviderId(duoProvider.getId());
 
         final DuoSecurityAuthenticationService duoAuthenticationService = duoProvider.getDuoAuthenticationService();
         final MutableAttributeMap<Object> viewScope = requestContext.getViewScope();

@@ -15,7 +15,7 @@ import org.springframework.core.OrderComparator;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -145,7 +145,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
         }
         return providers.stream()
                         .filter(p -> contexts.contains(p.getId()))
-                        .collect(Collectors.toCollection(HashSet::new));
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(
