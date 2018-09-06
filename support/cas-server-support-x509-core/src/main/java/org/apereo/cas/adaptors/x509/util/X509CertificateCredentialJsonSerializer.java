@@ -38,7 +38,7 @@ public class X509CertificateCredentialJsonSerializer extends JsonSerializer<X509
 
             typeSer.writeTypePrefix(generator, typeSer.typeId(value, JsonToken.START_OBJECT));
             serialize(value, generator, serializers);
-            typeSer.writeTypePrefix(generator, typeSer.typeId(value, JsonToken.START_OBJECT));
+            typeSer.writeTypeSuffix(generator, typeSer.typeId(value, JsonToken.START_OBJECT));
         } catch (final Exception e) {
             throw new JsonMappingException(generator, "Unable to serialize X509 certificate", e);
         }
