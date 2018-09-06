@@ -17,7 +17,7 @@ echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
 publishSnapshot=true
-if [ $casVersion == *-SNAPSHOT ]; then
+if [[ "$casVersion" == *"-SNAPSHOT" ]]; then
     currentChangeSetAffectsSnapshots
     retval=$?
     if [ "$retval" == 0 ]
@@ -33,9 +33,18 @@ if [ $casVersion == *-SNAPSHOT ]; then
 else
     echo "Publishing CAS release for version $casVersion"
     publishSnapshot=false
+
+    echo "Fetching keys..."
+    openssl aes-256-cbc -k "$GPG_PSW" -in ./ci/gpg-keys.enc -out ./ci/gpg-keys.txt -d
+    openssl aes-256-cbc -k "$GPG_PSW" -in ./ci/gpg-ownertrust.enc -out ./ci/gpg-ownertrust.txt -d
+    echo "Loading keys..."
+    cat ./ci/gpg-keys.txt | base64 --decode | gpg --import
+    cat ./ci/gpg-ownertrust.txt | base64 --decode | gpg --import-ownertrust
+    rm -Rf ./ci/gpg-keys.txt ./ci/gpg-ownertrust.txt
 fi
 
 if [ "$runBuild" = false ]; then
+    echo -e "Gradle build will not run under Travis job ${TRAVIS_JOB_NUMBER}"
     exit 0
 fi
 
