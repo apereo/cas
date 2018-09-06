@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
@@ -213,6 +214,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(RememberMeUsernamePasswordCredential.class);
         kryo.register(SimplePrincipal.class);
         kryo.register(HttpBasedServiceCredential.class);
+        kryo.register(OneTimePasswordCredential.class);
         kryo.register(PublicKeyFactoryBean.class);
         kryo.register(ReturnAllowedAttributeReleasePolicy.class);
         kryo.register(ReturnAllAttributeReleasePolicy.class);
