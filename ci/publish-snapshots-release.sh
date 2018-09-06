@@ -3,20 +3,9 @@ source ./ci/functions.sh
 
 runBuild=false
 echo "Reviewing changes that might affect the Gradle build..."
-currentChangeSetAffectsSnapshots
-retval=$?
-if [ "$retval" == 0 ]
-then
-    echo "Found changes that require snapshots to be published."
-    runBuild=true
-else
-    echo "Changes do NOT affect project snapshots."
-    runBuild=false
-fi
 
-if [ "$runBuild" = false ]; then
-    exit 0
-fi
+casVersion=$(./gradlew casVersion -q)
+echo "Current CAS version is $casVersion"
 
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
@@ -27,15 +16,46 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+publishSnapshot=true
+if [ $casVersion == *-SNAPSHOT ]; then
+    currentChangeSetAffectsSnapshots
+    retval=$?
+    if [ "$retval" == 0 ]
+    then
+        echo "Found changes that require snapshots to be published."
+        runBuild=true
+        publishSnapshot=true
+    else
+        echo "Changes do NOT affect project snapshots."
+        runBuild=false
+        publishSnapshot=false
+    fi
+else
+    echo "Publishing CAS release for version $casVersion"
+    publishSnapshot=false
+fi
+
+if [ "$runBuild" = false ]; then
+    exit 0
+fi
 
 echo -e "Installing NPM...\n"
 ./gradlew npmInstall --stacktrace -q
 
-gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
-        -DskipNpmLint=true -DskipNestedConfigMetadataGen=true \
-        -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
-        -DsonatypePassword=${SONATYPE_PWD} --parallel "
+if [ "$publishSnapshot" = true ]; then
+    echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+    gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
+            -DskipNpmLint=true \
+            -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
+            -DsonatypePassword=${SONATYPE_PWD} --parallel "
+else
+    echo -e "The build will deploy RELEASE artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+    gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
+                -DskipNpmLint=true \
+                -DpublishReleases=true -DsonatypeUsername=${SONATYPE_USER} \
+                -DsonatypePassword=${SONATYPE_PWD} "
+fi
+
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "

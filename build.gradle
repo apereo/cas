@@ -486,3 +486,9 @@ tasks.coveralls {
     description = "Uploads the aggregated coverage report to Coveralls"
     dependsOn jacocoRootReport
 }
+
+task casVersion(description: "Display current CAS version") {
+    doLast {
+        println project.version
+    }
+}
