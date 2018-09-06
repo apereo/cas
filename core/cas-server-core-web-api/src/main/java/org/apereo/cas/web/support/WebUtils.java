@@ -77,7 +77,6 @@ public class WebUtils {
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
     private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
     private static final String PARAMETER_SERVICE_UI_METADATA = "serviceUIMetadata";
-    private static final String PARAMETER_ACTIVE_MFA_PROVIDER = "activeMFAProvider";
 
     /**
      * Gets the http servlet request from the context.

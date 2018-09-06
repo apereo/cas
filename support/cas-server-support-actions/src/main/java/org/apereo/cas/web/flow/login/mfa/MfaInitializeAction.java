@@ -22,7 +22,7 @@ public class MfaInitializeAction extends AbstractAction {
         final String activeFlow = context.getActiveFlow().getId();
 
         final MultifactorAuthenticationProvider provider =
-                ApplicationContextProvider.getApplicationContext()
+                applicationContext
                         .getBeansOfType(MultifactorAuthenticationProvider.class)
                         .entrySet().stream().filter(e -> e.getKey().startsWith(activeFlow))
                         .map(e -> e.getValue())
