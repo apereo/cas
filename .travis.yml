@@ -58,11 +58,6 @@ env:
   - secure: "EoYJdh2vb3BIqkfS6UTiVjDci1CMDOgBba8dijE7ebG44rA7BTv/Y9rwi5wSds+bW0m3LvojyxKwD+47tLlRPw7AuuifZJfZvb7cGG+6vXdagU8NNaOuoRc0jMk4R/VlQ4uCN4X7/30FUyFfQl1+BPR/v2Q5YsyBz5kp4romnp8="
 before_install:
 - unset _JAVA_OPTIONS
-- openssl aes-256-cbc -k "$GPG_PSW" -in ./ci/gpg-keys.enc -out ./ci/gpg-keys.txt -d
-- openssl aes-256-cbc -k "$GPG_PSW" -in ./ci/gpg-ownertrust.enc -out ./ci/gpg-ownertrust.txt -d
-- cat ./ci/gpg-keys.txt | base64 --decode | gpg --import
-- cat ./ci/gpg-ownertrust.txt | base64 --decode | gpg --import-ownertrust
-- rm -Rf ./ci/gpg-keys.txt ./ci/gpg-ownertrust.txt
 - chmod -R 777 ./ci/*.sh
 - ./ci/init-travis-build.sh
 install: true
