@@ -33,23 +33,23 @@ import org.springframework.webflow.execution.Action;
 public class DuoSecurityConfiguration {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
@@ -57,7 +57,7 @@ public class DuoSecurityConfiguration {
 
     @Autowired
     @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
+    private ObjectProvider<CookieGenerator> warnCookieGenerator;
 
     @Bean
     public Action duoNonWebAuthenticationAction() {
@@ -71,12 +71,13 @@ public class DuoSecurityConfiguration {
 
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {
-        return new DuoAuthenticationWebflowEventResolver(authenticationSystemSupport,
-            centralAuthenticationService,
-            servicesManager,
-            ticketRegistrySupport,
-            warnCookieGenerator,
-            authenticationRequestServiceSelectionStrategies,
+        return new DuoAuthenticationWebflowEventResolver(
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
     }
 
