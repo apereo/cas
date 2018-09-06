@@ -27,18 +27,17 @@ public class PrepareDuoWebLoginFormAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        val p = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val authentication = WebUtils.getAuthentication(requestContext);
+        val p = authentication.getPrincipal();
 
         val c = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoCredential.class);
         c.setUsername(p.getId());
 
         val providerIds = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
-        val providers =
-            MultifactorAuthenticationUtils.getMultifactorAuthenticationProvidersByIds(providerIds, applicationContext);
+        val providers = MultifactorAuthenticationUtils.getMultifactorAuthenticationProvidersByIds(providerIds, applicationContext);
 
         providers.forEach(pr -> {
-            val duoAuthenticationService =
-                provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class).getDuoAuthenticationService();
+            val duoAuthenticationService = provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class).getDuoAuthenticationService();
             val viewScope = requestContext.getViewScope();
             viewScope.put("sigRequest", duoAuthenticationService.signRequestToken(p.getId()));
             viewScope.put("apiHost", duoAuthenticationService.getApiHost());
