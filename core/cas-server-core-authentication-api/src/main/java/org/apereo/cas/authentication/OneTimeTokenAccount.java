@@ -92,8 +92,15 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
 
     @Override
     public int compareTo(final OneTimeTokenAccount o) {
-        return new CompareToBuilder().append(this.scratchCodes, o.getScratchCodes()).append(this.validationCode, o.getValidationCode())
-            .append(this.secretKey, o.getSecretKey()).append(this.username, o.getUsername()).build();
+        
+        
+        return new CompareToBuilder()
+            .append(this.scratchCodes.toArray(new Integer[this.scratchCodes.size()]),
+                    o.getScratchCodes().toArray(new Integer[o.getScratchCodes().size()]))
+            .append(this.validationCode, o.getValidationCode())
+            .append(this.secretKey, o.getSecretKey())
+            .append(this.username, o.getUsername())
+            .build();
     }
 
     @Override

@@ -72,7 +72,7 @@ buildscript {
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.14"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2"
-        classpath "org.owasp:dependency-check-gradle:3.2.1"
+        classpath "org.owasp:dependency-check-gradle:3.3.1"
     }
 }
 
