@@ -351,13 +351,15 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param notBefore    the not before
      * @return the subject
      */
-    public Subject newSubject(final NameID nameId, final String recipient, final ZonedDateTime notOnOrAfter,
-                              final String inResponseTo, final ZonedDateTime notBefore) {
+    public Subject newSubject(final NameID nameId,
+                              final String recipient,
+                              final ZonedDateTime notOnOrAfter,
+                              final String inResponseTo,
+                              final ZonedDateTime notBefore) {
 
         LOGGER.debug("Building subject for NameID [{}] and recipient [{}], in response to [{}]", nameId, recipient, inResponseTo);
         val confirmation = newSamlObject(SubjectConfirmation.class);
         confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
-
         val data = newSamlObject(SubjectConfirmationData.class);
 
         if (StringUtils.isNotBlank(recipient)) {
@@ -387,6 +389,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         val subject = newSamlObject(Subject.class);
         if (nameId != null) {
             subject.setNameID(nameId);
+
+            nameId.detach();
+            confirmation.setNameID(nameId);
+
+            subject.setEncryptedID(null);
+            confirmation.setEncryptedID(null);
         }
         subject.getSubjectConfirmations().add(confirmation);
 

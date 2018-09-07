@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.SamlRegisteredServiceJpaTests;
 import org.apereo.cas.support.saml.SamlRegisteredServiceTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicyTests;
+import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -23,6 +24,7 @@ import org.junit.runners.Suite;
     SamlIdPConfigurationTests.class,
     SamlAttributeEncoderTests.class,
     SamlRegisteredServiceJpaTests.class,
+    SamlProfileSamlNameIdBuilderTests.class,
     SamlRegisteredServiceJpaMicrosoftSqlServerTests.class,
     PatternMatchingEntityIdAttributeReleasePolicyTests.class,
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class
