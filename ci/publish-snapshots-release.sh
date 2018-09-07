@@ -64,6 +64,7 @@ else
     gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
                 -DskipNpmLint=true -Dorg.gradle.project.signing.password=${GPG_PASSPHRASE}\
                 -Dorg.gradle.project.signing.secretKeyRingFile=~/.gnupg/secring.gpg \
+                -Dorg.gradle.project.signing.keyId=6A2EF9AA \
                 -DpublishReleases=true -DsonatypeUsername=${SONATYPE_USER} \
                 -DsonatypePassword=${SONATYPE_PWD} "
 fi
