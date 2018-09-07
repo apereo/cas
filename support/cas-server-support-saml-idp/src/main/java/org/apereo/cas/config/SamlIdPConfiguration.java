@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -286,7 +287,18 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder() {
-        return new SamlProfileSamlAttributeStatementBuilder(openSamlConfigBean.getIfAvailable(), new SamlAttributeEncoder());
+        return new SamlProfileSamlAttributeStatementBuilder(
+            openSamlConfigBean.getIfAvailable(),
+            samlAttributeEncoder(),
+            casProperties.getAuthn().getSamlIdp(),
+            samlObjectEncrypter());
+    }
+
+    @ConditionalOnMissingBean(name = "samlAttributeEncoder")
+    @Bean
+    @RefreshScope
+    public ProtocolAttributeEncoder samlAttributeEncoder() {
+        return new SamlAttributeEncoder();
     }
 
     @ConditionalOnMissingBean(name = "samlObjectEncrypter")

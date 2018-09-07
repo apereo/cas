@@ -98,6 +98,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     private boolean encryptAssertions;
 
     @Column
+    private boolean encryptAttributes;
+
+    @Column
     private String metadataCriteriaRoles = SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME;
 
     @Column(name = "mdCriteriaRmEmptyEntities")
