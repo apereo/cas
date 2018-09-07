@@ -26,5 +26,4 @@ public interface SSOSamlHttpRequestExtractor {
     Pair<? extends SignableSAMLObject, MessageContext> extract(HttpServletRequest request,
                                                                BaseHttpServletRequestXMLMessageDecoder decoder,
                                                                Class<? extends SignableSAMLObject> clazz);
-
 }

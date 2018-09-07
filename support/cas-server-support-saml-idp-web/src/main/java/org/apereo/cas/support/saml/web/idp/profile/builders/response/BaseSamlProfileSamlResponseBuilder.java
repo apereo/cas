@@ -34,8 +34,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.2
  */
 @Slf4j
-public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
-    extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
+public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
     /**
      * The Velocity engine factory.
@@ -210,14 +209,14 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
      * @throws SamlException the saml exception
      */
     protected SAMLObject encryptAssertion(final Assertion assertion,
-                                          final HttpServletRequest request, final HttpServletResponse response,
+                                          final HttpServletRequest request,
+                                          final HttpServletResponse response,
                                           final SamlRegisteredService service,
                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
         if (service.isEncryptAssertions()) {
             LOGGER.debug("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-            val encryptedAssertion =
-                this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
+            val encryptedAssertion = this.samlObjectEncrypter.encode(assertion, service, adaptor);
             return encryptedAssertion;
         }
         LOGGER.debug("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
