@@ -66,7 +66,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases  && !root
         jvmArgs = list
     }
 } else {
-    println """
+    logger.info """
 Ignoring application of Spring Boot plugin, since the build is preparing to publish SNAPSHOTs or releases,
 or the build is signaled to skip the plugin explicitly.
     """
