@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Logout & Single Logout
+category: SSO & SLO
 ---
 
 # Logout and Single Logout (SLO)
