@@ -68,10 +68,6 @@ after_script:
 stages:
 - initialize
 - publish
-- build
-- test
-- dependencies
-- spotbugs
 jobs:
   include:
   - stage: initialize
