@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Web Flow Acceptable Usage Policy
+category: User Interface
 ---
 
 # Acceptable Usage Policy

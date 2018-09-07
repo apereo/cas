@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Authentication Interrupt
+category: User Interface
 ---
 
 # Authentication Interrupt
