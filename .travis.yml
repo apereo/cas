@@ -13,7 +13,7 @@ services:
 - docker
 branches:
   only:
-  - 0.0.0
+  - 0.0.x
 # Enable once Travis CI fixed JDK setup
 #jdk:
   #- oraclejdk11
