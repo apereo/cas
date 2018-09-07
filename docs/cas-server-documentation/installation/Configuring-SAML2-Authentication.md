@@ -175,6 +175,7 @@ The following fields are available for SAML services:
 | `signAssertions`                     | Whether assertions should be signed. Default is `false`.
 | `signResponses`                      | Whether responses should be signed. Default is `true`.
 | `encryptAssertions`                  | Whether assertions should be encrypted. Default is `false`.
+| `encryptAttributes`                  | Whether assertion attributes should be encrypted. Default is `false`.
 | `requiredAuthenticationContextClass` | If defined, will specify the SAML authentication context class in the final response. If undefined, the authentication class will either be `urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified` or `urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport` depending on the SAML authentication request.
 | `requiredNameIdFormat`               | If defined, will force the indicated Name ID format in the final SAML response.
 | `metadataCriteriaPattern`            | If defined, will force an entity id filter on the metadata aggregate based on the `PredicateFilter` to include/exclude specific entity ids based on a valid regex pattern.
