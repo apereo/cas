@@ -41,6 +41,7 @@ else
     echo "Loading keys..."
     cat ./ci/gpg-keys.txt | base64 --decode | gpg --import
     cat ./ci/gpg-ownertrust.txt | base64 --decode | gpg --import-ownertrust
+    gpg --keyring secring.gpg --export-secret-keys > ~/.gnupg/secring.gpg
     rm -Rf ./ci/gpg-keys.txt ./ci/gpg-ownertrust.txt
 fi
 
@@ -61,7 +62,8 @@ if [ "$publishSnapshot" = true ]; then
 else
     echo -e "The build will deploy RELEASE artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
     gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
-                -DskipNpmLint=true \
+                -DskipNpmLint=true -Dorg.gradle.project.signing.password=${GPG_PASSPHRASE}\
+                -Dorg.gradle.project.signing.secretKeyRingFile=~/.gnupg/secring.gpg \
                 -DpublishReleases=true -DsonatypeUsername=${SONATYPE_USER} \
                 -DsonatypePassword=${SONATYPE_PWD} "
 fi
