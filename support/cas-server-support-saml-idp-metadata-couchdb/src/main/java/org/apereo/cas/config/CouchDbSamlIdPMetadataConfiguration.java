@@ -53,27 +53,31 @@ public class CouchDbSamlIdPMetadataConfiguration {
     private CouchDbConnectorFactory samlIdPCouchDbFactory;
 
     @Autowired
-    @Qualifier("defaultObjectMapperFactory")
+    @Qualifier("couchDbObjectMapperFactory")
     private ObjectMapperFactory objectMapperFactory;
 
+    @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbFactory")
     @RefreshScope
     @Bean
     public CouchDbConnectorFactory samlIdPCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance samlIdPMetadataCouchDbInstance() {
         return samlIdPCouchDbFactory.createInstance();
     }
 
+    @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector samlIdPMetadataCouchDbConnector() {
         return samlIdPCouchDbFactory.createConnector();
     }
 
+    @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbRepository")
     @Bean
     @RefreshScope
     public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository() {
@@ -102,6 +106,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
         return CipherExecutor.noOp();
     }
 
+    @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataGenerator")
     @Autowired
     @Bean(initMethod = "generate")
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
@@ -118,6 +123,7 @@ public class CouchDbSamlIdPMetadataConfiguration {
             samlIdPMetadataCouchDbRepository());
     }
 
+    @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataLocator")
     @Bean
     @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {

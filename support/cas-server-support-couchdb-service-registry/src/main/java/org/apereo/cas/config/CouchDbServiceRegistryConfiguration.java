@@ -13,6 +13,7 @@ import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -39,12 +40,14 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
     @Autowired
     private ObjectMapperFactory objectMapperFactory;
 
+    @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory serviceRegistryCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "serviceRegistryCouchDbRepository")
     @Bean
     @RefreshScope
     public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository() {
@@ -55,6 +58,7 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
         return serviceRepository;
     }
 
+    @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
     @Bean
     @RefreshScope
     public ServiceRegistry couchDbServiceRegistry() {

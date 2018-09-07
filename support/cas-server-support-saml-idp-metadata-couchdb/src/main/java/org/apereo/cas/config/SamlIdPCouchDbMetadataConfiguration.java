@@ -16,6 +16,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -46,24 +47,28 @@ public class SamlIdPCouchDbMetadataConfiguration implements SamlRegisteredServic
     @Qualifier("samlMetadataCouchDbFactory")
     private CouchDbConnectorFactory samlIdPCouchDbFactory;
 
+    @ConditionalOnMissingBean(name = "samlIdPCouchDbFactory")
     @RefreshScope
     @Bean
     public CouchDbConnectorFactory samlMetadataCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "samlIdPCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance samlIdPCouchDbInstance() {
         return samlIdPCouchDbFactory.createInstance();
     }
 
+    @ConditionalOnMissingBean(name = "samlIdPCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector samlIdPCouchDbConnector() {
         return samlIdPCouchDbFactory.createConnector();
     }
 
+    @ConditionalOnMissingBean(name = "samlMetadataDocumentCouchDbRepository")
     @Bean
     @RefreshScope
     public SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository() {
@@ -73,6 +78,7 @@ public class SamlIdPCouchDbMetadataConfiguration implements SamlRegisteredServic
         return repository;
     }
 
+    @ConditionalOnMissingBean(name = "couchDbSamlRegisteredServiceMetadataResolver")
     @Bean
     @RefreshScope
     public SamlRegisteredServiceMetadataResolver couchDbSamlRegisteredServiceMetadataResolver() {

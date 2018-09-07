@@ -25,8 +25,8 @@ public class CasCouchDbCoreConfiguration {
 
     @RefreshScope
     @Bean
-    @ConditionalOnMissingBean(name = "defaultObjectMapperFactory")
-    public ObjectMapperFactory defaultObjectMapperFactory() {
+    @ConditionalOnMissingBean(name = "couchDbObjectMapperFactory")
+    public ObjectMapperFactory couchDbObjectMapperFactory() {
         val objectMapperFactory = new CasObjectMapperFactory();
         ViewQuery.setDefaultObjectMapperFactory(objectMapperFactory);
         return objectMapperFactory;

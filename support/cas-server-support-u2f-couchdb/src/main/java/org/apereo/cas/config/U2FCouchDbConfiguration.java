@@ -16,6 +16,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -44,20 +45,24 @@ public class U2FCouchDbConfiguration {
     private CouchDbConnectorFactory u2fCouchDbFactory;
 
     @Autowired
-    @Qualifier("defaultObjectMapperFactory")
+    @Qualifier("couchDbObjectMapperFactory")
     private ObjectMapperFactory objectMapperFactory;
+
+    @ConditionalOnMissingBean(name = "u2fCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance u2fCouchDbInstance() {
         return u2fCouchDbFactory.createInstance();
     }
 
+    @ConditionalOnMissingBean(name = "u2fCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector u2fCouchDbConnector() {
         return u2fCouchDbFactory.createConnector();
     }
 
+    @ConditionalOnMissingBean(name = "couchDbU2fDeviceRegistrationRepository")
     @Bean
     @RefreshScope
     public U2FDeviceRegistrationCouchDbRepository couchDbU2fDeviceRegistrationRepository() {
@@ -66,12 +71,14 @@ public class U2FCouchDbConfiguration {
             couchDb.isCreateIfNotExists());
     }
 
+    @ConditionalOnMissingBean(name = "u2fCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory u2fCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getU2f().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "couchDbU2fDeviceRepository")
     @Bean
     @RefreshScope
     public U2FCouchDbDeviceRepository u2fDeviceRepository() {

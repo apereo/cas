@@ -63,6 +63,7 @@ public class CouchDbAuthenticationConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
+    @ConditionalOnMissingBean(name = "couchDbAuthenticationHandler")
     @Bean
     @RefreshScope
     public AuthenticationHandler couchDbAuthenticationHandler() {
@@ -79,12 +80,14 @@ public class CouchDbAuthenticationConfiguration {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(couchDbAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 
+    @ConditionalOnMissingBean(name = "authenticationCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory authenticationCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "authenticationCouchDbRepository")
     @Bean
     @RefreshScope
     public ProfileCouchDbRepository authenticationCouchDbRepository() {
@@ -109,12 +112,14 @@ public class CouchDbAuthenticationConfiguration {
         return auth;
     }
 
+    @ConditionalOnMissingBean(name = "authenticationCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance authenticationCouchDbInstance() {
         return authenticationCouchDbFactory.createInstance();
     }
 
+    @ConditionalOnMissingBean(name = "authenticationCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector authenticationCouchDbConnector() {

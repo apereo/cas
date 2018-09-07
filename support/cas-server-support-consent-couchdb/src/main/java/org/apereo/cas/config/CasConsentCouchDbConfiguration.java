@@ -12,6 +12,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -34,27 +35,31 @@ public class CasConsentCouchDbConfiguration {
     private CouchDbConnectorFactory consentCouchDbFactory;
 
     @Autowired
-    @Qualifier("defaultObjectMapperFactory")
+    @Qualifier("couchDbObjectMapperFactory")
     private ObjectMapperFactory objectMapperFactory;
 
+    @ConditionalOnMissingBean(name = "consentCouchDbFactory")
     @RefreshScope
     @Bean
     public CouchDbConnectorFactory consentCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getConsent().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "consentCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance consentCouchDbInstance() {
         return consentCouchDbFactory.createInstance();
     }
 
+    @ConditionalOnMissingBean(name = "consentCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector consentCouchDbConnector() {
         return consentCouchDbFactory.createConnector();
     }
 
+    @ConditionalOnMissingBean(name = "consentCouchDbRepository")
     @Bean
     @RefreshScope
     public ConsentDecisionCouchDbRepository consentCouchDbRepository() {
@@ -63,6 +68,7 @@ public class CasConsentCouchDbConfiguration {
         return repository;
     }
 
+    @ConditionalOnMissingBean(name = "couchDbConsentRepository")
     @RefreshScope
     @Bean
     public ConsentRepository consentRepository() {

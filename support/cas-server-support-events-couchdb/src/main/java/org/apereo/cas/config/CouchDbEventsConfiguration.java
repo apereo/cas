@@ -12,6 +12,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -32,25 +33,28 @@ public class CouchDbEventsConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("defaultObjectMapperFactory")
+    @Qualifier("couchDbObjectMapperFactory")
     private ObjectMapperFactory objectMapperFactory;
 
     @Autowired
     @Qualifier("eventCouchDbFactory")
     private CouchDbConnectorFactory eventCouchDbFactory;
 
+    @ConditionalOnMissingBean(name = "eventCouchDbImnstance")
     @RefreshScope
     @Bean
     public CouchDbInstance eventCouchDbInstance() {
         return eventCouchDbFactory.createInstance();
     }
 
+    @ConditionalOnMissingBean(name = "eventCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector eventCouchDbConnector() {
         return eventCouchDbFactory.createConnector();
     }
 
+    @ConditionalOnMissingBean(name = "couchDbEventRepository")
     @Bean
     @RefreshScope
     public EventCouchDbRepository couchDbEventRepository() {
@@ -59,12 +63,14 @@ public class CouchDbEventsConfiguration {
         return repository;
     }
 
+    @ConditionalOnMissingBean(name = "eventCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory eventCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getEvents().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "couchDbCasEventRepository")
     @Bean
     @RefreshScope
     public CasEventRepository casEventRepository() {

@@ -14,6 +14,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -43,24 +44,28 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @Autowired
     private ObjectMapperFactory objectMapperFactory;
 
+    @ConditionalOnMissingBean(name = "aupCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance aupCouchDbInstance() {
         return aupCouchDbFactory.createInstance();
     }
 
+    @ConditionalOnMissingBean(name = "aupCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector aupCouchDbConnector() {
         return aupCouchDbFactory.createConnector();
     }
 
+    @ConditionalOnMissingBean(name = "aupCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory aupCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getAcceptableUsagePolicy().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "aupCouchDbRepository")
     @Bean
     @RefreshScope
     public ProfileCouchDbRepository aupCouchDbRepository() {
@@ -70,6 +75,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
         return repository;
     }
 
+    @ConditionalOnMissingBean(name = "couchDbAcceptableUsagePolicyRepository")
     @Bean
     @RefreshScope
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {

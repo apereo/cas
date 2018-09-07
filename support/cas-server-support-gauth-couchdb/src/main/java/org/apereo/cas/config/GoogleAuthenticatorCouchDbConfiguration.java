@@ -18,6 +18,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -46,24 +47,28 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @Autowired
     private ObjectMapperFactory objectMapperFactory;
 
+    @ConditionalOnMissingBean(name = "oneTimeTokenCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance oneTimeTokenCouchDbInstance() {
         return oneTimeTokenCouchDbFactory.createInstance();
     }
 
+    @ConditionalOnMissingBean(name = "oneTimeTokenCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector oneTimeTokenCouchDbConnector() {
         return oneTimeTokenCouchDbFactory.createConnector();
     }
 
+    @ConditionalOnMissingBean(name = "oneTimeTokenAccountCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory oneTimeTokenAccountCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "couchDbGoogleAuthenticatotAccountRegistry")
     @Bean
     @RefreshScope
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance")
@@ -74,6 +79,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
             googleAuthenticatorAccountCipherExecutor);
     }
 
+    @ConditionalOnMissingBean(name = "couchDbOneTimeTokenAccountRepository")
     @Bean
     @RefreshScope
     public OneTimeTokenAccountCouchDbRepository couchDbOneTimeTokenAccountRepository() {
@@ -83,6 +89,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
         return repository;
     }
 
+    @ConditionalOnMissingBean(name = "couchDbOneTimeTokenAutneticatorTokenRepository")
     @Bean
     @RefreshScope
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
@@ -90,12 +97,14 @@ public class GoogleAuthenticatorCouchDbConfiguration {
             casProperties.getAuthn().getMfa().getGauth().getTimeStepSize());
     }
 
+    @ConditionalOnMissingBean(name = "oneTimeTokenCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory oneTimeTokenCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "couchDbbOneTimeTokenRepository")
     @Bean
     @RefreshScope
     public OneTimeTokenCouchDbRepository couchDbOneTimeTokenRepository() {

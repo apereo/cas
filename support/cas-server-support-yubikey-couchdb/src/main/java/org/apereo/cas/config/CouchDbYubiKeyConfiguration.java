@@ -14,6 +14,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -47,6 +48,7 @@ public class CouchDbYubiKeyConfiguration {
     @Autowired
     private ObjectMapperFactory objectMapperFactory;
 
+    @ConditionalOnMissingBean(name = "couchDbYubiKeyAccountRepository")
     @Bean
     @RefreshScope
     public YubiKeyAccountCouchDbRepository couchDbYubiKeyAccountRepository() {
@@ -55,24 +57,28 @@ public class CouchDbYubiKeyConfiguration {
             couchDb.isCreateIfNotExists());
     }
 
+    @ConditionalOnMissingBean(name = "yubikeyCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance yubikeyCouchDbInstance() {
         return yubikeyCouchDbFactory.createInstance();
     }
 
+    @ConditionalOnMissingBean(name = "yubikeyCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector yubikeyCouchDbConnector() {
         return yubikeyCouchDbFactory.createConnector();
     }
 
+    @ConditionalOnMissingBean(name = "yubikeyCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory yubikeyCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getYubikey().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "couchDbYubikeyAccountRegistry")
     @RefreshScope
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {

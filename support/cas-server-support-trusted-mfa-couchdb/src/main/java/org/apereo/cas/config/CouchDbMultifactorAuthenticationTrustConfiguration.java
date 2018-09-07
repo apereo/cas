@@ -13,6 +13,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +43,7 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
     @Autowired
     private ObjectMapperFactory objectMapperFactory;
 
+    @ConditionalOnMissingBean(name = "couchDbTrustRecordRepository")
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository() {
@@ -49,24 +51,28 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
             casProperties.getAuthn().getMfa().getTrusted().getCouchDb().isCreateIfNotExists());
     }
 
+    @ConditionalOnMissingBean(name = "mfaTrustCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance mfaTrustCouchDbInstance() {
         return mfaTrustCouchDbFactory.createInstance();
     }
 
+    @ConditionalOnMissingBean(name = "mfaTrustCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector mfaTrustCouchDbConnector() {
         return mfaTrustCouchDbFactory.createConnector();
     }
 
+    @ConditionalOnMissingBean(name = "mfaTrustCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory mfaTrustCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getTrusted().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "couchDbMfaTrustEngine")
     @Bean
     @RefreshScope
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {

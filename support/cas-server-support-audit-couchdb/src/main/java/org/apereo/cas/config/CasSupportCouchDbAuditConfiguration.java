@@ -14,6 +14,7 @@ import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -31,8 +32,8 @@ import org.springframework.context.annotation.Configuration;
 public class CasSupportCouchDbAuditConfiguration {
 
     @Autowired
-    @Qualifier("defaultObjectMapperFactory")
-    private ObjectMapperFactory defaultObjectMapperFactory;
+    @Qualifier("couchDbObjectMapperFactory")
+    private ObjectMapperFactory couchDbObjectMapperFactory;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -41,30 +42,35 @@ public class CasSupportCouchDbAuditConfiguration {
     @Qualifier("auditCouchDbFactory")
     private CouchDbConnectorFactory auditCouchDbFactory;
 
+    @ConditionalOnMissingBean(name = "auditCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory auditCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), defaultObjectMapperFactory);
+        return new CouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), couchDbObjectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "auditCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance auditCouchDbInstance() {
         return auditCouchDbFactory.createInstance();
     }
 
+    @ConditionalOnMissingBean(name = "auditCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector auditCouchDbConnector() {
         return auditCouchDbFactory.createConnector();
     }
 
+    @ConditionalOnMissingBean(name = "auditActionContextCouchDbRepository")
     @Bean
     @RefreshScope
     public AuditActionContextCouchDbRepository auditActionContextCouchDbRepository() {
         return new AuditActionContextCouchDbRepository(auditCouchDbConnector(), casProperties.getAudit().getCouchDb().isCreateIfNotExists());
     }
 
+    @ConditionalOnMissingBean(name = "couchDbAuditTrailManager")
     @Bean
     @RefreshScope
     public AuditTrailManager couchDbAuditTrailManager() {
@@ -73,6 +79,7 @@ public class CasSupportCouchDbAuditConfiguration {
         return new CouchDbAuditTrailManager(repository, casProperties.getAudit().getCouchDb().isAsyncronous());
     }
 
+    @ConditionalOnMissingBean(name = "couchDbAuditTrailExecutionPlanConfigurer")
     @Bean
     @RefreshScope
     public AuditTrailExecutionPlanConfigurer couchDbAuditTrailExecutionPlanConfigurer() {
