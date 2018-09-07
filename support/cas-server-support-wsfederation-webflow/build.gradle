@@ -6,6 +6,7 @@ dependencies {
     implementation libraries.caffein
     
     implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-services-api")
@@ -43,5 +44,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":support:cas-server-support-saml-core")
+    testImplementation project(":support:cas-server-support-saml-core-api")
     testImplementation project(":support:cas-server-support-saml")
 }
