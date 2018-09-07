@@ -33,6 +33,7 @@ if [[ "$casVersion" == *"-SNAPSHOT" ]]; then
 else
     echo "Publishing CAS release for version $casVersion"
     publishSnapshot=false
+    runBuild=true
 
     echo "Fetching keys..."
     openssl aes-256-cbc -k "$GPG_PSW" -in ./ci/gpg-keys.enc -out ./ci/gpg-keys.txt -d
