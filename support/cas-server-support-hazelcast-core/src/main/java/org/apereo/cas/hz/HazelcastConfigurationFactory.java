@@ -96,27 +96,27 @@ public class HazelcastConfigurationFactory {
         val cluster = hz.getCluster();
         val config = new Config();
 
-        val joinConfig = cluster.getDiscovery().isEnabled()
-            ? createDiscoveryJoinConfig(config, hz.getCluster()) : createDefaultJoinConfig(config, hz.getCluster());
-
-        LOGGER.debug("Created Hazelcast join configuration [{}]", joinConfig);
-
         val networkConfig = new NetworkConfig()
             .setPort(cluster.getPort())
-            .setPortAutoIncrement(cluster.isPortAutoIncrement())
-            .setJoin(joinConfig);
+            .setPortAutoIncrement(cluster.isPortAutoIncrement());
+
+        val joinConfig = cluster.getDiscovery().isEnabled()
+            ? createDiscoveryJoinConfig(config, hz.getCluster(), networkConfig)
+            : createDefaultJoinConfig(config, hz.getCluster());
+        LOGGER.debug("Created Hazelcast join configuration [{}]", joinConfig);
+        networkConfig.setJoin(joinConfig);
 
         LOGGER.debug("Created Hazelcast network configuration [{}]", networkConfig);
         config.setNetworkConfig(networkConfig);
 
         return config.setInstanceName(cluster.getInstanceName())
-            .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED, BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
+            .setProperty(BaseHazelcastProperties.HAZELCAST_DISCOVERY_ENABLED_PROP, BooleanUtils.toStringTrueFalse(cluster.getDiscovery().isEnabled()))
             .setProperty(BaseHazelcastProperties.IPV4_STACK_PROP, String.valueOf(cluster.isIpv4Enabled()))
             .setProperty(BaseHazelcastProperties.LOGGING_TYPE_PROP, cluster.getLoggingType())
             .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
     }
 
-    private JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster) {
+    private JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster, final NetworkConfig networkConfig) {
         val joinConfig = new JoinConfig();
 
         LOGGER.debug("Disabling multicast and TCP/IP configuration for discovery");
@@ -124,19 +124,22 @@ public class HazelcastConfigurationFactory {
         joinConfig.getTcpIpConfig().setEnabled(false);
 
         val discoveryConfig = new DiscoveryConfig();
-        val strategyConfig = locateDiscoveryStrategyConfig(cluster);
+        val strategyConfig = locateDiscoveryStrategyConfig(cluster, joinConfig, config, networkConfig);
         LOGGER.debug("Creating discovery strategy configuration as [{}]", strategyConfig);
         discoveryConfig.setDiscoveryStrategyConfigs(CollectionUtils.wrap(strategyConfig));
         joinConfig.setDiscoveryConfig(discoveryConfig);
         return joinConfig;
     }
 
-    private DiscoveryStrategyConfig locateDiscoveryStrategyConfig(final HazelcastClusterProperties cluster) {
+    private DiscoveryStrategyConfig locateDiscoveryStrategyConfig(final HazelcastClusterProperties cluster,
+                                                                  final JoinConfig joinConfig,
+                                                                  final Config config,
+                                                                  final NetworkConfig networkConfig) {
         val serviceLoader = ServiceLoader.load(HazelcastDiscoveryStrategy.class);
         val it = serviceLoader.iterator();
         if (it.hasNext()) {
             val strategy = it.next();
-            return strategy.get(cluster);
+            return strategy.get(cluster, joinConfig, config, networkConfig);
         }
         throw new IllegalArgumentException("Could not create discovery strategy configuration. No discovery provider is defined in the settings");
     }
