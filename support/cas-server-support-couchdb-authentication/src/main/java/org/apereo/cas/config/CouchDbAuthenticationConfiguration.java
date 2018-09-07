@@ -57,9 +57,6 @@ public class CouchDbAuthenticationConfiguration {
     @Qualifier("authenticationCouchDbFactory")
     private CouchDbConnectorFactory authenticationCouchDbFactory;
 
-    @Autowired
-    private ProfileCouchDbRepository profileCouchDbRepository;
-
     @ConditionalOnMissingBean(name = "couchDbPrincipalFactory")
     @Bean
     public PrincipalFactory couchDbPrincipalFactory() {

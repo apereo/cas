@@ -15,10 +15,10 @@ import java.math.BigInteger;
  */
 public class CouchDbSamlIdPMetadataDocument extends SamlIdPMetadataDocument {
     @JsonProperty("_id")
-    private String cid;
+    private String cid; //NOPMD
 
     @JsonProperty("_rev")
-    private String rev;
+    private String rev; //NOPMD
 
     @JsonCreator
     public CouchDbSamlIdPMetadataDocument(@JsonProperty("_id") final String cid, //NOPMD

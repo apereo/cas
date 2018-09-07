@@ -80,7 +80,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class
-}, properties = {"org.ektorp.support.AutoUpdateViewOnChange=true"})
+    }, properties = {"org.ektorp.support.AutoUpdateViewOnChange=true"})
 @Getter
 public class SurrogateCouchDbAuthenticationTests extends BaseSurrogateAuthenticationServiceTests {
 
