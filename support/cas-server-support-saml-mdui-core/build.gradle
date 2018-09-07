@@ -6,6 +6,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":support:cas-server-support-saml")
     implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":core:cas-server-core-configuration-api")
 
     implementation libraries.opensaml
