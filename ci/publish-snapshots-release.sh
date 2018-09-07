@@ -41,7 +41,7 @@ else
     echo "Loading keys..."
     cat ./ci/gpg-keys.txt | base64 --decode | gpg --import
     cat ./ci/gpg-ownertrust.txt | base64 --decode | gpg --import-ownertrust
-    gpg --export-secret-keys > ~/.gnupg/secring.gpg
+    gpg --export-secret-keys 6A2EF9AA > ~/.gnupg/secring.gpg
     rm -Rf ./ci/gpg-keys.txt ./ci/gpg-ownertrust.txt
 fi
 
