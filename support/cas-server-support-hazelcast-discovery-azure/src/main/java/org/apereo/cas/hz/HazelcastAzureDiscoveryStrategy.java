@@ -4,7 +4,10 @@ import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProp
 import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastAzureDiscoveryProperties;
 
 import com.hazelcast.azure.AzureDiscoveryStrategyFactory;
+import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryStrategyConfig;
+import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.NetworkConfig;
 import lombok.val;
 import org.springframework.util.StringUtils;
 
@@ -18,7 +21,7 @@ import java.util.HashMap;
  */
 public class HazelcastAzureDiscoveryStrategy implements HazelcastDiscoveryStrategy {
     @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster) {
+    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig, final Config configuration, final NetworkConfig networkConfig) {
         val azure = cluster.getDiscovery().getAzure();
         val properties = new HashMap<String, Comparable>();
         if (StringUtils.hasText(azure.getClientId())) {

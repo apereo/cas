@@ -580,7 +580,15 @@ ext.libraries = [
                     exclude(group: "com.hazelcast", module: "hazelcast")
                     force = true
                 }
-
+        ],
+        hazelcastswarm : [
+                dependencies.create("org.bitsofinfo:hazelcast-docker-swarm-discovery-spi:$hazelcastSwarmVersion") {
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "log4j", module: "log4j")
+                    exclude(group: "com.hazelcast", module: "hazelcast")
+                    force = true
+                }
         ],
         jclouds                 : [
                 dependencies.create("com.hazelcast:hazelcast-jclouds:$hazelcastJCloudsVersion") {
