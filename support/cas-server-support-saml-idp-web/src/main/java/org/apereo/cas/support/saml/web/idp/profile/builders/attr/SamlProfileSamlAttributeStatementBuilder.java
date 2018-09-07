@@ -1,20 +1,20 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 
 import lombok.val;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,13 +29,16 @@ import java.util.HashMap;
 public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AttributeStatement> {
     private static final long serialVersionUID = 1815697787562189088L;
     private final transient ProtocolAttributeEncoder samlAttributeEncoder;
+    private final SamlIdPProperties samlIdPProperties;
+    private final SamlObjectEncrypter samlObjectEncrypter;
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean, final ProtocolAttributeEncoder samlAttributeEncoder) {
+    public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean, final ProtocolAttributeEncoder samlAttributeEncoder,
+                                                    final SamlIdPProperties samlIdPProperties,
+                                                    final SamlObjectEncrypter samlObjectEncrypter) {
         super(configBean);
         this.samlAttributeEncoder = samlAttributeEncoder;
+        this.samlIdPProperties = samlIdPProperties;
+        this.samlObjectEncrypter = samlObjectEncrypter;
     }
 
     @Override
@@ -61,11 +64,12 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         attributes.putAll(assertion.getPrincipal().getAttributes());
         val encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
 
-        val resp = casProperties.getAuthn().getSamlIdp().getResponse();
+        val resp = samlIdPProperties.getResponse();
         val nameFormats = new HashMap<String, String>(resp.configureAttributeNameFormats());
         nameFormats.putAll(service.getAttributeNameFormats());
         return newAttributeStatement(encodedAttrs, service.getAttributeFriendlyNames(),
             nameFormats,
-            resp.getDefaultAttributeNameFormat());
+            resp.getDefaultAttributeNameFormat(),
+            new SamlProfileSamlRegisteredServiceAttributeBuilder(service, adaptor, messageContext, samlObjectEncrypter));
     }
 }
