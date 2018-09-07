@@ -7,6 +7,15 @@
         <cve>CVE-2018-1131</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2015-3630</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2015-3627</cve>
+    </suppress>
+    <suppress>
+        <cve>CVE-2014-6407</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2016-2402</cve>
     </suppress>
     <suppress>
