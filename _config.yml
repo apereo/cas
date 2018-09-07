@@ -1,3 +1,4 @@
+exclude: [.idea]
 markdown: kramdown
 plugins:
   - jekyll-sitemap
@@ -15,10 +16,3 @@ kramdown:
     block:
       line_numbers: true
       start_line: 1
-
-# Tipue search settings
-tipue_search:
-  include:
-    pages: true
-  exclude:
-    files: [search.html]
