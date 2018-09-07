@@ -33,7 +33,7 @@ apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.kt3k.coveralls"
 apply plugin: "com.github.ben-manes.versions"
 
-if (rootProject.continuousIntegrationBuild) {
+if (project.ext.continuousIntegrationBuild) {
     apply plugin: "com.gradle.build-scan"
 }
 

@@ -92,7 +92,7 @@ public class SamlIdPUtils {
         val endpoint = endpointReq == null
             ? adaptor.getAssertionConsumerService(binding)
             : endpointReq;
-        if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
+        if (endpoint == null || StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
             throw new SamlException("Assertion consumer service does not define a binding or location");
         }
         return endpoint;

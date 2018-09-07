@@ -1,12 +1,13 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.EncodingUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -14,7 +15,11 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
+import org.opensaml.saml.saml2.core.EncryptedAttribute;
+import org.opensaml.saml.saml2.core.EncryptedID;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.encryption.Encrypter;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.security.impl.MetadataCredentialResolver;
@@ -33,12 +38,8 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.KeyInfoReferenceProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link SamlObjectEncrypter}.
@@ -47,38 +48,10 @@ import java.util.List;
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class SamlObjectEncrypter {
 
-    /**
-     * The Override data encryption algorithms.
-     */
-    protected List overrideDataEncryptionAlgorithms;
-
-    /**
-     * The Override key encryption algorithms.
-     */
-    protected List overrideKeyEncryptionAlgorithms;
-
-    /**
-     * The Override black listed encryption signing algorithms.
-     */
-    protected List overrideBlackListedEncryptionAlgorithms;
-
-    /**
-     * The Override white listed encryption signing algorithms.
-     */
-    protected List overrideWhiteListedAlgorithms;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    public SamlObjectEncrypter(final List overrideDataEncryptionAlgorithms, final List overrideKeyEncryptionAlgorithms,
-                               final List overrideBlackListedEncryptionAlgorithms, final List overrideWhiteListedAlgorithms) {
-        this.overrideDataEncryptionAlgorithms = overrideDataEncryptionAlgorithms;
-        this.overrideKeyEncryptionAlgorithms = overrideKeyEncryptionAlgorithms;
-        this.overrideBlackListedEncryptionAlgorithms = overrideBlackListedEncryptionAlgorithms;
-        this.overrideWhiteListedAlgorithms = overrideWhiteListedAlgorithms;
-    }
+    private final SamlIdPProperties samlIdPProperties;
 
     /**
      * Encode a given saml object by invoking a number of outbound security handlers on the context.
@@ -86,18 +59,63 @@ public class SamlObjectEncrypter {
      * @param samlObject the saml object
      * @param service    the service
      * @param adaptor    the adaptor
-     * @param response   the response
-     * @param request    the request
      * @return the t
      * @throws SamlException the saml exception
      */
     @SneakyThrows
     public EncryptedAssertion encode(final Assertion samlObject,
                                      final SamlRegisteredService service,
-                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                     final HttpServletResponse response,
-                                     final HttpServletRequest request) throws SamlException {
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+        val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
+        return encrypter.encrypt(samlObject);
+    }
 
+    /**
+     * Encode encrypted id.
+     *
+     * @param samlObject the saml object
+     * @param service    the service
+     * @param adaptor    the adaptor
+     * @return the encrypted id
+     * @throws SamlException the saml exception
+     */
+    @SneakyThrows
+    public EncryptedID encode(final NameID samlObject,
+                              final SamlRegisteredService service,
+                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+        val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
+        return encrypter.encrypt(samlObject);
+    }
+
+    /**
+     * Encode encrypted attribute.
+     *
+     * @param samlObject the saml object
+     * @param service    the service
+     * @param adaptor    the adaptor
+     * @return the encrypted attribute
+     * @throws SamlException the saml exception
+     */
+    @SneakyThrows
+    public EncryptedAttribute encode(final Attribute samlObject,
+                                     final SamlRegisteredService service,
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+        val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
+        return encrypter.encrypt(samlObject);
+    }
+
+    /**
+     * Build encrypter for saml object encrypter.
+     *
+     * @param samlObject the saml object
+     * @param service    the service
+     * @param adaptor    the adaptor
+     * @return the encrypter
+     */
+    @SneakyThrows
+    protected Encrypter buildEncrypterForSamlObject(final Object samlObject,
+                                                    final SamlRegisteredService service,
+                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val className = samlObject.getClass().getName();
         val entityId = adaptor.getEntityId();
         LOGGER.debug("Attempting to encrypt [{}] for [{}]", className, entityId);
@@ -113,9 +131,7 @@ public class SamlObjectEncrypter {
         val encrypter = getEncrypter(samlObject, service, adaptor, keyEncParams, dataEncParams);
         LOGGER.debug("Attempting to encrypt [{}] for [{}] with key placement of [{}]",
             className, entityId, encrypter.getKeyPlacement());
-
-        return encrypter.encrypt(samlObject);
-
+        return encrypter;
     }
 
     /**
@@ -128,10 +144,11 @@ public class SamlObjectEncrypter {
      * @param dataEncParams the data enc params
      * @return the encrypter
      */
-    protected Encrypter getEncrypter(final Assertion samlObject, final SamlRegisteredService service,
+    protected Encrypter getEncrypter(final Object samlObject,
+                                     final SamlRegisteredService service,
                                      final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                     final KeyEncryptionParameters keyEncParams, final
-                                     DataEncryptionParameters dataEncParams) {
+                                     final KeyEncryptionParameters keyEncParams,
+                                     final DataEncryptionParameters dataEncParams) {
         val encrypter = new Encrypter(dataEncParams, keyEncParams);
         encrypter.setKeyPlacement(Encrypter.KeyPlacement.PEER);
         return encrypter;
@@ -145,7 +162,8 @@ public class SamlObjectEncrypter {
      * @param adaptor    the adaptor
      * @return the data encryption parameters
      */
-    protected DataEncryptionParameters getDataEncryptionParameters(final Assertion samlObject, final SamlRegisteredService service,
+    protected DataEncryptionParameters getDataEncryptionParameters(final Object samlObject,
+                                                                   final SamlRegisteredService service,
                                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val dataEncParams = new DataEncryptionParameters();
         dataEncParams.setAlgorithm(EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128);
@@ -161,7 +179,8 @@ public class SamlObjectEncrypter {
      * @param credential the credential
      * @return the key encryption parameters
      */
-    protected KeyEncryptionParameters getKeyEncryptionParameters(final Object samlObject, final SamlRegisteredService service,
+    protected KeyEncryptionParameters getKeyEncryptionParameters(final Object samlObject,
+                                                                 final SamlRegisteredService service,
                                                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                  final Credential credential) {
         val keyEncParams = new KeyEncryptionParameters();
@@ -183,24 +202,27 @@ public class SamlObjectEncrypter {
     protected Credential getKeyEncryptionCredential(final String peerEntityId,
                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                     final SamlRegisteredService service) throws Exception {
-        val idp = casProperties.getAuthn().getSamlIdp();
-        val config =
-            DefaultSecurityConfigurationBootstrap.buildDefaultEncryptionConfiguration();
+        val config = DefaultSecurityConfigurationBootstrap.buildDefaultEncryptionConfiguration();
 
-        if (this.overrideBlackListedEncryptionAlgorithms != null && !this.overrideBlackListedEncryptionAlgorithms.isEmpty()) {
-            config.setBlacklistedAlgorithms(this.overrideBlackListedEncryptionAlgorithms);
+        val overrideDataEncryptionAlgorithms = samlIdPProperties.getAlgs().getOverrideDataEncryptionAlgorithms();
+        val overrideKeyEncryptionAlgorithms = samlIdPProperties.getAlgs().getOverrideKeyEncryptionAlgorithms();
+        val overrideBlackListedEncryptionAlgorithms = samlIdPProperties.getAlgs().getOverrideBlackListedEncryptionAlgorithms();
+        val overrideWhiteListedAlgorithms = samlIdPProperties.getAlgs().getOverrideWhiteListedAlgorithms();
+
+        if (overrideBlackListedEncryptionAlgorithms != null && !overrideBlackListedEncryptionAlgorithms.isEmpty()) {
+            config.setBlacklistedAlgorithms(overrideBlackListedEncryptionAlgorithms);
         }
 
-        if (this.overrideWhiteListedAlgorithms != null && !this.overrideWhiteListedAlgorithms.isEmpty()) {
-            config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
+        if (overrideWhiteListedAlgorithms != null && !overrideWhiteListedAlgorithms.isEmpty()) {
+            config.setWhitelistedAlgorithms(overrideWhiteListedAlgorithms);
         }
 
-        if (this.overrideDataEncryptionAlgorithms != null && !this.overrideDataEncryptionAlgorithms.isEmpty()) {
-            config.setDataEncryptionAlgorithms(this.overrideDataEncryptionAlgorithms);
+        if (overrideDataEncryptionAlgorithms != null && !overrideDataEncryptionAlgorithms.isEmpty()) {
+            config.setDataEncryptionAlgorithms(overrideDataEncryptionAlgorithms);
         }
 
-        if (this.overrideKeyEncryptionAlgorithms != null && !this.overrideKeyEncryptionAlgorithms.isEmpty()) {
-            config.setKeyTransportEncryptionAlgorithms(this.overrideKeyEncryptionAlgorithms);
+        if (overrideKeyEncryptionAlgorithms != null && !overrideKeyEncryptionAlgorithms.isEmpty()) {
+            config.setKeyTransportEncryptionAlgorithms(overrideKeyEncryptionAlgorithms);
         }
 
         LOGGER.debug("Encryption blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
@@ -220,8 +242,7 @@ public class SamlObjectEncrypter {
         val keyInfoResolver = new BasicProviderKeyInfoCredentialResolver(providers);
         kekCredentialResolver.setKeyInfoCredentialResolver(keyInfoResolver);
 
-        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(adaptor,
-            idp.getMetadata().isRequireValidMetadata());
+        val roleDescriptorResolver = SamlIdPUtils.getRoleDescriptorResolver(adaptor, samlIdPProperties.getMetadata().isRequireValidMetadata());
 
         kekCredentialResolver.setRoleDescriptorResolver(roleDescriptorResolver);
         kekCredentialResolver.initialize();
@@ -235,6 +256,4 @@ public class SamlObjectEncrypter {
         LOGGER.debug("Attempting to resolve the encryption key for entity id [{}]", peerEntityId);
         return kekCredentialResolver.resolveSingle(criteriaSet);
     }
-
-
 }

@@ -29,6 +29,7 @@ import java.util.HashMap;
 public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AttributeStatement> {
     private static final long serialVersionUID = 1815697787562189088L;
     private final transient ProtocolAttributeEncoder samlAttributeEncoder;
+
     @Autowired
     private CasConfigurationProperties casProperties;
 

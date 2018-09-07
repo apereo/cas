@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,10 +41,13 @@ import java.util.List;
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<NameID> {
     private static final long serialVersionUID = -6231886395225437320L;
     private final PersistentIdGenerator persistentIdGenerator;
+    private final SamlObjectEncrypter samlObjectEncrypter;
 
-    public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean, final PersistentIdGenerator persistentIdGenerator) {
+    public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean, final PersistentIdGenerator persistentIdGenerator,
+                                        final SamlObjectEncrypter samlObjectEncrypter) {
         super(configBean);
         this.persistentIdGenerator = persistentIdGenerator;
+        this.samlObjectEncrypter = samlObjectEncrypter;
     }
 
     /**
@@ -105,11 +109,14 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
     }
 
     @Override
-    public NameID build(final RequestAbstractType authnRequest, final HttpServletRequest request,
+    public NameID build(final RequestAbstractType authnRequest,
+                        final HttpServletRequest request,
                         final HttpServletResponse response,
-                        final Object assertion, final SamlRegisteredService service,
+                        final Object assertion,
+                        final SamlRegisteredService service,
                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                        final String binding, final MessageContext messageContext) throws SamlException {
+                        final String binding,
+                        final MessageContext messageContext) throws SamlException {
         return buildNameId(authnRequest, assertion, service, adaptor, messageContext);
     }
 
@@ -255,7 +262,6 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                                                    final SamlRegisteredService service,
                                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         try {
-
             if (authnRequest instanceof AttributeQuery) {
                 val query = AttributeQuery.class.cast(authnRequest);
                 val nameID = query.getSubject().getNameID();
@@ -267,9 +273,9 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
             val attribute = prepareNameIdAttribute(assertion, nameFormat, adaptor);
             val encoder = prepareNameIdEncoder(authnRequest, nameFormat, attribute, service, adaptor);
             LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
-            val nameid = encoder.encode(attribute);
-            LOGGER.debug("Final NameID encoded with format [{}] has value [{}]", nameid.getFormat(), nameid.getValue());
-            return nameid;
+            var nameId = encoder.encode(attribute);
+            LOGGER.debug("Final NameID encoded with format [{}] has value [{}]", nameId.getFormat(), nameId.getValue());
+            return nameId;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -284,9 +290,9 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @param adaptor      the adaptor
      * @return the idp attribute
      */
-    protected IdPAttribute prepareNameIdAttribute(final Object casAssertion, final String nameFormat,
+    protected IdPAttribute prepareNameIdAttribute(final Object casAssertion,
+                                                  final String nameFormat,
                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
-
         val assertion = Assertion.class.cast(casAssertion);
         val attribute = new IdPAttribute(AttributePrincipal.class.getName());
 

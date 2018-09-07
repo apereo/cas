@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -28,9 +29,8 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, true);
-        val adaptor =
-            SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
-                service, service.getServiceId()).get();
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();
@@ -48,9 +48,9 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, true, true);
-        val adaptor =
-            SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
-                service, service.getServiceId()).get();
+        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();
@@ -60,6 +60,8 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
             SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());
         assertNotNull(samlResponse);
+        assertTrue(samlResponse.getAssertions().isEmpty());
+        assertFalse(samlResponse.getEncryptedAssertions().isEmpty());
     }
 
     @Test
@@ -68,9 +70,9 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(false, true);
-        val adaptor =
-            SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
-                service, service.getServiceId()).get();
+        service.setRequiredNameIdFormat(NameID.ENCRYPTED);
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();
@@ -80,6 +82,10 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
             SAMLConstants.SAML2_POST_BINDING_URI,
             new MessageContext());
         assertNotNull(samlResponse);
+        val assertions = samlResponse.getAssertions();
+        assertFalse(assertions.isEmpty());
+        assertNull(assertions.get(0).getSubject().getNameID());
+        assertNotNull(assertions.get(0).getSubject().getEncryptedID());
     }
 
     @Test
@@ -88,9 +94,8 @@ public class SamlProfileSaml2ResponseBuilderTests extends BaseSamlIdPConfigurati
         val response = new MockHttpServletResponse();
 
         val service = getSamlRegisteredServiceForTestShib(true, false);
-        val adaptor =
-            SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
-                service, service.getServiceId()).get();
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver,
+            service, service.getServiceId()).get();
 
         val authnRequest = getAuthnRequestFor(service);
         val assertion = getAssertion();

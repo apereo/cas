@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Subject;
 
@@ -37,18 +39,24 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
 
     private final int skewAllowance;
 
+    private final SamlObjectEncrypter samlObjectEncrypter;
+
     public SamlProfileSamlSubjectBuilder(final OpenSamlConfigBean configBean,
                                          final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder,
-                                         final int skewAllowance) {
+                                         final int skewAllowance,
+                                         final SamlObjectEncrypter samlObjectEncrypter) {
         super(configBean);
         this.ssoPostProfileSamlNameIdBuilder = ssoPostProfileSamlNameIdBuilder;
         this.skewAllowance = skewAllowance;
+        this.samlObjectEncrypter = samlObjectEncrypter;
     }
 
     @Override
-    public Subject build(final RequestAbstractType authnRequest, final HttpServletRequest request,
+    public Subject build(final RequestAbstractType authnRequest,
+                         final HttpServletRequest request,
                          final HttpServletResponse response,
-                         final Object assertion, final SamlRegisteredService service,
+                         final Object assertion,
+                         final SamlRegisteredService service,
                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                          final String binding,
                          final MessageContext messageContext) throws SamlException {
@@ -80,6 +88,16 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(this.skewAllowance),
             service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),
             service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now());
+
+        if (nameId.getFormat().equalsIgnoreCase(NameIDType.ENCRYPTED)) {
+            subject.setNameID(null);
+            subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
+
+            val encryptedId = samlObjectEncrypter.encode(nameId, service, adaptor);
+            subject.setEncryptedID(encryptedId);
+            encryptedId.detach();
+            subject.getSubjectConfirmations().forEach(c -> c.setEncryptedID(encryptedId));
+        }
 
         LOGGER.debug("Created SAML subject [{}]", subject);
         return subject;
