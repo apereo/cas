@@ -1,18 +1,1 @@
-.search-page {
-  h2 {
-    margin-top: 1em;
-  }
-}
-.search-form {
-  margin-bottom: 1em;
-}
-
-.search-results {
-  margin-bottom: 2em;
-}
-
-@media (min-width: 48em) {
-  .search-form {
-    margin: 1em 0;
-  }
-}
+.algolia-autocomplete {}
