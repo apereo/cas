@@ -498,3 +498,9 @@ task casVersion(description: "Display current CAS version") {
         println project.version
     }
 }
+
+task signingKey(description: "Display CAS signing key id") {
+    doLast {
+        println project.findProperty("signing.keyId")
+    }
+}
