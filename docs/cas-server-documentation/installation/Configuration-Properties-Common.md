@@ -521,6 +521,27 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.discovery.kubernetes.apiToken=
 ```
 
+### Docker Swarm Discovery
+
+```properties
+# ${configurationKey}.cluster.discovery.enabled=true
+
+# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.enabled=true
+# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.serviceName=
+# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.servicePort=5701
+# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.peerServices=service-a,service-b,etc
+
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.enabled=true
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.groupName=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.groupPassword=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.dockerNetworkNames=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.dockerServiceNames=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.dockerServiceLabels=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.swarmMgrUri=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.skipVerifySsl=false
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.hazelcastPeerPort=5701
+```
+
 ### Microsoft Azure Discovery
 
 ```properties
