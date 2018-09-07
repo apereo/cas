@@ -8,7 +8,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -46,21 +45,17 @@ public class CouchDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
-        return castCollection(couchDb.findOnOrAfterDate(onOrAfterDate));
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final LocalDateTime onOrAfterDate) {
+        return CollectionUtils.wrapHashSet(couchDb.findOnOrAfterDate(onOrAfterDate));
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
-        return castCollection(couchDb.findByPrincipal(principal));
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
+        return CollectionUtils.wrapHashSet(couchDb.findByPrincipal(principal));
     }
 
     @Override
-    public Set<MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDateTime onOrAfterDate) {
-        return castCollection(couchDb.findByPrincipalAfterDate(principal, onOrAfterDate));
-    }
-
-    private Set<MultifactorAuthenticationTrustRecord> castCollection(final Collection<? extends MultifactorAuthenticationTrustRecord> records) {
-        return CollectionUtils.castSet(MultifactorAuthenticationTrustRecord.class, records);
+    public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal, final LocalDateTime onOrAfterDate) {
+        return CollectionUtils.wrapHashSet(couchDb.findByPrincipalAfterDate(principal, onOrAfterDate));
     }
 }

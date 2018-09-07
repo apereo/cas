@@ -2,8 +2,8 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.couchdb.AuditActionContextCouchDbRepository;
 import org.apereo.cas.couchdb.CouchDbAuditActionContext;
+import org.apereo.cas.util.CollectionUtils;
 
-import com.google.common.collect.Sets;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
@@ -43,7 +43,7 @@ public class CouchDbAuditTrailManager implements AuditTrailManager {
     }
 
     @Override
-    public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
-        return Sets.newHashSet(couchDb.findAuditRecordsSince(localDate));
+    public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
+        return CollectionUtils.wrapHashSet(couchDb.findAuditRecordsSince(localDate));
     }
 }

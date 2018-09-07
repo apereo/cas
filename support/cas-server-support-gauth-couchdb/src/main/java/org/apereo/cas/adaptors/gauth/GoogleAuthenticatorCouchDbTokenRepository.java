@@ -5,8 +5,9 @@ import org.apereo.cas.couchdb.CouchDbOneTimeToken;
 import org.apereo.cas.couchdb.OneTimeTokenCouchDbRepository;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.ektorp.UpdateConflictException;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
  * @since 6.0.0
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class GoogleAuthenticatorCouchDbTokenRepository extends BaseOneTimeTokenRepository {
 
     private final OneTimeTokenCouchDbRepository couchDb;
@@ -68,7 +69,9 @@ public class GoogleAuthenticatorCouchDbTokenRepository extends BaseOneTimeTokenR
     @Override
     protected void cleanInternal() {
         try {
-            couchDb.findByIssuedDateTimeBefore(LocalDateTime.now().minusSeconds(expireTokensInSeconds)).forEach(couchDb::remove);
+            val since = LocalDateTime.now().minusSeconds(expireTokensInSeconds);
+            LOGGER.debug("Removing tokens older than [{}]", since);
+            couchDb.findByIssuedDateTimeBefore(since).forEach(couchDb::remove);
         } catch (final UpdateConflictException e) {
             LOGGER.warn(e.getMessage(), e);
         }

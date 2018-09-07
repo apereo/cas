@@ -85,7 +85,7 @@ public class CasEvent {
      * @return the creation time
      */
     @JsonIgnore
-    public ZonedDateTime getZonedCreationTime() {
+    public ZonedDateTime getCreationZonedDateTime() {
         val dt = DateTimeUtils.zonedDateTimeOf(this.creationTime);
         if (dt != null) {
             return dt;

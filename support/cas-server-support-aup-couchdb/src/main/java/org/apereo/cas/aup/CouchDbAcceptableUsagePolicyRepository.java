@@ -25,7 +25,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
 
     private static final long serialVersionUID = -2391630070546362552L;
-    private transient ProfileCouchDbRepository couchDb;
+    private final transient ProfileCouchDbRepository couchDb;
     private int conflictRetries;
 
     public CouchDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport, final String aupAttributeName,
@@ -90,7 +90,7 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
                 }
             }
             if (exception != null) {
-                LOGGER.debug("Could not delete service [{}] {}", username, exception.getMessage());
+                LOGGER.debug("Could not update AUP acceptance for [{}].\n{}", username, exception.getMessage());
             }
             return success;
         }

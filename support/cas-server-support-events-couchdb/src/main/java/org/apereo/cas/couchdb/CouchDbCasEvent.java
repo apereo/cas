@@ -8,10 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 
-import java.security.SecureRandom;
 import java.util.Map;
 
 /**
@@ -56,12 +54,7 @@ public class CouchDbCasEvent extends CasEvent {
      * Copy constructor.
      * @param event Event to copy from.
      */
-    @SneakyThrows
     public CouchDbCasEvent(final CasEvent event) {
-        this(null, null, event.getId(), event.getType(), event.getPrincipalId(), event.getCreationTime(), event.getProperties());
-
-        if (getId() < 0) {
-            setId(SecureRandom.getInstanceStrong().nextLong());
-        }
+        super(event.getId(), event.getType(), event.getPrincipalId(), event.getCreationTime(), event.getProperties());
     }
 }

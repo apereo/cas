@@ -6,7 +6,6 @@ import org.apereo.cas.couchdb.core.CouchDbProfileDocument;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -46,7 +45,7 @@ public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateA
             return false;
         }
 
-        if (CollectionUtils.toList(users, String.class).contains(principal.getId())) {
+        if (CollectionUtils.toCollection(users).contains(principal.getId())) {
             LOGGER.warn("User [{}] becoming surrogate for [{}] at [{}]", surrogate, principal.getId(), service.getId());
             return true;
         }

@@ -2,6 +2,7 @@ package org.apereo.cas.couchdb;
 
 import org.apereo.cas.consent.ConsentDecision;
 import org.apereo.cas.consent.ConsentReminderOptions;
+import org.apereo.cas.util.RandomUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -55,7 +55,6 @@ public class CouchDbConsentDecision extends ConsentDecision {
      * Copy constructor.
      * @param c Consent decision to copy from.
      */
-    @SneakyThrows
     public CouchDbConsentDecision(final ConsentDecision c) {
         setAttributes(c.getAttributes());
         setPrincipal(c.getPrincipal());
@@ -66,7 +65,7 @@ public class CouchDbConsentDecision extends ConsentDecision {
         setReminderTimeUnit(c.getReminderTimeUnit());
         setService(c.getService());
         if (getId() < 0) {
-            setId(SecureRandom.getInstanceStrong().nextLong());
+            setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
         }
     }
 

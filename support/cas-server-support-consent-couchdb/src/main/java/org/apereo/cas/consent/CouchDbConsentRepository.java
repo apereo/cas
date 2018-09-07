@@ -6,8 +6,8 @@ import org.apereo.cas.couchdb.ConsentDecisionCouchDbRepository;
 import org.apereo.cas.couchdb.CouchDbConsentDecision;
 import org.apereo.cas.services.RegisteredService;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @Getter
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class CouchDbConsentRepository implements ConsentRepository{
 
@@ -32,7 +32,7 @@ public class CouchDbConsentRepository implements ConsentRepository{
     /**
      * CouchDb DAO.
      */
-    private transient ConsentDecisionCouchDbRepository couchDb;
+    private final transient ConsentDecisionCouchDbRepository couchDb;
 
     @Override
     public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService, final Authentication authentication) {

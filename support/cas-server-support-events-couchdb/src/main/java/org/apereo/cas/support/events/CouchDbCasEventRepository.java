@@ -5,8 +5,7 @@ import org.apereo.cas.couchdb.EventCouchDbRepository;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 
-import lombok.AllArgsConstructor;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -20,13 +19,12 @@ import java.util.stream.Collectors;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CouchDbCasEventRepository extends AbstractCasEventRepository {
 
-    @NonNull
-    private EventCouchDbRepository couchDb;
+    private final EventCouchDbRepository couchDb;
 
-    private boolean asyncronous;
+    private final boolean asyncronous;
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
