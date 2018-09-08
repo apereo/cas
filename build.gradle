@@ -32,6 +32,11 @@ apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.kt3k.coveralls"
 apply plugin: "com.github.ben-manes.versions"
+
+if (project.ext.continuousIntegrationBuild) {
+    apply plugin: "com.gradle.build-scan"
+}
+
 if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 }
@@ -47,6 +52,7 @@ buildscript {
     }
 
     dependencies {
+        classpath "com.gradle:build-scan-plugin:1.16"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
@@ -64,8 +70,8 @@ buildscript {
 
 if (rootProject.continuousIntegrationBuild) {
     buildScan {
-        licenseAgreementUrl = "https://gradle.com/terms-of-service"
-        licenseAgree = "yes"
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
     }
 }
 
@@ -485,4 +491,10 @@ tasks.coveralls {
     group = "Coverage Reports"
     description = "Uploads the aggregated coverage report to Coveralls"
     dependsOn jacocoRootReport
+}
+
+task casVersion(description: "Display current CAS version") {
+    doLast {
+        println project.version
+    }
 }

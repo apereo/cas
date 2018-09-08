@@ -51,7 +51,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is {@link SamlIdPObjectSigner}.
@@ -62,26 +61,6 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class SamlIdPObjectSigner {
-    /**
-     * The Override signature reference digest methods.
-     */
-    protected final List overrideSignatureReferenceDigestMethods;
-
-    /**
-     * The Override signature algorithms.
-     */
-    protected final List overrideSignatureAlgorithms;
-
-    /**
-     * The Override black listed signature algorithms.
-     */
-    protected final List overrideBlackListedSignatureAlgorithms;
-
-    /**
-     * The Override white listed signature signing algorithms.
-     */
-    protected final List overrideWhiteListedAlgorithms;
-
     private final MetadataResolver casSamlIdPMetadataResolver;
 
     private final CasConfigurationProperties casProperties;
@@ -244,29 +223,32 @@ public class SamlIdPObjectSigner {
      */
     protected SignatureSigningConfiguration getSignatureSigningConfiguration(final RoleDescriptor roleDescriptor,
                                                                              final SamlRegisteredService service) throws Exception {
-        val config =
-            DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
-        val samlIdp = casProperties.getAuthn().getSamlIdp();
+        val config = DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
+        val algs = casProperties.getAuthn().getSamlIdp().getAlgs();
 
-        if (this.overrideBlackListedSignatureAlgorithms != null
-            && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
-            config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
+        val overrideSignatureReferenceDigestMethods = algs.getOverrideSignatureReferenceDigestMethods();
+        val overrideSignatureAlgorithms = algs.getOverrideSignatureAlgorithms();
+        val overrideBlackListedSignatureAlgorithms = algs.getOverrideBlackListedSignatureSigningAlgorithms();
+        val overrideWhiteListedAlgorithms = algs.getOverrideWhiteListedSignatureSigningAlgorithms();
+
+        if (overrideBlackListedSignatureAlgorithms != null && !overrideBlackListedSignatureAlgorithms.isEmpty()) {
+            config.setBlacklistedAlgorithms(overrideBlackListedSignatureAlgorithms);
         }
 
-        if (this.overrideSignatureAlgorithms != null && !this.overrideSignatureAlgorithms.isEmpty()) {
-            config.setSignatureAlgorithms(this.overrideSignatureAlgorithms);
+        if (overrideSignatureAlgorithms != null && !overrideSignatureAlgorithms.isEmpty()) {
+            config.setSignatureAlgorithms(overrideSignatureAlgorithms);
         }
 
-        if (this.overrideSignatureReferenceDigestMethods != null && !this.overrideSignatureReferenceDigestMethods.isEmpty()) {
-            config.setSignatureReferenceDigestMethods(this.overrideSignatureReferenceDigestMethods);
+        if (overrideSignatureReferenceDigestMethods != null && !overrideSignatureReferenceDigestMethods.isEmpty()) {
+            config.setSignatureReferenceDigestMethods(overrideSignatureReferenceDigestMethods);
         }
 
-        if (this.overrideWhiteListedAlgorithms != null && !this.overrideWhiteListedAlgorithms.isEmpty()) {
-            config.setWhitelistedAlgorithms(this.overrideWhiteListedAlgorithms);
+        if (overrideWhiteListedAlgorithms != null && !overrideWhiteListedAlgorithms.isEmpty()) {
+            config.setWhitelistedAlgorithms(overrideWhiteListedAlgorithms);
         }
 
-        if (StringUtils.isNotBlank(samlIdp.getAlgs().getOverrideSignatureCanonicalizationAlgorithm())) {
-            config.setSignatureCanonicalizationAlgorithm(samlIdp.getAlgs().getOverrideSignatureCanonicalizationAlgorithm());
+        if (StringUtils.isNotBlank(algs.getOverrideSignatureCanonicalizationAlgorithm())) {
+            config.setSignatureCanonicalizationAlgorithm(algs.getOverrideSignatureCanonicalizationAlgorithm());
         }
         LOGGER.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
         LOGGER.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());

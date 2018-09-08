@@ -8,6 +8,7 @@ dependencies {
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-idp-core")
     implementation project(":support:cas-server-support-saml-idp-ticket")
     implementation project(":support:cas-server-support-saml-idp-metadata")

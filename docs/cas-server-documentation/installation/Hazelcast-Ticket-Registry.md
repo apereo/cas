@@ -97,6 +97,20 @@ See [this link](https://github.com/hazelcast/hazelcast-kubernetes) for more info
 </dependency>
 ```
 
+## Docker Swarm Auto Discovery
+
+This hazelcast discovery plugin provides a Docker Swarm mode based discovery strategy. 
+
+See [this link](https://github.com/bitsofinfo/hazelcast-docker-swarm-discovery-spi/) for more info.
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-hazelcast-discovery-swarm</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
 ## Multicast Auto Discovery
 
 With the multicast auto-discovery mechanism, Hazelcast allows cluster members to find each other using multicast communication. The cluster members do not need to know the concrete addresses of the other members, as they just multicast to all the other members for listening. Whether multicast is possible or allowed **depends on your environment**.
