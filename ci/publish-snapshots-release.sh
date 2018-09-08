@@ -41,7 +41,6 @@ else
     echo "Loading keys..."
     cat ./ci/gpg-keys.txt | base64 --decode | gpg --import
     cat ./ci/gpg-ownertrust.txt | base64 --decode | gpg --import-ownertrust
-    gpg --export-secret-keys 6A2EF9AA > ~/.gnupg/secring.gpg
     rm -Rf ./ci/gpg-keys.txt ./ci/gpg-ownertrust.txt
 fi
 
@@ -49,9 +48,6 @@ if [ "$runBuild" = false ]; then
     echo -e "Gradle build will not run under Travis job ${TRAVIS_JOB_NUMBER}"
     exit 0
 fi
-
-echo -e "Installing NPM...\n"
-./gradlew npmInstall --stacktrace -q
 
 if [ "$publishSnapshot" = true ]; then
     echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
@@ -63,12 +59,11 @@ else
     echo -e "The build will deploy RELEASE artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
     gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
                 -DskipNpmLint=true -Dorg.gradle.project.signing.password=${GPG_PASSPHRASE}\
-                -Dorg.gradle.project.signing.secretKeyRingFile=~/.gnupg/secring.gpg \
+                -Dorg.gradle.project.signing.secretKeyRingFile=/home/travis/.gnupg/secring.gpg \
                 -Dorg.gradle.project.signing.keyId=6A2EF9AA \
                 -DpublishReleases=true -DsonatypeUsername=${SONATYPE_USER} \
                 -DsonatypePassword=${SONATYPE_PWD} "
 fi
-
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
@@ -77,6 +72,10 @@ fi
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
 else
+
+    echo -e "Installing NPM...\n"
+    ./gradlew npmInstall --stacktrace -q
+
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"
     echo $prepCommand
