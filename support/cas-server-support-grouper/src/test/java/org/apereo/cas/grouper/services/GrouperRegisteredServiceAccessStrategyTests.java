@@ -40,7 +40,6 @@ public class GrouperRegisteredServiceAccessStrategyTests {
 
     @Test
     public void checkAccessStrategyJson() throws Exception {
-
         val attributes = new HashMap<String, Set<String>>();
         val v1 = new HashSet<String>();
         v1.add("admin");
