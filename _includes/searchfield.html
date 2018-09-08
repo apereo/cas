@@ -1,9 +1,12 @@
-<form action="" class="navbar-form search-form" role="search">
-    <div class="input-group">
-        <input type="text" class="form-control" name="search_input" id="searchField" title="At least 3 characters" placeholder="Search" required />
+<form class="mb-3">
 
-        <div class="input-group-btn">
-            <button class="btn btn-default" type="submit"><i class="fa fa-search"></i></button>
+    <label for="searchField" class="sr-only">Search</label>
+
+    <div class="input-group">
+        <input type="text" class="form-control" id="searchField" placeholder="Search" title="At least 3 characters"
+               aria-label="Search"/>
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button"><i class="fa fa-search"></i></button>
         </div>
     </div>
 </form>
