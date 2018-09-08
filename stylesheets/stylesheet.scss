@@ -6,13 +6,16 @@ Slate Theme for GitHub Pages
 by Jason Costello, @jsncostello
 *******************************************************************************/
 
+@import "variables";
+@import "mixins/mixins";
+
 @import url(pygment_monokai.css);
 
 
 html, body {
   font-family: 'Lato', sans-serif;
   height: 100%;
-  background: #333;
+  //background: #333;
 }
 
 header {
@@ -48,10 +51,12 @@ h3 {
   font-size: 1.25rem;
 }
 
+/*
 .cas-docs-container {
   padding-top: 5px;
   margin-top: 30px;
 }
+*/
 
 .img-cloud {
   text-align: center;
@@ -66,30 +71,11 @@ h3 {
   }
 }
 
-/**
- * Flexbox implementation:
-.img-cloud {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-
-  a {
-    margin: 15px;
-    flex-grow: 1;
-    flex-basis: 15%;
-    align-self: center;
-  }
-}
- */
-
-
 .header-link {
   position: relative;
   margin-right: 0.25em;
   color: gainsboro;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
 }
 
 h2:hover .header-link,
@@ -193,9 +179,51 @@ footer {
   }
 }
 
-@import "sidebar";
+//@import "sidebar";
 
-@import "search";
+@import "docsearch";
+
+@import "page_toc";
+
+#sidebar {
+  overflow-y: auto;
+
+  a i.expand {
+    color: #cccccc;
+    float: right;
+    font-family: 'Font Awesome\ 5 Free';
+    font-style: normal;
+    font-weight: 900;
+    text-decoration: inherit;
+    font-size: 1rem;
+
+    &:before {
+      content: "\f107";
+    }
+  }
+
+
+  li > a {
+  }
+
+  li > a.collapsed {
+    background-color: transparent;
+
+    & i.expand:before {
+      content: "\f105";
+    }
+  }
+
+}
+
+
+a i.expand:before {
+  content: "\f107";
+}
+
+#sidebarTopics > li > a {
+  font-size: 1.15rem;
+}
 
 
 /* Extra small devices (portrait phones, less than 34em)*/
@@ -248,10 +276,16 @@ footer {
     padding: 30px;
   }
 
+  #docsNavBar {
+    position: relative;
+  }
   #toolbarIcons {
-    display: block;
-    float: right;
+    display: inline-block;
+    //float: right;
     text-align: right;
+    position: absolute;
+    top: 2px;
+    right: 10px;
 
     a {
       margin: 2px 5px;
@@ -301,3 +335,10 @@ footer {
 }
 
 @import "overrides";
+
+
+.collapsing {
+  -webkit-transition: none;
+  transition: none;
+  display: none;
+}
