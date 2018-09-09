@@ -24,13 +24,13 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link RankedAuthenticationProviderWebflowEventResolver}.
+ * This is {@link InitialAuthenticationProviderWebflowEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
+public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasMfaWebflowEventResolver {
 
 
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;

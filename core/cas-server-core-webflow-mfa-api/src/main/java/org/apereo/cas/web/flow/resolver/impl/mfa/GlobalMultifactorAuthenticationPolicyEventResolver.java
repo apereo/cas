@@ -63,8 +63,7 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         }
         LOGGER.debug("Attempting to globally activate [{}]", globalProviderId);
 
-        val providerMap =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", globalProviderId);
             throw new AuthenticationException();

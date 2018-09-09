@@ -3,8 +3,6 @@ package org.apereo.cas.adaptors.duo.web.flow.config;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
@@ -57,26 +55,22 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
     private static final String VIEW_ID_REDIRECT_TO_DUO_REGISTRATION = "redirectToDuoRegistration";
 
-    private final VariegatedMultifactorAuthenticationProvider provider;
-
     public DuoMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                            final boolean enableDeviceRegistration,
-                                           final VariegatedMultifactorAuthenticationProvider provider,
                                            final ApplicationContext applicationContext,
                                            final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, enableDeviceRegistration, applicationContext, casProperties);
-        this.provider = provider;
     }
 
     @Override
     protected void doInitialize() {
-        provider.getProviders().forEach(p -> {
-            val duoFlowRegistry = buildDuoFlowRegistry(p);
-            applicationContext.getAutowireCapableBeanFactory().initializeBean(duoFlowRegistry, p.getId());
+        casProperties.getAuthn().getMfa().getDuo().forEach(duo -> {
+            val duoFlowRegistry = buildDuoFlowRegistry(duo);
+            applicationContext.getAutowireCapableBeanFactory().initializeBean(duoFlowRegistry, duo.getId());
             val cfg = (ConfigurableListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
-            cfg.registerSingleton(p.getId(), duoFlowRegistry);
-            registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), p.getId(), duoFlowRegistry);
+            cfg.registerSingleton(duo.getId(), duoFlowRegistry);
+            registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getId(), duoFlowRegistry);
         });
 
         casProperties.getAuthn().getMfa().getDuo()
@@ -94,7 +88,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
             });
     }
 
-    private FlowDefinitionRegistry buildDuoFlowRegistry(final MultifactorAuthenticationProvider p) {
+    private FlowDefinitionRegistry buildDuoFlowRegistry(final DuoSecurityMultifactorProperties p) {
         val modelBuilder = new DynamicFlowModelBuilder();
 
         createDuoFlowVariables(modelBuilder);
@@ -104,7 +98,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         return createDuoFlowDefinitionRegistry(p, modelBuilder);
     }
 
-    private FlowDefinitionRegistry createDuoFlowDefinitionRegistry(final MultifactorAuthenticationProvider p, final DynamicFlowModelBuilder modelBuilder) {
+    private FlowDefinitionRegistry createDuoFlowDefinitionRegistry(final DuoSecurityMultifactorProperties p, final DynamicFlowModelBuilder modelBuilder) {
         val holder = new DefaultFlowModelHolder(modelBuilder);
         val flowBuilder = new FlowModelFlowBuilder(holder);
         val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, flowBuilderServices);

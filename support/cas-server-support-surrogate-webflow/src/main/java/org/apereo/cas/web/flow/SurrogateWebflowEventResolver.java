@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -39,10 +38,9 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
                                          final TicketRegistrySupport ticketRegistrySupport,
                                          final CookieGenerator warnCookieGenerator,
                                          final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                         final MultifactorAuthenticationProviderSelector selector,
                                          final SurrogateAuthenticationService surrogateService) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-            warnCookieGenerator, authenticationSelectionStrategies, selector);
+            warnCookieGenerator, authenticationSelectionStrategies);
         this.surrogateService = surrogateService;
     }
 

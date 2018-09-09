@@ -1,0 +1,47 @@
+description = "Apereo CAS Core Webflow MFA API"
+dependencies {
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-audit")
+    api project(":api:cas-server-core-api-webflow")
+
+    implementation libraries.bouncycastle
+
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-tickets-api")
+
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-authentication-api")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-web-api")
+    testImplementation project(":core:cas-server-core-cookie-api")
+    testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-api")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-cookie-api")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-validation")
+
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+}
+
+

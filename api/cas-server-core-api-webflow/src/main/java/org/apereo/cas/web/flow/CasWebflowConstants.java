@@ -606,4 +606,10 @@ public interface CasWebflowConstants {
      * State id to check for do change password manual flag "checkDoChangePassword".
      */
     String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
+
+    /**
+     * State id for fining provider and inserting into flowscope.
+     */
+    String STATE_ID_MFA_INITIALIZE = "mfaInitialize";
+
 }

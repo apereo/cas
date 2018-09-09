@@ -39,7 +39,7 @@ public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver
                                                                                final MultifactorAuthenticationProviderSelector selector,
                                                                                final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-            ticketRegistrySupport, warnCookieGenerator, authenticationStrategies, selector, casProperties);
+            ticketRegistrySupport, warnCookieGenerator, authenticationStrategies, selector);
         attributeName = casProperties.getAuthn().getMfa().getSessionAttribute();
     }
 

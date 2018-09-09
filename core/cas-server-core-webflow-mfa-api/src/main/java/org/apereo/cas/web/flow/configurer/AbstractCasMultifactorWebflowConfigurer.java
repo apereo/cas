@@ -6,13 +6,17 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+
 import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +31,9 @@ import java.util.Collection;
  */
 @Slf4j
 public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
+
+    private static final String MFA_INITIALIZE_BEAN_ID = "mfaInitializeAction";
+
     public AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                    final ApplicationContext applicationContext,
@@ -90,6 +97,19 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
      * @param mfaProviderFlowRegistry the registry
      */
     protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId, final FlowDefinitionRegistry mfaProviderFlowRegistry) {
+        val mfaFlow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(subflowId);
+
+        // Set the mfaInitialize action
+        val initLoginState = getState(mfaFlow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+        val transition = (Transition) initLoginState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        val targetStateId = transition.getTargetStateId();
+        transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_MFA_INITIALIZE));
+        val initializeAction = createActionState(mfaFlow,
+                CasWebflowConstants.STATE_ID_MFA_INITIALIZE,
+                createEvaluateAction(MFA_INITIALIZE_BEAN_ID));
+        createTransitionForState(initializeAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId);
+
+
         LOGGER.debug("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
             CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE, flow.getId());
         createEndState(flow, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE);
@@ -142,8 +162,8 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             registerMultifactorFlowDefinitionIntoLoginFlowRegistry(mfaProviderFlowRegistry);
             augmentMultifactorProviderFlowRegistry(mfaProviderFlowRegistry);
 
-            val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
-            createTransitionForState(state, subflowId, subflowId);
+            val startState = flow.getTransitionableState(flow.getStartState().getId());
+            createTransitionForState(startState, subflowId, subflowId);
         });
     }
 

@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.configurer;
 
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -676,16 +675,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         val field = ReflectionUtils.findField(act.getClass(), "expression");
         ReflectionUtils.makeAccessible(field);
         return (Expression) ReflectionUtils.getField(field, act);
-    }
-
-    /**
-     * Register multifactor providers state transitions into webflow.
-     *
-     * @param state the state
-     */
-    public void registerMultifactorProvidersStateTransitionsIntoWebflow(final TransitionableState state) {
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        providerMap.forEach((k, v) -> createTransitionForState(state, v.getId(), v.getId()));
     }
 
     /**

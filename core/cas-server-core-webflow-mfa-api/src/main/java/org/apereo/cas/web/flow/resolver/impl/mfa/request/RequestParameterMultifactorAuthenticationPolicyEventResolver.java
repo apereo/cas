@@ -39,7 +39,7 @@ public class RequestParameterMultifactorAuthenticationPolicyEventResolver extend
                                                                         final MultifactorAuthenticationProviderSelector selector,
                                                                         final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-            ticketRegistrySupport, warnCookieGenerator, authenticationStrategies, selector, casProperties);
+            ticketRegistrySupport, warnCookieGenerator, authenticationStrategies, selector);
         mfaRequestParameter = casProperties.getAuthn().getMfa().getRequestParameter();
     }
 

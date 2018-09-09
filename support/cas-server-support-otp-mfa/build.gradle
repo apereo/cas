@@ -4,6 +4,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-util-api")
     
     api project(":api:cas-server-core-api-webflow")

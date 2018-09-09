@@ -117,8 +117,8 @@ public class CasSupportActionsConfiguration {
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
-    @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
-    private ObjectProvider<CasWebflowEventResolver> rankedAuthenticationProviderWebflowEventResolver;
+    @Qualifier("initialAuthenticationProviderWebflowEventResolver")
+    private ObjectProvider<CasWebflowEventResolver> initialAuthenticationProviderWebflowEventResolver;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -220,7 +220,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "initialAuthenticationRequestValidationAction")
     public Action initialAuthenticationRequestValidationAction() {
-        return new InitialAuthenticationRequestValidationAction(rankedAuthenticationProviderWebflowEventResolver.getIfAvailable());
+        return new InitialAuthenticationRequestValidationAction(initialAuthenticationProviderWebflowEventResolver.getIfAvailable());
     }
 
     @RefreshScope

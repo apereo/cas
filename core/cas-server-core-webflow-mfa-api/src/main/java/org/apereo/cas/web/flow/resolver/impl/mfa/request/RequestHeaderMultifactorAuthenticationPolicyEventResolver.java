@@ -38,7 +38,7 @@ public class RequestHeaderMultifactorAuthenticationPolicyEventResolver extends B
                                                                      final MultifactorAuthenticationProviderSelector selector,
                                                                      final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-            ticketRegistrySupport, warnCookieGenerator, authenticationStrategies, selector, casProperties);
+            ticketRegistrySupport, warnCookieGenerator, authenticationStrategies, selector);
         mfaRequestHeader = casProperties.getAuthn().getMfa().getRequestHeader();
     }
 

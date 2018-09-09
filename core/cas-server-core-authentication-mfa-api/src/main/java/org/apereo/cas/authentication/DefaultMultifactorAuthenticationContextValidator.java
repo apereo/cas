@@ -16,7 +16,9 @@ import org.springframework.core.OrderComparator;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The {@link DefaultMultifactorAuthenticationContextValidator} is responsible for evaluating an authentication
@@ -65,11 +67,13 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
             LOGGER.debug("No multifactor authentication providers are configured");
             return Pair.of(Boolean.FALSE, Optional.empty());
         }
+        LOGGER.debug("Available MFA Providers are [{}]", providerMap.values());
         val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
         if (!requestedProvider.isPresent()) {
             LOGGER.debug("Requested authentication provider cannot be recognized.");
             return Pair.of(Boolean.FALSE, Optional.empty());
         }
+        LOGGER.debug("RequestedContext is [{}] and Available Contexts are [{}]", requestedContext, contexts);
         if (contexts.stream().filter(ctx -> ctx.toString().equals(requestedContext)).count() > 0) {
             LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContext);
             return Pair.of(Boolean.TRUE, requestedProvider);
@@ -142,9 +146,9 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
             LOGGER.debug("No authentication context could be determined based on authentication attribute [{}]", this.authenticationContextAttribute);
             return null;
         }
-        contexts.forEach(context -> providers.removeIf(provider -> !provider.getId().equals(context)));
-        LOGGER.debug("Found [{}] providers that may satisfy the context", providers.size());
-        return providers;
+        return providers.stream()
+                        .filter(p -> contexts.contains(p.getId()))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     private RegisteredServiceMultifactorPolicy.FailureModes getMultifactorFailureModeForService(final RegisteredService service) {

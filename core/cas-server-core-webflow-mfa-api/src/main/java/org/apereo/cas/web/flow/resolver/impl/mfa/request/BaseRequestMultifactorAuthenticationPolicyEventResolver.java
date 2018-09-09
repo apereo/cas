@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -41,8 +40,7 @@ public abstract class BaseRequestMultifactorAuthenticationPolicyEventResolver ex
                                                                    final TicketRegistrySupport ticketRegistrySupport,
                                                                    final CookieGenerator warnCookieGenerator,
                                                                    final AuthenticationServiceSelectionPlan authenticationStrategies,
-                                                                   final MultifactorAuthenticationProviderSelector selector,
-                                                                   final CasConfigurationProperties casProperties) {
+                                                                   final MultifactorAuthenticationProviderSelector selector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
             ticketRegistrySupport, warnCookieGenerator, authenticationStrategies, selector);
     }

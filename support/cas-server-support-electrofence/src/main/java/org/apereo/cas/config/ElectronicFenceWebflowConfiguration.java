@@ -102,8 +102,7 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
         val r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
             servicesManager,
             ticketRegistrySupport, warnCookieGenerator,
-            authenticationRequestServiceSelectionStrategies,
-            multifactorAuthenticationProviderSelector, authenticationRiskEvaluator,
+            authenticationRequestServiceSelectionStrategies, authenticationRiskEvaluator,
             authenticationRiskMitigator, casProperties);
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r, 0);
         return r;
