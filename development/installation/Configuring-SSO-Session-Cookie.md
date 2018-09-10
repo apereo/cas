@@ -1,7 +1,6 @@
 ---
 layout: default
 title: CAS - Configuring SSO Session Cookie
-category: SSO & SLO
 ---
 
 # SSO Session Cookie

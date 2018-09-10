@@ -1,7 +1,6 @@
 ---
 layout: default
 title: CAS - Webflow Decorations
-category: User Interface
 ---
 
 # Webflow Decorations
