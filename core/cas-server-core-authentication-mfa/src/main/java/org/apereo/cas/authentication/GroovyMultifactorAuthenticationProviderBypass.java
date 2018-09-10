@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties.ExecuteDefaultOptions;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ScriptingUtils;
@@ -37,6 +38,10 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
                     + "service [{}] and provider [{}] via Groovy script [{}]",
                 principal.getId(), registeredService, provider, this.groovyScript);
+            boolean defaultBypass = false;
+            if (bypassProperties.getGroovy().getExecuteDefault() == ExecuteDefaultOptions.BEFORE) {
+                defaultBypass = super.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
+            }
             final boolean isBypassed = ScriptingUtils.executeGroovyScript(this.groovyScript,
                 new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
             if (isBypassed) {
@@ -45,7 +50,10 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
             } else {
                 updateAuthenticationToForgetBypass(authentication, provider, principal);
             }
-            return isBypassed;
+            if (bypassProperties.getGroovy().getExecuteDefault() == ExecuteDefaultOptions.AFTER) {
+                defaultBypass = super.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
+            }
+            return isBypassed || defaultBypass;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
