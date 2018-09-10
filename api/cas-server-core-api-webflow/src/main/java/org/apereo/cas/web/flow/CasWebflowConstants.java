@@ -608,7 +608,7 @@ public interface CasWebflowConstants {
     String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
 
     /**
-     * State id for fining provider and inserting into flowscope.
+     * State id for finding provider and inserting into flowscope.
      */
     String STATE_ID_MFA_INITIALIZE = "mfaInitialize";
 
