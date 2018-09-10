@@ -9,20 +9,16 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -38,14 +34,13 @@ import java.util.Optional;
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
 
+    private static final String PARAMETER_ENTITY_ID = "entityId";
+
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final transient ServiceFactory webApplicationServiceFactory;
     private final String idpServerPrefix;
     private final ServicesManager servicesManager;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
-
-
-    private static final String PARAMETER_ENTITY_ID = "entityId";
 
     /**
      * Method attempts to resolve the service from the entityId parameter.  If present, an attempt is made
