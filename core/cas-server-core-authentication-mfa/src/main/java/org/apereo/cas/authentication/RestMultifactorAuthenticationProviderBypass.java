@@ -47,7 +47,14 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
 
             final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
                 rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters, new HashMap<>());
-            return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
+            final boolean isBypassed = response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
+            if (isBypassed) {
+                LOGGER.info("REST bypass endpoint response determined [{}] would be passed for [{}]", principal.getId(), provider.getId());
+                updateAuthenticationToRememberBypass(authentication, provider, principal);
+            } else {
+                updateAuthenticationToForgetBypass(authentication, provider, principal);
+            }
+            return isBypassed;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
