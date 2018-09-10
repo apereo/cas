@@ -383,6 +383,7 @@ subprojects {
 
         if (!Boolean.getBoolean("skipErrorProneCompiler")) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
+            errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
         }
         testImplementation libraries.tests
         testImplementation libraries.groovy
@@ -496,5 +497,11 @@ tasks.coveralls {
 task casVersion(description: "Display current CAS version") {
     doLast {
         println project.version
+    }
+}
+
+task signingKey(description: "Display CAS signing key id") {
+    doLast {
+        println "Signing key: " + project.findProperty("signing.keyId")
     }
 }
