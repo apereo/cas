@@ -69,6 +69,10 @@ after_script:
 stages:
 - initialize
 - publish
+- build
+- test
+- dependencies
+- spotbugs
 jobs:
   include:
   - stage: initialize
@@ -77,3 +81,66 @@ jobs:
   - stage: publish
     if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/publish-snapshots-release.sh
+  - stage: build
+    script: ./ci/build.sh
+  - stage: build
+    script: ./ci/analyze-style.sh
+  - stage: build
+    if: type != pull_request
+    script: ./ci/analyze-sonarqube.sh
+  - stage: build
+    script: ./ci/push-docs-ghpages.sh
+    if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+  - stage: build
+    script: ./ci/build-javadocs.sh
+  - stage: build
+    script: ./ci/build-config-metadata.sh
+  - stage: build
+    script: ./ci/check-config-factories.sh
+    ############################################
+  - stage: dependencies
+    script: ./ci/analyze-dependencies.sh
+  - stage: dependencies
+    if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    script: ./ci/report-dependency-updates.sh
+    ############################################
+  - stage: test
+    script: ./ci/tests/run-tests-simple.sh
+  - stage: test
+    script: ./ci/tests/restful/run-tests-restful.sh
+  - stage: test
+    script: ./ci/tests/cassandra/run-tests-cassandra.sh
+  - stage: test
+    script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
+  - stage: test
+    script: ./ci/tests/couchbase/run-tests-couchbase.sh
+  - stage: test
+    script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
+  - stage: test
+    script: ./ci/tests/filesystem/run-tests-filesystem.sh
+  - stage: test
+    script: ./ci/tests/ignite/run-tests-ignite.sh
+  - stage: test
+    script: ./ci/tests/influxdb/run-tests-influxdb.sh
+  - stage: test
+    script: ./ci/tests/ldap/run-tests-ldap.sh
+  - stage: test
+    script: ./ci/tests/mail/run-tests-mail.sh
+  - stage: test
+    script: ./ci/tests/couchdb/run-tests-couchdb.sh
+  - stage: test
+    script: ./ci/tests/memcached/run-tests-memcached.sh
+  - stage: test
+    script: ./ci/tests/mysql/run-tests-mysql.sh
+  - stage: test
+    script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
+  - stage: test
+    script: ./ci/tests/postgres/run-tests-postgres.sh
+  - stage: test
+    script: ./ci/tests/mariadb/run-tests-mariadb.sh
+  - stage: test
+    script: ./ci/tests/mongodb/run-tests-mongodb.sh
+  - stage: test
+    script: ./ci/tests/redis/run-tests-redis.sh
+  - stage: spotbugs
+    script: ./ci/analyze-bugs.sh
