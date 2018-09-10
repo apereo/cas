@@ -383,6 +383,7 @@ subprojects {
 
         if (!Boolean.getBoolean("skipErrorProneCompiler")) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
+            errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
         }
         testImplementation libraries.tests
         testImplementation libraries.groovy
