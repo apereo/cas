@@ -7,12 +7,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.core.Ordered;
 
@@ -37,25 +42,41 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
     private final transient ServiceFactory webApplicationServiceFactory;
     private final String idpServerPrefix;
     private final ServicesManager servicesManager;
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
 
     private static final String PARAMETER_ENTITY_ID = "entityId";
 
-
+    /**
+     * Method attempts to resolve the service from the entityId parameter.  If present, an attempt is made
+     * to find a service corresponding to the entityId in the Service Registry.  If a service is not resolved from
+     * a passed entity id, the service= parameter of the request will be returned instead.  This is usually the
+     * callback url to the external Shibboleth IdP.
+     *
+     * @param service the provided service by the caller
+     * @return - the resolved service.
+     */
     @Override
     public Service resolveServiceFrom(final Service service) {
         final Optional<String> result = getEntityIdAsParameter(service);
         if (result.isPresent()) {
             final String entityId = result.get();
             LOGGER.debug("Located entity id [{}] from service authentication request at [{}]", entityId, service.getId());
-            final RegisteredService registeredService = servicesManager.findServiceBy(entityId);
-            if (registeredService != null && registeredService.getAccessStrategy() !=  null
-                && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            if (isEntityIdServiceRegistered(entityId)) {
                 return this.webApplicationServiceFactory.createService(entityId);
             }
             LOGGER.debug("Entity id [{}] not registered as individual service", entityId);
         }
         LOGGER.debug("Could not located entity id from service authentication request at [{}]", service.getId());
         return service;
+    }
+
+    private boolean isEntityIdServiceRegistered(final String entityId) {
+        final RegisteredService registeredService = servicesManager.findServiceBy(entityId);
+        final AuditableContext audit = AuditableContext.builder()
+                .registeredService(registeredService)
+                .build();
+        return !registeredServiceAccessStrategyEnforcer.execute(audit).isExecutionFailure();
     }
 
     @Override
@@ -80,7 +101,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
                     .findFirst();
 
             if (param.isPresent()) {
-                LOGGER.debug("Found Entity Id in Service id = " + param.get().getValue());
+                LOGGER.debug("Found Entity Id in Service id [{}]", param.get().getValue());
                 return Optional.of(param.get().getValue());
             }
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
@@ -93,9 +114,9 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
                         })
                         .filter(p -> p.getKey().equals(PARAMETER_ENTITY_ID))
                         .map(Pair::getValue)
-                        .map(ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy::decode)
+                        .map(EncodingUtils::urlDecode)
                         .findFirst();
-                LOGGER.debug("Found entity id as part of request url = " + paramRequest);
+                LOGGER.debug("Found entity id as part of request url [{}]", paramRequest);
                 return paramRequest;
             }
         } catch (final Exception e) {
@@ -107,14 +128,5 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
     @Override
     public int getOrder() {
         return this.order;
-    }
-
-    protected static String decode(final String entityId) {
-        try {
-            return URLDecoder.decode(entityId, "UTF-8");
-        } catch (final Exception e) {
-            LOGGER.error("Error occurred try to decode entity id");
-            return entityId;
-        }
     }
 }

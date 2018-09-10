@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
@@ -38,6 +39,10 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
     private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private AuditableExecution registeredServiceAccessStrategyEnforcer;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
@@ -47,7 +52,8 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
     public AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy() {
         return new ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(webApplicationServiceFactory,
                 casProperties.getAuthn().getShibIdp().getServerUrl(),
-                servicesManager);
+                servicesManager,
+                registeredServiceAccessStrategyEnforcer);
     }
 
     @Override
