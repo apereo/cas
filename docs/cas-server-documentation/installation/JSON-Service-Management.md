@@ -168,7 +168,7 @@ An example legacy JSON file is listed below for reference:
 
 ## Replication
 
-If CAS is to deployed in a cluster, the service definition files must be kept in sync for all CAS nodes. Please [review this guide](Configuring-Service-Replication.html) to learn more about available options.
+If CAS is deployed in a cluster, the service definition files must be kept in sync for all CAS nodes. Please [review this guide](Configuring-Service-Replication.html) to learn more about available options.
 
 ## Auto Initialization
 
