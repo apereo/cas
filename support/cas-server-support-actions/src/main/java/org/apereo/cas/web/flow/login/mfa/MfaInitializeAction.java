@@ -7,6 +7,9 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Collection;
+import java.util.Optional;
+
 /**
  * This Action is wired in by AbstractCasMultifactorWebflowConfigurer to put
  * the resolved provider in the flow scope.
@@ -20,18 +23,16 @@ public class MfaInitializeAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) throws Exception {
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
         final String activeFlow = context.getActiveFlow().getId();
-
-        final MultifactorAuthenticationProvider provider =
+        final Optional<MultifactorAuthenticationProvider> provider =
                 applicationContext
                         .getBeansOfType(MultifactorAuthenticationProvider.class)
                         .entrySet().stream().filter(e -> e.getKey().startsWith(activeFlow))
                         .map(e -> e.getValue())
-                        .findFirst().get();
-        if (provider != null) {
+                        .findFirst();
+        if (provider.isPresent()) {
             context.getFlowScope().put("provider", provider);
             return success();
         }
-
         return error();
     }
 

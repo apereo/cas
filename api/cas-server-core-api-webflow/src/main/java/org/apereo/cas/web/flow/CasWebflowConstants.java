@@ -572,7 +572,7 @@ public interface CasWebflowConstants {
     String VIEW_ID_MFA_DENIED = "mfaDeniedView";
 
     /**
-     * State id for fining provider and inserting into flowscope.
+     * State id for finding provider and inserting into flowscope.
      */
     String STATE_ID_MFA_INITIALIZE = "mfaInitialize";
 
