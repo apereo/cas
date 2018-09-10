@@ -33,12 +33,21 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
         try {
+            if (bypassProperties.getGroovy().isExecuteDefault()) {
+                final boolean shouldExecute = super.shouldMultifactorAuthenticationProviderExecute(authentication,
+                        registeredService, provider, request);
+                if (!shouldExecute) {
+                    LOGGER.info("Default bypass provider determined this request may be passed, Groovy bypass will not" +
+                            "be consulted");
+                }
+                return false;
+            }
             final Principal principal = authentication.getPrincipal();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
-                    + "service [{}] and provider [{}] via Groovy script [{}]",
-                principal.getId(), registeredService, provider, this.groovyScript);
+                            + "service [{}] and provider [{}] via Groovy script [{}]",
+                    principal.getId(), registeredService, provider, this.groovyScript);
             final boolean shouldExecute = ScriptingUtils.executeGroovyScript(this.groovyScript,
-                new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
+                    new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
             if (shouldExecute) {
                 updateAuthenticationToForgetBypass(authentication, provider, principal);
             } else {

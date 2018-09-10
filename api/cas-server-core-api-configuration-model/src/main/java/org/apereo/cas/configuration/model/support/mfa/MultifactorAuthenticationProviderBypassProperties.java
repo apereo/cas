@@ -35,22 +35,6 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
         REST
     }
 
-    public enum ExecuteDefaultOptions {
-
-        /**
-         * Execute Default bypass before consulting custom provider.
-         */
-        BEFORE,
-        /**
-         * Execute Default bypass after consulting custom provider.
-         */
-        AFTER,
-        /**
-         * Default bypass will not be executed.
-         */
-        NEVER
-    }
-
     /**
      * Acceptable values are:
      * <ul>
@@ -133,7 +117,7 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
         /**
          * Determines if default bypass should be consulted along with this provider.
          */
-        private ExecuteDefaultOptions executeDefault = ExecuteDefaultOptions.NEVER;
+        private boolean executeDefault = false;
 
     }
 
@@ -147,6 +131,6 @@ public class MultifactorAuthenticationProviderBypassProperties implements Serial
         /**
          * Determines if default bypass should be consulted along with this provider.
          */
-        private ExecuteDefaultOptions executeDefault = ExecuteDefaultOptions.NEVER;
+        private boolean executeDefault = false;
     }
 }
