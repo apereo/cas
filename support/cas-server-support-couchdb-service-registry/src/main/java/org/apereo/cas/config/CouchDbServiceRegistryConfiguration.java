@@ -13,6 +13,7 @@ import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -37,16 +38,19 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
     private CouchDbConnectorFactory couchDbFactory;
 
     @Autowired
+    @Qualifier("defaultObjectMapperFactory")
     private ObjectMapperFactory objectMapperFactory;
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
     public CouchDbConnectorFactory serviceRegistryCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory);
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "serviceRegistryCouchDbRepository")
     public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository() {
         val couchDbProperties = casProperties.getServiceRegistry().getCouchDb();
 
@@ -57,6 +61,7 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
     public ServiceRegistry couchDbServiceRegistry() {
         return new CouchDbServiceRegistry(serviceRegistryCouchDbRepository(), casProperties.getServiceRegistry().getCouchDb().getRetries());
     }

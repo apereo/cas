@@ -108,9 +108,9 @@ public class CouchDbConnectorFactory {
 
             if (couchDbProperties.getProxyPort() > 0) {
                 builder.proxyPort(couchDbProperties.getProxyPort());
-                LOGGER.warn("CouchDb proxy settings enabled [{}:{}]", couchDbProperties.getProxyHost(), couchDbProperties.getProxyPort());
+                LOGGER.info("CouchDb proxy settings enabled [{}:{}]", couchDbProperties.getProxyHost(), couchDbProperties.getProxyPort());
             } else {
-                LOGGER.error("Proxy port not set for host [{}] clearing proxy host.", couchDbProperties.getProxyHost());
+                LOGGER.debug("Proxy port not set for host [{}] clearing proxy host.", couchDbProperties.getProxyHost());
                 builder.proxy(null);
             }
         }
