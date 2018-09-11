@@ -41,7 +41,7 @@ public class RegisteredServicesEndpoint extends BaseCasMvcEndpoint {
      */
     @ReadOperation
     public Collection<RegisteredService> handle() {
-        return this.servicesManager.getAllServices();
+        return this.servicesManager.load();
     }
 
     /**
