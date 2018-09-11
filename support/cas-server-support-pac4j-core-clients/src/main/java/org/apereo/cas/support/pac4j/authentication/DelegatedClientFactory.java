@@ -355,6 +355,8 @@ public class DelegatedClientFactory {
                 cfg.setDestinationBindingType(saml.getDestinationBinding());
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
+                cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
+
                 if (StringUtils.isNotBlank(saml.getPrincipalIdAttribute())) {
                     cfg.setAttributeAsId(saml.getPrincipalIdAttribute());
                 }
