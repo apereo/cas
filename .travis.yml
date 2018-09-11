@@ -82,10 +82,10 @@ jobs:
   - stage: publish
     if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/publish-snapshots-release.sh
-    name: "Publish/Release Artifacts"
+    name: "Publish Artifacts"
   - stage: build
     script: ./ci/build.sh
-    name: "Build/Compile CAS"
+    name: "Build CAS"
   - stage: build
     script: ./ci/analyze-style.sh
     name: "Checkstyle Analysis"
