@@ -39,8 +39,8 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
                 if (!shouldExecute) {
                     LOGGER.info("Default bypass provider determined this request may be passed, Groovy bypass will not" +
                             "be consulted");
+                    return false;
                 }
-                return false;
             }
             final Principal principal = authentication.getPrincipal();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "

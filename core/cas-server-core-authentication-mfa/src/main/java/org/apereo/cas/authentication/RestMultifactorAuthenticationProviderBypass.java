@@ -40,8 +40,8 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
                 if (!shouldExecute) {
                     LOGGER.info("Default bypass provider determined this request may be passed, REST bypass will not" +
                             "be consulted");
+                    return false;
                 }
-                return false;
             }
             final Principal principal = authentication.getPrincipal();
             final MultifactorAuthenticationProviderBypassProperties.Rest rest = bypassProperties.getRest();
