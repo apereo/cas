@@ -122,4 +122,9 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * A negative value de-activates the selection process and is the default.
      */
     private int assertionConsumerServiceIndex = -1;
+
+    /**
+     * Whether or not SAML SP metadata should be signed when generated.
+     */
+    private boolean signServiceProviderMetadata;
 }
