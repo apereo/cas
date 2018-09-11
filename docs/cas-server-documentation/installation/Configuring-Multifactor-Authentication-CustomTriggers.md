@@ -70,7 +70,7 @@ public class CustomWebflowEventResolver extends AbstractCasWebflowEventResolver 
 
 ## Register Triggers
 
-The event resolver trigger then needs to be registered. [See this guide](Configuration-Management-Extensions.html) for better details.
+The event resolver trigger then needs to be registered. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.
 
 The below example demonstrates a reasonable outline of a custom event resolver:
 
@@ -97,4 +97,4 @@ public class SomethingConfiguration implements InitializingBean {
 }
 ```
 
-Do not forget to register the configuration class with CAS. [See this guide](Configuration-Management-Extensions.html) for better details.
+Do not forget to register the configuration class with CAS. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.

@@ -124,7 +124,7 @@ public class CustomAuthenticatorSubsystemConfiguration {
 }
 ```
 
-Do not forget to register the configuration class with CAS. [See this guide](Configuration-Management-Extensions.html) for better details.
+Do not forget to register the configuration class with CAS. [See this guide](../configuration/Configuration-Management-Extensions.html) for better details.
 
 ## Triggers
 

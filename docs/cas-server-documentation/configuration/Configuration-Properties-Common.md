@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS Common Properties Overview
+category: Configuration
 ---
 
 # CAS Common Properties

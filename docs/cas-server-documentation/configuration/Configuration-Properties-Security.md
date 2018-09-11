@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Securing Configuration Properties
+category: Configuration
 ---
 
 # Configuration Security

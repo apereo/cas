@@ -52,7 +52,7 @@ will always use its own signing certificate for signing of the responses generat
 Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on 
 CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.md#saml-idp).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.md#saml-idp).
 
 ## IdP Metadata
 
@@ -148,7 +148,7 @@ your CAS overlay to be able to resolve dependencies:
 </repositories>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.md#saml-idp).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.md#saml-idp).
 
 ### SAML Services
 
@@ -255,7 +255,7 @@ Attribute name formats can be specified per relying party in the service registr
 ```
 
 You may also have the option to define attributes and their relevant name format globally
-via CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.md#saml-idp).
+via CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.md#saml-idp).
 
 ### Attribute Friendly Names
 

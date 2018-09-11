@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Management
+category: Configuration
 ---
 
 # Configuration Management

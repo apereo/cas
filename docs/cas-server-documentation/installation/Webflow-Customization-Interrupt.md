@@ -145,7 +145,7 @@ public class MyInterruptConfiguration {
 }
 ```
 
-[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
 ## Skipping Interrupts
 

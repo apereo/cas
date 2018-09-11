@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Discovery
+category: Configuration
 ---
 
 # Configuration Discovery

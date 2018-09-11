@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Management - Reloading Changes
+category: Configuration
 ---
 
 # Reloading Changes

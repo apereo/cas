@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS Properties
+category: Configuration
 ---
 
 # CAS Properties

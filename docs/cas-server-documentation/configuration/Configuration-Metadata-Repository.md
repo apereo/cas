@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS Configuration Metadata Repository
+category: Configuration
 ---
 
 # Configuration Metadata

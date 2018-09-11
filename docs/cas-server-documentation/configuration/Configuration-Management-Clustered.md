@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Management Clustered Deployment
+category: Configuration
 ---
 
 # Clustered Deployments

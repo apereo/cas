@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuration Extensions
+category: Configuration
 ---
 
 # Extending CAS Configuration
