@@ -108,8 +108,8 @@ public class CasServiceRegistryInitializationConfiguration {
         }
 
         @Override
-        protected String getExtension() {
-            return "json";
+        protected String[] getExtensions() {
+            return new String[]{"json"};
         }
     }
 }
