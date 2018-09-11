@@ -1,9 +1,10 @@
 package org.apereo.cas.web.saml2;
 
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.opensaml.core.xml.XMLObject;
 import org.pac4j.core.client.Clients;
 import org.pac4j.saml.client.SAML2Client;
@@ -84,14 +85,18 @@ public class Saml2ClientMetadataController {
     public ResponseEntity<String> getIdentityProviderMetadataByName(@PathVariable("client") final String client) {
         final SAML2Client saml2Client = (SAML2Client) builtClients.findClient(client);
         if (saml2Client != null) {
+            saml2Client.init();
             return getSaml2ClientIdentityProviderMetadataResponseEntity(saml2Client);
         }
         return getNotAcceptableResponseEntity();
     }
 
-    private ResponseEntity<String> getSaml2ClientServiceProviderMetadataResponseEntity(final SAML2Client saml2Client) {
+    private static ResponseEntity<String> getSaml2ClientServiceProviderMetadataResponseEntity(final SAML2Client saml2Client) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
+        if (saml2Client.getServiceProviderMetadataResolver() == null) {
+            return getNotAcceptableResponseEntity();
+        }
         return new ResponseEntity<>(saml2Client.getServiceProviderMetadataResolver().getMetadata(), headers, HttpStatus.OK);
     }
 
@@ -104,7 +109,7 @@ public class Saml2ClientMetadataController {
         return new ResponseEntity<>(metadata, headers, HttpStatus.OK);
     }
 
-    private ResponseEntity<String> getNotAcceptableResponseEntity() {
+    private static ResponseEntity<String> getNotAcceptableResponseEntity() {
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 }
