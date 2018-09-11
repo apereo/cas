@@ -85,6 +85,7 @@ public class Saml2ClientMetadataController {
     public ResponseEntity<String> getIdentityProviderMetadataByName(@PathVariable("client") final String client) {
         final SAML2Client saml2Client = (SAML2Client) builtClients.findClient(client);
         if (saml2Client != null) {
+            saml2Client.init();
             return getSaml2ClientIdentityProviderMetadataResponseEntity(saml2Client);
         }
         return getNotAcceptableResponseEntity();
