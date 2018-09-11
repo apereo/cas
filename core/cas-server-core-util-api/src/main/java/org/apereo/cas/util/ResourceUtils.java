@@ -181,7 +181,7 @@ public class ResourceUtils {
             val e = jFile.entries();
             while (e.hasMoreElements()) {
                 val entry = (ZipEntry) e.nextElement();
-                if (entry.getName().contains(resource.getFilename()) && entry.getName().contains(containsName)) {
+                if (entry.getName().contains(resource.getFilename()) && entry.getName().matches(containsName)) {
                     try (val stream = jFile.getInputStream(entry)) {
                         var copyDestination = destination;
                         if (isDirectory) {

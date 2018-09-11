@@ -77,70 +77,104 @@ jobs:
   include:
   - stage: initialize
     script: ./ci/download-dependencies.sh
+    name: "Initialize Build System"
     ############################################
   - stage: publish
     if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/publish-snapshots-release.sh
+    name: "Publish/Release Artifacts"
   - stage: build
     script: ./ci/build.sh
+    name: "Build/Compile CAS"
   - stage: build
     script: ./ci/analyze-style.sh
+    name: "Checkstyle Analysis"
   - stage: build
     if: type != pull_request
     script: ./ci/analyze-sonarqube.sh
+    name: "Sonarqube Analysis"
   - stage: build
     script: ./ci/push-docs-ghpages.sh
     if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    name: "Publish Documentation"
   - stage: build
     script: ./ci/build-javadocs.sh
+    name: "Build Javadocs"
   - stage: build
     script: ./ci/build-config-metadata.sh
+    name: "Build Configuration Metadata"
   - stage: build
     script: ./ci/check-config-factories.sh
+    name: "Configuration Factory Analysis"
     ############################################
   - stage: dependencies
     script: ./ci/analyze-dependencies.sh
+    name: "Dependency Security Analysis"
   - stage: dependencies
     if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/report-dependency-updates.sh
+    name: "Dependency Update Report"
     ############################################
   - stage: test
     script: ./ci/tests/run-tests-simple.sh
+    name: "Simple Unit Tests"
   - stage: test
     script: ./ci/tests/restful/run-tests-restful.sh
+    name: "RESTful Tests"
   - stage: test
     script: ./ci/tests/cassandra/run-tests-cassandra.sh
+    name: "Cassandra Tests"
   - stage: test
     script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
+    name: "CosmosDb Tests"
   - stage: test
     script: ./ci/tests/couchbase/run-tests-couchbase.sh
+    name: "Couchbase Tests"
   - stage: test
     script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
+    name: "DynamoDb Tests"
   - stage: test
     script: ./ci/tests/filesystem/run-tests-filesystem.sh
+    name: "FileSystem Tests"
   - stage: test
     script: ./ci/tests/ignite/run-tests-ignite.sh
+    name: "Apache Ignite Tests"
   - stage: test
     script: ./ci/tests/influxdb/run-tests-influxdb.sh
+    name: "InfluxDb Tests"
   - stage: test
     script: ./ci/tests/ldap/run-tests-ldap.sh
+    name: "LDAP Tests"
   - stage: test
     script: ./ci/tests/mail/run-tests-mail.sh
+    name: "Mail Tests"
   - stage: test
     script: ./ci/tests/couchdb/run-tests-couchdb.sh
+    name: "CouchDb Tests"
   - stage: test
     script: ./ci/tests/memcached/run-tests-memcached.sh
+    name: "Memcached Tests"
   - stage: test
     script: ./ci/tests/mysql/run-tests-mysql.sh
+    name: "MySQL Tests"
   - stage: test
     script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
+    name: "MSSQL Server Tests"
   - stage: test
     script: ./ci/tests/postgres/run-tests-postgres.sh
+    name: "PostgreSQL Tests"
   - stage: test
     script: ./ci/tests/mariadb/run-tests-mariadb.sh
+    name: "MariaDb Tests"
   - stage: test
     script: ./ci/tests/mongodb/run-tests-mongodb.sh
+    name: "MongoDb Tests"
   - stage: test
     script: ./ci/tests/redis/run-tests-redis.sh
+    name: "Redis Tests"
   - stage: spotbugs
-    script: ./ci/analyze-bugs.sh
+    script: ./ci/analyze-bugs-main.sh
+    name: "Spotbugs Main Analysis"
+  - stage: spotbugs
+    script: ./ci/analyze-bugs-tests.sh
+    name: "Spotbugs Tests Analysis"
