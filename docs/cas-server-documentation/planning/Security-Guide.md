@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Security Guide
+category: Planning
 ---
 
 # Security Guide
