@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JMeter Performance Testing
+category: High Availability
 ---
 
 # JMeter Performance Testing

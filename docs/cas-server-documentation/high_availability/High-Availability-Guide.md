@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - High Availability Guide
+category: High Availability
 ---
 
 # High Availability Guide (HA/Clustering)

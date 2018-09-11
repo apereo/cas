@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - High Availability Performance Testing
+category: High Availability
 ---
 
 # Locust Performance Testing
