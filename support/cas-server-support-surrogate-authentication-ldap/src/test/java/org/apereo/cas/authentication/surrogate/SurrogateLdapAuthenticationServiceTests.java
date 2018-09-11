@@ -83,6 +83,7 @@ import org.springframework.test.context.TestPropertySource;
 })
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @TestPropertySource(properties = {
+
     "cas.authn.surrogate.ldap.ldapUrl=ldap://localhost:10389",
     "cas.authn.surrogate.ldap.useSsl=false",
     "cas.authn.surrogate.ldap.baseDn=ou=people,dc=example,dc=org",
