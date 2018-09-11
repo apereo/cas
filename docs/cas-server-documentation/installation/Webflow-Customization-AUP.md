@@ -21,7 +21,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-Customize the policy by modifying the `src/main/resources/templates/casAcceptableUsagePolicyView.html`. See [this guide](User-Interface-Customization.html)
+Customize the policy by modifying the `src/main/resources/templates/casAcceptableUsagePolicyView.html`. See [this guide](../ux/User-Interface-Customization.html)
 to learn more about user interface customizations. Note that the view here should have full access to the resolved principal and attributes,
 if you wish to dynamically alter the page to present different text, etc.
 

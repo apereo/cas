@@ -606,7 +606,7 @@ as it's treated by the underlying servlet container engine.
 
 Control how CAS should treat views and other UI elements.
 
-To learn more about this topic, [please review this guide](User-Interface-Customization-Views.html).
+To learn more about this topic, [please review this guide](../ux/User-Interface-Customization-Views.html).
 
 ```properties
 # spring.thymeleaf.encoding=UTF-8
@@ -2850,7 +2850,7 @@ Database settings for this feature are available [here](Configuration-Properties
 
 ## Localization
 
-To learn more about this topic, [please review this guide](User-Interface-Customization-Localization.html).
+To learn more about this topic, [please review this guide](../ux/User-Interface-Customization-Localization.html).
 
 ```properties
 # cas.locale.paramName=locale
@@ -2936,7 +2936,7 @@ The signing and encryption keys [are both JWKs](Configuration-Properties-Common.
 
 ## Message Bundles
 
-To learn more about this topic, [please review this guide](User-Interface-Customization-Localization.html).
+To learn more about this topic, [please review this guide](../ux/User-Interface-Customization-Localization.html).
 The baseNames are message bundle base names representing files that either end in .properties or _xx.properties where xx is a country locale code. The commonNames are not actually message bundles but they are properties files that are merged together and contain keys that are only used if they are not found in the message bundles. Keys from the later files in the list will be preferred over keys from the earlier files.
 
 ```properties
@@ -3104,7 +3104,7 @@ Decide how CAS should monitor the internal state of JVM memory available at runt
 
 ## Themes
 
-To learn more about this topic, [please review this guide](User-Interface-Customization-Themes.html).
+To learn more about this topic, [please review this guide](../ux/User-Interface-Customization-Themes.html).
 
 ```properties
 # cas.theme.paramName=theme
