@@ -23,7 +23,7 @@ the available request headers as well as the following headers in its request:
 
 Upon a successful `200` status result, the response body is expected to contain the view that will be rendered by CAS.
  
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#views).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#views).
 
 ## Warning Before Accessing Application
 
@@ -65,4 +65,4 @@ In the event that no `service` is submitted to CAS, you may specify a default
 service url to which CAS will redirect. Note that this default service, much like
 all other services, MUST be authorized and registered with CAS.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#views).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#views).

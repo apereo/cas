@@ -41,7 +41,7 @@ Support is added by including the following dependency in the WAR overlay:
 ```
 
 To see the relevant list of CAS properties,
-please [review this guide](Configuration-Properties.html#eureka-service-discovery).
+please [review this guide](../configuration/Configuration-Properties.html#eureka-service-discovery).
 
 ### Authentication
 

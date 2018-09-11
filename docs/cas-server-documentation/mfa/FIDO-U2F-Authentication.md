@@ -20,7 +20,7 @@ Support is enabled by including the following module in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#fido-u2f).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f).
 
 ## Registration
 
@@ -87,7 +87,7 @@ Device registrations may be kept inside a relational database by including the f
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#fido-u2f-jpa).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-jpa).
 
 ### MongoDb
 
@@ -101,7 +101,7 @@ Device registrations may be kept inside a MongoDb instance by including the foll
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#fido-u2f-mongodb).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-mongodb).
 
 ### REST
 
@@ -115,4 +115,4 @@ The following parameters are passed:
 | `POST`           | Collection of registered devices as JSON | Store registered devices. | `200`.
 
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#fido-u2f-rest).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-rest).

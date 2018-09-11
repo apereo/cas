@@ -18,7 +18,7 @@ By default, after a user has successfully changed their password they will be re
 to enter their new password and log in. CAS can also be configured to automatically log the user in after
 a successful change. This behavior can be altered via CAS settings. 
 
-To learn more about available notification options, please [see this guide](SMS-Messaging-Configuration.html) or [this guide](Sending-Email-Configuration.html). To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#password-management).
+To learn more about available notification options, please [see this guide](SMS-Messaging-Configuration.html) or [this guide](Sending-Email-Configuration.html). To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#password-management).
 
 ## JSON
 

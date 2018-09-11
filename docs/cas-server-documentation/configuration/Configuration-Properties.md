@@ -7,7 +7,7 @@ category: Configuration
 # CAS Properties
 
 Various properties can be specified in CAS [either inside configuration files or as command
-line switches](Configuration-Management.html#overview). This section provides a list common CAS properties and
+line switches](../configuration/Configuration-Management.html#overview). This section provides a list common CAS properties and
 references to the underlying modules that consume them.
 
 <div class="alert alert-warning"><strong>Be Selective</strong><p>
@@ -29,7 +29,7 @@ create attribute release policies, etc. CAS at runtime will auto-configure all r
 ## General
 
 A number of CAS configuration options equally apply to a number of modules and features. To understand and 
-take note of those options, please [review this guide](Configuration-Properties-Common.html).
+take note of those options, please [review this guide](../configuration/Configuration-Properties-Common.html).
 
 ## Custom Settings
 
@@ -53,7 +53,7 @@ to CAS in form of a file or classpath resource. This is specially useful in case
 
 The following settings are to be loaded by the CAS configuration runtime, which bootstraps
 the entire CAS running context. They are to be put inside the `src/main/resources/bootstrap.properties`
-of the configuration server itself. See [this guide](Configuration-Server-Management.html) for more info.
+of the configuration server itself. See [this guide](../configuration/Configuration-Server-Management.html) for more info.
 
 The configuration server backed by Spring Cloud supports the following profiles.
 
@@ -107,7 +107,7 @@ Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp
 
 ### Vault
 
-Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp's Vault](Configuration-Properties-Security.html).
+Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp's Vault](../configuration/Configuration-Properties-Security.html).
 
 ```properties
 # spring.cloud.vault.host=127.0.0.1
@@ -156,30 +156,30 @@ Allow the CAS Spring Cloud configuration server to load settings from an Apache 
 
 ### Amazon Secrets Manager
 
-Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+Common AWS settings for this feature are available [here](../configuration/Configuration-Properties-Common.html#amazon-integration-settings)
 under the configuration key `cas.spring.cloud.aws.secretsManager`.
 
 ### Amazon S3
 
-The following settings may be passed using strategies outlined [here](Configuration-Management.html#overview) in order for CAS to establish a connection,
+The following settings may be passed using strategies outlined [here](../configuration/Configuration-Management.html#overview) in order for CAS to establish a connection,
 using the configuration key `cas.spring.cloud.aws.s3`.
 
 ```properties
 # ${configurationKey}.bucketName=cas-properties
 ```
 
-Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+Common AWS settings for this feature are available [here](../configuration/Configuration-Properties-Common.html#amazon-integration-settings)
 under the configuration key `cas.spring.cloud.aws.s3`.
 
 ### DynamoDb
 
-Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
+Common AWS settings for this feature are available [here](../configuration/Configuration-Properties-Common.html#amazon-integration-settings)
 under the configuration key `cas.spring.cloud.dynamodb`. 
 
 ### JDBC
 
 Allow the CAS Spring Cloud configuration server to load settings from a RDBMS instance. Database settings for this feature 
-are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.spring.cloud.jdbc`.
+are available [here](../configuration/Configuration-Properties-Common.html#database-settings) under the configuration key `cas.spring.cloud.jdbc`.
 
 ```properties
 # cas.spring.cloud.jdbc.sql=SELECT id, name, value FROM CAS_SETTINGS_TABLE
@@ -188,7 +188,7 @@ are available [here](Configuration-Properties-Common.html#database-settings) und
 ## Configuration Security
 
 To learn more about how sensitive CAS settings can be
-secured, [please review this guide](Configuration-Properties-Security.html).
+secured, [please review this guide](../configuration/Configuration-Properties-Security.html).
 
 ### Standalone
 
@@ -199,7 +199,7 @@ secured, [please review this guide](Configuration-Properties-Security.html).
 # cas.standalone.configurationSecurity.psw=
 ```
 
-The above settings may be passed to CAS using any of the [strategies outline here](Configuration-Management.html#overview),
+The above settings may be passed to CAS using any of the [strategies outline here](../configuration/Configuration-Management.html#overview),
 though it might be more secure to pass them to CAS as either command-line or system properties.
 
 ### Spring Cloud
@@ -228,7 +228,7 @@ distributed system with a lightweight message broker.
 # spring.cloud.bus.ack.enabled=true
 ```
 
-To learn more about this topic, [please review this guide](Configuration-Management.html).
+To learn more about this topic, [please review this guide](../configuration/Configuration-Management.html).
 
 ### RabbitMQ
 

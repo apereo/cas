@@ -26,7 +26,7 @@ please [review this guide](https://en.wikipedia.org/wiki/Digest_access_authentic
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#digest-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#digest-authentication).
 
 ## Credential Management
 

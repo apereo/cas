@@ -39,7 +39,7 @@ Support is provided via the following module:
 
 ## Settings
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-trusted-devicebrowser).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-trusted-devicebrowser).
 
 ## Authentication Context
 
@@ -54,7 +54,7 @@ identifies individual devices. Calculation of this device fingerprint can utiliz
 from the request. The default behavior is to use a combination of a randomly generated cookie and the client ip to
 calculate the device fingerprint.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#trusted-device-fingerprint).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#trusted-device-fingerprint).
 
 ## Storage
 
@@ -67,7 +67,7 @@ User decisions must be remembered and processed later on subsequent requests.  A
 If you do nothing, by default records are kept inside the runtime memory and cached for a configurable amount of time.
 This is most useful if you have a very small deployment with a small user base or if you simply wish to demo the functionality.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#json-storage).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-storage).
 
 ### JSON
 
@@ -89,7 +89,7 @@ Support is provided via the following module:
 ```
 
 To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-storage).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jdbc-storage).
 
 ### MongoDb
 
@@ -105,7 +105,7 @@ Support is provided via the following module:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-storage).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-storage).
 
 
 ### REST
@@ -123,7 +123,7 @@ Support is provided via the following module:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-storage).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-storage).
 
 #### Retrieve Trusted Records
 

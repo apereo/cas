@@ -30,7 +30,7 @@ replication with Ehcache, [see this resource](http://ehcache.org/documentation/u
 
 #### Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ehcache-ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ehcache-ticket-registry).
 
 The Ehcache configuration for `ehcache-replicated.xml` mentioned in the config follows.
 

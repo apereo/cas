@@ -23,7 +23,7 @@ The Redis ticket registry supports Redis Sentinel, which provides high availabil
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#redis-ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#redis-ticket-registry).
 
 ### Eviction Policy
 

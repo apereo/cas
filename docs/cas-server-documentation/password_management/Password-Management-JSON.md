@@ -24,4 +24,4 @@ The outline of the JSON file may match the following:
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#json-password-management).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-password-management).

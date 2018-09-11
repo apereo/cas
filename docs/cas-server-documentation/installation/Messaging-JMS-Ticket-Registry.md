@@ -29,7 +29,7 @@ identifier in order to avoid endless looping behavior and recursive needless inb
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jms-ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jms-ticket-registry).
 
 ## ActiveMQ
 
@@ -38,7 +38,7 @@ is available on the classpath. If the broker is present, an embedded broker is s
 configured automatically, as long as no broker URL is specified through configuration. 
 By default, ActiveMQ creates a destination if it does not exist yet, so destinations are resolved against their provided names.
 
-ActiveMQ configuration is controlled by external configuration properties in [CAS settings](Configuration-Properties.html#jms-ticket-registry).
+ActiveMQ configuration is controlled by external configuration properties in [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
 
 The default setting for ActiveMQ is that all persistent messages outside of a transaction 
 are sent to a broker are synchronous. This means that the send method is blocked until the 
@@ -64,14 +64,14 @@ Support is enabled by including the following dependency in the overlay:
 </dependency>
 ```
 
-Artemis configuration is controlled by external configuration properties in [CAS settings](Configuration-Properties.html#jms-ticket-registry).
+Artemis configuration is controlled by external configuration properties in [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
 
 ## JNDI
 
 If you are [running CAS in an application server](Configuring-Servlet-Container.html), 
 CAS will attempt to locate a JMS connection using JNDI. By default the locations 
 `java:/JmsXA` and `java:/XAConnectionFactory` will be checked. Of course, alternative locations may be 
-specified using [CAS settings](Configuration-Properties.html#jms-ticket-registry).
+specified using [CAS settings](../configuration/Configuration-Properties.html#jms-ticket-registry).
 
 
 ## Troubleshooting

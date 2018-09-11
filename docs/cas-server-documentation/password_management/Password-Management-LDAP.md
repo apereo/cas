@@ -18,4 +18,4 @@ LDAP support is enabled by including the following dependencies in the WAR overl
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-password-management).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-password-management).

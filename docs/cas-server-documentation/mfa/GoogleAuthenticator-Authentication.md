@@ -22,7 +22,7 @@ Support is enabled by including the following module in the overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator).
 
 ## Token Repository
 
@@ -50,7 +50,7 @@ Registration records and tokens may be kept inside a database instance via the f
 ```
 
 To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-jpa).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-jpa).
 
 #### MySQL / Galera Limitations
 
@@ -96,7 +96,7 @@ Registration records and tokens may be kept inside a mongo db instance, via the 
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-mongodb).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-mongodb).
 
 ### REST
 
@@ -117,7 +117,7 @@ The following endpoints need also be available:
 |-----------|------------------------------------------------------------------------------------
 | `GET`     | `count`    | N/A             | `200`. Numeric count | Count all user records
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-rest).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-rest).
 
 ### JSON
 
@@ -126,7 +126,7 @@ The behavior is only activated when a path to a JSON data store file is provided
 and otherwise CAS may fallback to keeping records in memory. This feature is mostly
 useful during development and for demo purposes.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-json).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-json).
 
 ## REST Protocol Credential Extraction 
 

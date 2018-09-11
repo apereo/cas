@@ -90,7 +90,7 @@ Support is enabled by including the following dependency in the overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#risk-based-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#risk-based-authentication).
 
 ### Messaging & Notifications
 

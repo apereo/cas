@@ -15,7 +15,7 @@ service registry that stores one or more registered services containing metadata
 * [Proxy control](Configuring-Service-Proxy-Policy.html) - Further restrict authorized services by granting/denying proxy authentication capability.
 * [Theme control](../ux/User-Interface-Customization.html) - Define alternate CAS themes to be used for particular services.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-registry).
 
 ## Service Management Web Application
 

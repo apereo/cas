@@ -151,7 +151,7 @@ that would authenticate the request via JAAS, LDAP, JDBC, etc.
 Depending on method of access and the `content-type` that is negotiated between the caller and CAS, (i.e. web-based vs. command-line access), 
 credentials may be supplied in headers via `curl` and family or they may be entered into a web-based login form.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#actuator-management-endpoints).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#actuator-management-endpoints).
 
 ### Troubleshooting
 
@@ -194,7 +194,7 @@ interactions with external systems should be instrumented automatically.
 Trace data is captured automatically and passed along to [Zipkin](https://github.com/openzipkin/zipkin), which helps 
 gather timing data needed to troubleshoot latency problems.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#sleuth-distributed-tracing).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#sleuth-distributed-tracing).
 
 ### Troubleshooting
 

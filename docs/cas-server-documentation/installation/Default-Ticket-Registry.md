@@ -10,7 +10,7 @@ The default registry uses a memory-backed internal concurrent map for ticket sto
 This component does not preserve ticket state across restarts and is not a suitable solution
 for clustered CAS environments that are deployed in active/active mode.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#inmemory-ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#inmemory-ticket-registry).
 
 ### Eviction Policy
 

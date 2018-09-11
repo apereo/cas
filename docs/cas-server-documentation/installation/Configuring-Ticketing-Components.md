@@ -14,7 +14,7 @@ There are two core configurable ticketing components:
 
 The deployment environment and technology expertise generally determine the particular `TicketRegistry` component. A cache-backed implementation is recommended for HA deployments, while the default in-memory registry may be suitable for small deployments.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ticket-registry).
 
 ### How Do I Choose?
 

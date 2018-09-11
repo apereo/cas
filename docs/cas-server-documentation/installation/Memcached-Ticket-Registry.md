@@ -118,7 +118,7 @@ compact data, which benefits both storage requirements and throughput.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#memcached-ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#memcached-ticket-registry).
 
 ## High Availability Considerations
 

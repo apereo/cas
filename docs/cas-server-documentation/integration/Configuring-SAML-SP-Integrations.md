@@ -166,7 +166,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 
 </div>
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-sps).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-sps).
 
 <div class="alert alert-info"><strong>Configure Once, Run Everywhere</strong><p>If you have developed a recipe for integrating
 with a SAML service provider, consider contributing that recipe to the project so its configuration

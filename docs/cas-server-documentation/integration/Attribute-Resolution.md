@@ -26,7 +26,7 @@ A framework for resolving persons and attributes from a variety of underlying so
 It consists of a collection of components that retrieve, cache, resolve, aggregate,
 merge person attributes from JDBC, LDAP and more.
 
-To see the relevant list of CAS properties that deal with resolving principals, please [review this guide](../installation/Configuration-Properties.html#principal-resolution).
+To see the relevant list of CAS properties that deal with resolving principals, please [review this guide](../configuration/Configuration-Properties.html#principal-resolution).
 
 Attribute sources are defined and configured to describe the global set of attributes to be fetched
 for each authenticated principal. That global set of attributes is then filtered by the
@@ -45,7 +45,7 @@ id provided during authentication or it could be noted by a custom attribute. Th
 Note that by default, CAS auto-creates attribute repository sources that are appropriate for LDAP, JDBC, etc.
 If you need something more, you will need to resort to more elaborate measures of defining the bean configuration.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#authentication-attributes).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-attributes).
 More about the Person Directory and its configurable sources [can be found here](https://github.com/apereo/person-directory).
 
 ### JDBC

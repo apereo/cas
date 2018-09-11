@@ -70,7 +70,7 @@ POST /cas/v1/tickets HTTP/1.0
 username=battags&password=password&token=true&additionalParam1=paramvalue
 ```
 
-The `token` parameter may either be passed as a request parameter or a request header. The body of the response will include the ticket-granting ticket as a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jwt-tickets).
+The `token` parameter may either be passed as a request parameter or a request header. The body of the response will include the ticket-granting ticket as a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jwt-tickets).
 
 ## Authenticate Credentials
 
@@ -119,7 +119,7 @@ Support is enabled by including the following in your overlay:
 </dependency>
 ```
 
-Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jwt-tickets).
+Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jwt-tickets).
 
 ## Validate Service Ticket
 
@@ -178,7 +178,7 @@ Support is enabled by including the following in your overlay:
 
 Invoke CAS to register applications into its own service registry. The REST call must be authenticated using basic authentication where credentials are authenticated and accepted by the existing CAS authentication strategy, and furthermore the authenticated principal must be authorized with a pre-configured role/attribute name and value that is designated in the CAS configuration via the CAS properties. The body of the request must be the service definition that shall be registered in JSON format and of course, CAS must be configured to accept the particular service type defined in the body. The accepted media type for this request is `application/json`.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#rest-api).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-api).
 
 ```bash
 POST /cas/v1/services HTTP/1.0

@@ -29,4 +29,4 @@ Adjust your expiration policy so that remember-me authentication requests are
 handled via a long-term timeout expiration policy, and other requests
 are handled via the CAS default SSO session expiration policy.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ticket-granting-cookie) and [this guide](Configuration-Properties.html#remember-me).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ticket-granting-cookie) and [this guide](../configuration/Configuration-Properties.html#remember-me).

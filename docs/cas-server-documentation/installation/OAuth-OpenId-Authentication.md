@@ -23,7 +23,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
 ## Endpoints
 
@@ -171,7 +171,7 @@ See [this guide](../integration/Attribute-Release-Policies.html) for more info.
 
 The expiration policy for OAuth tokens is controlled by CAS settings and properties. Note that while access and refresh tokens may have their own lifetime and expiration policy, they are typically upper-bound to the length of the CAS single sign-on session.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
 ## OAuth User Profile Structure
 
@@ -205,7 +205,7 @@ This option flattens principal attributes by one degree, putting them at the sam
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
 ### Custom
 
@@ -234,7 +234,7 @@ Authentication throttling may be enabled for the `/oauth2.0/accessToken` provide
 throttling](Configuring-Authentication-Throttling.md) support. The throttling mechanism that handles the usual CAS server endpoints for authentication
 and ticket validation, etc is then activated for the OAuth endpoints that are supported for throttling. 
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#oauth2).
 
 ## Server Configuration
 

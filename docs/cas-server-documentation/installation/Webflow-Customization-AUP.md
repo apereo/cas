@@ -31,7 +31,7 @@ policy record is strongly tied to the identified user record. Implement this fea
 would require heavy modifications to the CAS webflow as well as alternative means of storing and remembering decisions
 such as cookies or browser storage, etc.</p></div>
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
 ## Storage Mechanism
 
@@ -63,7 +63,7 @@ remembered via the same attribute. Support is enabled by including the following
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-1).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-1).
 
 ### MongoDb
 
@@ -80,7 +80,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
 ### JDBC
 
@@ -97,7 +97,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
 ### REST
 
@@ -114,7 +114,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
 ### Custom
 

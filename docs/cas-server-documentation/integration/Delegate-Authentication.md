@@ -32,7 +32,7 @@ An identity provider is a server which can authenticate users (like Google, Yaho
 If you want to delegate the CAS authentication to Twitter for example, you have to add an
 OAuth client for the Twitter provider, which will be done automatically for you once provider settings are taught to CAS.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#pac4j-delegated-authn).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#pac4j-delegated-authn).
 
 Notice that for each OAuth provider, the CAS server is considered as an OAuth client and therefore should be declared as
 an OAuth client at the OAuth provider. After the declaration, a key and a secret is given by the OAuth provider which has
@@ -50,7 +50,7 @@ After a successful delegated authentication, a user is created inside the CAS se
 this one can be created only from the technical identifier received from the external identity provider (like `1234`)
 or as a "typed identifier" (like `FacebookProfile#1234`), which is the default.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#pac4j-delegated-authn).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#pac4j-delegated-authn).
 
 ## Returned Payload
 

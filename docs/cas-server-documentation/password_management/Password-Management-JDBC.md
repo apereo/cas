@@ -18,7 +18,7 @@ JDBC support is enabled by including the following dependencies in the WAR overl
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-password-management).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jdbc-password-management).
 
 The expected database schema for the user accounts is:
 

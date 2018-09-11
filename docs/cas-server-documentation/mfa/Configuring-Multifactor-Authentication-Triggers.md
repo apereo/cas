@@ -7,7 +7,7 @@ category: Multifactor Authentication
 # Multifactor Authentication Triggers
 
 The following triggers can be used to activate and instruct CAS to navigate to a multifactor authentication flow.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 The execution order of multifactor authentication triggers is outlined below:
 
@@ -35,7 +35,7 @@ The trigger machinery in general should be completely oblivious to multifactor a
 
 MFA can be triggered for all applications and users regardless of individual settings.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 ## Applications
 
@@ -116,7 +116,7 @@ to know what provider to next activate.
 - Trigger MFA based on a principal attribute(s) whose value(s) **EXACTLY** matches an MFA provider.
 This option is more relevant if you have more than one provider configured or if you have the flexibility of assigning provider ids to attributes as values.
 
-Needless to say, the attributes need to have been resolved for the principal prior to this step. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
+Needless to say, the attributes need to have been resolved for the principal prior to this step. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 ## Global Principal Attribute Predicate
 
@@ -162,7 +162,7 @@ The parameters passed are as follows:
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 As an example, the following predicate example will begin to test each multifactor authentication provider and if the given provider is `mfa-duo` it will accept it as a valid trigger so long as the provider can be reached.
 

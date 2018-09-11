@@ -44,5 +44,5 @@ they may also be formatted under `custom_messages.properties` files.
 
 In the event that the code is not found in the activated resource bundle, the code itself will be used verbatim.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#localization)
-and [this guide](Configuration-Properties.html#message-bundles).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#localization)
+and [this guide](../configuration/Configuration-Properties.html#message-bundles).

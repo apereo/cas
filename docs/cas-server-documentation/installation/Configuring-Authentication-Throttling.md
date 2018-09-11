@@ -69,7 +69,7 @@ For additional instructions on how to configure auditing, please [review the fol
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-throttling).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-throttling).
 
 ## High Availability Considerations for Throttling
 

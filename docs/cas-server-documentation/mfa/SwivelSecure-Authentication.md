@@ -24,7 +24,7 @@ Support is enabled by including the following module in the overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#swivel-secure).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#swivel-secure).
 
 ## Logging
 

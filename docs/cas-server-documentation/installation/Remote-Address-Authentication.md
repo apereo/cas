@@ -37,4 +37,4 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#remote-address-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#remote-address-authentication).

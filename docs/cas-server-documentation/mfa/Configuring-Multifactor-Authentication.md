@@ -72,7 +72,7 @@ The following failure modes are supported:
 | `NONE`               | Do not contact the provider at all to check for availability. Assume the provider is available.
 
 A default failure mode can also be specified globally via CAS properties and may be overridden individually by CAS registered services.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 ## Multiple Provider Selection
 
@@ -105,7 +105,7 @@ The parameters passed are as follows:
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
 
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 ## Ranking Providers
 
@@ -138,4 +138,4 @@ Multifactor authentication in CAS mostly presents itself in form of two-factor a
 
 ## Settings
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).

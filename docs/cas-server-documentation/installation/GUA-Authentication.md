@@ -21,7 +21,7 @@ Support is enabled by including the following module in the overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#gua-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#gua-authentication).
 
 ### Resource
 

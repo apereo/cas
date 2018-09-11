@@ -41,7 +41,7 @@ CAS can also utilize a service's associated theme to selectively choose which se
 
 Views associated with a particular theme by default are expected to be found at: `src/main/resources/templates/<theme-id>`. Note that CAS views and theme-based views may both be externalized out of the web application context. When externalized, themed views are expected to be found at the specified path via CAS properties under a directory named after the theme. For instance, if the external path for CAS views is `/etc/cas/templates`, view template files for theme `sample` may be located `/etc/cas/templates/sample/`.
 
-  To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#views).
+  To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#views).
 
 ### Configuration
 

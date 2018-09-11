@@ -18,7 +18,7 @@ RADIUS support is enabled by only including the following dependency in the over
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#radius-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#radius-authentication).
 
 # RSA RADIUS MFA
 
@@ -34,7 +34,7 @@ RSA RADIUS OTP support for MFA is enabled by only including the following depend
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#radius-otp).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#radius-otp).
 
 ## Repository
 

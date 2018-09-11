@@ -35,4 +35,4 @@ def getSecurityQuestions(Object[] args) {
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#groovy-password-management).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#groovy-password-management).

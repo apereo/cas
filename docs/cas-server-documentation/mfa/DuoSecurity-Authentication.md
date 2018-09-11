@@ -84,4 +84,4 @@ curl --location --header "Content-Type: application/cas" https://apps.example.or
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#duosecurity).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#duosecurity).

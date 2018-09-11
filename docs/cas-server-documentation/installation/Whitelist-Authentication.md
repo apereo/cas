@@ -19,7 +19,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#file-whitelist-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#file-whitelist-authentication).
 
 ## Example Password File
 
@@ -50,4 +50,4 @@ The password file may also be specified as a JSON resource instead which allows 
 }
 ```
 
-The accepted statuses are `OK`, `LOCKED`, `DISABLED`, `EXPIRED` and `MUST_CHANGE_PASSWORD`. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#json-whitelist-authentication).
+The accepted statuses are `OK`, `LOCKED`, `DISABLED`, `EXPIRED` and `MUST_CHANGE_PASSWORD`. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-whitelist-authentication).
