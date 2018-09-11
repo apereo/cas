@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -440,6 +439,19 @@ public class CollectionUtils {
     }
 
     /**
+     * Wrap hash set.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the set
+     */
+    public static <T> HashSet<T> wrapHashSet(final Collection<T> source) {
+        val list = new HashSet<T>();
+        list.addAll(source);
+        return list;
+    }
+
+    /**
      * Wrap set set.
      *
      * @param <T>    the type parameter
@@ -485,48 +497,6 @@ public class CollectionUtils {
     public static MultiValueMap asMultiValueMap(final String key1, final Object value1, final String key2, final Object value2) {
         val wrap = (Map) wrap(key1, wrapList(value1), key2, wrapList(value2));
         return org.springframework.util.CollectionUtils.toMultiValueMap(wrap);
-    }
-
-    /**
-     * Cast members of a collection to a given type.
-     * @deprecated temporary until interfaces can change
-     * @param klass Class used for cast
-     * @param collection Collection who's members will be cast
-     * @param collector Collector for operation
-     * @param <T> type for cast
-     * @param <C> collection type
-     * @return Collection with members cast to given type
-     */
-    @Deprecated
-    public static <T, C extends Collection<T>> C castCollection(final Class<T> klass, final Collection<? extends T> collection,
-                                                                            final Collector<T, ?, C> collector) {
-        return collection.stream().map(klass::cast).collect(collector);
-    }
-
-    /**
-     * Cast elements of a list.
-     * @deprecated temporary until interfaces can change
-     * @param klass Class to cast elements to
-     * @param list List to be cast
-     * @param <T> type for casting
-     * @return List with elements cast to type
-     */
-    @Deprecated
-    public static <T> List<T> castList(final Class<T> klass, final Collection<? extends T> list) {
-        return castCollection(klass, list, Collectors.toList());
-    }
-
-    /**
-     * Cast elements of a set.
-     * @deprecated temporary until interfaces can change
-     * @param klass Class to cast elements to
-     * @param set Set to be cast
-     * @param <T> type for casting
-     * @return Set with elements cast to type
-     */
-    @Deprecated
-    public static <T> Set<T> castSet(final Class<T> klass, final Collection<? extends T> set) {
-        return castCollection(klass, set, Collectors.toSet());
     }
 
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {
