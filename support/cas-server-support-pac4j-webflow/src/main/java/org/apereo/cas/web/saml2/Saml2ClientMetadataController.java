@@ -85,7 +85,6 @@ public class Saml2ClientMetadataController {
     public ResponseEntity<String> getIdentityProviderMetadataByName(@PathVariable("client") final String client) {
         final SAML2Client saml2Client = (SAML2Client) builtClients.findClient(client);
         if (saml2Client != null) {
-            saml2Client.init();
             return getSaml2ClientIdentityProviderMetadataResponseEntity(saml2Client);
         }
         return getNotAcceptableResponseEntity();
@@ -94,6 +93,7 @@ public class Saml2ClientMetadataController {
     private static ResponseEntity<String> getSaml2ClientServiceProviderMetadataResponseEntity(final SAML2Client saml2Client) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
+        saml2Client.init();
         if (saml2Client.getServiceProviderMetadataResolver() == null) {
             return getNotAcceptableResponseEntity();
         }
