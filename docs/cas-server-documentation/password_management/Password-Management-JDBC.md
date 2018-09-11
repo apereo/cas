@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Password Management
+category: Password Management
 ---
 
 # Password Management - JDBC
