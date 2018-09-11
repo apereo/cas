@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Resolution
+category: Attributes
 ---
 
 # Attribute Resolution

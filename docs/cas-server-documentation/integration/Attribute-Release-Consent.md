@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Release Consent
+category: Attributes
 ---
 
 # Attribute Consent

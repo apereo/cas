@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Release Caching
+category: Attributes
 ---
 # Attribute Release Caching
 
