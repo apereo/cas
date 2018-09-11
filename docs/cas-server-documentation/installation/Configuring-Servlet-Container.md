@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Overlay Installation
+category: Installation
 ---
 
 # Servlet Container Configuration
