@@ -74,7 +74,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 ## High Availability Considerations for Throttling
 
 All of the throttling components are suitable for a CAS deployment that satisfies the
-[recommended HA architecture](../planning/High-Availability-Guide.html). In particular deployments with multiple CAS
+[recommended HA architecture](../high_availability/High-Availability-Guide.html). In particular deployments with multiple CAS
 nodes behind a load balancer configured with session affinity can use either in-memory or _inspektr_ components. It is
 instructive to discuss the rationale. Since load balancer session affinity is determined by source IP address, which
 is the same criterion by which throttle policy is applied, an attacker from a fixed location should be bound to the
