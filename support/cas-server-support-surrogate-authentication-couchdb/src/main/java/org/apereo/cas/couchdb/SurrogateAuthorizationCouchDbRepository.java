@@ -25,8 +25,8 @@ public class SurrogateAuthorizationCouchDbRepository extends CouchDbRepositorySu
      * @param surrogate username to retrieve authorized principals
      * @return list of surrogate documents
      */
-    @View(name = "by_surrogate", map = "function(doc) { if(doc.surrogate && doc.principal) { emit(doc.surrogate, doc.principal) } }")
-    public List<String> findBySurrogate(final String surrogate) {
+    @View(name = "by_surrogate", map = "function(doc) { if(doc.surrogate && doc.principal) { emit(doc.principal, doc.surrogate) } }")
+    public List<String> findByPrincipal(final String surrogate) {
         val view = createQuery("by_surrogate").key(surrogate);
         return db.queryView(view, String.class);
     }
@@ -37,8 +37,8 @@ public class SurrogateAuthorizationCouchDbRepository extends CouchDbRepositorySu
      * @param principal Principal to validate the surrogate can access.
      * @return Surrogate/principal if authorized
      */
-    @View(name = "by_surrogate_principal", map = "function(doc) { if(doc.surrogate && doc.principal) { emit([doc.surrogate, doc.principal], doc) } }")
+    @View(name = "by_surrogate_principal", map = "function(doc) { if(doc.surrogate && doc.principal) { emit([doc.principal, doc.surrogate], doc) } }")
     public List<CouchDbSurrogateAuthorization> findBySurrogatePrincipal(final String surrogate, final String principal) {
-        return queryView("by_surrogate_principal", ComplexKey.of(surrogate, principal));
+        return queryView("by_surrogate_principal", ComplexKey.of(principal, surrogate));
     }
 }

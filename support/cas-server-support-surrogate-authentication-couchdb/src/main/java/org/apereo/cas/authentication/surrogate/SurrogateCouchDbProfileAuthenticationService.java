@@ -34,19 +34,24 @@ public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateA
     @Override
     protected boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
         LOGGER.warn("User [{}] attempting surrogate for [{}] at [{}]", surrogate, principal.getId(), service.getId());
-        val user = couchDb.findByUsername(surrogate);
+        val user = couchDb.findByUsername(principal.getId());
         if (user == null) {
-            LOGGER.info("User [{}] not found for surrogacy.", user.getUsername());
+            LOGGER.info("User [{}] not found for surrogacy.", principal.getId());
             return false;
         }
         val users = user.getAttribute(surrogatePrincipalsAttribute);
         if (users == null) {
-            LOGGER.info("User [{}] has no surrogate principals entry.", user.getUsername());
+            LOGGER.info("User [{}] has no surrogate principals entry.", principal.getId());
             return false;
         }
 
-        if (CollectionUtils.toCollection(users).contains(principal.getId())) {
-            LOGGER.warn("User [{}] becoming surrogate for [{}] at [{}]", surrogate, principal.getId(), service.getId());
+        val userList = CollectionUtils.toCollection(users);
+        if (userList.isEmpty()) {
+            LOGGER.info("User [{}] is not an eligible surrogate.", principal.getId());
+            return false;
+        }
+        if (userList.contains(principal.getId())) {
+            LOGGER.warn("User [{}] becoming surrogate for [{}] at [{}]", principal.getId(), surrogate, service.getId());
             return true;
         }
         return false;
@@ -57,7 +62,7 @@ public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateA
         LOGGER.debug("Listing eligible accounts for user [{}].", username);
         val user = couchDb.findByUsername(username);
         if (user == null) {
-            LOGGER.debug("User [{}] not found for surrogacy.", user.getUsername());
+            LOGGER.debug("User [{}] not found for surrogacy.", username);
             return Collections.EMPTY_LIST;
         }
         val users = user.getAttribute(surrogatePrincipalsAttribute);

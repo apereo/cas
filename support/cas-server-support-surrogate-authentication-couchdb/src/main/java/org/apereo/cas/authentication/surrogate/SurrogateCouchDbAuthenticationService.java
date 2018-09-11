@@ -32,6 +32,6 @@ public class SurrogateCouchDbAuthenticationService extends BaseSurrogateAuthenti
 
     @Override
     public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
-        return couchDb.findBySurrogate(username);
+        return couchDb.findByPrincipal(username);
     }
 }
