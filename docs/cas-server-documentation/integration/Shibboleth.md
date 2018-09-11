@@ -40,7 +40,7 @@ https://sso.example.org/cas/login?service=<authentication-plugin-url>&entityId=<
 You can also take advantage of the `entityId` parameter and treat it as a normal CAS service definition,
 so it can be used for multifactor authentication and authorization.
 
-See [this guide](../installation/Configuring-Multifactor-Authentication-Triggers.html) for more info.
+See [this guide](../mfa/Configuring-Multifactor-Authentication-Triggers.html) for more info.
 
 ## Displaying SAML MDUI
 

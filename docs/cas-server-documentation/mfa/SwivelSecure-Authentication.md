@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Swivel Secure Authentication
+category: Multifactor Authentication
 ---
 
 # Swivel Secure Authentication

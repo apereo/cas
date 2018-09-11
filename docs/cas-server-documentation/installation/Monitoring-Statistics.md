@@ -48,10 +48,10 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `sso`                     | Indicate the current status of the single signon session tied to the browser session and the SSO cookie.
 | `resolve-attributes/{name}`    | Invoke the CAS [attribute resolution](../integration/Attribute-Resolution.html) engine to locate attributes for `{name}`.
 | `release-attributes`           | Invoke the CAS [attribute release](../integration/Attribute-Release.html) engine to release attributes to an application.
-| `multifactor-trusted-devices`  | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine.
+| `multifactor-trusted-devices`  | Expose devices currently [registered and trusted](../mfa/Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine.
 | `attribute-consent`  | Manage and control [attribute consent decisions](../integration/Attribute-Release-Consent.html).
-| `gauth-credential-repository`  | Manage and control [Google Authenticator account records](GoogleAuthenticator-Authentication.html).
-| `yubikey-account-repository`  | Manage and control [Google Authenticator account records](YubiKey-Authentication.html).
+| `gauth-credential-repository`  | Manage and control [Google Authenticator account records](../mfa/GoogleAuthenticator-Authentication.html).
+| `yubikey-account-repository`  | Manage and control [Google Authenticator account records](../mfa/YubiKey-Authentication.html).
 | `oauth-tokens`  | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html).
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>

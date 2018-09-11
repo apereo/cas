@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - YubiKey Authentication
+category: Multifactor Authentication
 ---
 
 # YubiKey Authentication

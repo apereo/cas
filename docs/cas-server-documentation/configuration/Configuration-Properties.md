@@ -1108,7 +1108,7 @@ same IP address. Database settings for this feature are available [here](Configu
 ## Adaptive Authentication
 
 Control how CAS authentication should adapt itself to incoming client requests.
-To learn more about this topic, [please review this guide](Configuring-Adaptive-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/Configuring-Adaptive-Authentication.html).
 
 ```properties
 # cas.authn.adaptive.rejectCountries=United.+
@@ -1390,7 +1390,7 @@ To learn more about this topic, [please review this guide](Digest-Authentication
 
 ## Radius Authentication
 
-To learn more about this topic, [please review this guide](RADIUS-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/RADIUS-Authentication.html).
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.radius`.
 
@@ -2035,7 +2035,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 
 ## Multifactor Authentication
 
-To learn more about this topic, [please review this guide](Configuring-Multifactor-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/Configuring-Multifactor-Authentication.html).
 
 ```properties
 # Activate MFA globally for all, regardless of other settings
@@ -2088,7 +2088,7 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 
 ### Multifactor Trusted Device/Browser
 
-To learn more about this topic, [please review this guide](Multifactor-TrustedDevice-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/Multifactor-TrustedDevice-Authentication.html).
 
 ```properties
 # cas.authn.mfa.trusted.authenticationContextAttribute=isFromTrustedMultifactorAuthentication
@@ -2153,7 +2153,7 @@ This section controls how that process should behave.
 
 ### Simple Multifactor Authentication
 
-To learn more about this topic, [please review this guide](Simple-Multifactor-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/Simple-Multifactor-Authentication.html).
 
 ```properties
 # cas.authn.mfa.simple.name=
@@ -2169,7 +2169,7 @@ under the configuration key `cas.authn.mfa.simple`.
 
 ### Google Authenticator
 
-To learn more about this topic, [please review this guide](GoogleAuthenticator-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/GoogleAuthenticator-Authentication.html).
 
 ```properties
 # cas.authn.mfa.gauth.issuer=
@@ -2222,7 +2222,7 @@ Database settings for this feature are available [here](Configuration-Properties
 
 ### YubiKey
 
-To learn more about this topic, [please review this guide](YubiKey-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/YubiKey-Authentication.html).
 
 ```properties
 # cas.authn.mfa.yubikey.clientId=
@@ -2266,7 +2266,7 @@ Database settings for this feature are available [here](Configuration-Properties
 
 ### Radius OTP
 
-To learn more about this topic, [please review this guide](RADIUS-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/RADIUS-Authentication.html).
 
 ```properties
 # cas.authn.mfa.radius.rank=0
@@ -2280,7 +2280,7 @@ Multifactor authentication bypass settings for this provider are available [here
 
 ### DuoSecurity
 
-To learn more about this topic, [please review this guide](DuoSecurity-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/DuoSecurity-Authentication.html).
 
 ```properties
 # cas.authn.mfa.duo[0].duoSecretKey=
@@ -2306,7 +2306,7 @@ Multifactor authentication bypass settings for this provider are available [here
 
 ### FIDO U2F
 
-To learn more about this topic, [please review this guide](FIDO-U2F-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/FIDO-U2F-Authentication.html).
 
 ```properties
 # cas.authn.mfa.u2f.rank=0
@@ -2358,7 +2358,7 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 
 ### Swivel Secure
 
-To learn more about this topic, [please review this guide](SwivelSecure-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/SwivelSecure-Authentication.html).
 
 ```properties
 # cas.authn.mfa.swivel.swivelTuringImageUrl=https://turing.example.edu/TURingImage
@@ -2374,7 +2374,7 @@ Multifactor authentication bypass settings for this provider are available [here
 
 ### Authy
 
-To learn more about this topic, [please review this guide](AuthyAuthenticator-Authentication.html).
+To learn more about this topic, [please review this guide](../mfa/AuthyAuthenticator-Authentication.html).
 
 ```properties
 # cas.authn.mfa.authy.apiKey=

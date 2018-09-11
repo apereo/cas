@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Multifactor Authentication Bypass
+category: Multifactor Authentication
 ---
 
 # Multifactor Authentication Bypass

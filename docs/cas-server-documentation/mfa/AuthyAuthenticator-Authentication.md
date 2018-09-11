@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Authy Authentication
+category: Multifactor Authentication
 ---
 
 # Authy Authentication

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Multifactor Authentication
+category: Multifactor Authentication
 ---
 
 # Multifactor Authentication (MFA)
@@ -30,7 +31,7 @@ The following multifactor providers are supported by CAS.
 | FIDO U2F              | `mfa-u2f`       | [See this guide](FIDO-U2F-Authentication.html).
 | CAS Simple            | `mfa-simple`    | [See this guide](Simple-Multifactor-Authentication.html).
 | Swivel Secure         | `mfa-swivel`    | [See this guide](SwivelSecure-Authentication.html).
-| Custom                | Custom          | [See this guide](Custom-MFA-Authentication.html).
+| Custom                | Custom          | [See this guide](../mfa/Custom-MFA-Authentication.html).
 
 ## Triggers
 
@@ -39,7 +40,7 @@ To learn more, [please see this guide](Configuring-Multifactor-Authentication-Tr
 
 ## Bypass Rules
 
-Each multifactor provider is equipped with options to allow for MFA bypass. To learn more, [please see this guide](Configuring-Multifactor-Authentication-Bypass.html).
+Each multifactor provider is equipped with options to allow for MFA bypass. To learn more, [please see this guide](../mfa/Configuring-Multifactor-Authentication-Bypass.html).
 
 ## Failure Modes
 

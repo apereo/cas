@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Trusted Device Multifactor Authentication
+category: Multifactor Authentication
 ---
 
 # Multifactor Authentication Trusted Device/Browser

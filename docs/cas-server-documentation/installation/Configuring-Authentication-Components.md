@@ -101,7 +101,7 @@ Please [see this guide](Configuring-Proxy-Authentication.html) for more details.
 
 ## Multifactor Authentication (MFA)
 
-Please [see this guide](Configuring-Multifactor-Authentication.html) for more details.
+Please [see this guide](../mfa/Configuring-Multifactor-Authentication.html) for more details.
 
 ## Login Throttling
 

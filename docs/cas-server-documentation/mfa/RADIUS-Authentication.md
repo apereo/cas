@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - RADIUS Authentication
+category: Multifactor Authentication
 ---
 
 # RADIUS Authentication

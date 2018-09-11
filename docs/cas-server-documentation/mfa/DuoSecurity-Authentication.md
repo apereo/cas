@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Duo Security Authentication
+category: Multifactor Authentication
 ---
 
 # Duo Security Authentication

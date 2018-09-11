@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Custom Multifactor Authentication
+category: Multifactor Authentication
 ---
 
 # Custom Multifactor Authentication

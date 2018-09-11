@@ -163,7 +163,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 Support for authentication context class references is implemented in form of `acr_values` as part of the original 
 authorization request, which is mostly taken into account by 
-the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS. 
+the [multifactor authentication features](../mfa/Configuring-Multifactor-Authentication.html) of CAS. 
 Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
 
 ## Pairwise Identifiers

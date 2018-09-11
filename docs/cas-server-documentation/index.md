@@ -9,12 +9,12 @@ title: CAS - Home
 * [Pluggable authentication support](Configuring-Authentication-Components.html) ([LDAP](installation/LDAP-Authentication.html), 
 [Database](installation/Database-Authentication.html), [X.509](installation/X509-Authentication.html), [SPNEGO](installation/SPNEGO-Authentication.html), 
 [JAAS](installation/JAAS-Authentication.html), [JWT](installation/JWT-Authentication.html), 
-[RADIUS](installation/RADIUS-Authentication.html), [MongoDb](installation/MongoDb-Authentication.html), etc)
+[RADIUS](mfa/RADIUS-Authentication.html), [MongoDb](installation/MongoDb-Authentication.html), etc)
 * Support for multiple protocols ([CAS](protocol/CAS-Protocol.html), [SAML](protocol/SAML-Protocol.html), [WS-Federation](protocol/WS-Federation-Protocol.html),
 [OAuth2](protocol/OAuth-Protocol.html), [OpenID](protocol/OpenID-Protocol.html), [OpenID Connect](protocol/OIDC-Protocol.html), [REST](protocol/REST-Protocol.html))
-* Support for [multifactor authentication](installation/Configuring-Multifactor-Authentication.html) via a variety of 
-providers ([Duo Security](installation/DuoSecurity-Authentication.html), [FIDO U2F](installation/FIDO-U2F-Authentication.html), 
-[YubiKey](installation/YubiKey-Authentication.html), [Google Authenticator](installation/GoogleAuthenticator-Authentication.html), [Authy](installation/AuthyAuthenticator-Authentication.html) etc)
+* Support for [multifactor authentication](mfa/Configuring-Multifactor-Authentication.html) via a variety of 
+providers ([Duo Security](mfa/DuoSecurity-Authentication.html), [FIDO U2F](mfa/FIDO-U2F-Authentication.html), 
+[YubiKey](mfa/YubiKey-Authentication.html), [Google Authenticator](mfa/GoogleAuthenticator-Authentication.html), [Authy](mfa/AuthyAuthenticator-Authentication.html) etc)
 * Support for [delegated authentication](integration/Delegate-Authentication.html) to external providers such as [ADFS](integration/ADFS-Integration.html), Facebook, Twitter, SAML2 IdPs, etc.
 * Built-in support for [password management](installation/Password-Management.html), [notifications](installation/Webflow-Customization-Interrupt.html), [terms of use](installation/Webflow-Customization-AUP.html) and [impersonation](installation/Surrogate-Authentication.html).
 * Support for [attribute release](integration/Attribute-Release.html) including [user consent](integration/Attribute-Release-Consent.html).

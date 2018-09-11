@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Google Authenticator Authentication
+category: Multifactor Authentication
 ---
 
 # Google Authenticator Authentication

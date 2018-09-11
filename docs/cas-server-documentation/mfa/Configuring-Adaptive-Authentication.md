@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Adaptive Authentication
+category: Multifactor Authentication
 ---
 
 # Adaptive Authentication

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Simple Multifactor Authentication
+category: Multifactor Authentication
 ---
 
 # Simple Multifactor Authentication

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - U2F - FIDO Universal 2nd Factor Authentication
+category: Multifactor Authentication
 ---
 
 # U2F - FIDO Universal Authentication
