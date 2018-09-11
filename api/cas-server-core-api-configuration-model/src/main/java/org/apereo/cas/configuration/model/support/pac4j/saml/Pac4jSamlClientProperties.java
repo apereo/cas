@@ -137,4 +137,9 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * user and build a profile for CAS.
      */
     private String principalIdAttribute;
+
+    /**
+     * Whether or not SAML SP metadata should be signed when generated.
+     */
+    private boolean signServiceProviderMetadata;
 }

@@ -91,12 +91,20 @@ public class Saml2ClientMetadataController {
     private ResponseEntity<String> getSaml2ClientServiceProviderMetadataResponseEntity(final SAML2Client saml2Client) {
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
+        saml2Client.init();
+        if (saml2Client.getServiceProviderMetadataResolver() == null) {
+            return getNotAcceptableResponseEntity();
+        }
         return new ResponseEntity<>(saml2Client.getServiceProviderMetadataResolver().getMetadata(), headers, HttpStatus.OK);
     }
 
     private ResponseEntity<String> getSaml2ClientIdentityProviderMetadataResponseEntity(final SAML2Client saml2Client) {
         val headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_XML);
+        saml2Client.init();
+        if (saml2Client.getIdentityProviderMetadataResolver() == null) {
+            return getNotAcceptableResponseEntity();
+        }
         saml2Client.getIdentityProviderMetadataResolver().resolve();
         val entity = saml2Client.getIdentityProviderMetadataResolver().getEntityDescriptorElement();
         val metadata = SamlUtils.transformSamlObject(openSamlConfigBean, entity).toString();
