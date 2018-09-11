@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Long Term Authentication
+category: SSO & SLO
 ---
 
 # Long Term Authentication
