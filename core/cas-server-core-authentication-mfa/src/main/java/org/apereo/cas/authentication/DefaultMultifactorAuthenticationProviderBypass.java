@@ -50,7 +50,14 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         this.httpRequestHeaderPatterns = values.stream().map(RegexUtils::createPattern).collect(Collectors.toSet());
     }
 
-    private static void updateAuthenticationToForgetBypass(final Authentication authentication,
+    /**
+     * Update authentication to forget bypass.
+     *
+     * @param authentication the authentication
+     * @param provider       the provider
+     * @param principal      the principal
+     */
+    protected static void updateAuthenticationToForgetBypass(final Authentication authentication,
                                                            final MultifactorAuthenticationProvider provider,
                                                            final Principal principal) {
         LOGGER.debug("Bypass rules for service [{}] indicate the request may be ignored", principal.getId());
@@ -58,7 +65,14 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         LOGGER.debug("Updated authentication session to remember bypass for [{}] via [{}]", provider.getId(), AUTHENTICATION_ATTRIBUTE_BYPASS_MFA);
     }
 
-    private static void updateAuthenticationToRememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
+    /**
+     * Update authentication to remember bypass.
+     *
+     * @param authentication the authentication
+     * @param provider       the provider
+     * @param principal      the principal
+     */
+    protected static void updateAuthenticationToRememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
                                                              final Principal principal) {
         LOGGER.debug("Bypass rules for service [{}] indicate the request may NOT be ignored", principal.getId());
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
