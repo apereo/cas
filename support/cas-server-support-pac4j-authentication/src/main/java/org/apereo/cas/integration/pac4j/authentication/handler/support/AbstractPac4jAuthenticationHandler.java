@@ -1,14 +1,17 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.security.auth.login.FailedLoginException;
@@ -38,15 +41,18 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      *
      * @param credentials the provided credentials
      * @param profile     the retrieved user profile
+     * @param client      the client
      * @return the built handler result
      * @throws GeneralSecurityException On authentication failure.
      */
-    protected AuthenticationHandlerExecutionResult createResult(final ClientCredential credentials, final UserProfile profile) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult createResult(final ClientCredential credentials,
+                                                                final UserProfile profile,
+                                                                final BaseClient client) throws GeneralSecurityException {
         if (profile == null) {
             throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);
         }
 
-        final String id = determinePrincipalIdFrom(profile);
+        final String id = determinePrincipalIdFrom(profile, client);
         if (StringUtils.isBlank(id)) {
             throw new FailedLoginException("No identifier found for this user profile: " + profile);
         }
@@ -61,19 +67,27 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * Determine principal id from profile.
      *
      * @param profile the profile
+     * @param client  the client
      * @return the id
      */
-    protected String determinePrincipalIdFrom(final UserProfile profile) {
-        final String id;
-        if (StringUtils.isNotBlank(principalAttributeId) && profile.containsAttribute(principalAttributeId)) {
+    protected String determinePrincipalIdFrom(final UserProfile profile, final BaseClient client) {
+        String id = profile.getId();
+        if (client != null && client.getCustomProperties().containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID)) {
+            final String principalAttribute = client.getCustomProperties().get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID).toString();
+            if (profile.containsAttribute(principalAttribute)) {
+                id = profile.getAttribute(principalAttribute).toString();
+                LOGGER.debug("Delegated authentication indicates usage of client principal attribute [{}] for the identifier [{}]", principalAttribute, id);
+            } else {
+                LOGGER.warn("Delegated authentication cannot find attribute [{}] to use as principal id", principalAttribute);
+            }
+        } else if (StringUtils.isNotBlank(principalAttributeId) && profile.containsAttribute(principalAttributeId)) {
             id = profile.getAttribute(principalAttributeId).toString();
             LOGGER.debug("Delegated authentication indicates usage of attribute [{}] for the identifier [{}]", principalAttributeId, id);
         } else if (isTypedIdUsed) {
             id = profile.getTypedId();
             LOGGER.debug("Delegated authentication indicates usage of typed profile id [{}]", id);
-        } else {
-            id = profile.getId();
         }
+        LOGGER.debug("Final principal id determined based on client [{}] and user profile [{}] is [{}]", profile, client, id);
         return id;
     }
 }

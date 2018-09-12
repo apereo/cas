@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jOidcClientProperties;
@@ -54,6 +55,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 @Slf4j
 public class DelegatedClientFactory {
+
     /**
      * The Pac 4 j properties.
      */
@@ -293,7 +295,8 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(props.getClientName())) {
             client.setName(props.getClientName());
         }
-        client.getCustomProperties().put("autoRedirect", props.isAutoRedirect());
+        client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, props.isAutoRedirect());
+        client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
     }
 
     /**

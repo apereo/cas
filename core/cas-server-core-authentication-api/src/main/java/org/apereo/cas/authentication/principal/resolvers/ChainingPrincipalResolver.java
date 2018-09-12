@@ -67,6 +67,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 LOGGER.debug("Invoking principal resolver [{}]", resolver);
                 final Principal p = resolver.resolve(credential, principal, handler);
                 if (p != null) {
+                    LOGGER.debug("Resolved principal [{}]", p);
                     principals.add(p);
                 }
             });
