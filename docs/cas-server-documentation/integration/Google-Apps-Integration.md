@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Google Apps Integration
+category: Integration
 ---
 
 # Overview

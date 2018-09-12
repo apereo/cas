@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - SAML SP Integrations
+category: Integration
 ---
 
 # SAML SP Integrations

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Google Analytics
+category: Integration
 ---
 
 # Google Analytics

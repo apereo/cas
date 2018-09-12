@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - SCIM Provisioning Integration
+category: Integration
 ---
 
 # Overview

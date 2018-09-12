@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Google reCAPTCHA
+category: Integration
 ---
 
 # Google reCAPTCHA

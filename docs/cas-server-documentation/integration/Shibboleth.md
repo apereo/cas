@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Shibboleth Integration
+category: Integration
 ---
 
 # Overview
