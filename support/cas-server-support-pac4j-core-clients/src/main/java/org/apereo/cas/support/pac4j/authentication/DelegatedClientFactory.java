@@ -41,6 +41,7 @@ import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.client.SAML2ClientConfiguration;
+import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -375,6 +376,13 @@ public class DelegatedClientFactory {
                 }
                 if (StringUtils.isNotBlank(saml.getNameIdPolicyFormat())) {
                     cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
+                }
+
+                if (!saml.getRequestedAttributes().isEmpty()) {
+                    saml.getRequestedAttributes().stream()
+                        .map(attribute -> new SAML2ServiceProvicerRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
+                            attribute.getNameFormat(), attribute.isRequired()))
+                        .forEach(attribute -> cfg.getRequestedServiceProviderAttributes().add(attribute));
                 }
 
                 val client = new SAML2Client(cfg);
