@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Metrics
+category: Monitoring & Statistics
 ---
 
 # CAS Metrics

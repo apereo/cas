@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Monitoring
+category: Monitoring & Statistics
 ---
 
 # CAS Monitoring
