@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Ticketing Components
+category: Ticketing
 ---
 
 # Ticket Registry Replication Encryption
