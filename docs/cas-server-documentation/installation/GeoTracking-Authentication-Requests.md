@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - GeoTracking Authentication Requests
+category: Authentication
 ---
 
 # GeoTracking Authentication Requests
