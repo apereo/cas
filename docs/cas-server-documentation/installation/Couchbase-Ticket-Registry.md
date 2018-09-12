@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Couchbase Ticket Registry
+category: Ticketing
 ---
 
 # Couchbase Ticket Registry

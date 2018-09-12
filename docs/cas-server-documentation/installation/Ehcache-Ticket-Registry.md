@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Ehcache Ticket Registry
+category: Ticketing
 ---
 
 # Ehcache Ticket Registry

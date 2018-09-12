@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Redis Ticket Registry
+category: Ticketing
 ---
 
 # Redis Ticket Registry

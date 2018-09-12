@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Messaging (JMS) Ticket Registry
+category: Ticketing
 ---
 
 # JMS Ticket Registry

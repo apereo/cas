@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Ticketing Components
+category: Ticketing
 ---
 
 # Ticketing

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - MongoDb Ticket Registry
+category: Ticketing
 ---
 
 # MongoDb Ticket Registry

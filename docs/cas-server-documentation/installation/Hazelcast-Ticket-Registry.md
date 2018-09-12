@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Hazelcast Ticket Registry
+category: Ticketing
 ---
 
 # Hazelcast Ticket Registry

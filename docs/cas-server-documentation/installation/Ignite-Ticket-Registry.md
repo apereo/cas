@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Ignite Ticket Registry
+category: Ticketing
 ---
 
 # Ignite Ticket Registry

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - DynamoDb Ticket Registry
+category: Ticketing
 ---
 
 # DynamoDb Ticket Registry

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Memcached Ticket Registry
+category: Ticketing
 ---
 
 # Memcached Ticket Registry

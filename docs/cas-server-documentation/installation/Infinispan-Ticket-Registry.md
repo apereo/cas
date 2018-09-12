@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Infinispan Ticket Registry
+category: Ticketing
 ---
 
 # Infinispan Ticket Registry

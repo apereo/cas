@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Default Ticket Registry
+category: Ticketing
 ---
 
 # Default Ticket Registry

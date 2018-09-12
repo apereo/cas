@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JWT Service Tickets
+category: Ticketing
 ---
 
 # JWT Service Tickets
