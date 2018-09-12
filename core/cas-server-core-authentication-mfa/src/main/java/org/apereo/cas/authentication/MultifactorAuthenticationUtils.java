@@ -29,17 +29,18 @@ public class MultifactorAuthenticationUtils {
     public static MultifactorAuthenticationProviderBypass newMultifactorAuthenticationProviderBypass(
         final MultifactorAuthenticationProviderBypassProperties props) {
 
-        final MultifactorAuthenticationProviderBypass bypass;
+        final ChainingMultifactorAuthenticationBypassProvider bypass = new ChainingMultifactorAuthenticationBypassProvider();
+        bypass.addBypass(new DefaultMultifactorAuthenticationProviderBypass(props));
+
         switch (props.getType()) {
             case GROOVY:
-                bypass = new GroovyMultifactorAuthenticationProviderBypass(props);
+                bypass.addBypass(new GroovyMultifactorAuthenticationProviderBypass(props));
                 break;
             case REST:
-                bypass = new RestMultifactorAuthenticationProviderBypass(props);
+                bypass.addBypass(new RestMultifactorAuthenticationProviderBypass(props));
                 break;
             case DEFAULT:
             default:
-                bypass = new DefaultMultifactorAuthenticationProviderBypass(props);
                 break;
         }
         return bypass;

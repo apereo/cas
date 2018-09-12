@@ -24,20 +24,20 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-public class DefaultMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
+public class DefaultMultifactorAuthenticationProviderBypass extends AbstractMultifactorAuthenticationProviderBypass {
 
     private static final long serialVersionUID = 3720922341350004543L;
 
     /**
      * Bypass settings for this provider.
      */
-    protected final MultifactorAuthenticationProviderBypassProperties bypassProperties;
+
 
     private final Pattern httpRequestRemoteAddressPattern;
     private final Set<Pattern> httpRequestHeaderPatterns;
 
     public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties) {
-        this.bypassProperties = bypassProperties;
+        super(bypassProperties);
 
         if (StringUtils.isNotBlank(bypassProperties.getHttpRequestRemoteAddress())) {
             this.httpRequestRemoteAddressPattern = RegexUtils.createPattern(bypassProperties.getHttpRequestRemoteAddress());
@@ -118,35 +118,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         return true;
     }
 
-    /**
-     * Method will remove any previous bypass set in the authentication.
-     *
-     * @param authentication - the authentication
-     * @param provider - the provider
-     * @param principal - the principal
-     */
-    protected static void updateAuthenticationToForgetBypass(final Authentication authentication,
-                                                           final MultifactorAuthenticationProvider provider,
-                                                           final Principal principal) {
-        LOGGER.debug("Bypass rules for service [{}] indicate the request may be ignored", principal.getId());
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE);
-        LOGGER.debug("Updated authentication session to remember bypass for [{}] via [{}]", provider.getId(), AUTHENTICATION_ATTRIBUTE_BYPASS_MFA);
-    }
 
-    /**
-     * Method will set the bypass into the authentication.
-     *
-     * @param authentication - the authentication
-     * @param provider - the provider
-     * @param principal - the principal
-     */
-    protected static void updateAuthenticationToRememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
-                                                             final Principal principal) {
-        LOGGER.debug("Bypass rules for service [{}] indicate the request may NOT be ignored", principal.getId());
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId());
-        LOGGER.debug("Updated authentication session to NOT remember bypass for [{}] via [{}]", provider.getId(), AUTHENTICATION_ATTRIBUTE_BYPASS_MFA);
-    }
 
     /**
      * Locate matching registered service property boolean.

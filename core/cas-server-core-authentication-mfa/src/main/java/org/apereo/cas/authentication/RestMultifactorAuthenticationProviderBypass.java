@@ -21,7 +21,7 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifactorAuthenticationProviderBypass {
+public class RestMultifactorAuthenticationProviderBypass extends AbstractMultifactorAuthenticationProviderBypass {
 
     private static final long serialVersionUID = -7553888418344342672L;
 
@@ -34,15 +34,6 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
         try {
-            if (bypassProperties.getRest().isExecuteDefault()) {
-                final boolean shouldExecute = super.shouldMultifactorAuthenticationProviderExecute(authentication,
-                        registeredService, provider, request);
-                if (!shouldExecute) {
-                    LOGGER.info("Default bypass provider determined this request may be passed, REST bypass will not" +
-                            "be consulted");
-                    return false;
-                }
-            }
             final Principal principal = authentication.getPrincipal();
             final MultifactorAuthenticationProviderBypassProperties.Rest rest = bypassProperties.getRest();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
@@ -67,6 +58,7 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return super.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
+        LOGGER.error("REST Bypass evaluator encountered an error, returning default true for shouldExecute");
+        return true;
     }
 }
