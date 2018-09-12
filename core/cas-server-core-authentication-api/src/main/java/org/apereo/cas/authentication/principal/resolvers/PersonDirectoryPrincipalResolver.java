@@ -11,6 +11,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,6 +41,7 @@ import java.util.Optional;
 @ToString
 @RequiredArgsConstructor
 @Getter
+@Setter
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /**
@@ -66,6 +68,11 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * Optional principal attribute name.
      */
     protected final String principalAttributeName;
+
+    /**
+     * Use the current principal id for extraction.
+     */
+    protected boolean useCurrentPrincipalId;
 
     public PersonDirectoryPrincipalResolver() {
         this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(), false,
@@ -185,7 +192,18 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @return the username, or null if it could not be resolved.
      */
     protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
-        return credential.getId();
+        LOGGER.debug("Extracting credential id based on existing credential [{}]", credential);
+        if (currentPrincipal != null && currentPrincipal.isPresent()) {
+            val principal = currentPrincipal.get();
+            LOGGER.debug("Principal is currently resolved is [{}]", principal);
+            if (useCurrentPrincipalId) {
+                LOGGER.debug("Using the existing resolved principal id [{}]", principal.getId());
+                return principal.getId();
+            }
+        }
+        val id = credential.getId();
+        LOGGER.debug("Extracted principal id [{}]", id);
+        return id;
     }
 
 }

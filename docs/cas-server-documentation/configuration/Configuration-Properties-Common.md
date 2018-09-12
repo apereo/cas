@@ -412,6 +412,7 @@ The following options related to Person Directory support in CAS when it attempt
 # ${configurationKey}.principalAttribute=
 # ${configurationKey}.returnNull=false
 # ${configurationKey}.principalResolutionFailureFatal=false
+# ${configurationKey}.useExistingPrincipalId=false
 ```
 
 ## InfluxDb Configuration
