@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Audit Configuration
+category: Logs & Audits
 ---
 
 # Audits
