@@ -22,12 +22,12 @@ The CAS server web application responds to the following strategies that dictate
 This is the default configuration mode which indicates that CAS does **NOT** require connections to an external configuration server
 and will run in an embedded *standalone mode*. When this option is turned on, CAS by default will attempt to locate settings and properties
 inside a given directory indicated under the setting name `cas.standalone.configurationDirectory` and otherwise falls back to using `/etc/cas/config` as the configuration directory.
-You may instruct CAS to use this setting via the methods [outlined here](../configuration/Configuration-Management.html#overview). 
+You may instruct CAS to use this setting via the methods [outlined here](Configuration-Management.html#overview). 
 There also exists a `cas.standalone.configurationFile` which can be used to directly feed a collection of properties to CAS in form of a file or classpath resource. 
 
 Similar to the Spring Cloud external configuration server, the contents of this directory include `(cas|application).(yml|properties)`
 files that can be used to control CAS behavior. Also note that this configuration directory can be monitored by CAS to auto-pick up changes
-and refresh the application context as needed. Please [review this guide](../configuration/Configuration-Management-Reload.html#reload-strategy) to learn more.
+and refresh the application context as needed. Please [review this guide](Configuration-Management-Reload.html#reload-strategy) to learn more.
 
 Note that by default, all CAS settings and configuration is controlled via the embedded `application.properties` file in the CAS server
 web application. There is also an embedded `application.yml` file that allows you to override all defaults if you wish to ship the configuration
@@ -46,7 +46,7 @@ to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap
 <div class="alert alert-warning"><strong>Remember</strong><p>You are advised to not overlay or otherwise
 modify the built in <code>application.properties</code> or <code>bootstrap.properties</code> files. This will only complicate and weaken your deployment.
 Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the defaults, override via <code>application.yml</code> or
-use the <a href="../configuration/Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
+use the <a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
 configuration files external to its own. Premature optimization will only lead to chaos.</p></div>
 
 ### Spring Cloud
@@ -77,7 +77,7 @@ via the following module in it own [WAR overlay](https://github.com/apereo/cas-c
 </dependency>
 ```
 
-In addition to the [strategies outlined here](../configuration/Configuration-Management.html#overview), the configuration server 
+In addition to the [strategies outlined here](Configuration-Management.html#overview), the configuration server 
 may load CAS settings and properties via the following order and mechanics:
 
 1. Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml`)
@@ -152,7 +152,7 @@ branch, for instance, when you might want to align the config label with your br
 but make it optional (e.g. `spring.cloud.config.label=myfeature,develop`).
 
 To lean more about how CAS allows you to reload configuration changes,
-please [review this guide](../configuration/Configuration-Management-Reload.html).
+please [review this guide](Configuration-Management-Reload.html).
 
 #### Profiles
 
@@ -453,7 +453,7 @@ To learn how sensitive CAS settings can be secured via encryption, [please revie
 ## Reloading Changes
 
 To lean more about how CAS allows you to reload configuration changes,
-please [review this guide](../configuration/Configuration-Management-Reload.html).
+please [review this guide](Configuration-Management-Reload.html).
 
 ## Clustered Deployments
 
@@ -462,4 +462,4 @@ to manage configuration in a distributed deployment. Spring Cloud Bus links node
 distributed system with a lightweight message broker. This can then be used to broadcast state
 changes (e.g. configuration changes) or other management instructions.
 
-To learn how sensitive CAS settings can be secured via encryption, [please review this guide](../configuration/Configuration-Management-Clustered.html).
+To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Management-Clustered.html).

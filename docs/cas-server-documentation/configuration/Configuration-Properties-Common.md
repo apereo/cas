@@ -53,11 +53,11 @@ in each case to learn the exact unit of measure.
 
 ## Authentication Throttling
 
-Certain functionality in CAS, such as [OAuth](OAuth-OpenId-Authentication.html) 
+Certain functionality in CAS, such as [OAuth](../installation/OAuth-OpenId-Authentication.html) 
 or [REST API](../protocol/REST-Protocol.html), allow you to throttle requests to specific endpoints in addition to the more 
 generic authentication throttling functionality applied during the login flow and authentication attempts.
 
-To fully deliver this functionality, it is expected that [authentication throttling](Configuring-Authentication-Throttling.html) is turned on.
+To fully deliver this functionality, it is expected that [authentication throttling](../installation/Configuring-Authentication-Throttling.html) is turned on.
 
 ## Authentication Credential Selection
 
@@ -379,7 +379,7 @@ The following crypto options apply equally to relevant CAS components (ticket re
 
 ### RSA Keys
 
-Certain features such as the ability to produce [JWTs as CAS tickets](Configure-ServiceTicket-JWT.html) may allow you to use the `RSA` algorithm with public/private keypairs for signing and encryption. This behavior may prove useful generally in cases where the consumer of the CAS-encoded payload is an outsider and a client application that need not have access to the signing secrets directly and visibly and may only be given a half truth vis-a-vis a public key to verify the payload authenticity and decode it. This particular option makes little sense in situations where CAS itself is both a producer and a consumer of the payload.
+Certain features such as the ability to produce [JWTs as CAS tickets](../installation/Configure-ServiceTicket-JWT.html) may allow you to use the `RSA` algorithm with public/private keypairs for signing and encryption. This behavior may prove useful generally in cases where the consumer of the CAS-encoded payload is an outsider and a client application that need not have access to the signing secrets directly and visibly and may only be given a half truth vis-a-vis a public key to verify the payload authenticity and decode it. This particular option makes little sense in situations where CAS itself is both a producer and a consumer of the payload.
 
 <div class="alert alert-info"><strong>Remember</strong><p>Signing and encryption options are not mutually exclusive. While it would be rather nonsensical, it is entirely possible for CAS to use <code>AES</code> keys for signing and <code>RSA</code> keys for encryption, or vice versa.</p></div>
 
@@ -717,7 +717,7 @@ please review [this guide](http://docs.spring.io/spring-framework/docs/current/j
 ## SAML2 Service Provider Integrations
 
 The settings defined for each service provider simply attempt to automate the creation of 
-a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the 
+a [SAML service definition](../installation/Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the 
 applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering 
 SAML service providers with CAS which would depend on your service registry of choice.
 
@@ -906,7 +906,7 @@ The parameters passed are as follows:
 
 ## Email Notifications
 
-To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
+To learn more about this topic, [please review this guide](../installation/SMS-Email-Configuration.html).
 
 The following options are shared and apply when CAS is configured to send email notifications, given the provider's *configuration key*:
 
@@ -942,7 +942,7 @@ The following options are shared and apply when CAS is configured to send SMS no
 ```
 
 You will also need to ensure a provider is defined that is able to send SMS messages. To learn more about this 
-topic, [please review this guide](SMS-Messaging-Configuration.html).
+topic, [please review this guide](../installation/SMS-Messaging-Configuration.html).
  
 ## Delegated Authentication Settings
 

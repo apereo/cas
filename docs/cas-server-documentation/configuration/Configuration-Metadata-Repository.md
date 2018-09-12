@@ -11,7 +11,7 @@ is generated automatically at build and release time by processing all items ann
 is then made available for additional querying and filtering to look up definitions of a given property or locate relevant settings 
 that apply to a particular group of functionality in CAS, such as LDAP authentication.
 
-Configuration metadata may also be accessed and queried using the CAS actuator endpoints. [See this guide](Monitoring-Statistics.html) to learn more.
+Configuration metadata may also be accessed and queried using the CAS actuator endpoints. [See this guide](../installation/Monitoring-Statistics.html) to learn more.
 
 ## Metadata Endpoint
 
@@ -22,4 +22,4 @@ not do anything special to enable it.
 ## Metadata via Commandline
 
 The metadata repository can also be examined using the command-line as a separate utility. 
-[See this guide](Configuring-Commandline-Shell.html) for more info.
+[See this guide](../installation/Configuring-Commandline-Shell.html) for more info.

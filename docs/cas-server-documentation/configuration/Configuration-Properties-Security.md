@@ -94,7 +94,7 @@ Once vault is accessible and configured inside CAS, support is provided via the 
 </dependency>
 ```
 
-To see the relevant list of CAS properties for this feature, please [review this guide](../configuration/Configuration-Properties.html#vault).
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#vault).
 
 With CAS, secrets are picked up at startup of the application server. CAS uses the data and settings
 from the application name (i.e. `cas`) and active profiles to determine contexts paths in
@@ -120,8 +120,8 @@ vault read secret/cas/native
 ```
 
 All settings and secrets that are stored inside Vault may be reloaded at any given time.
-To lean more about how CAS allows you to reload configuration changes, please [review this guide](../configuration/Configuration-Management-Reload.html).
-To lean more about how configuration is managed and profiled by CAS, please [review this guide](../configuration/Configuration-Management.html).
+To lean more about how CAS allows you to reload configuration changes, please [review this guide](Configuration-Management-Reload.html).
+To lean more about how configuration is managed and profiled by CAS, please [review this guide](Configuration-Management.html).
 
 ### Troubleshooting
 
