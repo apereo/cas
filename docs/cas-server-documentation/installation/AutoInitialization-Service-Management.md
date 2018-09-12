@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Service Registry Initialization
+category: Services
 ---
 
 # Service Registry Initialization
