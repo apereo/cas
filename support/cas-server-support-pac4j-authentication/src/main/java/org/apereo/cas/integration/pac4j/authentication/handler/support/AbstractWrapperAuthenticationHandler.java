@@ -61,7 +61,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             authenticator.validate(credentials, getWebContext());
             final UserProfile profile = this.profileCreator.create(credentials, getWebContext());
             LOGGER.debug("profile: [{}]", profile);
-            return createResult(new ClientCredential(credentials, authenticator.getClass().getSimpleName()), profile);
+            return createResult(new ClientCredential(credentials, authenticator.getClass().getSimpleName()), profile, null);
         } catch (final Exception e) {
             LOGGER.error("Failed to validate credentials", e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());

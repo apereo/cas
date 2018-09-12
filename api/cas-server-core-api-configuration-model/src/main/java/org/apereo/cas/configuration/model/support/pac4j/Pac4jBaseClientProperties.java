@@ -37,4 +37,9 @@ public class Pac4jBaseClientProperties implements Serializable {
      * Create a callback url with the clientId in the path instead of in the querystring.
      */
     private boolean usePathBasedCallbackUrl;
+
+    /**
+     * The attribute to use as the principal identifier built during and upon a successful authentication attempt.
+     */
+    private String principalAttributeId;
 }

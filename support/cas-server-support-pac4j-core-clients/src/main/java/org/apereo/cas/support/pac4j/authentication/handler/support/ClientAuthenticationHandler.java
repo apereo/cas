@@ -1,6 +1,5 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
@@ -10,7 +9,9 @@ import org.apereo.cas.integration.pac4j.authentication.handler.support.AbstractP
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.pac4j.core.client.Client;
+
+import lombok.extern.slf4j.Slf4j;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
@@ -55,9 +56,12 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
             final Credentials credentials = clientCredentials.getCredentials();
             LOGGER.debug("Client name: [{}]", clientCredentials.getClientName());
 
-            // get client
-            final Client client = this.clients.findClient(clientCredentials.getClientName());
+            final BaseClient client = (BaseClient) this.clients.findClient(clientCredentials.getClientName());
             LOGGER.debug("Delegated client is: [{}]", client);
+
+            if (client == null) {
+                throw new IllegalArgumentException("Unable to determine client based on client name " + clientCredentials.getClientName());
+            }
 
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
@@ -65,7 +69,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
 
             final UserProfile userProfile = client.getUserProfile(credentials, webContext);
             LOGGER.debug("Final user profile is: [{}]", userProfile);
-            return createResult(clientCredentials, userProfile);
+            return createResult(clientCredentials, userProfile, client);
         } catch (final HttpAction e) {
             throw new PreventedException(e);
         }
