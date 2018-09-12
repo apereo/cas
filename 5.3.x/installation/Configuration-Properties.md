@@ -2701,6 +2701,11 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].signServiceProviderMetadata=false
 # cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
 # cas.authn.pac4j.saml[0].assertionConsumerServiceIndex=-1
+
+# cas.authn.pac4j.saml[0].requestedAttributes[0].name=
+# cas.authn.pac4j.saml[0].requestedAttributes[0].friendlyName=
+# cas.authn.pac4j.saml[0].requestedAttributes[0].nameFormat=urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+# cas.authn.pac4j.saml[0].requestedAttributes[0].required=false
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.
