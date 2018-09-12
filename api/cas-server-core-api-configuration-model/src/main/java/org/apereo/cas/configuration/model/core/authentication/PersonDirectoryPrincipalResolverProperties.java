@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
 
 /**
  * Configuration properties class for Person Directory.
@@ -38,4 +40,13 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * Otherwise, simply logs the condition as an error without raising a catastrophic error.
      */
     private boolean principalResolutionFailureFatal;
+
+    /**
+     * Uses an existing principal id that may have already
+     * been established in order to run person directory queries.
+     * This is generally useful in situations where
+     * authentication is delegated to an external identity provider
+     * and a principal is first established to then query an attribute source.
+     */
+    private boolean useExistingPrincipalId;
 }
