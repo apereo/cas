@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OAuth User-Managed Access Protocol
+category: Protocols
 ---
 
 # User-Managed Access Protocol

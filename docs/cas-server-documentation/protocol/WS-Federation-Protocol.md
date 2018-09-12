@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - CAS WS Federation Protocol
+category: Protocols
 ---
 
 # WS Federation Protocol

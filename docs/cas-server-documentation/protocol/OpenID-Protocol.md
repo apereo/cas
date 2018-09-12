@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OpenID Protocol
+category: Protocols
 ---
 
 # OpenID Protocol

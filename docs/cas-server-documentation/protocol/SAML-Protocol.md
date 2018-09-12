@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - CAS SAML Protocol
+category: Protocols
 ---
 
 # SAML Protocol

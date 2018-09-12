@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - SAML2 Authentication
+category: Protocols
 ---
 
 # SAML2 Authentication
