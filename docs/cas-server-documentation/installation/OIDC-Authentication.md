@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OpenID Connect Authentication
+category: Authentication
 ---
 
 # OpenID Connect Authentication

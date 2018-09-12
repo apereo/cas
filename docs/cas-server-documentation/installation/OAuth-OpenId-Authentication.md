@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OAuth Authentication
+category: Authentication
 ---
 
 # OAuth/OpenID Authentication
