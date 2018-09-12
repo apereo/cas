@@ -34,6 +34,10 @@ gradleBuild="$gradleBuild spotbugsTest -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel -DshowStandardStreams=true "
 
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
+    gradleBuild="$gradleBuild --refresh-dependencies "
+fi
+
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
 else
