@@ -28,11 +28,6 @@ public class DefaultMultifactorAuthenticationProviderBypass extends AbstractMult
 
     private static final long serialVersionUID = 3720922341350004543L;
 
-    /**
-     * Bypass settings for this provider.
-     */
-
-
     private final Pattern httpRequestRemoteAddressPattern;
     private final Set<Pattern> httpRequestHeaderPatterns;
 

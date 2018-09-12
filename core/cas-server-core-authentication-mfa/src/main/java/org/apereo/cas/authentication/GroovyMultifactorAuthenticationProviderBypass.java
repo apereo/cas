@@ -35,10 +35,10 @@ public class GroovyMultifactorAuthenticationProviderBypass extends AbstractMulti
         try {
             final Principal principal = authentication.getPrincipal();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
-                            + "service [{}] and provider [{}] via Groovy script [{}]",
-                    principal.getId(), registeredService, provider, this.groovyScript);
+                    + "service [{}] and provider [{}] via Groovy script [{}]",
+                principal.getId(), registeredService, provider, this.groovyScript);
             final boolean shouldExecute = ScriptingUtils.executeGroovyScript(this.groovyScript,
-                    new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
+                new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
             if (shouldExecute) {
                 updateAuthenticationToForgetBypass(authentication, provider, principal);
             } else {

@@ -2,12 +2,17 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class used to Chain multiple MultifactorAuthenticationProviderBypass implementations.
+ *
+ * @author Travis Schmidt
+ * @since 5.3.4
+ */
 public class ChainingMultifactorAuthenticationBypassProvider implements MultifactorAuthenticationProviderBypass {
 
     private List<MultifactorAuthenticationProviderBypass> bypasses = new ArrayList<>();

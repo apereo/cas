@@ -5,9 +5,18 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 
+/**
+ * This is base for implementations of MultifactorAuthenticationProviderBypass.
+ *
+ * @author Travis Schmidt
+ * @since 5.3.4
+ */
 @Slf4j
 public abstract class AbstractMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
 
+    /**
+     * Bypass settings used for configuration.
+     */
     protected final MultifactorAuthenticationProviderBypassProperties bypassProperties;
 
     public AbstractMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypass) {
