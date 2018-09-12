@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Service Management
+category: Services
 ---
 
 # Service Management

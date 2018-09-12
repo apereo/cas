@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JPA Service Registry
+category: Services
 ---
 
 # JPA Service Registry

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JSON Service Registry
+category: Services
 ---
 
 # JSON Service Registry

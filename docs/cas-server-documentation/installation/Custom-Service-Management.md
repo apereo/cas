@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Custom Service Registry
+category: Services
 ---
 
 # Custom Service Registry

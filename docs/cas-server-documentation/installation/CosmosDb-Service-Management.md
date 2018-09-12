@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - CosmosDb Service Registry
+category: Services
 ---
 
 # CosmosDb Service Registry

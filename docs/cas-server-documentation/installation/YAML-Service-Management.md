@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - YAML Service Registry
+category: Services
 ---
 
 # YAML Service Registry

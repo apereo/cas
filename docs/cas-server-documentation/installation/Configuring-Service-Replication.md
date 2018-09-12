@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Replication
+category: Services
 ---
 
 # Configure Service Replication

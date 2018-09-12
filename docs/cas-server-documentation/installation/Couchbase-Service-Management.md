@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Couchbase Service Registry
+category: Services
 ---
 
 # Couchbase Service Registry

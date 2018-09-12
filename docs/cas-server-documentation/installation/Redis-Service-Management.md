@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Redis Service Registry
+category: Services
 ---
 
 # Redis Service Registry

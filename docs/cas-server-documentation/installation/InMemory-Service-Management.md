@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - InMemory Service Registry
+category: Services
 ---
 
 # InMemory Service Registry

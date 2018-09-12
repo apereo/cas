@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - LDAP Service Registry
+category: Services
 ---
 
 # LDAP Service Registry

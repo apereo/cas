@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - CouchDB Service Registry
+category: Services
 ---
 
 # CouchDB Service Registry

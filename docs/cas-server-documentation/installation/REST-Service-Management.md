@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - RESTful Service Registry
+category: Services
 ---
 
 # RESTful Service Registry

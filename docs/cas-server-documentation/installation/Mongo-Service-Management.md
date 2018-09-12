@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Mongo Service Registry
+category: Services
 ---
 
 # Mongo Service Registry

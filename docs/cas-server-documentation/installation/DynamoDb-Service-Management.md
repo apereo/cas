@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - DynamoDb Service Registry
+category: Services
 ---
 
 # DynamoDb Service Registry
