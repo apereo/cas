@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - SMS Messaging
+category: Notifications
 ---
 
 # SMS Messaging

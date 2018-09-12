@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Sending Email
+category: Notifications
 ---
 
 # Sending Email
