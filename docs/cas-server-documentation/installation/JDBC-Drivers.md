@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JDBC Drivers
+category: Configuration
 ---
 
 # JDBC Drivers
