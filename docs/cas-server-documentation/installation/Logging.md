@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Logging Configuration
+category: Logs & Audits
 ---
 
 # Logging
