@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Eureka Service Discovery
+category: High Availability
 ---
 
 # Eureka Server Discovery Service

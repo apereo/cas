@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Consul Service Discovery
+category: High Availability
 ---
 
 # Consul Server Discovery Service
