@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Adaptive Risk-based Authentication
+category: Authentication
 ---
 
 # Risk-based Authentication
