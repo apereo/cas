@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Web Flow Extensions
+category: Webflow Management
 ---
 
 # Extending CAS Webflow
