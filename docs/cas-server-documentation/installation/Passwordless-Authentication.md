@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Passwordless Authentication
+category: Authentication
 ---
 
 # Passwordless Authentication

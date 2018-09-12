@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Amazon Cloud Directory Authentication
+category: Authentication
 ---
 
 # Amazon Cloud Directory Authentication

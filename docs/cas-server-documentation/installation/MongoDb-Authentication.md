@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - MongoDb Authentication
+category: Authentication
 ---
 
 # MongoDb Authentication

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Password Policy Enforcement
+category: Authentication
 ---
 
 # Password Policy Enforcement

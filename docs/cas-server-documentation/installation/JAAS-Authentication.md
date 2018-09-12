@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JAAS Authentication
+category: Authentication
 ---
 
 # JAAS Authentication

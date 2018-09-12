@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Surrogate Authentication
+category: Authentication
 ---
 
 # Surrogate Authentication

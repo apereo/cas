@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - SPNEGO Authentication
+category: Authentication
 ---
 
 # SPNEGO Authentication

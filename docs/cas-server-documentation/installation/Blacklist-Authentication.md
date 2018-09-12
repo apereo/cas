@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Blacklist Authentication
+category: Authentication
 ---
 
 # Blacklist Authentication

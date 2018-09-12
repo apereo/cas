@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - ADFS Integration
+category: Authentication
 ---
 
 # Overview

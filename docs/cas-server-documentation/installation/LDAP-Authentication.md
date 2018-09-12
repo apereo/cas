@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - LDAP Authentication
+category: Authentication
 ---
 
 # LDAP Authentication

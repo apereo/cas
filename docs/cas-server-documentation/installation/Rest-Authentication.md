@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - REST Authentication
+category: Authentication
 ---
 
 # REST Authentication

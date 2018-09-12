@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Database Authentication
+category: Authentication
 ---
 
 # Database Authentication

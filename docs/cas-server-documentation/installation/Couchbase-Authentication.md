@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Couchbase Authentication
+category: Authentication
 ---
 
 # Couchbase Authentication

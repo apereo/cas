@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - X.509 Authentication
+category: Authentication
 ---
 
 # X.509 Authentication

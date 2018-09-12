@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Proxy Authentication
+category: Authentication
 ---
 
 # Proxy Authentication

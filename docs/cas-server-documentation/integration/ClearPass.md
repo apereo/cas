@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - ClearPass
+category: Authentication
 ---
 
 # ClearPass: Credential Caching and Replay

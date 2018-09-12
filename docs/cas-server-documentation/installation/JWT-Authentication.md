@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JWT Authentication
+category: Authentication
 ---
 
 # JWT Authentication

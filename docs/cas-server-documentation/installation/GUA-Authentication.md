@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - GUA Authentication
+category: Authentication
 ---
 
 # Graphical User Authentication

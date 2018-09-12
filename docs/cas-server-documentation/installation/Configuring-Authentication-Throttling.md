@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Authentication Throttling
+category: Authentication
 ---
 
 # Throttling Authentication Attempts

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Apache Cassandra Authentication
+category: Authentication
 ---
 
 # Apache Cassandra Authentication

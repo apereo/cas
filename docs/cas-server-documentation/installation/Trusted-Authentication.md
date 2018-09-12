@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Trusted Authentication
+category: Authentication
 ---
 
 # Trusted Authentication

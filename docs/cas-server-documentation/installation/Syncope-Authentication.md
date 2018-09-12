@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Apache Syncope Authentication
+category: Authentication
 ---
 
 # Apache Syncope Authentication

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Authentication Events
+category: Authentication
 ---
 
 # Authentication Events

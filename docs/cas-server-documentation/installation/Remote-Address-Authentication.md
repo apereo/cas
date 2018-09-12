@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Remote Address Authentication
+category: Authentication
 ---
 
 # Remote Address Authentication

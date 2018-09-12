@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Digest Authentication
+category: Authentication
 ---
 
 # Digest Authentication

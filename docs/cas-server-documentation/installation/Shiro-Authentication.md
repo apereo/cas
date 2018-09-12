@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Shiro Authentication
+category: Authentication
 ---
 
 

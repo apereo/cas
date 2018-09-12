@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Whitelist Authentication
+category: Authentication
 ---
 
 # Whitelist Authentication
