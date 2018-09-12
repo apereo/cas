@@ -1,14 +1,15 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jOidcClientProperties;
+
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jOidcClientProperties;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
@@ -37,6 +38,7 @@ import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.client.SAML2ClientConfiguration;
+import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -347,6 +349,7 @@ public class DelegatedClientFactory {
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
+
                 cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
                 if (saml.getAssertionConsumerServiceIndex() >= 0) {
@@ -363,6 +366,14 @@ public class DelegatedClientFactory {
                 if (StringUtils.isNotBlank(saml.getNameIdPolicyFormat())) {
                     cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
                 }
+
+                if (!saml.getRequestedAttributes().isEmpty()) {
+                    saml.getRequestedAttributes().stream()
+                        .map(attribute -> new SAML2ServiceProvicerRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
+                            attribute.getNameFormat(), attribute.isRequired()))
+                        .forEach(attribute -> cfg.getRequestedServiceProviderAttributes().add(attribute));
+                }
+
                 final SAML2Client client = new SAML2Client(cfg);
 
                 final int count = index.intValue();
