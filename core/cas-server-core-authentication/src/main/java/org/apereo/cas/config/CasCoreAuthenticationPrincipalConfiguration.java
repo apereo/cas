@@ -74,6 +74,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
             personDirectory.isReturnNull(),
             personDirectory.getPrincipalAttribute()
         );
+        bean.setUseCurrentPrincipalId(personDirectory.isUseExistingPrincipalId());
 
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
         if (!attributeRepositories.isEmpty()) {

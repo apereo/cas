@@ -1,19 +1,27 @@
 package org.apereo.cas.support.saml;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -27,6 +35,9 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
+    ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests.ShibbolethServicesTestConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreUtilConfiguration.class,
     ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration.class})
 @TestPropertySource(properties = "cas.authn.shibIdp.serverUrl=https://idp.example.com")
 @Slf4j
@@ -60,4 +71,14 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
         assertEquals("https://service.example.com", result.getId());
     }
 
+    @TestConfiguration
+    public static class ShibbolethServicesTestConfiguration {
+        @Bean
+        public List inMemoryRegisteredServices() {
+            final List l = new ArrayList();
+            l.add(RegisteredServiceTestUtils.getRegisteredService("https://service.example.com"));
+            l.add(RegisteredServiceTestUtils.getRegisteredService("https://idp.example.org"));
+            return l;
+        }
+    }
 }
