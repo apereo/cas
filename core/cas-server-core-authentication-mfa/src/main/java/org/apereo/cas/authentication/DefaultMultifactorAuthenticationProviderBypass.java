@@ -118,7 +118,14 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         return true;
     }
 
-    private static void updateAuthenticationToForgetBypass(final Authentication authentication,
+    /**
+     * Method will remove any previous bypass set in the authentication.
+     *
+     * @param authentication - the authentication
+     * @param provider - the provider
+     * @param principal - the principal
+     */
+    protected static void updateAuthenticationToForgetBypass(final Authentication authentication,
                                                            final MultifactorAuthenticationProvider provider,
                                                            final Principal principal) {
         LOGGER.debug("Bypass rules for service [{}] indicate the request may be ignored", principal.getId());
@@ -126,7 +133,14 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         LOGGER.debug("Updated authentication session to remember bypass for [{}] via [{}]", provider.getId(), AUTHENTICATION_ATTRIBUTE_BYPASS_MFA);
     }
 
-    private static void updateAuthenticationToRememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
+    /**
+     * Method will set the bypass into the authentication.
+     *
+     * @param authentication - the authentication
+     * @param provider - the provider
+     * @param principal - the principal
+     */
+    protected static void updateAuthenticationToRememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
                                                              final Principal principal) {
         LOGGER.debug("Bypass rules for service [{}] indicate the request may NOT be ignored", principal.getId());
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
