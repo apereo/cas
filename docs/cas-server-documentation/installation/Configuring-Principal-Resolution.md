@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Principal Resolution
+category: Configuration
 ---
 
 # Overview
