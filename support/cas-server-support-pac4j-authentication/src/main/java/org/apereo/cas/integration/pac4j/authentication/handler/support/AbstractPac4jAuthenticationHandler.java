@@ -79,15 +79,20 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         final Map properties = client != null ? client.getCustomProperties() : new HashMap<>();
 
         if (properties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID)) {
-            final String principalAttribute = properties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID).toString();
-            if (profile.containsAttribute(principalAttribute)) {
-                final Optional<Object> firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttribute));
-                if (firstAttribute.isPresent()) {
-                    id = firstAttribute.get().toString();
+            final Object attrObject = properties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID);
+            if (attrObject != null) {
+                final String principalAttribute = attrObject.toString();
+                if (profile.containsAttribute(principalAttribute)) {
+                    final Optional<Object> firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttribute));
+                    if (firstAttribute.isPresent()) {
+                        id = firstAttribute.get().toString();
+                    }
+                    LOGGER.debug("Delegated authentication indicates usage of client principal attribute [{}] for the identifier [{}]", principalAttribute, id);
+                } else {
+                    LOGGER.warn("Delegated authentication cannot find attribute [{}] to use as principal id", principalAttribute);
                 }
-                LOGGER.debug("Delegated authentication indicates usage of client principal attribute [{}] for the identifier [{}]", principalAttribute, id);
             } else {
-                LOGGER.warn("Delegated authentication cannot find attribute [{}] to use as principal id", principalAttribute);
+                LOGGER.warn("No custom principal attribute was provided by the client. Using the default id [{}]", client, id);
             }
         } else if (StringUtils.isNotBlank(principalAttributeId) && profile.containsAttribute(principalAttributeId)) {
             final Optional<Object> firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttributeId));
