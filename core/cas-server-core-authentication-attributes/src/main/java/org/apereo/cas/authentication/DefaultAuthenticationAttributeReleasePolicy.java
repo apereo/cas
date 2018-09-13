@@ -105,9 +105,10 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
     protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes, final Authentication authentication,
                                                                          final RegisteredService service) {
         val policy = service.getAttributeReleasePolicy();
-        val isAuthorized = policy != null && policy.isAuthorizedToReleaseCredentialPassword()
-            && isAttributeAllowedForRelease(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-        val credential = (String) authentication.getAttributes().get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+        val isAuthorized = policy != null && policy.isAuthorizedToReleaseCredentialPassword() && isAttributeAllowedForRelease(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
+
+        val element = CollectionUtils.firstElement(authentication.getAttributes().get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL));
+        val credential = element.isPresent() ? element.get().toString() : null;
         decideAttributeReleaseBasedOnServiceAttributePolicy(attributes, credential,
             CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, service, isAuthorized);
     }
@@ -125,8 +126,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
     protected void decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
                                                                           final Map<String, Object> model, final RegisteredService service) {
         val policy = service.getAttributeReleasePolicy();
-        val isAuthorized = policy != null && policy.isAuthorizedToReleaseProxyGrantingTicket()
-            && isAttributeAllowedForRelease(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+        val isAuthorized = policy != null && policy.isAuthorizedToReleaseProxyGrantingTicket() && isAttributeAllowedForRelease(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
 
         val pgtId = (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
         decideAttributeReleaseBasedOnServiceAttributePolicy(attributes, pgtId, CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, service, isAuthorized);
