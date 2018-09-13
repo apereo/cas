@@ -47,6 +47,9 @@ public class CasServicesStreamingHazelcastConfiguration {
     @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
     private StringBean casRegisteredServiceStreamPublisherIdentifier;
 
+    @Autowired
+    private HazelcastInstance hazelcastInstance;
+
     @Bean
     public DistributedCacheManager registeredServiceDistributedCacheManager() {
         return new RegisteredServiceHazelcastDistributedCacheManager(casRegisteredServiceHazelcastInstance());
@@ -74,9 +77,7 @@ public class CasServicesStreamingHazelcastConfiguration {
         final long duration = Beans.newDuration(stream.getDuration()).toMillis();
         final MapConfig mapConfig = factory.buildMapConfig(hz, name,
             TimeUnit.MILLISECONDS.toSeconds(duration));
-        final Config cfg = factory.build(hz, mapConfig);
-        LOGGER.debug("Created hazelcast instance [{}] with publisher id [{}] to publish service definitions",
-                name, casRegisteredServiceStreamPublisherIdentifier);
-        return Hazelcast.newHazelcastInstance(cfg);
+        hazelcastInstance.getConfig().addMapConfig(mapConfig);
+        return hazelcastInstance;
     }
 }

@@ -5,6 +5,7 @@ import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
@@ -48,10 +49,15 @@ public class HazelcastTicketRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    private HazelcastInstance hazelcastInstance;
+
+    @Autowired
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(ticketCatalog),
+        buildHazelcastMapConfigurations(ticketCatalog).values()
+                .forEach(map -> hazelcastInstance.getConfig().addMapConfig(map));
+        final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcastInstance,
                 ticketCatalog,
                 hz.getPageSize());
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
@@ -61,12 +67,6 @@ public class HazelcastTicketRegistryConfiguration {
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();
-    }
-
-    @Autowired
-    @Bean
-    public HazelcastInstance hazelcast(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        return Hazelcast.newHazelcastInstance(getConfig(ticketCatalog));
     }
 
     private Config getConfig(final TicketCatalog ticketCatalog) {
