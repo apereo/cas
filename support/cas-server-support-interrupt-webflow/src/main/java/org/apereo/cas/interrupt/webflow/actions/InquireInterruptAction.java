@@ -32,6 +32,7 @@ public class InquireInterruptAction extends AbstractAction {
         val service = WebUtils.getService(requestContext);
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val credential = WebUtils.getCredential(requestContext);
+        val eventFactorySupport = new EventFactorySupport();
 
         for (val inquirer : this.interruptInquirers) {
             LOGGER.debug("Invoking interrupt inquirer using [{}]", inquirer.getName());
@@ -40,7 +41,7 @@ public class InquireInterruptAction extends AbstractAction {
                 LOGGER.debug("Interrupt inquiry is required since inquirer produced a response [{}]", response);
                 InterruptUtils.putInterruptIn(requestContext, response);
                 WebUtils.putPrincipal(requestContext, authentication.getPrincipal());
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED);
+                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_INTERRUPT_REQUIRED);
             }
         }
         LOGGER.debug("Webflow interrupt is skipped since no inquirer produced a response");
