@@ -23,5 +23,5 @@ public class ShibbolethIdPProperties implements Serializable {
     /**
      * The server url of the shibboleth idp deployment.
      */
-    private String serverUrl;
+    private String serverUrl = "localhost";
 }
