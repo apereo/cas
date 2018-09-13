@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import org.pac4j.core.profile.UserProfile;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
@@ -71,16 +73,24 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      */
     protected String determinePrincipalIdFrom(final UserProfile profile, final BaseClient client) {
         var id = profile.getId();
-        if (client != null && client.getCustomProperties().containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID)) {
-            val principalAttribute = client.getCustomProperties().get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID).toString();
+        val properties = client != null ? client.getCustomProperties() : new HashMap<>();
+
+        if (client != null && properties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID)) {
+            val principalAttribute = properties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID).toString();
             if (profile.containsAttribute(principalAttribute)) {
-                id = profile.getAttribute(principalAttribute).toString();
+                val firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttribute));
+                if (firstAttribute.isPresent()) {
+                    id = firstAttribute.get().toString();
+                }
                 LOGGER.debug("Delegated authentication indicates usage of client principal attribute [{}] for the identifier [{}]", principalAttribute, id);
             } else {
                 LOGGER.warn("Delegated authentication cannot find attribute [{}] to use as principal id", principalAttribute);
             }
         } else if (StringUtils.isNotBlank(principalAttributeId) && profile.containsAttribute(principalAttributeId)) {
-            id = profile.getAttribute(principalAttributeId).toString();
+            val firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttributeId));
+            if (firstAttribute.isPresent()) {
+                id = firstAttribute.get().toString();
+            }
             LOGGER.debug("Delegated authentication indicates usage of attribute [{}] for the identifier [{}]", principalAttributeId, id);
         } else if (isTypedIdUsed) {
             id = profile.getTypedId();
