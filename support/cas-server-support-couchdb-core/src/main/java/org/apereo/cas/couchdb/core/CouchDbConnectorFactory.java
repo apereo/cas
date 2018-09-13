@@ -3,8 +3,8 @@ package org.apereo.cas.couchdb.core;
 import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,25 +24,19 @@ import org.ektorp.impl.StdCouchDbInstance;
  * @since 5.3.0
  */
 @Getter
-@Setter
 @RequiredArgsConstructor
 @Slf4j
 public class CouchDbConnectorFactory {
 
+    @NonNull
     private final BaseCouchDbProperties couchDbProperties;
-    private final ObjectMapperFactory objectMapperFactory;
-    private CouchDbConnector couchDbConnector;
-    private CouchDbInstance couchDbInstance;
-    private HttpClient httpClient;
 
-    /**
-     * Create {@link CouchDbConnector} instance.
-     *
-     * @return CouchDbConnector instance from db properties.
-     */
-    public CouchDbConnector create() {
-        return createConnector();
-    }
+    @NonNull
+    private final ObjectMapperFactory objectMapperFactory;
+
+    @Getter(lazy = true) private final CouchDbConnector couchDbConnector = createConnector();
+    @Getter(lazy = true) private final CouchDbInstance couchDbInstance = createInstance();
+    @Getter(lazy = true) private final HttpClient httpClient = createHttpClient();
 
     /**
      * Create {@link CouchDbConnector} instance.
@@ -50,15 +44,10 @@ public class CouchDbConnectorFactory {
      * @return CouchDbConnector instance from db properties.
      */
     public CouchDbConnector createConnector() {
-        if (couchDbConnector != null) {
-            LOGGER.debug("Connector already initialized!");
-            return couchDbConnector;
-        }
+        val connector = new StdCouchDbConnector(couchDbProperties.getDbName(), getCouchDbInstance(), objectMapperFactory);
+        LOGGER.debug("Connector created: [{}]", connector);
 
-        couchDbConnector = new StdCouchDbConnector(couchDbProperties.getDbName(), createInstance(), objectMapperFactory);
-        LOGGER.debug("Connector created: [{}]", couchDbConnector);
-
-        return couchDbConnector;
+        return connector;
     }
 
     /**
@@ -67,13 +56,9 @@ public class CouchDbConnectorFactory {
      * @return CouchDbInstance instance from db properties.
      */
     public CouchDbInstance createInstance() {
-        if (couchDbInstance!= null) {
-            LOGGER.debug("Instance already initialized!");
-            return couchDbInstance;
-        }
-        couchDbInstance = new StdCouchDbInstance(createHttpClient());
-        LOGGER.debug("Instance created: [{}]", couchDbInstance);
-        return couchDbInstance;
+        val instance = new StdCouchDbInstance(getHttpClient());
+        LOGGER.debug("Instance created: [{}]", instance);
+        return instance;
     }
 
     /**
@@ -83,12 +68,6 @@ public class CouchDbConnectorFactory {
      */
     @SneakyThrows
     public HttpClient createHttpClient() {
-        if (httpClient != null) {
-            LOGGER.debug("HTTP client already initialized!");
-            return httpClient;
-        }
-
-
         val builder = new StdHttpClient.Builder()
             .url(couchDbProperties.getUrl())
             .maxConnections(couchDbProperties.getMaxConnections())
@@ -119,8 +98,8 @@ public class CouchDbConnectorFactory {
             builder.password(couchDbProperties.getPassword());
         }
 
-        httpClient = builder.build();
-        LOGGER.debug("Client created: [{}]", httpClient);
-        return httpClient;
+        val client = builder.build();
+        LOGGER.debug("Client created: [{}]", client);
+        return client;
     }
 }

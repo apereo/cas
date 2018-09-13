@@ -54,7 +54,7 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
     public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository() {
         val couchDbProperties = casProperties.getServiceRegistry().getCouchDb();
 
-        val serviceRepository = new RegisteredServiceCouchDbRepository(couchDbFactory.create(), couchDbProperties.isCreateIfNotExists());
+        val serviceRepository = new RegisteredServiceCouchDbRepository(couchDbFactory.getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
         serviceRepository.initStandardDesignDocument();
         return serviceRepository;
     }

@@ -49,7 +49,7 @@ public class CouchDbTicketRegistryConfiguration {
     public TicketRepository ticketRegistryCouchDbRepository() {
         val couchDbProperties = casProperties.getTicket().getRegistry().getCouchDb();
 
-        val ticketRepository = new TicketRepository(ticketRegistryCouchDbFactory().create(), couchDbProperties.isCreateIfNotExists());
+        val ticketRepository = new TicketRepository(ticketRegistryCouchDbFactory().getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
         ticketRepository.initStandardDesignDocument();
         return ticketRepository;
     }
