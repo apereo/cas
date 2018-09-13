@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
@@ -370,7 +371,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             uriBuilder.queryParam(this.themeParamName, themeParam);
         }
         val redirectUrl = uriBuilder.toUriString();
-        val autoRedirect = (Boolean) client.getCustomProperties().getOrDefault("autoRedirect", Boolean.FALSE);
+        val autoRedirect = (Boolean) client.getCustomProperties().getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
         val p = new ProviderLoginPageConfiguration(name, redirectUrl, type, getCssClass(name), autoRedirect);
         return Optional.of(p);
     }
