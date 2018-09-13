@@ -269,7 +269,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         if (resolvedHandlers.isEmpty()) {
             throw new GeneralSecurityException("No authentication handlers could be resolved to support the authentication transaction");
         }
-        LOGGER.debug("Resolved and finalized authentication handlers to carry out this authentication transaction are [{}]", handlerResolvers);
+        LOGGER.debug("Resolved and finalized authentication handlers to carry out this authentication transaction are [{}]", resolvedHandlers);
         return resolvedHandlers;
     }
 
