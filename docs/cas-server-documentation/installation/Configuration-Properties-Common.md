@@ -411,6 +411,7 @@ The following options related to Person Directory support in CAS when it attempt
 # ${configurationKey}.principalAttribute=
 # ${configurationKey}.returnNull=false
 # ${configurationKey}.principalResolutionFailureFatal=false
+# ${configurationKey}.useExistingPrincipalId=false
 ```
 
 ## InfluxDb Configuration
@@ -953,6 +954,7 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.secret=
 # ${configurationKey}.clientName=My Provider
 # ${configurationKey}.autoRedirect=false
+# ${configurationKey}.principalAttributeId=
 ```
 
 ### Delegated Authentication OpenID Connect Settings
