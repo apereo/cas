@@ -18,7 +18,9 @@ import org.pac4j.core.profile.UserProfile;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -74,8 +76,10 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      */
     protected String determinePrincipalIdFrom(final UserProfile profile, final BaseClient client) {
         String id = profile.getId();
-        if (client != null && client.getCustomProperties().containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID)) {
-            final String principalAttribute = client.getCustomProperties().get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID).toString();
+        final Map properties = client != null ? client.getCustomProperties() : new HashMap<>();
+
+        if (properties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID)) {
+            final String principalAttribute = properties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID).toString();
             if (profile.containsAttribute(principalAttribute)) {
                 final Optional<Object> firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttribute));
                 if (firstAttribute.isPresent()) {
