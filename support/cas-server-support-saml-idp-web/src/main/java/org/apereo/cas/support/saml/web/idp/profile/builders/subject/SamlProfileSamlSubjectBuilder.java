@@ -39,7 +39,7 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
 
     private final int skewAllowance;
 
-    private final SamlObjectEncrypter samlObjectEncrypter;
+    private transient final SamlObjectEncrypter samlObjectEncrypter;
 
     public SamlProfileSamlSubjectBuilder(final OpenSamlConfigBean configBean,
                                          final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder,

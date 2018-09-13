@@ -41,7 +41,7 @@ import java.util.List;
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<NameID> {
     private static final long serialVersionUID = -6231886395225437320L;
     private final PersistentIdGenerator persistentIdGenerator;
-    private final SamlObjectEncrypter samlObjectEncrypter;
+    private final transient SamlObjectEncrypter samlObjectEncrypter;
 
     public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean, final PersistentIdGenerator persistentIdGenerator,
                                         final SamlObjectEncrypter samlObjectEncrypter) {
