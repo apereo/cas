@@ -2637,6 +2637,7 @@ Delegate authentication to an external CAS server.
 # cas.authn.pac4j.cas[0].loginUrl=
 # cas.authn.pac4j.cas[0].protocol=
 # cas.authn.pac4j.cas[0].usePathBasedCallbackUrl=false
+# cas.authn.pac4j.cas[0].principalAttributeId=
 ```
 
 ### OAuth20
@@ -2652,6 +2653,7 @@ Delegate authentication to an generic OAuth2 server. Common settings for this id
 # cas.authn.pac4j.oauth2[0].profileAttrs.attr1=path-to-attr-in-profile
 # cas.authn.pac4j.oauth2[0].customParams.param1=value1
 # cas.authn.pac4j.oauth2[0].usePathBasedCallbackUrl=false
+# cas.authn.pac4j.oauth2[0].principalAttributeId=
 ```
 
 ### OpenID Connect
@@ -2669,6 +2671,7 @@ Delegate authentication to an external OpenID Connect server. Common settings fo
 # cas.authn.pac4j.oidc[0].customParams.param1=value1
 # cas.authn.pac4j.oidc[0].azureTenantId=
 # cas.authn.pac4j.oidc[0].usePathBasedCallbackUrl=false
+# cas.authn.pac4j.oidc[0].principalAttributeId=
 ```
 
 ### SAML2
@@ -2701,6 +2704,7 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].signServiceProviderMetadata=false
 # cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
 # cas.authn.pac4j.saml[0].assertionConsumerServiceIndex=-1
+# cas.authn.pac4j.saml[0].principalAttributeId=
 
 # cas.authn.pac4j.saml[0].requestedAttributes[0].name=
 # cas.authn.pac4j.saml[0].requestedAttributes[0].friendlyName=
