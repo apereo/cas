@@ -169,6 +169,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @return the map
      */
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
+        LOGGER.debug("Retrieving person attributes for principal id [{}]", principalId);
         final IPersonAttributes personAttributes = this.attributeRepository.getPerson(principalId);
         final Map<String, List<Object>> attributes;
         if (personAttributes == null) {
@@ -176,6 +177,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         } else {
             attributes = personAttributes.getAttributes();
         }
+        LOGGER.debug("Found person attributes [{}] for principal id [{}]", attributes, principalId);
         return attributes;
     }
 
