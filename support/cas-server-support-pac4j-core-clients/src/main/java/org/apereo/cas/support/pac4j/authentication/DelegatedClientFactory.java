@@ -305,7 +305,9 @@ public class DelegatedClientFactory {
                 + "Consider defining an explicit name for the delegated provider", className, genName);
         }
         client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, props.isAutoRedirect());
-        client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
+        if (StringUtils.isNotBlank(props.getPrincipalAttributeId())) {
+            client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
+        }
     }
 
     /**
