@@ -39,8 +39,8 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final transient ServiceFactory webApplicationServiceFactory;
     private final String idpServerPrefix;
-    private final ServicesManager servicesManager;
-    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private final transient ServicesManager servicesManager;
+    private final transient AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     /**
      * Method attempts to resolve the service from the entityId parameter.  If present, an attempt is made
