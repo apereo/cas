@@ -98,44 +98,6 @@ public class CollectionUtils {
     }
 
     /**
-     * Convert the object given into a {@link List} instead.
-     *
-     * @param obj the object to convert into a collection
-     * @return The collection instance containing the object provided
-     */
-    public static List<Object> toList(final Object obj) {
-        val c = new ArrayList();
-        if (obj == null) {
-            LOGGER.debug("Converting null obj to empty collection");
-        } else if (obj instanceof Collection) {
-            c.addAll((Collection<Object>) obj);
-            LOGGER.trace("Converting multi-valued attribute [{}]", obj);
-        } else if (obj instanceof Map) {
-            ((Map) obj).forEach((key, value) -> {
-                c.add(Pair.of(key, value));
-            });
-        } else if (obj.getClass().isArray()) {
-            c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
-            LOGGER.trace("Converting array attribute [{}]", obj);
-        } else {
-            c.add(obj);
-            LOGGER.trace("Converting attribute [{}]", obj);
-        }
-        return c;
-    }
-
-    /**
-     * Cast object to {@link List} with appropriate type.
-     * @param obj Object to cas.
-     * @param klass Class to cast elements
-     * @param <T> type for casting
-     * @return List with elements cast to type
-     */
-    public static <T> List<T> toList(final Object obj, final Class<T> klass) {
-        return toList(obj).stream().map(klass::cast).collect(Collectors.toList());
-    }
-
-    /**
      * Wrap map.
      *
      * @param <K>    the type parameter
