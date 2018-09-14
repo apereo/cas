@@ -34,7 +34,7 @@ public class DefaultMultifactorAuthenticationProviderBypass extends AbstractMult
     private final Set<Pattern> httpRequestHeaderPatterns;
 
     public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties) {
-        super(bypassProperties)
+        super(bypassProperties);
 
         if (StringUtils.isNotBlank(bypassProperties.getHttpRequestRemoteAddress())) {
             this.httpRequestRemoteAddressPattern = RegexUtils.createPattern(bypassProperties.getHttpRequestRemoteAddress());
