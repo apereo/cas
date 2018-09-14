@@ -29,6 +29,7 @@ import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
+import org.apereo.cas.services.util.RegisteredServiceYamlHttpMessageConverter;
 import org.apereo.cas.util.io.CommunicationsManager;
 
 import com.google.common.base.Predicate;
@@ -48,6 +49,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.http.converter.AbstractHttpMessageConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,6 +135,11 @@ public class CasCoreServicesConfiguration {
                 break;
         }
         return new DefaultServicesManager(serviceRegistry(), eventPublisher);
+    }
+
+    @Bean
+    public AbstractHttpMessageConverter yamlHttpMessageConverter() {
+        return new RegisteredServiceYamlHttpMessageConverter();
     }
 
     @Bean

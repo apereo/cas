@@ -73,30 +73,30 @@ public class CasReportsConfiguration {
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("principalFactory")
-    private PrincipalFactory principalFactory;
+    private ObjectProvider<PrincipalFactory> principalFactory;
 
     @Bean
     @ConditionalOnEnabledEndpoint
@@ -119,13 +119,13 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
-        return new RegisteredServicesEndpoint(casProperties, servicesManager);
+        return new RegisteredServicesEndpoint(casProperties, servicesManager.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnEnabledEndpoint
     public ExportRegisteredServicesEndpoint exportRegisteredServicesEndpoint() {
-        return new ExportRegisteredServicesEndpoint(casProperties, servicesManager);
+        return new ExportRegisteredServicesEndpoint(casProperties, servicesManager.getIfAvailable());
     }
 
     @Bean
@@ -136,7 +136,7 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint() {
-        return new SingleSignOnSessionsEndpoint(centralAuthenticationService, casProperties);
+        return new SingleSignOnSessionsEndpoint(centralAuthenticationService.getIfAvailable(), casProperties);
     }
 
     @Bean
@@ -149,23 +149,23 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public StatisticsEndpoint statisticsReportEndpoint() {
-        return new StatisticsEndpoint(centralAuthenticationService, casProperties);
+        return new StatisticsEndpoint(centralAuthenticationService.getIfAvailable(), casProperties);
     }
 
     @Bean
     @ConditionalOnEnabledEndpoint
     public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint() {
-        return new CasResolveAttributesReportEndpoint(casProperties, personDirectoryPrincipalResolver);
+        return new CasResolveAttributesReportEndpoint(casProperties, personDirectoryPrincipalResolver.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnEnabledEndpoint
     public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint() {
         return new CasReleaseAttributesReportEndpoint(casProperties,
-            servicesManager,
-            authenticationSystemSupport,
-            webApplicationServiceFactory,
-            principalFactory);
+            servicesManager.getIfAvailable(),
+            authenticationSystemSupport.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
+            principalFactory.getIfAvailable());
     }
 
     /**

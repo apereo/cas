@@ -9,6 +9,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
+import org.springframework.boot.actuate.endpoint.http.ActuatorMediaType;
+import org.springframework.http.MediaType;
 
 import java.util.Collection;
 
@@ -39,7 +41,7 @@ public class RegisteredServicesEndpoint extends BaseCasMvcEndpoint {
      *
      * @return the web async task
      */
-    @ReadOperation
+    @ReadOperation(produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public Collection<RegisteredService> handle() {
         return this.servicesManager.load();
     }
@@ -50,7 +52,7 @@ public class RegisteredServicesEndpoint extends BaseCasMvcEndpoint {
      * @param id the id
      * @return the registered service
      */
-    @ReadOperation
+    @ReadOperation(produces = {ActuatorMediaType.V2_JSON, "application/vnd.cas.services+yaml", MediaType.APPLICATION_JSON_VALUE})
     public RegisteredService fetchService(@Selector final String id) {
         if (NumberUtils.isDigits(id)) {
             return this.servicesManager.findServiceBy(Long.parseLong(id));
