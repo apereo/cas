@@ -83,13 +83,14 @@ import org.springframework.test.context.TestPropertySource;
 })
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @TestPropertySource(properties = {
+
     "cas.authn.surrogate.ldap.ldapUrl=ldap://localhost:10389",
     "cas.authn.surrogate.ldap.useSsl=false",
     "cas.authn.surrogate.ldap.baseDn=ou=people,dc=example,dc=org",
     "cas.authn.surrogate.ldap.bindDn=cn=Directory Manager",
     "cas.authn.surrogate.ldap.bindCredential=password",
     "cas.authn.surrogate.ldap.searchFilter=cn={user}",
-    "cas.authn.surrogate.ldap.surrogateSearchFilter=employeeType={user}",
+    "cas.authn.surrogate.ldap.surrogateSearchFilter=employeeType={surrogate}",
     "cas.authn.surrogate.ldap.memberAttributeName=mail",
     "cas.authn.surrogate.ldap.memberAttributeValueRegex=\\\\w+@example.org"
     })

@@ -42,8 +42,9 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     @Test
     public void verifyProxying() throws Exception {
-        assertTrue(getService().canAuthenticateAs("banderson", CoreAuthenticationTestUtils.getPrincipal("casuser"),
+        assertFalse(getService().canAuthenticateAs("casuser", CoreAuthenticationTestUtils.getPrincipal("XXXX"),
+            CoreAuthenticationTestUtils.getService()));
+        assertTrue(getService().canAuthenticateAs("casuser", CoreAuthenticationTestUtils.getPrincipal("banderson"),
             CoreAuthenticationTestUtils.getService()));
     }
-
 }

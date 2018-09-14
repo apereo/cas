@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFingerprintProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
@@ -87,6 +88,11 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     private MongoDb mongo = new MongoDb();
 
     /**
+     * Store devices records inside MongoDb.
+     */
+    private CouchDb couchDb = new CouchDb();
+
+    /**
      * Crypto settings that sign/encrypt the device records.
      */
     @NestedConfigurationProperty
@@ -102,6 +108,18 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     @Setter
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = -8329950619696176349L;
+    }
+
+    @RequiresModule(name = "cas-server-support-trusted-mfa-couchdb")
+    @Getter
+    @Setter
+    public static class CouchDb extends BaseCouchDbProperties {
+
+        private static final long serialVersionUID = 5887850351177564308L;
+
+        public CouchDb() {
+            setDbName("trusted_devices_multifactor");
+        }
     }
 
     @Getter

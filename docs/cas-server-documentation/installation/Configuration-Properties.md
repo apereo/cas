@@ -1537,6 +1537,23 @@ Password encoding  settings for this feature are available [here](Configuration-
 # cas.authn.jdbc.encode[0].order=0
 ```
 
+## CouchDb Authentication
+
+To learn more about this topic, [please review this guide](CouchDb-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.couchDb`.
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.couchDb`.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn`.
+
+```properties
+# cas.authn.couchDb.attributes=
+# cas.authn.couchDb.usernameAttribute=username
+# cas.authn.couchDb.passwordAttribute=password
+# cas.authn.couchDb.name=
+# cas.authn.couchDb.order=
+```
+
 ## MongoDb Authentication
 
 To learn more about this topic, [please review this guide](MongoDb-Authentication.html). 
@@ -3135,6 +3152,11 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 Decide how CAS should store authentication events inside an InfluxDb instance. Common 
 configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.events.influxDb`.
 
+### CouchDb Events
+
+Decide how CAS should store authentication events inside a CouchDb instance. Common
+configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.events.couchDb`.
+
 ### Database Events
 
 Decide how CAS should store authentication events inside a database instance. Database 
@@ -3268,6 +3290,10 @@ To learn more about this topic, [please review this guide](REST-Service-Manageme
 # cas.serviceRegistry.rest.basicAuthUsername=
 # cas.serviceRegistry.rest.basicAuthPassword=
 ```
+
+### CouchDb Service Registry
+
+To learn more about this topic, [please review this guide](CouchDb-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.serviceRegistry`.
 
 ### Redis Service Registry
 
@@ -4130,6 +4156,10 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 ### MongoDb Attribute Consent
 
  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.consent`.
+
+### CouchDb Attribute Consent
+
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.consent`.
 
 ### REST Attribute Consent
 

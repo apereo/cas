@@ -8,7 +8,7 @@
     <suppress checks="IllegalCatch" files="(.*Aspect)\.java"/>
     <suppress checks="JavadocStyleCheck" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="Indentation" files="(.*Tests*|Mock.*|Test.*)\.java"/>
-    <suppress checks="JavadocMethod" files="(.*Configuration|.*Tests*|Mock.*|Test.*)\.java"/>
+    <suppress checks="JavadocMethod" files="(.*(Configuration|CouchDbRepository)|.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="JavadocType" files="(.*Tests*|Mock.*|Test.*|.*Properties)\.java"/>
     <suppress checks="JavadocVariable" files="(.*Tests*|Mock.*|Test.*)\.java"/>
     <suppress checks="MagicNumber" files="(.*Tests*|Mock.*|Test.*)\.java"/>

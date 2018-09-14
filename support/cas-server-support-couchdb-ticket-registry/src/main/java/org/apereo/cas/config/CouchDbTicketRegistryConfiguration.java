@@ -11,8 +11,10 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
+import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -30,12 +32,17 @@ public class CouchDbTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    private ObjectMapperFactory objectMapperFactory;
+
+    @ConditionalOnMissingBean(name = "ticketRegistryCouchDbFactory")
     @RefreshScope
     @Bean
     public CouchDbConnectorFactory ticketRegistryCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb());
+        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "ticketRegistryCouchDbRepository")
     @Bean
     @RefreshScope
     public TicketRepository ticketRegistryCouchDbRepository() {
@@ -46,6 +53,7 @@ public class CouchDbTicketRegistryConfiguration {
         return ticketRepository;
     }
 
+    @ConditionalOnMissingBean(name = "couchDbTicketRegistry")
     @RefreshScope
     @Bean
     @Autowired
@@ -56,6 +64,8 @@ public class CouchDbTicketRegistryConfiguration {
         return c;
     }
 
+    @ConditionalOnMissingBean(name = "couchDbTicketRegistryCleaner")
+    @RefreshScope
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();

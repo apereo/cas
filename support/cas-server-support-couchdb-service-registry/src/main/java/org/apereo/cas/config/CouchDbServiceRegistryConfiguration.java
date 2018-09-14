@@ -3,15 +3,17 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
-import org.apereo.cas.couchdb.services.RegisteredServiceRepository;
+import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
 import org.apereo.cas.services.CouchDbServiceRegistry;
 import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 
 import lombok.val;
+import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -35,22 +37,28 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
     @Qualifier("serviceRegistryCouchDbFactory")
     private CouchDbConnectorFactory couchDbFactory;
 
+    @Autowired
+    private ObjectMapperFactory objectMapperFactory;
+
+    @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory serviceRegistryCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb());
+        return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory);
     }
 
+    @ConditionalOnMissingBean(name = "serviceRegistryCouchDbRepository")
     @Bean
     @RefreshScope
-    public RegisteredServiceRepository serviceRegistryCouchDbRepository() {
+    public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository() {
         val couchDbProperties = casProperties.getServiceRegistry().getCouchDb();
 
-        val serviceRepository = new RegisteredServiceRepository(couchDbFactory.create(), couchDbProperties.isCreateIfNotExists());
+        val serviceRepository = new RegisteredServiceCouchDbRepository(couchDbFactory.create(), couchDbProperties.isCreateIfNotExists());
         serviceRepository.initStandardDesignDocument();
         return serviceRepository;
     }
 
+    @ConditionalOnMissingBean(name = "couchDbServiceRegistry")
     @Bean
     @RefreshScope
     public ServiceRegistry couchDbServiceRegistry() {
