@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - SysLog Logging Configuration
+category: Logs & Audits
 ---
 
 # SysLog Logging
