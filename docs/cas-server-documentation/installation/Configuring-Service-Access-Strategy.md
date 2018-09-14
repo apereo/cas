@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Access Strategy
+category: Services
 ---
 
 # Configure Service Access Strategy

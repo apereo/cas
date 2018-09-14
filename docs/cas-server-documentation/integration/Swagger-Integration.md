@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Swagger API Integration
+category: Integration
 ---
 
 # Overview

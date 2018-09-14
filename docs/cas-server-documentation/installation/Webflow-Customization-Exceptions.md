@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Web Flow Customization
+category: Webflow Management
 ---
 
 # Webflow Errors Customization
@@ -13,4 +14,4 @@ To map custom exceptions in the webflow, one would need map the exception in CAS
 authenticationFailure.MyAuthenticationException=Authentication has failed, but it did it my way!
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-exceptions).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-exceptions).
