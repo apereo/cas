@@ -8,4 +8,4 @@ userPassword: 123456
 mail: casuser@example.org
 sn: CAS
 uid: casuser
-employeeType: casuser
+employeeType: banderson
