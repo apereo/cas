@@ -3,6 +3,8 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 
+import org.springframework.core.Ordered;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
@@ -13,7 +15,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @FunctionalInterface
-public interface MultifactorAuthenticationProviderBypass extends Serializable {
+public interface MultifactorAuthenticationProviderBypass extends Serializable, Ordered {
 
     /**
      * bypass mfa authn attribute.
@@ -37,4 +39,9 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable {
     boolean shouldMultifactorAuthenticationProviderExecute(Authentication authentication, RegisteredService registeredService,
                                                            MultifactorAuthenticationProvider provider,
                                                            HttpServletRequest request);
+
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
 }
