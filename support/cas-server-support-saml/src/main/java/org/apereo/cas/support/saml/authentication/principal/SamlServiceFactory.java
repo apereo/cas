@@ -37,8 +37,9 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
     public SamlService createService(final HttpServletRequest request) {
         final String service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
         final String requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
-        final String artifactId;
-        final String requestId;
+
+        String artifactId = null;
+        String requestId = null;
 
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
             LOGGER.trace("Request does not specify a [{}] or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
@@ -60,6 +61,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
 
             final Attribute requestIdAttribute = requestChild.getAttribute("RequestID");
             if (requestIdAttribute == null) {
+
                 LOGGER.error("SAML request body does not specify the RequestID attribute. This is a required attribute per the schema definition and MUST be provided by the client. "
                     + " RequestID needs to be unique on a per-request basis and per OWASP, it may be 16 bytes of entropy in session identifiers which have similar requirements. "
                     + "While CAS does allow the RequestID attribute to be optional for the time being to preserve backward compatibility, this behavior MUST be fixed by the client "
@@ -67,9 +69,6 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             } else {
                 requestId = requestIdAttribute.getValue();
             }
-        } else {
-            artifactId = null;
-            requestId = null;
         }
 
         LOGGER.debug("Request Body: [{}]\n\"Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", requestBody, artifactId, requestId);
