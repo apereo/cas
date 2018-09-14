@@ -304,9 +304,10 @@ public class DelegatedClientFactory {
             LOGGER.warn("Client name for [{}] is set to a generated value of [{}]. "
                 + "Consider defining an explicit name for the delegated provider", className, genName);
         }
-        client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, props.isAutoRedirect());
+        val customProperties = client.getCustomProperties();
+        customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, props.isAutoRedirect());
         if (StringUtils.isNotBlank(props.getPrincipalAttributeId())) {
-            client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
+            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
         }
     }
 
