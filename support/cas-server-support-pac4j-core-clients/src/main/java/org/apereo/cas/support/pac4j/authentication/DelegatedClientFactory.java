@@ -43,6 +43,7 @@ import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -295,9 +296,10 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(props.getClientName())) {
             client.setName(props.getClientName());
         }
-        client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, props.isAutoRedirect());
+        final Map customProperties = client.getCustomProperties();
+        customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, props.isAutoRedirect());
         if (StringUtils.isNotBlank(props.getPrincipalAttributeId())) {
-            client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
+            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, props.getPrincipalAttributeId());
         }
     }
 
