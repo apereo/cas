@@ -20,7 +20,7 @@ import java.util.HashMap;
  * @since 5.2.0
  */
 @Slf4j
-public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifactorAuthenticationProviderBypass {
+public class RestMultifactorAuthenticationProviderBypass extends AbstractMultifactorAuthenticationProviderBypass {
 
     private static final long serialVersionUID = -7553888418344342672L;
 
@@ -57,6 +57,6 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return super.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
+        return true;
     }
 }
