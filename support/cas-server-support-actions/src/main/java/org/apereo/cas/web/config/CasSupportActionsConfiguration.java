@@ -27,11 +27,14 @@ import org.apereo.cas.web.flow.login.SendTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
 import org.apereo.cas.web.flow.login.SetServiceUnauthorizedRedirectUrlAction;
 import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
-import org.apereo.cas.web.flow.login.mfa.MfaInitializeAction;
+import org.apereo.cas.web.flow.mfa.MultifactorAuthenticationInitializeAction;
 import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
 import org.apereo.cas.web.flow.logout.TerminateSessionAction;
+import org.apereo.cas.web.flow.mfa.MultifactorAuthenticationAvailableAction;
+import org.apereo.cas.web.flow.mfa.MultifactorAuthenticationBypassAction;
+import org.apereo.cas.web.flow.mfa.MultifactorAuthenticationFailureAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -276,7 +279,30 @@ public class CasSupportActionsConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "mfaInitializeAction")
+    @RefreshScope
     public Action mfaInitializeAction() {
-        return new MfaInitializeAction();
+        return new MultifactorAuthenticationInitializeAction();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "mfaAvailableAction")
+    @RefreshScope
+    public Action mfaAvailableAction() {
+        return new MultifactorAuthenticationAvailableAction();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "mfaBypassAction")
+    @RefreshScope
+    public Action mfaBypassAction() {
+        return new MultifactorAuthenticationBypassAction();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "mfaFailureAction")
+    @RefreshScope
+    public Action mfaFailureAction() {
+        return new MultifactorAuthenticationFailureAction(casProperties);
     }
 }

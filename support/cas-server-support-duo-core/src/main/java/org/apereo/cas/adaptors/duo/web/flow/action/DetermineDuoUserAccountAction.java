@@ -34,7 +34,6 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
         final Principal p = authentication.getPrincipal();
-        final RegisteredService service = WebUtils.getRegisteredService(requestContext);
         final DuoMultifactorAuthenticationProvider provider = requestContext.getFlowScope().get("provider",
                 DuoMultifactorAuthenticationProvider.class);
 
@@ -54,23 +53,14 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
                 requestContext.getFlowScope().put("duoRegistrationUrl", provider.getRegistrationUrl());
                 return enrollEvent;
             case ALLOW:
-                return returnByPass(authentication, provider.getId());
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
             case DENY:
                 return denyEvent;
             case UNAVAILABLE:
-                final RegisteredServiceMultifactorPolicy.FailureModes failureMode = provider.determineFailureMode(service);
-                if (failureMode != RegisteredServiceMultifactorPolicy.FailureModes.CLOSED) {
-                    return returnByPass(authentication, provider.getId());
-                }
                 return unavailableEvent;
             default:
         }
         return success();
     }
 
-    private Event returnByPass(final Authentication authentication, final String providerId) {
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, providerId);
-        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
-    }
 }

@@ -57,7 +57,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
         final RadiusMultifactorAuthenticationProvider p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
         p.setBypassEvaluator(radiusBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getRadius().getRank());
         p.setId(casProperties.getAuthn().getMfa().getRadius().getId());
         return p;

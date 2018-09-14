@@ -24,7 +24,7 @@ public class AzureAuthenticatorMultifactorAuthenticationProvider extends Abstrac
     }
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable() {
         return true;
     }
 

@@ -169,7 +169,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
         final YubiKeyMultifactorAuthenticationProvider p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), this.httpClient);
         p.setBypassEvaluator(yubikeyBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getYubikey().getRank());
         p.setId(casProperties.getAuthn().getMfa().getYubikey().getId());
         return p;

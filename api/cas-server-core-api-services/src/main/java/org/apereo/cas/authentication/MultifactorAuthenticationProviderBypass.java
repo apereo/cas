@@ -37,4 +37,14 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable {
     boolean shouldMultifactorAuthenticationProviderExecute(Authentication authentication, RegisteredService registeredService,
                                                            MultifactorAuthenticationProvider provider,
                                                            HttpServletRequest request);
+
+    default void updateAuthenticationToForgetBypass(final Authentication authentication) {
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE);
+    }
+
+    default void updateAuthenticationToRememberBypass(final Authentication authentication,
+                                                     final MultifactorAuthenticationProvider provider) {
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId());
+    }
 }

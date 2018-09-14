@@ -24,7 +24,7 @@ public class U2FMultifactorAuthenticationProvider extends AbstractMultifactorAut
     }
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable() {
         return true;
     }
 

@@ -75,14 +75,10 @@ public abstract class BaseRequestMultifactorAuthenticationPolicyEventResolver ex
             final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, values.get(0));
             if (providerFound.isPresent()) {
                 final MultifactorAuthenticationProvider provider = providerFound.get();
-                if (provider.isAvailable(service)) {
-                    LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
-                    final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
-                        buildEventAttributeMap(authentication.getPrincipal(), service, provider));
-                    return CollectionUtils.wrapSet(event);
-                }
-                LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
-                return null;
+                LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
+                final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
+                    buildEventAttributeMap(authentication.getPrincipal(), service, provider));
+                return CollectionUtils.wrapSet(event);
             }
             LOGGER.warn("No multifactor provider could be found for request parameter [{}]", values);
             throw new AuthenticationException();

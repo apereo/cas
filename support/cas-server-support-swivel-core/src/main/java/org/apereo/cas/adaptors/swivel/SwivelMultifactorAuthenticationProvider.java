@@ -27,7 +27,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
     private String swivelUrl;
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable() {
         return canPing();
     }
 

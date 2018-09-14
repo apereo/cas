@@ -86,7 +86,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         final BasicDuoSecurityAuthenticationService s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
         final DefaultDuoMultifactorAuthenticationProvider duoP =
                 new DefaultDuoMultifactorAuthenticationProvider(duo.getRegistrationUrl(), s);
-        duoP.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        duoP.setFailureMode(duo.getFailureMode());
         duoP.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
         duoP.setOrder(duo.getRank());
         duoP.setId(duo.getId());

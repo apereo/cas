@@ -89,10 +89,6 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
             final MultifactorAuthenticationProvider provider = this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
             LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);
 
-            if (!provider.isAvailable(service)) {
-                LOGGER.warn("Multifactor authentication provider [{}] could not be verified/reached.", provider);
-                return null;
-            }
             final String identifier = provider.getId();
             LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
 

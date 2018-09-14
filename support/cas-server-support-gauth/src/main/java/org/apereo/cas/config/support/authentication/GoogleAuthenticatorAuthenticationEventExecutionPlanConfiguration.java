@@ -109,7 +109,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
         final GoogleAuthenticatorMultifactorAuthenticationProvider p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(googleBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(casProperties.getAuthn().getMfa().getGauth().getFailureMode());
         p.setOrder(gauth.getRank());
         p.setId(gauth.getId());
         return p;

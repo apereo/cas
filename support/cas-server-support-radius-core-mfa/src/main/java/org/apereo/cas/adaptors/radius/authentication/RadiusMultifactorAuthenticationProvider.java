@@ -32,7 +32,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
     }
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable() {
         return canPing();
     }
 

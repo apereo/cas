@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.login.mfa;
+package org.apereo.cas.web.flow.mfa;
 
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -16,7 +16,7 @@ import java.util.Optional;
  * @author Travis Schmidt
  * @since 5.3.4
  */
-public class MfaInitializeAction extends AbstractAction {
+public class MultifactorAuthenticationInitializeAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
@@ -29,7 +29,7 @@ public class MfaInitializeAction extends AbstractAction {
                         .map(e -> e.getValue())
                         .findFirst();
         if (provider.isPresent()) {
-            context.getFlowScope().put("provider", provider);
+            context.getFlowScope().put("provider", provider.get());
             return success();
         }
         return error();

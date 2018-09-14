@@ -118,20 +118,16 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
         LOGGER.debug("No multifactor providers could be located to satisfy the requested context for [{}]", provider);
         final RegisteredServiceMultifactorPolicy.FailureModes mode = getMultifactorFailureModeForService(service);
         if (mode == RegisteredServiceMultifactorPolicy.FailureModes.PHANTOM) {
-            if (!provider.isAvailable(service)) {
-                LOGGER.debug("Service [{}] is configured to use a [{}] failure mode for multifactor authentication policy. "
-                    + "Since provider [{}] is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
-                    + "of the present authentication context", service.getServiceId(), mode, requestedProvider, requestedContext);
-                return Pair.of(Boolean.TRUE, requestedProvider);
-            }
+            LOGGER.debug("Service [{}] is configured to use a [{}] failure mode for multifactor authentication policy. "
+                + "Since provider [{}] is unavailable at the moment, CAS will knowingly allow [{}] as a satisfied criteria "
+                + "of the present authentication context", service.getServiceId(), mode, requestedProvider, requestedContext);
+            return Pair.of(Boolean.TRUE, requestedProvider);
         }
         if (mode == RegisteredServiceMultifactorPolicy.FailureModes.OPEN) {
-            if (!provider.isAvailable(service)) {
-                LOGGER.debug("Service [{}] is configured to use a [{}] failure mode for multifactor authentication policy and "
-                    + "since provider [{}] is unavailable at the moment, CAS will consider the authentication satisfied "
-                    + "without the presence of [{}]", service.getServiceId(), mode, requestedProvider, requestedContext);
-                return Pair.of(Boolean.TRUE, Optional.empty());
-            }
+            LOGGER.debug("Service [{}] is configured to use a [{}] failure mode for multifactor authentication policy and "
+                + "since provider [{}] is unavailable at the moment, CAS will consider the authentication satisfied "
+                + "without the presence of [{}]", service.getServiceId(), mode, requestedProvider, requestedContext);
+            return Pair.of(Boolean.TRUE, Optional.empty());
         }
         return Pair.of(Boolean.FALSE, requestedProvider);
     }

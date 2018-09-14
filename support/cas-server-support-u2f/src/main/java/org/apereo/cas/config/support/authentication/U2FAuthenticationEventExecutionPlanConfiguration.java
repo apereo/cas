@@ -82,7 +82,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider u2fAuthenticationProvider() {
         final U2FMultifactorAuthenticationProvider p = new U2FMultifactorAuthenticationProvider();
         p.setBypassEvaluator(u2fBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getU2f().getRank());
         p.setId(casProperties.getAuthn().getMfa().getU2f().getId());
         return p;

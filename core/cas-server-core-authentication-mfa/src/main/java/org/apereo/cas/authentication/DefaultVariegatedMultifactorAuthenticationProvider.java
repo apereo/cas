@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 
 import java.util.Collection;
@@ -47,17 +46,6 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     }
 
     @Override
-    public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
-        final long count = this.providers.stream().filter(p -> p.isAvailable(service)).count();
-        return count == providers.size();
-    }
-
-    @Override
-    protected boolean isAvailable() {
-        return true;
-    }
-
-    @Override
     public boolean matches(final String identifier) {
         return findProvider(identifier) != null;
     }
@@ -88,4 +76,5 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     public String getFriendlyName() {
         return providers.stream().map(MultifactorAuthenticationProvider::getFriendlyName).collect(Collectors.joining("|"));
     }
+
 }
