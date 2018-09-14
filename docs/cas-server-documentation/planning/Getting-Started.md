@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Getting Started Guide
+category: Planning
 ---
 
 # Getting Started

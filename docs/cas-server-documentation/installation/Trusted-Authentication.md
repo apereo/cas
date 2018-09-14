@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Trusted Authentication
+category: Authentication
 ---
 
 # Trusted Authentication
@@ -25,4 +26,4 @@ Trusted authentication is able to extract the remote authenticated user via the 
 2. Username may be extracted from `HttpServletRequest#getUserPrincipal()`
 3. Username may be extracted from a request header whose name is defined in CAS settings.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#trusted-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#trusted-authentication).
