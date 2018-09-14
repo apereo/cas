@@ -19,6 +19,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-ws-sts")
     implementation project(":support:cas-server-support-ws-idp-api")
     implementation project(":core:cas-server-core-cookie-api")

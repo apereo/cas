@@ -3,7 +3,7 @@
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=SIMPLE "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=SIMPLE --scan "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -18,6 +18,14 @@ gradleBuild="$gradleBuild test coveralls --parallel -x javadoc -x check \
 # fi
 
 gradleBuild="$gradleBuild -DshowStandardStreams=true "
+
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
+    gradleBuild="$gradleBuild --rerun-tasks "
+fi
+
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
+    gradleBuild="$gradleBuild --refresh-dependencies "
+fi
 
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."

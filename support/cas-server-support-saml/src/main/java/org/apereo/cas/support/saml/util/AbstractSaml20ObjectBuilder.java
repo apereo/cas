@@ -201,12 +201,14 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param attributeFriendlyNames the attribute friendly names
      * @param configuredNameFormats  the configured name formats
      * @param defaultNameFormat      the default name format
+     * @param builder                the builder
      * @return the attribute statement
      */
     public AttributeStatement newAttributeStatement(final Map<String, Object> attributes,
                                                     final Map<String, String> attributeFriendlyNames,
                                                     final Map<String, String> configuredNameFormats,
-                                                    final String defaultNameFormat) {
+                                                    final String defaultNameFormat,
+                                                    final Saml20AttributeBuilder builder) {
         val attrStatement = newSamlObject(AttributeStatement.class);
         for (val e : attributes.entrySet()) {
             if (e.getValue() instanceof Collection<?> && ((Collection<?>) e.getValue()).isEmpty()) {
@@ -214,11 +216,28 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                 continue;
             }
             val friendlyName = attributeFriendlyNames.getOrDefault(e.getKey(), null);
-            val attribute = newAttribute(friendlyName, e, configuredNameFormats, defaultNameFormat);
-            attrStatement.getAttributes().add(attribute);
+            val attribute = newAttribute(friendlyName, e.getKey(), e.getValue(), configuredNameFormats, defaultNameFormat);
+            builder.build(attrStatement, attribute);
         }
 
         return attrStatement;
+    }
+
+    /**
+     * New attribute statement attribute statement.
+     *
+     * @param attributes             the attributes
+     * @param attributeFriendlyNames the attribute friendly names
+     * @param configuredNameFormats  the configured name formats
+     * @param defaultNameFormat      the default name format
+     * @return the attribute statement
+     */
+    public AttributeStatement newAttributeStatement(final Map<String, Object> attributes,
+                                                    final Map<String, String> attributeFriendlyNames,
+                                                    final Map<String, String> configuredNameFormats,
+                                                    final String defaultNameFormat) {
+        return newAttributeStatement(attributes, attributeFriendlyNames,
+            configuredNameFormats, defaultNameFormat, new DefaultSaml20AttributeBuilder());
     }
 
     /**
@@ -238,26 +257,27 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * New attribute.
      *
      * @param attributeFriendlyName the attribute friendly name
-     * @param e                     the entry to process and turn into a saml attribute
-     * @param configuredNameFormats the configured name formats. If an attribute is found in this
-     *                              collection, the linked name format will be used.
+     * @param attributeName         the attribute name
+     * @param attributeValue        the attribute value
+     * @param configuredNameFormats the configured name formats. If an attribute is found in this collection, the linked name format will be used.
      * @param defaultNameFormat     the default name format
      * @return the attribute
      */
     protected Attribute newAttribute(final String attributeFriendlyName,
-                                     final Map.Entry<String, Object> e,
+                                     final String attributeName,
+                                     final Object attributeValue,
                                      final Map<String, String> configuredNameFormats,
                                      final String defaultNameFormat) {
         val attribute = newSamlObject(Attribute.class);
-        attribute.setName(e.getKey());
+        attribute.setName(attributeName);
 
         if (StringUtils.isNotBlank(attributeFriendlyName)) {
             attribute.setFriendlyName(attributeFriendlyName);
         } else {
-            attribute.setFriendlyName(e.getKey());
+            attribute.setFriendlyName(attributeName);
         }
 
-        addAttributeValuesToSaml2Attribute(e.getKey(), e.getValue(), attribute.getAttributeValues());
+        addAttributeValuesToSaml2Attribute(attributeName, attributeValue, attribute.getAttributeValues());
 
         if (!configuredNameFormats.isEmpty() && configuredNameFormats.containsKey(attribute.getName())) {
             val nameFormat = configuredNameFormats.get(attribute.getName());
@@ -351,13 +371,15 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param notBefore    the not before
      * @return the subject
      */
-    public Subject newSubject(final NameID nameId, final String recipient, final ZonedDateTime notOnOrAfter,
-                              final String inResponseTo, final ZonedDateTime notBefore) {
+    public Subject newSubject(final NameID nameId,
+                              final String recipient,
+                              final ZonedDateTime notOnOrAfter,
+                              final String inResponseTo,
+                              final ZonedDateTime notBefore) {
 
         LOGGER.debug("Building subject for NameID [{}] and recipient [{}], in response to [{}]", nameId, recipient, inResponseTo);
         val confirmation = newSamlObject(SubjectConfirmation.class);
         confirmation.setMethod(SubjectConfirmation.METHOD_BEARER);
-
         val data = newSamlObject(SubjectConfirmationData.class);
 
         if (StringUtils.isNotBlank(recipient)) {
@@ -387,6 +409,12 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         val subject = newSamlObject(Subject.class);
         if (nameId != null) {
             subject.setNameID(nameId);
+
+            nameId.detach();
+            confirmation.setNameID(nameId);
+
+            subject.setEncryptedID(null);
+            confirmation.setEncryptedID(null);
         }
         subject.getSubjectConfirmations().add(confirmation);
 

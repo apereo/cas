@@ -4,7 +4,7 @@
 # Install travis: gem install travis
 # Login to travis: travis login
 # Encrypt the token: travis encrypt VAR_NAME=VAR_VALUE -r apereo/cas --add env.global
-# Encrypted settings include SONATYPE_USER, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN, COVERALLS_REPO_TOKEN
+# Encrypted settings include GPG_PSW, SONATYPE_USER, GPG_PASSPHRASE, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN, COVERALLS_REPO_TOKEN
 
 language: java
 sudo: required
@@ -51,6 +51,8 @@ env:
   - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="
   - secure: "A0B1HJoHzvYGT4pPWPW1bQDS3Ne755vZ/VZ20OtVRgJHTTQfK13eKgH0VbYpEyZKJAFIexmaDVQ0XUdNukzrAoI6rKSm5vwam6qjELrvrKH2ovMgd1xvS2a5a1no5OT3QP3TXKKlmOTdS+Q5ZspjslBxpay3q7aKA9GMNvzChko="
   - secure: "o+KTglDoN49U9YawUsInKZ/83xxyeSB+WexfztRR+2dfCr049VXlJyurcE2/FygkentOY5DJU2UAnyZOEjyWoHth0q4MQOjIn0BE53yBFojxvcQPufgIR1Bc/BNaNeU2xRunNf8Rha/E/Dlwg5WdQT60Z0mdyDm7jHwodKxh7d4="
+  - secure: "EoYJdh2vb3BIqkfS6UTiVjDci1CMDOgBba8dijE7ebG44rA7BTv/Y9rwi5wSds+bW0m3LvojyxKwD+47tLlRPw7AuuifZJfZvb7cGG+6vXdagU8NNaOuoRc0jMk4R/VlQ4uCN4X7/30FUyFfQl1+BPR/v2Q5YsyBz5kp4romnp8="
+  - secure: "KplfTU6f4kYxX3vP1aE5IbLDroK0AznP+jhzM95vqab+tGRodq/6oXjV8dGH3CuolC4E0+zaG2HktUpFIUD85vhUSijK49k4tEJVx5DetDc1JYUb4OniwOaNX+BKOUwbnic1za12MWJF0ZmSZqsRdNulsSevcnGiV/TxhOmnYOk="
 before_install:
 - unset _JAVA_OPTIONS
 - chmod -R 777 ./ci/*.sh
@@ -71,71 +73,104 @@ jobs:
   include:
   - stage: initialize
     script: ./ci/download-dependencies.sh
+    name: "Initialize Build System"
     ############################################
   - stage: publish
     if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
-    script: ./ci/publish-snapshots.sh
-    ############################################
+    script: ./ci/publish-snapshots-release.sh
+    name: "Publish Artifacts"
   - stage: build
     script: ./ci/build.sh
+    name: "Build CAS"
   - stage: build
     script: ./ci/analyze-style.sh
+    name: "Checkstyle Analysis"
   - stage: build
     if: type != pull_request
     script: ./ci/analyze-sonarqube.sh
+    name: "Sonarqube Analysis"
   - stage: build
     script: ./ci/push-docs-ghpages.sh
     if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
+    name: "Publish Documentation"
   - stage: build
     script: ./ci/build-javadocs.sh
+    name: "Build Javadocs"
   - stage: build
     script: ./ci/build-config-metadata.sh
+    name: "Build Configuration Metadata"
   - stage: build
     script: ./ci/check-config-factories.sh
+    name: "Configuration Factory Analysis"
     ############################################
   - stage: dependencies
     script: ./ci/analyze-dependencies.sh
+    name: "Dependency Security Analysis"
   - stage: dependencies
     if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/report-dependency-updates.sh
+    name: "Dependency Update Report"
     ############################################
   - stage: test
     script: ./ci/tests/run-tests-simple.sh
+    name: "Simple Unit Tests"
   - stage: test
     script: ./ci/tests/restful/run-tests-restful.sh
+    name: "RESTful Tests"
   - stage: test
     script: ./ci/tests/cassandra/run-tests-cassandra.sh
+    name: "Cassandra Tests"
   - stage: test
     script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
+    name: "CosmosDb Tests"
   - stage: test
     script: ./ci/tests/couchbase/run-tests-couchbase.sh
+    name: "Couchbase Tests"
   - stage: test
     script: ./ci/tests/dynamodb/run-tests-dynamodb.sh
+    name: "DynamoDb Tests"
   - stage: test
     script: ./ci/tests/filesystem/run-tests-filesystem.sh
+    name: "FileSystem Tests"
   - stage: test
     script: ./ci/tests/ignite/run-tests-ignite.sh
+    name: "Apache Ignite Tests"
   - stage: test
     script: ./ci/tests/influxdb/run-tests-influxdb.sh
+    name: "InfluxDb Tests"
   - stage: test
     script: ./ci/tests/ldap/run-tests-ldap.sh
+    name: "LDAP Tests"
   - stage: test
     script: ./ci/tests/mail/run-tests-mail.sh
+    name: "Mail Tests"
   - stage: test
     script: ./ci/tests/couchdb/run-tests-couchdb.sh
+    name: "CouchDb Tests"
   - stage: test
     script: ./ci/tests/memcached/run-tests-memcached.sh
+    name: "Memcached Tests"
   - stage: test
     script: ./ci/tests/mysql/run-tests-mysql.sh
+    name: "MySQL Tests"
   - stage: test
     script: ./ci/tests/mssqlserver/run-tests-mssqlserver.sh
+    name: "MSSQL Server Tests"
   - stage: test
     script: ./ci/tests/postgres/run-tests-postgres.sh
+    name: "PostgreSQL Tests"
   - stage: test
     script: ./ci/tests/mariadb/run-tests-mariadb.sh
+    name: "MariaDb Tests"
   - stage: test
     script: ./ci/tests/mongodb/run-tests-mongodb.sh
+    name: "MongoDb Tests"
   - stage: test
     script: ./ci/tests/redis/run-tests-redis.sh
+    name: "Redis Tests"
   - stage: spotbugs
-    script: ./ci/analyze-bugs.sh
+    script: ./ci/analyze-bugs-main.sh
+    name: "Spotbugs Main Analysis"
+  - stage: spotbugs
+    script: ./ci/analyze-bugs-tests.sh
+    name: "Spotbugs Tests Analysis"

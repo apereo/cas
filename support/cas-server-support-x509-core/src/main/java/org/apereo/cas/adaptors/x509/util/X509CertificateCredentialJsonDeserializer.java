@@ -36,7 +36,6 @@ public class X509CertificateCredentialJsonDeserializer extends JsonDeserializer<
             val data = EncodingUtils.decodeBase64(cert);
             certs.add(CertUtils.readCertificate(new InputStreamResource(new ByteArrayInputStream(data))));
         });
-        val c = new X509CertificateCredential(certs.toArray(new X509Certificate[]{}));
-        return c;
+        return new X509CertificateCredential(certs.toArray(new X509Certificate[]{}));
     }
 }

@@ -17,7 +17,7 @@ import java.nio.file.Path;
  * configuration file at the Spring Application Context initialization time. YAML files are
  * expected to be found inside a directory location and this registry will recursively look through
  * the directory structure to find relevant YAML files. Files are expected to have the
- * {@value YamlServiceRegistry#FILE_EXTENSION} extension. An example of the YAML file is included here:
+ * {@link #getExtensions()} extension. An example of the YAML file is included here:
  * <pre>
  * --- !&lt;org.apereo.cas.services.RegexRegisteredService&gt;
  * serviceId: "testId"
@@ -40,7 +40,7 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
     /**
      * File extension of registered service YAML files.
      */
-    private static final String FILE_EXTENSION = "yml";
+    private static final String[] FILE_EXTENSIONS = new String[] {"yml", "yaml"};
 
     /**
      * Instantiates a new YAML service registry dao.
@@ -80,7 +80,7 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
     }
 
     @Override
-    protected String getExtension() {
-        return FILE_EXTENSION;
+    protected String[] getExtensions() {
+        return FILE_EXTENSIONS;
     }
 }

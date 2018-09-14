@@ -104,8 +104,6 @@ task verifySpringConfigurationFactories(description: "Examine spring.factories f
     }
 }
 
-
-
 task outputSpotbugsReports(description: "Display Findbugs output") {
     doLast {
         printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)
@@ -166,5 +164,6 @@ def printSpotbugsReportToConsole(File file) {
 gradle.buildFinished { buildResult ->
     cleanLogs
 }
+
 
 clean.dependsOn("cleanLogs")

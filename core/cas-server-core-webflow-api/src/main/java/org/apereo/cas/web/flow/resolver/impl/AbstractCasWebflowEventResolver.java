@@ -320,11 +320,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             }
 
             LOGGER.debug("Selecting a multifactor authentication provider out of [{}] for [{}] and service [{}]", providers, principal.getId(), service);
-            val provider =
-                this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
+            val provider = this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
 
             LOGGER.debug("Located attribute value [{}] for [{}]", attributeValue, attributeNames);
-
             var results = resolveEventViaSingleAttribute(principal, attributeValue, service, context, provider, predicate);
             if (results == null || results.isEmpty()) {
                 results = resolveEventViaMultivaluedAttribute(principal, attributeValue, service, context, provider, predicate);

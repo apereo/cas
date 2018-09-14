@@ -411,6 +411,7 @@ The following options related to Person Directory support in CAS when it attempt
 # ${configurationKey}.principalAttribute=
 # ${configurationKey}.returnNull=false
 # ${configurationKey}.principalResolutionFailureFatal=false
+# ${configurationKey}.useExistingPrincipalId=false
 ```
 
 ## InfluxDb Configuration
@@ -519,6 +520,27 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.discovery.kubernetes.resolveNotReadyAddresses=false
 # ${configurationKey}.cluster.discovery.kubernetes.kubernetesMaster=
 # ${configurationKey}.cluster.discovery.kubernetes.apiToken=
+```
+
+### Docker Swarm Discovery
+
+```properties
+# ${configurationKey}.cluster.discovery.enabled=true
+
+# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.enabled=true
+# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.serviceName=
+# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.servicePort=5701
+# ${configurationKey}.cluster.discovery.dockerSwarm.dnsProvider.peerServices=service-a,service-b,etc
+
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.enabled=true
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.groupName=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.groupPassword=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.dockerNetworkNames=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.dockerServiceNames=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.dockerServiceLabels=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.swarmMgrUri=
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.skipVerifySsl=false
+# ${configurationKey}.cluster.discovery.dockerSwarm.memberProvider.hazelcastPeerPort=5701
 ```
 
 ### Microsoft Azure Discovery
@@ -932,6 +954,7 @@ to an external provider such as Yahoo, given the provider's *configuration key*:
 # ${configurationKey}.secret=
 # ${configurationKey}.clientName=My Provider
 # ${configurationKey}.autoRedirect=false
+# ${configurationKey}.principalAttributeId=
 ```
 
 ### Delegated Authentication OpenID Connect Settings

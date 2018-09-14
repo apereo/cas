@@ -30,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -63,18 +64,18 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
+    private ObjectProvider<HttpClient> httpClient;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @ConditionalOnMissingBean(name = "duoPrincipalFactory")
     @Bean
@@ -95,7 +96,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
                 && StringUtils.isNotBlank(duo.getDuoSecretKey())
                 && StringUtils.isNotBlank(duo.getDuoApplicationKey()))
             .forEach(duo -> {
-                val s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
+                val s = new BasicDuoSecurityAuthenticationService(duo, httpClient.getIfAvailable());
                 val duoP = new DefaultDuoMultifactorAuthenticationProvider(duo.getRegistrationUrl(), s);
                 duoP.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
                 duoP.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
@@ -110,11 +111,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         return provider;
     }
 
+    @ConditionalOnMissingBean(name = "prepareDuoWebLoginFormAction")
     @Bean
     public Action prepareDuoWebLoginFormAction() {
         return new PrepareDuoWebLoginFormAction(duoMultifactorAuthenticationProvider(), applicationContext);
     }
 
+    @ConditionalOnMissingBean(name = "determineDuoUserAccountAction")
     @Bean
     public Action determineDuoUserAccountAction() {
         return new DetermineDuoUserAccountAction(duoMultifactorAuthenticationProvider(), applicationContext);
@@ -139,8 +142,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         if (duos.size() > 1) {
             LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after [{}]", name);
         }
-        val h = new DuoAuthenticationHandler(name, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
-        return h;
+        return new DuoAuthenticationHandler(name, servicesManager.getIfAvailable(), duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
     }
 
     @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
@@ -148,8 +150,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-        return new DuoMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry,
+        return new DuoMultifactorWebflowConfigurer(flowBuilderServices.getIfAvailable(),
+            loginFlowDefinitionRegistry.getIfAvailable(),
             deviceRegistrationEnabled,
             duoMultifactorAuthenticationProvider(),
             applicationContext,

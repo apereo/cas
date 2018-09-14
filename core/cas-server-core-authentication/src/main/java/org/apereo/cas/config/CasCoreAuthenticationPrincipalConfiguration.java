@@ -17,6 +17,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -43,11 +44,11 @@ public class CasCoreAuthenticationPrincipalConfiguration {
 
     @Autowired
     @Qualifier("attributeRepositories")
-    private List<IPersonAttributeDao> attributeRepositories;
+    private ObjectProvider<List<IPersonAttributeDao>> attributeRepositories;
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @ConditionalOnMissingBean(name = "principalElectionStrategy")
     @Bean
@@ -69,14 +70,15 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     public PrincipalResolver personDirectoryPrincipalResolver() {
         val personDirectory = casProperties.getPersonDirectory();
         val bean = new PersonDirectoryPrincipalResolver(
-            attributeRepository,
+            attributeRepository.getIfAvailable(),
             principalFactory(),
             personDirectory.isReturnNull(),
             personDirectory.getPrincipalAttribute()
         );
+        bean.setUseCurrentPrincipalId(personDirectory.isUseExistingPrincipalId());
 
         val resolver = new ChainingPrincipalResolver();
-        if (!attributeRepositories.isEmpty()) {
+        if (!attributeRepositories.getIfAvailable().isEmpty()) {
             LOGGER.debug("Attribute repository sources are defined and available for the principal resolution chain. "
                 + "The principal resolver will use a combination of attributes collected from attribute repository sources "
                 + "and whatever may be collected during the authentication phase where results are eventually merged.");

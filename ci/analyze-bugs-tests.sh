@@ -3,14 +3,14 @@ source ./ci/functions.sh
 
 runBuild=false
 echo "Reviewing changes that might affect the Gradle build..."
-currentChangeSetAffectsSnapshots
+currentChangeSetAffectsStyle
 retval=$?
 if [ "$retval" == 0 ]
 then
-    echo "Found changes that require snapshots to be published."
+    echo "Found changes that require the build to run static analysis."
     runBuild=true
 else
-    echo "Changes do NOT affect project snapshots."
+    echo "Changes do NOT affect project static analysis."
     runBuild=false
 fi
 
@@ -27,18 +27,19 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-
 echo -e "Installing NPM...\n"
 ./gradlew npmInstall --stacktrace -q
 
-gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
-        -DskipNpmLint=true -DskipNestedConfigMetadataGen=true \
-        -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
-        -DsonatypePassword=${SONATYPE_PWD} --parallel "
+gradleBuild="$gradleBuild spotbugsTest -x test -x javadoc \
+     -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel -DshowStandardStreams=true "
 
-if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-    gradleBuild="$gradleBuild -DshowStandardStreams=true "
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
+    gradleBuild="$gradleBuild --rerun-tasks "
+fi
+
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
+    gradleBuild="$gradleBuild --refresh-dependencies "
 fi
 
 if [ -z "$gradleBuild" ]; then
@@ -64,7 +65,6 @@ else
 
     if [ $retVal == 0 ]; then
         echo "Gradle build finished successfully."
-        exit 0
     else
         echo "Gradle build did NOT finish successfully."
         exit $retVal

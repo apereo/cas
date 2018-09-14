@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.EqualsAndHashCode;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.data.mongodb.core.MongoOperations;
 
@@ -11,6 +12,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@EqualsAndHashCode(callSuper = true)
 public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperations> {
 
     private final List<MongoDbProperty> list;

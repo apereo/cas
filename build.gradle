@@ -32,6 +32,11 @@ apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
 apply plugin: "com.github.kt3k.coveralls"
 apply plugin: "com.github.ben-manes.versions"
+
+if (project.ext.continuousIntegrationBuild) {
+    apply plugin: "com.gradle.build-scan"
+}
+
 if (!Boolean.getBoolean("skipSonarqube")) {
     apply plugin: "org.sonarqube"
 }
@@ -47,6 +52,7 @@ buildscript {
     }
 
     dependencies {
+        classpath "com.gradle:build-scan-plugin:1.16"
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:$gradleLintVersion"
         classpath "io.franzbecker:gradle-lombok:$gradleLombokVersion"
@@ -64,8 +70,8 @@ buildscript {
 
 if (rootProject.continuousIntegrationBuild) {
     buildScan {
-        licenseAgreementUrl = "https://gradle.com/terms-of-service"
-        licenseAgree = "yes"
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
     }
 }
 
@@ -211,7 +217,7 @@ subprojects {
                 failOnVersionConflict()
             }
             preferProjectModules()
-            cacheDynamicVersionsFor 5, "days"
+            cacheDynamicVersionsFor 1, "days"
             cacheChangingModulesFor 5, "days"
 
             /**
@@ -377,6 +383,7 @@ subprojects {
 
         if (!Boolean.getBoolean("skipErrorProneCompiler")) {
             errorprone "com.google.errorprone:error_prone_core:$errorProneVersion"
+            errorproneJavac "com.google.errorprone:javac:$errorproneJavacVersion"
         }
         testImplementation libraries.tests
         testImplementation libraries.groovy
@@ -488,4 +495,16 @@ tasks.coveralls {
     group = "Coverage Reports"
     description = "Uploads the aggregated coverage report to Coveralls"
     dependsOn jacocoRootReport
+}
+
+task casVersion(description: "Display current CAS version") {
+    doLast {
+        println project.version
+    }
+}
+
+task signingKey(description: "Display CAS signing key id") {
+    doLast {
+        println "Signing key: " + project.findProperty("signing.keyId")
+    }
 }
