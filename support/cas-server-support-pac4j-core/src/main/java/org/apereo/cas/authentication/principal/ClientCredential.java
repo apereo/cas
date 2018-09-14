@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Credential;
 import org.pac4j.core.profile.UserProfile;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * This class represents client credentials and (after authentication) a user profile.
@@ -13,6 +14,11 @@ import java.io.Serializable;
  * @since 3.5.0
  */
 public class ClientCredential implements Credential, Serializable {
+
+    /**
+     * The prefix used when building an identifier for an unauthenticated user.
+     */
+    public static final String NOT_YET_AUTHENTICATED = "NotYetAuthenticated-";
 
     /**
      * The serialVersionUID.
@@ -75,7 +81,7 @@ public class ClientCredential implements Credential, Serializable {
             }
             return this.userProfile.getId();
         }
-        return null;
+        return NOT_YET_AUTHENTICATED + UUID.randomUUID().toString();
     }
 
     public void setTypedIdUsed(final boolean typedIdUsed) {
