@@ -43,7 +43,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     @Override
     public MultifactorAuthenticationProviderBypass getBypass() {
-        return  this.bypassEvaluator;
+        return this.bypassEvaluator;
     }
 
     @Override

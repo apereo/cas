@@ -21,12 +21,14 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifactorAuthenticationProviderBypass {
+public class RestMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
 
     private static final long serialVersionUID = -7553888418344342672L;
 
+    private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
+
     public RestMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties) {
-        super(bypassProperties);
+        this.bypassProperties = bypassProperties;
     }
 
     @Override

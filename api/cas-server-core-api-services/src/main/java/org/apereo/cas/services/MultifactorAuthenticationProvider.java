@@ -29,7 +29,8 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
 
     /**
      * Returns the configured bypass provider for this MFA provider.
-     * @return
+     *
+     * @return - the bypass evaluator
      */
     MultifactorAuthenticationProviderBypass getBypass();
 
