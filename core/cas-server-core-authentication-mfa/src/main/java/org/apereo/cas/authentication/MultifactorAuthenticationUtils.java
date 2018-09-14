@@ -31,13 +31,16 @@ public class MultifactorAuthenticationUtils {
     public static MultifactorAuthenticationProviderBypass newMultifactorAuthenticationProviderBypass(
         final MultifactorAuthenticationProviderBypassProperties props) {
 
+        val bypass = new ChainingMultifactorAuthenticationBypassProvider();
+        bypass.addBypass(new DefaultMultifactorAuthenticationProviderBypass(props));
+
         if (props.getType() == MultifactorAuthenticationProviderBypassProperties.MultifactorProviderBypassTypes.GROOVY) {
-            return new GroovyMultifactorAuthenticationProviderBypass(props);
+            bypass.addBypass(new GroovyMultifactorAuthenticationProviderBypass(props));
         }
         if (props.getType() == MultifactorAuthenticationProviderBypassProperties.MultifactorProviderBypassTypes.REST) {
-            return new RestMultifactorAuthenticationProviderBypass(props);
+            bypass.addBypass(new RestMultifactorAuthenticationProviderBypass(props));
         }
-        return new DefaultMultifactorAuthenticationProviderBypass(props);
+        return bypass;
     }
 
     /**

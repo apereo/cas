@@ -65,6 +65,10 @@ Actuator endpoints provided by Spring Boot can also be visually managed and moni
 <div class="alert alert-info"><strong>Obtaining Health Info</strong><p>Note that <code>/status</code> endpoint is kept mostly 
 as a legacy endpoint. If you wish to obtain health status of each monitor in detail, we recommend the <code>/status/health</code> endpoint instead.</p></div>
  
+### Registered Services Endpoint
+
+The endpoint can also accept a mime-type of `application/vnd.cas.services+yaml` to produce YAML output.
+
 ### Attribute Release Endpoint
 
 Supported parameters are the following:
