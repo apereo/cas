@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Release Consent
+category: Attributes
 ---
 
 # Attribute Consent
@@ -105,7 +106,7 @@ Valid values for `options` include:
 | `ATTRIBUTE_VALUE`         | Same as above, except that attributes values are also accounted for and trigger consent, if changed.
 | `ALWAYS`                  | Always ask for consent, regardless of change or context.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#json-attribute-consent).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-attribute-consent).
 
 ### Groovy
 
@@ -159,7 +160,7 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jpa-attribute-consent).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jpa-attribute-consent).
 
 ### MongoDb
 
@@ -173,7 +174,7 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#mongodb-attribute-consent).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-attribute-consent).
 
 
 ### REST
@@ -188,7 +189,7 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#rest-attribute-consent).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-attribute-consent).
 
 Endpoints must be designed to accept/process `application/json`.
 
@@ -218,7 +219,7 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#ldap-attribute-consent).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-attribute-consent).
 
 
 ### Custom
@@ -239,4 +240,4 @@ public class MyConfiguration {
 }
 ```
 
-[See this guide](../installation/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
