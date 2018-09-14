@@ -46,7 +46,6 @@ import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
