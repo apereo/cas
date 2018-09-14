@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Docker Installation
+category: Installation
 ---
 
 # Docker Installation

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - InMemory Service Registry
+category: Services
 ---
 
 # InMemory Service Registry
@@ -22,7 +23,7 @@ public class MyConfiguration {
 }
 ```
 
-[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
 Given registered services are injected into the context as Spring bean definitions, you will need to consult the project's javadocs
 to learn more about the CAS service API, and how to inject various other components into the service definition. 

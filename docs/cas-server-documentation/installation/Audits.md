@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Audit Configuration
+category: Logs & Audits
 ---
 
 # Audits
@@ -12,12 +13,12 @@ and Spring-managed `@Aspect`-style aspects.
 
 CAS server auto-configures all the relevant Inspektr components.   All the available configuration options that are injected to Inspektr classes are available to deployers via relevant CAS properties. Note that the audit record management functionality of CAS supports handling multiple audit record destinations at the same time. In other words, you may choose to route audit records to both a database and a REST endpoint as well as any number of logger-based destinations all at the same time.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#audits).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#audits).
 
 ## File-based Audits
 
 File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](Logging.html) configuration.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#audits).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#audits).
 
 ### Sample Log Output
 
@@ -52,7 +53,7 @@ If you intend to use a database for auditing functionality, enable the following
 ```
 
 To learn how to configure database drivers, please [review this guide](JDBC-Drivers.html).
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-audits).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-audits).
 
 ## MongoDb Audits
 
@@ -66,7 +67,7 @@ If you intend to use a MongoDb database for auditing functionality, enable the f
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-audits).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-audits).
 
 ## Couchbase Audits
 
@@ -80,7 +81,7 @@ If you intend to use a Couchbase database for auditing functionality, enable the
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#couchbase-audits).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchbase-audits).
 
 ## REST Audits
 
@@ -95,7 +96,7 @@ Audit events may also be `POST`ed to an endpoint of your choosing. To activate t
 ```
 
 The body of the HTTP request is a JSON representation of the audit record. 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-audits).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-audits).
 
 ## Audit Events
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JWT Authentication
+category: Authentication
 ---
 
 # JWT Authentication
@@ -61,7 +62,7 @@ JWT authentication support is enabled by including the following dependency in t
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jwttoken-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jwttoken-authentication).
 
 Configure the appropriate service in your service registry to hold the secrets:
 

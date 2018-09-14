@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Contacts
+category: Services
 ---
 
 # Configure Service Contacts

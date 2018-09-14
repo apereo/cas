@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Installation Requirements
+category: Installation
 ---
 
 # Installation Requirements

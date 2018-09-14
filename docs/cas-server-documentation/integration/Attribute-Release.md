@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Release
+category: Attributes
 ---
 
 # Attribute Release

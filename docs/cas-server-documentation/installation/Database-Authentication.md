@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Database Authentication
+category: Authentication
 ---
 
 # Database Authentication
@@ -19,7 +20,7 @@ To learn how to configure database drivers, [please see this guide](JDBC-Drivers
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-authentication).
 
 ## Password Policy Enforcement
 

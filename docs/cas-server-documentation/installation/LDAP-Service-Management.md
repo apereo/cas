@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - LDAP Service Registry
+category: Services
 ---
 
 # LDAP Service Registry
@@ -32,7 +33,7 @@ Service definitions are by default stored inside the `serviceDefinitionAttribute
 JSON objects. The format and syntax of the JSON is identical to that of
 [JSON Service Registry](JSON-Service-Management.html). That's all, as far as the schema goes.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-service-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-service-registry).
 
 ## Auto Initialization
 

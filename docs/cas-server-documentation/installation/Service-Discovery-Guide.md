@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Service Discovery
+category: High Availability
 ---
 
 # Service Discovery

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Cloudwatch Logging Configuration
+category: Logs & Audits
 ---
 
 # Cloudwatch Logging
