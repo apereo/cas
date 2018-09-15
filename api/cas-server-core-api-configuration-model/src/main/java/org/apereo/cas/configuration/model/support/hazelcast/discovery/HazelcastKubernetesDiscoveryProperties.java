@@ -21,13 +21,12 @@ public class HazelcastKubernetesDiscoveryProperties implements Serializable {
 
     /**
      * Defines the DNS service lookup domain. This is defined as something similar
-     * to <tt>my-svc.my-namespace.svc.cluster.local</tt>.<br>
-     * For more information please refer to the official documentation of the Kubernetes DNS addon,
+     * to {@code my-svc.my-namespace.svc.cluster.local}.
      */
     private String serviceDns;
 
     /**
-     * Defines the DNS service lookup timeout in seconds. Defaults to: 5 secs.
+     * Defines the DNS service lookup timeout in seconds. Defaults to 5 secs.
      */
     private int serviceDnsTimeout = -1;
 
@@ -57,13 +56,13 @@ public class HazelcastKubernetesDiscoveryProperties implements Serializable {
     private boolean resolveNotReadyAddresses;
 
     /**
-     * Defines an alternative address for the kubernetes master. Defaults to: <tt>https://kubernetes.default.svc</tt>
+     * Defines an alternative address for the kubernetes master. Defaults to: {@code https://kubernetes.default.svc}
      */
     private String kubernetesMaster;
 
     /**
      * Defines an oauth token for the kubernetes client to access the kubernetes REST API. Defaults to reading the
-     * token from the auto-injected file at: <tt>/var/run/secrets/kubernetes.io/serviceaccount/token</tt>
+     * token from the auto-injected file at: {@code /var/run/secrets/kubernetes.io/serviceaccount/token}.
      */
     private String apiToken;
 }
