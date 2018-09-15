@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring SSO Session Cookie
+category: SSO & SLO
 ---
 
 # SSO Session Cookie
@@ -25,7 +26,7 @@ and determine if CAS itself maintains an active SSO session via the <a href="Mon
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ticket-granting-cookie).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ticket-granting-cookie).
 
 The cookie has the following properties:
 
@@ -50,7 +51,7 @@ If you wish you manually generate keys, you may [use the following tool](https:/
 ### Disable Encryption
 
 If you wish to turn off cookie encryption, see the relevant list of CAS properties
-and [review this guide](Configuration-Properties.html#ticket-granting-cookie).
+and [review this guide](../configuration/Configuration-Properties.html#ticket-granting-cookie).
 
 ## Cookie Generation for Renewed Authentications
 
@@ -66,7 +67,7 @@ Plausibly, a CAS adopter may want this behavior to be different, such that loggi
 via CAS either does not create a CAS SSO session and the SSO session it creates is not honored for authenticating subsequently
 to an SSO-participating application. This might better match user expectations.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#global-sso-behavior).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
 
 # SSO Warning Session Cookie
 
@@ -75,4 +76,4 @@ The cookie is used later to warn and prompt
 the user before a service ticket is generated and access to the service application is granted.
 The cookie is controlled via:
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#warning-cookie).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#warning-cookie).

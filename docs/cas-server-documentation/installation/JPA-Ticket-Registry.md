@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JPA Ticket Registry
+category: Ticketing
 ---
 
 
@@ -25,7 +26,7 @@ Support is enabled by adding the following module into the overlay:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jpa-ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jpa-ticket-registry).
 
 A background *cleaner* process is also automatically scheduled to scan the chosen database periodically and remove expired records based on configured threshold parameters.
 
@@ -42,4 +43,4 @@ This reduces performance of the JPA Ticket Registry and may not be desirable or 
 the database in use, its configured transaction isolation level, and expected concurrency of a single
 TGT.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jpa-ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jpa-ticket-registry).

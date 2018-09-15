@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - CAS Clients
+category: Integration
 ---
 
 # Overview

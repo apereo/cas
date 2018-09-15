@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Upgrade Guide
+category: Planning
 ---
 
 # Upgrade Guide

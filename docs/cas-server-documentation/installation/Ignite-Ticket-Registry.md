@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Ignite Ticket Registry
+category: Ticketing
 ---
 
 # Ignite Ticket Registry
@@ -30,7 +31,7 @@ Ignite supports replication over TLS for distributed caches composed of two or m
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ignite-ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ignite-ticket-registry).
 
 ## Troubleshooting
 

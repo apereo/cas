@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Custom Properties
+category: Services
 ---
 
 # Configure Service Custom Properties

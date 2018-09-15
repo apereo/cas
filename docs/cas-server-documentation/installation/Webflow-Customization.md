@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Webflow Customization
+category: Webflow Management
 ---
 
 # Webflow Customization
@@ -30,7 +31,7 @@ and the module automatically takes care of all required changes. While this is t
 you may want to manually handle all such changes. For doing so, you will need to disable the CAS autoconfiguration
 of the webflow.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-webflow).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spring-webflow).
 
 <div class="alert alert-warning"><strong>Achtung, liebe Leser!</strong><p>Only attempt to 
 modify the Spring webflow configuration files by hand when/if absolutely necessary and the
@@ -59,7 +60,7 @@ sake of establishing an SSO session without logging in to any CAS-reliant servic
 As such, CAS optionally allows adopters to not bother to prompt for credentials when no target application is presented
 and instead presents a message when users visit CAS directly without specifying a service.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#global-sso-behavior).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#global-sso-behavior).
 
 ## Acceptable Usage Policy
 
@@ -74,5 +75,5 @@ See [this guide](Webflow-Customization-Exceptions.html) for more info.
 
 All webflow components and CAS views have access to the entire bundle of CAS settings defined from a variety of configuration sources. This allows one to extend and modify any CAS view or webflow component using the variable `casProperties` to gain access to a specific setting. Remember that this syntax only allowed access to settings that are *owned* by CAS, noted by its very own prefix.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#custom-settings).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#custom-settings).
 

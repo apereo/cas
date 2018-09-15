@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Couchbase Service Registry
+category: Services
 ---
 
 # Couchbase Service Registry
@@ -22,7 +23,7 @@ server to provide high availability to CAS.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#couchbase-service-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchbase-service-registry).
 
 The Couchbase integration currently assumes that the service registries are stored
 in their own buckets. Optionally set passwords for the buckets, optionally setup

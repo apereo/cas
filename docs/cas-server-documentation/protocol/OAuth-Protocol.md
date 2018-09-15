@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OAuth Protocol
+category: Protocols
 ---
 
 # OAuth Protocol
