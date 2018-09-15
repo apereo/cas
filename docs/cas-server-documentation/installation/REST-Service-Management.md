@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - RESTful Service Registry
+category: Services
 ---
 
 # RESTful Service Registry
@@ -15,7 +16,7 @@ title: CAS - RESTful Service Registry
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#restful-service-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#restful-service-registry).
 
 | Operation         | Method          | Body                       | Response
 |-------------------|-----------------|----------------------------------------------------------------------

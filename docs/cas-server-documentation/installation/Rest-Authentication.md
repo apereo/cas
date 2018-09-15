@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - REST Authentication
+category: Authentication
 ---
 
 # REST Authentication
@@ -46,4 +47,4 @@ Expected responses from the REST endpoint are mapped to CAS as such:
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-authentication).

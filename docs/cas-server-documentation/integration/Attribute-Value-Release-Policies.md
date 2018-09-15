@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Value Release Policies
+category: Attributes
 ---
 
 # Attribute Value Filters

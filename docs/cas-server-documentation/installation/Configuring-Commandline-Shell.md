@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Commandline Shell
+category: Installation
 ---
 
 # CAS Command-line Shell

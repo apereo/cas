@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Services Management Webapp
+category: Services
 ---
 
 # Services Management Webapp

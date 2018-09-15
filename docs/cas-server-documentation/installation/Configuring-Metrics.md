@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Metrics
+category: Monitoring & Statistics
 ---
 
 # CAS Metrics
@@ -97,4 +98,4 @@ Support is enabled by including the following module in the Overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#metrics-storage).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#metrics-storage).

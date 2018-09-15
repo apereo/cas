@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - ClearPass
+category: Authentication
 ---
 
 # ClearPass: Credential Caching and Replay
@@ -33,7 +34,7 @@ returning attributes to CAS, such as SAML1 will **not** support the additional r
 Also note that CAS by default attempts to encrypt the cached credential in memory via its own pre-generated keys
 for signing and encryption. When the attribute is to be released to the application, CAS will internally decode
 the credential first and then will attempt to encrypt it again this time using the service's public key credentials.
-This behavior can be controlled via [settings](../installation/Configuration-Properties.html#clearpass).
+This behavior can be controlled via [settings](../configuration/Configuration-Properties.html#clearpass).
 
 <div class="alert alert-info"><strong>ClearPass via Proxying!</strong><p>CAS no longer supports retrieving
 the credential via the proxying mechanism. Applications that intend to obtain the credential
@@ -43,7 +44,7 @@ need to be updated to account for the following approach described here.</p></di
 ## Cache Credential
 
 Enable the caching and capturing of the credential in CAS properties.
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#clearpass).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#clearpass).
 
 ## Create Keys
 

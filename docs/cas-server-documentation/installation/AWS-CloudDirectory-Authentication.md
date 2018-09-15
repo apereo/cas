@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Amazon Cloud Directory Authentication
+category: Authentication
 ---
 
 # Amazon Cloud Directory Authentication
@@ -21,7 +22,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#amazon-cloud-directory-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#amazon-cloud-directory-authentication).
 
 AWS credentials are fetched from the following sources automatically, where relevant and made possible via CAS configuration:
 

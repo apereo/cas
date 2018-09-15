@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - MongoDb Authentication
+category: Authentication
 ---
 
 # MongoDb Authentication
@@ -17,7 +18,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 To see the relevant list of CAS properties,
-please [review this guide](Configuration-Properties.html#mongodb-authentication).
+please [review this guide](../configuration/Configuration-Properties.html#mongodb-authentication).
 
 Accounts are expected to be found as such in collections:
 

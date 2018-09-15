@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Response Type
+category: Services
 ---
 
 # Configuring Service Response Type

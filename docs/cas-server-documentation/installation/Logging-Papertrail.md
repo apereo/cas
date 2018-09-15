@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Papertrail Logging Configuration
+category: Logs & Audits
 ---
 
 # Papertrail Logging

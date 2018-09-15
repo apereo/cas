@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Architecture
+category: Planning
 ---
 
 # Architecture

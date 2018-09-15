@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Google Apps Integration
+category: Integration
 ---
 
 # Overview
@@ -38,7 +39,7 @@ openssl req -new -x509 -key private.key -out x509.pem -days 365
 
 The `x509.pem` file should be uploaded into Google Apps under Security/SSO.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#google-apps-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-apps-authentication).
 
 ## Register Google Apps
 

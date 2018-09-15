@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Loggly Logging Configuration
+category: Logs & Audits
 ---
 
 # Loggly Configuration

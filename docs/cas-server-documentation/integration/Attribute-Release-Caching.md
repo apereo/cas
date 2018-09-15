@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Attribute Release Caching
+category: Attributes
 ---
 # Attribute Release Caching
 
@@ -11,7 +12,7 @@ to the service upon release time.
 
 Note: Remember that while the below policies are typically applied at release time on a per-service level, 
 CAS automatically does create attribute release caching policies at a more global with configurable timeouts
-and durations. See [the relevant settings](../installation/Configuration-Properties.html#authentication-attributes) for more info.
+and durations. See [the relevant settings](../configuration/Configuration-Properties.html#authentication-attributes) for more info.
 
 ## Default
 

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - MongoDb Ticket Registry
+category: Ticketing
 ---
 
 # MongoDb Ticket Registry
@@ -21,7 +22,7 @@ created to let MongoDb handle the expiration of each document and cleanup tasks.
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-ticket-registry).
 
 ## Troubleshooting
 

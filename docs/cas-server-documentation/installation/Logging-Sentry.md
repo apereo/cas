@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Sentry Monitoring Integration
+category: Logs & Audits
 ---
 
 # Overview

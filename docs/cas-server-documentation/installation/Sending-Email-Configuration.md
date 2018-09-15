@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Sending Email
+category: Notifications
 ---
 
 # Sending Email
@@ -10,4 +11,4 @@ of risky authentication attempts or password reset links/tokens, etc. Configurin
 is simply a matter of defining SMTP settings. Each particular feature in need of email functionality should be able to 
 gracefully continue in case settings are not defined. 
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#email-submissions).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#email-submissions).

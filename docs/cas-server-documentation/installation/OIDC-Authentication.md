@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OpenID Connect Authentication
+category: Authentication
 ---
 
 # OpenID Connect Authentication
@@ -104,7 +105,7 @@ CAS settings to allow CAS to operate in an `OPEN` mode.
 
 ## Settings
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#openid-connect).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect).
 
 ## Server Configuration
 
@@ -146,7 +147,7 @@ without having an impact on the attribute resolution configuration and all other
 
 If mapping is not defined, by default CAS attributes are expected to match claim names.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#openid-connect).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect).
 
 ### User-Defined Scopes
 
@@ -157,13 +158,13 @@ such that you may bundle attributes together, then you need to first register yo
 define its attribute bundle and then use it a given service definition such as `eduPerson` above.
 Such user-defined scopes are also able to override the definition of system scopes.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#openid-connect).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#openid-connect).
 
 ## Authentication Context Class
 
 Support for authentication context class references is implemented in form of `acr_values` as part of the original 
 authorization request, which is mostly taken into account by 
-the [multifactor authentication features](Configuring-Multifactor-Authentication.html) of CAS. 
+the [multifactor authentication features](../mfa/Configuring-Multifactor-Authentication.html) of CAS. 
 Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
 
 ## Pairwise Identifiers

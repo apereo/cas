@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Authentication Events
+category: Authentication
 ---
 
 # Authentication Events
@@ -52,7 +53,7 @@ Stores authentication events into a MongoDb NoSQL database.
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-events).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-events).
 
 ### JPA
 
@@ -66,7 +67,7 @@ Stores authentication events into a RDBMS.
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-events).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-events).
 
 ### InfluxDb
 
@@ -80,7 +81,7 @@ Stores authentication events inside an InfluxDb instance.
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#influxdb-events).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#influxdb-events).
 
 ### Memory
 
