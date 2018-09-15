@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - DynamoDb Ticket Registry
+category: Ticketing
 ---
 
 # DynamoDb Ticket Registry
@@ -21,7 +22,7 @@ This registry stores tickets in [DynamoDb](https://aws.amazon.com/dynamodb/) ins
 
 You will need to provide CAS with your [AWS credentials](https://aws.amazon.com/console/). Also, to gain a better understanding
 of DynamoDb's core components and concepts, please [start with this guide](http://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html) first.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#dynamodb-ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#dynamodb-ticket-registry).
 
 ## Troubleshooting
 
