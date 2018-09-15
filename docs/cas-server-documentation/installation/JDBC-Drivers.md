@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JDBC Drivers
+category: Configuration
 ---
 
 # JDBC Drivers
@@ -20,7 +21,7 @@ you may need to also include the following module to account for various databas
 
 Automatic support for drivers includes the following databases.
 All other drivers need to be manually added to the build configuration.
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#hibernate--jdbc).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#hibernate--jdbc).
 
 ### Oracle
 

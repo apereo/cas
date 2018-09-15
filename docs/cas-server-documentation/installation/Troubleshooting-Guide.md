@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Troubleshooting Guide
+category: Installation
 ---
 
 # Troubleshooting Guide
