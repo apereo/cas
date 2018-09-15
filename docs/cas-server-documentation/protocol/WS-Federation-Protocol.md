@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - CAS WS Federation Protocol
+category: Protocols
 ---
 
 # WS Federation Protocol
@@ -153,7 +154,7 @@ is identified by the value of the `givenName` attribute that is already retrieve
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#ws-federation).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ws-federation).
 
 You may also need to declare the following repository in
 your CAS Overlay to be able to resolve dependencies:
