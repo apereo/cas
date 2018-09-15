@@ -3,6 +3,8 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 
+import lombok.val;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,7 @@ public class ChainingMultifactorAuthenticationBypassProvider implements Multifac
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
 
-        for (final MultifactorAuthenticationProviderBypass bypass : bypasses) {
+        for (val bypass : bypasses) {
             if (!bypass.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request)) {
                 return false;
             }
