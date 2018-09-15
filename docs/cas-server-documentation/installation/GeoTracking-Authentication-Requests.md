@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - GeoTracking Authentication Requests
+category: Authentication
 ---
 
 # GeoTracking Authentication Requests
@@ -20,7 +21,7 @@ authentication requests into a geo-location.
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#googlemaps-geotracking).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#googlemaps-geotracking).
 
 ## Maxmind
 
@@ -35,4 +36,4 @@ authentication requests into a geo-location.
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#maxmind-geotracking).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#maxmind-geotracking).

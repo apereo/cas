@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Authentication Components
+category: Authentication
 ---
 
 # Configuration
@@ -26,7 +27,7 @@ For any given credential the manager does the following:
 
 There is an implicit security policy that requires at least one handler to successfully authenticate a credential.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-policy).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-policy).
 
 ## Authentication Handlers
 
@@ -37,7 +38,7 @@ use <strong>casuser</strong> and <strong>Mellon</strong> as the username and pas
 configured via the static authencation handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#accept-users-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#accept-users-authentication).
 
 ### Authentication Sequence
 
@@ -76,7 +77,7 @@ Typical use cases of authentication policies may include:
 2. Ensure a specific class of failure is not evident in the authentication chain's execution log.
 3. Ensure that all authentication schemes in the chain are executed successfully, for the entire authentication event to be considered successful.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-policy).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#authentication-policy).
 
 ## Principal Resolution
 
@@ -101,7 +102,7 @@ Please [see this guide](Configuring-Proxy-Authentication.html) for more details.
 
 ## Multifactor Authentication (MFA)
 
-Please [see this guide](Configuring-Multifactor-Authentication.html) for more details.
+Please [see this guide](../mfa/Configuring-Multifactor-Authentication.html) for more details.
 
 ## Login Throttling
 

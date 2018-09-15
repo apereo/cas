@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Monitoring
+category: Monitoring & Statistics
 ---
 
 # CAS Spring Boot Administration
@@ -33,6 +34,6 @@ Note that CAS server's actuator endpoints are by default secured. In order to al
 
 ## Configuration
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#spring-boot-admin-server).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#spring-boot-admin-server).
 
 [bootadmindocs]: https://codecentric.github.io/spring-boot-admin/1.5.0/
