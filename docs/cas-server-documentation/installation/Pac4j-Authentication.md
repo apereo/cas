@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - pac4j Authentication
+category: Authentication
 ---
 
 <p align="center">

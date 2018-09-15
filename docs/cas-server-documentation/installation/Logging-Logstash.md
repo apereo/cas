@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Logstash Logging Configuration
+category: Logs & Audits
 ---
 
 # Logstash Logging
