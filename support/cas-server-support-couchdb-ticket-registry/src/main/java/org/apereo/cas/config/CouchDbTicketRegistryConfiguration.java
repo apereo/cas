@@ -11,8 +11,10 @@ import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
+import org.ektorp.impl.ObjectMapperFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -30,18 +32,24 @@ public class CouchDbTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("defaultObjectMapperFactory")
+    private ObjectMapperFactory objectMapperFactory;
+
     @RefreshScope
     @Bean
+    @ConditionalOnMissingBean(name = "ticketRegistryCouchDbFactory")
     public CouchDbConnectorFactory ticketRegistryCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb());
+        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory);
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "ticketRegistryCouchDbRepository")
     public TicketRepository ticketRegistryCouchDbRepository() {
         val couchDbProperties = casProperties.getTicket().getRegistry().getCouchDb();
 
-        val ticketRepository = new TicketRepository(ticketRegistryCouchDbFactory().create(), couchDbProperties.isCreateIfNotExists());
+        val ticketRepository = new TicketRepository(ticketRegistryCouchDbFactory().getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
         ticketRepository.initStandardDesignDocument();
         return ticketRepository;
     }
@@ -49,6 +57,7 @@ public class CouchDbTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     @Autowired
+    @ConditionalOnMissingBean(name = "couchDbTicketRegistry")
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         val couchDb = casProperties.getTicket().getRegistry().getCouchDb();
         val c = new CouchDbTicketRegistry(ticketCatalog, ticketRegistryCouchDbRepository(), couchDb.getRetries());
@@ -57,6 +66,8 @@ public class CouchDbTicketRegistryConfiguration {
     }
 
     @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "couchDbTicketRegistryCleaner")
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();
     }
