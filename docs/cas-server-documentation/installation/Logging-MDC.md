@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - MDC Logging Configuration
+category: Logs & Audits
 ---
 
 #  Mapped Diagnostic Context

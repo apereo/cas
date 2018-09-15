@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JPA Service Registry
+category: Services
 ---
 
 # JPA Service Registry
@@ -17,7 +18,7 @@ Support is enabled by adding the following module into the overlay:
 ```
 
 To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-service-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#database-service-registry).
 
 ## Auto Initialization
 

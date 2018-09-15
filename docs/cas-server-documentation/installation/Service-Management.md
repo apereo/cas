@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Service Management
+category: Services
 ---
 
 # Service Management
@@ -13,9 +14,9 @@ service registry that stores one or more registered services containing metadata
 * Forced authentication - Provides administrative control for forced authentication.
 * [Attribute release](../integration/Attribute-Release.html) - Provide user details to services for authorization and personalization.
 * [Proxy control](Configuring-Service-Proxy-Policy.html) - Further restrict authorized services by granting/denying proxy authentication capability.
-* [Theme control](User-Interface-Customization.html) - Define alternate CAS themes to be used for particular services.
+* [Theme control](../ux/User-Interface-Customization.html) - Define alternate CAS themes to be used for particular services.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#service-registry).
 
 ## Service Management Web Application
 
@@ -37,7 +38,7 @@ Registered services present the following metadata:
 | `privacyUrl`                      | Optional free-text link to the service privacy policy.
 | `logo`                            | Optional path to an image file that is the logo for this service. The image will be displayed on the login page along with the service description and name. The value may be a relative path to the `images` directory of the CAS web application or it may be a full URL.
 | `serviceId`                       | Required [regular expression](http://docs.oracle.com/javase/tutorial/essential/regex/) describing a logical service. A logical service defines one or more URLs where a service or services are located. The definition of the url pattern must be **done carefully** because it can open security breaches.
-| `theme`                           | Optional theme name that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details.
+| `theme`                           | Optional theme name that may be used to customize the CAS UI when the service requests a ticket. See [this guide](../ux/User-Interface-Customization.html) for more details.
 | `proxyPolicy`                     | Determines whether the service is able to proxy authentication. See [this guide](Configuring-Service-Proxy-Policy.html) for more info.
 | `evaluationOrder`                 | Determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services; evaluation order determines which registration is evaluated first and acts as an internal sorting factor.
 | `requiredHandlers`                | Set of authentication handler names that must successfully authenticate credentials in order to access the service. If defined, only the selected required handlers are chosen to respond to authentication requests from this registered service.  See [this guide](Configuring-Service-Required-AuthN.html) for more details.
@@ -49,7 +50,7 @@ Registered services present the following metadata:
 | `publicKey`                          | The public key associated with this service that is used to authorize the request by encrypting certain elements and attributes in the CAS validation protocol response, such as [the PGT](Configuring-Proxy-Authentication.html) or [the credential](../integration/ClearPass.html). See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `logoutUrl`                          | URL endpoint for this service to receive logout requests. See [this guide](Logout-Single-Signout.html) for more details
 | `properties`                      | Extra metadata associated with this service in form of key/value pairs. This is used to inject custom fields into the service definition, to be used later by extension modules to define additional behavior on a per-service basis. [See this guide](Configuring-Service-Custom-Properties.html) for more info please.
-| `multifactorPolicy`               | The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](Configuring-Multifactor-Authentication.html).
+| `multifactorPolicy`               | The policy that describes the configuration required for this service authentication, typically for [multifactor authentication](../mfa/Configuring-Multifactor-Authentication.html).
 | `contacts`               | Specify the collection of contacts associated with service that own the application. See [this guide](Configuring-Service-Contacts.html) for more info.
 
 <div class="alert alert-info"><strong>Service Types</strong><p>Note that while the above properties apply to all <strong>generic</strong> service definitions, there are additional service types in CAS that may be activated and required depending on the protocol used and the nature of the client application. Always check the dedicated guide for the capability you have in mind (i.e. OAuth, SAML, etc).</p></div>
