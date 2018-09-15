@@ -3270,6 +3270,10 @@ To learn more about this topic, [please review this guide](REST-Service-Manageme
 # cas.serviceRegistry.rest.basicAuthPassword=
 ```
 
+### CouchDb Service Registry
+
+To learn more about this topic, [please review this guide](CouchDb-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.serviceRegistry`.
+
 ### Redis Service Registry
 
 To learn more about this topic, [please review this guide](Redis-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.serviceRegistry`.
