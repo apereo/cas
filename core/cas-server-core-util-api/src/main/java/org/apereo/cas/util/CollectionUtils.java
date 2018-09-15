@@ -401,6 +401,19 @@ public class CollectionUtils {
     }
 
     /**
+     * Wrap hash set.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the set
+     */
+    public static <T> HashSet<T> wrapHashSet(final Collection<T> source) {
+        val list = new HashSet<T>();
+        list.addAll(source);
+        return list;
+    }
+
+    /**
      * Wrap set set.
      *
      * @param <T>    the type parameter

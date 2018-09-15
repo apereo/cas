@@ -6,14 +6,14 @@ import lombok.Setter;
 import java.io.Serializable;
 
 /**
- * This is {@link AbstractCouchDbProperties}.
+ * This is {@link BaseCouchDbProperties}.
  *
  * @author Timur Duehr
- * @since 5.3.0
+ * @since 6.0.0
  */
 @Getter
 @Setter
-public abstract class AbstractCouchDbProperties implements Serializable {
+public abstract class BaseCouchDbProperties implements Serializable {
 
     private static final long serialVersionUID = 1323894615409106853L;
 
@@ -26,7 +26,6 @@ public abstract class AbstractCouchDbProperties implements Serializable {
      * Username for connection.
      */
     private String username;
-
     /**
      * Password for connection.
      */
@@ -97,4 +96,14 @@ public abstract class AbstractCouchDbProperties implements Serializable {
      * respectively.
      */
     private String dbName;
+
+    /**
+     * Proxy host.
+     */
+    private String proxyHost;
+
+    /**
+     * proxy port.
+     */
+    private int proxyPort = -1;
 }

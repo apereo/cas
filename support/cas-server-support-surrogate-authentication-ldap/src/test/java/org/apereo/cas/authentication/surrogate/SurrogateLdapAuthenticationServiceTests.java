@@ -89,7 +89,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.surrogate.ldap.bindDn=cn=Directory Manager",
     "cas.authn.surrogate.ldap.bindCredential=password",
     "cas.authn.surrogate.ldap.searchFilter=cn={user}",
-    "cas.authn.surrogate.ldap.surrogateSearchFilter=employeeType={user}",
+    "cas.authn.surrogate.ldap.surrogateSearchFilter=employeeType={surrogate}",
     "cas.authn.surrogate.ldap.memberAttributeName=mail",
     "cas.authn.surrogate.ldap.memberAttributeValueRegex=\\\\w+@example.org"
     })

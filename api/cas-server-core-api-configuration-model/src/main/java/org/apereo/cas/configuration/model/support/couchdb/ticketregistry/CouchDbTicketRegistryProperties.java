@@ -1,6 +1,7 @@
-package org.apereo.cas.configuration.model.support.couchdb;
+package org.apereo.cas.configuration.model.support.couchdb.ticketregistry;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -20,7 +21,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @RequiresModule(name = "cas-server-support-couchdb-ticket-registry")
 @Getter
 @Setter
-public class CouchDbTicketRegistryProperties extends AbstractCouchDbProperties {
+public class CouchDbTicketRegistryProperties extends BaseCouchDbProperties {
     private static final long serialVersionUID = 6895485069081125319L;
 
     /**
@@ -31,6 +32,6 @@ public class CouchDbTicketRegistryProperties extends AbstractCouchDbProperties {
 
     public CouchDbTicketRegistryProperties() {
         this.crypto.setEnabled(false);
-        this.setDbName("ticketRegistry");
+        this.setDbName("ticket_registry");
     }
 }

@@ -6,18 +6,18 @@ import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.View;
 
 /**
- * This is {@link RegisteredServiceRepository}. Typed interface to CouchDB.
+ * This is {@link RegisteredServiceCouchDbRepository}. Typed interface to CouchDB.
  *
  * @author Timur Duehr
  * @since 5.3.0
  */
 @View(name = "all", map = "function(doc) { emit(null, doc._id) }")
-public class RegisteredServiceRepository extends CouchDbRepositorySupport<RegisteredServiceDocument> {
-    public RegisteredServiceRepository(final CouchDbConnector db) {
+public class RegisteredServiceCouchDbRepository extends CouchDbRepositorySupport<RegisteredServiceDocument> {
+    public RegisteredServiceCouchDbRepository(final CouchDbConnector db) {
         this(db, true);
     }
 
-    public RegisteredServiceRepository(final CouchDbConnector db, final boolean createIfNotExists) {
+    public RegisteredServiceCouchDbRepository(final CouchDbConnector db, final boolean createIfNotExists) {
         super(RegisteredServiceDocument.class, db, createIfNotExists);
     }
 
