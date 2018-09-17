@@ -23,7 +23,10 @@ import static org.junit.Assert.*;
  * @author Jozef Kotlar
  * @since 5.3.0
  */
-@SpringBootTest(classes = {RadiusConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {
+    RadiusConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @TestPropertySource(properties = {
     "cas.authn.radius.client.sharedSecret=NoSecret",
     "cas.authn.radius.client.inetAddress=localhost,localguest"
