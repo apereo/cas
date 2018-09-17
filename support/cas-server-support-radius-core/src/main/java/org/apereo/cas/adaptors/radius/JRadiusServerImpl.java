@@ -137,8 +137,10 @@ public class JRadiusServerImpl implements RadiusServer {
         val client = this.radiusClientFactory.newInstance();
         try {
             val request = new AccessRequest(client, attributeList);
-            val response = client.authenticate(request, RadiusClient.getAuthProtocol(this.protocol.getName()), this.retries);
-            LOGGER.debug("RADIUS response from [{}]: [{}]", client.getRemoteInetAddress().getCanonicalHostName(), response.getClass().getName());
+            val authProtocol = RadiusClient.getAuthProtocol(this.protocol.getName());
+            val response = client.authenticate(request, authProtocol, this.retries);
+            LOGGER.debug("RADIUS response from [{}]: [{}]. Code: [{}], Identifier: [{}]", client.getRemoteInetAddress().getCanonicalHostName(),
+                response.getClass().getName(), response.getCode(), response.getIdentifier());
             if (response instanceof AccessAccept) {
                 val attributes = response.getAttributes().getAttributeList();
                 LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]", response.getCode(), attributes, response.getIdentifier());

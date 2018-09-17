@@ -87,13 +87,6 @@ public class RadiusConfiguration {
             server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort());
     }
 
-    /**
-     * Radius servers list.
-     * <p>
-     * Handles definition of several redundant servers provided on different IP addresses seprated by space.
-     *
-     * @return the list
-     */
     @RefreshScope
     @Bean
     public List<RadiusServer> radiusServers() {
@@ -104,6 +97,7 @@ public class RadiusConfiguration {
         return ips.stream().map(ip -> getSingleRadiusServer(client, server, ip)).collect(Collectors.toList());
     }
 
+    @ConditionalOnMissingBean(name = "radiusAuthenticationHandler")
     @Bean
     public AuthenticationHandler radiusAuthenticationHandler() {
         val radius = casProperties.getAuthn().getRadius();
