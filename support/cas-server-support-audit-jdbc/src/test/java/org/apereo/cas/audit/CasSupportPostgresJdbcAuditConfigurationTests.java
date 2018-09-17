@@ -13,7 +13,13 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(locations = "classpath:auditpostgres.properties")
+@TestPropertySource(properties = {
+    "cas.audit.jdbc.user=postgres",
+    "cas.audit.jdbc.password=password",
+    "cas.audit.jdbc.driverClass=org.postgresql.Driver",
+    "cas.audit.jdbc.url=jdbc:postgresql://localhost:5432/postgres",
+    "cas.audit.jdbc.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
+})
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
 @Category(PostgresCategory.class)
 public class CasSupportPostgresJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {

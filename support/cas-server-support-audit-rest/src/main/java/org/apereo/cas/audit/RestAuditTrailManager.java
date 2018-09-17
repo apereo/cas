@@ -8,7 +8,6 @@ import org.apereo.cas.util.HttpUtils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -29,13 +28,17 @@ import java.util.concurrent.Executors;
  * @since 5.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
 public class RestAuditTrailManager extends AbstractAuditTrailManager {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final AuditActionContextJsonSerializer serializer = new AuditActionContextJsonSerializer();
     private final AuditRestProperties properties;
+
+    public RestAuditTrailManager(final AuditRestProperties properties) {
+        super(properties.isAsynchronous());
+        this.properties = properties;
+    }
 
     @Override
     public void saveAuditRecord(final AuditActionContext audit) {
@@ -61,5 +64,4 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         }
         return new HashSet<>(0);
     }
-
 }

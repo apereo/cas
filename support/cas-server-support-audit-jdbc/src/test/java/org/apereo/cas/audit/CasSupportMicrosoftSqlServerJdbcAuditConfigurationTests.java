@@ -13,7 +13,13 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(locations = "classpath:auditmssql.properties")
+@TestPropertySource(properties = {
+    "cas.audit.jdbc.user=sa",
+    "cas.audit.jdbc.password=p@ssw0rd",
+    "cas.audit.jdbc.driverClass=com.microsoft.sqlserver.jdbc.SQLServerDriver",
+    "cas.audit.jdbc.url=jdbc:sqlserver://localhost:1433;databaseName=master",
+    "cas.audit.jdbc.dialect=org.hibernate.dialect.SQLServer2012Dialect"
+    })
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 1433)
 @Category(MsSqlServerCategory.class)
 public class CasSupportMicrosoftSqlServerJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {

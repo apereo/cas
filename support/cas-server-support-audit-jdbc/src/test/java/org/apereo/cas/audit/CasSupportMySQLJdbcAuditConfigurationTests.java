@@ -13,7 +13,13 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(locations = "classpath:auditmysql.properties")
+@TestPropertySource(properties = {
+    "cas.audit.jdbc.user=root",
+    "cas.audit.jdbc.password=password",
+    "cas.audit.jdbc.driverClass=com.mysql.cj.jdbc.Driver",
+    "cas.audit.jdbc.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "cas.audit.jdbc.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
+})
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 3306)
 @Category(MySQLCategory.class)
 public class CasSupportMySQLJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
