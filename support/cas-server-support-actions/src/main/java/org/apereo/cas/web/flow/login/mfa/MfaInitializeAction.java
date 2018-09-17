@@ -22,16 +22,20 @@ public class MfaInitializeAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) throws Exception {
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
         final String activeFlow = context.getActiveFlow().getId();
+
+        // Find the provider that matches the flow id
         final Optional<MultifactorAuthenticationProvider> provider =
                 applicationContext
                         .getBeansOfType(MultifactorAuthenticationProvider.class)
-                        .entrySet().stream().filter(e -> e.getKey().startsWith(activeFlow))
+                        .entrySet().stream().filter(e -> e.getValue().getId().equals(activeFlow))
                         .map(e -> e.getValue())
                         .findFirst();
+
         if (provider.isPresent()) {
-            context.getFlowScope().put("provider", provider);
+            context.getFlowScope().put("provider", provider.get());
             return success();
         }
+
         return error();
     }
 
