@@ -12,7 +12,14 @@ if (project.name =~ /cosmos/ && "COSMOSDB".equalsIgnoreCase(rootProject.testCate
             includeCategories "org.apereo.cas.category.CosmosDbCategory"
         }
     }
+}
 
+if (project.name =~ /radius/ && "RADIUS".equalsIgnoreCase(rootProject.testCategoryType)) {
+    task testRadius(type: Test) {
+        useJUnit {
+            includeCategories "org.apereo.cas.category.RadiusCategory"
+        }
+    }
 }
 
 if (project.name =~ /couchbase/ && "COUCHBASE".equalsIgnoreCase(rootProject.testCategoryType)) {
@@ -180,6 +187,7 @@ test {
         excludeCategories "org.apereo.cas.category.MySQLCategory"
         excludeCategories "org.apereo.cas.category.PostgresCategory"
         excludeCategories "org.apereo.cas.category.RedisCategory"
+        excludeCategories "org.apereo.cas.category.RadiusCategory"
         excludeCategories "org.apereo.cas.category.RestfulApiCategory"
     }
     onlyIf {
