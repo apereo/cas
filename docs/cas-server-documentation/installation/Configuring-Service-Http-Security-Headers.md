@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service HTTP Security Headers
+category: Services
 ---
 
 # Configure Service HTTP Security Headers

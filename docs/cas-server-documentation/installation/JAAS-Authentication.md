@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JAAS Authentication
+category: Authentication
 ---
 
 # JAAS Authentication
@@ -16,7 +17,7 @@ JAAS components are provided in the CAS core module and require no additional de
 The JAAS handler delegates to the built-in JAAS subsystem to perform authentication according to the
 directives in the JAAS config file.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jaas-authentication-1).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jaas-authentication-1).
 
 ## JAAS Configuration File
 
@@ -225,4 +226,4 @@ java -Djava.security.auth.login.config=file:/etc/cas/config/jaas.config -jar ...
 Alternatively, you may activate the login configuration type to be `JavaLoginConfig` in the CAS settings and simply specify the path
 to the jaas configuration file there in the settings directly.
 
-For more information on configuration management, please [review this guide](Configuration-Management.html).
+For more information on configuration management, please [review this guide](../configuration/Configuration-Management.html).

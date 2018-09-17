@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Splunk Logging Configuration
+category: Logs & Audits
 ---
 
 # Splunk Logging

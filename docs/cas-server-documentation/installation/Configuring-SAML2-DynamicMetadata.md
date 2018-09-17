@@ -69,7 +69,7 @@ Requests are submitted to REST endpoints with `entityId` as the parameter and `C
 }
 ```
 
-To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-rest).
+To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-rest).
 
 ## MongoDb
 
@@ -110,7 +110,7 @@ The metadata location in the registration record above simply needs to be specif
 SAML metadata for registered service provider must be fetched from MongoDb data sources defined in CAS configuration. 
 </p></div>
 
-To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-mongodb).
+To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-mongodb).
 
 ### Identity Provider Metadata
 
@@ -127,7 +127,7 @@ inside a MongoDb collection taught to CAS via settings as a single document that
 }
 ```
 
-To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-mongodb).
+To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-mongodb).
 
 ## JPA
 
@@ -167,7 +167,7 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 The metadata location in the registration record above simply needs to be specified as <code>jdbc://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from JDBC data sources defined in CAS configuration. 
 </p></div>
 
-To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-jpa).
+To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-jpa).
 
 ### Identity Provider Metadata
 
@@ -183,7 +183,7 @@ inside a database table that would have the following structure:
 | `encryptionKey`           | The encryption key.
 | `metadata`                | The SAML2 identity provider metadata.
 
-To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-jpa).
+To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-jpa).
 
 ## Groovy
 
@@ -268,4 +268,4 @@ The metadata location in the registration record above simply needs to be specif
 SAML metadata for registered service provider must be fetched from Amazon S3 defined in CAS configuration. 
 </p></div>
 
-To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-amazon-s3).
+To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-amazon-s3).

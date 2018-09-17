@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Releasing Principal Id
+category: Attributes
 ---
 
 # Principal-Id Attribute
