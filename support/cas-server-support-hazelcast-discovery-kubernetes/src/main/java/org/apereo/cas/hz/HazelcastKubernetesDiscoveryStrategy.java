@@ -22,7 +22,8 @@ import java.util.HashMap;
 public class HazelcastKubernetesDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
     @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig, final Config configuration, final NetworkConfig networkConfig) {
+    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
+                                       final Config configuration, final NetworkConfig networkConfig) {
         val kube = cluster.getDiscovery().getKubernetes();
         val properties = new HashMap<String, Comparable>();
 
