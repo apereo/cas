@@ -21,11 +21,15 @@ branches:
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -rf ~/.gradle/caches/$GRADLE_VERSION/
+- find ~/.gradle/caches/ -name "*.lock" -type f -delete
 # Remove once Travis CI fixes JDK setup
 before_script:
  - unset -v _JAVA_OPTIONS
  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
- - source install-jdk.sh -F 10 -L BCL
+ - chmod +x install-jdk.sh
+ - export JAVA_HOME=$(./install-jdk.sh --emit-java-home -F 10 | tail --lines 1)
+ - echo $JAVA_HOME
 cache:
   bundler: false
   cargo: false
@@ -127,9 +131,6 @@ jobs:
   - stage: test
     script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
     name: "CosmosDb Tests"
-  - stage: test
-    script: ./ci/tests/radius/run-tests-radius.sh
-    name: "Radius Tests"
   - stage: test
     script: ./ci/tests/couchbase/run-tests-couchbase.sh
     name: "Couchbase Tests"
