@@ -16,3 +16,65 @@
         </div>
     </div>
 </header>
+
+{% comment %}
+ToDo: Implement and finish the below code
+This replaces the larger header with a smaller navbar layout
+
+<header class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar">
+    <a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="CAS Documentation">CAS Documentation</a>
+
+    <div class="navbar-nav-scroll">
+        <ul class="navbar-nav bd-navbar-nav flex-row">
+            <li class="nav-item">
+                <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://github.com/apereo/cas/releases">Downloads</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://apereo.github.io/cas/Support.html">Support</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://apereo.github.io/cas/Mailing-Lists.html">Mailing Lists</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="https://apereo.github.io/">Blog</a>
+            </li>
+        </ul>
+    </div>
+
+    <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+        <li class="nav-item dropdown">
+            <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="bd-versions" data-toggle="dropdown"
+               aria-haspopup="true" aria-expanded="false">
+                {% if versionArray contains version %}
+                {% if version == 'development' %}
+                {{ version }}
+                {% else %}
+                v {{ version }}
+                {% endif%}
+                {% else %}
+                Versions
+                {% endif %}</a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bd-versions">
+                <a class="dropdown-item {% if version == 'development' %}active{% endif%}"
+                   href="/cas/development/index.html">Development</a>
+                <a class="dropdown-item {% if version == '5.2.x' %}active{% endif%}" href="/cas/5.2.x/">v5.2.x</a>
+                <a class="dropdown-item" href="/cas/5.1.x/">v5.1.x</a>
+                <a class="dropdown-item" href="/cas/5.0.x/">v5.0.x</a>
+                <a class="dropdown-item" href="/cas/4.2.x/">v4.2.x</a>
+                <a class="dropdown-item" href="/cas/4.1.x/">v4.1.x</a>
+                <a class="dropdown-item" href="/cas/4.0.x/">v4.0.x</a>
+            </div>
+        </li>
+        <li class="nav-item">
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" id="searchField" type="text" placeholder="Search"
+                       aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </li>
+    </ul>
+</header>
+{% endcomment %}

@@ -1,20 +1,101 @@
+
 <nav class="navbar navbar-expand-md navbar-dark bg-primary">
     <div class="container">
-        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsExample04"
+                aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
         <div class="navbar-collapse collapse" id="navbarsExample04">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active"><a href="{{ relative }}index.html" class="nav-link">Home</a></li>
-                <li class="nav-item"><a href="https://github.com/apereo/cas/releases" class="nav-link">Downloads</a></li>
+                <li class="nav-item"><a href="https://github.com/apereo/cas/releases" class="nav-link">Downloads</a>
+                </li>
                 <li class="nav-item"><a href="{{ relative }}Support.html" class="nav-link">Support</a></li>
                 <li class="nav-item"><a href="{{ relative }}Mailing-Lists.html" class="nav-link">Mailing Lists</a></li>
-                <li class="nav-item"><a href="{{ relative }}Older-Versions.html" class="nav-link">Versions</a></li>
-                <li class="nav-item"><a href="{{ relative }}Who-Is-Using-CAS.html" class="nav-link">Who Is Using CAS?</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle mr-md-2" href="#" id="cas-versions" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">Versions</a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="cas-versions">
+                        {% for ver in versionArray %}
+                        {% if ver == 'development' %}
+                        <a class="dropdown-item" href="/cas/{{ ver }}/">Development</a>
+                        {% else %}
+                        <a class="dropdown-item" href="/cas/{{ ver }}/">v{{ ver }}</a>
+                        {% endif%}
+                        {% endfor %}
+
+                    </div>
+                </li>
+
+                <li class="nav-item"><a href="{{ relative }}Who-Is-Using-CAS.html" class="nav-link">Who Is Using
+                    CAS?</a></li>
                 <li class="nav-item"><a href="https://apereo.github.io" target="_blank" class="nav-link">Blog</a></li>
             </ul>
+
         </div>
 
     </div>
 </nav>
+
+{% comment %}
+This puts a search field in the navbar
+
+<nav class="navbar navbar-expand-md navbar-dark bg-primary">
+    <div class="container">
+        <div class="navbar-nav-scroll">
+            <ul class="navbar-nav bd-navbar-nav flex-row">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://github.com/apereo/cas/releases">Downloads</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://apereo.github.io/cas/Support.html">Support</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://apereo.github.io/cas/Mailing-Lists.html">Mailing Lists</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://apereo.github.io/">Blog</a>
+                </li>
+            </ul>
+        </div>
+
+        <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
+            <li class="nav-item dropdown">
+                <a class="nav-item nav-link dropdown-toggle mr-md-2" href="#" id="bd-versions" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    {% if versionArray contains version %}
+                        {% if version == 'development' %}
+                            {{ version }}
+                        {% else %}
+                            v {{ version }}
+                        {% endif%}
+                    {% else %}
+                        Versions
+                    {% endif %}</a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="bd-versions">
+                    {% for ver in versionArray %}
+                        {% if ver == 'development' %}
+                            <a class="dropdown-item" href="/cas/{{ ver }}/">Development</a>
+                        {% else %}
+                            <a class="dropdown-item" href="/cas/{{ ver }}/">v{{ ver }}</a>
+                        {% endif%}
+                    {% endfor %}
+
+                </div>
+            </li>
+            <li class="nav-item">
+                <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" id="searchField" type="text" placeholder="Search"
+                           aria-label="Search">
+                    <button class="btn btn-light my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+{% endcomment %}
