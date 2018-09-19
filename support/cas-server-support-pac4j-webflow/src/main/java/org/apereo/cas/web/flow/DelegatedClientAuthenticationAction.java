@@ -4,8 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
-import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -44,8 +42,6 @@ import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.webflow.action.EventFactorySupport;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -169,12 +165,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
             }
 
-            try {
-                establishDelegatedAuthenticationSession(context, service, credentials, client);
-            } catch (final AuthenticationException e) {
-                LOGGER.warn("Could not establish delegated authentication session [{}]. Routing to [{}]", e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, e));
-            }
+            final ClientCredential clientCredential = new ClientCredential(credentials, client.getName());
+            WebUtils.putCredential(context, clientCredential);
+            WebUtils.putService(context, service);
             return super.doExecute(context);
         }
 
@@ -184,25 +177,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             return stopWebflow();
         }
         return error();
-    }
-
-    /**
-     * Establish delegated authentication session.
-     *
-     * @param context     the context
-     * @param service     the service
-     * @param credentials the credentials
-     * @param client      the client
-     */
-    protected void establishDelegatedAuthenticationSession(final RequestContext context, final Service service,
-                                                           final Credentials credentials, final BaseClient client) {
-        final ClientCredential clientCredential = new ClientCredential(credentials, client.getName());
-        final AuthenticationResult authenticationResult =
-            this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
-        WebUtils.putAuthentication(authenticationResult.getAuthentication(), context);
-        WebUtils.putAuthenticationResult(authenticationResult, context);
-        WebUtils.putCredential(context, clientCredential);
-        WebUtils.putService(context, service);
     }
 
     /**
