@@ -28,7 +28,7 @@ before_script:
  - unset -v _JAVA_OPTIONS
  - wget https://github.com/sormuras/bach/raw/master/install-jdk.sh
  - chmod +x install-jdk.sh
- - export JAVA_HOME=$(./install-jdk.sh --emit-java-home -F 10 | tail --lines 1)
+ - export JAVA_HOME=$(./install-jdk.sh --emit-java-home -F 10 -c | tail --lines 1)
  - echo $JAVA_HOME
 cache:
   bundler: false
