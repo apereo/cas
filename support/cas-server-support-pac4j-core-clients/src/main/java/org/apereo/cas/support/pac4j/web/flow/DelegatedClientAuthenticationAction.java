@@ -4,17 +4,12 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.ticket.AbstractTicketException;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.Pac4jUtils;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -31,9 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.ExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -181,21 +174,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
             if (credentials != null) {
                 final ClientCredential clientCredential = new ClientCredential(credentials);
-                final AuthenticationResult authenticationResult;
-                final TicketGrantingTicket tgt;
-                try {
-                    authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
-                    tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-                } catch (final AuthenticationException | AbstractTicketException e) {
-                    LOGGER.warn("Could not establish delegated authentication session [{}]. Routing to [{}]",
-                        e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
-                    return new EventFactorySupport().event(this,
-                        CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
-                        new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, e));
-                }
-                WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-                WebUtils.putAuthentication(authenticationResult.getAuthentication(), context);
-                WebUtils.putAuthenticationResult(authenticationResult, context);
                 WebUtils.putCredential(context, clientCredential);
                 WebUtils.putService(context, service);
                 return super.doExecute(context);
