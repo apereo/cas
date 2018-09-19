@@ -2,24 +2,15 @@ package org.apereo.cas.support.pac4j.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.AuthenticationTransaction;
-import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
@@ -140,24 +131,10 @@ public class DelegatedClientAuthenticationActionTests {
         };
         facebookClient.setName(FacebookClient.class.getSimpleName());
         final Clients clients = new Clients(PAC4J_URL, facebookClient);
-        final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
+
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
-        when(casImpl.createTicketGrantingTicket(any())).thenReturn(tgt);
-
-        final AuthenticationTransactionManager transManager = mock(AuthenticationTransactionManager.class);
-        final AuthenticationManager authNManager = mock(AuthenticationManager.class);
-        when(authNManager.authenticate(any(AuthenticationTransaction.class))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-
-        when(transManager.getAuthenticationManager()).thenReturn(authNManager);
-        when(transManager.handle(any(AuthenticationTransaction.class), any(AuthenticationResultBuilder.class))).thenReturn(transManager);
-
-        final AuthenticationResult authnResult = mock(AuthenticationResult.class);
-        when(authnResult.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
-        when(authnResult.getService()).thenReturn(service);
 
         final AuthenticationSystemSupport support = mock(AuthenticationSystemSupport.class);
-        when(support.getAuthenticationTransactionManager()).thenReturn(transManager);
-        when(support.handleAndFinalizeSingleAuthenticationTransaction(any(), (Credential[]) any())).thenReturn(authnResult);
 
         final CasDelegatingWebflowEventResolver initialResolver = mock(CasDelegatingWebflowEventResolver.class);
         when(initialResolver.resolveSingle(any())).thenReturn(new Event(this, "success"));
@@ -176,9 +153,9 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(HttpMethod.POST.name(), mockRequest.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         assertEquals(MY_SERVICE, mockRequest.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
-        final MutableAttributeMap requestScope = mockRequestContext.getRequestScope();
         assertEquals(service, flowScope.get(CasProtocolConstants.PARAMETER_SERVICE));
-        assertEquals(TGT_ID, flowScope.get(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID));
-        assertEquals(TGT_ID, requestScope.get(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID));
+        final ClientCredential credential = (ClientCredential) flowScope.get(CasWebflowConstants.VAR_ID_CREDENTIAL);
+        assertNotNull(credential);
+        assertTrue(credential.getId().startsWith(ClientCredential.NOT_YET_AUTHENTICATED));
     }
 }
