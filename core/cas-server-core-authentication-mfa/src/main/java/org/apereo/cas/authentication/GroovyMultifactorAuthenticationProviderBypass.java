@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.2.0
  */
 @Slf4j
-public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultifactorAuthenticationProviderBypass {
+public class GroovyMultifactorAuthenticationProviderBypass extends AbstractMultifactorAuthenticationProviderBypass {
     private static final long serialVersionUID = -4909072898415688377L;
 
     private final transient Resource groovyScript;
@@ -49,6 +49,7 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return super.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
+        LOGGER.error("Error encountered executing groovy bypass, returning shouldExecute true as default");
+        return true;
     }
 }
