@@ -25,7 +25,7 @@ import java.util.concurrent.Executors;
 public abstract class AbstractAuditTrailManager implements AuditTrailManager {
 
     /**
-     * Save records asyncronously.
+     * Save records asynchronously.
      */
     protected boolean asynchronous;
 
