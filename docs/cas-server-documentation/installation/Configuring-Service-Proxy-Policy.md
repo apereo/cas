@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Proxy Policy
+category: Services
 ---
 
 # Configure Proxy Authentication Policy

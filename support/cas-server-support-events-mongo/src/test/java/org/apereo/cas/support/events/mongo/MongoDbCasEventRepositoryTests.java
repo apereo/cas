@@ -5,16 +5,13 @@ import org.apereo.cas.config.MongoDbEventsConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
+import lombok.Getter;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * Test cases for {@link MongoDbCasEventRepository}.
@@ -33,20 +30,10 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     "cas.events.mongo.databaseName=events",
     "cas.events.mongo.dropCollection=true"
     })
+@Getter
 public class MongoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("casEventRepository")
-    private CasEventRepository casEventRepository;
-
-    @Override
-    public CasEventRepository getRepositoryInstance() {
-        return this.casEventRepository;
-    }
+    private CasEventRepository eventRepository;
 }

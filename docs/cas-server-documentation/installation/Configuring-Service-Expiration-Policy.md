@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Expiration Policy
+category: Services
 ---
 
 # Configure Service Expiration Policy

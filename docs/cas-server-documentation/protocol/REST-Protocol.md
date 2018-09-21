@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - CAS REST Protocol
+category: Protocols
 ---
 
 # REST Protocol
@@ -70,7 +71,7 @@ POST /cas/v1/tickets HTTP/1.0
 username=battags&password=password&token=true&additionalParam1=paramvalue
 ```
 
-The `token` parameter may either be passed as a request parameter or a request header. The body of the response will include the ticket-granting ticket as a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jwt-tickets).
+The `token` parameter may either be passed as a request parameter or a request header. The body of the response will include the ticket-granting ticket as a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jwt-tickets).
 
 ## Authenticate Credentials
 
@@ -96,7 +97,7 @@ POST /cas/v1/tickets/{TGT id} HTTP/1.0
 service={form encoded parameter for the service url}
 ```
 
-You may also submit service ticket requests using the semantics [SAML1 protocol](protocol/SAML-Protocol.html).
+You may also submit service ticket requests using the semantics [SAML1 protocol](SAML-Protocol.html).
 
 ### Successful Response
 
@@ -119,7 +120,7 @@ Support is enabled by including the following in your overlay:
 </dependency>
 ```
 
-Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jwt-tickets).
+Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jwt-tickets).
 
 ## Validate Service Ticket
 
@@ -178,7 +179,7 @@ Support is enabled by including the following in your overlay:
 
 Invoke CAS to register applications into its own service registry. The REST call must be authenticated using basic authentication where credentials are authenticated and accepted by the existing CAS authentication strategy, and furthermore the authenticated principal must be authorized with a pre-configured role/attribute name and value that is designated in the CAS configuration via the CAS properties. The body of the request must be the service definition that shall be registered in JSON format and of course, CAS must be configured to accept the particular service type defined in the body. The accepted media type for this request is `application/json`.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#rest-api).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-api).
 
 ```bash
 POST /cas/v1/services HTTP/1.0
@@ -316,7 +317,7 @@ To activate this functionality, you will need to choose an appropriate throttler
 The same throttling mechanism that handles the usual CAS server endpoints for authentication
 and ticket validation, etc is then activated for the REST endpoints that are supported for throttling. 
 
-To see the relevant options, [please review this guide](https://apereo.github.io/cas/development/installation/Configuration-Properties.html#rest-api).
+To see the relevant options, [please review this guide](https://apereo.github.io/cas/development/configuration/Configuration-Properties.html#rest-api).
 
 ## Swagger API
 

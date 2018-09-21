@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.2.0
  */
 @Slf4j
-public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultifactorAuthenticationProviderBypass {
+public class GroovyMultifactorAuthenticationProviderBypass extends AbstractMultifactorAuthenticationProviderBypass {
     private static final long serialVersionUID = -4909072898415688377L;
 
     private final transient Resource groovyScript;
@@ -35,14 +35,20 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
                                                                   final HttpServletRequest request) {
         try {
             val principal = authentication.getPrincipal();
-            LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
-                    + "service [{}] and provider [{}] via Groovy script [{}]",
+            LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], service [{}] and provider [{}] via Groovy script [{}]",
                 principal.getId(), registeredService, provider, this.groovyScript);
-            return ScriptingUtils.executeGroovyScript(this.groovyScript,
+            val shouldExecute = ScriptingUtils.executeGroovyScript(this.groovyScript,
                 new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class, true);
+            if (shouldExecute) {
+                updateAuthenticationToForgetBypass(authentication, provider, principal);
+            } else {
+                LOGGER.info("Groovy bypass script determined [{}] would be passed for [{}]", principal.getId(), provider.getId());
+                updateAuthenticationToRememberBypass(authentication, provider, principal);
+            }
+            return shouldExecute;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return super.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
+        return true;
     }
 }

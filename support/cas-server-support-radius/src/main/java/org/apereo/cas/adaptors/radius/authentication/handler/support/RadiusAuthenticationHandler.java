@@ -79,6 +79,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);
         } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
             throw new FailedLoginException("Radius authentication failed " + e.getMessage());
         }
     }

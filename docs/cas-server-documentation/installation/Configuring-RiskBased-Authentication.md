@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Adaptive Risk-based Authentication
+category: Authentication
 ---
 
 # Risk-based Authentication
@@ -23,7 +24,7 @@ Note that evaluation of attempts and mitigation of risks are all recorded in the
 
 <div class="alert alert-info"><strong>Adaptive Authentication</strong><p>
 If you need to preemptively evaluate authentication attempts based on various characteristics of the request,
-you may be interested in <a href="Configuring-Adaptive-Authentication.html">this guide</a> instead.</p></div>
+you may be interested in <a href="../mfa/Configuring-Adaptive-Authentication.html">this guide</a> instead.</p></div>
 
 ## Risk Calculation
 
@@ -75,7 +76,7 @@ Prevent the authentication flow to proceed and disallow the establishment of the
 
 ### Multifactor Authentication
 
-Force the authentication event into a [multifactor flow of choice](Configuring-Multifactor-Authentication.html),
+Force the authentication event into a [multifactor flow of choice](../mfa/Configuring-Multifactor-Authentication.html),
 identified by the provider id.
 
 ## Configuration
@@ -90,7 +91,7 @@ Support is enabled by including the following dependency in the overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#risk-based-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#risk-based-authentication).
 
 ### Messaging & Notifications
 
@@ -103,4 +104,4 @@ or [this guide](Sending-Email-Configuration.html).
 - You **MUST** allow and configure CAS to track and record [authentication events](Configuring-Authentication-Events.html).
 - You **MUST** allow and configure CAS to [geolocate authentication requests](GeoTracking-Authentication-Requests.html).
 - If the selected contingency plan is to force the user into a multifactor authentication flow, you then **MUST** configure CAS for
-[multifactor authentication](Configuring-Multifactor-Authentication.html) and the relevant provider.
+[multifactor authentication](../mfa/Configuring-Multifactor-Authentication.html) and the relevant provider.

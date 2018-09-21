@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - OS Service Deployment
+category: Installation
 ---
 
 # OS Service Deployment

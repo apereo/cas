@@ -10,6 +10,7 @@ import org.apereo.cas.util.RegexUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -25,20 +26,15 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-public class DefaultMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
+public class DefaultMultifactorAuthenticationProviderBypass extends AbstractMultifactorAuthenticationProviderBypass {
 
     private static final long serialVersionUID = 3720922341350004543L;
-
-    /**
-     * Bypass settings for this provider.
-     */
-    protected final MultifactorAuthenticationProviderBypassProperties bypassProperties;
 
     private final Pattern httpRequestRemoteAddressPattern;
     private final Set<Pattern> httpRequestHeaderPatterns;
 
     public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties) {
-        this.bypassProperties = bypassProperties;
+        super(bypassProperties);
 
         if (StringUtils.isNotBlank(bypassProperties.getHttpRequestRemoteAddress())) {
             this.httpRequestRemoteAddressPattern = RegexUtils.createPattern(bypassProperties.getHttpRequestRemoteAddress());
@@ -48,22 +44,6 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
 
         val values = org.springframework.util.StringUtils.commaDelimitedListToSet(bypassProperties.getHttpRequestHeaders());
         this.httpRequestHeaderPatterns = values.stream().map(RegexUtils::createPattern).collect(Collectors.toSet());
-    }
-
-    private static void updateAuthenticationToForgetBypass(final Authentication authentication,
-                                                           final MultifactorAuthenticationProvider provider,
-                                                           final Principal principal) {
-        LOGGER.debug("Bypass rules for service [{}] indicate the request may be ignored", principal.getId());
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE);
-        LOGGER.debug("Updated authentication session to remember bypass for [{}] via [{}]", provider.getId(), AUTHENTICATION_ATTRIBUTE_BYPASS_MFA);
-    }
-
-    private static void updateAuthenticationToRememberBypass(final Authentication authentication, final MultifactorAuthenticationProvider provider,
-                                                             final Principal principal) {
-        LOGGER.debug("Bypass rules for service [{}] indicate the request may NOT be ignored", principal.getId());
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
-        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId());
-        LOGGER.debug("Updated authentication session to NOT remember bypass for [{}] via [{}]", provider.getId(), AUTHENTICATION_ATTRIBUTE_BYPASS_MFA);
     }
 
     @Override
@@ -286,5 +266,10 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
         }
 
         return false;
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 }

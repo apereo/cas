@@ -4,11 +4,11 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
@@ -44,8 +44,6 @@ import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.webflow.action.EventFactorySupport;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -194,12 +192,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             val client = findDelegatedClientByName(request, clientName, service);
 
             val credentials = getCredentialsFromDelegatedClient(webContext, client);
-            try {
-                establishDelegatedAuthenticationSession(context, service, credentials, client);
-            } catch (final AuthenticationException e) {
-                LOGGER.warn("Could not establish delegated authentication session [{}]. Routing to [{}]", e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, new LocalAttributeMap<>(CasWebflowConstants.TRANSITION_ID_ERROR, e));
-            }
+            val clientCredential = new ClientCredential(credentials, client.getName());
+            WebUtils.putCredential(context, clientCredential);
+            WebUtils.putService(context, service);
             return super.doExecute(context);
         }
 
@@ -249,25 +244,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             LOGGER.info(e.getMessage(), e);
             throw new IllegalArgumentException("Delegated authentication has failed with client " + client.getName());
         }
-    }
-
-    /**
-     * Establish delegated authentication session.
-     *
-     * @param context     the context
-     * @param service     the service
-     * @param credentials the credentials
-     * @param client      the client
-     */
-    protected void establishDelegatedAuthenticationSession(final RequestContext context, final Service service,
-                                                           final Credentials credentials, final BaseClient client) {
-        val clientCredential = new ClientCredential(credentials, client.getName());
-        val authenticationResult =
-            this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
-        WebUtils.putAuthentication(authenticationResult.getAuthentication(), context);
-        WebUtils.putAuthenticationResult(authenticationResult, context);
-        WebUtils.putCredential(context, clientCredential);
-        WebUtils.putService(context, service);
     }
 
     /**
@@ -370,7 +346,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             uriBuilder.queryParam(this.themeParamName, themeParam);
         }
         val redirectUrl = uriBuilder.toUriString();
-        val autoRedirect = (Boolean) client.getCustomProperties().getOrDefault("autoRedirect", Boolean.FALSE);
+        val autoRedirect = (Boolean) client.getCustomProperties().getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
         val p = new ProviderLoginPageConfiguration(name, redirectUrl, type, getCssClass(name), autoRedirect);
         return Optional.of(p);
     }
