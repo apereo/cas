@@ -6,8 +6,10 @@ import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.context.ApplicationContext;
@@ -34,8 +36,8 @@ public class DetermineDuoUserAccountAction extends AbstractAction {
         final String flowId = requestContext.getActiveFlow().getId();
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
         final DuoMultifactorAuthenticationProvider provider = (DuoMultifactorAuthenticationProvider)
-                MultifactorAuthenticationUtils.getMultifactorAuthenticationProvidersByIds(CollectionUtils.wrap(flowId),
-                        applicationContext).iterator().next();
+                MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(flowId,
+                        applicationContext).orElseThrow(AuthenticationException::new);
 
         final Event enrollEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
         final Event denyEvent = new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY);

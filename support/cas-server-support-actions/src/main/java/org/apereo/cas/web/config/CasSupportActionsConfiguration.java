@@ -27,7 +27,6 @@ import org.apereo.cas.web.flow.login.SendTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
 import org.apereo.cas.web.flow.login.SetServiceUnauthorizedRedirectUrlAction;
 import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
-import org.apereo.cas.web.flow.mfa.MultifactorAuthenticationInitializeAction;
 import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
@@ -276,13 +275,6 @@ public class CasSupportActionsConfiguration {
     public Action serviceWarningAction() {
         return new ServiceWarningAction(centralAuthenticationService, authenticationSystemSupport,
             ticketRegistrySupport, warnCookieGenerator.getIfAvailable(), principalElectionStrategy);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "mfaInitializeAction")
-    @RefreshScope
-    public Action mfaInitializeAction() {
-        return new MultifactorAuthenticationInitializeAction();
     }
 
     @Bean

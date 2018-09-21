@@ -2,11 +2,15 @@ package org.apereo.cas.web.flow.mfa;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -23,12 +27,13 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class MultifactorAuthenticationBypassAction extends AbstractAction {
 
-
-
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final MultifactorAuthenticationProvider provider = requestContext.getFlowScope().get("provider",
-                MultifactorAuthenticationProvider.class);
+        final String flowId = requestContext.getActiveFlow().getId();
+        final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+        final MultifactorAuthenticationProvider provider =
+                MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(flowId, applicationContext)
+                .orElseThrow(AuthenticationException::new);
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
         final RegisteredService service = WebUtils.getRegisteredService(requestContext);
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();

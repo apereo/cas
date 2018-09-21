@@ -1,13 +1,7 @@
-package org.apereo.cas.adaptors.duo.config;
+package org.apereo.cas.adaptors.duo.authn;
 
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.duo.authn.BasicDuoSecurityAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
-import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
-import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
@@ -15,6 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 
+/**
+ * Implementation of AbstractFactoryBean used to create Duo provider instances.
+ *
+ * @author Travis Schmidt
+ * @since 5.3.4
+ */
 @Slf4j
 @Setter
 public class DuoMfaProviderFactoryBean extends AbstractFactoryBean<DuoMultifactorAuthenticationProvider> {

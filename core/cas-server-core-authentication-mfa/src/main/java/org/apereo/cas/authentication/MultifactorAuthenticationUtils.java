@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -82,6 +83,20 @@ public class MultifactorAuthenticationUtils {
         return values.stream()
             .filter(p -> ids.contains(p.getId()))
             .collect(Collectors.toSet());
+    }
+
+    /**
+     * Method returns an Optional that will contain a MultifactorAuthenticationProvider that has the
+     * same id as the passed providerId parameter.
+     *
+     * @param providerId - the id to match
+     * @param context - ApplicationContext
+     * @return - Optional
+     */
+    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderById(final String providerId,
+                                                                                                       final ApplicationContext context) {
+        return getAvailableMultifactorAuthenticationProviders(context).values().stream()
+            .filter(p -> p.getId().equals(providerId)).findFirst();
     }
 
     /**

@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.duo.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoMfaProviderFactory;
+import org.apereo.cas.adaptors.duo.authn.DuoMfaProviderFactoryBean;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoDirectAuthenticationAction;
@@ -16,8 +18,10 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
@@ -32,6 +36,11 @@ import org.springframework.webflow.execution.Action;
 @Slf4j
 public class DuoSecurityConfiguration {
 
+    @Autowired
+    private GenericApplicationContext applicationContext;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -81,5 +90,16 @@ public class DuoSecurityConfiguration {
                 warnCookieGenerator,
                 authenticationRequestServiceSelectionStrategies,
                 multifactorAuthenticationProviderSelector);
+    }
+
+    @Bean
+    @RefreshScope
+    public DuoMfaProviderFactoryBean duoMfaProviderFactoryBean() {
+        return new DuoMfaProviderFactoryBean();
+    }
+
+    @Bean
+    public DuoMfaProviderFactory duoMfaProviderFactory() {
+        return new DuoMfaProviderFactory(applicationContext, casProperties.getAuthn().getMfa().getDuo());
     }
 }
