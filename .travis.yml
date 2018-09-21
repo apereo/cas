@@ -21,7 +21,6 @@ branches:
 before_cache:
 - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-- rm -rf ~/.gradle/caches/$GRADLE_VERSION/
 - find ~/.gradle/caches/ -name "*.lock" -type f -delete
 # Remove once Travis CI fixes JDK setup
 before_script:
