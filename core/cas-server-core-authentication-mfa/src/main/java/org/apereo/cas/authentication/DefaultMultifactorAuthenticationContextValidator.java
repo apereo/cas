@@ -115,7 +115,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Authent
                                                                                               final Collection<MultifactorAuthenticationProvider> providers) {
         final Collection<Object> contexts = CollectionUtils.toCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
         if (contexts == null || contexts.isEmpty()) {
-            System.out.println("No authentication context could be determined based on authentication attribute [{}]" + this.authenticationContextAttribute);
+            LOGGER.debug("No authentication context could be determined based on authentication attribute [{}]", this.authenticationContextAttribute);
             return null;
         }
         return providers.stream()
