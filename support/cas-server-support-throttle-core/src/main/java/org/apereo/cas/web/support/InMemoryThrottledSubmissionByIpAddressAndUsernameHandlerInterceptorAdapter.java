@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Attempts to throttle by both IP Address and username.  Protects against instances where there is a NAT, such as
@@ -23,9 +24,10 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                                                                                       final String usernameParameter,
                                                                                       final String authenticationFailureCode,
                                                                                       final AuditTrailExecutionPlan auditTrailExecutionPlan,
-                                                                                      final String applicationCode) {
+                                                                                      final String applicationCode,
+                                                                                      final ConcurrentMap map) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailExecutionPlan, applicationCode);
+            authenticationFailureCode, auditTrailExecutionPlan, applicationCode, map);
     }
 
     @Override

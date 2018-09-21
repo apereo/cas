@@ -1,8 +1,6 @@
 package org.apereo.cas.config;
 
-import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
