@@ -85,7 +85,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.authn.surrogate.ldap.ldapUrl=ldap://localhost:10389",
     "cas.authn.surrogate.ldap.useSsl=false",
-    "cas.authn.surrogate.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.authn.surrogate.ldap.baseDn=ou=surrogates,dc=example,dc=org",
     "cas.authn.surrogate.ldap.bindDn=cn=Directory Manager",
     "cas.authn.surrogate.ldap.bindCredential=password",
     "cas.authn.surrogate.ldap.searchFilter=cn={user}",
@@ -111,7 +111,11 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
         localhost.bind("cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(
             localhost,
+            new ClassPathResource("ldif/ldap-surrogates-ou.ldif").getInputStream(),
+            "dc=example,dc=org");
+        LdapIntegrationTestsOperations.populateEntries(
+            localhost,
             new ClassPathResource("ldif/ldap-surrogate.ldif").getInputStream(),
-            "ou=people,dc=example,dc=org");
+            "ou=surrogates,dc=example,dc=org");
     }
 }
