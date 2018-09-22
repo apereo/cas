@@ -94,15 +94,11 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
 
         if (providerFound.isPresent()) {
             val provider = providerFound.get();
-            if (provider.isAvailable(service)) {
-                LOGGER.debug("Attempting to build event based on the authentication provider [{}] and service [{}]",
-                    provider, service.getName());
-                val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
-                    buildEventAttributeMap(authentication.getPrincipal(), service, provider));
-                return CollectionUtils.wrapSet(event);
-            }
-            LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
-            return null;
+            LOGGER.debug("Attempting to build event based on the authentication provider [{}] and service [{}]",
+                provider, service.getName());
+            val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
+                buildEventAttributeMap(authentication.getPrincipal(), service, provider));
+            return CollectionUtils.wrapSet(event);
         }
         LOGGER.debug("No multifactor provider could be found based on [{}]'s Grouper groups", principal.getId());
         return null;

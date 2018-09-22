@@ -608,8 +608,22 @@ public interface CasWebflowConstants {
     String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
 
     /**
-     * State id for finding provider and inserting into flowscope.
+     * State to check if the MFA provider is available.
      */
-    String STATE_ID_MFA_INITIALIZE = "mfaInitialize";
+    String STATE_ID_CHECK_AVAILABLE = "checkAvailable";
 
+    /**
+     * State to check if the MFA provider should be bypassed.
+     */
+    String STATE_ID_CHECK_BYPASS = "checkBypass";
+
+    /**
+     * State to determine the MFA failure mode and what action to take.
+     */
+    String TRANSITION_ID_FAILURE = "mfaFailure";
+
+    /**
+     * State that can be used by MFA providers that offer preAuth endpoints.
+     */
+    String STATE_ID_MFA_PRE_AUTH = "mfaPreAuth";
 }

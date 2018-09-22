@@ -6,11 +6,13 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -59,6 +61,20 @@ public class MultifactorAuthenticationUtils {
                 MultifactorAuthenticationProvider.class);
         }
         return new HashMap<>(0);
+    }
+
+    /**
+     * Method returns an Optional that will contain a MultifactorAuthenticationProvider that has the
+     * same id as the passed providerId parameter.
+     *
+     * @param providerId - the id to match
+     * @param context - ApplicationContext
+     * @return - Optional
+     */
+    public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderById(final String providerId,
+                                                                                                       final ApplicationContext context) {
+        return getAvailableMultifactorAuthenticationProviders(context).values().stream()
+                .filter(p -> p.getId().equals(providerId)).findFirst();
     }
 
     /**

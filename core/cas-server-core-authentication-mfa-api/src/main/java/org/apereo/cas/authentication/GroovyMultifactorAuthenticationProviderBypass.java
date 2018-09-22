@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ScriptingUtils;
 
@@ -18,13 +19,12 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.2.0
  */
 @Slf4j
-public class GroovyMultifactorAuthenticationProviderBypass extends AbstractMultifactorAuthenticationProviderBypass {
+public class GroovyMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
     private static final long serialVersionUID = -4909072898415688377L;
 
     private final transient Resource groovyScript;
 
     public GroovyMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypass) {
-        super(bypass);
         this.groovyScript = bypass.getGroovy().getLocation();
     }
 
@@ -35,20 +35,14 @@ public class GroovyMultifactorAuthenticationProviderBypass extends AbstractMulti
                                                                   final HttpServletRequest request) {
         try {
             val principal = authentication.getPrincipal();
-            LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], service [{}] and provider [{}] via Groovy script [{}]",
+            LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
+                    + "service [{}] and provider [{}] via Groovy script [{}]",
                 principal.getId(), registeredService, provider, this.groovyScript);
-            val shouldExecute = ScriptingUtils.executeGroovyScript(this.groovyScript,
+            return ScriptingUtils.executeGroovyScript(this.groovyScript,
                 new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class, true);
-            if (shouldExecute) {
-                updateAuthenticationToForgetBypass(authentication, provider, principal);
-            } else {
-                LOGGER.info("Groovy bypass script determined [{}] would be passed for [{}]", principal.getId(), provider.getId());
-                updateAuthenticationToRememberBypass(authentication, provider, principal);
-            }
-            return shouldExecute;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+            return true;
         }
-        return true;
     }
 }

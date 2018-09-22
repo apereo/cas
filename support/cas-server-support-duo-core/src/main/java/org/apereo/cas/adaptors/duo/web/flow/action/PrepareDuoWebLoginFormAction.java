@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.duo.web.flow.action;
 
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -26,7 +28,11 @@ public class PrepareDuoWebLoginFormAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
-        val provider = requestContext.getFlowScope().get("provider", DuoMultifactorAuthenticationProvider.class);
+        val applicationContext = ApplicationContextProvider.getApplicationContext();
+        final String flowId = requestContext.getActiveFlow().getId();
+        val provider = (DuoMultifactorAuthenticationProvider)
+                MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(flowId,
+                        applicationContext).orElseThrow(AbstractMethodError::new);
 
         val credential = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoCredential.class);
         credential.setUsername(principal.getId());

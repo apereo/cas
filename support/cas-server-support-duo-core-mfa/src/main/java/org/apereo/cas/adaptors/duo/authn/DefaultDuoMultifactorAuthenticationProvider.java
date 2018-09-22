@@ -34,7 +34,7 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     private DuoSecurityAuthenticationService duoAuthenticationService;
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable() {
         return this.duoAuthenticationService.ping();
     }
 

@@ -8,7 +8,7 @@ import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWeb
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -80,7 +80,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider authyAuthenticatorAuthenticationProvider() {
         val p = new AuthyMultifactorAuthenticationProvider();
         p.setBypassEvaluator(authyBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(casProperties.getAuthn().getMfa().getAuthy().getFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getAuthy().getRank());
         p.setId(casProperties.getAuthn().getMfa().getAuthy().getId());
         return p;

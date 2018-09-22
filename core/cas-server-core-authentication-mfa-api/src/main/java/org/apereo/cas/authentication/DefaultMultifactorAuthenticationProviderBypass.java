@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -26,15 +27,17 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-public class DefaultMultifactorAuthenticationProviderBypass extends AbstractMultifactorAuthenticationProviderBypass {
+public class DefaultMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
 
     private static final long serialVersionUID = 3720922341350004543L;
+
+    private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
 
     private final Pattern httpRequestRemoteAddressPattern;
     private final Set<Pattern> httpRequestHeaderPatterns;
 
     public DefaultMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties) {
-        super(bypassProperties);
+        this.bypassProperties = bypassProperties;
 
         if (StringUtils.isNotBlank(bypassProperties.getHttpRequestRemoteAddress())) {
             this.httpRequestRemoteAddressPattern = RegexUtils.createPattern(bypassProperties.getHttpRequestRemoteAddress());
@@ -57,14 +60,12 @@ public class DefaultMultifactorAuthenticationProviderBypass extends AbstractMult
         val bypassByPrincipal = locateMatchingAttributeBasedOnPrincipalAttributes(bypassProperties, principal);
         if (bypassByPrincipal) {
             LOGGER.debug("Bypass rules for principal [{}] indicate the request may be ignored", principal.getId());
-            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
         val bypassByAuthn = locateMatchingAttributeBasedOnAuthenticationAttributes(bypassProperties, authentication);
         if (bypassByAuthn) {
             LOGGER.debug("Bypass rules for authentication for principal [{}] indicate the request may be ignored", principal.getId());
-            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
@@ -75,7 +76,6 @@ public class DefaultMultifactorAuthenticationProviderBypass extends AbstractMult
         );
         if (bypassByAuthnMethod) {
             LOGGER.debug("Bypass rules for authentication method [{}] indicate the request may be ignored", bypassProperties.getAuthenticationMethodName());
-            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
@@ -86,31 +86,25 @@ public class DefaultMultifactorAuthenticationProviderBypass extends AbstractMult
         );
         if (bypassByHandlerName) {
             LOGGER.debug("Bypass rules for authentication handlers [{}] indicate the request may be ignored", bypassProperties.getAuthenticationHandlerName());
-            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
         val bypassByCredType = locateMatchingCredentialType(authentication, bypassProperties.getCredentialClassType());
         if (bypassByCredType) {
             LOGGER.debug("Bypass rules for credential types [{}] indicate the request may be ignored", bypassProperties.getCredentialClassType());
-            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
         val bypassByHttpRequest = locateMatchingHttpRequest(authentication, request);
         if (bypassByHttpRequest) {
             LOGGER.debug("Bypass rules for http request indicate the request may be ignored for [{}]", principal.getId());
-            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
 
         val bypassByService = locateMatchingRegisteredServiceForBypass(authentication, registeredService);
         if (bypassByService) {
-            updateAuthenticationToRememberBypass(authentication, provider, principal);
             return false;
         }
-
-        updateAuthenticationToForgetBypass(authentication, provider, principal);
 
         return true;
     }

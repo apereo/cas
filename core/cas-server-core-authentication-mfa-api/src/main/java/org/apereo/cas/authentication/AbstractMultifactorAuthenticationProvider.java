@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
-import org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,11 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.execution.Event;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * The {@link AbstractMultifactorAuthenticationProvider} is responsible for
@@ -36,94 +31,30 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     private MultifactorAuthenticationProviderBypass bypassEvaluator;
 
-    private String globalFailureMode;
+    private String failureMode = "NOT_SET";
 
     private String id;
 
     private int order;
 
     @Override
-    public final boolean supports(final Event event, final Authentication authentication, final RegisteredService registeredService, final HttpServletRequest request) {
-        if (event == null || !event.getId().matches(getId())) {
-            LOGGER.debug("Provided event id [{}] is not applicable to this provider identified by [{}]", event, getId());
-            return false;
-        }
-        if (bypassEvaluator != null && !bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, this, request)) {
-            LOGGER.debug("Request cannot be supported by provider [{}] as it's configured for bypass", getId());
-            return false;
-        }
-        if (supportsInternal(event, authentication, registeredService)) {
-            LOGGER.debug("[{}] voted to support this authentication request", getClass().getSimpleName());
-            return true;
-        }
-        LOGGER.debug("[{}] voted does not support this authentication request", getClass().getSimpleName());
-        return false;
-    }
-
-    /**
-     * Determine internally if provider is able to support this authentication request
-     * for multifactor, and account for bypass rules..
-     *
-     * @param e                 the event
-     * @param authentication    the authentication
-     * @param registeredService the registered service
-     * @return the boolean
-     */
-    protected boolean supportsInternal(final Event e, final Authentication authentication, final RegisteredService registeredService) {
+    public boolean isAvailable() {
         return true;
     }
 
     @Override
-    public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
-        val failureMode = determineFailureMode(service);
-        if (failureMode != RegisteredServiceMultifactorPolicy.FailureModes.NONE) {
-            if (isAvailable()) {
-                return true;
-            }
-            val providerName = getClass().getSimpleName();
-            if (failureMode == RegisteredServiceMultifactorPolicy.FailureModes.CLOSED) {
-                LOGGER.warn("[{}] could not be reached. Authentication shall fail for [{}]", providerName, service);
-                throw new AuthenticationException();
-            }
-            LOGGER.warn("[{}] could not be reached. Since the authentication provider is configured for the "
-                + "failure mode of [{}] authentication will proceed without [{}] for service [{}]", providerName, failureMode, providerName, service.getServiceId());
-            return false;
-        }
-        LOGGER.debug("Failure mode is set to [{}]. Assuming the provider is available.", failureMode);
-        return true;
+    public MultifactorAuthenticationProviderBypass getBypass() {
+        return this.bypassEvaluator;
     }
 
-    /**
-     * Is provider available?
-     *
-     * @return the true/false
-     */
-    protected boolean isAvailable() {
-        return true;
+    @Override
+    public RegisteredServiceMultifactorPolicy.FailureModes failureMode() {
+        return RegisteredServiceMultifactorPolicy.FailureModes.valueOf(failureMode);
     }
+
 
     @Override
     public boolean matches(final String identifier) {
-        return StringUtils.isNotBlank(getId()) && getId().matches(identifier);
+        return StringUtils.isNotBlank(getId()) ? getId().matches(identifier) : false;
     }
-
-    @Override
-    public RegisteredServiceMultifactorPolicy.FailureModes determineFailureMode(final RegisteredService service) {
-        var failureMode = FailureModes.CLOSED;
-        if (StringUtils.isNotBlank(this.globalFailureMode)) {
-            failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
-            LOGGER.debug("Using global multifactor failure mode for [{}] defined as [{}]", service, failureMode);
-        }
-        if (service != null) {
-            LOGGER.debug("Evaluating multifactor authentication policy for service [{}]", service.getServiceId());
-            val policy = service.getMultifactorPolicy();
-            if (policy != null && policy.getFailureMode() != null && policy.getFailureMode() != FailureModes.NONE) {
-                failureMode = policy.getFailureMode();
-                LOGGER.debug("Multifactor failure mode for [{}] is defined as [{}]", service.getServiceId(), failureMode);
-            }
-        }
-        LOGGER.debug("Final failure mode has been determined to be [{}]", failureMode);
-        return failureMode;
-    }
-
 }

@@ -29,7 +29,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     private final transient HttpClient httpClient;
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable() {
         try {
             val endpoints = client.getWsapiUrls();
             for (val endpoint : endpoints) {

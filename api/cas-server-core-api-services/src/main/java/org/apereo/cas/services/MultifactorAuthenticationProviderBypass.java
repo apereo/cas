@@ -1,8 +1,6 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.services;
 
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.RegisteredService;
-
+import org.apereo.cas.authentication.Authentication;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,7 +12,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@FunctionalInterface
 public interface MultifactorAuthenticationProviderBypass extends Serializable, Ordered {
 
     /**
@@ -39,6 +36,27 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable, O
     boolean shouldMultifactorAuthenticationProviderExecute(Authentication authentication, RegisteredService registeredService,
                                                            MultifactorAuthenticationProvider provider,
                                                            HttpServletRequest request);
+
+    /**
+     * Method will remove any previous bypass set in the authentication.
+     *
+     * @param authentication - the authentication
+     */
+    default void updateAuthenticationToForgetBypass(Authentication authentication) {
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE);
+    }
+
+    /**
+     * Method will set the bypass into the authentication.
+     *
+     * @param authentication - the authentication
+     * @param provider - the provider
+     */
+    default void updateAuthenticationToRememberBypass(Authentication authentication,
+                                                      MultifactorAuthenticationProvider provider) {
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId());
+    }
 
     @Override
     default int getOrder() {

@@ -108,13 +108,11 @@ public abstract class AbstractCasMfaWebflowEventResolver extends AbstractCasWebf
                     if (predicate.test(value)) {
                         LOGGER.debug("Attribute value predicate [{}] has successfully matched the [{}]. "
                             + "Attempting to verify multifactor authentication for [{}]", predicate, value, service);
-                        if (provider.isAvailable(service)) {
                             LOGGER.debug("Provider [{}] is successfully verified", provider);
                             val id = provider.getId();
                             val event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
                             events.add(event);
-                        }
                     } else {
                         LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, value);
                     }
@@ -162,7 +160,7 @@ public abstract class AbstractCasMfaWebflowEventResolver extends AbstractCasWebf
                                                            final RequestContext context,
                                                            final MultifactorAuthenticationProvider provider) {
         LOGGER.debug("Attempting check for availability of multifactor authentication provider [{}] for [{}]", provider, service);
-        if (provider != null && provider.isAvailable(service)) {
+        if (provider != null) {
             LOGGER.debug("Provider [{}] is successfully verified", provider);
             val id = provider.getId();
             val event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, service, provider));

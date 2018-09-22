@@ -23,7 +23,7 @@ public class CasSimpleMultifactorAuthenticationProvider extends AbstractMultifac
     }
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable() {
         return true;
     }
 

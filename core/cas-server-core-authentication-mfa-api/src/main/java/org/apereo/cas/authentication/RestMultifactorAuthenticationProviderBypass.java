@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
@@ -20,12 +21,14 @@ import java.util.HashMap;
  * @since 5.2.0
  */
 @Slf4j
-public class RestMultifactorAuthenticationProviderBypass extends AbstractMultifactorAuthenticationProviderBypass {
+public class RestMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
 
     private static final long serialVersionUID = -7553888418344342672L;
 
+    private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
+
     public RestMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties) {
-        super(bypassProperties);
+        this.bypassProperties = bypassProperties;
     }
 
     @Override
@@ -46,17 +49,10 @@ public class RestMultifactorAuthenticationProviderBypass extends AbstractMultifa
 
             val response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
                 rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters, new HashMap<>());
-            val shouldExecute = response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
-            if (shouldExecute) {
-                updateAuthenticationToForgetBypass(authentication, provider, principal);
-            } else {
-                LOGGER.info("REST bypass endpoint response determined [{}] would be passed for [{}]", principal.getId(), provider.getId());
-                updateAuthenticationToRememberBypass(authentication, provider, principal);
-            }
-            return shouldExecute;
+            return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+            return true;
         }
-        return true;
     }
 }

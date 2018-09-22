@@ -32,7 +32,9 @@ import java.util.Collection;
 @Slf4j
 public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private static final String MFA_INITIALIZE_BEAN_ID = "mfaInitializeAction";
+    private static final String MFA_CHECK_AVAILABLE_BEAN_ID = "mfaAvailableAction";
+    private static final String MFA_CHECK_BYPASS_BEAN_ID = "mfaBypassAction";
+    private static final String MFA_CHECK_FAILURE_BEAN_ID = "mfaFailureAction";
 
     public AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -99,15 +101,36 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
     protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId, final FlowDefinitionRegistry mfaProviderFlowRegistry) {
         val mfaFlow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(subflowId);
 
-        // Set the mfaInitialize action
+        // Insert bypass, available and failure actions into the flow.
         val initLoginState = getState(mfaFlow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
         val transition = (Transition) initLoginState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         val targetStateId = transition.getTargetStateId();
-        transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_MFA_INITIALIZE));
-        val initializeAction = createActionState(mfaFlow,
-                CasWebflowConstants.STATE_ID_MFA_INITIALIZE,
-                createEvaluateAction(MFA_INITIALIZE_BEAN_ID));
-        createTransitionForState(initializeAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId);
+        transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_CHECK_BYPASS));
+
+        // Set the bypass action
+        val bypassAction = createActionState(mfaFlow,
+                CasWebflowConstants.STATE_ID_CHECK_BYPASS,
+                createEvaluateAction(MFA_CHECK_BYPASS_BEAN_ID));
+        createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.STATE_ID_CHECK_AVAILABLE);
+        createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.TRANSITION_ID_SUCCESS);
+
+        // Set the available action
+        val availableAction = createActionState(mfaFlow,
+                CasWebflowConstants.STATE_ID_CHECK_AVAILABLE,
+                createEvaluateAction(MFA_CHECK_AVAILABLE_BEAN_ID));
+        if (mfaFlow.containsState(CasWebflowConstants.STATE_ID_MFA_PRE_AUTH)) {
+            createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.STATE_ID_MFA_PRE_AUTH);
+        } else {
+            createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_YES, targetStateId);
+        }
+        createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.TRANSITION_ID_FAILURE);
+
+        // set the failure action
+        val failureAction = createActionState(mfaFlow,
+                CasWebflowConstants.TRANSITION_ID_FAILURE,
+                createEvaluateAction(MFA_CHECK_FAILURE_BEAN_ID));
+        createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS, CasWebflowConstants.TRANSITION_ID_SUCCESS);
 
 
         LOGGER.debug("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",

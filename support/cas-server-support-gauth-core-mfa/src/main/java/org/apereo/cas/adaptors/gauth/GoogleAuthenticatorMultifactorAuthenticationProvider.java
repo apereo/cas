@@ -23,7 +23,7 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
     }
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable() {
         return true;
     }
 
