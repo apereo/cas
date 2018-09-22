@@ -1,13 +1,12 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasConsentLdapConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unboundid.ldap.sdk.LDAPConnection;
@@ -17,7 +16,6 @@ import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.SearchScope;
 import lombok.val;
 import org.junit.After;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -25,11 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -39,30 +34,26 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {CasConsentLdapConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {
+    CasConsentLdapConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @Category(LdapCategory.class)
-public abstract class BaseLdapConsentRepositoryTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+public abstract class BaseLdapConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    private static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
 
     private static final String ATTR_NAME = "description";
-    private static final String USER_CN = "consentTest";
-    private static final String USER_DN = "cn=consentTest,ou=people,dc=example,dc=org";
-    private static final String USER2_CN = "consentTest2";
-    private static final String USER2_DN = "cn=consentTest2,ou=people,dc=example,dc=org";
-    private static final Service SVC = RegisteredServiceTestUtils.getService();
+    private static final String USER_CN = "casuser";
+    private static final String USER_DN = "cn=casuser,ou=people,dc=example,dc=org";
+    private static final String USER2_CN = "casuser2";
+    private static final String USER2_DN = "cn=casuser2,ou=people,dc=example,dc=org";
     private static final Service SVC2 = RegisteredServiceTestUtils.getService2();
-    private static final AbstractRegisteredService REG_SVC = RegisteredServiceTestUtils.getRegisteredService(SVC.getId());
     private static final AbstractRegisteredService REG_SVC2 = RegisteredServiceTestUtils.getRegisteredService(SVC2.getId());
-    private static final Map<String, Object> ATTR = CollectionUtils.wrap("attribute", "value");
     private static final String DEF_FILTER = "(objectClass=*)";
 
     @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("consentRepository")
@@ -82,12 +73,6 @@ public abstract class BaseLdapConsentRepositoryTests {
     }
 
     @Test
-    public void verifyConsentDecisionIsNotFound() {
-        val d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(USER_CN));
-        assertNull(d);
-    }
-
-    @Test
     public void verifyConsentDecisionIsNotMistaken() throws Exception {
         val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
@@ -100,18 +85,6 @@ public abstract class BaseLdapConsentRepositoryTests {
         val d2 = this.repository.findConsentDecision(RegisteredServiceTestUtils.getService2(),
             REG_SVC, CoreAuthenticationTestUtils.getAuthentication(USER_CN));
         assertNull(d2);
-    }
-
-    @Test
-    public void verifyConsentDecisionIsFound() throws Exception {
-        val decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
-        decision.setId(1);
-        val mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
-        assertEquals(ResultCode.SUCCESS, getConnection().modify(USER_DN, mod).getResultCode());
-
-        val d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(USER_CN));
-        assertNotNull(d);
-        assertEquals(USER_CN, d.getPrincipal());
     }
 
     @Test

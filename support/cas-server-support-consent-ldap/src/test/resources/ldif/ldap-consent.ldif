@@ -1,17 +1,17 @@
-dn: cn=consentTest,ou=people,dc=example,dc=org
+dn: cn=casuser,ou=people,dc=example,dc=org
 objectClass: organizationalRole
 objectClass: person
 objectClass: account
-cn: ConsentTest
+cn: casuser
 userPassword: 123456
-sn: ConsentTest
-uid: ConsentTest
+sn: casuser
+uid: casuser
 
-dn: cn=consentTest2,ou=people,dc=example,dc=org
+dn: cn=casuser2,ou=people,dc=example,dc=org
 objectClass: organizationalRole
 objectClass: person
 objectClass: account
-cn: ConsentTest2
+cn: casuser2
 userPassword: 123456
-sn: ConsentTest2
-uid: ConsentTest2
+sn: casuser2
+uid: casuser2

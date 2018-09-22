@@ -33,6 +33,7 @@ public class GroovyConsentRepository extends BaseConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
+        super.deleteConsentDecision(decisionId, principal);
         return ScriptingUtils.executeGroovyScript(groovyResource, "delete", Boolean.class, decisionId, principal, LOGGER);
     }
 
