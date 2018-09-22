@@ -43,7 +43,16 @@ import static org.junit.Assert.*;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/ldappersondir.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.attributeRepository.ldap[0].baseDn=dc=example,dc=org",
+    "cas.authn.attributeRepository.ldap[0].ldapUrl=ldap://localhost:10389",
+    "cas.authn.attributeRepository.ldap[0].searchFilter=cn={user}",
+    "cas.authn.attributeRepository.ldap[0].useSsl=false",
+    "cas.authn.attributeRepository.ldap[0].attributes.cn=cn",
+    "cas.authn.attributeRepository.ldap[0].attributes.description=description",
+    "cas.authn.attributeRepository.ldap[0].bindDn=cn=Directory Manager",
+    "cas.authn.attributeRepository.ldap[0].bindCredential=password"
+    })
 @DirtiesContext
 @Category(LdapCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)

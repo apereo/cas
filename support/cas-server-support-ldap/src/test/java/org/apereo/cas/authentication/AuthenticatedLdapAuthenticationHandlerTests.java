@@ -18,7 +18,16 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-@TestPropertySource(locations = {"classpath:/ldapauthn.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.ldap[0].type=AUTHENTICATED",
+    "cas.authn.ldap[0].ldapUrl=ldap://localhost:10389",
+    "cas.authn.ldap[0].useSsl=false",
+    "cas.authn.ldap[0].baseDn=dc=example,dc=org",
+    "cas.authn.ldap[0].searchFilter=cn={user}",
+    "cas.authn.ldap[0].bindDn=cn=Directory Manager",
+    "cas.authn.ldap[0].bindCredential=password",
+    "cas.authn.ldap[0].principalAttributeList=description,cn"
+    })
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class AuthenticatedLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
     @Test

@@ -106,8 +106,13 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
 
     @Override
     @Test
-    public void verifyList() throws JsonProcessingException {
-        val data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+    public void verifyList() {
+        var data = "";
+        try {
+            data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+        } catch (final JsonProcessingException e) {
+            throw new AssertionError(e);
+        }
         try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             this.webServer = webServer;
@@ -121,8 +126,13 @@ public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthen
 
     @Override
     @Test
-    public void verifyProxying() throws JsonProcessingException {
-        val data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+    public void verifyProxying() {
+        var data = "";
+        try {
+            data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+        } catch (final JsonProcessingException e) {
+            throw new AssertionError(e);
+        }
         try (val webServer = new MockWebServer(9310,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
