@@ -36,12 +36,12 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     public abstract SurrogateAuthenticationService getService();
 
     @Test
-    public void verifyList() throws Exception {
+    public void verifyList() {
         assertFalse(getService().getEligibleAccountsForSurrogateToProxy("casuser").isEmpty());
     }
 
     @Test
-    public void verifyProxying() throws Exception {
+    public void verifyProxying() {
         assertTrue(getService().canAuthenticateAs("banderson", CoreAuthenticationTestUtils.getPrincipal("casuser"),
             CoreAuthenticationTestUtils.getService()));
     }
