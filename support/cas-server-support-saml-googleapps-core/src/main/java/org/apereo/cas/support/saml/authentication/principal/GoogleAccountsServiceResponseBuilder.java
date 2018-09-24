@@ -114,7 +114,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
-        val sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        val sessionIndex = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
         val authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
         val assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
             notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());

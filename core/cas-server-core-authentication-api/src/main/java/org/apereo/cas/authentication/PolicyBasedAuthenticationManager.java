@@ -62,9 +62,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         final Collection<AuthenticationPostProcessor> supported = pops.stream().filter(processor -> transaction.getCredentials()
             .stream()
-            .filter(processor::supports)
-            .findFirst()
-            .isPresent())
+            .anyMatch(processor::supports))
             .collect(Collectors.toList());
         for (val p : supported) {
             p.process(builder, transaction);
@@ -170,9 +168,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         final Collection<AuthenticationPreProcessor> supported = pops.stream()
             .filter(processor -> transaction.getCredentials()
                 .stream()
-                .filter(processor::supports)
-                .findFirst()
-                .isPresent())
+                .anyMatch(processor::supports))
             .collect(Collectors.toList());
 
         var processed = true;

@@ -82,21 +82,28 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
             LOGGER.warn("Subject recipient is not defined from either authentication request or metadata for [{}]", adaptor.getEntityId());
         }
 
-        val nameId = getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion, messageContext);
-        val subject = newSubject(nameId,
+        val subjectNameId = getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion, messageContext);
+        val subjectConfNameId = service.isSkipGeneratingSubjectConfirmationNameId()
+            ? null
+            : getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion, messageContext);
+
+        val subject = newSubject(subjectNameId, subjectConfNameId,
             service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
             service.isSkipGeneratingSubjectConfirmationNotOnOrAfter() ? null : validFromDate.plusSeconds(this.skewAllowance),
             service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),
             service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now());
 
-        if (nameId.getFormat().equalsIgnoreCase(NameIDType.ENCRYPTED)) {
+        if (NameIDType.ENCRYPTED.equalsIgnoreCase(subjectNameId.getFormat())) {
             subject.setNameID(null);
             subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
 
-            val encryptedId = samlObjectEncrypter.encode(nameId, service, adaptor);
+            val encryptedId = samlObjectEncrypter.encode(subjectNameId, service, adaptor);
             subject.setEncryptedID(encryptedId);
-            encryptedId.detach();
-            subject.getSubjectConfirmations().forEach(c -> c.setEncryptedID(encryptedId));
+
+            if (subjectConfNameId != null) {
+                val encryptedConfId = samlObjectEncrypter.encode(subjectConfNameId, service, adaptor);
+                subject.getSubjectConfirmations().forEach(c -> c.setEncryptedID(encryptedConfId));
+            }
         }
 
         LOGGER.debug("Created SAML subject [{}]", subject);

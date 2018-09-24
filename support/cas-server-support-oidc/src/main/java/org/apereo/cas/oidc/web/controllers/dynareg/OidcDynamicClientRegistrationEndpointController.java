@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link OidcDynamicClientRegistrationEndpointController}.
@@ -123,11 +122,11 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             registeredService.setDescription("Dynamically registered service "
                 .concat(registeredService.getName())
                 .concat(" with grant types ")
-                .concat(clientResponse.getGrantTypes().stream().collect(Collectors.joining(",")))
+                .concat(String.join(",", clientResponse.getGrantTypes()))
                 .concat(" and with scopes ")
-                .concat(registeredService.getScopes().stream().collect(Collectors.joining(",")))
+                .concat(String.join(",", registeredService.getScopes()))
                 .concat(" and response types ")
-                .concat(clientResponse.getResponseTypes().stream().collect(Collectors.joining(","))));
+                .concat(String.join(",", clientResponse.getResponseTypes())));
             registeredService.setDynamicallyRegistered(true);
             scopeToAttributesFilter.reconcile(registeredService);
 

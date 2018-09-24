@@ -32,7 +32,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -146,7 +145,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
 
-        val pattern = Arrays.stream(getExtensions()).collect(Collectors.joining("|"));
+        val pattern = String.join("|", getExtensions());
         val servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, pattern);
         if (servicesDirectory == null) {
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
@@ -166,7 +165,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy, new DefaultRegisteredServiceResourceNamingStrategy());
         this.registeredServiceSerializers = serializers;
 
-        val pattern = Arrays.stream(getExtensions()).collect(Collectors.joining("|"));
+        val pattern = String.join("|", getExtensions());
         this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME.concat(pattern));
 
         this.serviceRegistryDirectory = configDirectory;

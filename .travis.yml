@@ -19,7 +19,7 @@ branches:
   #- oraclejdk11
   #- oraclejdk10
 before_cache:
-- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -rf $HOME/.gradle/caches/4.*/
 - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 - find ~/.gradle/caches/ -name "*.lock" -type f -delete
 # Remove once Travis CI fixes JDK setup
@@ -49,6 +49,7 @@ matrix:
   fast_finish: true
 env:
   global:
+  - GRADLE_VERSION=4.10
   - JAVA_OPTS="-Xms512m -Xmx2048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
   - GRADLE_OPTS="-Xms512m -Xmx1024m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
   - SPRING_MAIN_BANNER-MODE="off"
@@ -130,6 +131,9 @@ jobs:
   - stage: test
     script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
     name: "CosmosDb Tests"
+  - stage: test
+    script: ./ci/tests/radius/run-tests-radius.sh
+    name: "Radius Tests"
   - stage: test
     script: ./ci/tests/couchbase/run-tests-couchbase.sh
     name: "Couchbase Tests"

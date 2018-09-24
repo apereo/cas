@@ -21,7 +21,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
@@ -47,7 +46,6 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
 
 
     public Saml2AttributeQueryProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                                       final ParserPool parserPool,
                                                        final AuthenticationSystemSupport authenticationSystemSupport,
                                                        final ServicesManager servicesManager,
                                                        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -61,7 +59,7 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
                                                        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
                                                        final Service callbackService) {
-        super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager,
+        super(samlObjectSigner, authenticationSystemSupport, servicesManager,
             webApplicationServiceFactory, metadataResolver, configBean,
             responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
         this.ticketRegistry = ticketRegistry;

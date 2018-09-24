@@ -2,6 +2,7 @@ package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -32,7 +33,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         s.setName("Test service " + id);
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
+        s.setId(RandomUtils.getNativeInstance().nextInt());
         return s;
     }
 
@@ -43,7 +44,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     @Test
-    public void verifyLogoutUrlByService() throws Exception {
+    public void verifyLogoutUrlByService() {
         val svc = getRegisteredService("https://www.google.com");
         svc.setLogoutUrl("http://www.example.com/logout");
         val builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false);

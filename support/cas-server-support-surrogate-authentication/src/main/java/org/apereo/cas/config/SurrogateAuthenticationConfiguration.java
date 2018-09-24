@@ -81,6 +81,7 @@ public class SurrogateAuthenticationConfiguration {
     @Qualifier("surrogateEligibilityAuditableExecution")
     private ObjectProvider<AuditableExecution> surrogateEligibilityAuditableExecution;
 
+    @RefreshScope
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
         val su = casProperties.getAuthn().getSurrogate();
@@ -92,6 +93,7 @@ public class SurrogateAuthenticationConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalFactory")
+    @RefreshScope
     @Bean
     public PrincipalFactory surrogatePrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();

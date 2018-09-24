@@ -134,9 +134,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
     protected boolean locateMatchingCredentialType(final Authentication authentication, final String credentialClassType) {
         return StringUtils.isNotBlank(credentialClassType) && authentication.getCredentials()
             .stream()
-            .filter(e -> e.getCredentialClass().getName().matches(credentialClassType))
-            .findAny()
-            .isPresent();
+            .anyMatch(e -> e.getCredentialClass().getName().matches(credentialClassType));
     }
 
     /**
@@ -221,9 +219,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
                 LOGGER.debug("Matching attribute [{}] with values [{}] against [{}]", e.getKey(), valuesCol, attrValue);
                 return valuesCol
                     .stream()
-                    .filter(v -> v.toString().matches(attrValue))
-                    .findAny()
-                    .isPresent();
+                    .anyMatch(v -> v.toString().matches(attrValue));
             }).collect(Collectors.toSet());
 
         LOGGER.debug("Matching attribute values remaining are [{}]", values);

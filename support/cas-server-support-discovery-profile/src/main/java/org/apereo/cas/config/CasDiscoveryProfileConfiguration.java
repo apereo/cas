@@ -76,7 +76,7 @@ public class CasDiscoveryProfileConfiguration {
         }
         val jdbcProps = casProperties.getAuthn().getJdbc();
         if (jdbcProps != null) {
-            jdbcProps.getQuery().stream()
+            jdbcProps.getQuery()
                 .forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
         }
         return attributes;
@@ -86,7 +86,6 @@ public class CasDiscoveryProfileConfiguration {
         val attributeSet = new LinkedHashSet<String>();
         CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
             .values()
-            .stream()
             .forEach(v -> attributeSet.add(v.toString()));
         return attributeSet;
     }
