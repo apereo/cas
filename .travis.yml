@@ -132,6 +132,9 @@ jobs:
     script: ./ci/tests/cosmosdb/run-tests-cosmosdb.sh
     name: "CosmosDb Tests"
   - stage: test
+    script: ./ci/tests/radius/run-tests-radius.sh
+    name: "Radius Tests"
+  - stage: test
     script: ./ci/tests/couchbase/run-tests-couchbase.sh
     name: "Couchbase Tests"
   - stage: test
