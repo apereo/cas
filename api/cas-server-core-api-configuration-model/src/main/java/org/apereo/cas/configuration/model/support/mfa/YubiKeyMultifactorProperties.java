@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -68,6 +69,11 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
     private boolean trustedDeviceEnabled;
 
     /**
+     * Keep device registration records inside a CouchDb resource.
+     */
+    private CouchDb couchDb = new CouchDb();
+
+    /**
      * Keep device registration records inside a JDBC resource.
      */
     private Jpa jpa = new Jpa();
@@ -84,6 +90,18 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
 
     public YubiKeyMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
+    }
+
+    @RequiresModule(name = "cas-server-support-yubikey-couchdb")
+    @Getter
+    @Setter
+    public static class CouchDb extends BaseCouchDbProperties {
+
+        private static final long serialVersionUID = 3757390989294642185L;
+
+        public CouchDb() {
+            this.setDbName("yubikey");
+        }
     }
 
     @Getter

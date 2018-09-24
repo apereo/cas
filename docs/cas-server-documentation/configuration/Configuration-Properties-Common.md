@@ -379,7 +379,7 @@ The following crypto options apply equally to relevant CAS components (ticket re
 
 ### RSA Keys
 
-Certain features such as the ability to produce [JWTs as CAS tickets](Configure-ServiceTicket-JWT.html) may allow you to use the `RSA` algorithm with public/private keypairs for signing and encryption. This behavior may prove useful generally in cases where the consumer of the CAS-encoded payload is an outsider and a client application that need not have access to the signing secrets directly and visibly and may only be given a half truth vis-a-vis a public key to verify the payload authenticity and decode it. This particular option makes little sense in situations where CAS itself is both a producer and a consumer of the payload.
+Certain features such as the ability to produce [JWTs as CAS tickets](../installation/Configure-ServiceTicket-JWT.html) may allow you to use the `RSA` algorithm with public/private keypairs for signing and encryption. This behavior may prove useful generally in cases where the consumer of the CAS-encoded payload is an outsider and a client application that need not have access to the signing secrets directly and visibly and may only be given a half truth vis-a-vis a public key to verify the payload authenticity and decode it. This particular option makes little sense in situations where CAS itself is both a producer and a consumer of the payload.
 
 <div class="alert alert-info"><strong>Remember</strong><p>Signing and encryption options are not mutually exclusive. While it would be rather nonsensical, it is entirely possible for CAS to use <code>AES</code> keys for signing and <code>RSA</code> keys for encryption, or vice versa.</p></div>
 
@@ -940,7 +940,7 @@ The parameters passed are as follows:
 
 ## Email Notifications
 
-To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
+To learn more about this topic, [please review this guide](../installation/SMS-Email-Configuration.html).
 
 The following options are shared and apply when CAS is configured to send email notifications, given the provider's *configuration key*:
 
@@ -976,7 +976,7 @@ The following options are shared and apply when CAS is configured to send SMS no
 ```
 
 You will also need to ensure a provider is defined that is able to send SMS messages. To learn more about this 
-topic, [please review this guide](SMS-Messaging-Configuration.html).
+topic, [please review this guide](../installation/SMS-Messaging-Configuration.html).
  
 ## Delegated Authentication Settings
 

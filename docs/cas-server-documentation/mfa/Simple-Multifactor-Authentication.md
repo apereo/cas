@@ -7,7 +7,7 @@ category: Multifactor Authentication
 # Simple Multifactor Authentication
 
 Allow CAS to act as a multifactor authentication provider on its own, issuing tokens and sending them to end-users via pre-defined communication
-channels such as email or text messages. Tokens issued by CAS are tracked using the [ticket registry](Configuring-Ticketing-Components.html)
+channels such as email or text messages. Tokens issued by CAS are tracked using the [ticket registry](../installation/Configuring-Ticketing-Components.html)
 and are assigned a configurable expiration policy controlled via CAS settings.
 
 ## Configuration
@@ -36,4 +36,4 @@ examine those attributes to share generated tokens.
 Users may be notified of CAS-issued tokens via text messages and/or email. The authenticated CAS principal is expected to carry enough attributes, 
 configurable via CAS settings, in order for CAS to properly send text messages and/or email to the end-user.
 
-To learn more about available options, please [see this guide](SMS-Messaging-Configuration.html) or [this guide](Sending-Email-Configuration.html).
+To learn more about available options, please [see this guide](../installation/SMS-Messaging-Configuration.html) or [this guide](../installation/Sending-Email-Configuration.html).
