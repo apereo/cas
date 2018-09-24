@@ -10,6 +10,7 @@ dependencies {
     implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-audit-mongo")
     implementation project(":support:cas-server-support-mongo-core")
+    
     implementation libraries.mongo
     
     testImplementation project(path: ":support:cas-server-support-throttle", configuration: "tests")
@@ -17,17 +18,18 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
-    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-tickets-api")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-services")
-    testImplementation project(path: ":core:cas-server-core")
-    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core-logout-api")
-    testImplementation project(path: ":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-authentication")
