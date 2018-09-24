@@ -50,7 +50,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private static String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
-        val propertyNames = profiles.stream().collect(Collectors.joining("|"));
+        val propertyNames = String.join("|", profiles);
         val profiledProperties = profiles.stream()
             .map(p -> String.format("application-%s", p))
             .collect(Collectors.joining("|"));
