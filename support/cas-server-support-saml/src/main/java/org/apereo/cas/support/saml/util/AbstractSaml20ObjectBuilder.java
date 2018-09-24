@@ -358,20 +358,22 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
                               final String recipient, final ZonedDateTime notOnOrAfter,
                               final String inResponseTo, final ZonedDateTime notBefore) {
         val nameID = getNameID(nameIdFormat, nameIdValue);
-        return newSubject(nameID, recipient, notOnOrAfter, inResponseTo, notBefore);
+        return newSubject(nameID, null, recipient, notOnOrAfter, inResponseTo, notBefore);
     }
 
     /**
      * New subject element.
      *
-     * @param nameId       the nameId
-     * @param recipient    the recipient
-     * @param notOnOrAfter the not on or after
-     * @param inResponseTo the in response to
-     * @param notBefore    the not before
+     * @param nameId            the nameId
+     * @param subjectConfNameId the subject conf name id
+     * @param recipient         the recipient
+     * @param notOnOrAfter      the not on or after
+     * @param inResponseTo      the in response to
+     * @param notBefore         the not before
      * @return the subject
      */
     public Subject newSubject(final NameID nameId,
+                              final NameID subjectConfNameId,
                               final String recipient,
                               final ZonedDateTime notOnOrAfter,
                               final String inResponseTo,
@@ -410,9 +412,9 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         if (nameId != null) {
             subject.setNameID(nameId);
 
-            nameId.detach();
-            confirmation.setNameID(nameId);
-
+            if (subjectConfNameId != null) {
+                confirmation.setNameID(subjectConfNameId);
+            }
             subject.setEncryptedID(null);
             confirmation.setEncryptedID(null);
         }

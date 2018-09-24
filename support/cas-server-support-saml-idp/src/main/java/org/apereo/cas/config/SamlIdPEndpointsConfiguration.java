@@ -340,21 +340,20 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
 
     @Bean
     public Service samlIdPCallbackService() {
-        val service = casProperties.getServer().getPrefix()
-            .concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK.concat(".+"));
+        val service = casProperties.getServer().getPrefix().concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
         return this.webApplicationServiceFactory.createService(service);
     }
 
     @Override
     public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        val callbackService = samlIdPCallbackService();
+        val callbackService = samlIdPCallbackService().getId().concat(".*");
         LOGGER.debug("Initializing callback service [{}]", callbackService);
         val service = new RegexRegisteredService();
         service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
         service.setEvaluationOrder(0);
         service.setName(service.getClass().getSimpleName());
-        service.setDescription("SAML Authentication Request");
-        service.setServiceId(callbackService.getId());
+        service.setDescription("SAML Authentication Request Callback");
+        service.setServiceId(callbackService);
         plan.registerServiceRegistry(new SamlIdPServiceRegistry(service));
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.throttle;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * This is {@link AuthenticationThrottlingExecutionPlanConfigurer}.
  *
@@ -13,5 +15,14 @@ public interface AuthenticationThrottlingExecutionPlanConfigurer {
      * @param plan the plan
      */
     default void configureAuthenticationThrottlingExecutionPlan(AuthenticationThrottlingExecutionPlan plan) {
+    }
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return StringUtils.defaultIfBlank(this.getClass().getSimpleName(), "Default");
     }
 }
