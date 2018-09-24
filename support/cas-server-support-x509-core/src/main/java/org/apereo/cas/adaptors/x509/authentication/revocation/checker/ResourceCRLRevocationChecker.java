@@ -143,8 +143,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
         // Set up the scheduler to fetch periodically to implement refresh
         final Runnable scheduledFetcher = () -> {
             try {
-                val resources = getResources();
-                val fetchedResults = getFetcher().fetch(resources);
+                val fetchedResults = getFetcher().fetch(getResources());
                 ResourceCRLRevocationChecker.this.addCrls(fetchedResults);
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);

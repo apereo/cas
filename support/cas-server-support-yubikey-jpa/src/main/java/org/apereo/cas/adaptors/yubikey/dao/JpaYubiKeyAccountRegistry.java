@@ -56,10 +56,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             return this.entityManager.createQuery(SELECT_QUERY, YubiKeyAccount.class)
                 .getResultList()
                 .stream()
-                .map(it -> {
-                    it.setPublicId(getCipherExecutor().decode(it.getPublicId()));
-                    return it;
-                })
+                .peek(it -> it.setPublicId(getCipherExecutor().decode(it.getPublicId())))
                 .collect(toList());
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found");

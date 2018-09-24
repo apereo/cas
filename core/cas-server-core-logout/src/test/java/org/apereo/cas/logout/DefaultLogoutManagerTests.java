@@ -66,7 +66,7 @@ public class DefaultLogoutManagerTests {
         s.setName("Test registered service " + id);
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
+        s.setId(RandomUtils.getNativeInstance().nextInt());
         return s;
     }
 

@@ -150,7 +150,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         LOGGER.debug("Initializing callback service [{}]", callbackService);
 
         val service = new RegexRegisteredService();
-        service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        service.setId(RandomUtils.getNativeInstance().nextLong());
         service.setEvaluationOrder(0);
         service.setName(service.getClass().getSimpleName());
         service.setDescription("WS-Federation Authentication Request");

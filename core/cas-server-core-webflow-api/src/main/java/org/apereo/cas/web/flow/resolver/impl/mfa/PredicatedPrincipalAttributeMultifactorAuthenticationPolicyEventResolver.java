@@ -82,8 +82,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
         val provider = providers
             .stream()
             .filter(predicate)
-            .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))
-            .findFirst()
+            .min(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))
             .orElse(null);
 
         LOGGER.debug("Predicate instance [{}] returned multifactor authentication provider [{}]", predicate.getClass().getSimpleName(), provider);

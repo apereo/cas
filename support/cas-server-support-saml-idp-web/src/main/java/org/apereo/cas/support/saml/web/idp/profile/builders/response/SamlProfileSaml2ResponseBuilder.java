@@ -81,7 +81,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                   final HttpServletResponse response,
                                   final String binding,
                                   final MessageContext messageContext) throws SamlException {
-        val id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
         val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());
