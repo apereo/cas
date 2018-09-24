@@ -1,10 +1,10 @@
-dn: cn=casaup,ou=people,dc=example,dc=org
+dn: cn=casuser,ou=people,dc=example,dc=org
 objectClass: organizationalRole
 objectClass: inetOrgPerson
 objectClass: person
 objectClass: account
-cn: casaup
+cn: casuser
 userPassword: 123456
-sn: casaup
-uid: casaup
-mail: casaup@example.org
+sn: casuser
+uid: casuser
+mail: casuser@example.org

@@ -23,6 +23,8 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+    public static final String CASUSER = "casuser";
+    public static final String BANDERSON = "banderson";
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
@@ -36,14 +38,17 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     public abstract SurrogateAuthenticationService getService();
 
     @Test
-    public void verifyList() throws Exception {
-        assertFalse(getService().getEligibleAccountsForSurrogateToProxy("casuser").isEmpty());
+    public void verifyList() {
+        assertFalse(getService().getEligibleAccountsForSurrogateToProxy(CASUSER).isEmpty());
     }
 
     @Test
-    public void verifyProxying() throws Exception {
-        assertTrue(getService().canAuthenticateAs("banderson", CoreAuthenticationTestUtils.getPrincipal("casuser"),
+    public void verifyProxying() {
+        assertTrue(getService().canAuthenticateAs(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(CASUSER),
+            CoreAuthenticationTestUtils.getService()));
+        assertFalse(getService().canAuthenticateAs("XXXX", CoreAuthenticationTestUtils.getPrincipal(CASUSER),
+            CoreAuthenticationTestUtils.getService()));
+        assertFalse(getService().canAuthenticateAs(CASUSER, CoreAuthenticationTestUtils.getPrincipal(BANDERSON),
             CoreAuthenticationTestUtils.getService()));
     }
-
 }
