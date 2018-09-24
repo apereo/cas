@@ -84,6 +84,20 @@ CREATE TABLE `hibernate_sequence` (
   private long id = Integer.MAX_VALUE;
 ```
 
+### CouchDb
+
+Registration records and tokens may be kept inside a CouchDb instance, via the following module:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-gauth-couchdb</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-couchdb).
+
 ### MongoDb
 
 Registration records and tokens may be kept inside a mongo db instance, via the following module:
