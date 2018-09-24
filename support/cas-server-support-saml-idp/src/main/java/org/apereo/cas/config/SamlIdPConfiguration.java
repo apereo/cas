@@ -3,16 +3,23 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutExecutionPlan;
+import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
+import org.apereo.cas.logout.LogoutMessageCreator;
 import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.services.logout.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.support.saml.services.logout.SamlIdPSingleLogoutServiceMessageHandler;
+import org.apereo.cas.support.saml.services.logout.SamlProfileLogoutMessageCreator;
 import org.apereo.cas.support.saml.web.idp.audit.SamlRequestAuditResourceResolver;
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditPrincipalIdProvider;
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditResourceResolver;
@@ -44,6 +51,7 @@ import org.apereo.cas.ticket.query.DefaultSamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketExpirationPolicy;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
@@ -78,7 +86,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("samlIdPConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
+public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfigurer, LogoutExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -127,11 +135,41 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Qualifier("samlIdPMetadataLocator")
     private ObjectProvider<SamlIdPMetadataLocator> samlIdPMetadataLocator;
 
+    @Autowired
+    @Qualifier("noRedirectHttpClient")
+    private ObjectProvider<HttpClient> httpClient;
+
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
+
+    @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilder")
     @Bean
-    public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
+    public SingleLogoutServiceLogoutUrlBuilder samlSingleLogoutServiceLogoutUrlBuilder() {
         return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager.getIfAvailable(),
             defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
             urlValidator.getIfAvailable());
+    }
+
+    @ConditionalOnMissingBean(name = "samlLogoutBuilder")
+    @Bean
+    public LogoutMessageCreator samlLogoutBuilder() {
+        return new SamlProfileLogoutMessageCreator(
+            openSamlConfigBean.getObject(),
+            servicesManager.getObject(),
+            defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
+            casProperties.getAuthn().getSamlIdp());
+    }
+
+    @ConditionalOnMissingBean(name = "samlSingleLogoutServiceMessageHandler")
+    @Bean
+    public SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler() {
+        return new SamlIdPSingleLogoutServiceMessageHandler(httpClient.getIfAvailable(),
+            samlLogoutBuilder(),
+            servicesManager.getIfAvailable(),
+            samlSingleLogoutServiceLogoutUrlBuilder(),
+            casProperties.getSlo().isAsynchronous(),
+            authenticationServiceSelectionPlan.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlResponseBuilder")
@@ -359,6 +397,16 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
         return new SamlAttributeQueryTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
     }
 
+    @Bean
+    public SamlResponseAuditPrincipalIdProvider samlResponseAuditPrincipalIdProvider() {
+        return new SamlResponseAuditPrincipalIdProvider();
+    }
+
+    @Override
+    public void configureLogoutExecutionPlan(final LogoutExecutionPlan plan) {
+        plan.registerSingleLogoutServiceMessageHandler(samlSingleLogoutServiceMessageHandler());
+    }
+
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
         plan.registerAuditResourceResolver("SAML2_RESPONSE_RESOURCE_RESOLVER", new SamlResponseAuditResourceResolver());
@@ -370,8 +418,4 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
             new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
     }
 
-    @Bean
-    public SamlResponseAuditPrincipalIdProvider samlResponseAuditPrincipalIdProvider() {
-        return new SamlResponseAuditPrincipalIdProvider();
-    }
 }

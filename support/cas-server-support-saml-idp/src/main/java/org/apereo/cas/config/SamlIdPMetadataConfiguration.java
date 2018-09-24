@@ -77,7 +77,7 @@ public class SamlIdPMetadataConfiguration {
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
-    private OpenSamlConfigBean openSamlConfigBean;
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Lazy
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
@@ -86,8 +86,8 @@ public class SamlIdPMetadataConfiguration {
     @Autowired
     public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlIdPMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
         val idp = casProperties.getAuthn().getSamlIdp();
-        val resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.getMetadata(), openSamlConfigBean);
-        resolver.setParserPool(this.openSamlConfigBean.getParserPool());
+        val resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.getMetadata(), openSamlConfigBean.getObject());
+        resolver.setParserPool(this.openSamlConfigBean.getObject().getParserPool());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
         resolver.setId(idp.getEntityId());
@@ -135,7 +135,7 @@ public class SamlIdPMetadataConfiguration {
     @RefreshScope
     public SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
         return new SamlRegisteredServiceMetadataResolverCacheLoader(
-            openSamlConfigBean, httpClient,
+            openSamlConfigBean.getObject(), httpClient,
             samlRegisteredServiceMetadataResolvers());
     }
 
@@ -145,11 +145,12 @@ public class SamlIdPMetadataConfiguration {
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
 
         val samlIdp = casProperties.getAuthn().getSamlIdp();
-        plan.registerMetadataResolver(new MetadataQueryProtocolMetadataResolver(samlIdp, openSamlConfigBean));
-        plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(samlIdp, openSamlConfigBean));
-        plan.registerMetadataResolver(new UrlResourceMetadataResolver(samlIdp, openSamlConfigBean));
-        plan.registerMetadataResolver(new ClasspathResourceMetadataResolver(samlIdp, openSamlConfigBean));
-        plan.registerMetadataResolver(new GroovyResourceMetadataResolver(samlIdp, openSamlConfigBean));
+        val cfgBean = openSamlConfigBean.getObject();
+        plan.registerMetadataResolver(new MetadataQueryProtocolMetadataResolver(samlIdp, cfgBean));
+        plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(samlIdp, cfgBean));
+        plan.registerMetadataResolver(new UrlResourceMetadataResolver(samlIdp, cfgBean));
+        plan.registerMetadataResolver(new ClasspathResourceMetadataResolver(samlIdp, cfgBean));
+        plan.registerMetadataResolver(new GroovyResourceMetadataResolver(samlIdp, cfgBean));
 
         val configurers =
             this.applicationContext.getBeansOfType(SamlRegisteredServiceMetadataResolutionPlanConfigurator.class, false, true);

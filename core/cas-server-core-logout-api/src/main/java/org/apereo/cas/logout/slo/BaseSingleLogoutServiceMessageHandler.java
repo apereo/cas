@@ -1,12 +1,19 @@
-package org.apereo.cas.logout;
+package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.logout.DefaultLogoutRequest;
+import org.apereo.cas.logout.LogoutHttpMessage;
+import org.apereo.cas.logout.LogoutMessageCreator;
+import org.apereo.cas.logout.LogoutRequest;
+import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.http.HttpClient;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,16 +25,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link DefaultSingleLogoutServiceMessageHandler} which handles the processing of logout messages
- * to logout endpoints processed by the logout manager.
+ * This is {@link BaseSingleLogoutServiceMessageHandler}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 6.0.0
  */
 @Slf4j
-@Getter
 @RequiredArgsConstructor
-public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
+public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
     private final HttpClient httpClient;
     private final LogoutMessageCreator logoutMessageBuilder;
     private final ServicesManager servicesManager;
@@ -35,18 +40,6 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
     private final boolean asynchronous;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
-    /**
-     * Service supports back channel single logout?
-     * Service must be found in the registry. enabled and logout type must not be {@link RegisteredService.LogoutType#NONE}.
-     *
-     * @param registeredService the registered service
-     * @return true, if support is available.
-     */
-    private static boolean serviceSupportsSingleLogout(final RegisteredService registeredService) {
-        return registeredService != null
-            && registeredService.getAccessStrategy().isServiceAccessAllowed()
-            && registeredService.getLogoutType() != RegisteredService.LogoutType.NONE;
-    }
 
     /**
      * Handle logout for slo service.
@@ -56,22 +49,17 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
      * @return the logout request
      */
     @Override
-    public Collection<LogoutRequest> handle(final WebApplicationService singleLogoutService, final String ticketId) {
+    public Collection<LogoutRequest> handle(final WebApplicationService singleLogoutService, final String ticketId,
+                                            final TicketGrantingTicket ticketGrantingTicket) {
         if (singleLogoutService.isLoggedOutAlready()) {
             LOGGER.debug("Service [{}] is already logged out.", singleLogoutService);
             return new ArrayList<>(0);
         }
-
-        val selectedService = WebApplicationService.class.cast(
-            this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService));
+        val selectedService = (WebApplicationService) this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
 
         LOGGER.debug("Processing logout request for service [{}]...", selectedService);
         val registeredService = this.servicesManager.findServiceBy(selectedService);
 
-        if (!serviceSupportsSingleLogout(registeredService)) {
-            LOGGER.debug("Service [{}] does not support single logout.", selectedService);
-            return new ArrayList<>(0);
-        }
         LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...", selectedService, registeredService);
 
         val logoutUrls = this.singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, selectedService);
@@ -82,28 +70,77 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         }
 
         LOGGER.debug("Creating logout request for [{}] and ticket id [{}]", selectedService, ticketId);
-        return createLogoutRequests(ticketId, selectedService, registeredService, logoutUrls);
+        return createLogoutRequests(ticketId, selectedService, registeredService, logoutUrls, ticketGrantingTicket);
     }
 
-    private Collection<LogoutRequest> createLogoutRequests(final String ticketId,
-                                                           final WebApplicationService selectedService,
-                                                           final RegisteredService registeredService,
-                                                           final Collection<URL> logoutUrls) {
+    @Override
+    public boolean supports(final WebApplicationService singleLogoutService) {
+        val selectedService = (WebApplicationService) this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
+        val registeredService = this.servicesManager.findServiceBy(selectedService);
+
+        if (registeredService != null
+            && registeredService.getAccessStrategy().isServiceAccessAllowed()
+            && registeredService.getLogoutType() != RegisteredService.LogoutType.NONE) {
+            return supportsInternal(singleLogoutService, registeredService);
+        }
+        return false;
+    }
+
+    /**
+     * Supports internal.
+     *
+     * @param singleLogoutService the single logout service
+     * @param registeredService   the registered service
+     * @return the boolean
+     */
+    protected boolean supportsInternal(final WebApplicationService singleLogoutService, final RegisteredService registeredService) {
+        return true;
+    }
+
+    /**
+     * Create logout requests collection.
+     *
+     * @param ticketId             the ticket id
+     * @param selectedService      the selected service
+     * @param registeredService    the registered service
+     * @param logoutUrls           the logout urls
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @return the collection
+     */
+    protected Collection<LogoutRequest> createLogoutRequests(final String ticketId,
+                                                             final WebApplicationService selectedService,
+                                                             final RegisteredService registeredService,
+                                                             final Collection<URL> logoutUrls,
+                                                             final TicketGrantingTicket ticketGrantingTicket) {
         return logoutUrls
             .stream()
-            .map(url -> createLogoutRequest(ticketId, selectedService, registeredService, url))
+            .map(url -> createLogoutRequest(ticketId, selectedService, registeredService, url, ticketGrantingTicket))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
-    private LogoutRequest createLogoutRequest(final String ticketId,
-                                              final WebApplicationService selectedService,
-                                              final RegisteredService registeredService,
-                                              final URL logoutUrl) {
-        val logoutRequest = new DefaultLogoutRequest(ticketId, selectedService, logoutUrl);
+    /**
+     * Create logout request logout request.
+     *
+     * @param ticketId             the ticket id
+     * @param selectedService      the selected service
+     * @param registeredService    the registered service
+     * @param logoutUrl            the logout url
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @return the logout request
+     */
+    protected LogoutRequest createLogoutRequest(final String ticketId,
+                                                final WebApplicationService selectedService,
+                                                final RegisteredService registeredService,
+                                                final URL logoutUrl,
+                                                final TicketGrantingTicket ticketGrantingTicket) {
+        val logoutRequest = new DefaultLogoutRequest(ticketId, selectedService, logoutUrl, registeredService, ticketGrantingTicket);
         LOGGER.debug("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
+
         val type = registeredService.getLogoutType() == null
-            ? RegisteredService.LogoutType.BACK_CHANNEL : registeredService.getLogoutType();
+            ? RegisteredService.LogoutType.BACK_CHANNEL
+            : registeredService.getLogoutType();
+
         LOGGER.debug("Logout type registered for [{}] is [{}]", selectedService, type);
 
         if (type == RegisteredService.LogoutType.BACK_CHANNEL) {
@@ -120,13 +157,14 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         return logoutRequest;
     }
 
+
     /**
      * Log out of a service through back channel.
      *
      * @param request the logout request.
      * @return if the logout has been performed.
      */
-    public boolean performBackChannelLogout(final LogoutRequest request) {
+    protected boolean performBackChannelLogout(final LogoutRequest request) {
         try {
             LOGGER.debug("Creating back-channel logout request based on [{}]", request);
             val logoutRequest = this.logoutMessageBuilder.create(request);
@@ -135,6 +173,7 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
 
             LOGGER.debug("Preparing logout request for [{}] to [{}]", logoutService.getId(), request.getLogoutUrl());
             val msg = new LogoutHttpMessage(request.getLogoutUrl(), logoutRequest, this.asynchronous);
+
             LOGGER.debug("Prepared logout message to send is [{}]. Sending...", msg);
             return this.httpClient.sendMessageToEndPoint(msg);
         } catch (final Exception e) {
