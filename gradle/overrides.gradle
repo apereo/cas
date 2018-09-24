@@ -8,15 +8,15 @@
   dependencies match that of CAS. 
  */
 ext["hibernateVersion"] = "5.3.6.Final"
-ext["hazelcastVersion"] = "3.10.4"
+ext["hazelcastVersion"] = "3.10.5"
 ext["infinispanVersion"] = "9.3.0.Final"
 
-ext["springVersion"] = "5.1.0.RC3"
+ext["springVersion"] = "5.1.0.RELEASE"
 ext["springBootTomcatVersion"] = "9.0.12"
-ext["springSessionVersion"] = "2.1.0.M2"
+ext["springSessionVersion"] = "2.1.0.RC1"
 ext["springSessionMongoVersion"] = "2.0.3.RELEASE"
 
-ext["jacksonDatabindVersion"] = "2.9.6"
+ext["jacksonDatabindVersion"] = "2.9.7"
 ext["thymeleafVersion"] = "3.0.9.RELEASE"
 ext["thymeleafDialectVersion"] = "2.3.0"
 ext["hsqlVersion"] = "2.4.1"
@@ -25,7 +25,6 @@ ext["hikariVersion"] = "3.2.0"
 ext["groovyVersion"] = "3.0.0-alpha-3"
 ext["log4jVersion"] = "2.11.1"
 ext["commonsBeansVersion"] = "1.9.3"
-ext["dropwizardMetricsVersion"] = "3.2.5"
 ext["caffeinVersion"] = "2.6.2"
 ext["couchbaseVersion"] = "2.6.2"
 
@@ -53,7 +52,6 @@ ext["hikaricp.version"] = ext["hikariVersion"]
 ext["groovy.version"] = ext["groovyVersion"]
 ext["log4j2.version"] = ext["log4jVersion"]
 ext["commons-beanutils.version"] = ext["commonsBeansVersion"]
-ext["dropwizard-metrics.version"] = ext["dropwizardMetricsVersion"]
 ext["mysql.version"] = ext["mysqlVersion"]
 ext["postgresql.version"] = ext["postgresqlVersion"]
 ext["mariadb.version"] = ext["mariaDbVersion"]
