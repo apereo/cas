@@ -2338,6 +2338,10 @@ under the configuration key `cas.authn.mfa.u2f`.
 # cas.authn.mfa.u2f.cleaner.schedule.repeatInterval=PT60S
 ```
 
+### FIDO U2F CouchDb
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.u2f`.
+
 ### FIDO U2F MongoDb
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.u2f`.
