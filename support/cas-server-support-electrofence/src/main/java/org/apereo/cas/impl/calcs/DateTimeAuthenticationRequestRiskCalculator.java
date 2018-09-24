@@ -43,7 +43,7 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
         val count = events
             .stream()
             .map(time -> {
-                val instant = ChronoZonedDateTime.from(time.getCreationTime()).toInstant();
+                val instant = ChronoZonedDateTime.from(time.getCreationZonedDateTime()).toInstant();
                 val zdt = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
                 return zdt.getHour();
             })
