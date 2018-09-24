@@ -94,6 +94,11 @@ There is of course the alternative: [ask](https://apereo.github.io/cas/Mailing-L
 
 Yes, absolutely. Provided the change fits the scope of the maintenance branch and its tracking release and assuming the branch is still under care, you are more than welcome to move changes across the codebase various branches as much as needed to remove pain and improve.  
 
+<div class="alert alert-success">
+  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+  <strong>Port Forward</strong><br/>Remember that changes applied to previous branches that target CAS versions in maintenance mode <b>MUST</b> be ported forward to the master branch as well, via a separate pull request.
+</div>
+
 ## What if the change is too big?
 
 Start by reviewing the [release policy](https://apereo.github.io/cas/developer/Release-Policy.html). The change you have in mind should fit the scope of the release that is planned. If needed, [please discuss](https://apereo.github.io/cas/Mailing-Lists.html) the release schedule and policy with other community members to find alternative solutions and strategies for delivery.
