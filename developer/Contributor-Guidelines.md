@@ -54,9 +54,7 @@ If you find that contributing to the project is at the moment out of your reach,
 
 No. 
 
-If you have already identified an enhancement or a bug, it is STRONGLY recommended that you simply submit a pull request to address the case. There is no need for special ceremony to create separate issues. The pull request **IS** the issue and it will be tracked and tagged as such. Remember that this is open source software in an open and collaborative community. It's not "Some folks report issues and some folks fix problems" software.
-
-The issue tracker is only a simple communication tool to assess a given problematic case or enhancement request. It's not tracking anything, really. You are for the most part and at all costs encouraged to submit patches that fix the reported issue and remove pain, rather than waiting for someone to come along and fix it. As prescribed, there is no *"We vs. You"*.
+If you have already identified an enhancement or a bug, it is STRONGLY recommended that you simply submit a pull request to address the case. There is no need for special ceremony to create separate issues. The pull request **IS** the issue and it will be tracked and tagged as such. Remember that this is open source software in an open and collaborative community. It's not "Some folks report issues and some folks fix problems" software. You are for the most part and at all costs encouraged to submit patches that fix the reported issue and remove pain, rather than waiting for someone to come along and fix it. As prescribed, there is no *"We vs. You"*.
 
 Very simply put:
 
