@@ -88,8 +88,24 @@ Support is provided via the following module:
 </dependency>
 ```
 
-To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jdbc-storage).
+
+### CouchDb
+
+User decisions may also be kept inside a CouchDb instance.
+
+Support is provided via the following module:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-trusted-mfa-couchdb</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-storage).
 
 ### MongoDb
 

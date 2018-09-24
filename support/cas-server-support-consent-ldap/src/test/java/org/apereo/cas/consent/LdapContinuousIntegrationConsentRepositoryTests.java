@@ -19,7 +19,15 @@ import org.springframework.test.context.TestPropertySource;
  * @author Arnold Bergner
  * @since 5.3.0
  */
-@TestPropertySource(locations = "classpath:/ldapconsentci.properties")
+@TestPropertySource(properties = {
+    "cas.consent.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.consent.ldap.useSsl=false",
+    "cas.consent.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.consent.ldap.searchFilter=cn={0}",
+    "cas.consent.ldap.consentAttributeName=description",
+    "cas.consent.ldap.bindDn=cn=Directory Manager",
+    "cas.consent.ldap.bindCredential=password"
+    })
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 10389;

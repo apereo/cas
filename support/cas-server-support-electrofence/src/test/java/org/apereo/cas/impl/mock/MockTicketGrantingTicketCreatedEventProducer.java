@@ -78,7 +78,7 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         dto.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
         dto.putTimestamp(new Date().getTime());
         dto.setCreationTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
-        dto.putId(TicketIdSanitizationUtils.sanitize("TGT-" + i + '-' + RandomStringUtils.randomAlphanumeric(16)));
+        dto.putEventId(TicketIdSanitizationUtils.sanitize("TGT-" + i + "-" + RandomStringUtils.randomAlphanumeric(16)));
         dto.setPrincipalId("casuser");
         dto.putClientIpAddress(getMockClientIpAddress());
         dto.putServerIpAddress("127.0.0.1");

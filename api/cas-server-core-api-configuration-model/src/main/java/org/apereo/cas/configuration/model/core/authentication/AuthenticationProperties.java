@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.couchdb.authentication.CouchDbAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.configuration.model.support.fortress.FortressAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
@@ -234,6 +235,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MongoAuthenticationProperties mongo = new MongoAuthenticationProperties();
+
+    /**
+     * CouchDb authentication settings.
+     */
+    @NestedConfigurationProperty
+    private CouchDbAuthenticationProperties couchDb = new CouchDbAuthenticationProperties();
 
     /**
      * NTLM authentication settings.
