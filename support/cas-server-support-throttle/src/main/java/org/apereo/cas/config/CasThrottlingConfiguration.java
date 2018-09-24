@@ -15,7 +15,6 @@ import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,8 +97,7 @@ public class CasThrottlingConfiguration {
     public AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan(final List<AuthenticationThrottlingExecutionPlanConfigurer> configurers) {
         val plan = new DefaultAuthenticationThrottlingExecutionPlan();
         configurers.forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Registering authentication throttler [{}]", name);
+            LOGGER.debug("Registering authentication throttler [{}]", c.getName());
             c.configureAuthenticationThrottlingExecutionPlan(plan);
         });
         return plan;

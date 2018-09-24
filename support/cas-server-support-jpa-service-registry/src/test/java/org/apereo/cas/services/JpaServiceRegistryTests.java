@@ -5,10 +5,8 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 
-import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +35,6 @@ import java.util.Collection;
 })
 @DirtiesContext
 public class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("jpaServiceRegistry")
