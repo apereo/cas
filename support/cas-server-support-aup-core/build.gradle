@@ -17,7 +17,6 @@ dependencies {
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-webflow")
-    testImplementation project(":support:cas-server-support-aup-webflow")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
