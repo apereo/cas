@@ -1174,7 +1174,7 @@ The following authentication types are supported:
 # ${configurationKey}.searchEntryHandlers[0].primaryGroupId.baseDn=
 
 # ${configurationKey}.searchEntryHandlers[0].mergeAttribute.mergeAttributeName=
-# ${configurationKey}.searchEntryHandlers[0].mergeAttribute.attribueNames=
+# ${configurationKey}.searchEntryHandlers[0].mergeAttribute.attributeNames=
 
 # ${configurationKey}.searchEntryHandlers[0].recursive.searchAttribute=
 # ${configurationKey}.searchEntryHandlers[0].recursive.mergeAttributes=

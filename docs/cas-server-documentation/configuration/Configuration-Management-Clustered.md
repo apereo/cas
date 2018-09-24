@@ -60,7 +60,7 @@ To see the relevant list of CAS properties for this feature, please [review this
 
 Apache Kafka is an open-source message broker project developed by the Apache Software Foundation.
 The project aims to provide a unified, high-throughput, low-latency platform for handling real-time data feeds.
-It is, in its essence, a "massively scalable pub/sub message queue architected as a distributed transaction log",
+It is, in its essence, a "massively scalable pub/sub message queue designed as a distributed transaction log",
 making it highly valuable for enterprise infrastructures to process streaming data.
 
 Support is enabled by including the following dependency in the final overlay:
