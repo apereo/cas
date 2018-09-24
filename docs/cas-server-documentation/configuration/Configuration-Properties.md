@@ -3165,6 +3165,11 @@ To learn more about this topic, [please review this guide](../installation/Confi
 Decide how CAS should store authentication events inside an InfluxDb instance. Common 
 configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.events.influxDb`.
 
+### CouchDb Events
+
+Decide how CAS should store authentication events inside a CouchDb instance. Common
+configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.events.couchDb`.
+
 ### Database Events
 
 Decide how CAS should store authentication events inside a database instance. Database 
