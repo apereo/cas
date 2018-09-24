@@ -113,7 +113,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             if (!devices.isEmpty()) {
                 val devs = devices.get(MAP_KEY_DEVICES);
                 LOGGER.debug("Located [{}] devices in repository", devs.size());
-                list.addAll(devs.stream().collect(Collectors.toList()));
+                list.addAll(new ArrayList<>(devs));
             }
             list.add(device);
             LOGGER.debug("There are [{}] device(s) remaining in repository. Storing...", list.size());

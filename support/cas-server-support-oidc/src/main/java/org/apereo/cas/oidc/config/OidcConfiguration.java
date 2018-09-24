@@ -116,7 +116,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link OidcConfiguration}.
@@ -286,10 +285,10 @@ public class OidcConfiguration implements WebMvcConfigurer, CasWebflowExecutionP
 
     @Bean
     public HandlerInterceptorAdapter requiresAuthenticationDynamicRegistrationInterceptor() {
-        val clients = Stream.of(
+        val clients = String.join(",",
             Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
             Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
-            Authenticators.CAS_OAUTH_CLIENT_USER_FORM).collect(Collectors.joining(","));
+            Authenticators.CAS_OAUTH_CLIENT_USER_FORM);
         return new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients);
     }
 

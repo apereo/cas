@@ -60,8 +60,8 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
             if (patterns.containsKey(attributeName)) {
                 val attributeValues = CollectionUtils.toCollection(entry.getValue());
                 LOGGER.debug("Found attribute [{}] in pattern definitions with value(s) [{}]", attributeName, attributeValues);
-                val patterns = createPatternForMappedAttribute(attributeName);
-                patterns.forEach(pattern -> {
+                val attributePatterns = createPatternForMappedAttribute(attributeName);
+                attributePatterns.forEach(pattern -> {
                     LOGGER.debug("Found attribute [{}] in the pattern definitions. Processing pattern [{}]", attributeName, pattern.pattern());
                     val filteredValues = filterAttributeValuesByPattern(attributeValues, pattern);
                     LOGGER.debug("Filtered attribute values for [{}] are [{}]", attributeName, filteredValues);

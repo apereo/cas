@@ -33,10 +33,10 @@ public class SamlCompliantLogoutMessageCreatorTests {
         val msg = builder.create(request);
 
         val factory = DocumentBuilderFactory.newInstance();
-        val builder = factory.newDocumentBuilder();
+        val documentBuilder = factory.newDocumentBuilder();
 
         val is = new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8));
-        val document = builder.parse(is);
+        val document = documentBuilder.parse(is);
 
         val list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");
         assertEquals(1, list.getLength());

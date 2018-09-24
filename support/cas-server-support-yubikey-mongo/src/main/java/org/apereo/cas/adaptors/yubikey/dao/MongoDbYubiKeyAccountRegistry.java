@@ -49,10 +49,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public Collection<? extends YubiKeyAccount> getAccounts() {
         return this.mongoTemplate.findAll(YubiKeyAccount.class, this.collectionName)
             .stream()
-            .map(it -> {
-                it.setPublicId(getCipherExecutor().decode(it.getPublicId()));
-                return it;
-            })
+            .peek(it -> it.setPublicId(getCipherExecutor().decode(it.getPublicId())))
             .collect(toList());
     }
 

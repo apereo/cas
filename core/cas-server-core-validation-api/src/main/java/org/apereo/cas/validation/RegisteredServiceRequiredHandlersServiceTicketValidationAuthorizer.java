@@ -36,9 +36,7 @@ public class RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer 
             if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
                 val assertedHandlers = CollectionUtils.toCollection(
                     attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-                val matchesAll = registeredService.getRequiredHandlers()
-                    .stream()
-                    .allMatch(assertedHandlers::contains);
+                val matchesAll = assertedHandlers.containsAll(registeredService.getRequiredHandlers());
                 if (!matchesAll) {
                     throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
                 }

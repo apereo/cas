@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     private DefaultServicesManager defaultServicesManager;
-    private Set<AuthenticationHandler> handlers;
+    private Set<AuthenticationHandler> authenticationHandlers;
 
     @Before
     public void initialize() {
@@ -54,7 +54,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         val handler2 = new AcceptUsersAuthenticationHandler("handler2");
         val handler3 = new AcceptUsersAuthenticationHandler("handler3");
 
-        this.handlers = Stream.of(handler1, handler2, handler3).collect(Collectors.toSet());
+        this.authenticationHandlers = Stream.of(handler1, handler2, handler3).collect(Collectors.toSet());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid1"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
-        val handlers = resolver.resolve(this.handlers, transaction);
+        val handlers = resolver.resolve(this.authenticationHandlers, transaction);
         assertEquals(2, handlers.size());
     }
 
@@ -74,7 +74,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
             new DefaultAuthenticationHandlerResolver();
         val transaction = DefaultAuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid2"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
-        val handlers = resolver.resolve(this.handlers, transaction);
-        assertEquals(handlers.size(), this.handlers.size());
+        val handlers = resolver.resolve(this.authenticationHandlers, transaction);
+        assertEquals(handlers.size(), this.authenticationHandlers.size());
     }
 }

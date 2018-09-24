@@ -88,7 +88,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
                     LOGGER.warn("Delegated authentication cannot find attribute [{}] to use as principal id", principalAttribute);
                 }
             } else {
-                LOGGER.warn("No custom principal attribute was provided by the client. Using the default id [{}]", client, id);
+                LOGGER.warn("No custom principal attribute was provided by the client [{}]. Using the default id [{}]", client, id);
             }
         } else if (StringUtils.isNotBlank(principalAttributeId) && profile.containsAttribute(principalAttributeId)) {
             val firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttributeId));

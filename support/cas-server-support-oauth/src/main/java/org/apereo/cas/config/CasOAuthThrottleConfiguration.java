@@ -23,8 +23,6 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 
@@ -55,10 +53,10 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
     public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
-        val clients = Stream.of(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
+        val clients = String.join(",", Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
             Authenticators.CAS_OAUTH_CLIENT_USER_FORM,
             Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
-            Authenticators.CAS_OAUTH_CLIENT_PROOF_KEY_CODE_EXCHANGE_AUTHN).collect(Collectors.joining(","));
+            Authenticators.CAS_OAUTH_CLIENT_PROOF_KEY_CODE_EXCHANGE_AUTHN);
         return new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients);
     }
 

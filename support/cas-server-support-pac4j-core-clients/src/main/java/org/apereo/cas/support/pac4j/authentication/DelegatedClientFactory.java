@@ -445,7 +445,6 @@ public class DelegatedClientFactory {
      */
     protected void configureOidcClient(final Collection<BaseClient> properties) {
         pac4jProperties.getOidc()
-            .stream()
             .forEach(oidc -> {
                 val client = getOidcClientFrom(oidc);
                 LOGGER.debug("Created client [{}]", client);

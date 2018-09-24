@@ -53,7 +53,6 @@ import org.springframework.http.converter.AbstractHttpMessageConverter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasCoreServicesConfiguration}.
@@ -97,7 +96,7 @@ public class CasCoreServicesConfiguration {
     @Bean
     public ResponseBuilderLocator webApplicationResponseBuilderLocator() {
         val beans = applicationContext.getBeansOfType(ResponseBuilder.class, false, true);
-        val builders = beans.values().stream().collect(Collectors.toList());
+        val builders = new ArrayList<ResponseBuilder>(beans.values());
         AnnotationAwareOrderComparator.sortIfNecessary(builders);
         return new DefaultWebApplicationResponseBuilderLocator(builders);
     }

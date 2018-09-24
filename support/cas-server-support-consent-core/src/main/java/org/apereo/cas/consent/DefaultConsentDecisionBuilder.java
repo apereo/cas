@@ -94,7 +94,7 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     }
 
     private String sha512ConsentAttributeNames(final Map<String, Object> attributes) {
-        val allNames = attributes.keySet().stream().collect(Collectors.joining("|"));
+        val allNames = String.join("|", attributes.keySet());
         return DigestUtils.sha512(allNames);
     }
 

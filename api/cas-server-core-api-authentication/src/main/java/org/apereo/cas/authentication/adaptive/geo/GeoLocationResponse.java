@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link GeoLocationResponse} that represents a particular geo location
@@ -46,6 +45,6 @@ public class GeoLocationResponse {
      * @return the string
      */
     public String build() {
-        return this.addresses.stream().collect(Collectors.joining(","));
+        return String.join(",", this.addresses);
     }
 }

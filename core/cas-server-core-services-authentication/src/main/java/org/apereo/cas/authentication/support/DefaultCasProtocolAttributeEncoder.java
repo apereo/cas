@@ -84,7 +84,6 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                             final RegisteredService registeredService) {
         LOGGER.debug("Sanitizing attribute values in preparation of the final validation response");
         attributes.entrySet()
-            .stream()
             .forEach(entry -> {
                 val values = CollectionUtils.toCollection(entry.getValue());
                 values.stream()

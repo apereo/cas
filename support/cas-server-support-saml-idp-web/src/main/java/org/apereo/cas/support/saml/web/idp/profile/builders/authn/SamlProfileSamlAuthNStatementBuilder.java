@@ -74,7 +74,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                final MessageContext messageContext) throws SamlException {
         val assertion = Assertion.class.cast(casAssertion);
         val authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
-        val id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
         val statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
         if (assertion.getValidUntilDate() != null) {
             val dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());

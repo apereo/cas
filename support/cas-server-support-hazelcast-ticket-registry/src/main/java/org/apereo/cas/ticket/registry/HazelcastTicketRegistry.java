@@ -12,6 +12,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -116,7 +117,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
                 if (pageSize > 0) {
                     return tickets.stream().limit(pageSize).collect(Collectors.toList()).stream();
                 }
-                return tickets.stream().collect(Collectors.toList()).stream();
+                return new ArrayList<>(tickets).stream();
             })
             .map(this::decodeTicket)
             .collect(Collectors.toSet());

@@ -731,7 +731,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Override
     public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
         val service = new RegexRegisteredService();
-        service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        service.setId(RandomUtils.getNativeInstance().nextLong());
         service.setEvaluationOrder(0);
         service.setName(service.getClass().getSimpleName());
         service.setDescription("OAuth Authentication Callback Request URL");

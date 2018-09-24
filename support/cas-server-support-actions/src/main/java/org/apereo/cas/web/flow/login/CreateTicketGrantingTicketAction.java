@@ -59,10 +59,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
             .stream()
             .map(entry -> entry.getValue().getWarnings())
             .flatMap(Collection::stream)
-            .map(message -> {
-                addMessageDescriptorToMessageContext(messageContext, message);
-                return message;
-            })
+            .peek(message -> addMessageDescriptorToMessageContext(messageContext, message))
             .collect(Collectors.toSet());
     }
 

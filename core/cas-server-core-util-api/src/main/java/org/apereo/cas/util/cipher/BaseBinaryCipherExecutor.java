@@ -101,31 +101,31 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     protected abstract String getSigningKeySetting();
 
     private void ensureEncryptionKeyExists(final String encryptionSecretKey, final int encryptionKeySize) {
-        final byte[] encryptionKey;
+        final byte[] genEncryptionKey;
         if (StringUtils.isBlank(encryptionSecretKey)) {
             LOGGER.warn("Secret key for encryption is not defined under [{}]. CAS will attempt to auto-generate the encryption key",
                 getEncryptionKeySetting());
             val key = new Base64RandomStringGenerator(encryptionKeySize).getNewString();
             LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
                 key, encryptionKeySize, getEncryptionKeySetting());
-            encryptionKey = EncodingUtils.decodeBase64(key);
+            genEncryptionKey = EncodingUtils.decodeBase64(key);
         } else {
             val base64 = EncodingUtils.isBase64(encryptionSecretKey);
             val key = base64 ? EncodingUtils.decodeBase64(encryptionSecretKey) : new byte[0];
             if (base64 && key.length == encryptionKeySize) {
                 LOGGER.debug("Secret key for encryption defined under [{}] is Base64 encoded.", getEncryptionKeySetting());
-                encryptionKey = key;
+                genEncryptionKey = key;
             } else if (encryptionSecretKey.length() != encryptionKeySize) {
                 LOGGER.warn("Secret key for encryption defined under [{}] is Base64 encoded but the size does not match the key size [{}].",
                     getEncryptionKeySetting(), encryptionKeySize);
-                encryptionKey = encryptionSecretKey.getBytes(StandardCharsets.UTF_8);
+                genEncryptionKey = encryptionSecretKey.getBytes(StandardCharsets.UTF_8);
             } else {
                 LOGGER.warn("Secret key for encryption defined under [{}] is not Base64 encoded. Clear the setting to regenerate (Recommended) or replace with"
                     + " [{}].", getEncryptionKeySetting(), EncodingUtils.encodeBase64(encryptionSecretKey));
-                encryptionKey = encryptionSecretKey.getBytes(StandardCharsets.UTF_8);
+                genEncryptionKey = encryptionSecretKey.getBytes(StandardCharsets.UTF_8);
             }
         }
-        this.encryptionSecretKey = encryptionKey;
+        this.encryptionSecretKey = genEncryptionKey;
     }
 
     private void ensureSigningKeyExists(final String signingSecretKey, final int signingKeySize) {
