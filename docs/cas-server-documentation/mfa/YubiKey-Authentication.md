@@ -64,6 +64,27 @@ The expected database schema that is automatically created and configured by CAS
 | `publicId`         | The public identifier/key of the device used for authentication.
 | `username`         | The username whose device is registered.
 
+### CouchDb
+
+Support is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-yubikey-couchdb</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+The registration records are kept inside a single CouchDb database of your choosing that will be auto-created by CAS.
+The structure of this database's documents is as follows:
+
+| Field              | Description
+|--------------------------------------------------------------------------------------
+| `id`               | Unique record identifier, acting as the primary key.
+| `publicId`         | The public identifier/key of the device used for authentication.
+| `username`         | The username whose device is registered.
+
 ### MongoDb
 
 Support is enabled by including the following dependencies in the WAR overlay:
