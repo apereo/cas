@@ -5,9 +5,11 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.DefaultLogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -120,7 +122,8 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     public void verifyLogoutRequestBack() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        val logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
+        val logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null,
+            RegisteredServiceTestUtils.getRegisteredService(), new MockTicketGrantingTicket("casuser"));
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         val properties = new LogoutProperties();
@@ -134,7 +137,9 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     public void verifyLogoutRequestFront() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        val logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
+        val logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null,
+            RegisteredServiceTestUtils.getRegisteredService(),
+            new MockTicketGrantingTicket("casuser"));
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         val properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);

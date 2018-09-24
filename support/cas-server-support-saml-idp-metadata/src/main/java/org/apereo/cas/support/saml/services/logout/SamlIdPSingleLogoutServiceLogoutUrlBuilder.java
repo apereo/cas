@@ -1,9 +1,10 @@
-package org.apereo.cas.support.saml.services;
+package org.apereo.cas.support.saml.services.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -26,12 +27,12 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
     /**
      * The Services manager.
      */
-    protected ServicesManager servicesManager;
+    protected final ServicesManager servicesManager;
 
     /**
      * The Saml registered service caching metadata resolver.
      */
-    protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
+    protected final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     public SamlIdPSingleLogoutServiceLogoutUrlBuilder(final ServicesManager servicesManager,
                                                       final SamlRegisteredServiceCachingMetadataResolver resolver,
@@ -65,10 +66,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
         val entityID = singleLogoutService.getId();
         LOGGER.debug("Located entity id [{}]", entityID);
 
-        val adaptor =
-            SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-                SamlRegisteredService.class.cast(registeredService), entityID);
-
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, (SamlRegisteredService) registeredService, entityID);
         if (!adaptor.isPresent()) {
             LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
             return null;
