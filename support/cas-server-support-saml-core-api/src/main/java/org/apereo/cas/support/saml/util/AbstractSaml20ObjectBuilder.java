@@ -11,6 +11,7 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -24,8 +25,10 @@ import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Issuer;
+import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.SessionIndex;
 import org.opensaml.saml.saml2.core.Statement;
 import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
@@ -180,6 +183,39 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         assertion.setIssuer(newIssuer(issuer));
         assertion.getStatements().addAll(authnStatement);
         return assertion;
+    }
+
+    /**
+     * New saml2 logout request.
+     *
+     * @param id           the id
+     * @param issueInstant the issue instant
+     * @param destination  the destination
+     * @param issuer       the issuer
+     * @param sessionIndex the session index
+     * @param nameId       the name id
+     * @return the logout request
+     */
+    public LogoutRequest newLogoutRequest(final String id, final DateTime issueInstant,
+                                          final String destination, final Issuer issuer,
+                                          final String sessionIndex, final NameID nameId) {
+        val request = newSamlObject(LogoutRequest.class);
+        request.setID(id);
+        request.setVersion(SAMLVersion.VERSION_20);
+        request.setIssueInstant(issueInstant);
+        request.setIssuer(issuer);
+        request.setDestination(destination);
+
+        if (StringUtils.isNotBlank(sessionIndex)) {
+            val sessionIdx = newSamlObject(SessionIndex.class);
+            sessionIdx.setSessionIndex(sessionIndex);
+            request.getSessionIndexes().add(sessionIdx);
+        }
+
+        if (nameId != null) {
+            request.setNameID(nameId);
+        }
+        return request;
     }
 
     /**
