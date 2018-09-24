@@ -32,7 +32,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         s.setName("Test service " + id);
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
+        s.setId(RandomUtils.getNativeInstance().nextInt());
         return s;
     }
 
