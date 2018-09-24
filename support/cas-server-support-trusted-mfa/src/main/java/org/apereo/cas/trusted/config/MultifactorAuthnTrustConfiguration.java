@@ -28,7 +28,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -108,7 +107,6 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
 
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
-    @Lazy
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner() {
         return new MultifactorAuthenticationTrustStorageCleaner(
             casProperties.getAuthn().getMfa().getTrusted(),
