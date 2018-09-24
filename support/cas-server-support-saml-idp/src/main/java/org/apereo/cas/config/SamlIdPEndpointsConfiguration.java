@@ -339,21 +339,20 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
 
     @Bean
     public Service samlIdPCallbackService() {
-        final String service = casProperties.getServer().getPrefix()
-            .concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK.concat(".+"));
+        final String service = casProperties.getServer().getPrefix().concat(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
         return this.webApplicationServiceFactory.createService(service);
     }
 
     @Override
     public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
-        final Service callbackService = samlIdPCallbackService();
+        final String callbackService = samlIdPCallbackService().getId().concat(".*");
         LOGGER.debug("Initializing callback service [{}]", callbackService);
         final RegexRegisteredService service = new RegexRegisteredService();
         service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
         service.setEvaluationOrder(0);
         service.setName(service.getClass().getSimpleName());
         service.setDescription("SAML Authentication Request");
-        service.setServiceId(callbackService.getId());
+        service.setServiceId(callbackService);
         plan.registerServiceRegistry(new SamlIdPServiceRegistry(service));
     }
 }
