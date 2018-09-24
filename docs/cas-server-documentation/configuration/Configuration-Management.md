@@ -39,7 +39,7 @@ are considered in the following order:
 
 <div class="alert alert-info"><strong>Managing Configuration</strong><p>In order to manage
 the CAS configuration, you should configure access
-to <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+to <a href="../installation/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
 ## Configuration Server
 
@@ -49,11 +49,11 @@ place to manage external properties for CAS nodes across all environments. To le
 
 ## Extending CAS Configuration
 
-To learn more about how to extend and customize the CAS configuration, please [review this guide](../configuration/Configuration-Management-Extensions.html).
+To learn more about how to extend and customize the CAS configuration, please [review this guide](Configuration-Management-Extensions.html).
 
 ## Auto Configuration Strategy
 
-To see a complete list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#configuration-storage).
+To see a complete list of CAS properties, please [review this guide](Configuration-Properties.html#configuration-storage).
 
 Note that CAS in most if not all cases will attempt to auto-configure the context based on the declaration
 and presence of feature-specific dedicated modules. This generally SHOULD relieve the deployer

@@ -49,7 +49,7 @@ Registration records and tokens may be kept inside a database instance via the f
 </dependency>
 ```
 
-To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#google-authenticator-jpa).
 
 #### MySQL / Galera Limitations

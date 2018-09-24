@@ -44,7 +44,7 @@ public abstract class AbstractCasEventRepositoryTests {
         assertEquals("Stored event IDs are equal", 2, col.stream().map(CasEvent::getId).distinct().count());
         col.forEach(event -> {
             assertFalse(event.getProperties().isEmpty());
-            if (event.getId().equals(dto1.getId())) {
+            if (event.getEventId().equals(dto1.getEventId())) {
                 assertEquals(dto1.getType(), event.getType());
                 assertEquals(dto1.getTimestamp(), event.getTimestamp());
                 assertEquals(dto1.getCreationTime(), event.getCreationTime());
@@ -52,7 +52,7 @@ public abstract class AbstractCasEventRepositoryTests {
                 assertEquals(dto1.getGeoLocation(), event.getGeoLocation());
                 assertEquals(dto1.getClientIpAddress(), event.getClientIpAddress());
                 assertEquals(dto1.getServerIpAddress(), event.getServerIpAddress());
-            } else if (event.getId().equals(dto2.getId())) {
+            } else if (event.getEventId().equals(dto2.getEventId())) {
                 assertEquals(dto2.getType(), event.getType());
                 assertEquals(dto2.getTimestamp(), event.getTimestamp());
                 assertEquals(dto2.getCreationTime(), event.getCreationTime());
@@ -74,7 +74,7 @@ public abstract class AbstractCasEventRepositoryTests {
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
-        dto.putId(event.getTicketGrantingTicket().getId());
+        dto.putEventId(event.getTicketGrantingTicket().getId());
         dto.putClientIpAddress("1.2.3.4");
         dto.putServerIpAddress("1.2.3.4");
         dto.putGeoLocation(new GeoLocationRequest(1234, 1234));

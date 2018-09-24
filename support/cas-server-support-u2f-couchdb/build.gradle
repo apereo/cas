@@ -1,0 +1,19 @@
+description = "Apereo CAS U2F FIDO CouchDb Support"
+dependencies {
+    implementation libraries.yubicoapi
+    implementation libraries.u2flibserver
+    implementation libraries.caffein
+    implementation libraries.ektorp
+
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":support:cas-server-support-u2f")
+    implementation project(":support:cas-server-support-u2f-core")
+    implementation project(":support:cas-server-support-couchdb-core")
+
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(path: ":support:cas-server-support-u2f", configuration: "tests")
+}

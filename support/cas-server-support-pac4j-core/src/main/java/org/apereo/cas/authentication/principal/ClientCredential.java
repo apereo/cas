@@ -10,6 +10,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.pac4j.core.profile.UserProfile;
 
+import java.util.UUID;
+
 /**
  * This class represents client credentials and (after authentication) a user profile.
  *
@@ -23,6 +25,11 @@ import org.pac4j.core.profile.UserProfile;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class ClientCredential implements Credential {
+
+    /**
+     * The prefix used when building an identifier for an unauthenticated user.
+     */
+    public static final String NOT_YET_AUTHENTICATED = "NotYetAuthenticated-";
 
     /***
      * The name of the client used to perform the authentication.
@@ -55,6 +62,6 @@ public class ClientCredential implements Credential {
             }
             return this.userProfile.getId();
         }
-        return null;
+        return NOT_YET_AUTHENTICATED + UUID.randomUUID().toString();
     }
 }

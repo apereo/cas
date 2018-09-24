@@ -146,6 +146,14 @@ def run(Object[] args) {
 }
 ```
 
+Sample javascript function follows:
+
+```javascript
+function run(uid, logger) {
+   return "test"
+}
+```
+
 ## Groovy
 
 Returns a username attribute value as the final result of a groovy script's execution.

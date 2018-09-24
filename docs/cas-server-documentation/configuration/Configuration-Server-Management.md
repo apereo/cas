@@ -229,7 +229,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```
 
 Note that to access and review the collection of CAS properties,
-you will need to use [the CAS administrative interfaces](Monitoring-Statistics.html), or you may
+you will need to use [the CAS administrative interfaces](../installation/Monitoring-Statistics.html), or you may
 also use your own native tooling for MongoDB to configure and inject settings.
 
 MongoDb documents are required to be found in the collection `MongoDbProperty`, as the following document:
@@ -252,7 +252,7 @@ locate properties and settings. [Please review this guide](Configuration-Propert
 ##### HashiCorp Consul
 
 CAS is also able to use [Consul](https://www.consul.io/) to
-locate properties and settings. [Please review this guide](Service-Discovery-Guide-Consul.html).
+locate properties and settings. [Please review this guide](../installation/Service-Discovery-Guide-Consul.html).
 
 ##### Apache ZooKeeper
 

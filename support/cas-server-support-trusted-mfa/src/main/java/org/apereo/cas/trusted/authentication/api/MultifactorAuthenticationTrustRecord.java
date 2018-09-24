@@ -3,6 +3,7 @@ package org.apereo.cas.trusted.authentication.api;
 import org.apereo.cas.util.jpa.SkippingNanoSecondsLocalDateTimeConverter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,23 +42,29 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
+    @JsonProperty("id")
     private long id = -1;
 
     @Column(nullable = false)
+    @JsonProperty("principal")
     private String principal;
 
+    @JsonProperty("deviceFingerprint")
     @Column(nullable = false)
     private String deviceFingerprint;
 
+    @JsonProperty("recordDate")
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @Convert(converter = SkippingNanoSecondsLocalDateTimeConverter.class)
     private LocalDateTime recordDate;
 
     @Lob
+    @JsonProperty("recordKey")
     @Column(length = 10_000, nullable = false)
     private String recordKey;
 
     @Lob
+    @JsonProperty("name")
     @Column(length = 10_000, nullable = false)
     private String name;
 
