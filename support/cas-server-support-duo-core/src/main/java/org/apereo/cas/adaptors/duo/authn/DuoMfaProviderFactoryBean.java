@@ -1,19 +1,15 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.http.HttpClient;
+
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
-import org.apereo.cas.util.http.HttpClient;
-import org.springframework.aop.framework.AbstractSingletonProxyFactoryBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
-import org.springframework.beans.factory.support.AbstractBeanFactory;
-import org.springframework.cloud.context.scope.GenericScope;
 
-import java.util.function.Supplier;
+import org.springframework.beans.factory.config.AbstractFactoryBean;
+
 
 /**
  * Implementation of AbstractFactoryBean used to create Duo provider instances.
@@ -23,18 +19,25 @@ import java.util.function.Supplier;
  */
 @Slf4j
 @Setter
-public class DuoMfaProviderFactoryBean extends AbstractFactoryBean<DuoMultifactorAuthenticationProvider> {
+public class DuoMfaProviderFactoryBean extends AbstractFactoryBean<DefaultDuoMultifactorAuthenticationProvider> {
 
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
+    private final HttpClient httpClient;
 
-    private DuoSecurityMultifactorProperties properties;
+    private final CasConfigurationProperties casProperties;
+
+    private String duoId;
+
+    public DuoMfaProviderFactoryBean(final HttpClient httpClient,
+                                     final CasConfigurationProperties casProperties) {
+        this.httpClient = httpClient;
+        this.casProperties = casProperties;
+    }
 
     @Override
     public DefaultDuoMultifactorAuthenticationProvider createInstance() throws Exception {
-        if (properties != null) {
-            LOGGER.debug("Duo = [{}]", properties.getId());
+        if (duoId != null) {
+            LOGGER.debug("Duo = [{}]", duoId);
+            val properties = casProperties.getAuthn().getMfa().getDuo().stream().filter(d -> d.getId().equals(duoId)).findFirst().get();
             val duoP = new DefaultDuoMultifactorAuthenticationProvider();
             duoP.setRegistrationUrl(properties.getRegistrationUrl());
             duoP.setDuoAuthenticationService(new BasicDuoSecurityAuthenticationService(properties, httpClient));

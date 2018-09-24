@@ -29,7 +29,7 @@ public class PrepareDuoWebLoginFormAction extends AbstractAction {
     protected Event doExecute(final RequestContext requestContext) {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         val applicationContext = ApplicationContextProvider.getApplicationContext();
-        final String flowId = requestContext.getActiveFlow().getId();
+        val flowId = requestContext.getActiveFlow().getId();
         val provider = (DuoMultifactorAuthenticationProvider)
                 MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(flowId,
                         applicationContext).orElseThrow(AbstractMethodError::new);
