@@ -1,4 +1,4 @@
-package org.apereo.cas.pm.config;
+package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.audit.AuditTrailConstants;
@@ -6,12 +6,12 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.DefaultPasswordValidationService;
+import org.apereo.cas.pm.GroovyResourcePasswordManagementService;
+import org.apereo.cas.pm.JsonResourcePasswordManagementService;
+import org.apereo.cas.pm.NoOpPasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidationService;
-import org.apereo.cas.pm.impl.GroovyResourcePasswordManagementService;
-import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
-import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
 import org.apereo.cas.util.io.CommunicationsManager;
 
 import lombok.extern.slf4j.Slf4j;

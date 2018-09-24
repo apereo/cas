@@ -47,7 +47,7 @@ if (!Boolean.getBoolean("skipSonarqube")) {
 
 buildscript {
     repositories {
-        mavenLocal()
+//        mavenLocal()
         jcenter()
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
@@ -136,7 +136,7 @@ allprojects {
 
     idea {
         module {
-            downloadSources = false
+            downloadSources = true
             downloadJavadoc = false
             excludeDirs << file(".gradle")
             ["classes", "bin", "docs", "dependency-cache", "libs", "reports", "resources", "test-results", "tmp"].each {
@@ -154,7 +154,7 @@ allprojects {
     conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntimeOnly"))
 
     repositories {
-        mavenLocal()
+//        mavenLocal()
         mavenCentral()
         jcenter()
         maven { url "https://repo.spring.io/libs-milestone" }
@@ -198,7 +198,7 @@ subprojects {
     ext.libraries = rootProject.ext.libraries
 
     repositories {
-        mavenLocal()
+//        mavenLocal()
         mavenCentral()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }

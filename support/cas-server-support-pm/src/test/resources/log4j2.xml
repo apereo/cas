@@ -5,8 +5,8 @@
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
         <RollingFile name="file" fileName="build/pm.log" append="true"
-                     filePattern="trusted-%d{yyyy-MM-dd-HH}-%i.log.gz">
-            <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
+                     filePattern="pm-%d{yyyy-MM-dd-HH}-%i.log.gz">
+             <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -15,7 +15,7 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
+        <Logger name="org.apereo" level="off">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

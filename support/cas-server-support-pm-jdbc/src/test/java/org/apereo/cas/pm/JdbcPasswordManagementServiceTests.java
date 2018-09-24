@@ -1,7 +1,6 @@
-package org.apereo.cas.pm.jdbc;
+package org.apereo.cas.pm;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -16,29 +15,20 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.pm.JdbcPasswordManagementConfiguration;
+import org.apereo.cas.config.JdbcPasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.pm.PasswordChangeBean;
-import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
-import lombok.val;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.sql.DataSource;
-
-import static org.junit.Assert.*;
 
 /**
  * This is {@link JdbcPasswordManagementServiceTests}.
@@ -66,18 +56,14 @@ import static org.junit.Assert.*;
     CasCoreUtilConfiguration.class,
     JdbcPasswordManagementConfiguration.class,
     PasswordManagementConfiguration.class})
-@TestPropertySource(locations = {"classpath:/pm.properties"})
-public class JdbcPasswordManagementServiceTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Autowired
-    @Qualifier("passwordChangeService")
-    private PasswordManagementService passwordChangeService;
-
+@TestPropertySource(properties = {
+    "cas.authn.pm.enabled=true",
+    "cas.authn.pm.jdbc.autoCommit=true",
+    "cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
+    "cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM pm_table_accounts WHERE userid=?",
+    "cas.authn.pm.jdbc.sqlChangePassword=UPDATE pm_table_accounts SET password=? WHERE userid=?"
+    })
+public class JdbcPasswordManagementServiceTests extends AbstractPasswordManagementTests {
     @Autowired
     @Qualifier("jdbcPasswordManagementDataSource")
     private DataSource jdbcPasswordManagementDataSource;
@@ -101,35 +87,10 @@ public class JdbcPasswordManagementServiceTests {
 
     }
 
-    @Test
-    public void verifyUserEmailCanBeFound() {
-        val email = passwordChangeService.findEmail("casuser");
-        assertEquals("casuser@example.org", email);
+    @After
+    public void after() {
+        jdbcTemplate = new JdbcTemplate(this.jdbcPasswordManagementDataSource);
+
+        jdbcTemplate.execute("drop table pm_table_accounts if exists;");
     }
-
-    @Test
-    public void verifyNullReturnedIfUserEmailCannotBeFound() {
-        val email = passwordChangeService.findEmail("unknown");
-        assertNull(email);
-    }
-
-    @Test
-    public void verifyUserQuestionsCanBeFound() {
-        val questions = passwordChangeService.getSecurityQuestions("casuser");
-        assertEquals(2, questions.size());
-        assertTrue(questions.containsKey("question1"));
-        assertTrue(questions.containsKey("question2"));
-    }
-
-    @Test
-    public void verifyUserPasswordChange() {
-        val c = new UsernamePasswordCredential("casuser", "password");
-        val bean = new PasswordChangeBean();
-        bean.setConfirmedPassword("newPassword1");
-        bean.setPassword("newPassword1");
-        val res = passwordChangeService.change(c, bean);
-        assertTrue(res);
-    }
-
-
 }

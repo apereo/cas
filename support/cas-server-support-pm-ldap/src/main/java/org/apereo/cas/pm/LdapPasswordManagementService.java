@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
+import org.ldaptive.LdapException;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 return null;
             }
             LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
-        } catch (final Exception e) {
+        } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
@@ -100,7 +101,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 return null;
             }
             LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
-        } catch (final Exception e) {
+        } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
@@ -133,7 +134,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             } else {
                 LOGGER.error("Could not locate an LDAP entry for [{}] and base DN [{}]", filter.format(), ldap.getBaseDn());
             }
-        } catch (final Exception e) {
+        } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return false;
@@ -166,7 +167,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     val question = questionAttribute.getStringValue();
                     val answer = answerAttribute.getStringValue();
 
-                    if (questionAttribute != null && answerAttribute != null && StringUtils.isNotBlank(question) && StringUtils.isNotBlank(answer)) {
+                    if (StringUtils.isNotBlank(question) && StringUtils.isNotBlank(answer)) {
                         LOGGER.debug("Added security question [{}] with answer [{}]", question, answer);
                         set.put(question, answer);
                     }
@@ -174,7 +175,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             } else {
                 LOGGER.debug("LDAP response did not contain a result for security questions");
             }
-        } catch (final Exception e) {
+        } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return set;

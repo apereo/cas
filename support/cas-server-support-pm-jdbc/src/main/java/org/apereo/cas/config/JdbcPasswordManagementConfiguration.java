@@ -1,10 +1,10 @@
-package org.apereo.cas.config.pm;
+package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.pm.JdbcPasswordManagementService;
 import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
