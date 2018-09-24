@@ -12,11 +12,11 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -67,7 +67,15 @@ import org.springframework.webflow.execution.Action;
     CasCoreHttpConfiguration.class,
     CasWebflowContextConfiguration.class
 })
-@TestPropertySource(locations = "classpath:cas-pm-webflow.properties")
+@TestPropertySource(properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+    "spring.mail.testConnection=true",
+    "cas.authn.pm.enabled=true",
+    "cas.authn.pm.groovy.location=classpath:PasswordManagementService.groovy",
+    "cas.authn.pm.reset.mail.from=cas@example.org",
+    "cas.authn.pm.reset.securityQuestionsEnabled=true"
+    })
 public abstract class BasePasswordManagementActionTests {
 
     @ClassRule

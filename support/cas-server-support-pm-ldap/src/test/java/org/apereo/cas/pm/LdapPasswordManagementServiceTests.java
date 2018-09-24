@@ -2,11 +2,10 @@ package org.apereo.cas.pm;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.LdapPasswordManagementConfiguration;
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
+import org.apereo.cas.config.PasswordManagementConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
@@ -17,22 +16,14 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
-
-import static org.junit.Assert.*;
 
 /**
  * This is {@link LdapPasswordManagementServiceTests}.
@@ -50,23 +41,23 @@ import static org.junit.Assert.*;
 })
 @DirtiesContext
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-@TestPropertySource(locations = {"classpath:/ldap-pm.properties"})
-public class LdapPasswordManagementServiceTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+@TestPropertySource(properties = {
+    "cas.authn.pm.ldap.ldapUrl=ldap://localhost:10389",
+    "cas.authn.pm.ldap.bindDn=cn=Directory Manager",
+    "cas.authn.pm.ldap.bindCredential=password",
+    "cas.authn.pm.ldap.baseDn=ou=people,dc=example,dc=org",
+    "cas.authn.pm.ldap.searchFilter=cn={user}",
+    "cas.authn.pm.ldap.useSsl=false",
+    "cas.authn.pm.ldap.type=GENERIC",
+    "cas.authn.pm.ldap.securityQuestionsAttributes.registeredAddress=roomNumber",
+    "cas.authn.pm.ldap.securityQuestionsAttributes.postalCode=teletexTerminalIdentifier"
+ })
+public class LdapPasswordManagementServiceTests extends AbstractPasswordManagementTests {
 
     private static final int LDAP_PORT = 10389;
 
     @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    @Rule
     public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
-    @Autowired
-    @Qualifier("passwordChangeService")
-    private PasswordManagementService passwordChangeService;
 
     @BeforeClass
     @SneakyThrows
@@ -76,40 +67,10 @@ public class LdapPasswordManagementServiceTests {
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
+            new ClassPathResource("ldif/ldap-pm-ou.ldif").getInputStream(),
+            "dc=example,dc=org");
+        LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-pm.ldif").getInputStream(),
-            "ou=people,dc=example,dc=org");
-    }
-
-    @Test
-    public void verifyTokenCreationAndParsing() {
-        val token = passwordChangeService.createToken("casuser");
-        assertNotNull(token);
-        val result = passwordChangeService.parseToken(token);
-        assertEquals("casuser", result);
-    }
-
-    @Test
-    public void verifyPasswordChangedFails() {
-        val credential = new UsernamePasswordCredential("caspm", "123456");
-        val bean = new PasswordChangeBean();
-        bean.setConfirmedPassword("Mellon");
-        bean.setPassword("Mellon");
-        assertFalse(passwordChangeService.change(credential, bean));
-    }
-
-    @Test
-    public void verifyFindEmail() {
-        val email = passwordChangeService.findEmail("caspm");
-        assertEquals("caspm@example.org", email);
-    }
-
-    @Test
-    public void verifyFindSecurityQuestions() {
-        val questions = passwordChangeService.getSecurityQuestions("caspm");
-        assertEquals(2, questions.size());
-        assertTrue(questions.containsKey("RegisteredAddressQuestion"));
-        assertEquals("666", questions.get("RegisteredAddressQuestion"));
-        assertTrue(questions.containsKey("PostalCodeQuestion"));
-        assertEquals("1776", questions.get("PostalCodeQuestion"));
+            "ou=pm,dc=example,dc=org");
     }
 }

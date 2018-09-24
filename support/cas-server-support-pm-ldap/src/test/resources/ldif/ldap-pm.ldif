@@ -1,9 +1,9 @@
-dn: cn=caspm,ou=people,dc=example,dc=org
+dn: cn=casuser,ou=pm,dc=example,dc=org
 objectClass: organizationalRole
 objectClass: inetOrgPerson
 objectClass: person
 objectClass: account
-cn: caspm
+cn: casuser
 userPassword: 123456
 sn: CasPasswordManagement
 uid: CasPasswordManagement

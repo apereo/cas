@@ -1,13 +1,14 @@
-package org.apereo.cas.config.pm;
+package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.pm.rest.RestPasswordManagementService;
+import org.apereo.cas.pm.RestPasswordManagementService;
 
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -30,12 +31,20 @@ public class RestPasswordManagementConfiguration {
     @Qualifier("passwordManagementCipherExecutor")
     private ObjectProvider<CipherExecutor> passwordManagementCipherExecutor;
 
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "passwordManagementRestTemplate")
+    public RestTemplate passwordManagementRestTemplate() {
+        return new RestTemplate();
+    }
+
+    @ConditionalOnMissingBean(name = "reatPasswordChangeService")
     @RefreshScope
     @Bean
-    public PasswordManagementService passwordChangeService() {
+    public PasswordManagementService passwordChangeService(@Qualifier("passwordManagementRestTemplate") final RestTemplate restTemplate) {
         return new RestPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
             casProperties.getServer().getPrefix(),
-            new RestTemplate(),
+            restTemplate,
             casProperties.getAuthn().getPm());
     }
 }

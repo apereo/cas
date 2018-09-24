@@ -1,4 +1,4 @@
-package org.apereo.cas.pm.config;
+package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;

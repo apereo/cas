@@ -1,0 +1,4 @@
+dn: ou=pm,dc=example,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: pm
