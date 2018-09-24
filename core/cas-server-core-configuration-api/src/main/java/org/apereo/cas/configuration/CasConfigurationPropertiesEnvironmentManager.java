@@ -28,6 +28,8 @@ import java.io.File;
 @RequiredArgsConstructor
 @Getter
 public class CasConfigurationPropertiesEnvironmentManager {
+    private static final File DEFAULT_CAS_CONFIG_DIRECTORY = new File("/etc/cas/config");
+
     @NonNull
     private final ConfigurationPropertiesBindingPostProcessor binder;
 
@@ -67,7 +69,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
      * @return the standalone profile configuration directory
      */
     public File getStandaloneProfileConfigurationDirectory() {
-        return environment.getProperty("cas.standalone.configurationDirectory", File.class, new File("/etc/cas/config"));
+        return environment.getProperty("cas.standalone.configurationDirectory", File.class, DEFAULT_CAS_CONFIG_DIRECTORY);
     }
 
     /**
