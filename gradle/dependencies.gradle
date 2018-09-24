@@ -1889,6 +1889,12 @@ ext.libraries = [
                     force = true
                 }
         ],
+
+        pac4jCouchDb             : dependencies.create("org.pac4j:pac4j-couch:$pac4jVersion") {
+            exclude(group: "org.pac4j", module: "pac4j-core")
+            exclude(group: "org.ektorp", module: "org.ektorp")
+            exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+        },
         persondirectory         : dependencies.create("org.apereo.service.persondir:person-directory-impl:$personDirectoryVersion") {
             exclude(group: "commons-logging", module: "commons-logging")
             exclude(group: "org.slf4j", module: "slf4j-api")
