@@ -1186,6 +1186,16 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 # cas.authn.surrogate.ldap.memberAttributeValueRegex=cn=edu:example:cas:something:([^,]+),.+
 ```
 
+### CouchDb Surrogate Accounts
+
+Settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-settings) under the configuration key `cas.authn.surrogate`. Surrogates may be stored either as part of the principals profile or as a series of principal/surrogate pair. The default is a key/value pair.
+
+```properties
+# cas.authn.surrogate.ldap.surrogateSearchFilter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
+# cas.authn.surrogate.ldap.memberAttributeName=memberOf
+# cas.authn.surrogate.ldap.memberAttributeValueRegex=cn=edu:example:cas:something:([^,]+),.+
+```
+
 ### JDBC Surrogate Accounts
 
  Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.surrogate.jdbc`.
