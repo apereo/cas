@@ -103,6 +103,20 @@ Device registrations may be kept inside a MongoDb instance by including the foll
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-mongodb).
 
+### CouchDb
+
+Device registrations may be kept inside a CouchDb instance by including the following module in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-support-u2f-couchdb</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#fido-u2f-couchdb).
+
 ### REST
 
 Device registrations may be managed via REST APIs. Endpoints must be designed to accept/process `application/json`. The syntax for he collection of devices passed back and forth is designed in JSON and is identical to the JSON structure defined above.

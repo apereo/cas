@@ -1186,6 +1186,16 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 # cas.authn.surrogate.ldap.memberAttributeValueRegex=cn=edu:example:cas:something:([^,]+),.+
 ```
 
+### CouchDb Surrogate Accounts
+
+Settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-settings) under the configuration key `cas.authn.surrogate`. Surrogates may be stored either as part of the principals profile or as a series of principal/surrogate pair. The default is a key/value pair.
+
+```properties
+# cas.authn.surrogate.ldap.surrogateSearchFilter=(&(principal={user})(memberOf=cn=edu:example:cas:something:{user},dc=example,dc=edu))
+# cas.authn.surrogate.ldap.memberAttributeName=memberOf
+# cas.authn.surrogate.ldap.memberAttributeValueRegex=cn=edu:example:cas:something:([^,]+),.+
+```
+
 ### JDBC Surrogate Accounts
 
  Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.surrogate.jdbc`.
@@ -1536,6 +1546,23 @@ Password encoding  settings for this feature are available [here](Configuration-
 # cas.authn.jdbc.encode[0].credentialCriteria=
 # cas.authn.jdbc.encode[0].name=
 # cas.authn.jdbc.encode[0].order=0
+```
+
+## CouchDb Authentication
+
+To learn more about this topic, [please review this guide](CouchDb-Authentication.html).
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.couchDb`.
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.couchDb`.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn`.
+
+```properties
+# cas.authn.couchDb.attributes=
+# cas.authn.couchDb.usernameAttribute=username
+# cas.authn.couchDb.passwordAttribute=password
+# cas.authn.couchDb.name=
+# cas.authn.couchDb.order=
 ```
 
 ## MongoDb Authentication
@@ -2112,6 +2139,10 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.trusted.jpa`.
 
+#### CouchDb Storage
+
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.trusted`.
+
 #### MongoDb Storage
 
  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.trusted`.
@@ -2260,6 +2291,10 @@ The signing key and the encryption key [are both JWKs](Configuration-Properties-
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.gauth.yubikey`.
 
+### YubiKey CouchDb Device Store
+
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+
 ### YubiKey MongoDb Device Store
 
  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
@@ -2337,6 +2372,10 @@ under the configuration key `cas.authn.mfa.u2f`.
 # cas.authn.mfa.u2f.cleaner.schedule.startDelay=PT10S
 # cas.authn.mfa.u2f.cleaner.schedule.repeatInterval=PT60S
 ```
+
+### FIDO U2F CouchDb
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.authn.mfa.u2f`.
 
 ### FIDO U2F MongoDb
 
@@ -2999,6 +3038,13 @@ Store audit logs inside a MongoDb database.
 Common configuration settings for this feature are available 
 [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`.
 
+### CouchDb Audits
+
+Store audit logs inside a CouchDb database.
+
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration)
+under the configuration key `cas.audit`.
+
 ### Couchbase Audits
 
 Store audit logs inside a Couchbase database.
@@ -3135,6 +3181,11 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 Decide how CAS should store authentication events inside an InfluxDb instance. Common 
 configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.events.influxDb`.
+
+### CouchDb Events
+
+Decide how CAS should store authentication events inside a CouchDb instance. Common
+configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.events.couchDb`.
 
 ### Database Events
 

@@ -55,6 +55,20 @@ Stores authentication events into a MongoDb NoSQL database.
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-events).
 
+### CouchDb
+
+Stores authentication events inside a CouchDb instance.
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-events-couchdb</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-events).
+
 ### JPA
 
 Stores authentication events into a RDBMS.
