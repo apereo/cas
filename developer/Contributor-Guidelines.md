@@ -64,7 +64,7 @@ If you'd rather just report the issue to have others benefit from your discovery
 
 ## What if I am not a developer?
 
-If you have already diagnosed a problem or have found a use case for an attractive improvement and feature, we strongly recommend you simply [walk down the path](https://github.com/apereo/cas/graphs/contributors) of making that all a reality and *contribute* back. If you find yourself unable to do so, you will need to find and procure resources that can [teach you the how-to](https://www.coursera.org/) or [do it for you](https://www.apereo.org/content/commercial-affiliates). Talk to your institution, company, organization, supervisor, boss, mentor, architect, etc and have them procure the right resources for the job.
+If you have already diagnosed a problem or have found a use case for an attractive improvement and feature, we strongly recommend you simply [walk down the path](https://github.com/apereo/cas/graphs/contributors) of making that all a reality and *contribute* back. If you find yourself unable to do so, you will need to find and procure resources that can [teach you the how-to](https://www.coursera.org/) or [do it for you](https://www.apereo.org/content/commercial-affiliates). Talk to your institution, company, organization, supervisor, boss, mentor, architect, manager, director, CIO, CTO, CISO, etc and have them procure the right resources for the job.
 
 Reporting an issue and hoping/waiting for someone else to magically come along and spend time, money and energy to provide a fix for you is never an acceptable strategy. Quit waiting for the light at the end of the tunnel and light it yourself.
 
