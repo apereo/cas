@@ -69,6 +69,20 @@ If you intend to use a MongoDb database for auditing functionality, enable the f
 
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-audits).
 
+## CouchDb Audits
+
+If you intend to use a CouchDb database for auditing functionality, enable the following module in your configuration:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-audit-couchdb</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#couchdb-audits).
+
 ## Couchbase Audits
 
 If you intend to use a Couchbase database for auditing functionality, enable the following module in your configuration:

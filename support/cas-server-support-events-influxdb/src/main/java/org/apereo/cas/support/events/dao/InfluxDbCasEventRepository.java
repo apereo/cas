@@ -73,8 +73,8 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
                                 switch (colName) {
                                     case "time":
                                         break;
-                                    case "id":
-                                        event.putId(value);
+                                    case "eventId":
+                                        event.putEventId(value);
                                         break;
                                     case "type":
                                         event.setType(value);
@@ -91,7 +91,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
                             }
                         }
 
-                        if (StringUtils.isNotBlank(event.getType()) && StringUtils.isNotBlank(event.getPrincipalId()) && StringUtils.isNotBlank(event.getId())) {
+                        if (StringUtils.isNotBlank(event.getType()) && StringUtils.isNotBlank(event.getPrincipalId()) && StringUtils.isNotBlank(event.getEventId())) {
                             events.add(event);
                         }
                     }

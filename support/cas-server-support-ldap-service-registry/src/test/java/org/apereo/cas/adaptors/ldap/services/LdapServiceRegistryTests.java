@@ -18,7 +18,11 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@TestPropertySource(locations = "classpath:/ldapsvc.properties")
+@TestPropertySource(properties = {
+    "cas.serviceRegistry.ldap.ldapUrl=ldap://localhost:1390",
+    "cas.serviceRegistry.ldap.useSsl=false",
+    "cas.serviceRegistry.ldap.baseDn=dc=example,dc=org"
+})
 @ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
 
