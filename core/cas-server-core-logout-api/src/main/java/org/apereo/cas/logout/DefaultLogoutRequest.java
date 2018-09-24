@@ -1,11 +1,16 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Transient;
 import java.net.URL;
 
 /**
@@ -17,6 +22,7 @@ import java.net.URL;
 @ToString
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class DefaultLogoutRequest implements LogoutRequest {
 
     /**
@@ -33,23 +39,20 @@ public class DefaultLogoutRequest implements LogoutRequest {
      * The service.
      */
     private final WebApplicationService service;
+
     private final URL logoutUrl;
+
+    @JsonIgnore
+    @Transient
+    private final transient RegisteredService registeredService;
+
+    @JsonIgnore
+    @Transient
+    private final transient TicketGrantingTicket ticketGrantingTicket;
+
     /**
      * The status of the logout request.
      */
     private LogoutRequestStatus status = LogoutRequestStatus.NOT_ATTEMPTED;
 
-    /**
-     * Build a logout request from ticket identifier and service.
-     * Default status is {@link LogoutRequestStatus#NOT_ATTEMPTED}.
-     *
-     * @param ticketId  the service ticket id.
-     * @param service   the service.
-     * @param logoutUrl the logout url
-     */
-    public DefaultLogoutRequest(final String ticketId, final WebApplicationService service, final URL logoutUrl) {
-        this.ticketId = ticketId;
-        this.service = service;
-        this.logoutUrl = logoutUrl;
-    }
 }

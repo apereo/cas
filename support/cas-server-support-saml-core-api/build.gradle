@@ -8,11 +8,17 @@ dependencies {
     
     implementation libraries.shibidp
 
-    provided project(":core:cas-server-core-web")
-    provided project(":core:cas-server-core-services")
-    provided project(":core:cas-server-core-authentication")
-    provided project(":support:cas-server-support-validation")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":support:cas-server-support-validation")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-services-authentication")
 
+    compileOnly project(":core:cas-server-core-rest")
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-web-api")
@@ -20,6 +26,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets-api")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-configuration")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
 }

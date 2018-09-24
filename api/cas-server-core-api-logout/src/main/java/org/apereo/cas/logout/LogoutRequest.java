@@ -1,6 +1,8 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -47,4 +49,16 @@ public interface LogoutRequest extends Serializable {
      */
     URL getLogoutUrl();
 
+    /**
+     * Registered service policy linked to this request and service.
+     *
+     * @return registered service instance.
+     */
+    RegisteredService getRegisteredService();
+
+    /**
+     * Ticket instance that is being destroyed, initiating the logout request.
+     * @return the ticket-granting ticket.
+     */
+    TicketGrantingTicket getTicketGrantingTicket();
 }

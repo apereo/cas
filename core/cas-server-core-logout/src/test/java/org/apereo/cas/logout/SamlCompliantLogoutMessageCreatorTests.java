@@ -1,6 +1,8 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
 import org.junit.Test;
@@ -28,7 +30,8 @@ public class SamlCompliantLogoutMessageCreatorTests {
         val service = mock(WebApplicationService.class);
         when(service.getOriginalUrl()).thenReturn(CONST_TEST_URL);
         val logoutUrl = new URL(service.getOriginalUrl());
-        val request = new DefaultLogoutRequest("TICKET-ID", service, logoutUrl);
+        val request = new DefaultLogoutRequest("TICKET-ID", service, logoutUrl, mock(RegisteredService.class),
+            new MockTicketGrantingTicket("casuser"));
 
         val msg = builder.create(request);
 

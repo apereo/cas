@@ -21,7 +21,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.ArtifactResolve;
@@ -44,7 +43,6 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
     private final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder;
 
     public Saml1ArtifactResolutionProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                                           final ParserPool parserPool,
                                                            final AuthenticationSystemSupport authenticationSystemSupport,
                                                            final ServicesManager servicesManager,
                                                            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -57,7 +55,7 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
                                                            final SamlArtifactTicketFactory artifactTicketFactory,
                                                            final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder,
                                                            final Service callbackService) {
-        super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager,
+        super(samlObjectSigner, authenticationSystemSupport, servicesManager,
             webApplicationServiceFactory, samlRegisteredServiceCachingMetadataResolver, configBean,
             responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
         this.ticketRegistry = ticketRegistry;

@@ -17,7 +17,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignat
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -50,7 +49,6 @@ import java.util.concurrent.TimeUnit;
 public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHandlerController {
 
     public IdPInitiatedProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                                final ParserPool parserPool,
                                                 final AuthenticationSystemSupport authenticationSystemSupport,
                                                 final ServicesManager servicesManager,
                                                 final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -60,7 +58,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
                                                 final CasConfigurationProperties casProperties,
                                                 final SamlObjectSignatureValidator samlObjectSignatureValidator,
                                                 final Service callbackService) {
-        super(samlObjectSigner, parserPool, authenticationSystemSupport,
+        super(samlObjectSigner, authenticationSystemSupport,
             servicesManager, webApplicationServiceFactory,
             samlRegisteredServiceCachingMetadataResolver,
             configBean, responseBuilder, casProperties,

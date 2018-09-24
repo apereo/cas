@@ -7,6 +7,7 @@ import org.apereo.cas.util.CompressionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,7 +28,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class DefaultLogoutManager implements LogoutManager {
     private final LogoutMessageCreator logoutMessageBuilder;
-    private final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
     private final boolean singleLogoutCallbacksDisabled;
     private final LogoutExecutionPlan logoutExecutionPlan;
 
@@ -54,19 +54,29 @@ public class DefaultLogoutManager implements LogoutManager {
     }
 
     private List<LogoutRequest> performLogoutForTicket(final TicketGrantingTicket ticketToBeLoggedOut) {
-        val streamServices = Stream.concat(Stream.of(ticketToBeLoggedOut.getServices()),
-            Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
-        return streamServices
+        val streamServices = Stream.concat(Stream.of(ticketToBeLoggedOut.getServices()), Stream.of(ticketToBeLoggedOut.getProxyGrantingTickets()));
+        val logoutServices = streamServices
             .map(Map::entrySet)
             .flatMap(Set::stream)
             .filter(entry -> entry.getValue() instanceof WebApplicationService)
-            .map(entry -> {
-                val service = (WebApplicationService) entry.getValue();
-                LOGGER.debug("Handling single logout callback for [{}]", service);
-                return this.singleLogoutServiceMessageHandler.handle(service, entry.getKey());
-            })
-            .flatMap(Collection::stream)
             .filter(Objects::nonNull)
+            .map(entry -> Pair.of(entry.getKey(), (WebApplicationService) entry.getValue()))
+            .collect(Collectors.toList());
+
+        val sloHandlers = logoutExecutionPlan.getSingleLogoutServiceMessageHandlers();
+        return logoutServices.stream()
+            .map(entry -> sloHandlers
+                .stream()
+                .filter(handler -> handler.supports(entry.getValue()))
+                .map(handler -> {
+                    val service = entry.getValue();
+                    LOGGER.debug("Handling single logout callback for [{}]", service);
+                    return handler.handle(service, entry.getKey(), ticketToBeLoggedOut);
+                })
+                .flatMap(Collection::stream)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()))
+            .flatMap(Collection::stream)
             .collect(Collectors.toList());
     }
 

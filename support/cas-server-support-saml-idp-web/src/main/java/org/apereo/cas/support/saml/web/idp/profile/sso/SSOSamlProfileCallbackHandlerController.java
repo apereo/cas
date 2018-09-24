@@ -19,7 +19,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignat
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.util.CommonUtils;
@@ -49,7 +48,6 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
     private final AbstractUrlBasedTicketValidator ticketValidator;
 
     public SSOSamlProfileCallbackHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                                   final ParserPool parserPool,
                                                    final AuthenticationSystemSupport authenticationSystemSupport,
                                                    final ServicesManager servicesManager,
                                                    final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -61,7 +59,6 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
                                                    final AbstractUrlBasedTicketValidator ticketValidator,
                                                    final Service callbackService) {
         super(samlObjectSigner,
-            parserPool,
             authenticationSystemSupport,
             servicesManager,
             webApplicationServiceFactory,
