@@ -406,9 +406,7 @@ public abstract class AbstractSamlProfileHandlerController {
 
         val registeredService = verifySamlRegisteredService(issuer);
         LOGGER.debug("Fetching saml metadata adaptor for [{}]", issuer);
-        val adaptor =
-            SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-                registeredService, authnRequest);
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
 
         if (!adaptor.isPresent()) {
             LOGGER.warn("No metadata could be found for [{}]", issuer);
