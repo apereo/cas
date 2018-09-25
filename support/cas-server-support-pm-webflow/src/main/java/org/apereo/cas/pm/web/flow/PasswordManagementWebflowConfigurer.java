@@ -134,11 +134,11 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             realSubmit.getEntryActionList().add(createEvaluateAction("flowScope." + DO_CHANGE_PASSWORD_PARAMETER
                 + " = requestParameters." + DO_CHANGE_PASSWORD_PARAMETER + " != null"));
 
-            createDecisionState(flow, CasWebflowConstants.CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION, "requestParameters."
+            createDecisionState(flow, CasWebflowConstants.DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION, "requestParameters."
                 + SendPasswordResetInstructionsAction.PARAMETER_NAME_TOKEN + " != null", CasWebflowConstants.STATE_ID_PASSWORD_RESET_SUBFLOW, originalTargetState);
             createTransitionForState(initializeLoginFormState,
                 CasWebflowConstants.STATE_ID_SUCCESS,
-                CasWebflowConstants.CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION, true);
+                CasWebflowConstants.DECISION_STATE_CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION, true);
             createEndState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_RESET_FLOW_COMPLETE);
             createTransitionForState(
                 getTransitionableState(pswdFlow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS),
