@@ -56,7 +56,7 @@ public class TokenCoreConfiguration {
         val crypto = casProperties.getAuthn().getToken().getCrypto();
 
         val enabled = FunctionUtils.doIf(
-            !crypto.isEnabled() && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey()),
+            !crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey()),
             () -> {
                 LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
                     + "are defined for operations. CAS will proceed to enable the token encryption/signing functionality.");

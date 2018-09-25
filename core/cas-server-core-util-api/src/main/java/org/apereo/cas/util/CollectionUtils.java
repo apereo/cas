@@ -84,7 +84,7 @@ public class CollectionUtils {
             val set = (Set<Map.Entry>) map.entrySet();
             c.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
-            if ((byte[].class).isInstance(obj)) {
+            if (byte[].class.isInstance(obj)) {
                 c.add(obj);
             } else {
                 c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));

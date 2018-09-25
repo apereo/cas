@@ -66,7 +66,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
                 LOGGER.debug("Filtering devices for [{}] based on device expiration date [{}]", username, expirationDate);
                 val list = devs
                     .stream()
-                    .filter(d -> d.getUsername().equals(username) && (d.getCreatedDate().isAfter(expirationDate)))
+                    .filter(d -> d.getUsername().equals(username) && d.getCreatedDate().isAfter(expirationDate))
                     .collect(Collectors.toList());
 
                 LOGGER.debug("There are [{}] device(s) remaining in repository for [{}]", list.size(), username);
