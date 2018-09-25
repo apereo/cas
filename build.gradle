@@ -388,9 +388,6 @@ subprojects {
         testImplementation libraries.tests
         testImplementation libraries.groovy
         compileOnly libraries.findbugsannotations
-        
-        // Experimenting...
-        testImplementation "org.projectlombok:lombok:$lombokVersion"
     }
 
     if (project.name != 'cas-server-core-api-test-category') {
