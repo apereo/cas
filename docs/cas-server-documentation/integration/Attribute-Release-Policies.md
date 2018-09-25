@@ -194,7 +194,7 @@ have resolved a `uid` attribute with a value of `piper`, you could then consider
     "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
     "allowedAttributes" : {
       "@class" : "java.util.TreeMap",
-      "uid" : "groovy { return attributes['uid'] + ' is great' }"
+      "uid" : "groovy { return attributes['uid'].get(0) + ' is great' }"
     }
   }
 }
