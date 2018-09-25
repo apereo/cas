@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.config.JdbcMultifactorAuthnTrustConfiguration;
@@ -36,6 +37,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
+    CasCoreUtilConfiguration.class,
     JdbcMultifactorAuthnTrustConfiguration.class,
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
