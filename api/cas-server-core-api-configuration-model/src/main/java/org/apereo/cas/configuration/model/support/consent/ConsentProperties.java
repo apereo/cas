@@ -80,13 +80,7 @@ public class ConsentProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
-
-    /**
-     * This is {@link org.apereo.cas.configuration.model.support.couchdb.consent.CouchDbConsentProperties}.
-     *
-     * @author Timur Duehr
-     * @since 5.3.0
-     */
+    
     @RequiresModule(name = "cas-server-support-consent-couchdb")
     @Getter
     @Setter
