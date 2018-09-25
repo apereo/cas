@@ -44,7 +44,7 @@ public class CoreTicketUtils {
                                                                  final String registryName) {
 
         val enabled = FunctionUtils.doIf(
-            !registry.isEnabled() && (StringUtils.isNotBlank(registry.getEncryption().getKey())) && StringUtils.isNotBlank(registry.getSigning().getKey()),
+            !registry.isEnabled() && StringUtils.isNotBlank(registry.getEncryption().getKey()) && StringUtils.isNotBlank(registry.getSigning().getKey()),
             () -> {
                 LOGGER.warn("Ticket registry encryption/signing for [{}] is not enabled explicitly in the configuration, yet signing/encryption keys "
                     + "are defined for ticket operations. CAS will proceed to enable the ticket registry encryption/signing functionality. "
