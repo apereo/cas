@@ -20,7 +20,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.val;
 import org.springframework.context.ApplicationContext;
-import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
@@ -100,7 +99,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
     protected void createAuthenticationWarningMessagesView(final Flow flow) {
         val state = createViewState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS, "casLoginMessageView");
 
-        val setAction = new SetAction(createExpression("requestScope.messages"), createExpression("messageContext.allMessages"));
+        val setAction = createSetAction("requestScope.messages", "messageContext.allMessages");
         state.getEntryActionList().add(setAction);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED, CasWebflowConstants.STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW);
 

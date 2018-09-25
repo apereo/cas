@@ -29,6 +29,7 @@ import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ExternalRedirectAction;
+import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.StateDefinition;
@@ -238,6 +239,11 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public void setStartState(final Flow flow, final TransitionableState state) {
         setStartState(flow, state.getId());
+    }
+
+    @Override
+    public SetAction createSetAction(final String name, final String value) {
+        return new SetAction(createExpression(name), createExpression(value));
     }
 
     @Override
