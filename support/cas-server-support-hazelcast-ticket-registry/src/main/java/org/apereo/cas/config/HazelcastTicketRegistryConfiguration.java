@@ -46,6 +46,7 @@ public class HazelcastTicketRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("casHazelcastInstance")
     private HazelcastInstance hazelcastInstance;
 
     @Autowired

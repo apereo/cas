@@ -110,7 +110,7 @@ public class CasThrottlingConfiguration {
         return new InMemoryThrottledSubmissionCleaner(plan);
     }
 
-    @ConditionalOnMissingBean(name = "authenticationThrottlingExecutionPlanCtonfigurer")
+    @ConditionalOnMissingBean(name = "authenticationThrottlingExecutionPlanConfigurer")
     @Bean
     @Order(0)
     public AuthenticationThrottlingExecutionPlanConfigurer authenticationThrottlingExecutionPlanConfigurer() {

@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,18 +19,19 @@ import org.springframework.context.annotation.Configuration;
  * @author Travis Schmidt
  * @since 5.3.4
  */
-@Configuration("hazelcastConfiguration")
+@Configuration("casHazelcastConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class HazelcastConfiguration {
+public class CasHazelcastConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @ConditionalOnMissingBean(name = "casHazelcastInstance")
     @Bean
-    public HazelcastInstance hazelcastInstance() {
-        LOGGER.debug("CREATING HAZELCAST INSTANCE");
+    public HazelcastInstance casHazelcastInstance() {
         final BaseHazelcastProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
+        LOGGER.debug("Creating Hazelcast instance using properties [{}]", hz);
         final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
         return Hazelcast.newHazelcastInstance(factory.build(hz));
     }

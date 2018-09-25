@@ -1,8 +1,5 @@
 package org.apereo.cas.config;
 
-import com.hazelcast.config.MapConfig;
-import com.hazelcast.core.HazelcastInstance;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -16,6 +13,11 @@ import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPubl
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.services.replication.DefaultRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
+
+import com.hazelcast.config.MapConfig;
+import com.hazelcast.core.HazelcastInstance;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -46,6 +48,7 @@ public class CasServicesStreamingHazelcastConfiguration {
     private StringBean casRegisteredServiceStreamPublisherIdentifier;
 
     @Autowired
+    @Qualifier("casHazelcastInstance")
     private HazelcastInstance hazelcastInstance;
 
     @Bean
