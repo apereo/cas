@@ -12,6 +12,11 @@
             <property name="severity" value="error"/>
         </module>
         <module name="LambdaParameterName"/>
+        <module name="HiddenField">
+            <property name="tokens" value="VARIABLE_DEF" />
+            <property name="ignoreSetter" value="true"/>
+            <property name="ignoreConstructorParameter" value="true"/>
+        </module>
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>

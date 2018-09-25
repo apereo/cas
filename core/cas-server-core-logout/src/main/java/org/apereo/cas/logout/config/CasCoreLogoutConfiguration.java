@@ -4,8 +4,6 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultLogoutManager;
-import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.logout.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutManager;
@@ -13,6 +11,8 @@ import org.apereo.cas.logout.LogoutMessageCreator;
 import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.SingleLogoutServiceMessageHandler;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
@@ -75,7 +75,7 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @Bean
     public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler() {
         return new DefaultSingleLogoutServiceMessageHandler(httpClient.getIfAvailable(),
-            logoutBuilder(),
+            defaultLogoutBuilder(),
             servicesManager.getIfAvailable(),
             singleLogoutServiceLogoutUrlBuilder(),
             casProperties.getSlo().isAsynchronous(),
@@ -87,13 +87,12 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @Autowired
     @Bean
     public LogoutManager logoutManager(@Qualifier("logoutExecutionPlan") final LogoutExecutionPlan logoutExecutionPlan) {
-        return new DefaultLogoutManager(logoutBuilder(), defaultSingleLogoutServiceMessageHandler(),
-            casProperties.getSlo().isDisabled(), logoutExecutionPlan);
+        return new DefaultLogoutManager(defaultLogoutBuilder(), casProperties.getSlo().isDisabled(), logoutExecutionPlan);
     }
 
-    @ConditionalOnMissingBean(name = "logoutBuilder")
+    @ConditionalOnMissingBean(name = "defaultLogoutBuilder")
     @Bean
-    public LogoutMessageCreator logoutBuilder() {
+    public LogoutMessageCreator defaultLogoutBuilder() {
         return new SamlCompliantLogoutMessageCreator();
     }
 
@@ -112,13 +111,14 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
 
     @Override
     public void configureLogoutExecutionPlan(final LogoutExecutionPlan plan) {
+        plan.registerSingleLogoutServiceMessageHandler(defaultSingleLogoutServiceMessageHandler());
+
         if (casProperties.getLogout().isRemoveDescendantTickets()) {
             LOGGER.debug("CAS is configured to remove descendant tickets of the ticket-granting tickets");
             plan.registerLogoutHandler(ticketGrantingTicket -> ticketGrantingTicket.getDescendantTickets()
-                .stream()
                 .forEach(t -> {
                     LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, ticketGrantingTicket.getId());
-                    ticketRegistry.getIfAvailable().deleteTicket(t);
+                    ticketRegistry.getObject().deleteTicket(t);
                 }));
         }
     }

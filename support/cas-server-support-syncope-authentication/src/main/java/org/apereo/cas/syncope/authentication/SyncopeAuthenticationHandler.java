@@ -51,13 +51,13 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     @SneakyThrows
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
                                                                                         final String originalPassword) {
-        val syncopeUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
-        val response = HttpUtils.executeGet(syncopeUrl, c.getUsername(), c.getPassword(),
+        val syncopeRestUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
+        val response = HttpUtils.executeGet(syncopeRestUrl, c.getUsername(), c.getPassword(),
             new HashMap<>(), CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain));
 
         LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
 
-        if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
             val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
             LOGGER.debug("Received user object as [{}]", result);
             val user = this.objectMapper.readValue(result, UserTO.class);
@@ -127,7 +127,6 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         }
 
         user.getPlainAttrs()
-            .stream()
             .forEach(a -> attributes.put("syncopeUserAttr" + a.getSchema(), a.getValues()));
         return attributes;
     }

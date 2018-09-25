@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -66,7 +68,7 @@ public class DefaultLogoutManagerTests {
         s.setName("Test registered service " + id);
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
+        s.setId(RandomUtils.getNativeInstance().nextInt());
         return s;
     }
 
@@ -94,14 +96,16 @@ public class DefaultLogoutManagerTests {
         services.put(ID, this.simpleWebApplicationServiceImpl);
         when(this.tgt.getServices()).thenReturn(services);
 
-        this.logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(),
-            singleLogoutServiceMessageHandler, false, mock(LogoutExecutionPlan.class));
+        val plan = new DefaultLogoutExecutionPlan();
+        plan.registerSingleLogoutServiceMessageHandler(singleLogoutServiceMessageHandler);
+
+        this.logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), false, plan);
         this.registeredService = getRegisteredService(URL);
         when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
     }
 
     @Test
-    public void verifyServiceLogoutUrlIsUsed() throws Exception {
+    public void verifyServiceLogoutUrlIsUsed() {
         this.registeredService.setLogoutUrl("https://www.apereo.org");
         val logoutRequests = this.logoutManager.performLogout(tgt);
         val logoutRequest = logoutRequests.iterator().next();
@@ -110,8 +114,9 @@ public class DefaultLogoutManagerTests {
 
     @Test
     public void verifyLogoutDisabled() {
-        this.logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(),
-            singleLogoutServiceMessageHandler, true, mock(LogoutExecutionPlan.class));
+        val plan = new DefaultLogoutExecutionPlan();
+        plan.registerSingleLogoutServiceMessageHandler(singleLogoutServiceMessageHandler);
+        this.logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), true, plan);
 
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());

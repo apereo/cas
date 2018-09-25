@@ -40,7 +40,7 @@ public class ServiceRegistryInitializer {
             .stream()
             .filter(s -> !findExistingMatchForService(s))
             .forEach(r -> {
-                LOGGER.debug("Initializing service registry with the [{}] JSON service definition...", r);
+                LOGGER.debug("Initializing service registry with the [{}] JSON service definition...", r.getName());
                 this.serviceRegistry.save(r);
             });
         this.servicesManager.load();

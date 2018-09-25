@@ -742,7 +742,7 @@ public class LdapUtils {
 
         val urls = l.getLdapUrl().contains(" ")
             ? l.getLdapUrl()
-            : Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
+            : String.join(" ", l.getLdapUrl().split(","));
         LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
         cc.setLdapUrl(urls);
 

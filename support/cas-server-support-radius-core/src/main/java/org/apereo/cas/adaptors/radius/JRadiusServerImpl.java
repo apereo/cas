@@ -5,6 +5,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jradius.client.RadiusClient;
+import net.jradius.dictionary.Attr_ClientIPAddress;
 import net.jradius.dictionary.Attr_NASIPAddress;
 import net.jradius.dictionary.Attr_NASIPv6Address;
 import net.jradius.dictionary.Attr_NASIdentifier;
@@ -19,6 +20,7 @@ import net.jradius.packet.AccessRequest;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.security.Security;
@@ -111,8 +113,18 @@ public class JRadiusServerImpl implements RadiusServer {
     @Override
     public RadiusResponse authenticate(final String username, final String password) throws Exception {
         val attributeList = new AttributeList();
+        
         attributeList.add(new Attr_UserName(username));
         attributeList.add(new Attr_UserPassword(password));
+
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        if (clientInfo != null) {
+            val clientIpAddress = clientInfo.getClientIpAddress();
+            val clientIpAttribute = new Attr_ClientIPAddress(clientIpAddress);
+            LOGGER.debug("Adding client IP address attribute [{}]", clientIpAttribute);
+            attributeList.add(clientIpAttribute);
+        }
+
         if (StringUtils.isNotBlank(this.nasIpAddress)) {
             attributeList.add(new Attr_NASIPAddress(this.nasIpAddress));
         }

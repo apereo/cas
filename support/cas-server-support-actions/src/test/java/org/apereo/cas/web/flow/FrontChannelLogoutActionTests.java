@@ -2,11 +2,11 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
+import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultLogoutManager;
-import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.logout.DefaultSingleLogoutServiceMessageHandler;
-import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
@@ -56,8 +56,10 @@ public class FrontChannelLogoutActionTests {
         val handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
             new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-        val logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(),
-            handler, false, mock(LogoutExecutionPlan.class));
+
+        val plan = new DefaultLogoutExecutionPlan();
+        plan.registerSingleLogoutServiceMessageHandler(handler);
+        val logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), false, plan);
 
         this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
 

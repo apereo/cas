@@ -11,6 +11,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-web")
+
+    testImplementation project(":support:cas-server-support-aup-webflow")
+    
+    testImplementation project(path: ":support:cas-server-support-aup-webflow", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -58,10 +59,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
             .stream()
             .map(entry -> entry.getValue().getWarnings())
             .flatMap(Collection::stream)
-            .map(message -> {
-                addMessageDescriptorToMessageContext(messageContext, message);
-                return message;
-            })
+            .peek(message -> addMessageDescriptorToMessageContext(messageContext, message))
             .collect(Collectors.toSet());
     }
 
@@ -140,6 +138,9 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
             tgt.getAuthentication().update(authentication);
             this.centralAuthenticationService.updateTicket(tgt);
             return tgt;
+        } catch (final PrincipalException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new InvalidTicketException(ticketGrantingTicket);
