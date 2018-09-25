@@ -49,7 +49,7 @@ public class BaseConsentRepositoryTests {
 
     @Autowired
     @Qualifier("consentRepository")
-    private ConsentRepository repository;
+    protected ConsentRepository repository;
 
     public ConsentRepository getRepository(final String testName) {
         return getRepository();

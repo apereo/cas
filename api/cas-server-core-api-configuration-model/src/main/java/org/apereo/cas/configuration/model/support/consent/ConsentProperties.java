@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.consent;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.couchdb.BaseCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
@@ -70,10 +71,32 @@ public class ConsentProperties implements Serializable {
     private MongoDb mongo = new MongoDb();
 
     /**
+     * Keep consent decisions stored via a CouchDb database resource.
+     */
+    private CouchDb couchDb = new CouchDb();
+
+    /**
      * Signing/encryption settings.
      */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
+    /**
+     * This is {@link org.apereo.cas.configuration.model.support.couchdb.consent.CouchDbConsentProperties}.
+     *
+     * @author Timur Duehr
+     * @since 5.3.0
+     */
+    @RequiresModule(name = "cas-server-support-consent-couchdb")
+    @Getter
+    @Setter
+    public static class CouchDb extends BaseCouchDbProperties {
+        private static final long serialVersionUID = 8184753250455916462L;
+
+        public CouchDb() {
+            this.setDbName("consent");
+        }
+    }
 
     @RequiresModule(name = "cas-server-consent-webflow")
     @Getter
