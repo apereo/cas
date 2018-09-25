@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -26,6 +27,7 @@ import java.math.BigInteger;
 @Document
 @Getter
 @Setter
+@AllArgsConstructor
 public class SamlIdPMetadataDocument {
 
     @javax.persistence.Id
