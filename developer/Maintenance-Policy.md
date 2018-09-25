@@ -14,8 +14,7 @@ In particular, the following questions are addressed:
 
 ## Schedules
 
-The project release schedule is [available here](https://github.com/apereo/cas/milestones). The 
-[maintenance policy](Maintenance-Policy.html) is also available.
+The project release schedule is [available here](https://github.com/apereo/cas/milestones). 
 
 ## Policy
 
