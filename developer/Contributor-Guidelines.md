@@ -111,7 +111,7 @@ The CAS project generally operates based on its own [maintenance policy](https:/
 
 By simply delivering the change and having it get merged into the codebase relevant branches. There is no predefined roadmap for the project. Work items get completed based on community's availability, interest, time and money. **The roadmap is what you intend to work on.**
 
-## How often are changed released?
+## How often are changes released?
 
 You can review the [release schedule](https://github.com/apereo/cas/milestones). Note that the dates specified for each milestone are somewhat tentative and may be pushed around depending on need and severity. 
 
