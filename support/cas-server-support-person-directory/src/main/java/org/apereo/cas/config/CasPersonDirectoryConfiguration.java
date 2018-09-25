@@ -267,8 +267,9 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         casProperties.getAuthn().getAttributeRepository().getScript()
             .forEach(Unchecked.consumer(script -> {
                 val scriptContents = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
-                val engineName = script.getEngineName() == null ?
-                        ScriptEnginePersonAttributeDao.getScriptEngineName(script.getLocation().getFilename()) : script.getEngineName();
+                val engineName = script.getEngineName() == null
+                    ? ScriptEnginePersonAttributeDao.getScriptEngineName(script.getLocation().getFilename())
+                    : script.getEngineName();
                 val dao = new ScriptEnginePersonAttributeDao(scriptContents, engineName);
                 dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
                 dao.setOrder(script.getOrder());
