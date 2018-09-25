@@ -76,11 +76,11 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
     public void verifyEncryptedNameIdFormat() {
         val service = getSamlRegisteredServiceForTestShib();
         service.setRequiredNameIdFormat(NameID.ENCRYPTED);
-
+        service.setSkipGeneratingSubjectConfirmationNameId(false);
+        
         val authnRequest = getAuthnRequestFor(service);
         
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-                SamlRegisteredService.class.cast(service), service.getServiceId()).get();
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, service, service.getServiceId()).get();
 
         val assertion = mock(Assertion.class);
         when(assertion.getPrincipal()).thenReturn(new AttributePrincipalImpl("casuser"));
@@ -91,7 +91,8 @@ public class SamlProfileSamlNameIdBuilderTests extends BaseSamlIdPConfigurationT
         assertNull(subject.getNameID());
         assertNotNull(subject.getEncryptedID());
         assertFalse(subject.getSubjectConfirmations().isEmpty());
-        assertNotNull(subject.getSubjectConfirmations().get(0).getEncryptedID());
-        assertNull(subject.getSubjectConfirmations().get(0).getNameID());
+        val subjectConfirmation = subject.getSubjectConfirmations().get(0);
+        assertNotNull(subjectConfirmation.getEncryptedID());
+        assertNull(subjectConfirmation.getNameID());
     }
 }
