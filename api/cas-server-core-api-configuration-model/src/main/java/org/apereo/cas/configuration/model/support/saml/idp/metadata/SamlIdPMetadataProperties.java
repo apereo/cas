@@ -75,6 +75,12 @@ public class SamlIdPMetadataProperties implements Serializable {
     private AmazonS3SamlMetadataProperties amazonS3 = new AmazonS3SamlMetadataProperties();
 
     /**
+     * Properties pertaining to CouchDB metadata resolution.
+     */
+    @NestedConfigurationProperty
+    private CouchDbSamlMetadataProperties couchDb = new CouchDbSamlMetadataProperties();
+
+    /**
      * Algorithm name to use when generating private key.
      */
     private String privateKeyAlgName = "RSA";
