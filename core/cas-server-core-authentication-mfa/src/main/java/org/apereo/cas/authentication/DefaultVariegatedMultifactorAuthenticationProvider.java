@@ -46,6 +46,12 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     }
 
     @Override
+    public boolean isAvailable() throws AuthenticationException {
+        final long count = this.providers.stream().filter(p -> p.isAvailable()).count();
+        return count == providers.size();
+    }
+
+    @Override
     public boolean matches(final String identifier) {
         return findProvider(identifier) != null;
     }
