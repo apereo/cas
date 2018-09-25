@@ -342,3 +342,7 @@ a i.expand:before {
   transition: none;
   display: none;
 }
+
+.table td:first-child {
+  white-space: nowrap;
+}
