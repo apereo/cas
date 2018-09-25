@@ -1,0 +1,41 @@
+description = "Apereo CAS SAML Identity Provider Metadata Resolution Via CouchDb"
+dependencies {
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-saml-mdui-core")
+    implementation project(":support:cas-server-support-saml-idp-core")
+    implementation project(":support:cas-server-support-saml-idp-metadata")
+    implementation project(":support:cas-server-support-saml-idp-ticket")
+    implementation project(":support:cas-server-support-saml-idp")
+    implementation project(":support:cas-server-support-saml-core-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":support:cas-server-support-couchdb-core")
+
+    implementation libraries.ektorp
+    implementation libraries.shibidp
+    implementation libraries.pac4j
+    implementation libraries.caffein
+
+    runtimeOnly libraries.groovy
+
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-validation")
+    testImplementation project(":core:cas-server-core-validation-api")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+}

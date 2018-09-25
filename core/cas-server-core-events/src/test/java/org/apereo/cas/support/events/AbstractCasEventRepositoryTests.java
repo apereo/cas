@@ -39,9 +39,9 @@ public abstract class AbstractCasEventRepositoryTests {
         val col = getEventRepository().load();
         assertEquals(2, col.size());
 
-        assertNotEquals("Event IDs are equal", dto2.getId(), dto1.getId());
+        assertNotEquals("Created Event IDs are equal", dto2.getEventId(), dto1.getEventId());
 
-        assertEquals("Stored event IDs are equal", 2, col.stream().map(CasEvent::getId).distinct().count());
+        assertEquals("Stored event IDs are equal", 2, col.stream().map(CasEvent::getEventId).distinct().count());
         col.forEach(event -> {
             assertFalse(event.getProperties().isEmpty());
             if (event.getEventId().equals(dto1.getEventId())) {
