@@ -13,11 +13,9 @@ gradleBuild="$gradleBuild test coveralls --parallel -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
-# if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-#    gradleBuild="$gradleBuild -DshowStandardStreams=true "
-# fi
-
-gradleBuild="$gradleBuild -DshowStandardStreams=true "
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
+   gradleBuild="$gradleBuild -DshowStandardStreams=true "
+fi
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
     gradleBuild="$gradleBuild --rerun-tasks "
