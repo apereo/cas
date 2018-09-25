@@ -114,7 +114,7 @@ def checkForSpringConfigurationFactories(String projectPath, String configuratio
     def classes = configurations.split(",")
     classes.each {
         def sourcePath = "/src/main/java/".replace("/", String.valueOf(File.separator))
-        def clazz = projectPath + sourcePath + it.replace(".", String.valueOf(File.separator))  + ".java"
+        def clazz = projectPath + sourcePath + it.replace(".", String.valueOf(File.separator)) + ".java"
         def configurationFile = new File(clazz)
         if (!configurationFile.exists()) {
             throw new GradleException("Spring configuration class does not exist: ${clazz}")
@@ -134,9 +134,9 @@ def printSpotbugsReportToConsole(File file) {
                 println "*********************************"
                 println "Bug (" + bug.@abbrev + "): " + bug.@type + " [" + bug.@priority + "-" + bug.@rank + "] @ category " + bug.@category
                 bug.Class.each { clz ->
-                    println "\tClass: " + clz.@classname 
+                    println "\tClass: " + clz.@classname
                     clz.SourceLine.each { line ->
-                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Source Path: [" + line.@sourcepath  + "], Source File: [" + line.@sourcefile + "]"
+                        println "\tStart Line: " + line.@start + ", End Line: " + line.@end + ", Source Path: [" + line.@sourcepath + "], Source File: [" + line.@sourcefile + "]"
                     }
                 }
                 println "\t----------------------METHOD-----------------------------"

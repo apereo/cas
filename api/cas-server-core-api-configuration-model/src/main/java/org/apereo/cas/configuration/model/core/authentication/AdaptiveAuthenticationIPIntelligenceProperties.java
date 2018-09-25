@@ -77,8 +77,8 @@ public class AdaptiveAuthenticationIPIntelligenceProperties implements Serializa
          * code just look for the value "1". However, there are many IPs that haven't gone through manual review and IPs
          * can change behavior very frequently (which is why dynamic checks exist in the first place). If you only look
          * for the value of "1", then expect to have more proxy / VPN / bad IPs go through your system, however, false
-         * positives are less likely if you use the dynamic ban list option. If you wish to use only manually banned &
-         * public proxy IPs, append the parameter &flags=m, the system will only
+         * positives are less likely if you use the dynamic ban list option. If you wish to use only manually banned and
+         * public proxy IPs, append the parameter flags=m, the system will only
          * return a result of 0 or 1. This option is the best to start off with that will have a noticeable impact in bot /
          * proxy / VPN traffic, especially if you don't have any data sets to test with the system.</li>
          *
@@ -87,7 +87,7 @@ public class AdaptiveAuthenticationIPIntelligenceProperties implements Serializa
          * system does not attempt to go through the full bad IPs check because the time for the extra checks vary wildly
          * (between an extra 200ms to 2 seconds). In this mode, false positives are more likely than dynamic ban lists only.
          * Scores are lower compared to the full IP check (without any flag options) because less attributes are considered.
-         * If you wish to use dynamic ban list and dynamic checks only, append the parameter &flags=b. This option is the
+         * If you wish to use dynamic ban list and dynamic checks only, append the parameter flags=b. This option is the
          * best if dynamic ban lists isn't catching enough IPs but you don't want to run the full check because it takes
          * too long and/or you want to have a predictable execution time.</li>
          *

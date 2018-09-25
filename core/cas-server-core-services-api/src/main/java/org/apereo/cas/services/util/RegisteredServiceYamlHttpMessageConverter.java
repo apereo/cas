@@ -13,6 +13,7 @@ import org.springframework.http.converter.HttpMessageNotWritableException;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 /**
@@ -38,7 +39,7 @@ public class RegisteredServiceYamlHttpMessageConverter<T> extends AbstractHttpMe
 
     @Override
     protected void writeInternal(final T t, final HttpOutputMessage outputMessage) throws IOException, HttpMessageNotWritableException {
-        try (val writer = new OutputStreamWriter(outputMessage.getBody())) {
+        try (val writer = new OutputStreamWriter(outputMessage.getBody(), StandardCharsets.UTF_8)) {
             val serializer = new RegisteredServiceYamlSerializer();
             if (t instanceof Collection) {
                 Collection.class.cast(t)

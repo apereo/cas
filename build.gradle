@@ -141,7 +141,7 @@ allprojects {
             }
         }
     }
-    
+
     signArchives.enabled = rootProject.publishingRelease || rootProject.publishSnapshots
 
     /*
@@ -175,9 +175,9 @@ subprojects {
         doLast {}
     }
     apply plugin: "java-library"
-   if (!rootProject.skipErrorProneCompiler) {
-       apply plugin: "net.ltgt.errorprone-javacplugin"
-   }
+    if (!rootProject.skipErrorProneCompiler) {
+        apply plugin: "net.ltgt.errorprone-javacplugin"
+    }
     apply plugin: "checkstyle"
     apply plugin: "io.franzbecker.gradle-lombok"
     if (!Boolean.getBoolean("skipFindbugs")) {
@@ -275,13 +275,13 @@ subprojects {
     [compileTestJava, compileJava].each {
         it.options.fork = false
         it.options.incremental = false
-        
+
         def casCompilerArgs = ["-parameters"]
 
         if (!rootProject.skipErrorProneCompiler) {
             it.options.errorprone.allErrorsAsWarnings = false
             it.options.errorprone.disableWarningsInGeneratedCode = true
-            it.options.errorprone.errorproneArgs += [ '-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF' ]
+            it.options.errorprone.errorproneArgs += ['-Xep:ParameterName:OFF', '-Xep:MissingOverride:OFF']
 
             casCompilerArgs.add("-XDcompilePolicy=byfile")
         }
@@ -450,7 +450,7 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
             it.tasks.withType(Test).each { task -> dependsOn(task) }
         }
     }
-    
+
     dependsOn jacocoMerge
 
     additionalSourceDirs = files(publishedProjects.sourceSets.main.allSource.srcDirs)

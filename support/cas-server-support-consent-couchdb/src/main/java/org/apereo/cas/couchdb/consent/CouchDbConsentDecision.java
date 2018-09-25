@@ -65,7 +65,7 @@ public class CouchDbConsentDecision extends ConsentDecision {
         setReminderTimeUnit(c.getReminderTimeUnit());
         setService(c.getService());
         if (getId() < 0) {
-            setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+            setId(RandomUtils.getNativeInstance().nextLong());
         }
     }
 
