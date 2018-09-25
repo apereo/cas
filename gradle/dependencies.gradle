@@ -1211,6 +1211,7 @@ ext.libraries = [
                     exclude(group: "com.fasterxml.jackson.jaxrs", module: "jackson-jaxrs-json-provider")
                     exclude(group: "org.apache.wink", module: "wink-client")
                     exclude(group: "org.apache.wink", module: "wink-common")
+                    exclude(group: "com.unboundid.components", module: "json")
                     exclude(group: "org.apache.geronimo.specs", module: "geronimo-jaxrs_1.1_spec")
                     force = true
                 },
@@ -1228,6 +1229,7 @@ ext.libraries = [
                     exclude(group: "org.apache.geronimo.specs", module: "geronimo-jaxrs_1.1_spec")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.unboundid.components", module: "json")
                     force = true
                 },
                 dependencies.create("org.glassfish.jersey.security:oauth2-client:$jerseyVersion") {
