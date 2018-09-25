@@ -1,12 +1,13 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import org.apereo.cas.authentication.principal.AbstractServiceFactory;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
+
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
-import org.apereo.cas.authentication.principal.AbstractServiceFactory;
-import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -36,8 +37,9 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
     public SamlService createService(final HttpServletRequest request) {
         final String service = request.getParameter(SamlProtocolConstants.CONST_PARAM_TARGET);
         final String requestBody = request.getMethod().equalsIgnoreCase(HttpMethod.POST.name()) ? getRequestBody(request) : null;
-        final String artifactId;
-        final String requestId;
+
+        String artifactId = null;
+        String requestId = null;
 
         if (!StringUtils.hasText(service) && !StringUtils.hasText(requestBody)) {
             LOGGER.trace("Request does not specify a [{}] or request body is empty", SamlProtocolConstants.CONST_PARAM_TARGET);
@@ -51,21 +53,22 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             final Document document = saml10ObjectBuilder.constructDocumentFromXml(requestBody);
             final Element root = document.getRootElement();
 
-            @NonNull
-            final Element body = root.getChild("Body", NAMESPACE_ENVELOPE);
-            @NonNull
-            final Element requestChild = body.getChild("Request", NAMESPACE_SAML1);
+            @NonNull final Element body = root.getChild("Body", NAMESPACE_ENVELOPE);
+            @NonNull final Element requestChild = body.getChild("Request", NAMESPACE_SAML1);
 
-            @NonNull
-            final Element artifactElement = requestChild.getChild("AssertionArtifact", NAMESPACE_SAML1);
+            @NonNull final Element artifactElement = requestChild.getChild("AssertionArtifact", NAMESPACE_SAML1);
             artifactId = artifactElement.getValue();
 
-            @NonNull
             final Attribute requestIdAttribute = requestChild.getAttribute("RequestID");
-            requestId = requestIdAttribute.getValue();
-        } else {
-            artifactId = null;
-            requestId = null;
+            if (requestIdAttribute == null) {
+
+                LOGGER.error("SAML request body does not specify the RequestID attribute. This is a required attribute per the schema definition and MUST be provided by the client. "
+                    + " RequestID needs to be unique on a per-request basis and per OWASP, it may be 16 bytes of entropy in session identifiers which have similar requirements. "
+                    + "While CAS does allow the RequestID attribute to be optional for the time being to preserve backward compatibility, this behavior MUST be fixed by the client "
+                    + "and future CAS versions begin to enforce the presence of RequestID more forcefully to remain compliant with schema and protocol.");
+            } else {
+                requestId = requestIdAttribute.getValue();
+            }
         }
 
         LOGGER.debug("Request Body: [{}]\n\"Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", requestBody, artifactId, requestId);
