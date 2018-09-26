@@ -17,14 +17,14 @@ import lombok.val;
  */
 @Slf4j
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class AnyAuthenticationPolicy implements AuthenticationPolicy {
 
     /**
      * Flag to try all credentials before policy is satisfied. Defaults to {@code false}.
      */
-    private boolean tryAll;
+    private final boolean tryAll;
 
     @Override
     public boolean isSatisfiedBy(final Authentication authn) throws Exception {
