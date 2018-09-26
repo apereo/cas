@@ -1,15 +1,13 @@
 package org.apereo.cas.monitor;
 
-import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.instance.HazelcastInstanceProxy;
 import com.hazelcast.memory.MemoryStats;
 import com.hazelcast.monitor.LocalMapStats;
-import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,22 +22,25 @@ import java.util.List;
 @ToString
 public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
-    public HazelcastHealthIndicator(final CasConfigurationProperties casProperties) {
+    /**
+     * CAS Hazelcast Instance.
+     */
+    private final HazelcastInstanceProxy instance;
+
+    public HazelcastHealthIndicator(final CasConfigurationProperties casProperties,
+                                    final HazelcastInstance instance) {
         super(casProperties);
+        this.instance = (HazelcastInstanceProxy) instance;
     }
 
     @Override
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> statsList = new ArrayList<>();
-        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        LOGGER.debug("Locating hazelcast instance [{}]...", hz.getCluster().getInstanceName());
-        @NonNull
-        final HazelcastInstanceProxy instance = (HazelcastInstanceProxy) Hazelcast.getHazelcastInstanceByName(hz.getCluster().getInstanceName());
         instance.getConfig().getMapConfigs().keySet().forEach(key -> {
             final IMap map = instance.getMap(key);
             final MemoryStats memoryStats = instance.getOriginal().getMemoryStats();
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
-            statsList.add(new HazelcastStatistics(map, hz.getCluster().getMembers().size(), memoryStats));
+            statsList.add(new HazelcastStatistics(map, instance.getCluster().getMembers().size(), memoryStats));
         });
         return statsList.toArray(new CacheStatistics[0]);
     }

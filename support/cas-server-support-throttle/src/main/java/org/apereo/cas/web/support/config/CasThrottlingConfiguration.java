@@ -26,7 +26,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * This is {@link CasThrottlingConfiguration}.
@@ -48,6 +51,14 @@ public class CasThrottlingConfiguration {
     private CasConfigurationProperties casProperties;
 
     @RefreshScope
+    @ConditionalOnMissingBean(name = "throttleSubmissionMap")
+    @Bean
+    @Lazy
+    public ConcurrentMap throttleSubmissionMap() {
+        return new ConcurrentHashMap<String, ZonedDateTime>();
+    }
+
+    @RefreshScope
     @ConditionalOnMissingBean(name = "authenticationThrottle")
     @Bean
     @Lazy
@@ -66,7 +77,8 @@ public class CasThrottlingConfiguration {
                 throttle.getUsernameParameter(),
                 throttle.getFailure().getCode(),
                 auditTrailExecutionPlan.getIfAvailable(),
-                throttle.getAppcode());
+                throttle.getAppcode(),
+                throttleSubmissionMap());
         }
         LOGGER.debug("Activating authentication throttling based on IP address...");
         return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(throttle.getFailure().getThreshold(),
@@ -74,7 +86,8 @@ public class CasThrottlingConfiguration {
             throttle.getUsernameParameter(),
             throttle.getFailure().getCode(),
             auditTrailExecutionPlan.getIfAvailable(),
-            throttle.getAppcode());
+            throttle.getAppcode(),
+            throttleSubmissionMap());
     }
 
     @Autowired
