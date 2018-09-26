@@ -70,7 +70,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
     public PrincipalResolver personDirectoryPrincipalResolver() {
         val personDirectory = casProperties.getPersonDirectory();
         val bean = new PersonDirectoryPrincipalResolver(
-            attributeRepository.getObject(),
+            attributeRepository.getIfAvailable(),
             principalFactory(),
             personDirectory.isReturnNull(),
             personDirectory.getPrincipalAttribute()
@@ -78,7 +78,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         bean.setUseCurrentPrincipalId(personDirectory.isUseExistingPrincipalId());
 
         val resolver = new ChainingPrincipalResolver();
-        if (!attributeRepositories.getObject().isEmpty()) {
+        if (!attributeRepositories.getIfAvailable().isEmpty()) {
             LOGGER.debug("Attribute repository sources are defined and available for the principal resolution chain. "
                 + "The principal resolver will use a combination of attributes collected from attribute repository sources "
                 + "and whatever may be collected during the authentication phase where results are eventually merged.");

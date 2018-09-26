@@ -53,7 +53,7 @@ public class CasCoreMonitorConfiguration {
         if (warnSt.getThreshold() > 0 && warnTgt.getThreshold() > 0) {
             LOGGER.debug("Configured session monitor with service ticket threshold [{}] and session threshold [{}]",
                 warnSt.getThreshold(), warnTgt.getThreshold());
-            return new SessionMonitor(ticketRegistry.getObject(), warnSt.getThreshold(), warnTgt.getThreshold());
+            return new SessionMonitor(ticketRegistry.getIfAvailable(), warnSt.getThreshold(), warnTgt.getThreshold());
         }
         return () -> Health.up().build();
     }

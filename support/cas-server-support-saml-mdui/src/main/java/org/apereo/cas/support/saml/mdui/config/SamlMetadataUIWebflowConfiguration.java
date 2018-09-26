@@ -68,8 +68,8 @@ public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPl
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
-        return new SamlMetadataUIWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), samlMetadataUIParserAction(),
+        return new SamlMetadataUIWebflowConfigurer(flowBuilderServices.getIfAvailable(),
+            loginFlowDefinitionRegistry.getIfAvailable(), samlMetadataUIParserAction(),
             applicationContext, casProperties);
     }
 

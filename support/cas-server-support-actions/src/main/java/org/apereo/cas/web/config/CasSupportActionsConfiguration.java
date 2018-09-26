@@ -142,42 +142,42 @@ public class CasSupportActionsConfiguration {
     @Bean
     @RefreshScope
     public Action authenticationViaFormAction() {
-        return new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
-            serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject());
+        return new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
+            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
+            adaptiveAuthenticationPolicy.getIfAvailable());
     }
 
     @RefreshScope
     @ConditionalOnMissingBean(name = "serviceAuthorizationCheck")
     @Bean
     public Action serviceAuthorizationCheck() {
-        return new ServiceAuthorizationCheck(this.servicesManager.getObject(),
-            authenticationRequestServiceSelectionStrategies.getObject());
+        return new ServiceAuthorizationCheck(this.servicesManager.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable());
     }
 
     @RefreshScope
     @ConditionalOnMissingBean(name = "sendTicketGrantingTicketAction")
     @Bean
     public Action sendTicketGrantingTicketAction() {
-        return new SendTicketGrantingTicketAction(centralAuthenticationService.getObject(),
-            ticketGrantingTicketCookieGenerator.getObject(), webflowSingleSignOnParticipationStrategy.getObject());
+        return new SendTicketGrantingTicketAction(centralAuthenticationService.getIfAvailable(),
+            ticketGrantingTicketCookieGenerator.getIfAvailable(), webflowSingleSignOnParticipationStrategy.getIfAvailable());
     }
 
     @RefreshScope
     @ConditionalOnMissingBean(name = "createTicketGrantingTicketAction")
     @Bean
     public Action createTicketGrantingTicketAction() {
-        return new CreateTicketGrantingTicketAction(centralAuthenticationService.getObject(),
-            authenticationSystemSupport.getObject(),
-            ticketRegistrySupport.getObject());
+        return new CreateTicketGrantingTicketAction(centralAuthenticationService.getIfAvailable(),
+            authenticationSystemSupport.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable());
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "logoutAction")
     public Action logoutAction() {
-        return new LogoutAction(webApplicationServiceFactory.getObject(),
-            servicesManager.getObject(),
+        return new LogoutAction(webApplicationServiceFactory.getIfAvailable(),
+            servicesManager.getIfAvailable(),
             casProperties.getLogout());
     }
 
@@ -185,21 +185,21 @@ public class CasSupportActionsConfiguration {
     @Bean
     @RefreshScope
     public Action initializeLoginAction() {
-        return new InitializeLoginAction(servicesManager.getObject());
+        return new InitializeLoginAction(servicesManager.getIfAvailable());
     }
 
     @RefreshScope
     @ConditionalOnMissingBean(name = "setServiceUnauthorizedRedirectUrlAction")
     @Bean
     public Action setServiceUnauthorizedRedirectUrlAction() {
-        return new SetServiceUnauthorizedRedirectUrlAction(servicesManager.getObject());
+        return new SetServiceUnauthorizedRedirectUrlAction(servicesManager.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "renderLoginFormAction")
     @Bean
     @RefreshScope
     public Action renderLoginFormAction() {
-        return new RenderLoginAction(servicesManager.getObject(), casProperties, applicationContext);
+        return new RenderLoginAction(servicesManager.getIfAvailable(), casProperties, applicationContext);
     }
 
     @RefreshScope
@@ -208,28 +208,28 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "initialFlowSetupAction")
     public Action initialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor),
-            servicesManager.getObject(),
-            authenticationRequestServiceSelectionStrategies.getObject(),
-            ticketGrantingTicketCookieGenerator.getObject(),
-            warnCookieGenerator.getObject(),
+            servicesManager.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
             casProperties,
-            authenticationEventExecutionPlan.getObject());
+            authenticationEventExecutionPlan.getIfAvailable());
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "initialAuthenticationRequestValidationAction")
     public Action initialAuthenticationRequestValidationAction() {
-        return new InitialAuthenticationRequestValidationAction(rankedAuthenticationProviderWebflowEventResolver.getObject());
+        return new InitialAuthenticationRequestValidationAction(rankedAuthenticationProviderWebflowEventResolver.getIfAvailable());
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "genericSuccessViewAction")
     public Action genericSuccessViewAction() {
-        return new GenericSuccessViewAction(centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            webApplicationServiceFactory.getObject(),
+        return new GenericSuccessViewAction(centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
             casProperties.getView().getDefaultRedirectUrl());
     }
 
@@ -237,47 +237,47 @@ public class CasSupportActionsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "redirectUnauthorizedServiceUrlAction")
     public Action redirectUnauthorizedServiceUrlAction() {
-        return new RedirectUnauthorizedServiceUrlAction(servicesManager.getObject());
+        return new RedirectUnauthorizedServiceUrlAction(servicesManager.getIfAvailable());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "generateServiceTicketAction")
     public Action generateServiceTicketAction() {
-        return new GenerateServiceTicketAction(authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            ticketRegistrySupport.getObject(),
-            authenticationRequestServiceSelectionStrategies.getObject(),
-            servicesManager.getObject(),
-            principalElectionStrategy.getObject());
+        return new GenerateServiceTicketAction(authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            principalElectionStrategy.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "gatewayServicesManagementCheck")
     @RefreshScope
     public Action gatewayServicesManagementCheck() {
-        return new GatewayServicesManagementCheck(this.servicesManager.getObject());
+        return new GatewayServicesManagementCheck(this.servicesManager.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "frontChannelLogoutAction")
     public Action frontChannelLogoutAction() {
-        return new FrontChannelLogoutAction(this.logoutManager.getObject());
+        return new FrontChannelLogoutAction(this.logoutManager.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "ticketGrantingTicketCheckAction")
     public Action ticketGrantingTicketCheckAction() {
-        return new TicketGrantingTicketCheckAction(this.centralAuthenticationService.getObject());
+        return new TicketGrantingTicketCheckAction(this.centralAuthenticationService.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "terminateSessionAction")
     @RefreshScope
     public Action terminateSessionAction() {
-        return new TerminateSessionAction(centralAuthenticationService.getObject(),
-            ticketGrantingTicketCookieGenerator.getObject(),
-            warnCookieGenerator.getObject(),
+        return new TerminateSessionAction(centralAuthenticationService.getIfAvailable(),
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
             casProperties.getLogout());
     }
 
@@ -290,10 +290,10 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "serviceWarningAction")
     @RefreshScope
     public Action serviceWarningAction() {
-        return new ServiceWarningAction(centralAuthenticationService.getObject(),
-            authenticationSystemSupport.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            principalElectionStrategy.getObject());
+        return new ServiceWarningAction(centralAuthenticationService.getIfAvailable(),
+            authenticationSystemSupport.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            principalElectionStrategy.getIfAvailable());
     }
 }

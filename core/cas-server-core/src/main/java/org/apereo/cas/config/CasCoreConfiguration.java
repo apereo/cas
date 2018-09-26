@@ -107,14 +107,14 @@ public class CasCoreConfiguration {
     public CentralAuthenticationService centralAuthenticationService(
         @Qualifier("authenticationServiceSelectionPlan") final AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan) {
         return new DefaultCentralAuthenticationService(applicationEventPublisher,
-            ticketRegistry.getObject(),
-            servicesManager.getObject(),
-            logoutManager.getObject(),
-            ticketFactory.getObject(),
+            ticketRegistry.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            logoutManager.getIfAvailable(),
+            ticketFactory.getIfAvailable(),
             authenticationServiceSelectionPlan,
             authenticationPolicyFactory(),
-            principalFactory.getObject(),
-            cipherExecutor.getObject(),
-            registeredServiceAccessStrategyEnforcer.getObject());
+            principalFactory.getIfAvailable(),
+            cipherExecutor.getIfAvailable(),
+            registeredServiceAccessStrategyEnforcer.getIfAvailable());
     }
 }

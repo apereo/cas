@@ -48,8 +48,8 @@ public class CasCoreServicesAuthenticationConfiguration {
     @RefreshScope
     @Bean
     public ProtocolAttributeEncoder casAttributeEncoder() {
-        return new DefaultCasProtocolAttributeEncoder(servicesManager.getObject(),
-            registeredServiceCipherExecutor.getObject(),
-            cacheCredentialsCipherExecutor.getObject());
+        return new DefaultCasProtocolAttributeEncoder(servicesManager.getIfAvailable(),
+            registeredServiceCipherExecutor.getIfAvailable(),
+            cacheCredentialsCipherExecutor.getIfAvailable());
     }
 }

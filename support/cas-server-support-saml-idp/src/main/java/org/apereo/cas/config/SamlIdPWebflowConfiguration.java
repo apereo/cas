@@ -62,8 +62,8 @@ public class SamlIdPWebflowConfiguration implements CasWebflowExecutionPlanConfi
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer samlIdPMetadataUIWebConfigurer() {
-        return new SamlIdPMetadataUIWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
+        return new SamlIdPMetadataUIWebflowConfigurer(flowBuilderServices.getIfAvailable(),
+            loginFlowDefinitionRegistry.getIfAvailable(),
             samlIdPMetadataUIParserAction(),
             applicationContext,
             casProperties);
