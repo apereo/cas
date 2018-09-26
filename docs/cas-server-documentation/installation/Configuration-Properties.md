@@ -879,16 +879,19 @@ to be a JSON map as such:
 
 ### Ruby/Python/Javascript/Groovy
 
-Similar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
+Similar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script to resolve attributes. 
+The following settings are relevant:
 
 ```properties
 # cas.authn.attributeRepository.script[0].location=file:/etc/cas/script.groovy
 # cas.authn.attributeRepository.script[0].order=0
 # cas.authn.attributeRepository.script[0].caseInsensitive=false
+# cas.authn.attributeRepository.script[0].engineName=js|groovy|ruby|python
 ```
 
 While Javascript and Groovy should be natively supported by CAS, Python scripts may need
 to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
+Ruby scripts are supported via [JRuby](https://search.maven.org/search?q=g:org.jruby%20AND%20a:jruby)  
 
 The Groovy script may be defined as:
 
