@@ -1,0 +1,31 @@
+description = "Apereo CAS Hazelcast Authentication Throttling"
+dependencies {
+    api project(":api:cas-server-core-api-throttle")
+
+    implementation libraries.hazelcast
+    implementation project(":support:cas-server-support-hazelcast")
+    implementation project(":support:cas-server-support-hazelcast-core")
+    implementation project(":core:cas-server-core-audit")
+    implementation project(":core:cas-server-core-audit-api")
+    implementation project(":support:cas-server-support-throttle")
+    implementation project(":support:cas-server-support-throttle-core")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-authentication-api")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-audit-api")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-throttle", configuration: "tests")
+    testImplementation project(":core:cas-server-core-cookie")
+
+    testCompileOnly libraries.javax
+}

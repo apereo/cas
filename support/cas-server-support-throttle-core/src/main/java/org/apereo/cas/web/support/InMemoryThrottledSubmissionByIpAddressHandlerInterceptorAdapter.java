@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Throttles access attempts for failed logins by IP Address. This stores the attempts in memory.
@@ -21,9 +22,10 @@ public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter ext
                                                                            final String usernameParameter,
                                                                            final String authenticationFailureCode,
                                                                            final AuditTrailExecutionPlan auditTrailExecutionPlan,
-                                                                           final String applicationCode) {
+                                                                           final String applicationCode,
+                                                                           final ConcurrentMap map) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailExecutionPlan, applicationCode);
+            authenticationFailureCode, auditTrailExecutionPlan, applicationCode, map);
     }
 
     @Override

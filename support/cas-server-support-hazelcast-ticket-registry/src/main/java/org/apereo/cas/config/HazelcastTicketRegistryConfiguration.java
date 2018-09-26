@@ -1,8 +1,6 @@
 package org.apereo.cas.config;
 
-import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -48,10 +46,16 @@ public class HazelcastTicketRegistryConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("casHazelcastInstance")
+    private HazelcastInstance hazelcastInstance;
+
+    @Autowired
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(ticketCatalog),
+        buildHazelcastMapConfigurations(ticketCatalog).values()
+                .forEach(map -> hazelcastInstance.getConfig().addMapConfig(map));
+        final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcastInstance,
                 ticketCatalog,
                 hz.getPageSize());
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
@@ -61,19 +65,6 @@ public class HazelcastTicketRegistryConfiguration {
     @Bean
     public TicketRegistryCleaner ticketRegistryCleaner() {
         return NoOpTicketRegistryCleaner.getInstance();
-    }
-
-    @Autowired
-    @Bean
-    public HazelcastInstance hazelcast(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        return Hazelcast.newHazelcastInstance(getConfig(ticketCatalog));
-    }
-
-    private Config getConfig(final TicketCatalog ticketCatalog) {
-        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        final Map<String, MapConfig> configs = buildHazelcastMapConfigurations(ticketCatalog);
-        final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
-        return factory.build(hz, configs);
     }
 
     private Map<String, MapConfig> buildHazelcastMapConfigurations(final TicketCatalog ticketCatalog) {

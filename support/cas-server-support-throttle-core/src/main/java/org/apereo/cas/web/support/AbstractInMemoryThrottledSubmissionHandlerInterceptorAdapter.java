@@ -9,7 +9,6 @@ import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -25,16 +24,18 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
-    private final ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ZonedDateTime> ipMap;
 
     public AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold,
                                                                         final int failureRangeInSeconds,
                                                                         final String usernameParameter,
                                                                         final String authenticationFailureCode,
                                                                         final AuditTrailExecutionPlan auditTrailExecutionPlan,
-                                                                        final String applicationCode) {
+                                                                        final String applicationCode,
+                                                                        final ConcurrentMap map) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
             authenticationFailureCode, auditTrailExecutionPlan, applicationCode);
+        this.ipMap = map;
     }
 
     @Override
