@@ -54,7 +54,7 @@ public class HazelcastTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val r = new HazelcastTicketRegistry(hazelcast(),
-            ticketCatalog.getObject(),
+            ticketCatalog.getIfAvailable(),
             hz.getPageSize());
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
         return r;
@@ -83,7 +83,7 @@ public class HazelcastTicketRegistryConfiguration {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val factory = new HazelcastConfigurationFactory();
 
-        val definitions = ticketCatalog.getObject().findAll();
+        val definitions = ticketCatalog.getIfAvailable().findAll();
         definitions.forEach(t -> {
             val properties = t.getProperties();
             val mapConfig = factory.buildMapConfig(hz, properties.getStorageName(), properties.getStorageTimeout());
