@@ -63,7 +63,7 @@ buildscript {
         classpath "com.moowork.gradle:gradle-node-plugin:$gradleNodeVersion"
         classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$gradleCoverallsVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
-        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleFindbugsVersion"
+        classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
     }
 }
