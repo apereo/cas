@@ -71,7 +71,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
 
     @Bean
     public CommunicationsManager communicationsManager() {
-        return new CommunicationsManager(smsSender.getIfAvailable(), mailSender.getIfAvailable());
+        return new CommunicationsManager(smsSender.getObject(), mailSender.getObject());
     }
 
     @Bean

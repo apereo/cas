@@ -51,7 +51,7 @@ public class JmsTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry() {
         val jms = casProperties.getTicket().getRegistry().getJms();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jms.getCrypto(), "jms");
-        return new JmsTicketRegistry(this.jmsTemplate.getIfAvailable(), messageQueueTicketRegistryIdentifier(), cipher);
+        return new JmsTicketRegistry(this.jmsTemplate.getObject(), messageQueueTicketRegistryIdentifier(), cipher);
     }
 
     @Autowired

@@ -47,7 +47,7 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
     public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
-        return new SecurityInterceptor(oauthSecConfig.getIfAvailable(), Authenticators.CAS_OAUTH_CLIENT);
+        return new SecurityInterceptor(oauthSecConfig.getObject(), Authenticators.CAS_OAUTH_CLIENT);
     }
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
@@ -57,7 +57,7 @@ public class CasOAuthThrottleConfiguration implements AuthenticationThrottlingEx
             Authenticators.CAS_OAUTH_CLIENT_USER_FORM,
             Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
             Authenticators.CAS_OAUTH_CLIENT_PROOF_KEY_CODE_EXCHANGE_AUTHN);
-        return new SecurityInterceptor(oauthSecConfig.getIfAvailable(), clients);
+        return new SecurityInterceptor(oauthSecConfig.getObject(), clients);
     }
 
     @ConditionalOnMissingBean(name = "oauthHandlerInterceptorAdapter")

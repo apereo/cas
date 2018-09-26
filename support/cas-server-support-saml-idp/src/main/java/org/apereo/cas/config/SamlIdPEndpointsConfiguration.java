@@ -324,7 +324,7 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
             samlObjectSignatureValidator(),
             ticketRegistry.getObject(),
             samlProfileSamlAttributeQueryFaultResponseBuilder,
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            ticketGrantingTicketCookieGenerator.getObject(),
             samlAttributeQueryTicketFactory,
             samlIdPCallbackService());
     }
