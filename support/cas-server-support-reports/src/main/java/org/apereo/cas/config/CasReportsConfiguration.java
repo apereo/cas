@@ -107,7 +107,7 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public AuditLogEndpoint auditLogEndpoint() {
-        return new AuditLogEndpoint(auditTrailExecutionPlan.getObject(), casProperties);
+        return new AuditLogEndpoint(auditTrailExecutionPlan.getIfAvailable(), casProperties);
     }
 
     @Bean
@@ -119,13 +119,13 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public RegisteredServicesEndpoint registeredServicesReportEndpoint() {
-        return new RegisteredServicesEndpoint(casProperties, servicesManager.getObject());
+        return new RegisteredServicesEndpoint(casProperties, servicesManager.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnEnabledEndpoint
     public ExportRegisteredServicesEndpoint exportRegisteredServicesEndpoint() {
-        return new ExportRegisteredServicesEndpoint(casProperties, servicesManager.getObject());
+        return new ExportRegisteredServicesEndpoint(casProperties, servicesManager.getIfAvailable());
     }
 
     @Bean
@@ -136,36 +136,36 @@ public class CasReportsConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint() {
-        return new SingleSignOnSessionsEndpoint(centralAuthenticationService.getObject(), casProperties);
+        return new SingleSignOnSessionsEndpoint(centralAuthenticationService.getIfAvailable(), casProperties);
     }
 
     @Bean
     @ConditionalOnEnabledEndpoint
     public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint() {
-        return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator.getObject(), ticketRegistrySupport.getObject());
+        return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator.getIfAvailable(), ticketRegistrySupport.getIfAvailable());
     }
 
 
     @Bean
     @ConditionalOnEnabledEndpoint
     public StatisticsEndpoint statisticsReportEndpoint() {
-        return new StatisticsEndpoint(centralAuthenticationService.getObject(), casProperties);
+        return new StatisticsEndpoint(centralAuthenticationService.getIfAvailable(), casProperties);
     }
 
     @Bean
     @ConditionalOnEnabledEndpoint
     public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint() {
-        return new CasResolveAttributesReportEndpoint(casProperties, personDirectoryPrincipalResolver.getObject());
+        return new CasResolveAttributesReportEndpoint(casProperties, personDirectoryPrincipalResolver.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnEnabledEndpoint
     public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint() {
         return new CasReleaseAttributesReportEndpoint(casProperties,
-            servicesManager.getObject(),
-            authenticationSystemSupport.getObject(),
-            webApplicationServiceFactory.getObject(),
-            principalFactory.getObject());
+            servicesManager.getIfAvailable(),
+            authenticationSystemSupport.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
+            principalFactory.getIfAvailable());
     }
 
     /**

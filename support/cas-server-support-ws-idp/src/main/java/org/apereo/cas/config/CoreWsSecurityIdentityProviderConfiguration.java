@@ -94,7 +94,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         return new WSFederationValidateRequestController(servicesManager,
             webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
             httpClient, securityTokenTicketFactory, ticketRegistry,
-            ticketGrantingTicketCookieGenerator.getObject(),
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
             ticketRegistrySupport, wsFederationCallbackService());
     }
 
@@ -107,7 +107,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer,
             wsFederationAuthenticationServiceSelectionStrategy(),
             httpClient, securityTokenTicketFactory, ticketRegistry,
-            ticketGrantingTicketCookieGenerator.getObject(),
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
             ticketRegistrySupport, casClientTicketValidator,
             wsFederationCallbackService());
     }

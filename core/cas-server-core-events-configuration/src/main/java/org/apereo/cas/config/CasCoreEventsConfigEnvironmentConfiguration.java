@@ -29,7 +29,7 @@ public class CasCoreEventsConfigEnvironmentConfiguration {
     @ConditionalOnMissingBean(name = "casConfigurationEventListener")
     @Bean
     public CasConfigurationEventListener casConfigurationEventListener() {
-        return new CasConfigurationEventListener(manager.getObject());
+        return new CasConfigurationEventListener(manager.getIfAvailable());
     }
 
 }

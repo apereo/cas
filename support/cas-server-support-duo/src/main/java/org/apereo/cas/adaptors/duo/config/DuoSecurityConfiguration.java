@@ -76,12 +76,12 @@ public class DuoSecurityConfiguration {
     @Bean
     public CasWebflowEventResolver duoAuthenticationWebflowEventResolver() {
         return new DuoAuthenticationWebflowEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationRequestServiceSelectionStrategies.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
     }
 

@@ -107,19 +107,19 @@ public class SurrogateAuthenticationConfiguration {
         val su = casProperties.getAuthn().getSurrogate();
         if (su.getJson().getLocation() != null) {
             LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
-            return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager.getObject());
+            return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager.getIfAvailable());
         }
         val accounts = new HashMap<String, List>();
         su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
         LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
-        return new SimpleSurrogateAuthenticationService(accounts, servicesManager.getObject());
+        return new SimpleSurrogateAuthenticationService(accounts, servicesManager.getIfAvailable());
     }
 
     @RefreshScope
     @Bean
     public PrincipalResolver personDirectoryPrincipalResolver() {
         val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
-        return new SurrogatePrincipalResolver(attributeRepository.getObject(),
+        return new SurrogatePrincipalResolver(attributeRepository.getIfAvailable(),
             surrogatePrincipalFactory(),
             principal.isReturnNull(),
             org.apache.commons.lang3.StringUtils.defaultIfBlank(principal.getPrincipalAttribute(),
@@ -131,16 +131,16 @@ public class SurrogateAuthenticationConfiguration {
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
         return new SurrogateAuthenticationPostProcessor(
             surrogateAuthenticationService(),
-            servicesManager.getObject(),
+            servicesManager.getIfAvailable(),
             eventPublisher,
-            registeredServiceAccessStrategyEnforcer.getObject(),
-            surrogateEligibilityAuditableExecution.getObject());
+            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            surrogateEligibilityAuditableExecution.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
     @Bean
     public SurrogatePrincipalBuilder surrogatePrincipalBuilder() {
-        return new SurrogatePrincipalBuilder(surrogatePrincipalFactory(), attributeRepository.getObject());
+        return new SurrogatePrincipalBuilder(surrogatePrincipalFactory(), attributeRepository.getIfAvailable());
     }
 
     @Bean
@@ -162,6 +162,6 @@ public class SurrogateAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "surrogateAuthenticationEventListener")
     @Bean
     public SurrogateAuthenticationEventListener surrogateAuthenticationEventListener() {
-        return new SurrogateAuthenticationEventListener(communicationsManager.getObject(), casProperties);
+        return new SurrogateAuthenticationEventListener(communicationsManager.getIfAvailable(), casProperties);
     }
 }
