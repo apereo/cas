@@ -129,15 +129,15 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver() {
-        return new AdaptiveMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
+        return new AdaptiveMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties,
-            geoLocationService.getObject());
+            geoLocationService.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "timedAuthenticationPolicyWebflowEventResolver")
@@ -145,13 +145,13 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver timedAuthenticationPolicyWebflowEventResolver() {
         return new TimedMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties);
     }
 
@@ -160,13 +160,13 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver principalAttributeAuthenticationPolicyWebflowEventResolver() {
         return new PrincipalAttributeMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties);
     }
 
@@ -175,13 +175,13 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver predicatedPrincipalAttributeMultifactorAuthenticationPolicyEventResolver() {
         return new PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties);
     }
 
@@ -191,13 +191,13 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver authenticationAttributeAuthenticationPolicyWebflowEventResolver() {
         return new AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties);
     }
 
@@ -218,14 +218,14 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
         val r = new InitialAuthenticationAttemptWebflowEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
-            registeredServiceAccessStrategyEnforcer.getObject());
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
+            registeredServiceAccessStrategyEnforcer.getIfAvailable());
         r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(timedAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(globalAuthenticationPolicyWebflowEventResolver());
@@ -248,13 +248,13 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver restEndpointAuthenticationPolicyWebflowEventResolver() {
         return new RestEndpointMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties);
     }
 
@@ -262,14 +262,14 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver serviceTicketRequestWebflowEventResolver() {
-        return new ServiceTicketRequestWebflowEventResolver(authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
-            registeredServiceAccessStrategyEnforcer.getObject(),
+        return new ServiceTicketRequestWebflowEventResolver(authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
+            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
             casProperties);
     }
 
@@ -278,13 +278,13 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver globalAuthenticationPolicyWebflowEventResolver() {
         return new GlobalMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties);
     }
 
@@ -293,13 +293,13 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver groovyScriptAuthenticationPolicyWebflowEventResolver() {
         return new GroovyScriptMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties);
     }
 
@@ -308,26 +308,26 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver() {
         return new SelectiveAuthenticationProviderWebflowEventEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject());
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "requestParameterAuthenticationPolicyWebflowEventResolver")
     @Bean
     @RefreshScope
     public CasWebflowEventResolver requestParameterAuthenticationPolicyWebflowEventResolver() {
-        return new RequestParameterMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
+        return new RequestParameterMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties);
     }
 
@@ -336,13 +336,13 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver requestHeaderAuthenticationPolicyWebflowEventResolver() {
         return new RequestHeaderMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties);
     }
 
@@ -351,13 +351,13 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver requestSessionAttributeAuthenticationPolicyWebflowEventResolver() {
         return new RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties);
     }
 
@@ -366,13 +366,13 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver() {
         return new RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject());
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "registeredServiceAuthenticationPolicyWebflowEventResolver")
@@ -380,13 +380,13 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver registeredServiceAuthenticationPolicyWebflowEventResolver() {
         return new RegisteredServiceMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject());
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "rankedAuthenticationProviderWebflowEventResolver")
@@ -394,14 +394,14 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver() {
         return new RankedAuthenticationProviderWebflowEventResolver(
-            authenticationSystemSupport.getObject(),
-            centralAuthenticationService.getObject(),
-            servicesManager.getObject(),
-            ticketRegistrySupport.getObject(),
-            warnCookieGenerator.getObject(),
-            authenticationServiceSelectionPlan.getObject(),
-            multifactorAuthenticationProviderSelector.getObject(),
-            authenticationContextValidator.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
+            authenticationContextValidator.getIfAvailable(),
             initialAuthenticationAttemptWebflowEventResolver());
     }
 
@@ -449,14 +449,14 @@ public class CasCoreWebflowConfiguration {
     @ConditionalOnMissingBean(name = "redirectToServiceAction")
     @RefreshScope
     public Action redirectToServiceAction() {
-        return new RedirectToServiceAction(responseBuilderLocator.getObject());
+        return new RedirectToServiceAction(responseBuilderLocator.getIfAvailable());
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "injectResponseHeadersAction")
     @RefreshScope
     public Action injectResponseHeadersAction() {
-        return new InjectResponseHeadersAction(responseBuilderLocator.getObject());
+        return new InjectResponseHeadersAction(responseBuilderLocator.getIfAvailable());
     }
 
     @Bean
@@ -464,7 +464,7 @@ public class CasCoreWebflowConfiguration {
     @RefreshScope
     public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy() {
         val sso = casProperties.getSso();
-        return new DefaultSingleSignOnParticipationStrategy(servicesManager.getObject(),
+        return new DefaultSingleSignOnParticipationStrategy(servicesManager.getIfAvailable(),
             sso.isCreateSsoCookieOnRenewAuthn(),
             sso.isRenewAuthnEnabled());
     }

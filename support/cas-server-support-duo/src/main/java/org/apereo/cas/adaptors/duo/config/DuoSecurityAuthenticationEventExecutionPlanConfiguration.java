@@ -96,7 +96,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
                 && StringUtils.isNotBlank(duo.getDuoSecretKey())
                 && StringUtils.isNotBlank(duo.getDuoApplicationKey()))
             .forEach(duo -> {
-                val s = new BasicDuoSecurityAuthenticationService(duo, httpClient.getObject());
+                val s = new BasicDuoSecurityAuthenticationService(duo, httpClient.getIfAvailable());
                 val duoP = new DefaultDuoMultifactorAuthenticationProvider(duo.getRegistrationUrl(), s);
                 duoP.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
                 duoP.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
@@ -142,7 +142,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         if (duos.size() > 1) {
             LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after [{}]", name);
         }
-        return new DuoAuthenticationHandler(name, servicesManager.getObject(), duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
+        return new DuoAuthenticationHandler(name, servicesManager.getIfAvailable(), duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
     }
 
     @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
@@ -150,8 +150,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-        return new DuoMultifactorWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
+        return new DuoMultifactorWebflowConfigurer(flowBuilderServices.getIfAvailable(),
+            loginFlowDefinitionRegistry.getIfAvailable(),
             deviceRegistrationEnabled,
             duoMultifactorAuthenticationProvider(),
             applicationContext,

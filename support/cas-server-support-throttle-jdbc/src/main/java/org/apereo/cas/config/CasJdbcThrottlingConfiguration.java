@@ -56,7 +56,7 @@ public class CasJdbcThrottlingConfiguration {
             failure.getThreshold(),
             failure.getRangeSeconds(),
             throttle.getUsernameParameter(),
-            auditTrailManager.getObject(),
+            auditTrailManager.getIfAvailable(),
             inspektrThrottleDataSource(),
             throttle.getAppcode(),
             throttle.getJdbc().getAuditQuery(),
