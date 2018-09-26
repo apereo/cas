@@ -1,9 +1,5 @@
 package org.apereo.cas.web.flow.login;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -12,10 +8,16 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
@@ -49,19 +51,25 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
     @Override
     public Event doExecute(final RequestContext context) {
         final Service service = WebUtils.getService(context);
+        final RegisteredService registeredService = WebUtils.getRegisteredService(context);
         final AuthenticationResultBuilder authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
 
         LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
-        final AuthenticationResult authenticationResult =
-            this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
+        final AuthenticationResult authenticationResult = this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
+        LOGGER.debug("Finalizing authentication event...");
         final Authentication authentication = buildFinalAuthentication(authenticationResult);
         final String ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicket);
         final TicketGrantingTicket tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
-        
+
+        if (registeredService != null && registeredService.getAccessStrategy() != null) {
+            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+        }
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthenticationResult(authenticationResult, context);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
 
+        LOGGER.debug("Calculating authentication warning messages...");
         final Collection<MessageDescriptor> warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
         if (!warnings.isEmpty()) {
             final LocalAttributeMap attributes = new LocalAttributeMap(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
@@ -92,8 +100,10 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
                                                                       final Authentication authentication, final String ticketGrantingTicket) {
         final TicketGrantingTicket tgt;
         if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
+            LOGGER.debug("Attempting to issue a new ticket-granting ticket...");
             tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
         } else {
+            LOGGER.debug("Updating the existing ticket-granting ticket [{}]...", ticketGrantingTicket);
             tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
             tgt.getAuthentication().update(authentication);
             this.centralAuthenticationService.updateTicket(tgt);

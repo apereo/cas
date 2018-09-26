@@ -267,9 +267,10 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         final List<IPersonAttributeDao> list = new ArrayList<>();
         casProperties.getAuthn().getAttributeRepository().getScript()
             .forEach(Unchecked.consumer(script -> {
-                final ScriptEnginePersonAttributeDao dao = new ScriptEnginePersonAttributeDao();
-                final String scriptFile = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
-                dao.setScriptFile(scriptFile);
+                final String scriptContents = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
+                final String engineName = script.getEngineName() == null ?
+                        ScriptEnginePersonAttributeDao.getScriptEngineName(script.getLocation().getFilename()) : script.getEngineName();
+                final ScriptEnginePersonAttributeDao dao = new ScriptEnginePersonAttributeDao(scriptContents, engineName);
                 dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
                 dao.setOrder(script.getOrder());
                 LOGGER.debug("Configured scripted attribute sources from [{}]", script.getLocation());

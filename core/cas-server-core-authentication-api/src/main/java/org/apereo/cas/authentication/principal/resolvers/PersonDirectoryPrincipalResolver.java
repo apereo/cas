@@ -1,11 +1,5 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -13,6 +7,14 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
@@ -34,8 +36,9 @@ import java.util.Optional;
  */
 @Slf4j
 @ToString
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
+@Setter
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /**
@@ -62,6 +65,11 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * Optional principal attribute name.
      */
     protected final String principalAttributeName;
+
+    /**
+     * Use the current principal id for extraction.
+     */
+    protected boolean useCurrentPrincipalId;
 
     public PersonDirectoryPrincipalResolver() {
         this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(), false,
@@ -161,6 +169,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @return the map
      */
     protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
+        LOGGER.debug("Retrieving person attributes for principal id [{}]", principalId);
         final IPersonAttributes personAttributes = this.attributeRepository.getPerson(principalId);
         final Map<String, List<Object>> attributes;
         if (personAttributes == null) {
@@ -168,6 +177,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         } else {
             attributes = personAttributes.getAttributes();
         }
+        LOGGER.debug("Found person attributes [{}] for principal id [{}]", attributes, principalId);
         return attributes;
     }
 
@@ -180,7 +190,18 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @return the username, or null if it could not be resolved.
      */
     protected String extractPrincipalId(final Credential credential, final Optional<Principal> currentPrincipal) {
-        return credential.getId();
+        LOGGER.debug("Extracting credential id based on existing credential [{}]", credential);
+        if (currentPrincipal != null && currentPrincipal.isPresent()) {
+            final Principal principal = currentPrincipal.get();
+            LOGGER.debug("Principal is currently resolved is [{}]", principal);
+            if (useCurrentPrincipalId) {
+                LOGGER.debug("Using the existing resolved principal id [{}]", principal.getId());
+                return principal.getId();
+            }
+        }
+        final String id = credential.getId();
+        LOGGER.debug("Extracted principal id [{}]", id);
+        return id;
     }
 
 }

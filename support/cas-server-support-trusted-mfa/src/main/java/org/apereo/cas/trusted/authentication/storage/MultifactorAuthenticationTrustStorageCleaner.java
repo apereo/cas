@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
  * @since 5.0.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(transactionManager = "transactionManagerU2f")
+@Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 @Slf4j
 @RequiredArgsConstructor
 @Getter

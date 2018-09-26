@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -157,7 +158,11 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected String getAuthenticationAttribute(final Map<String, Object> model, final String attributeName) {
         final Authentication authn = getPrimaryAuthenticationFrom(model);
-        return (String) authn.getAttributes().get(attributeName);
+        final Optional<Object> element = CollectionUtils.firstElement(authn.getAttributes().get(attributeName));
+        if (element.isPresent()) {
+            return element.get().toString();
+        }
+        return null;
     }
 
     /**

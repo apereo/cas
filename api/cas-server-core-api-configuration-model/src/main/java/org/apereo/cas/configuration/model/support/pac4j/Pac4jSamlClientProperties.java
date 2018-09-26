@@ -5,6 +5,10 @@ import lombok.Setter;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This is {@link Pac4jSamlClientProperties}.
  *
@@ -122,4 +126,43 @@ public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
      * A negative value de-activates the selection process and is the default.
      */
     private int assertionConsumerServiceIndex = -1;
+
+    /**
+     * Whether or not SAML SP metadata should be signed when generated.
+     */
+    private boolean signServiceProviderMetadata;
+
+    /**
+     * List of attributes requested by the service provider
+     * that would be put into the service provider metadata.
+     */
+    private List<ServiceProviderRequestedAttribute> requestedAttributes = new ArrayList<>();
+
+    @RequiresModule(name = "cas-server-support-pac4j-webflow")
+    @Getter
+    @Setter
+    public static class ServiceProviderRequestedAttribute implements Serializable {
+        private static final long serialVersionUID = -862819796533384951L;
+
+        /**
+         * Attribute name.
+         */
+        private String name;
+
+        /**
+         * Attribute friendly name.
+         */
+        private String friendlyName;
+
+        /**
+         * Attribute name format.
+         */
+        private String nameFormat = "urn:oasis:names:tc:SAML:2.0:attrname-format:uri";
+
+        /**
+         * Whether this attribute is required and should
+         * be marked so in the metadata.
+         */
+        private boolean required;
+    }
 }

@@ -19,6 +19,15 @@ public class ScriptedPrincipalAttributesProperties extends SpringResourcePropert
     private static final long serialVersionUID = 4221139939506528713L;
 
     /**
+     * Script engine name, e.g. groovy, js, python, etc.
+     * Required if CAS can't determine based on extension.
+     * The file extension of the resource will be used to determine the engineName if not specified.
+     * Engines must be on the classpath in order for the engineName to be determined automatically.
+     * The first engine found claiming to support the extension of the file specified will be used.
+     */
+    private String engineName;
+
+    /**
      * Whether attribute repository should consider the underlying
      * attribute names in a case-insensitive manner.
      */

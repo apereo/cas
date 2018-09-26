@@ -879,16 +879,19 @@ to be a JSON map as such:
 
 ### Ruby/Python/Javascript/Groovy
 
-Similar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
+Similar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script to resolve attributes. 
+The following settings are relevant:
 
 ```properties
 # cas.authn.attributeRepository.script[0].location=file:/etc/cas/script.groovy
 # cas.authn.attributeRepository.script[0].order=0
 # cas.authn.attributeRepository.script[0].caseInsensitive=false
+# cas.authn.attributeRepository.script[0].engineName=js|groovy|ruby|python
 ```
 
 While Javascript and Groovy should be natively supported by CAS, Python scripts may need
 to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
+Ruby scripts are supported via [JRuby](https://search.maven.org/search?q=g:org.jruby%20AND%20a:jruby)  
 
 The Groovy script may be defined as:
 
@@ -899,7 +902,7 @@ Map<String, List<Object>> run(final Object... args) {
     def uid = args[0]
     def logger = args[1]
 
-    logger.debug("Things are happening just fine")
+    logger.debug("Groovy things are happening just fine with UID: {}",uid)
     return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }
 ```
@@ -907,14 +910,20 @@ Map<String, List<Object>> run(final Object... args) {
 The Javascript script may be defined as:
 
 ```javascript
-function run(args) {
-    var uid = args[0]
-    var logger = args[1]
+function run(uid, logger) {
     print("Things are happening just fine")
+    logger.warn("Javascript called with UID: {}",uid);
+
+    // If you want to call back into Java, this is one way to do so
+    var javaObj = new JavaImporter(org.yourorgname.yourpackagename);
+    with (javaObj) {
+    	var objFromJava = JavaClassInPackage.someStaticMethod(uid);
+    }
 
     var map = {};
+    map["attr_from_java"] = objFromJava.getSomething();
     map["username"] = uid;
-    map["likes"] = "chees";
+    map["likes"] = "cheese";
     map["id"] = [1234,2,3,4,5];
     map["another"] = "attribute";
 
@@ -2637,6 +2646,7 @@ Delegate authentication to an external CAS server.
 # cas.authn.pac4j.cas[0].loginUrl=
 # cas.authn.pac4j.cas[0].protocol=
 # cas.authn.pac4j.cas[0].usePathBasedCallbackUrl=false
+# cas.authn.pac4j.cas[0].principalAttributeId=
 ```
 
 ### OAuth20
@@ -2652,6 +2662,7 @@ Delegate authentication to an generic OAuth2 server. Common settings for this id
 # cas.authn.pac4j.oauth2[0].profileAttrs.attr1=path-to-attr-in-profile
 # cas.authn.pac4j.oauth2[0].customParams.param1=value1
 # cas.authn.pac4j.oauth2[0].usePathBasedCallbackUrl=false
+# cas.authn.pac4j.oauth2[0].principalAttributeId=
 ```
 
 ### OpenID Connect
@@ -2669,6 +2680,7 @@ Delegate authentication to an external OpenID Connect server. Common settings fo
 # cas.authn.pac4j.oidc[0].customParams.param1=value1
 # cas.authn.pac4j.oidc[0].azureTenantId=
 # cas.authn.pac4j.oidc[0].usePathBasedCallbackUrl=false
+# cas.authn.pac4j.oidc[0].principalAttributeId=
 ```
 
 ### SAML2
@@ -2698,8 +2710,15 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].passive=false
 
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
+# cas.authn.pac4j.saml[0].signServiceProviderMetadata=false
 # cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
 # cas.authn.pac4j.saml[0].assertionConsumerServiceIndex=-1
+# cas.authn.pac4j.saml[0].principalAttributeId=
+
+# cas.authn.pac4j.saml[0].requestedAttributes[0].name=
+# cas.authn.pac4j.saml[0].requestedAttributes[0].friendlyName=
+# cas.authn.pac4j.saml[0].requestedAttributes[0].nameFormat=urn:oasis:names:tc:SAML:2.0:attrname-format:uri
+# cas.authn.pac4j.saml[0].requestedAttributes[0].required=false
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.

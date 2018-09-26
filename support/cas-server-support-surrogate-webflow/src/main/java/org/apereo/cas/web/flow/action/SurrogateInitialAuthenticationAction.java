@@ -34,7 +34,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
     @Override
     protected Event doPreExecute(final RequestContext context) {
         final UsernamePasswordCredential up = WebUtils.getCredential(context, UsernamePasswordCredential.class);
-        if (up == null || up instanceof SurrogateUsernamePasswordCredential) {
+        if (up == null) {
             LOGGER.debug("Provided credentials cannot be found, or are already of type [{}]", SurrogateUsernamePasswordCredential.class.getName());
             return null;
         }

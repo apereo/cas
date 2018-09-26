@@ -4,8 +4,6 @@ dependencies {
 
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
-    implementation project(":support:cas-server-support-saml-core")
-    implementation project(":support:cas-server-support-trusted")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-authentication")
@@ -13,5 +11,7 @@ dependencies {
     implementation project(":core:cas-server-core-services")
 
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

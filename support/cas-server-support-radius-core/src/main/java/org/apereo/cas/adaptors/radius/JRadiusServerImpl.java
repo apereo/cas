@@ -1,7 +1,10 @@
 package org.apereo.cas.adaptors.radius;
 
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
+import net.jradius.dictionary.Attr_ClientIPAddress;
 import net.jradius.dictionary.Attr_NASIPAddress;
 import net.jradius.dictionary.Attr_NASIPv6Address;
 import net.jradius.dictionary.Attr_NASIdentifier;
@@ -18,11 +21,12 @@ import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
 import net.jradius.packet.attribute.RadiusAttribute;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfo;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 import java.security.Security;
 import java.util.List;
-import lombok.ToString;
-import lombok.Setter;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
@@ -116,6 +120,15 @@ public class JRadiusServerImpl implements RadiusServer {
         final AttributeList attributeList = new AttributeList();
         attributeList.add(new Attr_UserName(username));
         attributeList.add(new Attr_UserPassword(password));
+
+        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+        if (clientInfo != null) {
+            final String clientIpAddress = clientInfo.getClientIpAddress();
+            final Attr_ClientIPAddress clientIpAttribute = new Attr_ClientIPAddress(clientIpAddress);
+            LOGGER.debug("Adding client IP address attribute [{}]", clientIpAttribute);
+            attributeList.add(clientIpAttribute);
+        }
+
         if (StringUtils.isNotBlank(this.nasIpAddress)) {
             attributeList.add(new Attr_NASIPAddress(this.nasIpAddress));
         }

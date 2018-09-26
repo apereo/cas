@@ -31,6 +31,7 @@ import java.util.List;
  */
 @Slf4j
 public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
+
     public AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                    final ApplicationContext applicationContext,
@@ -96,6 +97,8 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
      * @param mfaProviderFlowRegistry the registry
      */
     protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId, final FlowDefinitionRegistry mfaProviderFlowRegistry) {
+        final Flow mfaFlow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(subflowId);
+
         LOGGER.debug("Adding end state [{}] with transition to [{}] to flow 'login' for MFA", CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE);
         createEndState(flow, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE);
 
