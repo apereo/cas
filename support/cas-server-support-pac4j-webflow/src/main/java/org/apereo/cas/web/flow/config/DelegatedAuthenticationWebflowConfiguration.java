@@ -142,7 +142,7 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     @Lazy
     @RefreshScope
     public Action saml2ClientLogoutAction() {
-        return new DelegatedAuthenticationSAML2ClientLogoutAction(builtClients.getObject());
+        return new DelegatedAuthenticationSAML2ClientLogoutAction(builtClients.getIfAvailable());
     }
 
     @RefreshScope
@@ -151,19 +151,19 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     @Lazy
     public Action delegatedAuthenticationAction() {
         return new DelegatedClientAuthenticationAction(
-            initialAuthenticationAttemptWebflowEventResolver.getObject(),
-            serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject(),
-            builtClients.getObject(),
-            servicesManager.getObject(),
-            registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer.getObject(),
+            initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
+            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
+            adaptiveAuthenticationPolicy.getIfAvailable(),
+            builtClients.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer.getIfAvailable(),
             delegatedClientWebflowManager(),
-            delegatedSessionCookieManager.getObject(),
-            authenticationSystemSupport.getObject(),
+            delegatedSessionCookieManager.getIfAvailable(),
+            authenticationSystemSupport.getIfAvailable(),
             casProperties.getLocale().getParamName(),
             casProperties.getTheme().getParamName(),
-            authenticationRequestServiceSelectionStrategies.getObject(),
-            centralAuthenticationService.getObject());
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
@@ -171,10 +171,10 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer() {
         return new DelegatedAuthenticationWebflowConfigurer(
-            flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(),
-            logoutFlowDefinitionRegistry.getObject(),
-            saml2ClientLogoutAction.getObject(),
+            flowBuilderServices.getIfAvailable(),
+            loginFlowDefinitionRegistry.getIfAvailable(),
+            logoutFlowDefinitionRegistry.getIfAvailable(),
+            saml2ClientLogoutAction.getIfAvailable(),
             applicationContext,
             casProperties);
     }
@@ -182,24 +182,24 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     @RefreshScope
     @Bean
     public DelegatedClientWebflowManager delegatedClientWebflowManager() {
-        return new DelegatedClientWebflowManager(ticketRegistry.getObject(),
-            ticketFactory.getObject(),
+        return new DelegatedClientWebflowManager(ticketRegistry.getIfAvailable(),
+            ticketFactory.getIfAvailable(),
             casProperties.getTheme().getParamName(),
             casProperties.getLocale().getParamName(),
-            authenticationRequestServiceSelectionStrategies.getObject(),
-            argumentExtractor.getObject()
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            argumentExtractor.getIfAvailable()
         );
     }
 
     @Bean
     public Saml2ClientMetadataController saml2ClientMetadataController() {
-        return new Saml2ClientMetadataController(builtClients.getObject(), configBean.getObject());
+        return new Saml2ClientMetadataController(builtClients.getIfAvailable(), configBean.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "delegatedClientNavigationController")
     @Bean
     public DelegatedClientNavigationController delegatedClientNavigationController() {
-        return new DelegatedClientNavigationController(builtClients.getObject(), delegatedClientWebflowManager(), delegatedSessionCookieManager.getObject());
+        return new DelegatedClientNavigationController(builtClients.getIfAvailable(), delegatedClientWebflowManager(), delegatedSessionCookieManager.getIfAvailable());
     }
 
     @Override

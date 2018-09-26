@@ -5,8 +5,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -22,7 +22,7 @@ import java.net.URL;
 @ToString
 @Getter
 @Setter
-@RequiredArgsConstructor
+@Builder
 public class DefaultLogoutRequest implements LogoutRequest {
 
     /**
@@ -53,6 +53,7 @@ public class DefaultLogoutRequest implements LogoutRequest {
     /**
      * The status of the logout request.
      */
+    @Builder.Default
     private LogoutRequestStatus status = LogoutRequestStatus.NOT_ATTEMPTED;
 
 }

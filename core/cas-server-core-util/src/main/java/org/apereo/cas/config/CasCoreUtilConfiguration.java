@@ -70,6 +70,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "communicationsManager")
     public CommunicationsManager communicationsManager() {
         return new CommunicationsManager(smsSender.getIfAvailable(), mailSender.getIfAvailable());
     }

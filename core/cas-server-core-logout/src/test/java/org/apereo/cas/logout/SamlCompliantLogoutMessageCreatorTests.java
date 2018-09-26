@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 public class SamlCompliantLogoutMessageCreatorTests {
-    public static final String CONST_TEST_URL = "https://google.com";
+    private static final String CONST_TEST_URL = "https://google.com";
 
     private final LogoutMessageCreator builder = new SamlCompliantLogoutMessageCreator();
 
@@ -29,21 +29,26 @@ public class SamlCompliantLogoutMessageCreatorTests {
 
         val service = mock(WebApplicationService.class);
         when(service.getOriginalUrl()).thenReturn(CONST_TEST_URL);
+
         val logoutUrl = new URL(service.getOriginalUrl());
-        val request = new DefaultLogoutRequest("TICKET-ID", service, logoutUrl, mock(RegisteredService.class),
-            new MockTicketGrantingTicket("casuser"));
+        val request = DefaultLogoutRequest.builder()
+            .ticketId("TICKET-ID")
+            .service(service)
+            .logoutUrl(logoutUrl)
+            .registeredService(mock(RegisteredService.class))
+            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .build();
 
         val msg = builder.create(request);
 
         val factory = DocumentBuilderFactory.newInstance();
         val documentBuilder = factory.newDocumentBuilder();
 
-        val is = new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8));
-        val document = documentBuilder.parse(is);
-
-        val list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");
-        assertEquals(1, list.getLength());
-
-        assertEquals(list.item(0).getTextContent(), request.getTicketId());
+        try (val is = new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8))) {
+            val document = documentBuilder.parse(is);
+            val list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");
+            assertEquals(1, list.getLength());
+            assertEquals(list.item(0).getTextContent(), request.getTicketId());
+        }
     }
 }
