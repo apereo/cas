@@ -67,7 +67,7 @@ public class SamlIdPMetadataConfiguration {
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
+    private ObjectProvider<HttpClient> httpClient;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -87,7 +87,7 @@ public class SamlIdPMetadataConfiguration {
     public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlIdPMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
         val idp = casProperties.getAuthn().getSamlIdp();
         val resolver = new InMemoryResourceMetadataResolver(samlMetadataLocator.getMetadata(), openSamlConfigBean.getObject());
-        resolver.setParserPool(this.openSamlConfigBean.getObject().getParserPool());
+        resolver.setParserPool(this.openSamlConfigBean.getIfAvailable().getParserPool());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
         resolver.setId(idp.getEntityId());
@@ -135,7 +135,8 @@ public class SamlIdPMetadataConfiguration {
     @RefreshScope
     public SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
         return new SamlRegisteredServiceMetadataResolverCacheLoader(
-            openSamlConfigBean.getObject(), httpClient,
+            openSamlConfigBean.getIfAvailable(),
+            httpClient.getIfAvailable(),
             samlRegisteredServiceMetadataResolvers());
     }
 
@@ -145,7 +146,7 @@ public class SamlIdPMetadataConfiguration {
         val plan = new DefaultSamlRegisteredServiceMetadataResolutionPlan();
 
         val samlIdp = casProperties.getAuthn().getSamlIdp();
-        val cfgBean = openSamlConfigBean.getObject();
+        val cfgBean = openSamlConfigBean.getIfAvailable();
         plan.registerMetadataResolver(new MetadataQueryProtocolMetadataResolver(samlIdp, cfgBean));
         plan.registerMetadataResolver(new FileSystemResourceMetadataResolver(samlIdp, cfgBean));
         plan.registerMetadataResolver(new UrlResourceMetadataResolver(samlIdp, cfgBean));

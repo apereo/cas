@@ -25,6 +25,7 @@ import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
@@ -52,6 +53,7 @@ import org.opensaml.saml.saml2.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -101,7 +103,9 @@ import static org.mockito.Mockito.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CoreSamlConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class})
+    CasCoreUtilConfiguration.class
+})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseSamlIdPConfigurationTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
@@ -138,6 +142,13 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlObjectSignatureValidator")
     protected SamlObjectSignatureValidator samlObjectSignatureValidator;
+
+    @Autowired
+    protected CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
+    protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @BeforeClass
     public static void beforeClass() {
