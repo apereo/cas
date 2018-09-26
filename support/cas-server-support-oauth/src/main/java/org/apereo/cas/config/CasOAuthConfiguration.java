@@ -230,11 +230,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         };
     }
 
-    @Bean
-    public OAuth20CasClientRedirectActionBuilder defaultOAuthCasClientRedirectActionBuilder() {
-        return new OAuth20DefaultCasClientRedirectActionBuilder();
-    }
-
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
