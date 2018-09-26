@@ -1,11 +1,5 @@
 package org.apereo.cas.config;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.GrouperPrincipalAttributesProperties;
@@ -17,6 +11,13 @@ import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.CachingPersonAttributeDaoImpl;
 import org.apereo.services.persondir.support.GroovyPersonAttributeDao;
@@ -268,8 +269,9 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         casProperties.getAuthn().getAttributeRepository().getScript()
             .forEach(Unchecked.consumer(script -> {
                 final String scriptContents = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
-                final String engineName = script.getEngineName() == null ?
-                        ScriptEnginePersonAttributeDao.getScriptEngineName(script.getLocation().getFilename()) : script.getEngineName();
+                final String engineName = script.getEngineName() == null
+                    ? ScriptEnginePersonAttributeDao.getScriptEngineName(script.getLocation().getFilename())
+                    : script.getEngineName();
                 final ScriptEnginePersonAttributeDao dao = new ScriptEnginePersonAttributeDao(scriptContents, engineName);
                 dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
                 dao.setOrder(script.getOrder());
