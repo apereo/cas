@@ -75,7 +75,7 @@ public class RegisteredServiceTestUtils {
         return usernamePasswordCredentials;
     }
 
-    public static Service getService() {
+    public static AbstractWebApplicationService getService() {
         return getService(CONST_TEST_URL);
     }
 

@@ -36,6 +36,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
@@ -130,6 +131,10 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
+
+    @Autowired
+    @Qualifier("urlValidator")
+    protected UrlValidator urlValidator;
 
     @Autowired
     @Qualifier("servicesManager")
