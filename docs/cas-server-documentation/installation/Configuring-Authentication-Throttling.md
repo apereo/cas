@@ -65,6 +65,21 @@ Enable the following module in your configuration overlay:
 </dependency>
 ```
 
+## CouchDb
+
+Queries a CouchDb data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. This component requires and depends on the [CAS auditing
+functionality](Audits.html) via CouchDb.
+
+Enable the following module in your configuration overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-throttle-mongo</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
 For additional instructions on how to configure auditing, please [review the following guide](Audits.html).
 
 

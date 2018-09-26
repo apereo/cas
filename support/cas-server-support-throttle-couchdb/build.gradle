@@ -1,0 +1,36 @@
+description = "Apereo CAS CouchDb Authentication Throttling"
+dependencies {
+    api project(":api:cas-server-core-api-throttle")
+
+    implementation project(":support:cas-server-support-audit-couchdb")
+    implementation project(":core:cas-server-core-audit")
+    implementation project(":core:cas-server-core-audit-api")
+    implementation project(":core:cas-server-core-authentication-throttle")
+    implementation project(":support:cas-server-support-couchdb-core")
+    implementation project(":support:cas-server-support-throttle")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+
+    implementation libraries.ektorp
+
+    testImplementation project(path: ":support:cas-server-support-throttle", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core-web-api")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-tickets-api")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core")
+    testImplementation project(path: ":core:cas-server-core-logout-api")
+    testImplementation project(path: ":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-authentication-api")
+}
