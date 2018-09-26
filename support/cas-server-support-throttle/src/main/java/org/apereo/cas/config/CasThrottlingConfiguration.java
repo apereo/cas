@@ -76,7 +76,7 @@ public class CasThrottlingConfiguration {
                 throttle.getFailure().getRangeSeconds(),
                 throttle.getUsernameParameter(),
                 throttle.getFailure().getCode(),
-                auditTrailExecutionPlan.getObject(),
+                auditTrailExecutionPlan.getIfAvailable(),
                 throttle.getAppcode(),
                 throttledRequestResponseHandler());
         }
@@ -86,7 +86,7 @@ public class CasThrottlingConfiguration {
             throttle.getFailure().getRangeSeconds(),
             throttle.getUsernameParameter(),
             throttle.getFailure().getCode(),
-            auditTrailExecutionPlan.getObject(),
+            auditTrailExecutionPlan.getIfAvailable(),
             throttle.getAppcode(),
             throttledRequestResponseHandler());
     }

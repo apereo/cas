@@ -66,15 +66,15 @@ public class CasCoreAuthenticationSupportConfiguration {
 
     @Bean
     public AuthenticationSystemSupport defaultAuthenticationSystemSupport() {
-        return new DefaultAuthenticationSystemSupport(authenticationTransactionManager.getObject(),
-            principalElectionStrategy.getObject());
+        return new DefaultAuthenticationSystemSupport(authenticationTransactionManager.getIfAvailable(),
+            principalElectionStrategy.getIfAvailable());
     }
 
     @Bean
     @Lazy
     @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
     public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
-        return new RegisteredServiceAuthenticationHandlerResolver(servicesManager.getObject());
+        return new RegisteredServiceAuthenticationHandlerResolver(servicesManager.getIfAvailable());
     }
 
     @Bean

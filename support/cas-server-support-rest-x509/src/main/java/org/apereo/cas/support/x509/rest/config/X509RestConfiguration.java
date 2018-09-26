@@ -44,13 +44,13 @@ public class X509RestConfiguration implements RestHttpRequestCredentialFactoryCo
 
     @Bean
     public RestHttpRequestCredentialFactory x509RestRequestHeader() {
-        return new X509RestHttpRequestHeaderCredentialFactory(x509CertificateExtractor.getObject());
+        return new X509RestHttpRequestHeaderCredentialFactory(x509CertificateExtractor.getIfAvailable());
     }
     
     @Override
     public void configureCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
         val restProperties = casProperties.getRest();
-        val extractor = x509CertificateExtractor.getObject();
+        val extractor = x509CertificateExtractor.getIfAvailable();
         val headerAuth = restProperties.isHeaderAuth();
         val bodyAuth = restProperties.isBodyAuth();
         LOGGER.debug("is certificate extractor available? = {}, headerAuth = {}, bodyAuth = {}",

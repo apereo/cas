@@ -82,12 +82,12 @@ public class DefaultPrincipalAttributesRepositoryTests {
     @Test
     public void checkDefaultAttributes() {
         val rep = new DefaultPrincipalAttributesRepository();
-        assertEquals(3, rep.getAttributes(this.principalFactory.getObject().createPrincipal("uid")).size());
+        assertEquals(3, rep.getAttributes(this.principalFactory.getIfAvailable().createPrincipal("uid")).size());
     }
 
     @Test
     public void checkInitialAttributes() {
-        val p = this.principalFactory.getObject().createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
+        val p = this.principalFactory.getIfAvailable().createPrincipal("uid", Collections.singletonMap("mail", "final@example.com"));
         val rep = new DefaultPrincipalAttributesRepository();
         assertEquals(1, rep.getAttributes(p).size());
         assertTrue(rep.getAttributes(p).containsKey("mail"));

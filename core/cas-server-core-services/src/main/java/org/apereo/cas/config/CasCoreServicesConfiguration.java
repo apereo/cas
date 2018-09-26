@@ -164,7 +164,7 @@ public class CasCoreServicesConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistry serviceRegistry() {
-        val configurers = ObjectUtils.defaultIfNull(serviceRegistryDaoConfigurers.getObject(),
+        val configurers = ObjectUtils.defaultIfNull(serviceRegistryDaoConfigurers.getIfAvailable(),
             new ArrayList<ServiceRegistryExecutionPlanConfigurer>(0));
         val plan = new DefaultServiceRegistryExecutionPlan();
         configurers.forEach(c -> {

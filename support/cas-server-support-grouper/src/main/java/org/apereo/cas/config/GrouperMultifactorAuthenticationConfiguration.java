@@ -81,7 +81,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
     @RefreshScope
     public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver() {
         val r = new GrouperMultifactorAuthenticationPolicyEventResolver(
-            authenticationSystemSupport.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService,
             servicesManager,
             ticketRegistrySupport,

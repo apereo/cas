@@ -171,9 +171,9 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     public Action acceptPasswordlessAuthenticationAction() {
         return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
             serviceTicketRequestWebflowEventResolver,
-            adaptiveAuthenticationPolicy.getObject(),
+            adaptiveAuthenticationPolicy.getIfAvailable(),
             passwordlessTokenRepository(),
-            authenticationSystemSupport.getObject(),
+            authenticationSystemSupport.getIfAvailable(),
             passwordlessUserAccountStore());
     }
 

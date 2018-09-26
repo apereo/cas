@@ -38,6 +38,6 @@ public class SamlServiceFactoryConfiguration implements ServiceFactoryConfigurer
 
     @Bean
     public ServiceFactory<SamlService> samlServiceFactory() {
-        return new SamlServiceFactory(this.saml10ObjectBuilder.getObject());
+        return new SamlServiceFactory(this.saml10ObjectBuilder.getIfAvailable());
     }
 }

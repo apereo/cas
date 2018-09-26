@@ -139,8 +139,8 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             public HttpURLConnection buildHttpURLConnection(final URLConnection conn) {
                 if (conn instanceof HttpsURLConnection) {
                     val httpsConnection = (HttpsURLConnection) conn;
-                    httpsConnection.setSSLSocketFactory(sslContext.getObject().getSocketFactory());
-                    httpsConnection.setHostnameVerifier(hostnameVerifier.getObject());
+                    httpsConnection.setSSLSocketFactory(sslContext.getIfAvailable().getSocketFactory());
+                    httpsConnection.setHostnameVerifier(hostnameVerifier.getIfAvailable());
                 }
                 return (HttpURLConnection) conn;
             }
@@ -254,7 +254,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy20Handler() {
-        return new Cas20ProxyHandler(httpClient.getObject(), proxy20TicketUniqueIdGenerator());
+        return new Cas20ProxyHandler(httpClient.getIfAvailable(), proxy20TicketUniqueIdGenerator());
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistry")
