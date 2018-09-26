@@ -71,8 +71,8 @@ public class X509AuthenticationWebflowConfiguration implements CasWebflowExecuti
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer x509WebflowConfigurer() {
-        return new X509WebflowConfigurer(flowBuilderServices.getIfAvailable(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+        return new X509WebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             applicationContext, casProperties);
     }
 
@@ -83,7 +83,7 @@ public class X509AuthenticationWebflowConfiguration implements CasWebflowExecuti
             return new X509CertificateCredentialsRequestHeaderAction(initialAuthenticationAttemptWebflowEventResolver,
                 serviceTicketRequestWebflowEventResolver,
                 adaptiveAuthenticationPolicy,
-                x509CertificateExtractor.getIfAvailable());
+                x509CertificateExtractor.getObject());
         }
         return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver,
             serviceTicketRequestWebflowEventResolver,

@@ -68,18 +68,18 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @ConditionalOnMissingBean(name = "singleLogoutServiceLogoutUrlBuilder")
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
-        return new DefaultSingleLogoutServiceLogoutUrlBuilder(this.urlValidator.getIfAvailable());
+        return new DefaultSingleLogoutServiceLogoutUrlBuilder(this.urlValidator.getObject());
     }
 
     @ConditionalOnMissingBean(name = "defaultSingleLogoutServiceMessageHandler")
     @Bean
     public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler() {
-        return new DefaultSingleLogoutServiceMessageHandler(httpClient.getIfAvailable(),
+        return new DefaultSingleLogoutServiceMessageHandler(httpClient.getObject(),
             defaultLogoutBuilder(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             singleLogoutServiceLogoutUrlBuilder(),
             casProperties.getSlo().isAsynchronous(),
-            authenticationServiceSelectionPlan.getIfAvailable());
+            authenticationServiceSelectionPlan.getObject());
     }
 
     @ConditionalOnMissingBean(name = "logoutManager")

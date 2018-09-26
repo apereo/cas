@@ -214,7 +214,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
                     val principal = CoreAuthenticationTestUtils.getPrincipal();
                     authenticationResultBuilder.collect(authentication);
                     authenticationResultBuilder.collect(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-                    val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getIfAvailable(), service);
+                    val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getObject(), service);
 
                     WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
                     WebUtils.putAuthenticationResult(authenticationResult, requestContext);

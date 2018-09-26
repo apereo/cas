@@ -76,7 +76,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
                 plan.registerAuthenticationPolicy(notPreventedAuthenticationPolicy());
             } else if (police.getUniquePrincipal().isEnabled()) {
                 LOGGER.debug("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
-                plan.registerAuthenticationPolicy(new UniquePrincipalAuthenticationPolicy(ticketRegistry.getIfAvailable()));
+                plan.registerAuthenticationPolicy(new UniquePrincipalAuthenticationPolicy(ticketRegistry.getObject()));
             } else if (!police.getGroovy().isEmpty()) {
                 LOGGER.debug("Activating authentication policy [{}]", GroovyScriptAuthenticationPolicy.class.getSimpleName());
                 police.getGroovy().forEach(groovy -> plan.registerAuthenticationPolicy(new GroovyScriptAuthenticationPolicy(resourceLoader, groovy.getScript())));
@@ -99,7 +99,7 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @Bean
     @RefreshScope
     public AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy() {
-        return new DefaultAdaptiveAuthenticationPolicy(this.geoLocationService.getIfAvailable(),
+        return new DefaultAdaptiveAuthenticationPolicy(this.geoLocationService.getObject(),
             ipAddressIntelligenceService(), casProperties.getAuthn().getAdaptive());
     }
 

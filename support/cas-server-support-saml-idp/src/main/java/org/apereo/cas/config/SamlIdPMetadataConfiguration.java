@@ -177,6 +177,6 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     public HealthIndicator samlRegisteredServiceMetadataHealthIndicator() {
         return new SamlRegisteredServiceMetadataHealthIndicator(samlRegisteredServiceMetadataResolvers(),
-            servicesManager.getIfAvailable());
+            servicesManager.getObject());
     }
 }

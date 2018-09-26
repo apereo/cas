@@ -166,7 +166,7 @@ public class X509AuthenticationConfiguration {
         val revChecker = getRevocationCheckerFrom(x509);
         return new X509CredentialsAuthenticationHandler(
             x509.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             x509PrincipalFactory(),
             StringUtils.isNotBlank(x509.getRegExTrustedIssuerDnPattern())
                 ? RegexUtils.createPattern(x509.getRegExTrustedIssuerDnPattern())
@@ -205,7 +205,7 @@ public class X509AuthenticationConfiguration {
     public PrincipalResolver x509SubjectPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
         return new X509SubjectPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             x509.getPrincipal().isReturnNull(),
             x509.getPrincipal().getPrincipalAttribute(),
@@ -218,7 +218,7 @@ public class X509AuthenticationConfiguration {
         val x509 = casProperties.getAuthn().getX509();
         val principal = x509.getPrincipal();
         return new X509SubjectDNPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull(),
             principal.getPrincipalAttribute());
@@ -230,7 +230,7 @@ public class X509AuthenticationConfiguration {
         val x509 = casProperties.getAuthn().getX509();
         val principal = x509.getPrincipal();
         return new X509SubjectAlternativeNameUPNPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull(),
             principal.getPrincipalAttribute());
@@ -249,21 +249,21 @@ public class X509AuthenticationConfiguration {
         if (Character.MIN_RADIX <= radix && radix <= Character.MAX_RADIX) {
             if (radix == HEX) {
                 return new X509SerialNumberPrincipalResolver(
-                    attributeRepository.getIfAvailable(),
+                    attributeRepository.getObject(),
                     x509PrincipalFactory(),
                     principal.isReturnNull(),
                     principal.getPrincipalAttribute(),
                     radix, x509.isPrincipalHexSNZeroPadding());
             }
             return new X509SerialNumberPrincipalResolver(
-                attributeRepository.getIfAvailable(),
+                attributeRepository.getObject(),
                 x509PrincipalFactory(),
                 principal.isReturnNull(),
                 principal.getPrincipalAttribute(),
                 radix, false);
         }
         return new X509SerialNumberPrincipalResolver(
-            attributeRepository.getIfAvailable(),
+            attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull(),
             principal.getPrincipalAttribute());
@@ -279,7 +279,7 @@ public class X509AuthenticationConfiguration {
     @RefreshScope
     public PrincipalResolver x509SerialNumberAndIssuerDNPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
-        return new X509SerialNumberAndIssuerDNPrincipalResolver(attributeRepository.getIfAvailable(),
+        return new X509SerialNumberAndIssuerDNPrincipalResolver(attributeRepository.getObject(),
             x509PrincipalFactory(),
             x509.getPrincipal().isReturnNull(),
             x509.getPrincipal().getPrincipalAttribute(),
@@ -291,7 +291,7 @@ public class X509AuthenticationConfiguration {
     public PrincipalResolver x509CommonNameEDIPIPrincipalResolver() {
         val x509 = casProperties.getAuthn().getX509();
         val principal = x509.getPrincipal();
-        return new X509CommonNameEDIPIPrincipalResolver(attributeRepository.getIfAvailable(),
+        return new X509CommonNameEDIPIPrincipalResolver(attributeRepository.getObject(),
             x509PrincipalFactory(),
             principal.isReturnNull(),
             principal.getPrincipalAttribute());

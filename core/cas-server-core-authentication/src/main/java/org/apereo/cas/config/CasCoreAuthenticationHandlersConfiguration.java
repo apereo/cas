@@ -68,9 +68,9 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
         return new HttpBasedServiceCredentialsAuthenticationHandler(null,
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             proxyPrincipalFactory(), Integer.MIN_VALUE,
-            supportsTrustStoreSslSocketFactoryHttpClient.getIfAvailable());
+            supportsTrustStoreSslSocketFactoryHttpClient.getObject());
     }
 
     @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
@@ -90,7 +90,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         val props = casProperties.getAuthn().getAccept();
         val h = new AcceptUsersAuthenticationHandler(props.getName(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             acceptUsersPrincipalFactory(),
             null,
             getParsedUsers());
@@ -172,7 +172,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
             return casProperties.getAuthn().getJaas()
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
-                .map(jaas -> new PersonDirectoryPrincipalResolver(attributeRepository.getIfAvailable(),
+                .map(jaas -> new PersonDirectoryPrincipalResolver(attributeRepository.getObject(),
                     jaasPrincipalFactory(),
                     jaas.getPrincipal().isReturnNull(),
                     StringUtils.defaultIfBlank(jaas.getPrincipal().getPrincipalAttribute(), casProperties.getPersonDirectory().getPrincipalAttribute())))
@@ -187,7 +187,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                 .stream()
                 .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
                 .map(jaas -> {
-                    val h = new JaasAuthenticationHandler(jaas.getName(), servicesManager.getIfAvailable(),
+                    val h = new JaasAuthenticationHandler(jaas.getName(), servicesManager.getObject(),
                         jaasPrincipalFactory(), jaas.getOrder());
 
                     h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());

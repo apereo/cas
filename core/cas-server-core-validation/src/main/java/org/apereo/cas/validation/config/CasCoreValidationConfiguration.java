@@ -73,7 +73,7 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
 
     @Bean
     public ServiceTicketValidationAuthorizer requiredHandlersServiceTicketValidationAuthorizer() {
-        return new RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer(this.servicesManager.getIfAvailable());
+        return new RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer(this.servicesManager.getObject());
     }
 
     @Override

@@ -114,8 +114,8 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
     @RefreshScope
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer() {
-        return new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices.getIfAvailable(),
-            loginFlowDefinitionRegistry.getIfAvailable(),
+        return new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices.getObject(),
+            loginFlowDefinitionRegistry.getObject(),
             applicationContext,
             casProperties);
     }

@@ -146,9 +146,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @ConditionalOnMissingBean(name = "samlSingleLogoutServiceLogoutUrlBuilder")
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder samlSingleLogoutServiceLogoutUrlBuilder() {
-        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
-            urlValidator.getIfAvailable());
+        return new SamlIdPSingleLogoutServiceLogoutUrlBuilder(servicesManager.getObject(),
+            defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),
+            urlValidator.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlLogoutBuilder")
@@ -164,12 +164,12 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @ConditionalOnMissingBean(name = "samlSingleLogoutServiceMessageHandler")
     @Bean
     public SingleLogoutServiceMessageHandler samlSingleLogoutServiceMessageHandler() {
-        return new SamlIdPSingleLogoutServiceMessageHandler(httpClient.getIfAvailable(),
+        return new SamlIdPSingleLogoutServiceMessageHandler(httpClient.getObject(),
             samlLogoutBuilder(),
-            servicesManager.getIfAvailable(),
+            servicesManager.getObject(),
             samlSingleLogoutServiceLogoutUrlBuilder(),
             casProperties.getSlo().isAsynchronous(),
-            authenticationServiceSelectionPlan.getIfAvailable());
+            authenticationServiceSelectionPlan.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlResponseBuilder")
@@ -177,14 +177,14 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlResponseBuilder() {
         return new SamlProfileSaml2ResponseBuilder(
-            openSamlConfigBean.getIfAvailable(),
+            openSamlConfigBean.getObject(),
             samlObjectSigner(),
-            velocityEngineFactory.getIfAvailable(),
+            velocityEngineFactory.getObject(),
             samlProfileSamlAssertionBuilder(),
             samlObjectEncrypter(),
-            ticketRegistry.getIfAvailable(),
+            ticketRegistry.getObject(),
             samlArtifactTicketFactory(),
-            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            ticketGrantingTicketCookieGenerator.getObject(),
             samlArtifactMap(),
             samlAttributeQueryTicketFactory());
     }
@@ -194,8 +194,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlArtifactTicketFactory samlArtifactTicketFactory() {
         return new DefaultSamlArtifactTicketFactory(samlArtifactTicketExpirationPolicy(),
-            openSamlConfigBean.getIfAvailable(),
-            webApplicationServiceFactory.getIfAvailable());
+            openSamlConfigBean.getObject(),
+            webApplicationServiceFactory.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
@@ -207,9 +207,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @RefreshScope
     public SAMLArtifactMap samlArtifactMap() {
-        val map = new CasSamlArtifactMap(ticketRegistry.getIfAvailable(),
+        val map = new CasSamlArtifactMap(ticketRegistry.getObject(),
             samlArtifactTicketFactory(),
-            ticketGrantingTicketCookieGenerator.getIfAvailable());
+            ticketGrantingTicketCookieGenerator.getObject());
         map.setArtifactLifetime(TimeUnit.SECONDS.toMillis(samlArtifactTicketExpirationPolicy().getTimeToLive()));
         return map;
     }
@@ -218,7 +218,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder() {
-        return new SamlProfileSamlSubjectBuilder(openSamlConfigBean.getIfAvailable(),
+        return new SamlProfileSamlSubjectBuilder(openSamlConfigBean.getObject(),
             samlProfileSamlNameIdBuilder(),
             casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance(),
             samlObjectEncrypter());
@@ -229,9 +229,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11FaultResponseBuilder() {
         return new SamlProfileSamlSoap11FaultResponseBuilder(
-            openSamlConfigBean.getIfAvailable(),
+            openSamlConfigBean.getObject(),
             samlObjectSigner(),
-            velocityEngineFactory.getIfAvailable(),
+            velocityEngineFactory.getObject(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
             samlObjectEncrypter());
@@ -242,9 +242,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlProfileObjectBuilder<Response> samlProfileSamlSoap11ResponseBuilder() {
         return new SamlProfileSamlSoap11ResponseBuilder(
-            openSamlConfigBean.getIfAvailable(),
+            openSamlConfigBean.getObject(),
             samlObjectSigner(),
-            velocityEngineFactory.getIfAvailable(),
+            velocityEngineFactory.getObject(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
             samlObjectEncrypter());
@@ -256,9 +256,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlArtifactFaultResponseBuilder() {
         return new SamlProfileArtifactFaultResponseBuilder(
-            openSamlConfigBean.getIfAvailable(),
+            openSamlConfigBean.getObject(),
             samlObjectSigner(),
-            velocityEngineFactory.getIfAvailable(),
+            velocityEngineFactory.getObject(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
             samlObjectEncrypter());
@@ -269,9 +269,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlArtifactResponseBuilder() {
         return new SamlProfileArtifactResponseBuilder(
-            openSamlConfigBean.getIfAvailable(),
+            openSamlConfigBean.getObject(),
             samlObjectSigner(),
-            velocityEngineFactory.getIfAvailable(),
+            velocityEngineFactory.getObject(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
             samlObjectEncrypter());
@@ -281,8 +281,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<NameID> samlProfileSamlNameIdBuilder() {
-        return new SamlProfileSamlNameIdBuilder(openSamlConfigBean.getIfAvailable(),
-            shibbolethCompatiblePersistentIdGenerator.getIfAvailable(),
+        return new SamlProfileSamlNameIdBuilder(openSamlConfigBean.getObject(),
+            shibbolethCompatiblePersistentIdGenerator.getObject(),
             samlObjectEncrypter());
     }
 
@@ -290,7 +290,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder() {
-        return new SamlProfileSamlConditionsBuilder(openSamlConfigBean.getIfAvailable());
+        return new SamlProfileSamlConditionsBuilder(openSamlConfigBean.getObject());
     }
 
     @ConditionalOnMissingBean(name = "defaultAuthnContextClassRefBuilder")
@@ -305,7 +305,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder() {
         return new SamlProfileSamlAssertionBuilder(
-            openSamlConfigBean.getIfAvailable(),
+            openSamlConfigBean.getObject(),
             casProperties,
             samlProfileSamlAuthNStatementBuilder(),
             samlProfileSamlAttributeStatementBuilder(),
@@ -318,7 +318,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Bean
     @RefreshScope
     public SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder() {
-        return new SamlProfileSamlAuthNStatementBuilder(openSamlConfigBean.getIfAvailable(), defaultAuthnContextClassRefBuilder());
+        return new SamlProfileSamlAuthNStatementBuilder(openSamlConfigBean.getObject(), defaultAuthnContextClassRefBuilder());
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeStatementBuilder")
@@ -326,7 +326,7 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder() {
         return new SamlProfileSamlAttributeStatementBuilder(
-            openSamlConfigBean.getIfAvailable(),
+            openSamlConfigBean.getObject(),
             samlAttributeEncoder(),
             casProperties.getAuthn().getSamlIdp(),
             samlObjectEncrypter());
@@ -351,9 +351,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlIdPObjectSigner samlObjectSigner() {
         return new SamlIdPObjectSigner(
-            this.casSamlIdPMetadataResolver.getIfAvailable(),
+            this.casSamlIdPMetadataResolver.getObject(),
             casProperties,
-            this.samlIdPMetadataLocator.getIfAvailable());
+            this.samlIdPMetadataLocator.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryFaultResponseBuilder")
@@ -361,9 +361,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlAttributeQueryFaultResponseBuilder() {
         return new SamlProfileAttributeQueryFaultResponseBuilder(
-            openSamlConfigBean.getIfAvailable(),
+            openSamlConfigBean.getObject(),
             samlObjectSigner(),
-            velocityEngineFactory.getIfAvailable(),
+            velocityEngineFactory.getObject(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
             samlObjectEncrypter());
@@ -374,9 +374,9 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlProfileObjectBuilder<org.opensaml.saml.saml2.core.Response> samlProfileSamlAttributeQueryResponseBuilder() {
         return new SamlProfileAttributeQueryResponseBuilder(
-            openSamlConfigBean.getIfAvailable(),
+            openSamlConfigBean.getObject(),
             samlObjectSigner(),
-            velocityEngineFactory.getIfAvailable(),
+            velocityEngineFactory.getObject(),
             samlProfileSamlAssertionBuilder(),
             samlProfileSamlResponseBuilder(),
             samlObjectEncrypter());
@@ -387,8 +387,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @RefreshScope
     public SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory() {
         return new DefaultSamlAttributeQueryTicketFactory(samlAttributeQueryTicketExpirationPolicy(),
-            webApplicationServiceFactory.getIfAvailable(),
-            openSamlConfigBean.getIfAvailable());
+            webApplicationServiceFactory.getObject(),
+            openSamlConfigBean.getObject());
     }
 
     @ConditionalOnMissingBean(name = "samlAttributeQueryTicketExpirationPolicy")
