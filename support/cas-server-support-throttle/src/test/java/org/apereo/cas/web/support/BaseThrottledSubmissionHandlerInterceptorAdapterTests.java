@@ -110,7 +110,9 @@ public class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
                 LOGGER.debug("Waiting for [{}] ms", period);
                 Thread.sleep(period);
                 val status = loginUnsuccessfully("mog", "1.2.3.4");
-                assertEquals(expected, status.getStatus());
+                if (i == trials) {
+                    assertEquals(expected, status.getStatus());
+                }
             } catch (final Exception e) {
                 throw new AssertionError(e.getMessage(), e);
             }
