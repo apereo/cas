@@ -6,7 +6,6 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.Test;
 
@@ -22,9 +21,8 @@ import static org.junit.Assert.*;
  */
 public class SamlProfileLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
 
-    @SneakyThrows
     @Test
-    public void verifyOperation() {
+    public void verifyOperation() throws Exception {
         val creator = new SamlProfileLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp());
