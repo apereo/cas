@@ -52,7 +52,7 @@ See the [CAS Protocol](../protocol/CAS-Protocol.html) for more info.
 
 By default, CAS ships with a bundled HTTP client that is partly responsible to callback the URL
 for proxy authentication. Note that this URL need also be authorized by the CAS service registry
-before the callback can be made. [See this guide](Service-Management.md) for more info.
+before the callback can be made. [See this guide](Service-Management.html) for more info.
 
 If the callback URL is authorized by the service registry, and if the endpoint is under HTTPS
 and protected by an SSL certificate, CAS will also attempt to verify the validity of the endpoint's
