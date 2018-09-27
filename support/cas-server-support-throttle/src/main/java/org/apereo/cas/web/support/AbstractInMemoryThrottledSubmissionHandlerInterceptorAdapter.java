@@ -58,7 +58,9 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     @Override
     public void recordSubmissionFailure(final HttpServletRequest request) {
-        this.ipMap.put(constructKey(request), ZonedDateTime.now(ZoneOffset.UTC));
+        val key = constructKey(request);
+        LOGGER.debug("Recording submission failure [{}]", key);
+        this.ipMap.put(key, ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     /**
