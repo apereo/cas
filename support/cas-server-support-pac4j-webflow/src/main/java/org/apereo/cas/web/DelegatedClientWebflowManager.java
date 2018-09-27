@@ -1,8 +1,5 @@
 package org.apereo.cas.web;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
@@ -15,10 +12,15 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth20Configuration;
@@ -122,6 +124,21 @@ public class DelegatedClientWebflowManager {
      */
     public Service retrieve(final RequestContext requestContext, final WebContext webContext, final BaseClient client) {
         final String clientId = getDelegatedClientId(webContext, client);
+        final TransientSessionTicket ticket = retrieveSessionTicketViaClientId(webContext, clientId);
+        restoreDelegatedAuthenticationRequest(requestContext, webContext, ticket);
+        LOGGER.debug("Removing delegated client identifier [{}} from registry", ticket.getId());
+        this.ticketRegistry.deleteTicket(ticket.getId());
+        return ticket.getService();
+    }
+
+    /**
+     * Retrieve session ticket via client id.
+     *
+     * @param webContext the web context
+     * @param clientId   the client id
+     * @return the transient session ticket
+     */
+    protected TransientSessionTicket retrieveSessionTicketViaClientId(final WebContext webContext, final String clientId) {
         final TransientSessionTicket ticket = this.ticketRegistry.getTicket(clientId, TransientSessionTicket.class);
         if (ticket == null) {
             LOGGER.error("Delegated client identifier cannot be located in the authentication request [{}]", webContext.getFullRequestURL());
@@ -133,10 +150,7 @@ public class DelegatedClientWebflowManager {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         LOGGER.debug("Located delegated client identifier as [{}]", ticket.getId());
-        restoreDelegatedAuthenticationRequest(requestContext, webContext, ticket);
-        LOGGER.debug("Removing delegated client identifier [{}} from registry", ticket.getId());
-        this.ticketRegistry.deleteTicket(ticket.getId());
-        return ticket.getService();
+        return ticket;
     }
 
     private Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext,
@@ -152,7 +166,14 @@ public class DelegatedClientWebflowManager {
         return service;
     }
 
-    private String getDelegatedClientId(final WebContext webContext, final BaseClient client) {
+    /**
+     * Gets delegated client id.
+     *
+     * @param webContext the web context
+     * @param client     the client
+     * @return the delegated client id
+     */
+    protected String getDelegatedClientId(final WebContext webContext, final BaseClient client) {
         String clientId = webContext.getRequestParameter(PARAMETER_CLIENT_ID);
         if (StringUtils.isBlank(clientId)) {
             if (client instanceof SAML2Client) {
@@ -165,8 +186,9 @@ public class DelegatedClientWebflowManager {
             }
             if (client instanceof OAuth10Client) {
                 LOGGER.debug("Client identifier could not be found as part of request parameters.  Looking at state for the OAuth1 client");
-                clientId = (String) webContext.getSessionStore().get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
-                webContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
+                final SessionStore sessionStore = webContext.getSessionStore();
+                clientId = (String) sessionStore.get(webContext, OAUTH10_CLIENT_ID_SESSION_KEY);
+                sessionStore.set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, null);
             }
         }
         LOGGER.debug("Located delegated client identifier for this request as [{}]", clientId);
