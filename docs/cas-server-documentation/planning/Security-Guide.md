@@ -218,7 +218,7 @@ section for further information.
 
 ### Credential Encryption
 
-To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Properties-Security.html).
+To learn how sensitive CAS settings can be secured via encryption, [please review this guide](../installation/Configuration-Properties-Security.html).
 
 ### CAS Security Filter
 

@@ -102,7 +102,7 @@ public class DelegatedClientNavigationController {
      * @return the view
      */
     @GetMapping(ENDPOINT_RESPONSE)
-    public View redirectResponseToFlow(final @PathVariable("clientName") String clientName, final HttpServletRequest request, final HttpServletResponse response) {
+    public View redirectResponseToFlow(@PathVariable("clientName") final String clientName, final HttpServletRequest request, final HttpServletResponse response) {
         final URIBuilder builder = new URIBuilder(request.getRequestURL().append('?').append(request.getQueryString()).toString());
         builder.setPath(builder.getPath().replace('/' + clientName, ""));
         builder.addParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientName);

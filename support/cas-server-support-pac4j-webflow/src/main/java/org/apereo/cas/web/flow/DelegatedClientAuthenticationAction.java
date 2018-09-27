@@ -287,7 +287,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
     protected String getCssClass(final String name) {
         String computedCssClass = "fa fa-lock";
         if (StringUtils.isNotBlank(name)) {
-            computedCssClass = computedCssClass.concat(" " + PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN.matcher(name).replaceAll("-"));
+            computedCssClass = computedCssClass.concat(' ' + PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN.matcher(name).replaceAll("-"));
         }
         LOGGER.debug("cssClass for [{}] is [{}]", name, computedCssClass);
         return computedCssClass;

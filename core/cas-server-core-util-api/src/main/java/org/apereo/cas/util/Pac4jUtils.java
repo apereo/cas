@@ -111,6 +111,16 @@ public class Pac4jUtils {
     /**
      * Gets pac4j context.
      *
+     * @param request the request
+     * @return the pac4j context
+     */
+    public static J2EContext getPac4jJ2EContext(final HttpServletRequest request) {
+        return getPac4jJ2EContext(request, HttpRequestUtils.getHttpServletResponseFromRequestAttributes(), new J2ESessionStore());
+    }
+
+    /**
+     * Gets pac4j context.
+     *
      * @param request      the request
      * @param sessionStore the session store
      * @return the pac4j context

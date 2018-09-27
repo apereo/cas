@@ -7,7 +7,7 @@ title: CAS - SAML2 Authentication
 
 CAS can act as a SAML2 identity provider accepting authentication requests and producing SAML assertions.
 
-If you intend to allow CAS to delegate authentication to an external SAML2 identity provider, you need to [review this guide](../integration/Delegate-Authentication.md).
+If you intend to allow CAS to delegate authentication to an external SAML2 identity provider, you need to [review this guide](../integration/Delegate-Authentication.html).
 
 <div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on SAML2 support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure about the concepts referred to on this page, please start with reviewing the <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html">SAML2 Specification</a>.</p></div>
 
@@ -52,7 +52,7 @@ will always use its own signing certificate for signing of the responses generat
 Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on 
 CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.md#saml-idp).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#saml-idp).
 
 ## IdP Metadata
 
@@ -148,7 +148,7 @@ your CAS overlay to be able to resolve dependencies:
 </repositories>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.md#saml-idp).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#saml-idp).
 
 ### SAML Services
 
@@ -233,7 +233,7 @@ metadata resolution to override the default global value.
 
 In addition to the more traditional means of managing service provider metadata such as direct XML files or URLs, CAS 
 provides support for a number of other strategies to fetch metadata more dynamically with the likes of MDQ and more.
-To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.md).
+To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
 
 ### Attribute Name Formats
 
@@ -254,7 +254,7 @@ Attribute name formats can be specified per relying party in the service registr
 ```
 
 You may also have the option to define attributes and their relevant name format globally
-via CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.md#saml-idp).
+via CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#saml-idp).
 
 ### Attribute Friendly Names
 
@@ -278,21 +278,21 @@ specially if the original attribute is *mapped* to a different name.
 
 ### Attribute Release
 
-Attribute filtering and release policies are defined per SAML service. See [this guide](Configuring-SAML2-Attribute-Release.md) for more info.
+Attribute filtering and release policies are defined per SAML service. See [this guide](Configuring-SAML2-Attribute-Release.html) for more info.
 
 ### Name ID Selection
 
 Each service may specify a required Name ID format. If left undefined, the metadata will be consulted to find the right format.
 The Name ID value is always simply the authenticated user that is designed to be returned to this service. In other words, if you
 decide to configure CAS to return a particular attribute as
-[the authenticated user name for this service](../integration/Attribute-Release-PrincipalId.md),
+[the authenticated user name for this service](../integration/Attribute-Release-PrincipalId.html),
 that value will then be used to construct the Name ID along with the right format.
 
 
 ## SP Integrations
 
 A number of SAML2 service provider integrations are provided natively by CAS. To learn more,
-please [review this guide](../integration/Configuring-SAML-SP-Integrations.md).
+please [review this guide](../integration/Configuring-SAML-SP-Integrations.html).
 
 ## Client Libraries
 

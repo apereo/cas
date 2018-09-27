@@ -869,7 +869,7 @@ The parameters passed are as follows:
 
 ## Email Notifications
 
-To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
+To learn more about this topic, [please review this guide](Sending-Email-Configuration.html).
 
 The following options are shared and apply when CAS is configured to send email notifications, given the provider's *configuration key*:
 
