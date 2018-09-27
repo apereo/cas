@@ -63,5 +63,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(":core:cas-server-core-tickets-api")
 }
