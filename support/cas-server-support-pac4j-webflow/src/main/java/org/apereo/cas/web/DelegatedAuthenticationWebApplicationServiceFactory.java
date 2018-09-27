@@ -49,12 +49,15 @@ public class DelegatedAuthenticationWebApplicationServiceFactory extends WebAppl
         final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
         final J2EContext webContext = Pac4jUtils.getPac4jJ2EContext(request);
         final String clientId = delegatedClientWebflowManager.getDelegatedClientId(webContext, client);
-        final TransientSessionTicket ticket = delegatedClientWebflowManager.retrieveSessionTicketViaClientId(webContext, clientId);
+        if (StringUtils.isNotBlank(clientId)) {
+            final TransientSessionTicket ticket = delegatedClientWebflowManager.retrieveSessionTicketViaClientId(webContext, clientId);
 
-        if (ticket == null || ticket.getService() == null) {
-            LOGGER.warn("Session ticket [{}] is not found or does not have a service associated with it", ticket);
-            return null;
+            if (ticket == null || ticket.getService() == null) {
+                LOGGER.warn("Session ticket [{}] is not found or does not have a service associated with it", ticket);
+                return null;
+            }
+            return ticket.getService().getId();
         }
-        return ticket.getService().getId();
+        return null;
     }
 }
