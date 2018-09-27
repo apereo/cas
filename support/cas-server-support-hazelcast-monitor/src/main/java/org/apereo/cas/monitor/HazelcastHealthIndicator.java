@@ -2,6 +2,8 @@ package org.apereo.cas.monitor;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.instance.HazelcastInstanceProxy;
+import com.hazelcast.memory.MemoryStats;
 import com.hazelcast.monitor.LocalMapStats;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +25,12 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
     /**
      * CAS Hazelcast Instance.
      */
-    private final HazelcastInstance instance;
+    private final HazelcastInstanceProxy instance;
 
     public HazelcastHealthIndicator(final CasConfigurationProperties casProperties,
                                     final HazelcastInstance instance) {
         super(casProperties);
-        this.instance = instance;
+        this.instance = (HazelcastInstanceProxy) instance;
     }
 
     @Override
@@ -36,8 +38,9 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         final List<CacheStatistics> statsList = new ArrayList<>();
         instance.getConfig().getMapConfigs().keySet().forEach(key -> {
             final IMap map = instance.getMap(key);
+            final MemoryStats memoryStats = instance.getOriginal().getMemoryStats();
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
-            statsList.add(new HazelcastStatistics(map, instance.getCluster().getMembers().size()));
+            statsList.add(new HazelcastStatistics(map, instance.getCluster().getMembers().size(), memoryStats));
         });
         return statsList.toArray(new CacheStatistics[0]);
     }
@@ -53,9 +56,12 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
         private final int clusterSize;
 
-        protected HazelcastStatistics(final IMap map, final int clusterSize) {
+        private final MemoryStats memoryStats;
+
+        protected HazelcastStatistics(final IMap map, final int clusterSize, final MemoryStats memoryStats) {
             this.map = map;
             this.clusterSize = clusterSize;
+            this.memoryStats = memoryStats;
         }
 
         @Override
@@ -65,7 +71,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
         @Override
         public long getCapacity() {
-            return this.map.getLocalMapStats() != null ? this.map.getLocalMapStats().total() : 0;
+            return this.memoryStats.getCommittedHeap();
         }
 
         @Override
@@ -83,11 +89,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
         @Override
         public long getPercentFree() {
-            final long capacity = getCapacity();
-            if (capacity == 0) {
-                return 0;
-            }
-            return (int) ((capacity - getSize()) * PERCENTAGE_VALUE / capacity);
+            return (int) this.memoryStats.getFreeHeap() * PERCENTAGE_VALUE / this.memoryStats.getCommittedHeap();
         }
 
         @Override
