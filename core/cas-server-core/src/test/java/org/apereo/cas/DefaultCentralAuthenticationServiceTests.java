@@ -189,7 +189,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val ticket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticket.getId(), getService(), ctx);
 
-        val service = AbstractWebApplicationService.class.cast(serviceTicketId.getService());
+        val service = (AbstractWebApplicationService) serviceTicketId.getService();
         assertEquals(service.getPrincipal(), ticket.getAuthentication().getPrincipal().getId());
     }
 

@@ -15,6 +15,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -42,16 +43,18 @@ import java.util.Map;
 @Slf4j
 public class HazelcastTicketRegistryConfiguration {
 
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("ticketCatalog")
+    private ObjectProvider<TicketCatalog> ticketCatalog;
+
     @Bean
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+    public TicketRegistry ticketRegistry() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
-        val r = new HazelcastTicketRegistry(hazelcast(ticketCatalog),
-            ticketCatalog,
+        val r = new HazelcastTicketRegistry(hazelcast(),
+            ticketCatalog.getIfAvailable(),
             hz.getPageSize());
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
         return r;
@@ -62,30 +65,30 @@ public class HazelcastTicketRegistryConfiguration {
         return NoOpTicketRegistryCleaner.getInstance();
     }
 
-    @Autowired
     @Bean
-    public HazelcastInstance hazelcast(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        return Hazelcast.newHazelcastInstance(getConfig(ticketCatalog));
+    public HazelcastInstance hazelcast() {
+        return Hazelcast.newHazelcastInstance(getConfig());
     }
 
-    private Config getConfig(final TicketCatalog ticketCatalog) {
+    private Config getConfig() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
-        val configs = buildHazelcastMapConfigurations(ticketCatalog);
+        val configs = buildHazelcastMapConfigurations();
         val factory = new HazelcastConfigurationFactory();
         return factory.build(hz, configs);
     }
 
-    private Map<String, MapConfig> buildHazelcastMapConfigurations(final TicketCatalog ticketCatalog) {
+    private Map<String, MapConfig> buildHazelcastMapConfigurations() {
         val mapConfigs = new HashMap<String, MapConfig>();
 
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val factory = new HazelcastConfigurationFactory();
 
-        val definitions = ticketCatalog.findAll();
+        val definitions = ticketCatalog.getIfAvailable().findAll();
         definitions.forEach(t -> {
-            val mapConfig = factory.buildMapConfig(hz, t.getProperties().getStorageName(), t.getProperties().getStorageTimeout());
+            val properties = t.getProperties();
+            val mapConfig = factory.buildMapConfig(hz, properties.getStorageName(), properties.getStorageTimeout());
             LOGGER.debug("Created Hazelcast map configuration for [{}]", t);
-            mapConfigs.put(t.getProperties().getStorageName(), mapConfig);
+            mapConfigs.put(properties.getStorageName(), mapConfig);
         });
         return mapConfigs;
     }

@@ -837,16 +837,19 @@ to be a JSON map as such:
 
 ### Ruby/Python/Javascript/Groovy
 
-Similar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
+Similar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script to resolve attributes. 
+The following settings are relevant:
 
 ```properties
 # cas.authn.attributeRepository.script[0].location=file:/etc/cas/script.groovy
 # cas.authn.attributeRepository.script[0].order=0
 # cas.authn.attributeRepository.script[0].caseInsensitive=false
+# cas.authn.attributeRepository.script[0].engineName=js|groovy|ruby|python
 ```
 
 While Javascript and Groovy should be natively supported by CAS, Python scripts may need
 to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
+Ruby scripts are supported via [JRuby](https://search.maven.org/search?q=g:org.jruby%20AND%20a:jruby)  
 
 The Groovy script may be defined as:
 
@@ -857,7 +860,7 @@ Map<String, List<Object>> run(final Object... args) {
     def uid = args[0]
     def logger = args[1]
 
-    logger.debug("Things are happening just fine")
+    logger.debug("Groovy things are happening just fine with UID: {}",uid)
     return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }
 ```
@@ -865,14 +868,20 @@ Map<String, List<Object>> run(final Object... args) {
 The Javascript script may be defined as:
 
 ```javascript
-function run(args) {
-    var uid = args[0]
-    var logger = args[1]
+function run(uid, logger) {
     print("Things are happening just fine")
+    logger.warn("Javascript called with UID: {}",uid);
+
+    // If you want to call back into Java, this is one way to do so
+    var javaObj = new JavaImporter(org.yourorgname.yourpackagename);
+    with (javaObj) {
+    	var objFromJava = JavaClassInPackage.someStaticMethod(uid);
+    }
 
     var map = {};
+    map["attr_from_java"] = objFromJava.getSomething();
     map["username"] = uid;
-    map["likes"] = "chees";
+    map["likes"] = "cheese";
     map["id"] = [1234,2,3,4,5];
     map["another"] = "attribute";
 
@@ -1104,6 +1113,12 @@ same IP address. Database settings for this feature are available [here](Configu
 # cas.authn.throttle.jdbc.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? \
 #                                    AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
 ```
+
+### CouchDb
+
+Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
+same IP address. CouchDb settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-settings) under the configuration key
+`cas.authn.throttle`. When using this feature the audit facility should be in syncronous mode.
 
 ## Adaptive Authentication
 

@@ -86,7 +86,7 @@ public class SamlProfileLogoutMessageCreator extends AbstractSaml20ObjectBuilder
             nameId);
 
         val xmlRequest = SamlUtils.transformSamlObject(this.configBean, samlLogoutRequest).toString();
-        LOGGER.debug("SAML2 logout request prepared for [{}] is:\n[{}]", xmlRequest);
+        LOGGER.debug("SAML2 logout request prepared for [{}] is:\n[{}]", samlService, xmlRequest);
         return xmlRequest;
     }
 }

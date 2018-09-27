@@ -61,8 +61,11 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@TestPropertySource(properties = {"cas.scim.target=http://localhost:8215",
-    "cas.scim.version=1", "cas.scim.username=casuser", "cas.scim.password=Mellon"})
+@TestPropertySource(properties = {
+    "cas.scim.target=http://localhost:8215",
+    "cas.scim.version=1",
+    "cas.scim.username=casuser",
+    "cas.scim.password=Mellon"})
 public class PrincipalScimV1ProvisionerActionTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
