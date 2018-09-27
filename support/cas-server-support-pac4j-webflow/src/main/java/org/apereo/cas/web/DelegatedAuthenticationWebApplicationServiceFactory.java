@@ -6,10 +6,10 @@ import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.CommonProfile;
@@ -30,12 +30,12 @@ public class DelegatedAuthenticationWebApplicationServiceFactory extends WebAppl
 
     @Override
     protected String getRequestedService(final HttpServletRequest request) {
-        final String service = super.getRequestedService(request);
+        val service = super.getRequestedService(request);
         if (StringUtils.isNotBlank(service)) {
             return service;
         }
 
-        final String clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
+        val clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
         LOGGER.debug("Indicated client name for service extraction is [{}]", clientName);
 
         if (StringUtils.isBlank(clientName)) {
@@ -43,16 +43,19 @@ public class DelegatedAuthenticationWebApplicationServiceFactory extends WebAppl
             return null;
         }
 
-        final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-        final J2EContext webContext = Pac4jUtils.getPac4jJ2EContext(request);
-        final String clientId = delegatedClientWebflowManager.getDelegatedClientId(webContext, client);
-        final TransientSessionTicket ticket = delegatedClientWebflowManager.retrieveSessionTicketViaClientId(webContext, clientId);
+        val client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
+        val webContext = Pac4jUtils.getPac4jJ2EContext(request);
+        val clientId = delegatedClientWebflowManager.getDelegatedClientId(webContext, client);
+        if (StringUtils.isNotBlank(clientId)) {
+            val ticket = delegatedClientWebflowManager.retrieveSessionTicketViaClientId(webContext, clientId);
 
-        if (ticket == null || ticket.getService() == null) {
-            LOGGER.warn("Session ticket [{}] is not found or does not have a service associated with it", ticket);
-            return null;
+            if (ticket == null || ticket.getService() == null) {
+                LOGGER.warn("Session ticket [{}] is not found or does not have a service associated with it", ticket);
+                return null;
+            }
+            return ticket.getService().getId();
         }
-        return ticket.getService().getId();
+        return null;
     }
 }
 

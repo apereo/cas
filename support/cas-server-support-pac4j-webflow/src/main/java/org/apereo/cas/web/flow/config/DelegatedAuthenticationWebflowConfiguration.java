@@ -137,11 +137,15 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
     @Qualifier("logoutFlowRegistry")
     private ObjectProvider<FlowDefinitionRegistry> logoutFlowDefinitionRegistry;
 
+    @Autowired
+    @Qualifier("conventionErrorViewResolver")
+    private ObjectProvider<ErrorViewResolver> conventionErrorViewResolver;
+
     @Bean
     @ConditionalOnMissingBean(name = "pac4jErrorViewResolver")
     @RefreshScope
-    public static ErrorViewResolver pac4jErrorViewResolver() {
-        return new DelegatedAuthenticationErrorViewResolver();
+    public ErrorViewResolver pac4jErrorViewResolver() {
+        return new DelegatedAuthenticationErrorViewResolver(conventionErrorViewResolver.getIfAvailable(), delegatedSessionCookieManager.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "saml2ClientLogoutAction")
