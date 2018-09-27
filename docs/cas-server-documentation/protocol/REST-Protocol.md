@@ -96,7 +96,7 @@ POST /cas/v1/tickets/{TGT id} HTTP/1.0
 service={form encoded parameter for the service url}
 ```
 
-You may also submit service ticket requests using the semantics [SAML1 protocol](protocol/SAML-Protocol.html).
+You may also submit service ticket requests using the semantics [SAML1 protocol](SAML-Protocol.html).
 
 ### Successful Response
 
