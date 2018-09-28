@@ -12,6 +12,7 @@ import org.apereo.cas.web.UrlValidator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.opensaml.saml.common.xml.SAMLConstants;
 
 import java.net.URL;
 import java.util.Collection;
@@ -45,7 +46,6 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
     @Override
     public Collection<URL> determineLogoutUrl(final RegisteredService registeredService,
                                               final WebApplicationService singleLogoutService) {
-
         try {
             if (registeredService instanceof SamlRegisteredService) {
                 val location = buildLogoutUrl(registeredService, singleLogoutService);
@@ -63,6 +63,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
 
     private URL buildLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) throws Exception {
         LOGGER.debug("Building logout url for SAML service [{}]", registeredService);
+
         val entityID = singleLogoutService.getId();
         LOGGER.debug("Located entity id [{}]", entityID);
 
@@ -71,7 +72,13 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
             LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
             return null;
         }
-        val location = adaptor.get().getSingleLogoutService().getLocation();
+        val sloService = adaptor.get().getSingleLogoutService(SAMLConstants.SAML2_POST_BINDING_URI);
+        if (sloService == null) {
+            LOGGER.warn("Cannot find SLO service at binding [{}] in metadata for entity id [{}]", SAMLConstants.SAML2_POST_BINDING_URI, entityID);
+            return null;
+        }
+
+        val location = sloService.getLocation();
         return new URL(location);
     }
 }

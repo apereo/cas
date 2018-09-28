@@ -134,7 +134,13 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
                                                 final RegisteredService registeredService,
                                                 final URL logoutUrl,
                                                 final TicketGrantingTicket ticketGrantingTicket) {
-        val logoutRequest = new DefaultLogoutRequest(ticketId, selectedService, logoutUrl, registeredService, ticketGrantingTicket);
+        val logoutRequest = DefaultLogoutRequest.builder()
+            .ticketId(ticketId)
+            .service(selectedService)
+            .logoutUrl(logoutUrl)
+            .registeredService(registeredService)
+            .ticketGrantingTicket(ticketGrantingTicket)
+            .build();
         LOGGER.debug("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
 
         val type = registeredService.getLogoutType() == null

@@ -1,4 +1,4 @@
-package org.apereo.cas.configuration.model.support.jdbc;
+package org.apereo.cas.configuration.model.support.jdbc.authn;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -10,17 +10,16 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
- * This is {@link BindJdbcAuthenticationProperties}.
+ * This is {@link BaseJdbcAuthenticationProperties}.
  *
  * @author Misagh Moayyed
- * @since 5.2.0
+ * @since 6.0.0
  */
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
 @Getter
 @Setter
-public class BindJdbcAuthenticationProperties extends AbstractJpaProperties {
-
-    private static final long serialVersionUID = 4268982716707687796L;
+public abstract class BaseJdbcAuthenticationProperties extends AbstractJpaProperties {
+    private static final long serialVersionUID = 8460723293967413501L;
 
     /**
      * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
