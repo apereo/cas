@@ -722,7 +722,7 @@ To disable log sanitization, start the container with the system property `CAS_T
 ## Authentication Attributes
 
 Set of authentication attributes that are retrieved by the principal resolution process,
-typically via some component of [Person Directory](..\integration\Attribute-Resolution.html)
+typically via some component of [Person Directory](../integration/Attribute-Resolution.html)
 from a number of attribute sources unless noted otherwise by the specific authentication scheme.
 
 If multiple attribute repository sources are defined, they are added into a list
@@ -959,7 +959,7 @@ Retrieve attributes from a JDBC source. Database settings for this feature are a
 
 ### Grouper
 
-This option reads all the groups from [a Grouper instance](www.internet2.edu/grouper/software.html) for the given CAS principal and adopts them
+This option reads all the groups from [a Grouper instance](http://www.internet2.edu/grouper/software.html) for the given CAS principal and adopts them
 as CAS attributes under a `grouperGroups` multi-valued attribute.
 To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
 
@@ -2753,7 +2753,7 @@ Delegate authentication to Twitter.  Common settings for this identity provider 
 Allow CAS to act as an identity provider and security token service
 to support the WS-Federation protocol.
 
-To learn more about this topic, [please review this guide](WS-Federation-Protocol.html)
+To learn more about this topic, [please review this guide](../protocol/WS-Federation-Protocol.html)
 
 ```properties
 # cas.authn.wsfedIdp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS
