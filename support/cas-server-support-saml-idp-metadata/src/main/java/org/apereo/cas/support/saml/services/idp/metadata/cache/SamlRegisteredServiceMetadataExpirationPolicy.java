@@ -48,33 +48,10 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
         return defaultExpiration;
     }
 
-    private long getCacheDurationForServiceProvider(final SamlRegisteredService service, final MetadataResolver chainingMetadataResolver) {
-        try {
-            val set = new CriteriaSet();
-            set.add(new EntityIdCriterion(service.getServiceId()));
-            set.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-            val entitySp = chainingMetadataResolver.resolveSingle(set);
-            if (entitySp.getCacheDuration() != null) {
-                LOGGER.debug("Located cache duration [{}] specified in SP metadata for [{}]", entitySp.getCacheDuration(), entitySp.getEntityID());
-                return TimeUnit.MILLISECONDS.toNanos(entitySp.getCacheDuration());
-            }
-
-            set.clear();
-            set.add(new EntityIdCriterion(service.getServiceId()));
-            val entity = chainingMetadataResolver.resolveSingle(set);
-            if (entity.getCacheDuration() != null) {
-                LOGGER.debug("Located cache duration [{}] specified in entity metadata for [{}]", entity.getCacheDuration(), entity.getEntityID());
-                return TimeUnit.MILLISECONDS.toNanos(entity.getCacheDuration());
-            }
-        } catch (final Exception e) {
-            LOGGER.debug(e.getMessage(), e);
-        }
-        return -1;
-    }
 
     @Override
     public long expireAfterUpdate(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
-                                  final MetadataResolver chainingMetadataResolver,
+                                  @Nonnull final MetadataResolver chainingMetadataResolver,
                                   final long currentTime, final long currentDuration) {
         LOGGER.debug("Cache expiration duration after updates is set to [{}]", currentDuration);
         return currentDuration;
@@ -82,9 +59,40 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
 
     @Override
     public long expireAfterRead(@Nonnull final SamlRegisteredServiceCacheKey cacheKey,
-                                final MetadataResolver chainingMetadataResolver,
+                                @Nonnull final MetadataResolver chainingMetadataResolver,
                                 final long currentTime, final long currentDuration) {
         LOGGER.debug("Cache expiration duration after reads is set to [{}]", currentDuration);
         return currentDuration;
+    }
+
+    /**
+     * Gets cache duration for service provider.
+     *
+     * @param service                  the service
+     * @param chainingMetadataResolver the chaining metadata resolver
+     * @return the cache duration for service provider
+     */
+    protected long getCacheDurationForServiceProvider(final SamlRegisteredService service, final MetadataResolver chainingMetadataResolver) {
+        try {
+            val set = new CriteriaSet();
+            set.add(new EntityIdCriterion(service.getServiceId()));
+            set.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+            val entitySp = chainingMetadataResolver.resolveSingle(set);
+            if (entitySp != null && entitySp.getCacheDuration() != null) {
+                LOGGER.debug("Located cache duration [{}] specified in SP metadata for [{}]", entitySp.getCacheDuration(), entitySp.getEntityID());
+                return TimeUnit.MILLISECONDS.toNanos(entitySp.getCacheDuration());
+            }
+
+            set.clear();
+            set.add(new EntityIdCriterion(service.getServiceId()));
+            val entity = chainingMetadataResolver.resolveSingle(set);
+            if (entity != null && entity.getCacheDuration() != null) {
+                LOGGER.debug("Located cache duration [{}] specified in entity metadata for [{}]", entity.getCacheDuration(), entity.getEntityID());
+                return TimeUnit.MILLISECONDS.toNanos(entity.getCacheDuration());
+            }
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return -1;
     }
 }
