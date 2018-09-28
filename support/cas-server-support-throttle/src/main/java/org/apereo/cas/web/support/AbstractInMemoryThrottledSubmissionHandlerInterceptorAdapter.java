@@ -9,7 +9,6 @@ import lombok.val;
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -25,7 +24,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
-    private final ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, ZonedDateTime> ipMap;
 
     public AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold,
                                                                         final int failureRangeInSeconds,
@@ -33,9 +32,11 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
                                                                         final String authenticationFailureCode,
                                                                         final AuditTrailExecutionPlan auditTrailExecutionPlan,
                                                                         final String applicationCode,
-                                                                        final ThrottledRequestResponseHandler throttledRequestResponseHandler) {
+                                                                        final ThrottledRequestResponseHandler throttledRequestResponseHandler,
+                                                                        final ConcurrentMap map) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
             authenticationFailureCode, auditTrailExecutionPlan, applicationCode, throttledRequestResponseHandler);
+        this.ipMap = map;
     }
 
     /**
@@ -57,7 +58,9 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
 
     @Override
     public void recordSubmissionFailure(final HttpServletRequest request) {
-        this.ipMap.put(constructKey(request), ZonedDateTime.now(ZoneOffset.UTC));
+        val key = constructKey(request);
+        LOGGER.debug("Recording submission failure [{}]", key);
+        this.ipMap.put(key, ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     /**

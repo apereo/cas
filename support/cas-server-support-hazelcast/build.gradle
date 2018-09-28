@@ -1,0 +1,7 @@
+description = "Apereo CAS Hazelcast Core Support Config"
+dependencies {
+    implementation libraries.hazelcast
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":support:cas-server-support-hazelcast-core")
+}
