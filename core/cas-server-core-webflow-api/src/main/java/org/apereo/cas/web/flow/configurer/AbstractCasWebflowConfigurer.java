@@ -1,14 +1,15 @@
 package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
@@ -34,6 +35,7 @@ import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.StateDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.ActionList;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
@@ -272,6 +274,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         state.getTransitionSet().add(transition);
     }
 
+
     /**
      * Create state default transition.
      *
@@ -281,6 +284,84 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public void createStateDefaultTransition(final TransitionableState state, final StateDefinition targetState) {
         createStateDefaultTransition(state, targetState.getId());
     }
+
+    /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final ActionState actionStateId, final String... actions) {
+        prependActionsToActionStateExecutionList(flow, actionStateId.getId(), actions);
+    }
+
+    /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final String... actions) {
+        final EvaluateAction[] evalActions = Arrays.stream(actions)
+            .map(this::createEvaluateAction)
+            .toArray(EvaluateAction[]::new);
+        addActionsToActionStateExecutionListAt(flow, actionStateId, 0, evalActions);
+    }
+
+    /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final EvaluateAction... actions) {
+        addActionsToActionStateExecutionListAt(flow, actionStateId, 0, actions);
+    }
+
+    /**
+     * Prepend actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void prependActionsToActionStateExecutionList(final Flow flow, final ActionState actionStateId, final EvaluateAction... actions) {
+        addActionsToActionStateExecutionListAt(flow, actionStateId.getId(), 0, actions);
+    }
+
+    /**
+     * Append actions to action state execution list.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param actions       the actions
+     */
+    public void appendActionsToActionStateExecutionList(final Flow flow, final String actionStateId, final EvaluateAction... actions) {
+        addActionsToActionStateExecutionListAt(flow, actionStateId, Integer.MAX_VALUE, actions);
+    }
+
+    /**
+     * Add actions to action state execution list at.
+     *
+     * @param flow          the flow
+     * @param actionStateId the action state id
+     * @param position      the position
+     * @param actions       the actions
+     */
+    public void addActionsToActionStateExecutionListAt(final Flow flow, final String actionStateId, final int position, final EvaluateAction... actions) {
+        final ActionState actionState = getState(flow, actionStateId, ActionState.class);
+        final List<Action> currentActions = new ArrayList<Action>();
+        final ActionList actionList = actionState.getActionList();
+        actionList.forEach(currentActions::add);
+        final int index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
+        currentActions.forEach(actionList::remove);
+        Arrays.stream(actions).forEach(a -> currentActions.add(index, a));
+        actionList.addAll(currentActions.toArray(new Action[]{}));
+    }
+
 
     /**
      * Create transition for state transition.
