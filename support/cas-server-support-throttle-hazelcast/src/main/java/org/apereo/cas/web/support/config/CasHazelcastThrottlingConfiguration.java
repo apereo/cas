@@ -1,13 +1,14 @@
 package org.apereo.cas.web.support.config;
 
-import com.hazelcast.config.MapConfig;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.hz.HazelcastConfigurationFactory;
+
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
-import org.apereo.cas.hz.HazelcastConfigurationFactory;
+import lombok.val;
 import org.joda.time.Duration;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,16 +34,16 @@ public class CasHazelcastThrottlingConfiguration {
 
     @Autowired
     @Qualifier("casHazelcastInstance")
-    private HazelcastInstance hazelcastInstance;
+    private ObjectProvider<HazelcastInstance> casHazelcastInstance;
 
     @Bean
     public IMap throttleSubmissionMap() {
-        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        final int timeout = Duration.parse(casProperties.getAuthn().getThrottle().getSchedule().getRepeatInterval())
-                .toStandardSeconds().getSeconds();
-        final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
+        val hz = casProperties.getTicket().getRegistry().getHazelcast();
+        val timeout = Duration.parse(casProperties.getAuthn().getThrottle().getSchedule().getRepeatInterval()).toStandardSeconds().getSeconds();
+        val factory = new HazelcastConfigurationFactory();
         LOGGER.debug("Creating [{}] to record failed logins for throttling with timeout set to [{}]", MAP_KEY, timeout);
-        final MapConfig ipMapConfig = factory.buildMapConfig(hz, MAP_KEY, timeout);
+        val ipMapConfig = factory.buildMapConfig(hz, MAP_KEY, timeout);
+        val hazelcastInstance = this.casHazelcastInstance.getObject();
         hazelcastInstance.getConfig().addMapConfig(ipMapConfig);
         return hazelcastInstance.getMap(MAP_KEY);
     }
