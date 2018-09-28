@@ -1,7 +1,6 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.RequiredArgsConstructor;
