@@ -29,4 +29,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":support:cas-server-support-hazelcast")
 }
