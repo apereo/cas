@@ -47,13 +47,13 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
         return defaultExpiration;
     }
 
-    private long getCacheDurationForServiceProvider(final SamlRegisteredService service, final MetadataResolver chainingMetadataResolver) {
+    private static long getCacheDurationForServiceProvider(final SamlRegisteredService service, final MetadataResolver chainingMetadataResolver) {
         try {
             final CriteriaSet set = new CriteriaSet();
             set.add(new EntityIdCriterion(service.getServiceId()));
             set.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
             final EntityDescriptor entitySp = chainingMetadataResolver.resolveSingle(set);
-            if (entitySp.getCacheDuration() != null) {
+            if (entitySp != null && entitySp.getCacheDuration() != null) {
                 LOGGER.debug("Located cache duration [{}] specified in SP metadata for [{}]", entitySp.getCacheDuration(), entitySp.getEntityID());
                 return TimeUnit.MILLISECONDS.toNanos(entitySp.getCacheDuration());
             }
@@ -61,7 +61,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
             set.clear();
             set.add(new EntityIdCriterion(service.getServiceId()));
             final EntityDescriptor entity = chainingMetadataResolver.resolveSingle(set);
-            if (entity.getCacheDuration() != null) {
+            if (entity != null && entity.getCacheDuration() != null) {
                 LOGGER.debug("Located cache duration [{}] specified in entity metadata for [{}]", entity.getCacheDuration(), entity.getEntityID());
                 return TimeUnit.MILLISECONDS.toNanos(entity.getCacheDuration());
             }
