@@ -89,7 +89,7 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
 
         @Override
         public long getPercentFree() {
-            return (int) this.memoryStats.getFreeHeap() * PERCENTAGE_VALUE / this.memoryStats.getCommittedHeap();
+            return this.memoryStats.getFreeHeap() * PERCENTAGE_VALUE / this.memoryStats.getCommittedHeap();
         }
 
         @Override
