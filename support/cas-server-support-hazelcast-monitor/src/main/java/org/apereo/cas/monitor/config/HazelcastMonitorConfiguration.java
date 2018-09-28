@@ -1,9 +1,11 @@
 package org.apereo.cas.monitor.config;
 
+import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.HazelcastHealthIndicator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -23,14 +25,17 @@ public class HazelcastMonitorConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("casHazelcastInstance")
+    private HazelcastInstance hazelcastInstance;
+
     @Bean
     @RefreshScope
     public HealthIndicator hazelcastHealthIndicator() {
         return new HazelcastHealthIndicator(
             casProperties.getMonitor().getWarn().getEvictionThreshold(),
             casProperties.getMonitor().getWarn().getThreshold(),
-            casProperties.getTicket().getRegistry().getHazelcast().getCluster().getInstanceName(),
-            casProperties.getTicket().getRegistry().getHazelcast().getCluster().getMembers().size()
+            hazelcastInstance
         );
     }
 }

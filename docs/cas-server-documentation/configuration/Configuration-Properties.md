@@ -1095,8 +1095,8 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ```properties
 # cas.authn.throttle.usernameParameter=username
-# cas.authn.throttle.schedule.startDelay=10000
-# cas.authn.throttle.schedule.repeatInterval=20000
+# cas.authn.throttle.schedule.startDelay=PT10S
+# cas.authn.throttle.schedule.repeatInterval=PT20S
 # cas.authn.throttle.appcode=CAS
 
 # cas.authn.throttle.failure.threshold=100
