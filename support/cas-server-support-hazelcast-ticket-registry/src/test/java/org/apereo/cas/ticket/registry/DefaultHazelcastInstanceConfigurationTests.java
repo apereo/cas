@@ -53,7 +53,8 @@ import static org.junit.Assert.*;
  */
 @SpringBootTest(classes = {
     DefaultHazelcastInstanceConfigurationTests.HazelcastTestConfiguration.class,
-    CasHazelcastConfiguration.class,HazelcastTicketRegistryConfiguration.class,
+    CasHazelcastConfiguration.class,
+    HazelcastTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
