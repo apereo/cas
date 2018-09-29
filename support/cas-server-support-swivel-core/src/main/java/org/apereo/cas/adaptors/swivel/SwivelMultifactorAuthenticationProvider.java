@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.swivel;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
+import org.apereo.cas.services.RegisteredService;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -30,7 +31,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
     private String swivelUrl;
 
     @Override
-    public boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         return canPing();
     }
 

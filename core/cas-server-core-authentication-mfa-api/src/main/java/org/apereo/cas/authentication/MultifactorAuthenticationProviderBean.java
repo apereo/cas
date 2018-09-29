@@ -1,11 +1,13 @@
 package org.apereo.cas.authentication;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderFactory;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.cloud.context.scope.refresh.RefreshScopeRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -17,6 +19,8 @@ import java.util.List;
  * Generic class that applies a list of {@link BaseMultifactorProviderProperties} to a provided
  * {@link MultifactorAuthenticationProviderFactory} to create instances of {@link MultifactorAuthenticationProvider}.
  *
+ * @author Travis Schmidt
+ * @since 6.0
  * @param <T> - Type of {@link MultifactorAuthenticationProvider}
  * @param <P> - Type of {@link BaseMultifactorProviderProperties}
  */

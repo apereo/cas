@@ -2,9 +2,11 @@ package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorProperties;
+import org.apereo.cas.services.RegisteredService;
 
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationProvider}.
@@ -23,7 +25,7 @@ public class CasSimpleMultifactorAuthenticationProvider extends AbstractMultifac
     }
 
     @Override
-    public boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         return true;
     }
 

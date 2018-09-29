@@ -81,7 +81,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             casSimpleMultifactorAuthenticationHandler(),
-            casSimpleMultifactorAuthenticationProvider()
+            casSimpleMultifactorAuthenticationProvider().getId()
         );
     }
 

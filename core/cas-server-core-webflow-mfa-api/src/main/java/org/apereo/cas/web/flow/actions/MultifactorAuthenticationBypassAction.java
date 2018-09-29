@@ -1,15 +1,11 @@
 package org.apereo.cas.web.flow.actions;
 
-import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -21,19 +17,15 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.3.4
  */
 @Slf4j
-public class MultifactorAuthenticationBypassAction extends AbstractAction {
+public class MultifactorAuthenticationBypassAction extends AbstractMultifactorAuthenticationAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val flowId = requestContext.getActiveFlow().getId();
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
-        val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(flowId, applicationContext)
-                .orElseThrow(AuthenticationException::new);
         val authentication = WebUtils.getAuthentication(requestContext);
         val service = WebUtils.getRegisteredService(requestContext);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
 
-        val bypass = provider.getBypass();
+        val bypass = provider.getBypassEvaluator();
 
         // Transitioned here by another action to set the authentication bypass
         if (requestContext.getCurrentTransition().getId().equals(CasWebflowConstants.TRANSITION_ID_BYPASS)) {

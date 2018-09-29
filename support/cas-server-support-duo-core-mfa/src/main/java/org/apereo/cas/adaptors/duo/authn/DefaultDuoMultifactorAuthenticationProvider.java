@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.services.RegisteredService;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -11,6 +12,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 
 /**
@@ -36,7 +38,7 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     private DuoSecurityAuthenticationService duoAuthenticationService;
 
     @Override
-    public boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         return this.duoAuthenticationService.ping();
     }
 

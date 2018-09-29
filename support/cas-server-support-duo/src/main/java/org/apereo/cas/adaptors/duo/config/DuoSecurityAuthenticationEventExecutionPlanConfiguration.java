@@ -115,7 +115,8 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         return new AuthenticationContextAttributeMetaDataPopulator(
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 authenticationHandler,
-                duoProviderBean().getProvider(authenticationHandler.getName()));
+                duoProviderBean().getProvider(authenticationHandler.getName()).getId()
+        );
     }
 
     @RefreshScope

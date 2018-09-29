@@ -1,10 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
-import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -12,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -25,16 +21,12 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class MultifactorAuthenticationFailureAction extends AbstractAction {
+public class MultifactorAuthenticationFailureAction extends AbstractMultifactorAuthenticationAction {
 
     private final CasConfigurationProperties casProperties;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        val flowId = requestContext.getActiveFlow().getId();
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
-        val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(flowId, applicationContext)
-                .orElseThrow(AuthenticationException::new);
         val service = WebUtils.getRegisteredService(requestContext);
 
         var failureMode = FailureModes.valueOf(casProperties.getAuthn().getMfa().getGlobalFailureMode());

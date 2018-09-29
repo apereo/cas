@@ -71,9 +71,11 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
+        return new AuthenticationContextAttributeMetaDataPopulator(
+            authenticationContextAttribute,
             yubikeyAuthenticationHandler(),
-            yubikeyAuthenticationProvider());
+            yubikeyAuthenticationProvider().getId()
+        );
     }
 
     @Bean

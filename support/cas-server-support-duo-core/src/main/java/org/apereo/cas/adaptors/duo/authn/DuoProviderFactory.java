@@ -1,12 +1,13 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderFactory;
 import org.apereo.cas.util.http.HttpClient;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 
 /**
  * Implementation of {@link MultifactorAuthenticationProviderFactory} that provides instances of

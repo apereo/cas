@@ -104,7 +104,10 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
         val attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(attribute, radiusTokenAuthenticationHandler(), radiusAuthenticationProvider());
+        return new AuthenticationContextAttributeMetaDataPopulator(attribute,
+                radiusTokenAuthenticationHandler(),
+                radiusAuthenticationProvider().getId()
+        );
     }
 
     @ConditionalOnMissingBean(name = "radiusTokenAuthenticationEventExecutionPlanConfigurer")
