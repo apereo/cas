@@ -1,8 +1,9 @@
 package org.apereo.cas.web.flow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -24,7 +25,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
     private static final String VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW = "acceptableUsagePolicyView";
     private static final String AUP_ACCEPTED_ACTION = "aupAcceptedAction";
     private static final String STATE_ID_AUP_CHECK = "acceptableUsagePolicyCheck";
-    
+
     public AcceptableUsagePolicyWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                   final ApplicationContext applicationContext,
@@ -99,5 +100,9 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
         final TransitionSet transitionSet = actionState.getTransitionSet();
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, target));
         transitionSet.add(createTransition(AcceptableUsagePolicyVerifyAction.EVENT_ID_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW));
+
+        final ActionState ticketCreateState = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
+        prependActionsToActionStateExecutionList(flow, ticketCreateState, "acceptableUsagePolicyVerifyAction");
+        createTransitionForState(ticketCreateState, AcceptableUsagePolicyVerifyAction.EVENT_ID_MUST_ACCEPT, VIEW_ID_ACCEPTABLE_USAGE_POLICY_VIEW);
     }
 }

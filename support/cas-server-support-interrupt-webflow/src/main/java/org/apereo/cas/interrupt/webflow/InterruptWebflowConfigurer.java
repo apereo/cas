@@ -1,12 +1,14 @@
 package org.apereo.cas.interrupt.webflow;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
+import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -61,6 +63,10 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private void createTransitionStateToInterrupt(final Flow flow) {
         final ActionState submit = getRealSubmissionState(flow);
         createTransitionForState(submit, CasWebflowConstants.TRANSITION_ID_SUCCESS, STATE_ID_INQUIRE_INTERRUPT_ACTION, true);
+
+        final ActionState ticketCreateState = getState(flow, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET, ActionState.class);
+        prependActionsToActionStateExecutionList(flow, ticketCreateState, getInquireInterruptAction());
+        createTransitionForState(ticketCreateState, CasWebflowConstants.TRANSITION_ID_YES, VIEW_ID_INTERRUPT_VIEW);
     }
 
     private void createTransitionStateForMultifactorSubflows(final Flow flow) {
@@ -92,7 +98,7 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createInquireActionState(final Flow flow) {
-        final ActionState actionState = createActionState(flow, STATE_ID_INQUIRE_INTERRUPT_ACTION, createEvaluateAction(STATE_ID_INQUIRE_INTERRUPT_ACTION));
+        final ActionState actionState = createActionState(flow, STATE_ID_INQUIRE_INTERRUPT_ACTION, getInquireInterruptAction());
 
         final String target = getRealSubmissionState(flow).getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
         final Transition noInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_NO, target);
@@ -100,5 +106,9 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
         final Transition yesInterruptTransition = createTransition(CasWebflowConstants.TRANSITION_ID_YES, VIEW_ID_INTERRUPT_VIEW);
         actionState.getTransitionSet().add(yesInterruptTransition);
+    }
+
+    private EvaluateAction getInquireInterruptAction() {
+        return createEvaluateAction(STATE_ID_INQUIRE_INTERRUPT_ACTION);
     }
 }

@@ -413,7 +413,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         final Collection<AuthenticationPolicy> policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
 
         policies
-            .stream()
             .forEach(p -> {
                 try {
                     final String simpleName = p.getClass().getSimpleName();
