@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Attempts to throttle by both IP Address and username.  Protects against instances where there is a NAT, such as
@@ -25,9 +26,10 @@ public class InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                                                                                       final String authenticationFailureCode,
                                                                                       final AuditTrailExecutionPlan auditTrailExecutionPlan,
                                                                                       final String applicationCode,
-                                                                                      final ThrottledRequestResponseHandler throttledRequestResponseHandler) {
+                                                                                      final ThrottledRequestResponseHandler throttledRequestResponseHandler,
+                                                                                      final ConcurrentMap map) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter,
-            authenticationFailureCode, auditTrailExecutionPlan, applicationCode, throttledRequestResponseHandler);
+            authenticationFailureCode, auditTrailExecutionPlan, applicationCode, throttledRequestResponseHandler, map);
     }
 
     @Override

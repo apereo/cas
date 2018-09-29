@@ -4,6 +4,7 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-tickets")
     implementation project(":support:cas-server-support-hazelcast-core")
+    implementation project(":support:cas-server-support-hazelcast")
     implementation project(":core:cas-server-core-configuration-api")
     
     api project(":api:cas-server-core-api-util")
@@ -29,4 +30,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-configuration")
+    
 }
