@@ -102,8 +102,8 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         val mfaFlow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(subflowId);
 
         // Insert bypass, available and failure actions into the flow.
-        val initLoginState = getState(mfaFlow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
-        val transition = (Transition) initLoginState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        val initStartState = (ActionState) mfaFlow.getStartState();
+        val transition = (Transition) initStartState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         val targetStateId = transition.getTargetStateId();
         transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_CHECK_BYPASS));
 
