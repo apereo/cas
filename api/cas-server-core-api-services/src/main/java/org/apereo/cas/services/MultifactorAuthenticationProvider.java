@@ -22,17 +22,18 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
     /**
      * Ensure the provider is available.
      *
+     * @param service - the service
      * @return true /false flag once verification is successful.
      * @throws AuthenticationException the authentication exception
      */
-    boolean isAvailable() throws AuthenticationException;
+    boolean isAvailable(RegisteredService service) throws AuthenticationException;
 
     /**
      * Returns the configured bypass provider for this MFA provider.
      *
      * @return - the bypass evaluator
      */
-    MultifactorAuthenticationProviderBypass getBypass();
+    MultifactorAuthenticationProviderBypass getBypassEvaluator();
 
     /**
      * Gets id for this provider.

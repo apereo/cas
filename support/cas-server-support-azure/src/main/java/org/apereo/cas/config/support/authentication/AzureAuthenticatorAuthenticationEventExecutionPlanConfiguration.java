@@ -109,7 +109,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             azureAuthenticatorAuthenticationHandler(),
-            azureAuthenticatorAuthenticationProvider()
+            azureAuthenticatorAuthenticationProvider().getId()
         );
     }
 

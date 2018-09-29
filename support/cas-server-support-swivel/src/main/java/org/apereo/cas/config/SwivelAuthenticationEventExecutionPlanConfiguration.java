@@ -46,8 +46,11 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
-                swivelAuthenticationHandler(), swivelAuthenticationProvider());
+        return new AuthenticationContextAttributeMetaDataPopulator(
+                authenticationContextAttribute,
+                swivelAuthenticationHandler(),
+                swivelAuthenticationProvider().getId()
+        );
     }
 
     @Bean

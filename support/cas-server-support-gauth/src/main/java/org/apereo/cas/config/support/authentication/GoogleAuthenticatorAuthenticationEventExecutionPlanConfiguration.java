@@ -121,7 +121,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             googleAuthenticatorAuthenticationHandler(),
-            googleAuthenticatorAuthenticationProvider()
+            googleAuthenticatorAuthenticationProvider().getId()
         );
     }
 

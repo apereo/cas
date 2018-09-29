@@ -1,20 +1,13 @@
 package org.apereo.cas.web.flow.mfa;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-import org.springframework.context.ApplicationContext;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -27,17 +20,12 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class MultifactorAuthenticationFailureAction extends AbstractAction {
+public class MultifactorAuthenticationFailureAction extends AbstractMultifactorAuthenticationAction {
 
     private final CasConfigurationProperties casProperties;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final String flowId = requestContext.getActiveFlow().getId();
-        final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-        final MultifactorAuthenticationProvider provider =
-                MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(flowId, applicationContext)
-                .orElseThrow(AuthenticationException::new);
         final RegisteredService service = WebUtils.getRegisteredService(requestContext);
 
         FailureModes failureMode = FailureModes.valueOf(casProperties.getAuthn().getMfa().getGlobalFailureMode());

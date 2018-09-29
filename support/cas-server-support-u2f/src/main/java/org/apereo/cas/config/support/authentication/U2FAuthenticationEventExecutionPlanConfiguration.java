@@ -53,9 +53,11 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator u2fAuthenticationMetaDataPopulator() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
+        return new AuthenticationContextAttributeMetaDataPopulator(
+                authenticationContextAttribute,
                 u2fAuthenticationHandler(),
-                u2fAuthenticationProvider());
+                u2fAuthenticationProvider().getId()
+        );
     }
 
     @Bean

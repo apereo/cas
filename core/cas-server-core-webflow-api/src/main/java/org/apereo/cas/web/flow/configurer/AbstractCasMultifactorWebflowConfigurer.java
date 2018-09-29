@@ -107,7 +107,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         final Flow mfaFlow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(subflowId);
 
         // Insert bypass, available and failure actions into the flow.
-        final ActionState initLoginState = getState(mfaFlow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+        final ActionState initLoginState = (ActionState) mfaFlow.getStartState();
         final Transition transition = (Transition) initLoginState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         final String targetStateId = transition.getTargetStateId();
         transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_CHECK_BYPASS));

@@ -99,7 +99,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             authyAuthenticationHandler(),
-            authyAuthenticatorAuthenticationProvider()
+            authyAuthenticatorAuthenticationProvider().getId()
         );
     }
 

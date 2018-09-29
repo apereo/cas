@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 
 import lombok.EqualsAndHashCode;
@@ -37,12 +38,12 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     private int order;
 
     @Override
-    public boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         return true;
     }
 
     @Override
-    public MultifactorAuthenticationProviderBypass getBypass() {
+    public MultifactorAuthenticationProviderBypass getBypassEvaluator() {
         return this.bypassEvaluator;
     }
 
