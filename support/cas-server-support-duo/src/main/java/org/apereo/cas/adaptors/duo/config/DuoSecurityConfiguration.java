@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.duo.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.DuoMfaProviderFactoryBean;
 import org.apereo.cas.adaptors.duo.web.flow.DuoAuthenticationWebflowEventResolver;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoDirectAuthenticationAction;
@@ -11,7 +10,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
@@ -22,10 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Action;
 
@@ -39,12 +35,6 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class DuoSecurityConfiguration {
-
-    @Autowired
-    private GenericApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -74,10 +64,6 @@ public class DuoSecurityConfiguration {
     @Qualifier("warnCookieGenerator")
     private ObjectProvider<CookieGenerator> warnCookieGenerator;
 
-    @Autowired
-    @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
-
     @ConditionalOnMissingBean(name = "duoNonWebAuthenticationAction")
     @Bean
     public Action duoNonWebAuthenticationAction() {
@@ -102,13 +88,4 @@ public class DuoSecurityConfiguration {
             authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
     }
-
-
-    @ConditionalOnMissingBean(name = "duoMfaProviderFactoryBean")
-    @Bean
-    @RefreshScope
-    public DuoMfaProviderFactoryBean duoMfaProviderFactoryBean() {
-        return new DuoMfaProviderFactoryBean(httpClient, casProperties);
-    }
-
 }

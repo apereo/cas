@@ -31,7 +31,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     private MultifactorAuthenticationProviderBypass bypassEvaluator;
 
-    private String failureMode = "NOT_SET";
+    private String failureMode = "UNDEFINED";
 
     private String id;
 

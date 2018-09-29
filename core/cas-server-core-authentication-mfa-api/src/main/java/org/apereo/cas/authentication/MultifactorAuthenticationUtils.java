@@ -65,7 +65,7 @@ public class MultifactorAuthenticationUtils {
     }
 
     /**
-     * Method returns an Optional that will contain a MultifactorAuthenticationProvider that has the
+     * Method returns an Optional that will contain a {@link MultifactorAuthenticationProvider} that has the
      * same id as the passed providerId parameter.
      *
      * @param providerId - the id to match
