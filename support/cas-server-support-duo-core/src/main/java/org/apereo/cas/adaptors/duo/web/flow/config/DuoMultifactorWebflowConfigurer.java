@@ -70,7 +70,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
             applicationContext.getAutowireCapableBeanFactory().initializeBean(duoFlowRegistry, duo.getId());
             val cfg = (ConfigurableListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
             cfg.registerSingleton(duo.getId(), duoFlowRegistry);
-            registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getId(), duoFlowRegistry);
+            registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getId(), duoFlowRegistry, duo.getId());
         });
 
         casProperties.getAuthn().getMfa().getDuo()

@@ -10,6 +10,7 @@ import lombok.val;
 import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -97,9 +98,18 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
      * @param flow                    the flow
      * @param subflowId               the subflow id
      * @param mfaProviderFlowRegistry the registry
+     * @param providerId              the provider id
      */
-    protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId, final FlowDefinitionRegistry mfaProviderFlowRegistry) {
+    protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId,
+                                                                    final FlowDefinitionRegistry mfaProviderFlowRegistry,
+                                                                    final String providerId) {
         val mfaFlow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(subflowId);
+
+        // Set providerId into flowScope.
+        mfaFlow.getStartActionList().add(
+                createSetAction("flowScope.".concat(CasWebflowConstants.VAR_ID_PROVIDER_ID),
+                                StringUtils.quote(providerId))
+        );
 
         // Insert bypass, available and failure actions into the flow.
         val initStartState = (ActionState) mfaFlow.getStartState();
@@ -131,7 +141,6 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                 createEvaluateAction(MFA_CHECK_FAILURE_BEAN_ID));
         createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
         createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS, CasWebflowConstants.TRANSITION_ID_SUCCESS);
-
 
         LOGGER.debug("Adding end state [{}] with transition to [{}] to flow [{}] for MFA",
             CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE, flow.getId());
@@ -185,6 +194,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             registerMultifactorFlowDefinitionIntoLoginFlowRegistry(mfaProviderFlowRegistry);
             augmentMultifactorProviderFlowRegistry(mfaProviderFlowRegistry);
 
+            LOGGER.debug("Registering the [{}] flow into the Login flow", subflowId);
             val startState = flow.getTransitionableState(flow.getStartState().getId());
             createTransitionForState(startState, subflowId, subflowId);
         });

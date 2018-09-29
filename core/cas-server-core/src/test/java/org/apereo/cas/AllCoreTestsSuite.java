@@ -15,7 +15,7 @@ import org.junit.runners.Suite;
     DefaultCentralAuthenticationServiceTests.class,
     DefaultCentralAuthenticationServiceMockitoTests.class,
     DefaultCasAttributeEncoderTests.class,
-    DefaultPrincipalAttributesRepositoryTests.class,
+    DefaultPrincipalAttributesRepositoryTests.class
 })
 public class AllCoreTestsSuite {
 }

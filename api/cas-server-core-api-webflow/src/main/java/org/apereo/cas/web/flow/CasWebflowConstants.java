@@ -163,6 +163,11 @@ public interface CasWebflowConstants {
      */
     String TRANSITION_ID_AUP_ACCEPTED = "acceptedUsagePolicy";
 
+    /**
+     * State to determine the MFA failure mode and what action to take.
+     */
+    String TRANSITION_ID_FAILURE = "mfaFailure";
+
     /*
      ****************************************
      * States.
@@ -413,6 +418,21 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
 
+    /**
+     * State to check if the MFA provider is available.
+     */
+    String STATE_ID_CHECK_AVAILABLE = "checkAvailable";
+
+    /**
+     * State to check if the MFA provider should be bypassed.
+     */
+    String STATE_ID_CHECK_BYPASS = "checkBypass";
+
+    /**
+     * State that can be used by MFA providers that offer preAuth endpoints.
+     */
+    String STATE_ID_MFA_PRE_AUTH = "mfaPreAuth";
+
     /*
      ****************************************
      * Views.
@@ -570,6 +590,11 @@ public interface CasWebflowConstants {
      */
     String VAR_ID_CREDENTIAL = "credential";
 
+    /**
+     * The flow var id 'providerId'.
+     */
+    String VAR_ID_PROVIDER_ID = "providerId";
+
 
     /**
      * Event attribute id 'authenticationWarnings'.
@@ -646,24 +671,4 @@ public interface CasWebflowConstants {
      * Delegated authentication action id.
      */
     String ACTION_ID_DELEGATED_AUTHENTICATION = "delegatedAuthenticationAction";
-
-    /**
-     * State to check if the MFA provider is available.
-     */
-    String STATE_ID_CHECK_AVAILABLE = "checkAvailable";
-
-    /**
-     * State to check if the MFA provider should be bypassed.
-     */
-    String STATE_ID_CHECK_BYPASS = "checkBypass";
-
-    /**
-     * State to determine the MFA failure mode and what action to take.
-     */
-    String TRANSITION_ID_FAILURE = "mfaFailure";
-
-    /**
-     * State that can be used by MFA providers that offer preAuth endpoints.
-     */
-    String STATE_ID_MFA_PRE_AUTH = "mfaPreAuth";
 }

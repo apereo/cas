@@ -64,4 +64,23 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      */
     RegisteredServiceMultifactorPolicy.FailureModes failureMode();
 
+    /**
+     * Creates a unique mark that identifies this provider instance.
+     *
+     * @return - the mark
+     */
+    default String createMark() {
+        return getId().concat(String.valueOf(hashCode()));
+    }
+
+    /**
+     * Validates that the passed mark was created by this provider.
+     *
+     * @param mark - the mark
+     * @return - true if the mark was created by this provider
+     */
+    default boolean validateMark(final String mark) {
+        return mark != null && createMark().equals(mark);
+    }
+
 }
