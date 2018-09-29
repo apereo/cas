@@ -352,6 +352,11 @@ public interface CasWebflowConstants {
     String VAR_ID_CREDENTIAL = "credential";
 
     /**
+     * The flow var id 'providerId'.
+     */
+    String VAR_ID_PROVIDER_ID = "providerId";
+
+    /**
      * Event attribute id 'authenticationWarnings'.
      */
     String ATTRIBUTE_ID_AUTHENTICATION_WARNINGS = "authenticationWarnings";

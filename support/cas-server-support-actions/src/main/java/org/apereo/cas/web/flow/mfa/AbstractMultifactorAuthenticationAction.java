@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -27,10 +28,9 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
 
     @Override
     protected Event doPreExecute(final RequestContext requestContext) throws Exception {
-        final String flowId = requestContext.getActiveFlow().getId();
+        final String providerId = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_PROVIDER_ID, String.class);
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-        final MultifactorAuthenticationProvider provider =
-                MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(flowId, applicationContext)
+        provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(providerId, applicationContext)
                         .orElseThrow(AuthenticationException::new);
 
         return null;

@@ -21,7 +21,8 @@ public class AuthyMultifactorWebflowConfigurer extends AbstractCasMultifactorWeb
     
     private final FlowDefinitionRegistry flowDefinitionRegistry;
 
-    public AuthyMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+    public AuthyMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                              final FlowDefinitionRegistry flowDefinitionRegistry,
                                              final ApplicationContext applicationContext,
                                              final CasConfigurationProperties casProperties) {
@@ -31,6 +32,7 @@ public class AuthyMultifactorWebflowConfigurer extends AbstractCasMultifactorWeb
 
     @Override
     protected void doInitialize() {
-        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_AUTHY_EVENT_ID, this.flowDefinitionRegistry);
+        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_AUTHY_EVENT_ID,
+                this.flowDefinitionRegistry, casProperties.getAuthn().getMfa().getAuthy().getId());
     }
 }

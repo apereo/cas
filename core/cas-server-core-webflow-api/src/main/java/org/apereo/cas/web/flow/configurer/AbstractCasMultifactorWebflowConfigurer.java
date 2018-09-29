@@ -8,6 +8,8 @@ import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.util.StringUtils;
+import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -102,9 +104,18 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
      * @param flow                    the flow
      * @param subflowId               the subflow id
      * @param mfaProviderFlowRegistry the registry
+     * @param providerId              the provider id
      */
-    protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId, final FlowDefinitionRegistry mfaProviderFlowRegistry) {
+    protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId,
+                                                                    final FlowDefinitionRegistry mfaProviderFlowRegistry,
+                                                                    final String providerId) {
         final Flow mfaFlow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(subflowId);
+
+        // Set providerId into flowScope.
+        mfaFlow.getStartActionList().add(
+                new SetAction(createExpression("flowScope.".concat(CasWebflowConstants.VAR_ID_PROVIDER_ID)),
+                              createExpression(StringUtils.quote(providerId)))
+        );
 
         // Insert bypass, available and failure actions into the flow.
         final ActionState initLoginState = (ActionState) mfaFlow.getStartState();
