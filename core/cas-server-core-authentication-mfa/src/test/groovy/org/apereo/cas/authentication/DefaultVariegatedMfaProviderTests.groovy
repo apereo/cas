@@ -59,26 +59,26 @@ class DefaultVariegatedMfaProviderTests extends Specification {
 
     def 'unavailable based on providers availability'() {
         given: 'two providers: first is available and second is NOT available'
-        mfaProvider1.isAvailable() >> true
-        mfaProvider2.isAvailable() >> false
+        mfaProvider1.isAvailable(registeredService) >> true
+        mfaProvider2.isAvailable(registeredService) >> false
 
         when: 'these providers are added to their variegated wrapper'
         def variegatedProvider = createVariegatedProviderWith([mfaProvider1, mfaProvider2])
 
         then: 'variegated provider is unavailable because NOT ALL its wrapped providers are available'
-        !variegatedProvider.isAvailable()
+        !variegatedProvider.isAvailable(registeredService)
     }
 
     def 'available based on providers availability'() {
         given: 'two providers: BOTH available'
-        mfaProvider1.isAvailable() >> true
-        mfaProvider2.isAvailable() >> true
+        mfaProvider1.isAvailable(registeredService) >> true
+        mfaProvider2.isAvailable(registeredService) >> true
 
         when: 'these providers are added to their variegated wrapper'
         def variegatedProvider = createVariegatedProviderWith([mfaProvider1, mfaProvider2])
 
         then: 'variegated provider is available because ALL its wrapped providers are available'
-        variegatedProvider.isAvailable()
+        variegatedProvider.isAvailable(registeredService)
     }
 
     def 'correct `matches()` method behavior'() {
