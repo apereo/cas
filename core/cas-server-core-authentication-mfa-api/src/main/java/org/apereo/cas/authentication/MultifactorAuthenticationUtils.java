@@ -1,8 +1,6 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;

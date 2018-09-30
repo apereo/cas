@@ -2,8 +2,8 @@ package org.apereo.cas.web.v3;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
@@ -31,7 +31,7 @@ public class V3ProxyValidateController extends V3ServiceValidateController {
                                      final ProxyHandler proxyHandler,
                                      final ArgumentExtractor argumentExtractor,
                                      final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-                                     final AuthenticationContextValidator authenticationContextValidator,
+                                     final MultifactorAuthenticationContextValidator authenticationContextValidator,
                                      final View jsonView,
                                      final View successView, final View failureView,
                                      final String authnContextAttribute,

@@ -4,10 +4,10 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -31,27 +31,27 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link AbstractCasMfaWebflowEventResolver} that provides parent
+ * This is {@link AbstractCasMultifactorAuthenticationWebflowEventResolver} that provides parent
  * operations for all child event resolvers to handle MFA webflow changes.
  *
  * @author Travis Schmidt
  * @since 6.0.0
  */
 @Slf4j
-public abstract class AbstractCasMfaWebflowEventResolver extends AbstractCasWebflowEventResolver {
+public abstract class AbstractCasMultifactorAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     /**
      * The mfa selector.
      */
     protected final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
-    public AbstractCasMfaWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                              final CentralAuthenticationService centralAuthenticationService,
-                                              final ServicesManager servicesManager,
-                                              final TicketRegistrySupport ticketRegistrySupport,
-                                              final CookieGenerator warnCookieGenerator,
-                                              final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                              final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector) {
+    public AbstractCasMultifactorAuthenticationWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                                    final CentralAuthenticationService centralAuthenticationService,
+                                                                    final ServicesManager servicesManager,
+                                                                    final TicketRegistrySupport ticketRegistrySupport,
+                                                                    final CookieGenerator warnCookieGenerator,
+                                                                    final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                                                    final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
                 warnCookieGenerator, authenticationRequestServiceSelectionStrategies);
         this.multifactorAuthenticationProviderSelector = multifactorAuthenticationProviderSelector;

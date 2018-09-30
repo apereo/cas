@@ -4,9 +4,9 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This is {@link SelectiveAuthenticationProviderWebflowEventEventResolver}
+ * This is {@link SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver}
  * that acts as a stub resolver, specifically designed for extensions.
  * Deployers can extend this class to perform additional processes on the final set
  * of resolved events, to select one vs another based on the nature of the event attributes.
@@ -35,14 +35,14 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
-public class SelectiveAuthenticationProviderWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-    public SelectiveAuthenticationProviderWebflowEventEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                                    final CentralAuthenticationService centralAuthenticationService,
-                                                                    final ServicesManager servicesManager,
-                                                                    final TicketRegistrySupport ticketRegistrySupport,
-                                                                    final CookieGenerator warnCookieGenerator,
-                                                                    final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                                    final MultifactorAuthenticationProviderSelector selector) {
+public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+    public SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                                               final CentralAuthenticationService centralAuthenticationService,
+                                                                               final ServicesManager servicesManager,
+                                                                               final TicketRegistrySupport ticketRegistrySupport,
+                                                                               final CookieGenerator warnCookieGenerator,
+                                                                               final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
+                                                                               final MultifactorAuthenticationProviderSelector selector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
             authenticationSelectionStrategies, selector);
     }

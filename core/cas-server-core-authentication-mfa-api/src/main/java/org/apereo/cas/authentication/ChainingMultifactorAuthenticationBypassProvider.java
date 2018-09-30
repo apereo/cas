@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.val;
@@ -11,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class used to Chain multiple MultifactorAuthenticationProviderBypass implementations.
+ * Class used to Chain multiple {@link MultifactorAuthenticationProviderBypass} implementations.
  *
  * @author Travis Schmidt
  * @since 5.3.4

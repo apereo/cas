@@ -11,6 +11,8 @@ import org.apereo.cas.adaptors.gauth.repository.credentials.RestGoogleAuthentica
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -23,8 +25,7 @@ import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
+
 import org.apereo.cas.services.ServicesManager;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;

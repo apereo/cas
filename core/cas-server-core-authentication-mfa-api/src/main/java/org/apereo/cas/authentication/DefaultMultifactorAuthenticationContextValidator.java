@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -30,7 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @RequiredArgsConstructor
-public class DefaultMultifactorAuthenticationContextValidator implements AuthenticationContextValidator {
+public class DefaultMultifactorAuthenticationContextValidator implements MultifactorAuthenticationContextValidator {
 
     private final String authenticationContextAttribute;
     private final String globalFailureMode;

@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
@@ -80,7 +80,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("authenticationContextValidator")
-    private AuthenticationContextValidator authenticationContextValidator;
+    private MultifactorAuthenticationContextValidator authenticationContextValidator;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")

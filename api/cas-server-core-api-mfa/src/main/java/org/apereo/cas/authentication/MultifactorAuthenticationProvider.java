@@ -1,7 +1,7 @@
-package org.apereo.cas.services;
+package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.AuthenticationException;
-
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;

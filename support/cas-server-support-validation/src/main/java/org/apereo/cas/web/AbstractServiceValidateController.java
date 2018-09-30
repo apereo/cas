@@ -3,17 +3,18 @@ package org.apereo.cas.web;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
+
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -86,7 +87,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     private final ArgumentExtractor argumentExtractor;
     private final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-    private final AuthenticationContextValidator authenticationContextValidator;
+    private final MultifactorAuthenticationContextValidator authenticationContextValidator;
     private final View jsonView;
     private final String authnContextAttribute;
 
@@ -179,7 +180,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @throws AbstractTicketException the abstract ticket exception
      */
     public TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential)
-        throws AuthenticationException, AbstractTicketException {
+            throws AuthenticationException, AbstractTicketException {
         val serviceTicket = this.centralAuthenticationService.getTicket(serviceTicketId, ServiceTicket.class);
         val authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
         val proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId, authenticationResult);

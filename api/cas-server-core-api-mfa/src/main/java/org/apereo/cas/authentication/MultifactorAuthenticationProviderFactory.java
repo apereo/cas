@@ -1,4 +1,4 @@
-package org.apereo.cas.services;
+package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
 

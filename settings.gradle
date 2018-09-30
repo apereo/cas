@@ -17,6 +17,7 @@ include "api:cas-server-core-api-events"
 include "api:cas-server-core-api-throttle"
 include "api:cas-server-core-api-webflow"
 include "api:cas-server-core-api-test-category"
+include "api:cas-server-core-api-mfa"
 
 include "core:cas-server-core-util-api"
 include "core:cas-server-core-util"

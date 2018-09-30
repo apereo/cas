@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
@@ -14,14 +14,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link CasMfaAuthenticationSupportConfiguration}.
+ * This is {@link CasCoreMultifactorAuthenticationConfiguration}.
  *
  * @author Travis Schmidt
  * @since 6.0.0
  */
-@Configuration("casMfaAuthenticationSupportConfiguration")
+@Configuration("casCoreMultifactorAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasMfaAuthenticationSupportConfiguration {
+public class CasCoreMultifactorAuthenticationConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -32,7 +32,7 @@ public class CasMfaAuthenticationSupportConfiguration {
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "authenticationContextValidator")
-    public AuthenticationContextValidator authenticationContextValidator() {
+    public MultifactorAuthenticationContextValidator authenticationContextValidator() {
         val mfa = casProperties.getAuthn().getMfa();
         val contextAttribute = mfa.getAuthenticationContextAttribute();
         val failureMode = mfa.getGlobalFailureMode();

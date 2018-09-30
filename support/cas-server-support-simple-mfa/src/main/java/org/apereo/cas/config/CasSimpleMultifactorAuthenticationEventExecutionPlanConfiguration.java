@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -12,8 +14,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandler;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
+
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 

@@ -1,9 +1,9 @@
 package org.apereo.cas.web.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -70,7 +70,7 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Qualifier("authenticationContextValidator")
-    private AuthenticationContextValidator authenticationContextValidator;
+    private MultifactorAuthenticationContextValidator authenticationContextValidator;
 
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")

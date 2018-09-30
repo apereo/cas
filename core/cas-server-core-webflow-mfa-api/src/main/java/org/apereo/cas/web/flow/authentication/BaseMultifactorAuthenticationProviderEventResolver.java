@@ -3,16 +3,16 @@ package org.apereo.cas.web.flow.authentication;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.MultifactorAuthenticationProviderResolver;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.authentication.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.flow.resolver.impl.AbstractCasMfaWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.AbstractCasMultifactorAuthenticationWebflowEventResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -32,7 +32,7 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
-public abstract class BaseMultifactorAuthenticationProviderEventResolver extends AbstractCasMfaWebflowEventResolver
+public abstract class BaseMultifactorAuthenticationProviderEventResolver extends AbstractCasMultifactorAuthenticationWebflowEventResolver
     implements MultifactorAuthenticationProviderResolver {
 
 

@@ -6,8 +6,8 @@ import org.apereo.cas.adaptors.duo.web.flow.action.DuoAuthenticationWebflowActio
 import org.apereo.cas.adaptors.duo.web.flow.action.DuoDirectAuthenticationAction;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;

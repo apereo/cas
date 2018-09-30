@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.mfa;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import org.springframework.context.ConfigurableApplicationContext;

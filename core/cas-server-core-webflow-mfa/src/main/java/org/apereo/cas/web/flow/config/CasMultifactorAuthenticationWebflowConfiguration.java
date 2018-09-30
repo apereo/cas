@@ -2,13 +2,13 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationAvailableAction;
@@ -19,8 +19,8 @@ import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationPro
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.InitialAuthenticationAttemptWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.RankedAuthenticationProviderWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.SelectiveAuthenticationProviderWebflowEventEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.RankedMultifactorAuthenticationProviderWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.GlobalMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.GroovyScriptMultifactorAuthenticationPolicyEventResolver;
@@ -49,7 +49,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.util.CookieGenerator;
 
 /**
- * This is {@link CasMfaWebflowConfiguration}.
+ * This is {@link CasMultifactorAuthenticationWebflowConfiguration}.
  *
  * @author Travis Schmidt
  * @since 6.0.0
@@ -57,14 +57,14 @@ import org.springframework.web.util.CookieGenerator;
 @Configuration("casMfaWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasMfaWebflowConfiguration {
+public class CasMultifactorAuthenticationWebflowConfiguration {
     @Autowired
     @Qualifier("geoLocationService")
     private ObjectProvider<GeoLocationService> geoLocationService;
 
     @Autowired
     @Qualifier("authenticationContextValidator")
-    private ObjectProvider<AuthenticationContextValidator> authenticationContextValidator;
+    private ObjectProvider<MultifactorAuthenticationContextValidator> authenticationContextValidator;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -169,7 +169,7 @@ public class CasMfaWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver initialAuthenticationProviderWebflowEventResolver() {
-        return new RankedAuthenticationProviderWebflowEventResolver(
+        return new RankedMultifactorAuthenticationProviderWebflowEventResolver(
                 authenticationSystemSupport.getIfAvailable(),
                 centralAuthenticationService.getIfAvailable(),
                 servicesManager.getIfAvailable(),
@@ -286,7 +286,7 @@ public class CasMfaWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver() {
-        return new SelectiveAuthenticationProviderWebflowEventEventResolver(
+        return new SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),

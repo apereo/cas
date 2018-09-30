@@ -17,7 +17,7 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMfaWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -58,7 +58,7 @@ import static org.junit.Assert.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasMfaWebflowConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,

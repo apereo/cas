@@ -1,8 +1,8 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 

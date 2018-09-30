@@ -1,10 +1,10 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -30,21 +30,21 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
-public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasMfaWebflowEventResolver {
+public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends AbstractCasMultifactorAuthenticationWebflowEventResolver {
 
 
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-    private final AuthenticationContextValidator authenticationContextValidator;
+    private final MultifactorAuthenticationContextValidator authenticationContextValidator;
 
-    public RankedAuthenticationProviderWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                            final CentralAuthenticationService centralAuthenticationService,
-                                                            final ServicesManager servicesManager,
-                                                            final TicketRegistrySupport ticketRegistrySupport,
-                                                            final CookieGenerator warnCookieGenerator,
-                                                            final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                            final MultifactorAuthenticationProviderSelector selector,
-                                                            final AuthenticationContextValidator authenticationContextValidator,
-                                                            final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver) {
+    public RankedMultifactorAuthenticationProviderWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                                       final CentralAuthenticationService centralAuthenticationService,
+                                                                       final ServicesManager servicesManager,
+                                                                       final TicketRegistrySupport ticketRegistrySupport,
+                                                                       final CookieGenerator warnCookieGenerator,
+                                                                       final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
+                                                                       final MultifactorAuthenticationProviderSelector selector,
+                                                                       final MultifactorAuthenticationContextValidator authenticationContextValidator,
+                                                                       final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
             authenticationSelectionStrategies, selector);
         this.authenticationContextValidator = authenticationContextValidator;

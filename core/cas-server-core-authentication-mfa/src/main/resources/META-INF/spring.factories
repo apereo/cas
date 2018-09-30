@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasMfaAuthenticationSupportConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration

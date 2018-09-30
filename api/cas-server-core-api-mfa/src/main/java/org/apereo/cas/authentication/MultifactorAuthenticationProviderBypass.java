@@ -1,6 +1,6 @@
-package org.apereo.cas.services;
+package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.services.RegisteredService;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;

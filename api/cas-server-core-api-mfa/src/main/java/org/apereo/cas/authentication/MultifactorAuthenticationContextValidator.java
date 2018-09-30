@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -8,14 +7,14 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.Optional;
 
 /**
- * This is {@link AuthenticationContextValidator}, which is responsible for evaluating an authentication
+ * This is {@link MultifactorAuthenticationContextValidator}, which is responsible for evaluating an authentication
  * object to see whether it satisfied a requested authentication context.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @FunctionalInterface
-public interface AuthenticationContextValidator {
+public interface MultifactorAuthenticationContextValidator {
 
     /**
      * Validate the authentication context.

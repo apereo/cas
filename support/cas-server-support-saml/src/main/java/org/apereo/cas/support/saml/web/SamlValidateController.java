@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.web;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -36,7 +36,7 @@ public class SamlValidateController extends AbstractServiceValidateController {
                                   final ProxyHandler proxyHandler,
                                   final ArgumentExtractor argumentExtractor,
                                   final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-                                  final AuthenticationContextValidator authenticationContextValidator,
+                                  final MultifactorAuthenticationContextValidator authenticationContextValidator,
                                   final View jsonView, final View successView, final View failureView,
                                   final String authnContextAttribute,
                                   final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,

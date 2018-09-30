@@ -1,6 +1,7 @@
-package org.apereo.cas.services;
+package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.services.RegisteredService;
 
 import java.util.Collection;
 

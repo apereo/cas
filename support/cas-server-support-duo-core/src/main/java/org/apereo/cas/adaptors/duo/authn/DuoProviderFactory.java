@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderFactory;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProviderFactory;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.RequiredArgsConstructor;
