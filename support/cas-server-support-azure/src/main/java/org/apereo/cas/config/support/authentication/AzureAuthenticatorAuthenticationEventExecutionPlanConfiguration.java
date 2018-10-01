@@ -97,7 +97,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         final AzureMultifactorProperties azure = casProperties.getAuthn().getMfa().getAzure();
         final AzureAuthenticatorMultifactorAuthenticationProvider p = new AzureAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(azureBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(casProperties.getAuthn().getMfa().getAzure().getFailureMode());
         p.setOrder(azure.getRank());
         p.setId(azure.getId());
         return p;
@@ -109,7 +109,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             azureAuthenticatorAuthenticationHandler(),
-            azureAuthenticatorAuthenticationProvider()
+            azureAuthenticatorAuthenticationProvider().getId()
         );
     }
 

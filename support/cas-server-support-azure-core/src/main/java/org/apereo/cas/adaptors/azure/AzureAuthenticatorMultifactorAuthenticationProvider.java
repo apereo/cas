@@ -24,11 +24,6 @@ public class AzureAuthenticatorMultifactorAuthenticationProvider extends Abstrac
     }
 
     @Override
-    protected boolean isAvailable() {
-        return true;
-    }
-
-    @Override
     public String getFriendlyName() {
         return "Microsoft Azure";
     }

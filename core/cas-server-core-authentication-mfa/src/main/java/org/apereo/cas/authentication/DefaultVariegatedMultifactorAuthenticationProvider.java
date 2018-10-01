@@ -53,11 +53,6 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     }
 
     @Override
-    protected boolean isAvailable() {
-        return true;
-    }
-
-    @Override
     public boolean matches(final String identifier) {
         return findProvider(identifier) != null;
     }
@@ -88,4 +83,5 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     public String getFriendlyName() {
         return providers.stream().map(MultifactorAuthenticationProvider::getFriendlyName).collect(Collectors.joining("|"));
     }
+
 }

@@ -32,7 +32,6 @@ import org.springframework.webflow.execution.Action;
 @Slf4j
 public class DuoSecurityConfiguration {
 
-
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
