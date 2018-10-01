@@ -57,7 +57,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
         final RadiusMultifactorAuthenticationProvider p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
         p.setBypassEvaluator(radiusBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getRadius().getRank());
         p.setId(casProperties.getAuthn().getMfa().getRadius().getId());
         return p;
@@ -106,7 +106,11 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
         final String attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(attribute, radiusTokenAuthenticationHandler(), radiusAuthenticationProvider());
+        return new AuthenticationContextAttributeMetaDataPopulator(
+                attribute,
+                radiusTokenAuthenticationHandler(),
+                radiusAuthenticationProvider().getId()
+        );
     }
 
     @ConditionalOnMissingBean(name = "radiusTokenAuthenticationEventExecutionPlanConfigurer")

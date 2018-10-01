@@ -76,14 +76,10 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, globalProviderId);
         if (providerFound.isPresent()) {
             final MultifactorAuthenticationProvider provider = providerFound.get();
-            if (provider.isAvailable(service)) {
-                LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service);
-                final Map<String, Object> attributes = buildEventAttributeMap(authentication.getPrincipal(), service, provider);
-                final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context, attributes);
-                return CollectionUtils.wrapSet(event);
-            }
-            LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);
-            return null;
+            LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service);
+            final Map<String, Object> attributes = buildEventAttributeMap(authentication.getPrincipal(), service, provider);
+            final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context, attributes);
+            return CollectionUtils.wrapSet(event);
         }
         LOGGER.warn("No multifactor provider could be found for [{}]", globalProviderId);
         throw new AuthenticationException();

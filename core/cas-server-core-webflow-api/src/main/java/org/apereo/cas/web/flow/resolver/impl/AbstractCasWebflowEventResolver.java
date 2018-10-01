@@ -247,15 +247,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                     if (predicate.test(value)) {
                         LOGGER.debug("Attribute value predicate [{}] has successfully matched the [{}]. "
                             + "Attempting to verify multifactor authentication for [{}]", predicate, value, service);
-
-                        if (provider.isAvailable(service)) {
-                            LOGGER.debug("Provider [{}] is successfully verified", provider);
-
-                            final String id = provider.getId();
-                            final Event event = validateEventIdForMatchingTransitionInContext(id, context,
-                                buildEventAttributeMap(principal, service, provider));
-                            events.add(event);
-                        }
+                        final String id = provider.getId();
+                        final Event event = validateEventIdForMatchingTransitionInContext(id, context,
+                            buildEventAttributeMap(principal, service, provider));
+                        events.add(event);
                     } else {
                         LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, value);
                     }
@@ -302,15 +297,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                            final RegisteredService service,
                                                            final RequestContext context,
                                                            final MultifactorAuthenticationProvider provider) {
-        LOGGER.debug("Attempting check for availability of multifactor authentication provider [{}] for [{}]", provider, service);
-        if (provider != null && provider.isAvailable(service)) {
-            LOGGER.debug("Provider [{}] is successfully verified", provider);
-            final String id = provider.getId();
-            final Event event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, service, provider));
-            return CollectionUtils.wrapSet(event);
-        }
-        LOGGER.debug("Provider [{}] could not be verified", provider);
-        return new HashSet<>(0);
+        LOGGER.debug("Provider [{}] is successfully verified", provider);
+        final String id = provider.getId();
+        final Event event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, service, provider));
+        return CollectionUtils.wrapSet(event);
     }
 
     private Set<Event> resolveEventViaAttribute(final Principal principal,

@@ -3,8 +3,6 @@ package org.apereo.cas.adaptors.duo.authn;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.MultiInstanceMfaAuthenticationHandler;
-import org.apereo.cas.authentication.MultiInstanceMfaCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -22,7 +20,7 @@ import java.util.ArrayList;
  * @since 4.2
  */
 @Slf4j
-public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultiInstanceMfaAuthenticationHandler {
+public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final DuoMultifactorAuthenticationProvider provider;
 
@@ -98,14 +96,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     }
 
     @Override
-    public String getMultifactorProviderId() {
-        return provider.getId();
-    }
-
-    @Override
     public boolean supports(final Credential credential) {
-        return (DuoCredential.class.isAssignableFrom(credential.getClass())
-                || credential instanceof DuoDirectCredential)
-                && supports((MultiInstanceMfaCredential) credential);
+        return provider.validateMark(credential.getMark());
     }
 }

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import lombok.NoArgsConstructor;
+import org.apereo.cas.services.RegisteredService;
 
 /**
  * This is {@link U2FMultifactorAuthenticationProvider}.
@@ -24,7 +25,7 @@ public class U2FMultifactorAuthenticationProvider extends AbstractMultifactorAut
     }
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         return true;
     }
 

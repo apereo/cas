@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 
 /**
  * This is {@link AuthenticationContextAttributeMetaDataPopulator}.
@@ -25,13 +24,13 @@ public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthent
 
     private final AuthenticationHandler authenticationHandler;
 
-    private final MultifactorAuthenticationProvider provider;
+    private final String authenticationContextAttributeValue;
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         if (builder.hasAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
             obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
-            builder.mergeAttribute(this.authenticationContextAttribute, this.provider.getId());
+            builder.mergeAttribute(this.authenticationContextAttribute, this.authenticationContextAttributeValue);
         }
     }
 

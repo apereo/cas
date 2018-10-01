@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.springframework.http.HttpMethod;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -27,7 +28,7 @@ public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactor
     private String swivelUrl;
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         return canPing();
     }
 

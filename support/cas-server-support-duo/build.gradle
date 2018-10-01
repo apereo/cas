@@ -13,6 +13,6 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":support:cas-server-support-duo-core")
     implementation project(":support:cas-server-support-duo-core-mfa")
-    
+    implementation project(":support:cas-server-support-actions") 
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }
