@@ -21,13 +21,12 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(
-    classes = {
-        CasCoreAuditConfiguration.class,
-        CasSupportJdbcAuditConfiguration.class,
-        AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
+@SpringBootTest(classes = {
+    CasCoreAuditConfiguration.class,
+    CasSupportJdbcAuditConfiguration.class,
+    AopAutoConfiguration.class,
+    RefreshAutoConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = "cas.audit.jdbc.asynchronous=false")
 @Getter
