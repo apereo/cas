@@ -39,9 +39,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
         val k = new SamlRegisteredServiceCacheKey(service);
         LOGGER.debug("Locating cached metadata resolver using key [{}] for service [{}]", k.getId(), service.getName());
         val resolver = this.cache.get(k);
-        LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
-            resolver.getId(),
-            service.getMetadataLocation());
+        LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]", resolver.getId(), service.getMetadataLocation());
         return resolver;
     }
 }
