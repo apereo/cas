@@ -26,6 +26,7 @@ import org.pac4j.oauth.client.FoursquareClient;
 import org.pac4j.oauth.client.GenericOAuth20Client;
 import org.pac4j.oauth.client.GitHubClient;
 import org.pac4j.oauth.client.Google2Client;
+import org.pac4j.oauth.client.HiOrgServerClient;
 import org.pac4j.oauth.client.LinkedIn2Client;
 import org.pac4j.oauth.client.OrcidClient;
 import org.pac4j.oauth.client.PayPalClient;
@@ -217,6 +218,24 @@ public class DelegatedClientFactory {
 
             if (StringUtils.isNotBlank(ln.getFields())) {
                 client.setFields(ln.getFields());
+            }
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
+            properties.add(client);
+        }
+    }
+
+    /**
+     * Configure HiOrg-Server client.
+     *
+     * @param properties the properties
+     */
+    protected void configureHiOrgServerClient(final Collection<BaseClient> properties) {
+        val hiOrgServer = pac4jProperties.getHiOrgServer();
+        if (StringUtils.isNotBlank(hiOrgServer.getId()) && StringUtils.isNotBlank(hiOrgServer.getSecret())) {
+            val client = new HiOrgServerClient(hiOrgServer.getId(), hiOrgServer.getSecret());
+            configureClient(client, hiOrgServer);
+            if (StringUtils.isNotBlank(hiOrgServer.getScope())) {
+                client.getConfiguration().setScope(hiOrgServer.getScope());
             }
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -529,7 +548,8 @@ public class DelegatedClientFactory {
         configureWordPressClient(clients);
         configureBitBucketClient(clients);
         configureOrcidClient(clients);
-
+        configureHiOrgServerClient(clients);
+        
         return clients;
     }
 }
