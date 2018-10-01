@@ -1095,8 +1095,8 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ```properties
 # cas.authn.throttle.usernameParameter=username
-# cas.authn.throttle.schedule.startDelay=10000
-# cas.authn.throttle.schedule.repeatInterval=20000
+# cas.authn.throttle.schedule.startDelay=PT10S
+# cas.authn.throttle.schedule.repeatInterval=PT20S
 # cas.authn.throttle.appcode=CAS
 
 # cas.authn.throttle.failure.threshold=100
@@ -1113,6 +1113,12 @@ same IP address. Database settings for this feature are available [here](Configu
 # cas.authn.throttle.jdbc.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? \
 #                                    AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
 ```
+
+### CouchDb
+
+Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
+same IP address. CouchDb settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-settings) under the configuration key
+`cas.authn.throttle`. When using this feature the audit facility should be in syncronous mode.
 
 ## Adaptive Authentication
 

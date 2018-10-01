@@ -35,8 +35,8 @@ a particular username from the same IP address.
 
 ## JDBC
 
-Queries a database data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. This component requires and depends on the [CAS auditing
-functionality](Audits.html) via databases.
+Queries a database data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. 
+This component requires and depends on the [CAS auditing functionality](Audits.html) via databases.
 
 Enable the following module in your configuration overlay:
 
@@ -52,8 +52,38 @@ For additional instructions on how to configure auditing, please [review the fol
 
 ## MongoDb
 
-Queries a MongoDb data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. This component requires and depends on the [CAS auditing
-functionality](Audits.html) via MongoDb.
+Queries a MongoDb data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. 
+This component requires and depends on the [CAS auditing functionality](Audits.html) via MongoDb.
+
+Enable the following module in your configuration overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-throttle-mongo</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+## Hazelcast
+
+This feature uses a Hazelcast map to record throttled authentication attempts, and uses the same connection information and settings
+as the [Hazelcast ticket registry](Hazelcast-Ticket-Registry.html). This component requires and depends on the [CAS auditing functionality](Audits.html)
+
+Enable the following module in your configuration overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-throttle-hazelcast</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+## CouchDb
+
+Queries a CouchDb data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. 
+This component requires and depends on the [CAS auditing functionality](Audits.html) via CouchDb.
 
 Enable the following module in your configuration overlay:
 

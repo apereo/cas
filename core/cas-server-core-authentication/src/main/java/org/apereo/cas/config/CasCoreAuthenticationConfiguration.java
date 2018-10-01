@@ -16,7 +16,6 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,7 +24,9 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,9 +68,11 @@ public class CasCoreAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlan authenticationEventExecutionPlan(final List<AuthenticationEventExecutionPlanConfigurer> configurers) {
         val plan = new DefaultAuthenticationEventExecutionPlan();
-        configurers.forEach(c -> {
-            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Configuring authentication execution plan [{}]", name);
+        val sortedConfigurers = new ArrayList<AuthenticationEventExecutionPlanConfigurer>(configurers);
+        AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
+
+        sortedConfigurers.forEach(c -> {
+            LOGGER.debug("Configuring authentication execution plan [{}]", c.getName());
             c.configureAuthenticationExecutionPlan(plan);
         });
         return plan;
