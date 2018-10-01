@@ -145,9 +145,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                                                                                    final Map<String, List<Object>> attributes) {
         final String[] principalId = {extractedPrincipalId};
         val convertedAttributes = new LinkedHashMap<String, Object>();
-        attributes.entrySet().forEach(entry -> {
-            val key = entry.getKey();
-            val values = CollectionUtils.toCollection(entry.getValue(), ArrayList.class);
+        attributes.forEach((key, attrValue) -> {
+            val values = CollectionUtils.toCollection(attrValue, ArrayList.class);
             LOGGER.debug("Found attribute [{}] with value(s) [{}]", key, values);
             if (StringUtils.isNotBlank(this.principalAttributeName) && key.equalsIgnoreCase(this.principalAttributeName)) {
                 if (values.isEmpty()) {

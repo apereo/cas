@@ -51,8 +51,7 @@ public class AmazonS3BucketsCloudConfigBootstrapConfiguration implements Propert
                     if (objectKey.endsWith("properties")) {
                         val props = new Properties();
                         props.load(is);
-                        props.entrySet()
-                            .forEach(entry -> properties.put(entry.getKey().toString(), entry.getValue()));
+                        props.forEach((key, value) -> properties.put(key.toString(), value));
                     } else if (objectKey.endsWith("yml")) {
                         val yamlProps = CasCoreConfigurationUtils.loadYamlProperties(new InputStreamResource(is));
                         properties.putAll(yamlProps);

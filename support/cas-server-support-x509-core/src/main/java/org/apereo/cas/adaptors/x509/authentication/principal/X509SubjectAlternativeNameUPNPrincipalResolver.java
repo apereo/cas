@@ -143,7 +143,6 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
             }
         } catch (final CertificateParsingException e) {
             LOGGER.error("Error is encountered while trying to retrieve subject alternative names collection from certificate", e);
-            LOGGER.debug("Returning null principal...");
             return null;
         }
         LOGGER.debug("Returning null principal id...");
