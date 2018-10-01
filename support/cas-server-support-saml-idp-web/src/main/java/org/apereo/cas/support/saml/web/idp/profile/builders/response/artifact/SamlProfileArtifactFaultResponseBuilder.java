@@ -2,8 +2,8 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.response.artifact;
 
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11FaultResponseBuilder;
 
 import org.apache.velocity.app.VelocityEngine;
@@ -23,7 +23,7 @@ public class SamlProfileArtifactFaultResponseBuilder extends SamlProfileSamlSoap
                                                    final VelocityEngine velocityEngineFactory,
                                                    final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                                    final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
-                                                   final SamlObjectEncrypter samlObjectEncrypter) {
+                                                   final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder,
             saml2ResponseBuilder, samlObjectEncrypter);
     }

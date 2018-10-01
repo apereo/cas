@@ -8,8 +8,8 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -52,13 +52,13 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
     protected CasConfigurationProperties casProperties;
 
     private final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
-    private final SamlObjectEncrypter samlObjectEncrypter;
+    private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     public BaseSamlProfileSamlResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
                                               final SamlIdPObjectSigner samlObjectSigner,
                                               final VelocityEngine velocityEngineFactory,
                                               final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
-                                              final SamlObjectEncrypter samlObjectEncrypter) {
+                                              final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(openSamlConfigBean);
         this.samlObjectSigner = samlObjectSigner;
         this.velocityEngineFactory = velocityEngineFactory;

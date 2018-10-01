@@ -6,8 +6,8 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
 
 import lombok.val;
@@ -39,7 +39,7 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
                                                     final VelocityEngine velocityEngineFactory,
                                                     final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                                     final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
-                                                    final SamlObjectEncrypter samlObjectEncrypter) {
+                                                    final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory,
             samlProfileSamlAssertionBuilder, saml2ResponseBuilder, samlObjectEncrypter);
     }

@@ -8,7 +8,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -41,10 +41,10 @@ import java.util.List;
 public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<NameID> {
     private static final long serialVersionUID = -6231886395225437320L;
     private final PersistentIdGenerator persistentIdGenerator;
-    private final transient SamlObjectEncrypter samlObjectEncrypter;
+    private final transient SamlIdPObjectEncrypter samlObjectEncrypter;
 
     public SamlProfileSamlNameIdBuilder(final OpenSamlConfigBean configBean, final PersistentIdGenerator persistentIdGenerator,
-                                        final SamlObjectEncrypter samlObjectEncrypter) {
+                                        final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(configBean);
         this.persistentIdGenerator = persistentIdGenerator;
         this.samlObjectEncrypter = samlObjectEncrypter;
