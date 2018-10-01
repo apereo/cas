@@ -7,7 +7,6 @@ import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTr
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
-import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintComponentExtractor;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
@@ -43,6 +42,7 @@ import static org.junit.Assert.*;
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class
 })
 public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
+
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
@@ -53,24 +53,12 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
-    @Qualifier("mfaTrustEngine")
-    protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
-
-    @Autowired
     @Qualifier("mfaVerifyTrustAction")
     protected Action mfaVerifyTrustAction;
 
     @Autowired
-    @Qualifier("mfaSetTrustAction")
-    protected Action mfaSetTrustAction;
-
-    @Autowired
     @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
     protected DeviceFingerprintStrategy deviceFingerprintStrategy;
-
-    @Autowired
-    @Qualifier("deviceFingerprintCookieComponent")
-    protected DeviceFingerprintComponentExtractor deviceFingerprintCookieComponent;
 
     @Autowired
     @Qualifier("mfaTrustStorageCleaner")
@@ -90,9 +78,11 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Test
     public void verifyTrustEngine() {
         val record = getMultifactorAuthenticationTrustRecord();
-        mfaTrustEngine.set(record);
-        assertFalse(mfaTrustEngine.get(record.getPrincipal()).isEmpty());
-        assertFalse(mfaTrustEngine.get(LocalDateTime.MAX.now()).isEmpty());
-        assertFalse(mfaTrustEngine.get(record.getPrincipal(), LocalDateTime.now()).isEmpty());
+        getMfaTrustEngine().set(record);
+        assertFalse(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
+        assertFalse(getMfaTrustEngine().get(LocalDateTime.now()).isEmpty());
+        assertFalse(getMfaTrustEngine().get(record.getPrincipal(), LocalDateTime.now()).isEmpty());
     }
+
+    public abstract MultifactorAuthenticationTrustStorage getMfaTrustEngine();
 }

@@ -61,6 +61,7 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
@@ -144,11 +145,15 @@ public class CouchDbSamlRegisteredServiceMetadataResolverTests {
     }
 
     @Test
-    public void verifyResolver() throws Exception {
+    public void verifyResolver() {
         val res = new ClassPathResource("samlsp-metadata.xml");
         val md = new SamlMetadataDocument();
         md.setName("SP");
-        md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
+        try {
+            md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
+        } catch (final IOException e) {
+            throw new AssertionError(e);
+        }
         resolver.saveOrUpdate(md);
 
         val service = new SamlRegisteredService();
