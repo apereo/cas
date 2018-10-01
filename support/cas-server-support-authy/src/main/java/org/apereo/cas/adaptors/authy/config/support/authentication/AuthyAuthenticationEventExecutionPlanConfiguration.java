@@ -81,7 +81,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider authyAuthenticatorAuthenticationProvider() {
         final AuthyMultifactorAuthenticationProvider p = new AuthyMultifactorAuthenticationProvider();
         p.setBypassEvaluator(authyBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(casProperties.getAuthn().getMfa().getAuthy().getFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getAuthy().getRank());
         p.setId(casProperties.getAuthn().getMfa().getAuthy().getId());
         return p;
@@ -99,7 +99,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             authyAuthenticationHandler(),
-            authyAuthenticatorAuthenticationProvider()
+            authyAuthenticatorAuthenticationProvider().getId()
         );
     }
 

@@ -30,4 +30,22 @@ public interface Credential extends Serializable {
      * is not readily available or meaningful.
      */
     String getId();
+
+    /**
+     * Returns the unique mark that ids the provider that created the credential.
+     *
+     * @return - the mark
+     */
+    default String getMark() {
+        return null;
+    }
+
+    /**
+     * Sets the unique mark of the provider that created the credential.
+     *
+     * @param mark - the mark
+     */
+    default void setMark(String mark) {
+        // Set mark in field.
+    }
 }

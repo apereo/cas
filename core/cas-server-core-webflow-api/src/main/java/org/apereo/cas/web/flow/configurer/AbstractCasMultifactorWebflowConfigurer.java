@@ -8,14 +8,19 @@ import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
+import org.springframework.util.StringUtils;
+import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowAttributeMapper;
 import org.springframework.webflow.engine.SubflowState;
+import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionSet;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +36,10 @@ import java.util.List;
  */
 @Slf4j
 public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
+
+    private static final String MFA_CHECK_AVAILABLE_BEAN_ID = "mfaAvailableAction";
+    private static final String MFA_CHECK_BYPASS_BEAN_ID = "mfaBypassAction";
+    private static final String MFA_CHECK_FAILURE_BEAN_ID = "mfaFailureAction";
 
     public AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -95,9 +104,49 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
      * @param flow                    the flow
      * @param subflowId               the subflow id
      * @param mfaProviderFlowRegistry the registry
+     * @param providerId              the provider id
      */
-    protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId, final FlowDefinitionRegistry mfaProviderFlowRegistry) {
+    protected void registerMultifactorProviderAuthenticationWebflow(final Flow flow, final String subflowId,
+                                                                    final FlowDefinitionRegistry mfaProviderFlowRegistry,
+                                                                    final String providerId) {
         final Flow mfaFlow = (Flow) mfaProviderFlowRegistry.getFlowDefinition(subflowId);
+
+        // Set providerId into flowScope.
+        mfaFlow.getStartActionList().add(
+                new SetAction(createExpression("flowScope.".concat(CasWebflowConstants.VAR_ID_PROVIDER_ID)),
+                              createExpression(StringUtils.quote(providerId)))
+        );
+
+        // Insert bypass, available and failure actions into the flow.
+        final ActionState initLoginState = (ActionState) mfaFlow.getStartState();
+        final Transition transition = (Transition) initLoginState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        final String targetStateId = transition.getTargetStateId();
+        transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_CHECK_BYPASS));
+
+        // Set the bypass action
+        final ActionState bypassAction = createActionState(mfaFlow,
+                CasWebflowConstants.STATE_ID_CHECK_BYPASS,
+                createEvaluateAction(MFA_CHECK_BYPASS_BEAN_ID));
+        createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.STATE_ID_CHECK_AVAILABLE);
+        createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.TRANSITION_ID_SUCCESS);
+
+        // Set the available action
+        final ActionState availableAction = createActionState(mfaFlow,
+                CasWebflowConstants.STATE_ID_CHECK_AVAILABLE,
+                createEvaluateAction(MFA_CHECK_AVAILABLE_BEAN_ID));
+        if (mfaFlow.containsState(CasWebflowConstants.STATE_ID_MFA_PRE_AUTH)) {
+            createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.STATE_ID_MFA_PRE_AUTH);
+        } else {
+            createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_YES, targetStateId);
+        }
+        createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.TRANSITION_ID_FAILURE);
+
+        // set the failure action
+        final ActionState failureAction = createActionState(mfaFlow,
+                CasWebflowConstants.TRANSITION_ID_FAILURE,
+                createEvaluateAction(MFA_CHECK_FAILURE_BEAN_ID));
+        createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS, CasWebflowConstants.TRANSITION_ID_SUCCESS);
 
         LOGGER.debug("Adding end state [{}] with transition to [{}] to flow 'login' for MFA", CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE);
         createEndState(flow, CasWebflowConstants.STATE_ID_MFA_UNAVAILABLE, CasWebflowConstants.VIEW_ID_MFA_UNAVAILABLE);

@@ -32,6 +32,7 @@ public class AzureAuthenticatorMultifactorWebflowConfigurer extends AbstractCasM
 
     @Override
     protected void doInitialize() {
-        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_AZURE_EVENT_ID, this.flowDefinitionRegistry);
+        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_AZURE_EVENT_ID,
+                this.flowDefinitionRegistry, casProperties.getAuthn().getMfa().getAzure().getId());
     }
 }

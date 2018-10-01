@@ -181,6 +181,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(DefaultRegisteredServiceAccessStrategy.class);
         kryo.register(RegexMatchingRegisteredServiceProxyPolicy.class);
         kryo.register(RegisteredServiceMultifactorPolicy.FailureModes.class);
+
     }
 
     private void registerCasAuthenticationWithKryo(final Kryo kryo) {
