@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
@@ -208,6 +209,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
      * @return the saml object
      * @throws SamlException the saml exception
      */
+    @SneakyThrows
     protected SAMLObject encryptAssertion(final Assertion assertion,
                                           final HttpServletRequest request,
                                           final HttpServletResponse response,
