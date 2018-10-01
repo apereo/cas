@@ -94,10 +94,16 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
             } else {
                 LOGGER.warn("No custom principal attribute was provided by the client [{}]. Using the default id [{}]", client, id);
             }
-        } else if (StringUtils.isNotBlank(principalAttributeId) && profile.containsAttribute(principalAttributeId)) {
-            final Optional<Object> firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttributeId));
-            if (firstAttribute.isPresent()) {
-                id = firstAttribute.get().toString();
+        } else if (StringUtils.isNotBlank(principalAttributeId)) {
+            if (profile.containsAttribute(principalAttributeId)) {
+                final Optional<Object> firstAttribute = CollectionUtils.firstElement(profile.getAttribute(principalAttributeId));
+                if (firstAttribute.isPresent()) {
+                    id = firstAttribute.get().toString();
+                }
+            } else {
+                LOGGER.warn("CAS cannot use [{}] as the principal attribute id, since the profile attributes do not contain the attribute. "
+                    + "Either adjust the CAS configuration to use a different attribute, or contact the delegated authentication provider noted by [{}] "
+                    + "to release the expected attribute to CAS", principalAttributeId, profile.getAttributes());
             }
             LOGGER.debug("Delegated authentication indicates usage of attribute [{}] for the identifier [{}]", principalAttributeId, id);
         } else if (isTypedIdUsed) {
