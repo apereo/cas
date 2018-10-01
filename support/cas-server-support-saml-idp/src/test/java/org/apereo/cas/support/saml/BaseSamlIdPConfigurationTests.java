@@ -33,6 +33,7 @@ import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
@@ -127,6 +128,10 @@ public abstract class BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlObjectSigner")
     protected SamlIdPObjectSigner samlIdPObjectSigner;
+
+    @Autowired
+    @Qualifier("samlObjectEncrypter")
+    protected SamlIdPObjectEncrypter samlIdPObjectEncrypter;
 
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")

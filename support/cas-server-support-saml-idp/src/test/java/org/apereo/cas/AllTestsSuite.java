@@ -2,13 +2,14 @@ package org.apereo.cas;
 
 import org.apereo.cas.support.saml.SamlAttributeEncoderTests;
 import org.apereo.cas.support.saml.SamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.SamlRegisteredServiceJpaMicrosoftSqlServerTests;
-import org.apereo.cas.support.saml.SamlRegisteredServiceJpaTests;
-import org.apereo.cas.support.saml.SamlRegisteredServiceTests;
 import org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicyTests;
 import org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicyTests;
+import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaMicrosoftSqlServerTests;
+import org.apereo.cas.support.saml.services.SamlRegisteredServiceJpaTests;
+import org.apereo.cas.support.saml.services.SamlRegisteredServiceTests;
 import org.apereo.cas.support.saml.services.logout.SamlIdPSingleLogoutServiceLogoutUrlBuilderTests;
 import org.apereo.cas.support.saml.services.logout.SamlProfileLogoutMessageCreatorTests;
+import org.apereo.cas.support.saml.web.idp.profile.builders.attr.SamlProfileSamlRegisteredServiceAttributeBuilderTests;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilderTests;
 
 import org.junit.runner.RunWith;
@@ -31,6 +32,7 @@ import org.junit.runners.Suite;
     SamlIdPSingleLogoutServiceLogoutUrlBuilderTests.class,
     SamlRegisteredServiceJpaMicrosoftSqlServerTests.class,
     PatternMatchingEntityIdAttributeReleasePolicyTests.class,
+    SamlProfileSamlRegisteredServiceAttributeBuilderTests.class,
     GroovySamlRegisteredServiceAttributeReleasePolicyTests.class
 })
 public class AllTestsSuite {
