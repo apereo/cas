@@ -1,12 +1,11 @@
 package org.apereo.cas.adaptors.duo.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.duo.authn.BasicDuoSecurityAuthenticationService;
-import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoDirectCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.duo.authn.DuoProviderFactory;
 import org.apereo.cas.adaptors.duo.web.flow.action.DetermineDuoUserAccountAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
@@ -14,13 +13,12 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderBean;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -54,6 +52,7 @@ import java.util.stream.Collectors;
 @Configuration("duoSecurityAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@DependsOn("duoSecurityConfiguration")
 public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     private GenericWebApplicationContext applicationContext;
@@ -82,18 +81,6 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    private DuoMultifactorAuthenticationProvider duoMultifactorAuthenticationProviders(final DuoSecurityMultifactorProperties duo) {
-        final BasicDuoSecurityAuthenticationService s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
-        final DefaultDuoMultifactorAuthenticationProvider duoP =
-                new DefaultDuoMultifactorAuthenticationProvider(duo.getRegistrationUrl(), s);
-        duoP.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-        duoP.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
-        duoP.setOrder(duo.getRank());
-        duoP.setId(duo.getId());
-        applicationContext.getBeanFactory().registerSingleton(duoP.getId()+"-provider", duoP);
-        return duoP;
-    }
-
     @Bean
     public Action prepareDuoWebLoginFormAction() {
         return new PrepareDuoWebLoginFormAction();
@@ -104,13 +91,27 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         return new DetermineDuoUserAccountAction();
     }
 
+    @ConditionalOnMissingBean(name = "duoProviderFactory")
+    @Bean
+    @RefreshScope
+    public DuoProviderFactory duoProviderFactory() {
+        return new DuoProviderFactory(httpClient);
+    }
+
+    @ConditionalOnMissingBean(name = "duoProviderBean")
+    @Bean
+    @RefreshScope
+    public MultifactorAuthenticationProviderBean<DuoMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean() {
+        return new MultifactorAuthenticationProviderBean(duoProviderFactory(),
+                applicationContext.getDefaultListableBeanFactory(),
+                casProperties.getAuthn().getMfa().getDuo());
+    }
+
     private AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(final AuthenticationHandler authenticationHandler) {
-        final MultifactorAuthenticationProvider provider = applicationContext.getBean(authenticationHandler.getName() + "-provider",
-                                                                                      MultifactorAuthenticationProvider.class);
         return new AuthenticationContextAttributeMetaDataPopulator(
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
                 authenticationHandler,
-                provider);
+                duoProviderBean().getProvider(authenticationHandler.getName()).getId());
     }
 
     @RefreshScope
@@ -124,7 +125,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
                 .map(d -> new DuoAuthenticationHandler(d.getId(),
                         servicesManager,
                         duoPrincipalFactory(),
-                        duoMultifactorAuthenticationProviders(d))
+                        duoProviderBean().getProvider(d.getId()))
                 ).collect(Collectors.toList());
     }
 

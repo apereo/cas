@@ -21,12 +21,14 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifactorAuthenticationProviderBypass {
+public class RestMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
 
     private static final long serialVersionUID = -7553888418344342672L;
 
+    private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
+
     public RestMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypassProperties) {
-        super(bypassProperties);
+        this.bypassProperties = bypassProperties;
     }
 
     @Override
@@ -47,17 +49,10 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
 
             final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
                 rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters, new HashMap<>());
-            final boolean shouldExecute = response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
-            if (shouldExecute) {
-                updateAuthenticationToForgetBypass(authentication, provider, principal);
-            } else {
-                LOGGER.info("REST bypass endpoint response determined [{}] would be passed for [{}]", principal.getId(), provider.getId());
-                updateAuthenticationToRememberBypass(authentication, provider, principal);
-            }
-            return shouldExecute;
+            return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+            return true;
         }
-        return super.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
     }
 }

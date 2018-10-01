@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.springframework.util.Assert;
 
 /**
@@ -34,7 +35,7 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     private DuoSecurityAuthenticationService duoAuthenticationService;
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         Assert.notNull(this.duoAuthenticationService, "duoAuthenticationService cannot be null");
         return this.duoAuthenticationService.ping();
     }

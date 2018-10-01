@@ -24,11 +24,6 @@ public class GoogleAuthenticatorMultifactorAuthenticationProvider extends Abstra
     }
 
     @Override
-    protected boolean isAvailable() {
-        return true;
-    }
-
-    @Override
     public String getFriendlyName() {
         return "Google Authenticator";
     }
