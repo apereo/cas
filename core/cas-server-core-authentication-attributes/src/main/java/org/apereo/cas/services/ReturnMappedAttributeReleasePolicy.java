@@ -121,9 +121,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
          * by the original key, value and the original entry itself.
          * Then process the array to populate the map for allowed attributes
          */
-        this.allowedAttributes.entrySet().forEach(entry -> {
-            val attributeName = entry.getKey();
-            val mappedAttributes = CollectionUtils.wrap(entry.getValue());
+        this.allowedAttributes.forEach((attributeName, value) -> {
+            val mappedAttributes = CollectionUtils.wrap(value);
             LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
             val attributeValue = resolvedAttributes.get(attributeName);
             mappedAttributes.forEach(mapped -> {

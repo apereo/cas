@@ -235,12 +235,19 @@ public class SamlUtils {
      *
      * @param configBean the config bean
      * @param samlObject the saml object
+     * @return the string
      * @throws SamlException the saml exception
      */
-    public static void logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
+    public static String logSamlObject(final OpenSamlConfigBean configBean, final XMLObject samlObject) throws SamlException {
         val repeat = StringUtils.repeat('*', SAML_OBJECT_LOG_ASTERIXLINE_LENGTH);
         LOGGER.debug(repeat);
-        LOGGER.debug("Logging [{}]\n\n{}\n\n", samlObject.getClass().getName(), transformSamlObject(configBean, samlObject, true));
-        LOGGER.debug(repeat);
+        try (val writer = transformSamlObject(configBean, samlObject, true)) {
+            LOGGER.debug("Logging [{}]\n\n{}\n\n", samlObject.getClass().getName(), writer);
+            LOGGER.debug(repeat);
+            return writer.toString();
+        } catch (final Exception e) {
+            throw new SamlException(e.getMessage(), e);
+        }
+
     }
 }
