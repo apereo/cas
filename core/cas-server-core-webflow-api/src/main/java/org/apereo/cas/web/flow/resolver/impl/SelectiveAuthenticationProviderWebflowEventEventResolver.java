@@ -51,7 +51,6 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
         final Set<Event> resolvedEvents = getResolvedEventsAsAttribute(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
         final RegisteredService registeredService = resolveRegisteredServiceInRequestContext(context);
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         return resolveEventsInternal(resolvedEvents, authentication, registeredService, context);
     }
 

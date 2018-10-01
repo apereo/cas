@@ -46,5 +46,6 @@ public interface Credential extends Serializable {
      * @param mark - the mark
      */
     default void setMark(String mark) {
+        // Set mark in field.
     }
 }

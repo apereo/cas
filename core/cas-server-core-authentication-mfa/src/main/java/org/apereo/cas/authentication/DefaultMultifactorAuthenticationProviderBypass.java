@@ -98,12 +98,7 @@ public class DefaultMultifactorAuthenticationProviderBypass implements Multifact
             return false;
         }
 
-        final boolean bypassByService = locateMatchingRegisteredServiceForBypass(authentication, registeredService);
-        if (bypassByService) {
-            return false;
-        }
-
-        return true;
+        return !locateMatchingRegisteredServiceForBypass(authentication, registeredService);
     }
 
     /**
