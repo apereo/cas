@@ -212,7 +212,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addSuccesses(final Map<String, AuthenticationHandlerExecutionResult> successes) {
-        successes.entrySet().forEach(entry -> addSuccess(entry.getKey(), entry.getValue()));
+        successes.forEach((key, value) -> addSuccess(key, value));
         return this;
     }
 
@@ -247,7 +247,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addFailures(final Map<String, Throwable> failures) {
-        failures.entrySet().forEach(entry -> addFailure(entry.getKey(), entry.getValue()));
+        failures.forEach((key, value) -> addFailure(key, value));
         return this;
     }
 

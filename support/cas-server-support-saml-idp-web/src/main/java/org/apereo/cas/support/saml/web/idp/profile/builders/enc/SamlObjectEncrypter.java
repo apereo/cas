@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
-import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -60,12 +59,11 @@ public class SamlObjectEncrypter {
      * @param service    the service
      * @param adaptor    the adaptor
      * @return the t
-     * @throws SamlException the saml exception
      */
     @SneakyThrows
     public EncryptedAssertion encode(final Assertion samlObject,
                                      final SamlRegisteredService service,
-                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
         return encrypter.encrypt(samlObject);
     }
@@ -77,12 +75,11 @@ public class SamlObjectEncrypter {
      * @param service    the service
      * @param adaptor    the adaptor
      * @return the encrypted id
-     * @throws SamlException the saml exception
      */
     @SneakyThrows
     public EncryptedID encode(final NameID samlObject,
                               final SamlRegisteredService service,
-                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
         return encrypter.encrypt(samlObject);
     }
@@ -94,12 +91,11 @@ public class SamlObjectEncrypter {
      * @param service    the service
      * @param adaptor    the adaptor
      * @return the encrypted attribute
-     * @throws SamlException the saml exception
      */
     @SneakyThrows
     public EncryptedAttribute encode(final Attribute samlObject,
                                      final SamlRegisteredService service,
-                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
+                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val encrypter = buildEncrypterForSamlObject(samlObject, service, adaptor);
         return encrypter.encrypt(samlObject);
     }
