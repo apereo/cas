@@ -46,9 +46,7 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Override
     public ConsentRepository getRepository(final String testName) {
-        return repos.computeIfAbsent(testName, n -> {
-            return new RestConsentRepository(new RestTemplate(), CONSENT);
-        });
+        return repos.computeIfAbsent(testName, n -> new RestConsentRepository(new RestTemplate(), CONSENT));
     }
 
     private MockRestServiceServer getNewServer(final RestConsentRepository repository) {
