@@ -11,6 +11,7 @@ dependencies {
     implementation project(":support:cas-server-support-geolocation")
     implementation project(":core:cas-server-core-logout-api")
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-mfa")
     api project(":api:cas-server-core-api-webflow")
     
     implementation libraries.pac4j

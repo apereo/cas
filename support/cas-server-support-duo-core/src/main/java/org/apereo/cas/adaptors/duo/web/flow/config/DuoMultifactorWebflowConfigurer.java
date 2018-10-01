@@ -59,7 +59,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
             applicationContext.getAutowireCapableBeanFactory().initializeBean(duoFlowRegistry, duo.getId());
             final ConfigurableListableBeanFactory cfg = (ConfigurableListableBeanFactory) applicationContext.getAutowireCapableBeanFactory();
             cfg.registerSingleton(duo.getId(), duoFlowRegistry);
-            registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getId(), duoFlowRegistry);
+            registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), duo.getId(), duoFlowRegistry, duo.getId());
         });
 
         casProperties.getAuthn().getMfa().getDuo()
@@ -218,7 +218,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     }
 
     private void createDuoDetermineRequestAction(final List<AbstractStateModel> states) {
-        final ActionStateModel actModel = new ActionStateModel("determineDuoRequest");
+        final ActionStateModel actModel = new ActionStateModel("attemptAuth");
         final LinkedList<AbstractActionModel> actions = new LinkedList<>();
         actions.add(new EvaluateModel("checkWebAuthenticationRequestAction"));
         actModel.setActions(actions);
@@ -240,7 +240,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
     }
 
     private void createDuoDetermineUserAccountAction(final List<AbstractStateModel> states) {
-        final ActionStateModel actModel = new ActionStateModel("determineDuoUserAccount");
+        final ActionStateModel actModel = new ActionStateModel(CasWebflowConstants.STATE_ID_MFA_PRE_AUTH);
         final LinkedList<AbstractActionModel> actions = new LinkedList<>();
         actions.add(new EvaluateModel("determineDuoUserAccountAction"));
         actModel.setActions(actions);
@@ -248,7 +248,7 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         final LinkedList<TransitionModel> trans = new LinkedList<>();
         TransitionModel transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo("determineDuoRequest");
+        transModel.setTo("attemptAuth");
         trans.add(transModel);
 
         transModel = new TransitionModel();
@@ -258,12 +258,12 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_BYPASS);
-        transModel.setTo("finalizeAuthentication");
+        transModel.setTo(CasWebflowConstants.STATE_ID_CHECK_BYPASS);
         trans.add(transModel);
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        transModel.setTo(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
+        transModel.setTo(CasWebflowConstants.TRANSITION_ID_FAILURE);
         trans.add(transModel);
 
         transModel = new TransitionModel();
@@ -286,13 +286,15 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
         actions.add(new EvaluateModel("initializeLoginAction"));
         actModel.setActions(actions);
 
+
         final LinkedList<TransitionModel> trans = new LinkedList<>();
         final TransitionModel transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        transModel.setTo("determineDuoUserAccount");
+        transModel.setTo("attemptAuth");
         trans.add(transModel);
 
         actModel.setTransitions(trans);
+
         states.add(actModel);
         return actions;
     }

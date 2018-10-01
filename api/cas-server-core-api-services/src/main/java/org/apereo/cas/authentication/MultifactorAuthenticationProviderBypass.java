@@ -12,7 +12,6 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@FunctionalInterface
 public interface MultifactorAuthenticationProviderBypass extends Serializable {
 
     /**
@@ -37,4 +36,25 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable {
     boolean shouldMultifactorAuthenticationProviderExecute(Authentication authentication, RegisteredService registeredService,
                                                            MultifactorAuthenticationProvider provider,
                                                            HttpServletRequest request);
+
+    /**
+     * Method will remove any previous bypass set in the authentication.
+     *
+     * @param authentication - the authentication
+     */
+    default void updateAuthenticationToForgetBypass(Authentication authentication) {
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE);
+    }
+
+    /**
+     * Method will set the bypass into the authentication.
+     *
+     * @param authentication - the authentication
+     * @param provider - the provider
+     */
+    default void updateAuthenticationToRememberBypass(Authentication authentication,
+                                                      MultifactorAuthenticationProvider provider) {
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
+        authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId());
+    }
 }

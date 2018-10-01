@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.model.support.mfa.RadiusMultifactorPropertie
 import java.net.SocketTimeoutException;
 import java.util.List;
 import lombok.NoArgsConstructor;
+import org.apereo.cas.services.RegisteredService;
 
 /**
  * The authentication provider for yubikey.
@@ -32,7 +33,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
     }
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         return canPing();
     }
 

@@ -1,11 +1,10 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.springframework.core.Ordered;
-import org.springframework.webflow.execution.Event;
 
-import javax.servlet.http.HttpServletRequest;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
+import org.springframework.core.Ordered;
+
 import java.io.Serializable;
 
 /**
@@ -23,11 +22,18 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
     /**
      * Ensure the provider is available.
      *
-     * @param service the service
+     * @param service - the service
      * @return true /false flag once verification is successful.
      * @throws AuthenticationException the authentication exception
      */
     boolean isAvailable(RegisteredService service) throws AuthenticationException;
+
+    /**
+     * Returns the configured bypass provider for this MFA provider.
+     *
+     * @return - the bypass evaluator
+     */
+    MultifactorAuthenticationProviderBypass getBypassEvaluator();
 
     /**
      * Gets id for this provider.
@@ -53,31 +59,29 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
     boolean matches(String identifier);
 
     /**
-     * Indicates whether the current active event is supported by
-     * this mfa provider based on the given authentication and service definition.
-     * This allows each mfa provider to design bypass rules based on traits
-     * of the service or authentication, or both.
+     * This method will return the failure mode for the provider.
      *
-     * @param event             the event
-     * @param authentication    the authentication
-     * @param registeredService the registered service
-     * @param request           the request
-     * @return true if supported
-     */
-    boolean supports(Event event,
-                     Authentication authentication,
-                     RegisteredService registeredService,
-                     HttpServletRequest request);
-
-    /**
-     * This method will inspect global and service properties and determine which
-     * FailureMode applies to the current authentication transaction.
-     *
-     * @param service the service
      * @return the FailureMode
      */
-    default RegisteredServiceMultifactorPolicy.FailureModes determineFailureMode(final RegisteredService service) {
-        return RegisteredServiceMultifactorPolicy.FailureModes.NONE;
+    RegisteredServiceMultifactorPolicy.FailureModes failureMode();
+
+    /**
+     * Creates a unique mark that identifies this provider instance.
+     *
+     * @return - the mark
+     */
+    default String createMark() {
+        return getId().concat(String.valueOf(hashCode()));
+    }
+
+    /**
+     * Validates that the passed mark was created by this provider.
+     *
+     * @param mark - the mark
+     * @return - true if the mark was created by this provider
+     */
+    default boolean validateMark(final String mark) {
+        return mark != null && createMark().equals(mark);
     }
 
 }

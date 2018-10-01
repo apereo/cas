@@ -18,7 +18,6 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -51,8 +50,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
         final Set<Event> resolvedEvents = getResolvedEventsAsAttribute(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
         final RegisteredService registeredService = resolveRegisteredServiceInRequestContext(context);
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        return resolveEventsInternal(resolvedEvents, authentication, registeredService, request, context);
+        return resolveEventsInternal(resolvedEvents, authentication, registeredService, context);
     }
 
     /**
@@ -63,12 +61,11 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
      * @param resolveEvents     the resolve events
      * @param authentication    the authentication
      * @param registeredService the registered service
-     * @param request           the request
      * @param context           the request context
      * @return the set of resolved events
      */
     protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents, final Authentication authentication, final RegisteredService registeredService,
-                                               final HttpServletRequest request, final RequestContext context) {
+                                               final RequestContext context) {
         if (!resolveEvents.isEmpty()) {
             LOGGER.debug("Collection of resolved events for this authentication sequence are:");
             resolveEvents.forEach(e -> LOGGER.debug("Event id [{}] resolved from [{}]", e.getId(), e.getSource().getClass().getName()));
@@ -76,7 +73,7 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
             LOGGER.debug("No events could be resolved for this authentication transaction [{}] and service [{}]", authentication, registeredService);
         }
         final Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> pair =
-                filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
+                filterEventsByMultifactorAuthenticationProvider(resolveEvents);
         WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
         return pair.getKey();
     }
@@ -85,15 +82,10 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
      * Filter events by multifactor authentication providers.
      *
      * @param resolveEvents     the resolve events
-     * @param authentication    the authentication
-     * @param registeredService the registered service
-     * @param request           the request
      * @return the set of events
      */
     protected Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
-            final Set<Event> resolveEvents, final Authentication authentication, 
-            final RegisteredService registeredService,
-            final HttpServletRequest request) {
+            final Set<Event> resolveEvents) {
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
         final Map<String, MultifactorAuthenticationProvider> providers =
                 MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
@@ -107,12 +99,12 @@ public class SelectiveAuthenticationProviderWebflowEventEventResolver extends Ba
 
         // remove providers that don't support the event
         flattenedProviders.removeIf(p -> resolveEvents.stream()
-                .filter(e -> p.supports(e, authentication, registeredService, request))
+                .filter(e -> p.matches(e.getId()))
                 .count() == 0);
 
         // remove events that are not supported by providers.
         resolveEvents.removeIf(e -> flattenedProviders.stream()
-                .filter(p -> p.supports(e, authentication, registeredService, request))
+                .filter(p -> p.matches(e.getId()))
                 .count() == 0);
 
         LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);
