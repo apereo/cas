@@ -71,7 +71,7 @@ import static org.junit.Assert.*;
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class
 })
-public class BaseAcceptableUsagePolicyRepositoryTests {
+public abstract class BaseAcceptableUsagePolicyRepositoryTests {
 
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
@@ -83,10 +83,7 @@ public class BaseAcceptableUsagePolicyRepositoryTests {
     @Qualifier("ticketRegistry")
     protected TicketRegistry ticketRegistry;
 
-    @Autowired
-    @Qualifier("acceptableUsagePolicyRepository")
-    protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
-
+    public abstract AcceptableUsagePolicyRepository getAcceptableUsagePolicyRepository();
     /**
      * Repository can update the state of the AUP acceptance without reloading the principal. Mostly for testing purposes.
      *
@@ -107,10 +104,10 @@ public class BaseAcceptableUsagePolicyRepositoryTests {
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
-        assertFalse(acceptableUsagePolicyRepository.verify(context, c).getLeft());
-        assertTrue(acceptableUsagePolicyRepository.submit(context, c));
+        assertFalse(getAcceptableUsagePolicyRepository().verify(context, c).getLeft());
+        assertTrue(getAcceptableUsagePolicyRepository().submit(context, c));
         if (hasLiveUpdates()) {
-            assertTrue(acceptableUsagePolicyRepository.verify(context, c).getLeft());
+            assertTrue(getAcceptableUsagePolicyRepository().verify(context, c).getLeft());
         }
     }
 }
