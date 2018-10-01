@@ -5,7 +5,10 @@ import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasConsentMongoDbConfiguration;
 
+import lombok.Getter;
 import org.junit.experimental.categories.Category;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -32,5 +35,10 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.mongo.dropCollection=true",
     "cas.consent.mongo.databaseName=consent"
     })
+@Getter
 public class MongoDbConsentRepositoryTests extends BaseConsentRepositoryTests {
+
+    @Autowired
+    @Qualifier("consentRepository")
+    protected ConsentRepository repository;
 }

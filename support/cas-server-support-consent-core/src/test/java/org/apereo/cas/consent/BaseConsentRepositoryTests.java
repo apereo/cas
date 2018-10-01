@@ -12,8 +12,6 @@ import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
@@ -33,7 +31,7 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class
 })
 @Getter
-public class BaseConsentRepositoryTests {
+public abstract class BaseConsentRepositoryTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
@@ -47,9 +45,7 @@ public class BaseConsentRepositoryTests {
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
-    @Autowired
-    @Qualifier("consentRepository")
-    protected ConsentRepository repository;
+    public abstract ConsentRepository getRepository();
 
     public ConsentRepository getRepository(final String testName) {
         return getRepository();

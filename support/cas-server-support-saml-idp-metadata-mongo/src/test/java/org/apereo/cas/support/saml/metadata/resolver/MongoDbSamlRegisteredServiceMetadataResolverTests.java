@@ -36,7 +36,6 @@ import static org.junit.Assert.*;
 public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
     @Test
     public void verifyResolver() throws IOException {
-        val mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
         val res = new ClassPathResource("sp-metadata.xml");
         val md = new SamlMetadataDocument();
         md.setName("SP");

@@ -3,6 +3,9 @@ package org.apereo.cas.consent;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -21,5 +24,10 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.consent.groovy.location=classpath:/ConsentRepository.groovy"
 })
+@Getter
 public class GroovyConsentRepositoryTests extends BaseConsentRepositoryTests {
+
+    @Autowired
+    @Qualifier("consentRepository")
+    protected ConsentRepository repository;
 }
