@@ -1095,8 +1095,8 @@ To learn more about this topic, [please review this guide](../installation/Confi
 
 ```properties
 # cas.authn.throttle.usernameParameter=username
-# cas.authn.throttle.schedule.startDelay=10000
-# cas.authn.throttle.schedule.repeatInterval=20000
+# cas.authn.throttle.schedule.startDelay=PT10S
+# cas.authn.throttle.schedule.repeatInterval=PT20S
 # cas.authn.throttle.appcode=CAS
 
 # cas.authn.throttle.failure.threshold=100
@@ -3932,6 +3932,10 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 ```properties
 # cas.acceptableUsagePolicy.jdbc.tableName=usage_policies_table
 ```
+
+#### CouchDb
+
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.acceptableUsagePolicy`. This feature uses the `asynchronous` setting.
 
 #### MongoDb
 

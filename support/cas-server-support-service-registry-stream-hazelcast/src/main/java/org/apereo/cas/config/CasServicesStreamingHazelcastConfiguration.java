@@ -11,7 +11,6 @@ import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.services.replication.DefaultRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -44,6 +43,10 @@ public class CasServicesStreamingHazelcastConfiguration {
     @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
     private StringBean casRegisteredServiceStreamPublisherIdentifier;
 
+    @Autowired
+    @Qualifier("casHazelcastInstance")
+    private HazelcastInstance hazelcastInstance;
+
     @Bean
     public DistributedCacheManager registeredServiceDistributedCacheManager() {
         return new RegisteredServiceHazelcastDistributedCacheManager(casRegisteredServiceHazelcastInstance());
@@ -71,9 +74,7 @@ public class CasServicesStreamingHazelcastConfiguration {
         val duration = Beans.newDuration(stream.getDuration()).toMillis();
         val mapConfig = factory.buildMapConfig(hz, name,
             TimeUnit.MILLISECONDS.toSeconds(duration));
-        val cfg = factory.build(hz, mapConfig);
-        LOGGER.debug("Created hazelcast instance [{}] with publisher id [{}] to publish service definitions",
-            name, casRegisteredServiceStreamPublisherIdentifier);
-        return Hazelcast.newHazelcastInstance(cfg);
+        hazelcastInstance.getConfig().addMapConfig(mapConfig);
+        return hazelcastInstance;
     }
 }

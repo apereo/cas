@@ -4,7 +4,10 @@ import org.apereo.cas.config.CasAcceptableUsagePolicyJdbcConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
+import lombok.Getter;
 import lombok.val;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +35,16 @@ import javax.sql.DataSource;
     "cas.acceptableUsagePolicy.jdbc.tableName=aup_table",
     "cas.acceptableUsagePolicy.aupAttributeName=accepted"
     })
+@Getter
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier("acceptableUsagePolicyDataSource")
     private DataSource acceptableUsagePolicyDataSource;
+
+    @Autowired
+    @Qualifier("acceptableUsagePolicyRepository")
+    private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Override
     public boolean hasLiveUpdates() {

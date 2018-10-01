@@ -25,7 +25,10 @@ import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
+import lombok.Getter;
 import org.junit.experimental.categories.Category;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -73,6 +76,11 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.mongo.password=secret",
     "cas.audit.mongo.authenticationDatabaseName=admin",
     "cas.audit.mongo.asynchronous=false"})
+@Getter
 public class MongoDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {
+
+    @Autowired
+    @Qualifier("authenticationThrottle")
+    private ThrottledSubmissionHandlerInterceptor throttle;
 }

@@ -34,9 +34,14 @@ public class CouchDbConnectorFactory {
     @NonNull
     private final ObjectMapperFactory objectMapperFactory;
 
-    @Getter(lazy = true) private final CouchDbConnector couchDbConnector = createConnector();
-    @Getter(lazy = true) private final CouchDbInstance couchDbInstance = createInstance();
-    @Getter(lazy = true) private final HttpClient httpClient = createHttpClient();
+    @Getter(lazy = true)
+    private final CouchDbConnector couchDbConnector = createConnector();
+
+    @Getter(lazy = true)
+    private final CouchDbInstance couchDbInstance = createInstance();
+
+    @Getter(lazy = true)
+    private final HttpClient httpClient = createHttpClient();
 
     /**
      * Create {@link CouchDbConnector} instance.
