@@ -3,15 +3,18 @@ package org.apereo.cas.trusted.web.flow;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -33,7 +36,12 @@ import static org.junit.Assert.*;
     "cas.authn.mfa.trusted.expiration=30",
     "cas.authn.mfa.trusted.timeUnit=SECONDS"
 })
+@Getter
 public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+
+    @Autowired
+    @Qualifier("mfaTrustEngine")
+    protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -42,7 +50,7 @@ public class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMul
     public void verifyDeviceNotTrusted() throws Exception {
         val r = getMultifactorAuthenticationTrustRecord();
         r.setRecordDate(LocalDateTime.now().minusSeconds(5));
-        mfaTrustEngine.set(r);
+        getMfaTrustEngine().set(r);
 
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
