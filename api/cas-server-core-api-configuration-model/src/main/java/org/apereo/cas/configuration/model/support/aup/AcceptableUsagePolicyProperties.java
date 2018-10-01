@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.aup;
 
+import org.apereo.cas.configuration.model.support.couchdb.BaseAsynchronousCouchDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
@@ -41,6 +42,11 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private Rest rest = new Rest();
 
     /**
+     * Control AUP via CouchDb.
+     */
+    private CouchDb couchDb = new CouchDb();
+
+    /**
      * Keep consent decisions stored via a MongoDb database resource.
      */
     private MongoDb mongo = new MongoDb();
@@ -57,6 +63,16 @@ public class AcceptableUsagePolicyProperties implements Serializable {
      */
     @RequiredProperty
     private String aupAttributeName = "aupAccepted";
+
+    @RequiresModule(name = "cas-server-support-aup-couchdb")
+    public static class CouchDb extends BaseAsynchronousCouchDbProperties {
+
+        private static final long serialVersionUID = 1323894615409106853L;
+
+        public CouchDb() {
+            setDbName("acceptable_usage_policy");
+        }
+    }
 
     @RequiresModule(name = "cas-server-support-aup-mongo")
     @Getter
