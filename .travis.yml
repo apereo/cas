@@ -4,7 +4,7 @@
 # Install travis: gem install travis
 # Login to travis: travis login
 # Encrypt the token: travis encrypt VAR_NAME=VAR_VALUE -r apereo/cas --add env.global
-# Encrypted settings include GPG_PSW, SONATYPE_USER, GPG_PASSPHRASE, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN, COVERALLS_REPO_TOKEN
+# Encrypted settings include GPG_PSW, SONATYPE_USER, GPG_PASSPHRASE, SONATYPE_PWD, GH_TOKEN, COVERITY_SCAN_TOKEN
 
 language: java
 sudo: required
@@ -42,9 +42,6 @@ git:
 notifications:
   slack:
     secure: "gNFUOGd0isowSwPfQ9VqGQWhWRDAjzX9tfH0xGe2gyg1kiOhq3Odb8fdcUg9f3DhAbiMxGDu08IgmDbeEyncB42Zdqk/DFvD3F958WaVy0O9TF2iAzO+ftBG0+slFHPDZ8qAy97+mV/be7KBkLYP+BydYTVfO84NvpLNiylmOVU="
-  webhooks:
-    # Coveralls: https://docs.coveralls.io/parallel-build-webhook
-    secure: "e3Lkn/iMpq9IjNrBQqMAKAxCbKUcd5t6zbow+l39a5n7trIUcBzgK9YXlSBigRyVnKXwNmI08WQN0GMJuWoT2u9cda5qttgZ5C8p/RFWxGKz6qhlmKwcwmipasU0ykvMARB6nrTMwMeMV/O5btt2xko8KfsRQdmqyZGJBglhDsc="
 matrix:
   fast_finish: true
 env:
@@ -53,7 +50,6 @@ env:
   - JAVA_OPTS="-Xms512m -Xmx2048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
   - GRADLE_OPTS="-Xms512m -Xmx1024m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
   - SPRING_MAIN_BANNER-MODE="off"
-  - COVERALLS_PARALLEL=true
   - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="
   - secure: "iWPPLKSS3zBs2adqLPkMiHfCj2hSLyD5BoV3oodhR7Ne83Kpn1khRcEWFoHF3Ed11eSU+glNdPSzUpc8TzwTZGx5B3RU2Qp36hZFyjuzNWJARmoVPYMiEg3FFBQrUR75w+Tbtn6zPkiAk6nl0K5ewmY0/xixVdnTLXL5HjpE2rc="
   - secure: "f3mDIZ8m6NYJXI8KvWD/sZRSeCCyIyfgPRy3Q6o9u9WyHZuYaJf95Ia0eJQ3gxUDS1TKL31Vk08dhFKrfIcKgifFPa2uQ2uyJkvGxlarMTQ+tpqsZYp4zAJgKc9r4xdZasvF2k4xqr+pl9AFjlpXB4jDD59XPXt3DcRABOYA9sM="

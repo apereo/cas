@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/radius/run-radius-server.sh
 
-gradleBuild="$gradleBuild testRadius coveralls -x test -x javadoc -x check \
+gradleBuild="$gradleBuild testRadius  -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

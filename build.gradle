@@ -30,7 +30,6 @@ def isArtifactSigningRequired = {
 
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
-apply plugin: "com.github.kt3k.coveralls"
 apply plugin: "com.github.ben-manes.versions"
 
 if (project.ext.continuousIntegrationBuild) {
@@ -61,7 +60,6 @@ buildscript {
         classpath "org.ajoberstar:grgit:$gradleGitVersion"
         classpath "net.ltgt.gradle:gradle-errorprone-javacplugin-plugin:$gradleErrorProneVersion"
         classpath "com.moowork.gradle:gradle-node-plugin:$gradleNodeVersion"
-        classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:$gradleCoverallsVersion"
         classpath "org.owasp:dependency-check-gradle:$gradleDependencyCheckVersion"
         classpath "gradle.plugin.com.github.spotbugs:spotbugs-gradle-plugin:$gradleSpotbugsVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
@@ -482,17 +480,6 @@ task jacocoRootReport(type: JacocoReport, group: 'Coverage reports') {
         html.enabled = false
         xml.enabled = true
     }
-}
-
-coveralls {
-    sourceDirs = publishedProjects.sourceSets.main.allSource.srcDirs.flatten()
-    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
-}
-
-tasks.coveralls {
-    group = "Coverage Reports"
-    description = "Uploads the aggregated coverage report to Coveralls"
-    dependsOn jacocoRootReport
 }
 
 task casVersion(description: "Display current CAS version") {
