@@ -107,12 +107,12 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver
 
         // remove providers that don't support the event
         flattenedProviders.removeIf(p -> resolveEvents.stream()
-            .filter(e -> !p.matches(e.getId()))
+            .filter(e -> p.matches(e.getId()))
             .count() == 0);
 
         // remove events that are not supported by providers.
         resolveEvents.removeIf(e -> flattenedProviders.stream()
-            .filter(p -> !p.matches(e.getId()))
+            .filter(p -> p.matches(e.getId()))
             .count() == 0);
 
         LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);
