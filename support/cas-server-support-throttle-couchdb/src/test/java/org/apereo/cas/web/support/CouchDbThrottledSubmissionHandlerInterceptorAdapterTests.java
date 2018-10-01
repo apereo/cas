@@ -1,4 +1,4 @@
-package org.apereo.cas.web.support.config;
+package org.apereo.cas.web.support;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.category.CouchDbCategory;
@@ -27,8 +27,8 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.couchdb.audit.AuditActionContextCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.web.support.BaseThrottledSubmissionHandlerInterceptorAdapterTests;
 
+import lombok.Getter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.experimental.categories.Category;
@@ -75,8 +75,13 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.couchDb.dbName=throttle",
     "cas.audit.couchDb.asynchronous=false",
     "org.ektorp.support.AutoUpdateViewOnChange=true"})
+@Getter
 public class CouchDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {
+
+    @Autowired
+    @Qualifier("authenticationThrottle")
+    private ThrottledSubmissionHandlerInterceptor throttle;
 
     @Autowired
     @Qualifier("auditActionContextCouchDbRepository")

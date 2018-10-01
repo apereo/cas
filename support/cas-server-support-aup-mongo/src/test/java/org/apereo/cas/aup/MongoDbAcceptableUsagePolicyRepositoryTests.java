@@ -22,8 +22,11 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
+import lombok.Getter;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -68,7 +71,13 @@ import org.springframework.test.context.TestPropertySource;
     "cas.acceptableUsagePolicy.aupAttributeName=accepted"
     }
 )
+@Getter
 public class MongoDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     @Rule
     public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
+
+    @Autowired
+    @Qualifier("acceptableUsagePolicyRepository")
+    protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
+
 }

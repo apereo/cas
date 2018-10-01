@@ -16,11 +16,14 @@ import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
 import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.SearchScope;
+import lombok.Getter;
 import lombok.val;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -40,6 +43,7 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class
 })
 @Category(LdapCategory.class)
+@Getter
 public abstract class BaseLdapConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
@@ -55,6 +59,10 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
 
     @Rule
     public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
+
+    @Autowired
+    @Qualifier("consentRepository")
+    protected ConsentRepository repository;
 
     @After
     public void cleanDecisions() {

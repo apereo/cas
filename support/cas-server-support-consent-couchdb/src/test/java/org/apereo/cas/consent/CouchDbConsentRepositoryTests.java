@@ -9,7 +9,6 @@ import org.apereo.cas.couchdb.consent.ConsentDecisionCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.experimental.categories.Category;
@@ -32,7 +31,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     RefreshAutoConfiguration.class})
 @Category(CouchDbCategory.class)
 @Getter
-@Slf4j
 public class CouchDbConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired
@@ -42,6 +40,10 @@ public class CouchDbConsentRepositoryTests extends BaseConsentRepositoryTests {
     @Autowired
     @Qualifier("consentCouchDbRepository")
     private ConsentDecisionCouchDbRepository couchDbRepository;
+
+    @Autowired
+    @Qualifier("consentRepository")
+    private ConsentRepository repository;
 
     @Before
     public void setUp() {

@@ -71,7 +71,7 @@ public abstract class AbstractConsentAction extends AbstractAction {
         val attributes = consentEngine.resolveConsentableAttributesFrom(authentication, service, registeredService);
         val flowScope = requestContext.getFlowScope();
         flowScope.put("attributes", attributes);
-        flowScope.put("principal", authentication.getPrincipal().getId());
+        flowScope.put("principal", authentication.getPrincipal());
         flowScope.put("service", service);
 
         val decision = consentEngine.findConsentDecision(service, registeredService, authentication);

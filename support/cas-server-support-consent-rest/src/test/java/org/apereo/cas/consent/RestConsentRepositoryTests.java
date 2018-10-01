@@ -4,9 +4,9 @@ import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasConsentRestConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.client.ExpectedCount.*;
@@ -32,10 +33,16 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @Category(RestfulApiCategory.class)
 @SpringBootTest(classes = {CasConsentRestConfiguration.class})
 public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
-    public static final String CONSENT = "/consent";
+    private static final String CONSENT = "/consent";
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+    private static final Function<ConsentDecision, String> HANDLER = Unchecked.function(MAPPER::writeValueAsString);
 
     private final Map<String, ConsentRepository> repos = new HashMap<>();
+
+    @Override
+    public ConsentRepository getRepository() {
+        return getRepository("default");
+    }
 
     @Override
     public ConsentRepository getRepository(final String testName) {
@@ -53,12 +60,7 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
     public void verifyConsentDecisionIsNotFound() {
 
         val decision = BUILDER.build(SVC, REG_SVC, "casuser", CollectionUtils.wrap("attribute", "value"));
-        final String body;
-        try {
-            body = MAPPER.writeValueAsString(decision);
-        } catch (final JsonProcessingException e) {
-            throw new AssertionError(e);
-        }
+        val body = HANDLER.apply(decision);
         val repo = getRepository("verifyConsentDecisionIsNotFound");
         val server = getNewServer((RestConsentRepository) repo);
         server.expect(manyTimes(), requestTo(CONSENT))
@@ -78,12 +80,7 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
 
         val decision = BUILDER.build(SVC, REG_SVC, "casuser2", CollectionUtils.wrap("attribute", "value"));
         decision.setId(100);
-        final String body;
-        try {
-            body = MAPPER.writeValueAsString(decision);
-        } catch (final JsonProcessingException e) {
-            throw new AssertionError(e);
-        }
+        val body = HANDLER.apply(decision);
         val repo = getRepository("verifyConsentDecisionIsFound");
         val server = getNewServer((RestConsentRepository) repo);
         server.expect(once(), requestTo(CONSENT))
