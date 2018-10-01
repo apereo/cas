@@ -16,7 +16,9 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -129,6 +131,10 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @MapKeyColumn(name = "attribute_name")
     @Column(name = "attribute_value")
     private Map<String, String> attributeFriendlyNames = new TreeMap<>();
+
+    @Lob
+    @Column(name = "encryptable_attrs", length = Integer.MAX_VALUE)
+    private HashSet<String> encryptableAttributes = new HashSet<>();
 
     @Override
     protected AbstractRegisteredService newInstance() {

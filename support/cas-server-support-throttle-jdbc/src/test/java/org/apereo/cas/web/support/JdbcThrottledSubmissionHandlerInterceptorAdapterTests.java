@@ -24,6 +24,9 @@ import org.apereo.cas.config.CasThrottlingConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
+import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -64,5 +67,10 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.throttle.usernameParameter=username",
     "cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
     "cas.audit.jdbc.asynchronous=false"})
+@Getter
 public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
+
+    @Autowired
+    @Qualifier("authenticationThrottle")
+    private ThrottledSubmissionHandlerInterceptor throttle;
 }

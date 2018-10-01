@@ -32,8 +32,8 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultAuthnCo
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileSamlAuthNStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.artifact.SamlProfileArtifactFaultResponseBuilder;
@@ -342,8 +342,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @ConditionalOnMissingBean(name = "samlObjectEncrypter")
     @Bean
     @RefreshScope
-    public SamlObjectEncrypter samlObjectEncrypter() {
-        return new SamlObjectEncrypter(casProperties.getAuthn().getSamlIdp());
+    public SamlIdPObjectEncrypter samlObjectEncrypter() {
+        return new SamlIdPObjectEncrypter(casProperties.getAuthn().getSamlIdp());
     }
 
     @ConditionalOnMissingBean(name = "samlObjectSigner")

@@ -2704,7 +2704,8 @@ The following external identity providers share [common blocks of settings](Conf
 | GitHub                    | `cas.authn.pac4j.github`
 | Foursquare                | `cas.authn.pac4j.foursquare`
 | WindowsLive               | `cas.authn.pac4j.windowsLive`
-| Google                   | `cas.authn.pac4j.google`
+| Google                    | `cas.authn.pac4j.google`
+| HiOrg                     | `cas.authn.pac4j.hiOrgServer`
 
 See below for other identity providers such as CAS, SAML2 and more.
 
@@ -3932,6 +3933,10 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 ```properties
 # cas.acceptableUsagePolicy.jdbc.tableName=usage_policies_table
 ```
+
+#### CouchDb
+
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.acceptableUsagePolicy`. This feature uses the `asynchronous` setting.
 
 #### MongoDb
 

@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml;
+package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
@@ -8,8 +8,6 @@ import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
-import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;

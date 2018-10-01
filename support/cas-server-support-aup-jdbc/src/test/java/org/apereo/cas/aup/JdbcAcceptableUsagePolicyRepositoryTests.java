@@ -1,16 +1,13 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.config.CasAcceptableUsagePolicyJdbcConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 
+import lombok.Getter;
 import lombok.val;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
 import javax.sql.DataSource;
@@ -21,21 +18,20 @@ import javax.sql.DataSource;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    CasAcceptableUsagePolicyJdbcConfiguration.class,
-    RefreshAutoConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class
-})
+@Import(CasAcceptableUsagePolicyJdbcConfiguration.class)
 @TestPropertySource(properties = {
     "cas.acceptableUsagePolicy.jdbc.tableName=aup_table",
     "cas.acceptableUsagePolicy.aupAttributeName=accepted"
-    })
+})
+@Getter
 public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier("acceptableUsagePolicyDataSource")
     private DataSource acceptableUsagePolicyDataSource;
+
+    @Autowired
+    @Qualifier("acceptableUsagePolicyRepository")
+    private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Override
     public boolean hasLiveUpdates() {
