@@ -18,6 +18,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")
