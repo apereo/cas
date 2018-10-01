@@ -6,6 +6,7 @@ dependencies {
     implementation project(":core:cas-server-core-monitor")
     implementation project(":support:cas-server-support-hazelcast-ticket-registry")
     implementation project(":support:cas-server-support-hazelcast-core")
+    implementation project(":support:cas-server-support-hazelcast")
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":support:cas-server-support-person-directory")
@@ -20,7 +21,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-configuration")
-    testImplementation project(":support:cas-server-support-hazelcast")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
