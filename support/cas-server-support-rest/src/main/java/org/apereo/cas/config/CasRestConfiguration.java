@@ -189,9 +189,7 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
         public void addInterceptors(final InterceptorRegistry registry) {
             val plan = authenticationThrottlingExecutionPlan.getIfAvailable();
             LOGGER.debug("Activating authentication throttling for REST endpoints...");
-            plan.getAuthenticationThrottleInterceptors().forEach(handler -> {
-                registry.addInterceptor(handler).addPathPatterns("/v1/**");
-            });
+            plan.getAuthenticationThrottleInterceptors().forEach(handler -> registry.addInterceptor(handler).addPathPatterns("/v1/**"));
         }
     }
 }
