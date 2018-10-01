@@ -7,7 +7,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -39,12 +39,12 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
 
     private final int skewAllowance;
 
-    private final transient SamlObjectEncrypter samlObjectEncrypter;
+    private final transient SamlIdPObjectEncrypter samlObjectEncrypter;
 
     public SamlProfileSamlSubjectBuilder(final OpenSamlConfigBean configBean,
                                          final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder,
                                          final int skewAllowance,
-                                         final SamlObjectEncrypter samlObjectEncrypter) {
+                                         final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(configBean);
         this.ssoPostProfileSamlNameIdBuilder = ssoPostProfileSamlNameIdBuilder;
         this.skewAllowance = skewAllowance;

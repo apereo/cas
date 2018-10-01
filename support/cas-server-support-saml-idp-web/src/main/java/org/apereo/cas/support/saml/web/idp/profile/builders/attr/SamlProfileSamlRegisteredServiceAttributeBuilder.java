@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.DefaultSaml20AttributeBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -25,22 +25,20 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilder extends DefaultSam
     private final SamlRegisteredService service;
     private final SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
     private final MessageContext messageContext;
-    private final SamlObjectEncrypter samlObjectEncrypter;
+    private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     @Override
     @SneakyThrows
     public void build(final AttributeStatement attrStatement, final Attribute attribute) {
-        if (!service.isEncryptAttributes()) {
+        if (!service.isEncryptAttributes() || !shouldEncryptAttribute(attribute)) {
             LOGGER.debug("Service [{}] is configured to not encrypt attributes for [{}]", service.getName(), attribute.getName());
             super.build(attrStatement, attribute);
             return;
         }
 
-        if (shouldEncryptAttribute(attribute)) {
-            val encryptedAttribute = samlObjectEncrypter.encode(attribute, service, adaptor);
-            LOGGER.debug("Encrypted attribute [{}] for service [{}]", attribute.getName(), service.getName());
-            attrStatement.getEncryptedAttributes().add(encryptedAttribute);
-        }
+        val encryptedAttribute = samlObjectEncrypter.encode(attribute, service, adaptor);
+        LOGGER.debug("Encrypted attribute [{}] for service [{}]", attribute.getName(), service.getName());
+        attrStatement.getEncryptedAttributes().add(encryptedAttribute);
     }
 
     private boolean shouldEncryptAttribute(final Attribute attribute) {
