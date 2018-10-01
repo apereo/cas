@@ -2704,7 +2704,8 @@ The following external identity providers share [common blocks of settings](Conf
 | GitHub                    | `cas.authn.pac4j.github`
 | Foursquare                | `cas.authn.pac4j.foursquare`
 | WindowsLive               | `cas.authn.pac4j.windowsLive`
-| Google                   | `cas.authn.pac4j.google`
+| Google                    | `cas.authn.pac4j.google`
+| HiOrg                     | `cas.authn.pac4j.hiOrgServer`
 
 See below for other identity providers such as CAS, SAML2 and more.
 
