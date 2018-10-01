@@ -7,10 +7,12 @@ import org.apereo.cas.config.CouchDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.trusted.MultifactorAuthenticationTrustRecordCouchDbRepository;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
 
+import lombok.Getter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.experimental.categories.Category;
@@ -34,7 +36,12 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     MultifactorAuthnTrustWebflowConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class})
+@Getter
 public class CouchDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+
+    @Autowired
+    @Qualifier("mfaTrustEngine")
+    protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Autowired
     @Qualifier("mfaTrustCouchDbFactory")
