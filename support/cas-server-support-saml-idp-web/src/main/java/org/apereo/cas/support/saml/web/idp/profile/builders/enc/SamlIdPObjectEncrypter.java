@@ -41,14 +41,14 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import java.util.ArrayList;
 
 /**
- * This is {@link SamlObjectEncrypter}.
+ * This is {@link SamlIdPObjectEncrypter}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SamlObjectEncrypter {
+public class SamlIdPObjectEncrypter {
 
     private final SamlIdPProperties samlIdPProperties;
 

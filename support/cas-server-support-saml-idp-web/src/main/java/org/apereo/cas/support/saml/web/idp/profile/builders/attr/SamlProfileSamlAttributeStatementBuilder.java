@@ -8,7 +8,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 
 import lombok.val;
 import org.jasig.cas.client.validation.Assertion;
@@ -30,11 +30,11 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
     private static final long serialVersionUID = 1815697787562189088L;
     private final transient ProtocolAttributeEncoder samlAttributeEncoder;
     private final SamlIdPProperties samlIdPProperties;
-    private final SamlObjectEncrypter samlObjectEncrypter;
+    private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     public SamlProfileSamlAttributeStatementBuilder(final OpenSamlConfigBean configBean, final ProtocolAttributeEncoder samlAttributeEncoder,
                                                     final SamlIdPProperties samlIdPProperties,
-                                                    final SamlObjectEncrypter samlObjectEncrypter) {
+                                                    final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(configBean);
         this.samlAttributeEncoder = samlAttributeEncoder;
         this.samlIdPProperties = samlIdPProperties;

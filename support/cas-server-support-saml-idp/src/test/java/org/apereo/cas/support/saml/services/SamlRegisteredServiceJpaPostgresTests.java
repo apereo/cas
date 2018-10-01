@@ -1,7 +1,6 @@
-package org.apereo.cas.support.saml;
+package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.category.PostgresCategory;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
