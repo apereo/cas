@@ -9,6 +9,7 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":support:cas-server-support-aup-core")
+    implementation project(":support:cas-server-support-aup-webflow")
     implementation project(":support:cas-server-support-couchdb-core")
 
     api libraries.ektorp
