@@ -22,17 +22,14 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.core.ProfileCouchDbRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
+import lombok.Getter;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * This is {@link CouchDbAcceptableUsagePolicyRepositoryTests}.
@@ -62,13 +59,9 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     CasCoreAuthenticationPrincipalConfiguration.class},
     properties = {"cas.acceptableUsagePolicy.couchDb.asynchronous=false"})
 @Category(CouchDbCategory.class)
+
+@Getter
 public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("aupCouchDbFactory")
@@ -77,6 +70,10 @@ public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     @Autowired
     @Qualifier("aupCouchDbRepository")
     private ProfileCouchDbRepository couchDbRepository;
+
+    @Autowired
+    @Qualifier("acceptableUsagePolicyRepository")
+    private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Before
     public void setUp() {
@@ -88,4 +85,5 @@ public class CouchDbAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     public void tearDown() {
         aupCouchDbFactory.getCouchDbInstance().deleteDatabase(aupCouchDbFactory.getCouchDbConnector().getDatabaseName());
     }
+
 }
