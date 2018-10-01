@@ -1,0 +1,31 @@
+description = "Apereo CAS AUP CouchDb Support"
+dependencies {
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-ticket")
+
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":support:cas-server-support-aup-core")
+    implementation project(":support:cas-server-support-couchdb-core")
+
+    api libraries.ektorp
+
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")
+}
