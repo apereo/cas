@@ -181,3 +181,5 @@ jobs:
   - stage: spotbugs
     script: ./ci/analyze-bugs-tests.sh
     name: "Spotbugs Tests Analysis"
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
