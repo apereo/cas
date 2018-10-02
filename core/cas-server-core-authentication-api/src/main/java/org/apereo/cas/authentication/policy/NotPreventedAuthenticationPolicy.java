@@ -8,14 +8,14 @@ import lombok.val;
 
 /**
  * Authentication policy that defines success as at least one authentication success and no authentication attempts
- * that were prevented by system errors. This policy may be a desirable alternative to {@link AnyAuthenticationPolicy}
+ * that were prevented by system errors. This policy may be a desirable alternative to {@link AtLeastOneCredentialValidatedAuthenticationPolicy}
  * for cases where deployers wish to fail closed for indeterminate security events.
  *
  * @author Marvin S. Addison
  * @since 4.0.0
  */
 @Slf4j
-public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
+public class NotPreventedAuthenticationPolicy extends AtLeastOneCredentialValidatedAuthenticationPolicy {
 
 
     public NotPreventedAuthenticationPolicy() {

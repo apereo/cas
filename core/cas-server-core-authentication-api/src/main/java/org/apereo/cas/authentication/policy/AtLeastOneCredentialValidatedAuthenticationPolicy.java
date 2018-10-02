@@ -19,7 +19,7 @@ import lombok.val;
 @Setter
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class AnyAuthenticationPolicy implements AuthenticationPolicy {
+public class AtLeastOneCredentialValidatedAuthenticationPolicy implements AuthenticationPolicy {
 
     /**
      * Flag to try all credentials before policy is satisfied. Defaults to {@code false}.
