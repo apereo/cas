@@ -135,6 +135,10 @@ public class CoreAuthenticationTestUtils {
         return getAuthentication(getPrincipal(name));
     }
 
+    public static Authentication getAuthentication(final String name, final Map<String, Object> attributes) {
+        return getAuthentication(getPrincipal(name), attributes, null);
+    }
+
     public static Authentication getAuthentication(final String name, final ZonedDateTime authnDate) {
         return getAuthentication(getPrincipal(name), new HashMap<>(0), authnDate);
     }
