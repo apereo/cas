@@ -126,7 +126,7 @@ Scripts will receive and have access to the following variable bindings:
   "id" : 500,
   "description" : "sample",
   "usernameAttributeProvider" : {
-    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceUsernameProvider",
+    "@class" : "org.apereo.cas.services.ScriptedRegisteredServiceUsernameProvider",
     "script" : "file:/etc/cas/sampleService.[groovy|js|.py]",
     "canonicalizationMode" : "UPPER"
   }
