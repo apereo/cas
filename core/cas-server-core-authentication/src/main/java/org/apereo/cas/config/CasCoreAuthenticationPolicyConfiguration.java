@@ -9,8 +9,8 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.adaptive.intel.GroovyIPAddressIntelligenceService;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceService;
 import org.apereo.cas.authentication.adaptive.intel.RestfulIPAddressIntelligenceService;
-import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
-import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
+import org.apereo.cas.authentication.policy.AtLeastOneCredentialValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
@@ -69,8 +69,8 @@ public class CasCoreAuthenticationPolicyConfiguration {
                 LOGGER.debug("Activating authentication policy [{}]", RequiredHandlerAuthenticationPolicy.class.getSimpleName());
                 plan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName(), police.getReq().isTryAll()));
             } else if (police.getAll().isEnabled()) {
-                LOGGER.debug("Activating authentication policy [{}]", AllAuthenticationPolicy.class.getSimpleName());
-                plan.registerAuthenticationPolicy(new AllAuthenticationPolicy());
+                LOGGER.debug("Activating authentication policy [{}]", AllCredentialsValidatedAuthenticationPolicy.class.getSimpleName());
+                plan.registerAuthenticationPolicy(new AllCredentialsValidatedAuthenticationPolicy());
             } else if (police.getNotPrevented().isEnabled()) {
                 LOGGER.debug("Activating authentication policy [{}]", NotPreventedAuthenticationPolicy.class.getSimpleName());
                 plan.registerAuthenticationPolicy(notPreventedAuthenticationPolicy());
@@ -84,8 +84,8 @@ public class CasCoreAuthenticationPolicyConfiguration {
                 LOGGER.debug("Activating authentication policy [{}]", RestfulAuthenticationPolicy.class.getSimpleName());
                 police.getRest().forEach(r -> plan.registerAuthenticationPolicy(new RestfulAuthenticationPolicy(new RestTemplate(), r.getEndpoint())));
             } else if (police.getAny().isEnabled()) {
-                LOGGER.debug("Activating authentication policy [{}]", AnyAuthenticationPolicy.class.getSimpleName());
-                plan.registerAuthenticationPolicy(new AnyAuthenticationPolicy(police.getAny().isTryAll()));
+                LOGGER.debug("Activating authentication policy [{}]", AtLeastOneCredentialValidatedAuthenticationPolicy.class.getSimpleName());
+                plan.registerAuthenticationPolicy(new AtLeastOneCredentialValidatedAuthenticationPolicy(police.getAny().isTryAll()));
             }
         };
     }
