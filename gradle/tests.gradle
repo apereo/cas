@@ -200,7 +200,7 @@ tasks.withType(Test) {
     enabled = !Boolean.getBoolean("skipTests")
     scanForTestClasses = false
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-    maxParallelForks = 1
+    maxParallelForks = 4
     failFast = true
     jvmArgs "-Xmx1024m"
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
