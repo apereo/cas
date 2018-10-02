@@ -30,7 +30,8 @@ import org.junit.runners.Suite;
     DefaultPrincipalFactoryTests.class,
     GroovyAuthenticationPreProcessorTests.class,
     GroovyPrincipalFactoryTests.class,
-    OneTimeTokenAccountTests.class
+    OneTimeTokenAccountTests.class,
+    DefaultAuthenticationResultBuilderTests.class
 })
 public class AllAuthenticationTestsSuite {
 }
