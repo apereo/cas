@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -98,6 +99,10 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     @Override
     public boolean supports(final Credential credential) {
-        return provider.validateMark(credential.getMark());
+        if (credential.getClass().isAssignableFrom(MultifactorAuthenticationCredential.class)) {
+            val id = MultifactorAuthenticationCredential.class.cast(credential).getProviderId();
+            return provider.validateId(id);
+        }
+        return false;
     }
 }

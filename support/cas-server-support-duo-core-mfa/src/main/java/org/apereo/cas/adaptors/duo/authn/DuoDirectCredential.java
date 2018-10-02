@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.AbstractCredential;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,7 +21,7 @@ import lombok.ToString;
 @Getter
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class DuoDirectCredential extends AbstractCredential {
+public class DuoDirectCredential extends AbstractCredential implements MultifactorAuthenticationCredential {
     private static final long serialVersionUID = -7570699733132111037L;
 
     private final Authentication authentication;

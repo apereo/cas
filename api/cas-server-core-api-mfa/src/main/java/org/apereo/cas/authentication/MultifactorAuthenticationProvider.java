@@ -69,18 +69,18 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      *
      * @return - the mark
      */
-    default String createMark() {
+    default String createUniqueId() {
         return getId().concat(String.valueOf(hashCode()));
     }
 
     /**
      * Validates that the passed mark was created by this provider.
      *
-     * @param mark - the mark
+     * @param id - the id to validate
      * @return - true if the mark was created by this provider
      */
-    default boolean validateMark(final String mark) {
-        return mark != null && createMark().equals(mark);
+    default boolean validateId(final String id) {
+        return id != null && createUniqueId().equals(id);
     }
 
 }

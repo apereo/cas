@@ -3,13 +3,15 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderProperties;
 
 /**
- * Interface for provider a factory that can create a MultifactorAuthenticationProvider.
+ * Interface for beans that can be considered a Factory that can create instances of specific
+ * {@link MultifactorAuthenticationProvider} when passed an instance of {@link BaseMultifactorProviderProperties}
+ * Used by MFA providers that can be configured with multiple instances at runtime such as Duo.
  *
  * @author Travis Schmidt
  * @since 6.0
  */
 public interface MultifactorAuthenticationProviderFactory<T extends MultifactorAuthenticationProvider,
-                                                          P extends BaseMultifactorProviderProperties> {
+                                                              P extends BaseMultifactorProviderProperties> {
 
     /**
      * Default suffix to add to the bean name.

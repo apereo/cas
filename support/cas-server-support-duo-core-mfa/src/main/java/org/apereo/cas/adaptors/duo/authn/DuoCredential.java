@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.AbstractCredential;
+import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -23,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"username"}, callSuper = true)
-public class DuoCredential extends AbstractCredential {
+public class DuoCredential extends AbstractCredential implements MultifactorAuthenticationCredential {
 
     private static final long serialVersionUID = -7570600733132111037L;
 
@@ -31,21 +32,11 @@ public class DuoCredential extends AbstractCredential {
 
     private String signedDuoResponse;
 
-    private String mark;
+    private String providerId;
 
     @Override
     public String getId() {
         return this.username;
-    }
-
-    @Override
-    public void setMark(final String mark) {
-        this.mark = mark;
-    }
-
-    @Override
-    public String getMark() {
-        return mark;
     }
 
     public boolean isValid() {
