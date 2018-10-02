@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/ldap/run-ldap-server.sh
 
-gradleBuild="$gradleBuild testLdap -x test -x javadoc -x check \
+gradleBuild="$gradleBuild testLdap jacocoRootReport -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

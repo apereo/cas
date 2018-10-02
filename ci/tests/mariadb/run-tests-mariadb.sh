@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/mariadb/run-mariadb-server.sh
 
-gradleBuild="$gradleBuild testMariaDb  -x test -x javadoc -x check \
+gradleBuild="$gradleBuild testMariaDb jacocoRootReport -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
