@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.0.0
  */
 @Slf4j
-public class AllAuthenticationPolicy implements AuthenticationPolicy {
+public class AllCredentialsValidatedAuthenticationPolicy implements AuthenticationPolicy {
 
 
     @Override
