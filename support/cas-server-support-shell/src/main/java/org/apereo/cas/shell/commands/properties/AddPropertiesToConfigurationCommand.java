@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Properties;
@@ -110,7 +109,7 @@ public class AddPropertiesToConfigurationCommand {
         LOGGER.info("Located [{}] properties in configuration file [{}]", results.size(), filePath.getCanonicalPath());
         putResultsIntoProperties(results, p);
         val lines = p.stringPropertyNames().stream().map(s -> s + '=' + p.get(s)).collect(Collectors.toList());
-        Collections.sort(lines, Comparator.naturalOrder());
+        lines.sort(Comparator.naturalOrder());
         FileUtils.writeLines(filePath, lines);
     }
 

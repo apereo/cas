@@ -25,9 +25,9 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -165,11 +165,7 @@ public class CasKryoTranscoderTests {
     @Test
     public void verifyEncodeDecodeTGTWithUnmodifiableSet() {
         val newAttributes = new HashMap<String, Object>();
-        val values = new HashSet<String>();
-        values.add(NICKNAME_VALUE);
-        //CHECKSTYLE:OFF
-        newAttributes.put(NICKNAME_KEY, Collections.unmodifiableSet(values));
-        //CHECKSTYLE:ON
+        newAttributes.put(NICKNAME_KEY, Set.of(NICKNAME_VALUE));
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);
