@@ -65,17 +65,13 @@ public class PathWatcherService implements Runnable, Closeable {
             var key = (WatchKey) null;
             while ((key = watcher.take()) != null) {
                 handleEvent(key);
-                val valid = key != null && key.reset();
+                val valid = key.reset();
                 if (!valid) {
                     LOGGER.info("Directory key is no longer valid. Quitting watcher service");
                 }
             }
-        } catch (final InterruptedException e) {
+        } catch (final InterruptedException | ClosedWatchServiceException e) {
             LOGGER.trace(e.getMessage(), e);
-            return;
-        } catch (final ClosedWatchServiceException e) {
-            LOGGER.trace(e.getMessage(), e);
-            return;
         }
     }
 

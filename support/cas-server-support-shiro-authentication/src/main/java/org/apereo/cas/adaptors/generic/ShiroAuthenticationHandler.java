@@ -18,7 +18,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.DisabledAccountException;
 import org.apache.shiro.authc.ExcessiveAttemptsException;
 import org.apache.shiro.authc.ExpiredCredentialsException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -73,16 +72,14 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             return createAuthenticatedSubjectResult(transformedCredential, currentUser);
         } catch (final UnknownAccountException uae) {
             throw new AccountNotFoundException(uae.getMessage());
-        } catch (final IncorrectCredentialsException ice) {
-            throw new FailedLoginException(ice.getMessage());
         } catch (final LockedAccountException | ExcessiveAttemptsException lae) {
             throw new AccountLockedException(lae.getMessage());
         } catch (final ExpiredCredentialsException eae) {
             throw new CredentialExpiredException(eae.getMessage());
         } catch (final DisabledAccountException eae) {
             throw new AccountDisabledException(eae.getMessage());
-        } catch (final AuthenticationException e) {
-            throw new FailedLoginException(e.getMessage());
+        } catch (final AuthenticationException ice) {
+            throw new FailedLoginException(ice.getMessage());
         }
     }
 
