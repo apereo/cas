@@ -21,6 +21,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockOnlyOneTicketRegistry;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 
@@ -375,7 +376,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val auth = assertion.getPrimaryAuthentication();
         val attributes = auth.getPrincipal().getAttributes();
         assertEquals(1, attributes.size());
-        assertEquals("adopters", attributes.get("groupMembership"));
+        assertEquals(CollectionUtils.wrapList("adopters"), attributes.get("groupMembership"));
     }
 
     @Test
