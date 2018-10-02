@@ -29,6 +29,4 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 
-
-    testCompileOnly libraries.javax
 }
