@@ -99,14 +99,16 @@ public class InitialFlowSetupAction extends AbstractAction {
             StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
                 || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
 
-        val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
-            .stream()
-            .filter(h -> h.supports(UsernamePasswordCredential.class))
-            .map(h -> StringUtils.capitalize(h.getName().trim()))
-            .distinct()
-            .sorted()
-            .collect(Collectors.toList());
-        WebUtils.putAvailableAuthenticationHandleNames(context, availableHandlers);
+        if (casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
+            val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
+                .stream()
+                .filter(h -> h.supports(UsernamePasswordCredential.class))
+                .map(h -> StringUtils.capitalize(h.getName().trim()))
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+            WebUtils.putAvailableAuthenticationHandleNames(context, availableHandlers);
+        }
     }
 
     private void configureCookieGenerators(final RequestContext context) {

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.util.spring.ApplicationContextProvider;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -40,7 +42,6 @@ public class UsernamePasswordCredential implements Credential {
     @Size(min = 1, message = "password.required")
     private String password;
 
-    @Size(min = 1, message = "source.required")
     private String source;
 
     public UsernamePasswordCredential(final String username, final String password) {
@@ -78,7 +79,8 @@ public class UsernamePasswordCredential implements Credential {
                 .code("password.required")
                 .build());
         }
-        if (StringUtils.isBlank(source)) {
+        val casProperties = ApplicationContextProvider.getCasProperties();
+        if (StringUtils.isBlank(source) && casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
             messages.addMessage(new MessageBuilder()
                 .error()
                 .source("source")

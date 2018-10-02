@@ -985,8 +985,7 @@ In the event that a separate resolver is put into place, control how the final p
 
 To learn more about this topic, [please review this guide](../installation/Configuring-Authentication-Components.html#authentication-policy).
 
-Global authentication policy that is applied when
-CAS attempts to vend and validate tickets.
+Global authentication policy that is applied when CAS attempts to vend and validate tickets.
 
 ```properties
 # cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=false
@@ -999,6 +998,7 @@ and try every handler even if one prior succeeded.
 
 ```properties
 # cas.authn.policy.any.tryAll=false
+# cas.authn.policy.any.enabled=true
 ```
 
 ### All
@@ -1011,6 +1011,15 @@ would only be acceptable in a multi-factor authentication situation.
 # cas.authn.policy.all.enabled=true
 ```
 
+### Source Selection
+
+Allows CAS to select authentication handlers based on the credential source. This allows the authentication engine to restrict the task of validating credentials
+to the selected source or account repository, as opposed to every authentication handler.
+   
+```properties
+# cas.authn.policy.sourceSelectionEnabled=true
+```
+     
 ### Unique Principal
 
 Satisfied if and only if the requesting principal has not already authenticated with CAS.
