@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Setter;
+import org.apache.commons.lang3.ObjectUtils;
 
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
@@ -57,7 +58,7 @@ public class X509CertificateCredential extends AbstractCredential {
     }
 
     public X509Certificate getCertificate() {
-        return this.certificate;
+        return ObjectUtils.defaultIfNull(this.certificate, this.certificates[0]);
     }
 
     @Override
