@@ -408,9 +408,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> HashSet<T> wrapHashSet(final Collection<T> source) {
-        val list = new HashSet<T>();
-        list.addAll(source);
-        return list;
+        return new HashSet<T>(source);
     }
 
     /**

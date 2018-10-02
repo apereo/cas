@@ -24,7 +24,6 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.ArrayList;
@@ -71,8 +70,10 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
                 authZGen.generate(context, profile);
                 LOGGER.debug("Assembled user profile with roles after generating authorization claims [{}]", profile);
 
-                val authorities = new ArrayList<GrantedAuthority>();
-                authorities.addAll(profile.getRoles().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+                val authorities = profile.getRoles()
+                    .stream()
+                    .map(SimpleGrantedAuthority::new)
+                    .collect(Collectors.toCollection(ArrayList::new));
                 LOGGER.debug("List of authorities remapped from profile roles are [{}]", authorities);
 
                 val authorizer = new RequireAnyRoleAuthorizer(securityProperties.getUser().getRoles());
