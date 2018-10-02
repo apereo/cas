@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link X509SubjectAlternativeNameUPNPrincipalResolver}.
@@ -65,7 +68,13 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
 
     @Test
     public void verifyResolvePrincipalInternal() {
-        Assert.assertEquals(this.expected, this.resolver.resolvePrincipalInternal(this.certificate));
+        final String userId = this.resolver.resolvePrincipalInternal(this.certificate);
+        assertEquals(this.expected, userId);
+        final X509CertificateCredential credential = new X509CertificateCredential(new X509Certificate[]{this.certificate});
+        credential.setCertificate(this.certificate);
+        final Principal principal = this.resolver.resolve(credential);
+        assertNotNull(principal);
+        assertFalse(principal.getAttributes().isEmpty());
     }
 
 }
