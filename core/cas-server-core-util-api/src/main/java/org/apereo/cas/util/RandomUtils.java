@@ -26,13 +26,12 @@ public class RandomUtils {
 
     /**
      * Get strong enough SecureRandom instance and of the checked exception.
-     * TODO Try {@code NativePRNGNonBlocking} and failover to default SHA1PRNG until Java 9.
      *
      * @return the strong instance
      */
     public static SecureRandom getNativeInstance() {
         try {
-            return SecureRandom.getInstance("NativePRNGNonBlocking");
+            return SecureRandom.getInstanceStrong();
         } catch (final NoSuchAlgorithmException e) {
             LOGGER.trace(e.getMessage(), e);
             return new SecureRandom();
@@ -45,7 +44,7 @@ public class RandomUtils {
      * @return the string
      */
     public static String generateSecureRandomId() {
-        val generator = RandomUtils.getNativeInstance();
+        val generator = getNativeInstance();
         val charMappings = new char[]{
             'a', 'b', 'c', 'd', 'e', 'f', 'g',
             'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',

@@ -107,13 +107,6 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
         return values.toArray(new String[0]);
     }
 
-    /**
-     * Replaces placeholders in the descriptor with values extracted from attribute
-     * values in relative distinguished name components of the DN.
-     *
-     * @param certificate X.509 certificate credential.
-     * @return Resolved principal ID.
-     */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal for [{}]", certificate);
