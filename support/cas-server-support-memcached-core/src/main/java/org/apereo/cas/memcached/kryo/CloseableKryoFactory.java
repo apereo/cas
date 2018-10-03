@@ -148,11 +148,13 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.setAutoReset(this.autoReset);
         kryo.setReferences(this.replaceObjectsByReferences);
         kryo.setRegistrationRequired(this.registrationRequired);
+
         LOGGER.debug("Constructing a kryo instance with the following settings:");
         LOGGER.debug("warnUnregisteredClasses: [{}]", this.warnUnregisteredClasses);
         LOGGER.debug("autoReset: [{}]", this.autoReset);
         LOGGER.debug("replaceObjectsByReferences: [{}]", this.replaceObjectsByReferences);
         LOGGER.debug("registrationRequired: [{}]", this.registrationRequired);
+
         registerCasAuthenticationWithKryo(kryo);
         registerExpirationPoliciesWithKryo(kryo);
         registerCasTicketsWithKryo(kryo);
