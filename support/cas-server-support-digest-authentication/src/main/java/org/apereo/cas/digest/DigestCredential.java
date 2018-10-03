@@ -1,6 +1,6 @@
 package org.apereo.cas.digest;
 
-import org.apereo.cas.authentication.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

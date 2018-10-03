@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.handler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationTransaction;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

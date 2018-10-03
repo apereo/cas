@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.swivel;
 
-import org.apereo.cas.authentication.OneTimeTokenCredential;
+import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

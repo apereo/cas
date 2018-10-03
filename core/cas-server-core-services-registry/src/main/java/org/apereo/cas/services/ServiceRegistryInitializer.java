@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.stream.Collectors;
+
 
 /**
  * Initializes a given service registry data store with available
@@ -26,7 +28,7 @@ public class ServiceRegistryInitializer {
      */
     public void initServiceRegistryIfNecessary() {
         val size = this.serviceRegistry.size();
-        LOGGER.debug("Service registry contains [{}] service definition(s)", size);
+        LOGGER.trace("Service registry contains [{}] service definition(s)", size);
 
         LOGGER.warn("Service registry [{}] will be auto-initialized from JSON service definitions. "
             + "This behavior is only useful for testing purposes and MAY NOT be appropriate for production. "
@@ -34,7 +36,7 @@ public class ServiceRegistryInitializer {
             + "and explicitly register definitions in the services registry.", this.serviceRegistry.getName());
 
         val servicesLoaded = this.jsonServiceRegistry.load();
-        LOGGER.debug("Loading JSON services are [{}]", servicesLoaded);
+        LOGGER.debug("Loaded JSON services are [{}]", servicesLoaded.stream().map(RegisteredService::getName).collect(Collectors.joining(",")));
 
         servicesLoaded
             .stream()

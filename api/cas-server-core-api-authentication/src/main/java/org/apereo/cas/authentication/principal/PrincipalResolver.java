@@ -72,4 +72,13 @@ public interface PrincipalResolver {
      * @since 5.1
      */
     IPersonAttributeDao getAttributeRepository();
+
+    /**
+     * Gets a unique name for this principal resolver.
+     *
+     * @return resolver name.
+     */
+    default String getName() {
+        return this.getClass().getSimpleName();
+    }
 }

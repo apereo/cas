@@ -33,7 +33,7 @@ public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
 
     @Override
     public void registerSingleLogoutServiceMessageHandler(final SingleLogoutServiceMessageHandler handler) {
-        LOGGER.debug("Registering single logout service message handler [{}]", handler.getName());
+        LOGGER.trace("Registering single logout service message handler [{}]", handler.getName());
         singleLogoutServiceMessageHandlers.add(handler);
     }
 

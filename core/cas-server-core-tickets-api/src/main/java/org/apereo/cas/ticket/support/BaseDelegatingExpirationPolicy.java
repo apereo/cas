@@ -51,7 +51,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      * @param policy the policy
      */
     public void addPolicy(final ExpirationPolicy policy) {
-        LOGGER.debug("Adding expiration policy [{}] with name [{}]", policy, policy.getName());
+        LOGGER.trace("Adding expiration policy [{}] with name [{}]", policy, policy.getName());
         this.policies.put(policy.getName(), policy);
     }
 
@@ -62,7 +62,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      * @param policy the policy
      */
     public void addPolicy(final String name, final ExpirationPolicy policy) {
-        LOGGER.debug("Adding expiration policy [{}] with name [{}]", policy, name);
+        LOGGER.trace("Adding expiration policy [{}] with name [{}]", policy, name);
         this.policies.put(name, policy);
     }
 
@@ -73,7 +73,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      * @param policy the policy
      */
     public void addPolicy(final Enum name, final ExpirationPolicy policy) {
-        LOGGER.debug("Adding expiration policy [{}] with name [{}]", policy, name);
+        LOGGER.trace("Adding expiration policy [{}] with name [{}]", policy, name);
         addPolicy(name.name(), policy);
     }
 
