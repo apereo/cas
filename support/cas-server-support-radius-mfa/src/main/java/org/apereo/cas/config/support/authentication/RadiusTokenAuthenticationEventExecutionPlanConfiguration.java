@@ -1,12 +1,12 @@
 package org.apereo.cas.config.support.authentication;
 
-import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenCredential;
+import org.apereo.cas.adaptors.radius.server.BlockingRadiusServer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
@@ -79,7 +79,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
             client.getInetAddress(), client.getSharedSecret());
 
         val protocol = RadiusProtocol.valueOf(server.getProtocol());
-        val impl = new JRadiusServerImpl(protocol, factory, server.getRetries(),
+        val impl = new BlockingRadiusServer(protocol, factory, server.getRetries(),
             server.getNasIpAddress(), server.getNasIpv6Address(),
             server.getNasPort(), server.getNasPortId(),
             server.getNasIdentifier(), server.getNasRealPort(), server.getNasPortType());
