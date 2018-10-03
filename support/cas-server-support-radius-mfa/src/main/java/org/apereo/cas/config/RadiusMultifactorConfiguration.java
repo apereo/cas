@@ -56,26 +56,26 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
-    private FlowBuilderServices flowBuilderServices;
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
@@ -83,16 +83,15 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
-
+    private ObjectProvider<CookieGenerator> warnCookieGenerator;
 
     @Bean
     public FlowDefinitionRegistry radiusFlowRegistry() {
-        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
+        val builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices.getIfAvailable());
         builder.setBasePath("classpath*:/webflow");
         builder.addFlowLocationPattern("/mfa-radius/*-webflow.xml");
         return builder.build();
@@ -106,9 +105,12 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
     @RefreshScope
     @Bean
     public CasWebflowEventResolver radiusAuthenticationWebflowEventResolver() {
-        return new RadiusAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
-            servicesManager, ticketRegistrySupport,
-            warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
+        return new RadiusAuthenticationWebflowEventResolver(authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
     }
 
@@ -116,8 +118,11 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer radiusMultifactorWebflowConfigurer() {
-        return new RadiusMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, radiusFlowRegistry(), applicationContext, casProperties);
+        return new RadiusMultifactorWebflowConfigurer(flowBuilderServices.getIfAvailable(),
+            loginFlowDefinitionRegistry.getIfAvailable(),
+            radiusFlowRegistry(),
+            applicationContext,
+            casProperties);
     }
 
     @Override
@@ -138,9 +143,9 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer radiusMultifactorTrustConfiguration() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, deviceRegistrationEnabled,
-                loginFlowDefinitionRegistry, applicationContext, casProperties);
+            return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices.getIfAvailable(),
+                loginFlowDefinitionRegistry.getIfAvailable(), deviceRegistrationEnabled,
+                loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
         }
 
         @Override
