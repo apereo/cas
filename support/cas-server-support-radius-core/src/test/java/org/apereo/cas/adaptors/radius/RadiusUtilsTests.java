@@ -27,7 +27,7 @@ public class RadiusUtilsTests {
     public void verifyActionPasses() throws Exception {
         val server = mock(RadiusServer.class);
         val attribute = new Attr_ClientId("client_id");
-        val response = new RadiusResponse(100, 100, CollectionUtils.wrapList(attribute));
+        val response = new CasRadiusResponse(100, 100, CollectionUtils.wrapList(attribute));
         when(server.authenticate(anyString(), anyString())).thenReturn(response);
         val result = RadiusUtils.authenticate("casuser", "Mellon",
             CollectionUtils.wrapList(server), true, false);

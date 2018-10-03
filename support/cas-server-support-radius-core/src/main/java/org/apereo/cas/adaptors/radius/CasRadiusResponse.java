@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Getter
 @RequiredArgsConstructor
-public class RadiusResponse {
+public class CasRadiusResponse {
 
     /**
      * The code.
