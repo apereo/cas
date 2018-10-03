@@ -41,7 +41,7 @@ public class CasRestTokensConfiguration implements ServiceTicketResourceEntityRe
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Bean
     public TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory() {
@@ -52,7 +52,7 @@ public class CasRestTokensConfiguration implements ServiceTicketResourceEntityRe
     public void configureEntityResponseFactory(final ServiceTicketResourceEntityResponseFactoryPlan plan) {
         plan.registerFactory(new JWTServiceTicketResourceEntityResponseFactory(centralAuthenticationService.getIfAvailable(),
             tokenTicketBuilder,
-            ticketRegistrySupport,
+            ticketRegistrySupport.getIfAvailable(),
             servicesManager.getIfAvailable()));
     }
 }
