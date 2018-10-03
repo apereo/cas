@@ -63,42 +63,25 @@ public class JRadiusServerImpl implements RadiusServer {
 
     private final String nasIpv6Address;
     private final String nasIdentifier;
+
     /**
      * Number of times to retry authentication when no response is received.
      */
-    private int retries = DEFAULT_RETRY_COUNT;
-    private long nasPort = -1;
-    private long nasPortId = -1;
-    private long nasRealPort = -1;
-    private long nasPortType = -1;
+    private final int retries;
+    private final long nasPort;
+    private final long nasPortId;
+    private final long nasRealPort;
 
-    /**
-     * Instantiates a new J radius server.
-     *
-     * @param protocol            the protocol
-     * @param radiusClientFactory the radius client factory
-     */
+    private final long nasPortType;
+
     public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory radiusClientFactory) {
-        this(protocol, radiusClientFactory, 1, null, null, -1, -1, null, -1);
+        this(protocol, radiusClientFactory, 1, null,
+            null, -1, -1, null, -1, -1);
     }
 
-    /**
-     * Instantiates a new server implementation
-     * with the radius protocol and client factory specified.
-     *
-     * @param protocol       the protocol
-     * @param clientFactory  the client factory
-     * @param retries        the new retries
-     * @param nasIpAddress   the new nas ip address
-     * @param nasIpv6Address the new nas ipv6 address
-     * @param nasPort        the new nas port
-     * @param nasPortId      the new nas port id
-     * @param nasIdentifier  the new nas identifier
-     * @param nasRealPort    the new nas real port
-     */
     public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory, final int retries,
                              final String nasIpAddress, final String nasIpv6Address, final long nasPort, final long nasPortId,
-                             final String nasIdentifier, final long nasRealPort) {
+                             final String nasIdentifier, final long nasRealPort, final long nasPortType) {
         this.protocol = protocol;
         this.radiusClientFactory = clientFactory;
         this.retries = retries;
@@ -108,12 +91,13 @@ public class JRadiusServerImpl implements RadiusServer {
         this.nasPortId = nasPortId;
         this.nasIdentifier = nasIdentifier;
         this.nasRealPort = nasRealPort;
+        this.nasPortType = nasPortType;
     }
 
     @Override
     public RadiusResponse authenticate(final String username, final String password) throws Exception {
         val attributeList = new AttributeList();
-        
+
         attributeList.add(new Attr_UserName(username));
         attributeList.add(new Attr_UserPassword(password));
 
