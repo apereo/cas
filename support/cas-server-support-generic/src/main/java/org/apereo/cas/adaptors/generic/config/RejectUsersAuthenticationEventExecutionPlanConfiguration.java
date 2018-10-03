@@ -46,7 +46,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "rejectPrincipalFactory")
     @Bean
@@ -73,7 +73,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             val users = casProperties.getAuthn().getReject().getUsers();
             if (StringUtils.isNotBlank(users)) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(rejectUsersAuthenticationHandler(), personDirectoryPrincipalResolver);
+                plan.registerAuthenticationHandlerWithPrincipalResolver(rejectUsersAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
                 LOGGER.debug("Added rejecting authentication handler with the following users [{}]", users);
             }
         };
