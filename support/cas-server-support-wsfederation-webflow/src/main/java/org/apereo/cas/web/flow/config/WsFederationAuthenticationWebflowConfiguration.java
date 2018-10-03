@@ -16,6 +16,7 @@ import org.apereo.cas.web.flow.WsFederationWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -64,7 +65,7 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("wsFederationConfigurations")
@@ -111,8 +112,10 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
     @RefreshScope
     @ConditionalOnMissingBean(name = "wsFederationResponseValidator")
     public WsFederationResponseValidator wsFederationResponseValidator() {
-        return new WsFederationResponseValidator(wsFederationHelper, wsFederationConfigurations,
-            authenticationSystemSupport, wsFederationCookieManager);
+        return new WsFederationResponseValidator(wsFederationHelper,
+            wsFederationConfigurations,
+            authenticationSystemSupport.getIfAvailable(),
+            wsFederationCookieManager);
     }
 
     @Override
