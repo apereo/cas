@@ -33,7 +33,7 @@ public class CasDiscoveryProfileConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -48,7 +48,7 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
-        return new CasServerProfileRegistrar(this.servicesManager, casProperties,
+        return new CasServerProfileRegistrar(servicesManager.getIfAvailable(), casProperties,
             this.builtClients.getIfAvailable(),
             availableAttributes());
     }
@@ -56,7 +56,7 @@ public class CasDiscoveryProfileConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint() {
-        return new CasServerDiscoveryProfileEndpoint(casProperties, servicesManager, casServerProfileRegistrar());
+        return new CasServerDiscoveryProfileEndpoint(casProperties, servicesManager.getIfAvailable(), casServerProfileRegistrar());
     }
 
     @Bean
@@ -76,8 +76,7 @@ public class CasDiscoveryProfileConfiguration {
         }
         val jdbcProps = casProperties.getAuthn().getJdbc();
         if (jdbcProps != null) {
-            jdbcProps.getQuery()
-                .forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
+            jdbcProps.getQuery().forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
         }
         return attributes;
     }

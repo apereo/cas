@@ -19,6 +19,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -59,7 +60,7 @@ public class SurrogateAuthenticationWebflowConfiguration implements CasWebflowEx
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -114,7 +115,7 @@ public class SurrogateAuthenticationWebflowConfiguration implements CasWebflowEx
     @ConditionalOnMissingBean(name = "surrogateAuthorizationCheck")
     @Bean
     public Action surrogateAuthorizationCheck() {
-        return new SurrogateAuthorizationAction(servicesManager, registeredServiceAccessStrategyEnforcer);
+        return new SurrogateAuthorizationAction(servicesManager.getIfAvailable(), registeredServiceAccessStrategyEnforcer);
     }
 
     @ConditionalOnMissingBean(name = "loadSurrogatesListAction")

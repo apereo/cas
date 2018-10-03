@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConfirmConsentAction;
 import org.apereo.cas.web.flow.ConsentWebflowConfigurer;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -55,7 +56,7 @@ public class CasConsentWebflowConfiguration implements CasWebflowExecutionPlanCo
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -63,14 +64,14 @@ public class CasConsentWebflowConfiguration implements CasWebflowExecutionPlanCo
     @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
     @Bean
     public Action checkConsentRequiredAction() {
-        return new CheckConsentRequiredAction(servicesManager,
+        return new CheckConsentRequiredAction(servicesManager.getIfAvailable(),
             authenticationRequestServiceSelectionStrategies, consentEngine, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "confirmConsentAction")
     @Bean
     public Action confirmConsentAction() {
-        return new ConfirmConsentAction(servicesManager,
+        return new ConfirmConsentAction(servicesManager.getIfAvailable(),
             authenticationRequestServiceSelectionStrategies, consentEngine, casProperties);
     }
 

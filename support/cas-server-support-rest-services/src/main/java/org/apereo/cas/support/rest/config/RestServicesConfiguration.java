@@ -10,6 +10,7 @@ import org.apereo.cas.support.rest.RegisteredServiceResource;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,7 +30,7 @@ public class RestServicesConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -60,7 +61,7 @@ public class RestServicesConfiguration {
                 + "This is likely due to misconfiguration in CAS settings where the attribute value definition is absent");
         }
         return new RegisteredServiceResource(authenticationSystemSupport, webApplicationServiceFactory,
-            servicesManager, rest.getAttributeName(), rest.getAttributeValue());
+            servicesManager.getIfAvailable(), rest.getAttributeName(), rest.getAttributeValue());
     }
 }
 

@@ -9,6 +9,7 @@ import org.apereo.cas.util.SamlSPUtils;
 
 import lombok.val;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -27,14 +28,14 @@ public abstract class BaseCasSamlSPConfiguration implements InitializingBean {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     private SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         init();
     }
 
@@ -43,7 +44,7 @@ public abstract class BaseCasSamlSPConfiguration implements InitializingBean {
             samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
             finalizeRegisteredService(service);
-            SamlSPUtils.saveService(service, this.servicesManager);
+            SamlSPUtils.saveService(service, servicesManager.getIfAvailable());
         }
     }
 

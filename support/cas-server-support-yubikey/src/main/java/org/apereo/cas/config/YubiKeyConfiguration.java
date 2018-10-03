@@ -83,7 +83,7 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
@@ -118,7 +118,7 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Bean
     public CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver() {
         return new YubiKeyAuthenticationWebflowEventResolver(authenticationSystemSupport,
-            centralAuthenticationService, servicesManager, ticketRegistrySupport,
+            centralAuthenticationService, servicesManager.getIfAvailable(), ticketRegistrySupport,
             warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
             multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
     }

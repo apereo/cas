@@ -71,7 +71,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -86,14 +86,14 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Lazy
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
-        return new WSFederationValidateRequestController(servicesManager,
+        return new WSFederationValidateRequestController(servicesManager.getIfAvailable(),
             webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
-            httpClient, securityTokenTicketFactory, ticketRegistry,
+            httpClient, securityTokenTicketFactory, ticketRegistry.getIfAvailable(),
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             ticketRegistrySupport, wsFederationCallbackService());
     }
@@ -103,12 +103,17 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Bean
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
         @Qualifier("wsFederationRelyingPartyTokenProducer") final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
-        return new WSFederationValidateRequestCallbackController(servicesManager,
-            webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer,
+        return new WSFederationValidateRequestCallbackController(servicesManager.getIfAvailable(),
+            webApplicationServiceFactory,
+            casProperties,
+            wsFederationRelyingPartyTokenProducer,
             wsFederationAuthenticationServiceSelectionStrategy(),
-            httpClient, securityTokenTicketFactory, ticketRegistry,
+            httpClient,
+            securityTokenTicketFactory,
+            ticketRegistry.getIfAvailable(),
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            ticketRegistrySupport, casClientTicketValidator,
+            ticketRegistrySupport,
+            casClientTicketValidator,
             wsFederationCallbackService());
     }
 

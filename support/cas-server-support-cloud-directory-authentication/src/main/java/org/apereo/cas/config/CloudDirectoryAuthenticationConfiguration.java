@@ -18,6 +18,7 @@ import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectoryClientBuilder;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,7 +40,7 @@ public class CloudDirectoryAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -61,7 +62,7 @@ public class CloudDirectoryAuthenticationConfiguration {
 
         val cloud = casProperties.getAuthn().getCloudDirectory();
 
-        val handler = new CloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager,
+        val handler = new CloudDirectoryAuthenticationHandler(cloud.getName(), servicesManager.getIfAvailable(),
             cloudDirectoryPrincipalFactory(), cloudDirectoryRepository(), cloud);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cloud.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(cloud.getPasswordEncoder()));

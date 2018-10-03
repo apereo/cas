@@ -14,6 +14,7 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,11 +37,11 @@ public class CasRestAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -70,7 +71,7 @@ public class CasRestAuthenticationConfiguration {
     public AuthenticationHandler restAuthenticationHandler() {
         val rest = casProperties.getAuthn().getRest();
         val r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(),
-            servicesManager, restAuthenticationPrincipalFactory());
+            servicesManager.getIfAvailable(), restAuthenticationPrincipalFactory());
         r.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rest.getPasswordEncoder()));
         return r;
     }
@@ -80,7 +81,7 @@ public class CasRestAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer casRestAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getRest().getUri())) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), personDirectoryPrincipalResolver);
+                plan.registerAuthenticationHandlerWithPrincipalResolver(restAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
             }
         };
     }

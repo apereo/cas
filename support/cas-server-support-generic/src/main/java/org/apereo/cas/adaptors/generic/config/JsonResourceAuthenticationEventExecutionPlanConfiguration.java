@@ -14,6 +14,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,7 +38,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -57,7 +58,7 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler jsonResourceAuthenticationHandler() {
         val jsonProps = casProperties.getAuthn().getJson();
         val h =
-            new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager, jsonPrincipalFactory(),
+            new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager.getIfAvailable(), jsonPrincipalFactory(),
                 null, jsonProps.getLocation());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jsonProps.getPasswordEncoder()));
         if (jsonProps.getPasswordPolicy().isEnabled()) {

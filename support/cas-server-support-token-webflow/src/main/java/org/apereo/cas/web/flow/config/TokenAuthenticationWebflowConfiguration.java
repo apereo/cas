@@ -13,6 +13,7 @@ import org.apereo.cas.web.flow.TokenWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -62,7 +63,7 @@ public class TokenAuthenticationWebflowConfiguration implements CasWebflowExecut
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @ConditionalOnMissingBean(name = "tokenWebflowConfigurer")
     @Bean
@@ -83,7 +84,7 @@ public class TokenAuthenticationWebflowConfiguration implements CasWebflowExecut
         return new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
             serviceTicketRequestWebflowEventResolver,
             adaptiveAuthenticationPolicy,
-            tokenRequestExtractor(), servicesManager);
+            tokenRequestExtractor(), servicesManager.getIfAvailable());
     }
 
     @Override

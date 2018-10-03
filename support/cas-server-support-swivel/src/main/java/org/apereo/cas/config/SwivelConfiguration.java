@@ -79,7 +79,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
@@ -110,7 +110,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
     public CasWebflowEventResolver swivelAuthenticationWebflowEventResolver() {
         return new SwivelAuthenticationWebflowEventResolver(authenticationSystemSupport,
             centralAuthenticationService,
-            servicesManager,
+            servicesManager.getIfAvailable(),
             ticketRegistrySupport,
             warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,

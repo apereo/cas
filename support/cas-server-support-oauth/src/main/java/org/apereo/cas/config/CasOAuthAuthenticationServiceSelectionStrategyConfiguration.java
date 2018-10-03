@@ -10,6 +10,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuth20AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,7 +34,7 @@ public class CasOAuthAuthenticationServiceSelectionStrategyConfiguration impleme
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -43,7 +44,7 @@ public class CasOAuthAuthenticationServiceSelectionStrategyConfiguration impleme
     @ConditionalOnMissingBean(name = "oauth20AuthenticationRequestServiceSelectionStrategy")
     @RefreshScope
     public AuthenticationServiceSelectionStrategy oauth20AuthenticationRequestServiceSelectionStrategy() {
-        return new OAuth20AuthenticationServiceSelectionStrategy(servicesManager,
+        return new OAuth20AuthenticationServiceSelectionStrategy(servicesManager.getIfAvailable(),
             webApplicationServiceFactory, OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
     }
 

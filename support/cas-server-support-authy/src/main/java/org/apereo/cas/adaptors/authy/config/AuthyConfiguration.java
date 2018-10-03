@@ -49,7 +49,7 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -102,7 +102,7 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
     public CasWebflowEventResolver authyAuthenticationWebflowEventResolver() {
         return new AuthyAuthenticationWebflowEventResolver(authenticationSystemSupport,
             centralAuthenticationService,
-            servicesManager,
+            servicesManager.getIfAvailable(),
             ticketRegistrySupport,
             warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,

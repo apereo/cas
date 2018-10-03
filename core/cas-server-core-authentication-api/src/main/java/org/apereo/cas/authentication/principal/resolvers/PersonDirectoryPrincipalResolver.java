@@ -164,6 +164,12 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                 }
             }
         });
+
+        if (StringUtils.isNotBlank(this.principalAttributeName) && !attributes.containsKey(this.principalAttributeName)) {
+            LOGGER.warn("Principal resolution is set to resolve the authenticated principal via attribute [{}], and yet "
+                + "the collection of attributes retrieved [{}] do not contain that attribute. This is likely due to misconfiguration "
+                + "and CAS will switch to use [{}] as the final principal id", this.principalAttributeName, attributes.keySet(), principalId[0]);
+        }
         return Pair.of(principalId[0], convertedAttributes);
     }
 

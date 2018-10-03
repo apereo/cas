@@ -11,6 +11,7 @@ import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.tokens.JWTServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.tokens.JWTTicketGrantingTicketResourceEntityResponseFactory;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,7 +37,7 @@ public class CasRestTokensConfiguration implements ServiceTicketResourceEntityRe
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -44,12 +45,12 @@ public class CasRestTokensConfiguration implements ServiceTicketResourceEntityRe
 
     @Bean
     public TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory() {
-        return new JWTTicketGrantingTicketResourceEntityResponseFactory(this.servicesManager, tokenTicketBuilder);
+        return new JWTTicketGrantingTicketResourceEntityResponseFactory(servicesManager.getIfAvailable(), tokenTicketBuilder);
     }
 
     @Override
     public void configureEntityResponseFactory(final ServiceTicketResourceEntityResponseFactoryPlan plan) {
         plan.registerFactory(new JWTServiceTicketResourceEntityResponseFactory(centralAuthenticationService,
-            tokenTicketBuilder, ticketRegistrySupport, servicesManager));
+            tokenTicketBuilder, ticketRegistrySupport, servicesManager.getIfAvailable()));
     }
 }
