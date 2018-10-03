@@ -56,7 +56,6 @@ import java.util.Properties;
 @Slf4j
 public class OpenIdConfiguration {
 
-
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
     private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
@@ -95,7 +94,7 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("authenticationContextValidator")
@@ -145,7 +144,7 @@ public class OpenIdConfiguration {
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
         val openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
-        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService, servicesManager.getIfAvailable());
+        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService.getIfAvailable(), servicesManager.getIfAvailable());
     }
 
 
@@ -179,7 +178,7 @@ public class OpenIdConfiguration {
         val c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
             authenticationSystemSupport,
             servicesManager.getIfAvailable(),
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             proxy20Handler,
             argumentExtractor,
             multifactorTriggerSelectionStrategy,

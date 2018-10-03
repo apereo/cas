@@ -126,7 +126,7 @@ public class CasValidationConfiguration {
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
@@ -214,7 +214,7 @@ public class CasValidationConfiguration {
     public ProxyController proxyController() {
         return new ProxyController(cas2ProxySuccessView.getIfAvailable(),
             cas2ProxyFailureView.getIfAvailable(),
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             webApplicationServiceFactory,
             applicationContext);
     }
@@ -227,7 +227,7 @@ public class CasValidationConfiguration {
             cas20WithoutProxyProtocolValidationSpecification,
             authenticationSystemSupport.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             multifactorTriggerSelectionStrategy,
@@ -249,7 +249,7 @@ public class CasValidationConfiguration {
             cas20ProtocolValidationSpecification,
             authenticationSystemSupport.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             multifactorTriggerSelectionStrategy,
@@ -271,7 +271,7 @@ public class CasValidationConfiguration {
                 cas20ProtocolValidationSpecification,
                 authenticationSystemSupport.getIfAvailable(),
                 servicesManager.getIfAvailable(),
-                centralAuthenticationService,
+                centralAuthenticationService.getIfAvailable(),
                 proxy20Handler.getIfAvailable(),
                 argumentExtractor.getIfAvailable(),
                 multifactorTriggerSelectionStrategy,
@@ -289,7 +289,7 @@ public class CasValidationConfiguration {
             cas20ProtocolValidationSpecification,
             authenticationSystemSupport.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             multifactorTriggerSelectionStrategy,
@@ -310,7 +310,7 @@ public class CasValidationConfiguration {
             cas10ProtocolValidationSpecification,
             authenticationSystemSupport.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             proxy10Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             multifactorTriggerSelectionStrategy,
@@ -332,7 +332,7 @@ public class CasValidationConfiguration {
                 cas20WithoutProxyProtocolValidationSpecification,
                 authenticationSystemSupport.getIfAvailable(),
                 servicesManager.getIfAvailable(),
-                centralAuthenticationService,
+                centralAuthenticationService.getIfAvailable(),
                 proxy20Handler.getIfAvailable(),
                 argumentExtractor.getIfAvailable(),
                 multifactorTriggerSelectionStrategy,
@@ -350,7 +350,7 @@ public class CasValidationConfiguration {
             cas20WithoutProxyProtocolValidationSpecification,
             authenticationSystemSupport.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
             multifactorTriggerSelectionStrategy,
