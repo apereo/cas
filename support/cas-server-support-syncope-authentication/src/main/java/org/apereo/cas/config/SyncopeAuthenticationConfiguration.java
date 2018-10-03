@@ -42,7 +42,7 @@ public class SyncopeAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "syncopePrincipalFactory")
     @Bean
@@ -71,7 +71,7 @@ public class SyncopeAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "syncopeAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer syncopeAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), personDirectoryPrincipalResolver);
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "syncopePasswordPolicyConfiguration")
