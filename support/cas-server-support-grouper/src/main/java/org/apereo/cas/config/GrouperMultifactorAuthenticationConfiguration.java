@@ -42,7 +42,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -84,7 +84,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            ticketRegistrySupport,
+            ticketRegistrySupport.getIfAvailable(),
             warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,
             multifactorAuthenticationProviderSelector,

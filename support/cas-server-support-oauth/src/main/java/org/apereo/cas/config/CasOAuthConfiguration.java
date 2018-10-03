@@ -159,7 +159,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -246,7 +246,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
-        return new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport, servicesManager.getIfAvailable(), webApplicationServiceFactory);
+        return new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport.getIfAvailable(), servicesManager.getIfAvailable(), webApplicationServiceFactory);
     }
 
     @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
