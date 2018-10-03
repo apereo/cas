@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.server.AbstractRadiusServer;
 import org.apereo.cas.adaptors.radius.server.BlockingRadiusServer;
+import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -80,7 +81,7 @@ public class RadiusConfiguration {
 
         val protocol = RadiusProtocol.valueOf(server.getProtocol());
 
-        return new BlockingRadiusServer(protocol, factory, server.getRetries(),
+        return new NonBlockingRadiusServer(protocol, factory, server.getRetries(),
             server.getNasIpAddress(), server.getNasIpv6Address(), server.getNasPort(),
             server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort(),
             server.getNasPortType());
