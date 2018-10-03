@@ -48,11 +48,13 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
     CasHazelcastConfiguration.class,
     HazelcastTicketRegistryConfiguration.class,
+    HazelcastTicketRegistryTicketCatalogConfiguration.class,
+    HazelcastMonitorConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    HazelcastTicketRegistryTicketCatalogConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -64,14 +66,12 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreHttpConfiguration.class,
-    RefreshAutoConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreLogoutConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    HazelcastMonitorConfiguration.class
+    CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(properties = {"cas.ticket.registry.hazelcast.cluster.instanceName=testlocalmonitor"})
 public class HazelcastHealthIndicatorTests {
