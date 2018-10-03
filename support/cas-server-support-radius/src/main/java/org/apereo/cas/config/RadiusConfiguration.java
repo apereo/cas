@@ -62,39 +62,37 @@ public class RadiusConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    /**
-     * Radius server j radius server.
-     *
-     * @return the j radius server
-     */
     @RefreshScope
     @Bean
     public JRadiusServerImpl radiusServer() {
-        val client = casProperties.getAuthn().getRadius().getClient();
-        val server = casProperties.getAuthn().getRadius().getServer();
+        val radius = casProperties.getAuthn().getRadius();
+        val client = radius.getClient();
+        val server = radius.getServer();
 
         val ips = getClientIps(client);
         return getSingleRadiusServer(client, server, ips.iterator().next());
     }
 
     private JRadiusServerImpl getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
-        val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
-            clientInetAddress, client.getSharedSecret());
+        val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(),
+            client.getSocketTimeout(), clientInetAddress, client.getSharedSecret());
 
         val protocol = RadiusProtocol.valueOf(server.getProtocol());
 
         return new JRadiusServerImpl(protocol, factory, server.getRetries(),
             server.getNasIpAddress(), server.getNasIpv6Address(), server.getNasPort(),
-            server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort());
+            server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort(),
+            server.getNasPortType());
     }
 
     @RefreshScope
     @Bean
     public List<RadiusServer> radiusServers() {
-        val client = casProperties.getAuthn().getRadius().getClient();
-        val server = casProperties.getAuthn().getRadius().getServer();
+        val radius = casProperties.getAuthn().getRadius();
+        val client = radius.getClient();
+        val server = radius.getServer();
 
-        val ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
+        val ips = getClientIps(radius.getClient());
         return ips.stream().map(ip -> getSingleRadiusServer(client, server, ip)).collect(Collectors.toList());
     }
 
