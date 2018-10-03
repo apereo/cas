@@ -66,7 +66,7 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -101,7 +101,7 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Bean
     public CasWebflowEventResolver authyAuthenticationWebflowEventResolver() {
         return new AuthyAuthenticationWebflowEventResolver(authenticationSystemSupport,
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
             ticketRegistrySupport,
             warnCookieGenerator,
