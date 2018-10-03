@@ -10,6 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.data.convert.ReadingConverter; 
+import org.springframework.data.convert.WritingConverter; 
 
 import java.lang.ref.ReferenceQueue;
 import java.security.cert.CertPath;
@@ -153,6 +155,7 @@ public abstract class BaseConverters {
     /**
      * The type String to zoned date time converter.
      */
+    @ReadingConverter
     public static class StringToZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
         @Override
         public ZonedDateTime convert(final String source) {
@@ -173,6 +176,7 @@ public abstract class BaseConverters {
     /**
      * The type Zoned date time to string converter.
      */
+    @WritingConverter
     public static class ZonedDateTimeToStringConverter implements Converter<ZonedDateTime, String> {
         @Override
         public String convert(final ZonedDateTime source) {
