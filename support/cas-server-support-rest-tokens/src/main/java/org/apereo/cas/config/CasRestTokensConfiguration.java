@@ -29,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 public class CasRestTokensConfiguration implements ServiceTicketResourceEntityResponseFactoryConfigurer {
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("tokenTicketBuilder")
@@ -50,7 +50,9 @@ public class CasRestTokensConfiguration implements ServiceTicketResourceEntityRe
 
     @Override
     public void configureEntityResponseFactory(final ServiceTicketResourceEntityResponseFactoryPlan plan) {
-        plan.registerFactory(new JWTServiceTicketResourceEntityResponseFactory(centralAuthenticationService,
-            tokenTicketBuilder, ticketRegistrySupport, servicesManager.getIfAvailable()));
+        plan.registerFactory(new JWTServiceTicketResourceEntityResponseFactory(centralAuthenticationService.getIfAvailable(),
+            tokenTicketBuilder,
+            ticketRegistrySupport,
+            servicesManager.getIfAvailable()));
     }
 }

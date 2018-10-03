@@ -52,7 +52,7 @@ public class OneTimeTokenAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -82,7 +82,7 @@ public class OneTimeTokenAuthenticationConfiguration {
     @RefreshScope
     public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver() {
         return new OneTimeTokenAuthenticationWebflowEventResolver(authenticationSystemSupport,
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
             ticketRegistrySupport,
             warnCookieGenerator,

@@ -67,7 +67,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -109,7 +109,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
     @RefreshScope
     public CasWebflowEventResolver swivelAuthenticationWebflowEventResolver() {
         return new SwivelAuthenticationWebflowEventResolver(authenticationSystemSupport,
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
             ticketRegistrySupport,
             warnCookieGenerator,
