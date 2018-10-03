@@ -37,7 +37,7 @@ public class RestServicesConfiguration {
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -60,8 +60,11 @@ public class RestServicesConfiguration {
             throw new BeanCreationException("No attribute value is defined to enforce authorization when adding services via CAS REST APIs. "
                 + "This is likely due to misconfiguration in CAS settings where the attribute value definition is absent");
         }
-        return new RegisteredServiceResource(authenticationSystemSupport, webApplicationServiceFactory,
-            servicesManager.getIfAvailable(), rest.getAttributeName(), rest.getAttributeValue());
+        return new RegisteredServiceResource(authenticationSystemSupport.getIfAvailable(),
+            webApplicationServiceFactory,
+            servicesManager.getIfAvailable(),
+            rest.getAttributeName(),
+            rest.getAttributeValue());
     }
 }
 

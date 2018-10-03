@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LdapUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,7 +29,7 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -38,7 +39,7 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         val ldap = casProperties.getAcceptableUsagePolicy().getLdap();
         val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-        return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport,
+        return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(),
             casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
             connectionFactory, ldap.getSearchFilter(), ldap.getBaseDn());
     }

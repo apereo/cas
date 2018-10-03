@@ -58,7 +58,7 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -102,7 +102,7 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
         val r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport,
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            ticketRegistrySupport,
+            ticketRegistrySupport.getIfAvailable(),
             warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,
             multifactorAuthenticationProviderSelector,

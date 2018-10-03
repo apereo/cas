@@ -102,7 +102,7 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
@@ -118,7 +118,7 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("serviceValidationAuthorizers")
@@ -164,7 +164,7 @@ public class OpenIdConfiguration {
     @Bean
     public Action openIdSingleSignOnAction() {
         return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
-            adaptiveAuthenticationPolicy, defaultOpenIdUserNameExtractor(), ticketRegistrySupport);
+            adaptiveAuthenticationPolicy, defaultOpenIdUserNameExtractor(), ticketRegistrySupport.getIfAvailable());
     }
 
     @Bean
@@ -176,7 +176,7 @@ public class OpenIdConfiguration {
     @Bean
     public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         val c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
-            authenticationSystemSupport,
+            authenticationSystemSupport.getIfAvailable(),
             servicesManager.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             proxy20Handler,

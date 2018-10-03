@@ -71,11 +71,11 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -108,10 +108,10 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver swivelAuthenticationWebflowEventResolver() {
-        return new SwivelAuthenticationWebflowEventResolver(authenticationSystemSupport,
+        return new SwivelAuthenticationWebflowEventResolver(authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            ticketRegistrySupport,
+            ticketRegistrySupport.getIfAvailable(),
             warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,
             multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));

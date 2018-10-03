@@ -67,7 +67,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -92,10 +92,15 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
         return new WSFederationValidateRequestController(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
-            httpClient, securityTokenTicketFactory, ticketRegistry.getIfAvailable(),
+            webApplicationServiceFactory,
+            casProperties,
+            wsFederationAuthenticationServiceSelectionStrategy(),
+            httpClient,
+            securityTokenTicketFactory,
+            ticketRegistry.getIfAvailable(),
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            ticketRegistrySupport, wsFederationCallbackService());
+            ticketRegistrySupport.getIfAvailable(),
+            wsFederationCallbackService());
     }
 
     @Lazy
@@ -112,7 +117,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             securityTokenTicketFactory,
             ticketRegistry.getIfAvailable(),
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            ticketRegistrySupport,
+            ticketRegistrySupport.getIfAvailable(),
             casClientTicketValidator,
             wsFederationCallbackService());
     }

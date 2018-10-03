@@ -84,7 +84,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
@@ -145,7 +145,7 @@ public class SamlConfiguration {
     @Bean
     public SamlValidateController samlValidateController() {
         return new SamlValidateController(cas20WithoutProxyProtocolValidationSpecification,
-            authenticationSystemSupport,
+            authenticationSystemSupport.getIfAvailable(),
             servicesManager.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             proxy20Handler,

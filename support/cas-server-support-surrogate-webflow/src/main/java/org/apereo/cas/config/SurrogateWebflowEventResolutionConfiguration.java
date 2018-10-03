@@ -43,7 +43,7 @@ public class SurrogateWebflowEventResolutionConfiguration {
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
@@ -63,15 +63,15 @@ public class SurrogateWebflowEventResolutionConfiguration {
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Bean
     @RefreshScope
     public CasWebflowEventResolver surrogateMultifactorAuthenticationWebflowEventResolver() {
-        val r = new SurrogateMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
+        val r = new SurrogateMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            ticketRegistrySupport,
+            ticketRegistrySupport.getIfAvailable(),
             warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,
             selector,

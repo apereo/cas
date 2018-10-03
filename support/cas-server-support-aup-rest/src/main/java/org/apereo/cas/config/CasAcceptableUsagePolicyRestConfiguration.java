@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,7 +28,7 @@ public class CasAcceptableUsagePolicyRestConfiguration {
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -36,6 +37,6 @@ public class CasAcceptableUsagePolicyRestConfiguration {
     @Bean
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
         val aup = casProperties.getAcceptableUsagePolicy();
-        return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport, aup.getAupAttributeName(), aup.getRest());
+        return new RestAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(), aup.getAupAttributeName(), aup.getRest());
     }
 }
