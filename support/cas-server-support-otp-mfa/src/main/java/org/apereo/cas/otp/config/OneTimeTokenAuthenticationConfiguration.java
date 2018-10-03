@@ -64,7 +64,7 @@ public class OneTimeTokenAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
@@ -83,7 +83,7 @@ public class OneTimeTokenAuthenticationConfiguration {
     public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver() {
         return new OneTimeTokenAuthenticationWebflowEventResolver(authenticationSystemSupport,
             centralAuthenticationService,
-            servicesManager,
+            servicesManager.getIfAvailable(),
             ticketRegistrySupport,
             warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,

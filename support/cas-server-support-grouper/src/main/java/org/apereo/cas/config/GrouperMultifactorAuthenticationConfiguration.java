@@ -46,7 +46,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -83,7 +83,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
         val r = new GrouperMultifactorAuthenticationPolicyEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService,
-            servicesManager,
+            servicesManager.getIfAvailable(),
             ticketRegistrySupport,
             warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,

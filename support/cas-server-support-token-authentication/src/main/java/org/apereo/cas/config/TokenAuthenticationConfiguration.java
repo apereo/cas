@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,7 +34,7 @@ public class TokenAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
@@ -49,7 +50,7 @@ public class TokenAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler tokenAuthenticationHandler() {
         val token = casProperties.getAuthn().getToken();
-        return new TokenAuthenticationHandler(token.getName(), servicesManager, tokenPrincipalFactory(),
+        return new TokenAuthenticationHandler(token.getName(), servicesManager.getIfAvailable(), tokenPrincipalFactory(),
             PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation()));
     }
 

@@ -15,6 +15,7 @@ import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -64,7 +65,7 @@ public class CasThemesConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -134,7 +135,7 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookiePath(tgc.getPath());
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
 
-        val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager,
+        val serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager.getIfAvailable(),
             serviceThemeResolverSupportedBrowsers(), authenticationRequestServiceSelectionStrategies,
             this.resourceLoader, new CasConfigurationProperties());
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
@@ -189,14 +190,12 @@ public class CasThemesConfiguration {
         r.setTemplateEngine(engine);
         r.setViewNames(this.thymeleafViewResolver.getViewNames());
 
-        // disable the cache
         r.setCache(false);
 
         thymeleafViewResolverConfigurers.stream()
             .sorted(OrderComparator.INSTANCE)
             .forEach(configurer -> configurer.configureThymeleafViewResolver(r));
 
-        // return this ViewResolver
         return r;
     }
 

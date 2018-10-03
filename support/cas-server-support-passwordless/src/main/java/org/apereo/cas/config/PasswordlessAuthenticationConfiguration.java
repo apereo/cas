@@ -72,7 +72,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -105,7 +105,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @Bean
     @ConditionalOnMissingBean(name = "passwordlessTokenAuthenticationHandler")
     public AuthenticationHandler passwordlessTokenAuthenticationHandler() {
-        return new PasswordlessTokenAuthenticationHandler(null, servicesManager,
+        return new PasswordlessTokenAuthenticationHandler(null, servicesManager.getIfAvailable(),
             passwordlessPrincipalFactory(), null, passwordlessTokenRepository());
     }
 
@@ -186,7 +186,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
 
     @Bean
     public Action initializeLoginAction() {
-        return new PrepareForPasswordlessAuthenticationAction(servicesManager);
+        return new PrepareForPasswordlessAuthenticationAction(servicesManager.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationWebflowConfigurer")

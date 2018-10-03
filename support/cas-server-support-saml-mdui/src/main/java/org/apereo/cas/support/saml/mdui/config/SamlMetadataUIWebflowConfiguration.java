@@ -50,7 +50,7 @@ public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPl
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
@@ -77,7 +77,7 @@ public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPl
     @Bean
     public Action samlMetadataUIParserAction() {
         val parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter, serviceFactory, servicesManager);
+        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter, serviceFactory, servicesManager.getIfAvailable());
     }
 
     @Override

@@ -15,6 +15,7 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,7 +39,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -58,7 +59,7 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler rejectUsersAuthenticationHandler() {
         val rejectProperties = casProperties.getAuthn().getReject();
         val users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
-        val h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager,
+        val h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager.getIfAvailable(),
             rejectUsersPrincipalFactory(), users);
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
         h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration());
