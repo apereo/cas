@@ -12,7 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
@@ -55,7 +57,7 @@ public class PathWatcherService implements Runnable, Closeable {
         this.onModify = onModify;
         this.onDelete = onDelete;
         this.watcher = watchablePath.getFileSystem().newWatchService();
-        LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) KINDS);
+        LOGGER.trace("Created service registry watcher for events of type [{}]", Arrays.stream(KINDS).map(WatchEvent.Kind::name).collect(Collectors.joining(",")));
         watchablePath.register(this.watcher, KINDS);
     }
 

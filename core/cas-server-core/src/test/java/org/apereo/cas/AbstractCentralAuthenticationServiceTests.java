@@ -2,7 +2,8 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -30,22 +31,28 @@ public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasC
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
+    @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
     @Autowired
+    @Qualifier("casAuthenticationManager")
     private AuthenticationManager authenticationManager;
 
     @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     @Autowired
+    @Qualifier("argumentExtractor")
     private ArgumentExtractor argumentExtractor;
 
     @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
 
     @Autowired
-    private WebApplicationServiceFactory webApplicationServiceFactory;
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")

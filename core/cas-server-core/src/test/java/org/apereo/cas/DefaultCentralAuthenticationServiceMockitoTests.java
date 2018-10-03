@@ -179,10 +179,15 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         val enforcer = mock(AuditableExecution.class);
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
         this.cas = new DefaultCentralAuthenticationService(
-            mock(ApplicationEventPublisher.class), ticketRegMock, smMock,
-            mock(LogoutManager.class), factory,
-            authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(),
-            new DefaultPrincipalFactory(), null,
+            mock(ApplicationEventPublisher.class),
+            ticketRegMock,
+            smMock,
+            mock(LogoutManager.class),
+            factory,
+            authenticationRequestServiceSelectionStrategies,
+            new AcceptAnyAuthenticationPolicyFactory(),
+            new DefaultPrincipalFactory(),
+            CipherExecutor.noOpOfStringToString(),
             enforcer);
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
