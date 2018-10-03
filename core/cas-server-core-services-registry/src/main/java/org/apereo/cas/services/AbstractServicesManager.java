@@ -196,7 +196,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
         fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:60000}")
     @Override
     public Collection<RegisteredService> load() {
-        LOGGER.debug("Loading services from [{}]", this.serviceRegistry);
+        LOGGER.trace("Loading services from [{}]", this.serviceRegistry);
         this.services = this.serviceRegistry.load()
             .stream()
             .collect(Collectors.toConcurrentMap(r -> {

@@ -41,19 +41,24 @@ public class AuthenticationPolicyProperties implements Serializable {
      * Satisfied if any authentication handler succeeds.
      * Allows options to avoid short circuiting and try every handler even if one prior succeeded.
      */
-    private Any any = new Any();
+    private AnyCredential any = new AnyCredential();
 
     /**
      * Satisfied if an only if a specified handler successfully authenticates its credential.
      */
-    private Req req = new Req();
+    private RequiredAuthenticationHandler req = new RequiredAuthenticationHandler();
 
     /**
      * Satisfied if and only if all given credentials are successfully authenticated.
      * Support for multiple credentials is new in CAS and this handler would
      * only be acceptable in a multi-factor authentication situation.
      */
-    private All all = new All();
+    private AllCredentials all = new AllCredentials();
+
+    /**
+     * Satisfied if and only if all given authn handlers are successfully authenticated.
+     */
+    private AllHandlers allHandlers = new AllHandlers();
 
     /**
      * Execute a groovy script to detect authentication policy.
@@ -82,68 +87,52 @@ public class AuthenticationPolicyProperties implements Serializable {
 
     @Getter
     @Setter
-    public static class NotPrevented implements Serializable {
-
-        private static final long serialVersionUID = -4930217018850738715L;
-
+    public abstract static class BaseAuthenticationPolicy implements Serializable {
+        private static final long serialVersionUID = -1830217018850738715L;
         /**
          * Enables the policy.
          */
         private boolean enabled;
     }
 
-    @Getter
-    @Setter
-    public static class UniquePrincipal implements Serializable {
+    public static class NotPrevented extends BaseAuthenticationPolicy {
+        private static final long serialVersionUID = 8184166804664983317L;
+    }
 
+    public static class UniquePrincipal extends BaseAuthenticationPolicy {
         private static final long serialVersionUID = -4930217087310738715L;
-
-        /**
-         * Enables the policy.
-         */
-        private boolean enabled;
     }
 
     @Getter
     @Setter
-    public static class Any implements Serializable {
+    public static class AnyCredential extends BaseAuthenticationPolicy {
 
         private static final long serialVersionUID = 4600357071276768175L;
-
-        /**
-         * Enables the policy.
-         */
-        private boolean enabled = true;
 
         /**
          * Avoid short circuiting and try every handler even if one prior succeeded.
          * Ensure number of provided credentials does not match the sum of authentication successes and failures
          */
         private boolean tryAll;
+
+        public AnyCredential() {
+            setEnabled(true);
+        }
     }
 
-    @Getter
-    @Setter
-    public static class All implements Serializable {
-
+    public static class AllCredentials extends BaseAuthenticationPolicy {
         private static final long serialVersionUID = 928409456096460793L;
+    }
 
-        /**
-         * Enables the policy.
-         */
-        private boolean enabled;
+    public static class AllHandlers extends BaseAuthenticationPolicy {
+        private static final long serialVersionUID = 928409456096460793L;
     }
 
     @Getter
     @Setter
-    public static class Req implements Serializable {
+    public static class RequiredAuthenticationHandler extends BaseAuthenticationPolicy {
 
         private static final long serialVersionUID = -4206244023952305821L;
-
-        /**
-         * Enables the policy.
-         */
-        private boolean enabled;
 
         /**
          * Ensure number of provided credentials does not match the sum of authentication successes and failures.

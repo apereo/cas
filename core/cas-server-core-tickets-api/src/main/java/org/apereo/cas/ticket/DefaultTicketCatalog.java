@@ -39,7 +39,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public TicketDefinition find(final Ticket ticket) {
-        LOGGER.debug("Locating ticket definition for ticket [{}]", ticket);
+        LOGGER.trace("Locating ticket definition for ticket [{}]", ticket);
         return find(ticket.getPrefix());
     }
 
@@ -49,13 +49,13 @@ public class DefaultTicketCatalog implements TicketCatalog {
             .filter(t -> t.getImplementationClass().isAssignableFrom(ticketClass))
             .collect(Collectors.toList());
         OrderComparator.sort(list);
-        LOGGER.debug("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);
+        LOGGER.trace("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);
         return list;
     }
 
     @Override
     public void register(final TicketDefinition ticketDefinition) {
-        LOGGER.debug("Registering/Updating ticket definition [{}]", ticketDefinition);
+        LOGGER.trace("Registering/Updating ticket definition [{}]", ticketDefinition);
         ticketMetadataMap.put(ticketDefinition.getPrefix(), ticketDefinition);
     }
 
@@ -66,7 +66,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public boolean contains(final String ticketId) {
-        LOGGER.debug("Locating ticket definition for [{}]", ticketId);
+        LOGGER.trace("Locating ticket definition for [{}]", ticketId);
         return ticketMetadataMap.containsKey(ticketId);
     }
 
@@ -74,7 +74,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     public Collection<TicketDefinition> findAll() {
         val list = new ArrayList<TicketDefinition>(ticketMetadataMap.values());
         OrderComparator.sort(list);
-        LOGGER.debug("Located all registered and known sorted ticket definitions [{}]", list);
+        LOGGER.trace("Located all registered and known sorted ticket definitions [{}]", list);
         return list;
     }
 }

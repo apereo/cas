@@ -126,7 +126,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
                 secretKeyToUse, ENCRYPTION_KEY_SIZE, getName(), getEncryptionKeySetting());
         } else {
-            LOGGER.debug("Located encryption key to use for [{}]", getName());
+            LOGGER.trace("Located encryption key to use for [{}]", getName());
         }
         try {
             if (ResourceUtils.doesResourceExist(secretKeyToUse)) {
@@ -136,11 +136,11 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.error(e.getMessage(), e);
         } finally {
             if (this.secretKeyEncryptionKey == null) {
-                LOGGER.debug("Creating encryption key instance based on provided secret key");
+                LOGGER.trace("Creating encryption key instance based on provided secret key");
                 setSecretKeyEncryptionKey(EncodingUtils.generateJsonWebKey(secretKeyToUse));
             }
             setContentEncryptionAlgorithmIdentifier(contentEncryptionAlgorithmIdentifier);
-            LOGGER.debug("Initialized cipher encryption sequence via content encryption [{}] and algorithm [{}]", this.contentEncryptionAlgorithmIdentifier, this.encryptionAlgorithm);
+            LOGGER.trace("Initialized cipher encryption sequence via content encryption [{}] and algorithm [{}]", this.contentEncryptionAlgorithmIdentifier, this.encryptionAlgorithm);
         }
     }
 

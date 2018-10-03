@@ -260,10 +260,10 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      */
     @Override
     public AuthenticationBuilder addFailure(final String key, final Throwable value) {
-        LOGGER.debug("Recording authentication handler failure under key [{}]", key);
+        LOGGER.trace("Recording authentication handler failure under key [{}]", key);
         if (this.successes.containsKey(key)) {
             val newKey = key + System.currentTimeMillis();
-            LOGGER.debug("Key mapped to authentication handler failure [{}] is recorded in the list of failed attempts. Overriding with [{}]", key, newKey);
+            LOGGER.trace("Key mapped to authentication handler failure [{}] is recorded in the list of failed attempts. Overriding with [{}]", key, newKey);
             this.failures.put(newKey, value);
         } else {
             this.failures.put(key, value);

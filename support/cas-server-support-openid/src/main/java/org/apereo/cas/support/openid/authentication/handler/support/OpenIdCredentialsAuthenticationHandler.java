@@ -40,7 +40,7 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
         val t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(), TicketGrantingTicket.class);
 
         if (t == null || t.isExpired()) {
-            throw new FailedLoginException("TGT is null or expired.");
+            throw new FailedLoginException("Ticket-granting ticket is null or expired.");
         }
         val principal = t.getAuthentication().getPrincipal();
         if (!principal.getId().equals(c.getUsername())) {

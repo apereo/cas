@@ -26,6 +26,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
+import java.util.LinkedHashSet;
+
 import static org.junit.Assert.*;
 
 /**
@@ -63,7 +65,7 @@ public class UniquePrincipalAuthenticationPolicyTests {
     public void verifyPolicyIsGoodUserNotFound() throws Exception {
         this.ticketRegistry.deleteAll();
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
-        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser")));
+        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), new LinkedHashSet<>()));
     }
 
     @Test
@@ -72,6 +74,6 @@ public class UniquePrincipalAuthenticationPolicyTests {
         this.ticketRegistry.addTicket(new TicketGrantingTicketImpl("TGT-1", CoreAuthenticationTestUtils.getAuthentication("casuser"),
             new NeverExpiresExpirationPolicy()));
         val p = new UniquePrincipalAuthenticationPolicy(this.ticketRegistry);
-        assertFalse(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser")));
+        assertFalse(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), new LinkedHashSet<>()));
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
@@ -23,6 +24,7 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.Set;
 
 /**
  * This is {@link RestfulAuthenticationPolicy}.
@@ -37,7 +39,7 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
     private final String endpoint;
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
+    public boolean isSatisfiedBy(final Authentication authentication, final Set<AuthenticationHandler> authenticationHandlers) throws Exception {
         val principal = authentication.getPrincipal();
         try {
             val acceptHeaders = new HttpHeaders();

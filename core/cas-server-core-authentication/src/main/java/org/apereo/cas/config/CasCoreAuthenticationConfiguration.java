@@ -72,7 +72,7 @@ public class CasCoreAuthenticationConfiguration {
         AnnotationAwareOrderComparator.sortIfNecessary(sortedConfigurers);
 
         sortedConfigurers.forEach(c -> {
-            LOGGER.debug("Configuring authentication execution plan [{}]", c.getName());
+            LOGGER.trace("Configuring authentication execution plan [{}]", c.getName());
             c.configureAuthenticationExecutionPlan(plan);
         });
         return plan;

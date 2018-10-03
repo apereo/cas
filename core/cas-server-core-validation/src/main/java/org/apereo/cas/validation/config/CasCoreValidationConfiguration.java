@@ -65,7 +65,7 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
         val plan = new DefaultServiceTicketValidationAuthorizersExecutionPlan();
         configurers.forEach(c -> {
             val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Configuring service ticket validation authorizer execution plan [{}]", name);
+            LOGGER.trace("Configuring service ticket validation authorizer execution plan [{}]", name);
             c.configureAuthorizersExecutionPlan(plan);
         });
         return plan;

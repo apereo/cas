@@ -103,7 +103,7 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
         val plan = new DefaultLogoutExecutionPlan();
         configurers.forEach(c -> {
             val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Configuring logout execution plan [{}]", name);
+            LOGGER.trace("Configuring logout execution plan [{}]", name);
             c.configureLogoutExecutionPlan(plan);
         });
         return plan;

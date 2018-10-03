@@ -110,7 +110,7 @@ public class CasThrottlingConfiguration {
     public AuthenticationThrottlingExecutionPlan authenticationThrottlingExecutionPlan(final List<AuthenticationThrottlingExecutionPlanConfigurer> configurers) {
         val plan = new DefaultAuthenticationThrottlingExecutionPlan();
         configurers.forEach(c -> {
-            LOGGER.debug("Registering authentication throttler [{}]", c.getName());
+            LOGGER.trace("Registering authentication throttler [{}]", c.getName());
             c.configureAuthenticationThrottlingExecutionPlan(plan);
         });
         return plan;

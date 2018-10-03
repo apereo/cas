@@ -37,7 +37,7 @@ public class CasCoreUtilSerializationConfiguration implements ComponentSerializa
         val plan = new DefaultComponentSerializationPlan();
         configurers.forEach(c -> {
             val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Configuring component serialization plan [{}]", name);
+            LOGGER.trace("Configuring component serialization plan [{}]", name);
             c.configureComponentSerializationPlan(plan);
         });
         return plan;

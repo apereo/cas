@@ -1,12 +1,15 @@
 package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Set;
 
 /**
  * Authentication security policy that is satisfied iff a specified authentication handler successfully authenticates
@@ -39,7 +42,7 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authn) {
+    public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers) {
         var credsOk = true;
         val sum = authn.getSuccesses().size() + authn.getFailures().size();
         if (this.tryAll) {

@@ -238,7 +238,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 LOGGER.info("Configured connector listening on port [{}]", tomcat.getPort());
             });
         } else {
-            LOGGER.debug("HTTP proxying is not enabled for CAS; Connector configuration for port [{}] is not modified.", tomcat.getPort());
+            LOGGER.trace("HTTP proxying is not enabled for CAS; Connector configuration for port [{}] is not modified.", tomcat.getPort());
         }
     }
 

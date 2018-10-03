@@ -326,8 +326,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
             .build();
         impl.setUserInfoCache(graphs.asMap());
         impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
-
-        LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)", props.getExpirationTime());
+        LOGGER.trace("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)", props.getExpirationTime());
         return impl;
     }
 

@@ -87,7 +87,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
         val plan = new DefaultAuditTrailRecordResolutionPlan();
         configurers.forEach(c -> {
             val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Registering audit trail manager [{}]", name);
+            LOGGER.trace("Registering audit trail manager [{}]", name);
             c.configureAuditTrailRecordResolutionPlan(plan);
         });
         return plan;
@@ -100,7 +100,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
         val plan = new DefaultAuditTrailExecutionPlan();
         configurers.forEach(c -> {
             val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Registering audit trail manager [{}]", name);
+            LOGGER.trace("Configuring audit trail execution plan via [{}]", name);
             c.configureAuditTrailExecutionPlan(plan);
         });
         return plan;
