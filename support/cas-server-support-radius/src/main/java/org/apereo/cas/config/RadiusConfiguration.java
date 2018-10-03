@@ -1,10 +1,11 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
+import org.apereo.cas.adaptors.radius.server.AbstractRadiusServer;
+import org.apereo.cas.adaptors.radius.server.BlockingRadiusServer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -64,7 +65,7 @@ public class RadiusConfiguration {
 
     @RefreshScope
     @Bean
-    public JRadiusServerImpl radiusServer() {
+    public AbstractRadiusServer radiusServer() {
         val radius = casProperties.getAuthn().getRadius();
         val client = radius.getClient();
         val server = radius.getServer();
@@ -73,13 +74,13 @@ public class RadiusConfiguration {
         return getSingleRadiusServer(client, server, ips.iterator().next());
     }
 
-    private JRadiusServerImpl getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
+    private AbstractRadiusServer getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
         val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(),
             client.getSocketTimeout(), clientInetAddress, client.getSharedSecret());
 
         val protocol = RadiusProtocol.valueOf(server.getProtocol());
 
-        return new JRadiusServerImpl(protocol, factory, server.getRetries(),
+        return new BlockingRadiusServer(protocol, factory, server.getRetries(),
             server.getNasIpAddress(), server.getNasIpv6Address(), server.getNasPort(),
             server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort(),
             server.getNasPortType());
