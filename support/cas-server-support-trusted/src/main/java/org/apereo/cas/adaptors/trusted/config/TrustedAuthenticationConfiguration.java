@@ -25,6 +25,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -62,7 +63,7 @@ public class TrustedAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("attributeRepository")
@@ -72,7 +73,7 @@ public class TrustedAuthenticationConfiguration {
     @RefreshScope
     public AuthenticationHandler principalBearingCredentialsAuthenticationHandler() {
         val trusted = casProperties.getAuthn().getTrusted();
-        return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(), servicesManager, trustedPrincipalFactory());
+        return new PrincipalBearingCredentialsAuthenticationHandler(trusted.getName(), servicesManager.getIfAvailable(), trustedPrincipalFactory());
     }
 
     @Bean

@@ -82,7 +82,7 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
@@ -143,7 +143,7 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
     @Bean
     public CasWebflowEventResolver u2fAuthenticationWebflowEventResolver() {
         return new U2FAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
-            servicesManager, ticketRegistrySupport,
+            servicesManager.getIfAvailable(), ticketRegistrySupport,
             warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
             multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
     }

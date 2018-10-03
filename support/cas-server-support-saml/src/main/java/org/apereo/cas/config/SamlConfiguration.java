@@ -68,7 +68,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -104,7 +104,7 @@ public class SamlConfiguration {
     public View casSamlServiceSuccessView() {
         val samlCore = casProperties.getSamlCore();
         return new Saml10SuccessResponseView(protocolAttributeEncoder,
-            servicesManager,
+            servicesManager.getIfAvailable(),
             saml10ObjectBuilder(),
             argumentExtractor.getIfAvailable(),
             StandardCharsets.UTF_8.name(),
@@ -120,7 +120,7 @@ public class SamlConfiguration {
     @Bean
     public View casSamlServiceFailureView() {
         return new Saml10FailureResponseView(protocolAttributeEncoder,
-            servicesManager,
+            servicesManager.getIfAvailable(),
             saml10ObjectBuilder(),
             argumentExtractor.getIfAvailable(),
             StandardCharsets.UTF_8.name(),
@@ -133,7 +133,7 @@ public class SamlConfiguration {
     @ConditionalOnMissingBean(name = "samlServiceResponseBuilder")
     @Bean
     public ResponseBuilder samlServiceResponseBuilder() {
-        return new SamlServiceResponseBuilder(servicesManager);
+        return new SamlServiceResponseBuilder(servicesManager.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "saml10ObjectBuilder")
@@ -146,7 +146,7 @@ public class SamlConfiguration {
     public SamlValidateController samlValidateController() {
         return new SamlValidateController(cas20WithoutProxyProtocolValidationSpecification,
             authenticationSystemSupport,
-            servicesManager,
+            servicesManager.getIfAvailable(),
             centralAuthenticationService,
             proxy20Handler,
             argumentExtractor.getIfAvailable(),

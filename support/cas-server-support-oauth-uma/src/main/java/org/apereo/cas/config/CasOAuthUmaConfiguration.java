@@ -45,6 +45,7 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.http.client.direct.HeaderClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -73,11 +74,11 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("oauthTokenGenerator")
@@ -104,15 +105,17 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
         val uma = casProperties.getAuthn().getUma();
         val jwks = uma.getRequestingPartyToken().getJwksFile();
         val signingService = new UmaRequestingPartyTokenSigningService(jwks, uma.getIssuer());
-        return new UmaIdTokenGeneratorService(casProperties, signingService, servicesManager, ticketRegistry);
+        return new UmaIdTokenGeneratorService(casProperties, signingService, servicesManager.getIfAvailable(), ticketRegistry.getIfAvailable());
     }
 
     @Bean
     public UmaAuthorizationRequestEndpointController umaAuthorizationRequestEndpointController() {
         return new UmaAuthorizationRequestEndpointController(defaultUmaPermissionTicketFactory(),
             umaResourceSetRepository(),
-            casProperties, servicesManager,
-            ticketRegistry, oauthTokenGenerator,
+            casProperties,
+            servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
+            oauthTokenGenerator,
             umaResourceSetClaimPermissionExaminer(),
             umaRequestingPartyTokenGenerator());
     }
@@ -121,14 +124,18 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     public UmaRequestingPartyTokenJwksEndpointController umaRequestingPartyTokenJwksEndpointController() {
         return new UmaRequestingPartyTokenJwksEndpointController(defaultUmaPermissionTicketFactory(),
             umaResourceSetRepository(),
-            casProperties, servicesManager, ticketRegistry);
+            casProperties,
+            servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable());
     }
 
     @Bean
     public UmaRequestingPartyClaimsCollectionEndpointController umaRequestingPartyClaimsCollectionEndpointController() {
         return new UmaRequestingPartyClaimsCollectionEndpointController(defaultUmaPermissionTicketFactory(),
             umaResourceSetRepository(),
-            casProperties, servicesManager, ticketRegistry);
+            casProperties,
+            servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable());
     }
 
     @Autowired
@@ -140,7 +147,9 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
     @Bean
     public UmaPermissionRegistrationEndpointController umaPermissionRegistrationEndpointController() {
         return new UmaPermissionRegistrationEndpointController(defaultUmaPermissionTicketFactory(),
-            umaResourceSetRepository(), casProperties, ticketRegistry);
+            umaResourceSetRepository(),
+            casProperties,
+            ticketRegistry.getIfAvailable());
     }
 
     @Bean
@@ -220,13 +229,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Bean
     public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor() {
-        val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry);
+        val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry.getIfAvailable());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH");
     }
 
     @Bean
     public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor() {
-        val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry);
+        val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry.getIfAvailable());
         return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH");
     }
 

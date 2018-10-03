@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.ShibbolethIdPEntityIdAuthenticationServiceSel
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,7 +38,7 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
     
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -52,7 +53,7 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
     public AuthenticationServiceSelectionStrategy shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy() {
         return new ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(webApplicationServiceFactory,
             casProperties.getAuthn().getShibIdp().getServerUrl(),
-            servicesManager,
+            servicesManager.getIfAvailable(),
             registeredServiceAccessStrategyEnforcer);
     }
 

@@ -10,6 +10,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
 import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -43,7 +44,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration implements CasWe
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -59,7 +60,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration implements CasWe
     @Bean
     @RefreshScope
     public Action wsFederationMetadataUIAction() {
-        return new WSFederationMetadataUIAction(servicesManager, wsFederationAuthenticationServiceSelectionStrategy);
+        return new WSFederationMetadataUIAction(servicesManager.getIfAvailable(), wsFederationAuthenticationServiceSelectionStrategy);
     }
 
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
