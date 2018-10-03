@@ -21,7 +21,7 @@ public class DefaultServiceRegistryExecutionPlan implements ServiceRegistryExecu
 
     @Override
     public ServiceRegistryExecutionPlan registerServiceRegistry(final ServiceRegistry registry) {
-        LOGGER.debug("Registering service registry [{}] into the execution plan", registry.getName());
+        LOGGER.trace("Registering service registry [{}] into the execution plan", registry.getName());
         serviceRegistries.add(registry);
         return this;
     }

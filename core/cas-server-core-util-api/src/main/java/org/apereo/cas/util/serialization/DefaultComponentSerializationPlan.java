@@ -30,7 +30,7 @@ public class DefaultComponentSerializationPlan implements ComponentSerialization
 
     @Override
     public void registerSerializableClass(final Class clazz, final Integer order) {
-        LOGGER.debug("Registering serializable class [{}] with order [{}]", clazz.getName(), order);
+        LOGGER.trace("Registering serializable class [{}] with order [{}]", clazz.getName(), order);
         this.registeredClasses.add(Pair.of(clazz, order));
     }
 

@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.LinkedHashSet;
 
 import static org.junit.Assert.*;
 
@@ -48,7 +49,7 @@ public class GroovyScriptAuthenticationPolicyTests {
             + " return Optional.empty()\n"
             + '}';
         val p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
-        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication()));
+        assertTrue(p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>()));
     }
 
     @Test
@@ -60,7 +61,7 @@ public class GroovyScriptAuthenticationPolicyTests {
             + '}';
         val p = new GroovyScriptAuthenticationPolicy(resourceLoader, script);
         thrown.expect(GeneralSecurityException.class);
-        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication());
+        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>());
     }
 
     @Test
@@ -76,6 +77,6 @@ public class GroovyScriptAuthenticationPolicyTests {
         FileUtils.write(scriptFile, script, StandardCharsets.UTF_8);
         val p = new GroovyScriptAuthenticationPolicy(resourceLoader, "file:" + scriptFile.getCanonicalPath());
         thrown.expect(GeneralSecurityException.class);
-        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication());
+        p.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), new LinkedHashSet<>());
     }
 }
