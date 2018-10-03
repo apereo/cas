@@ -31,7 +31,7 @@ import org.springframework.context.annotation.Configuration;
 public class DigestAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -56,6 +56,6 @@ public class DigestAuthenticationEventExecutionPlanConfiguration {
     @ConditionalOnMissingBean(name = "digestAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer digestAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(digestAuthenticationHandler(), personDirectoryPrincipalResolver);
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(digestAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
     }
 }

@@ -43,7 +43,7 @@ public class CouchDbAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
@@ -74,7 +74,7 @@ public class CouchDbAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer couchDbAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("couchDbAuthenticationHandler") final AuthenticationHandler authenticationHandler) {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(authenticationHandler, personDirectoryPrincipalResolver);
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(authenticationHandler, personDirectoryPrincipalResolver.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "couchDbPrincipalFactory")

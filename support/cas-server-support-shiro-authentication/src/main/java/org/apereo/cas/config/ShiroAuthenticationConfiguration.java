@@ -36,7 +36,7 @@ public class ShiroAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -72,7 +72,7 @@ public class ShiroAuthenticationConfiguration {
             val shiroConfigFile = casProperties.getAuthn().getShiro().getLocation();
             if (shiroConfigFile != null) {
                 LOGGER.debug("Injecting shiro authentication handler configured at [{}]", shiroConfigFile.getDescription());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), personDirectoryPrincipalResolver);
+                plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
             }
         };
     }
