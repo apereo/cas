@@ -1,10 +1,10 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;

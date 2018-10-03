@@ -1,7 +1,7 @@
 package org.apereo.cas.pm.jdbc;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;

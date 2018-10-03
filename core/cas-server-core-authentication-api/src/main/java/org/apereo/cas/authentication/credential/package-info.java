@@ -13,5 +13,5 @@
  *
  * @since 3.0
  */
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.credential;
 

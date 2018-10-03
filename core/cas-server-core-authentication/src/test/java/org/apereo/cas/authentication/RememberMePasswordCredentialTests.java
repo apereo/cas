@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
+
 import lombok.val;
 import org.junit.Test;
 
