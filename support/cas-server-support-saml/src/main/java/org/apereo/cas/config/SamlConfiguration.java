@@ -72,7 +72,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("authenticationAttributeReleasePolicy")
@@ -147,7 +147,7 @@ public class SamlConfiguration {
         return new SamlValidateController(cas20WithoutProxyProtocolValidationSpecification,
             authenticationSystemSupport,
             servicesManager.getIfAvailable(),
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             proxy20Handler,
             argumentExtractor.getIfAvailable(),
             multifactorTriggerSelectionStrategy,

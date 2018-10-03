@@ -39,7 +39,7 @@ public class SurrogateWebflowEventResolutionConfiguration {
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -69,7 +69,7 @@ public class SurrogateWebflowEventResolutionConfiguration {
     @RefreshScope
     public CasWebflowEventResolver surrogateMultifactorAuthenticationWebflowEventResolver() {
         val r = new SurrogateMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
             ticketRegistrySupport,
             warnCookieGenerator,

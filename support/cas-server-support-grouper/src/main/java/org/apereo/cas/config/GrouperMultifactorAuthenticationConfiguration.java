@@ -38,7 +38,7 @@ import org.springframework.web.util.CookieGenerator;
 public class GrouperMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -82,7 +82,7 @@ public class GrouperMultifactorAuthenticationConfiguration {
     public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver() {
         val r = new GrouperMultifactorAuthenticationPolicyEventResolver(
             authenticationSystemSupport.getIfAvailable(),
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
             ticketRegistrySupport,
             warnCookieGenerator,
