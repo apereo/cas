@@ -1,19 +1,19 @@
 package org.apereo.cas.memcached.kryo;
 
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.HttpBasedServiceCredential;
-import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.PrincipalException;
-import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
+import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
