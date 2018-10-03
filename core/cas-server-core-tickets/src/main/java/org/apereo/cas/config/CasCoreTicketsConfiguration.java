@@ -112,7 +112,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
@@ -275,7 +275,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "defaultTicketRegistrySupport")
     @Bean
     public TicketRegistrySupport defaultTicketRegistrySupport() {
-        return new DefaultTicketRegistrySupport(ticketRegistry);
+        return new DefaultTicketRegistrySupport(ticketRegistry.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "grantingTicketExpirationPolicy")

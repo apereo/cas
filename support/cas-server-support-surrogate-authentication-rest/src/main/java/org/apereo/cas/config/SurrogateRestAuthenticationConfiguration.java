@@ -7,6 +7,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,11 +25,10 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SurrogateRestAuthenticationConfiguration {
-
-
+    
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -39,6 +39,6 @@ public class SurrogateRestAuthenticationConfiguration {
         val su = casProperties.getAuthn().getSurrogate();
         LOGGER.debug("Using REST endpoint [{}] with method [{}] to locate surrogate accounts",
             su.getRest().getUrl(), su.getRest().getMethod());
-        return new SurrogateRestAuthenticationService(su.getRest(), servicesManager);
+        return new SurrogateRestAuthenticationService(su.getRest(), servicesManager.getIfAvailable());
     }
 }

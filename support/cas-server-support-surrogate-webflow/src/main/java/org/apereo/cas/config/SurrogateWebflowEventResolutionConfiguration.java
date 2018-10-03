@@ -12,6 +12,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,7 +35,7 @@ public class SurrogateWebflowEventResolutionConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -68,7 +69,8 @@ public class SurrogateWebflowEventResolutionConfiguration {
     @RefreshScope
     public CasWebflowEventResolver surrogateMultifactorAuthenticationWebflowEventResolver() {
         val r = new SurrogateMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
-            centralAuthenticationService, servicesManager,
+            centralAuthenticationService,
+            servicesManager.getIfAvailable(),
             ticketRegistrySupport,
             warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,
