@@ -1,5 +1,6 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.credential;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.AllArgsConstructor;

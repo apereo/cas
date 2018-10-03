@@ -1,7 +1,7 @@
 package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;

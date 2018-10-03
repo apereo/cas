@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonDeserializer;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializer;
-import org.apereo.cas.authentication.AbstractCredential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.util.crypto.CertUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

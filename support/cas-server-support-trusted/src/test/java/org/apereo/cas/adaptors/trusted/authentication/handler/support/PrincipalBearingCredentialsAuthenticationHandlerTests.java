@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.trusted.authentication.handler.support;
 
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
 import lombok.val;

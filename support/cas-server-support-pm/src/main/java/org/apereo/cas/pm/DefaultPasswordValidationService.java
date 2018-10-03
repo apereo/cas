@@ -1,6 +1,6 @@
 package org.apereo.cas.pm;
 
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.util.RegexUtils;
 
 import lombok.RequiredArgsConstructor;

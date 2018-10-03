@@ -1,4 +1,6 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.credential;
+
+import org.apereo.cas.authentication.RememberMeCredential;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

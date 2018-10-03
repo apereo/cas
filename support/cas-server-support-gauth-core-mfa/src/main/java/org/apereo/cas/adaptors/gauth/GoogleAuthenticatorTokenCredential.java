@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.gauth;
 
-import org.apereo.cas.authentication.OneTimeTokenCredential;
+import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 
 import lombok.NoArgsConstructor;
 

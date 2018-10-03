@@ -1,4 +1,7 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.credential;
+
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.CredentialMetaData;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.ToString;

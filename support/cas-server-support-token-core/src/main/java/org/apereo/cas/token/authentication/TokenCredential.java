@@ -1,6 +1,6 @@
 package org.apereo.cas.token.authentication;
 
-import org.apereo.cas.authentication.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;

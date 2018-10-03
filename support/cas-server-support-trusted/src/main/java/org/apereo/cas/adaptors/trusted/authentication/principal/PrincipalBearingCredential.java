@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
-import org.apereo.cas.authentication.AbstractCredential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.authentication.principal.Principal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

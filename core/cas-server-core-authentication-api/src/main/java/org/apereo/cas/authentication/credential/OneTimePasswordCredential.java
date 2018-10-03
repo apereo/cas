@@ -1,4 +1,6 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.credential;
+
+import org.apereo.cas.authentication.CredentialMetaData;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

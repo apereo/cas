@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.credential;
 
 import org.apereo.cas.services.RegisteredService;
 
