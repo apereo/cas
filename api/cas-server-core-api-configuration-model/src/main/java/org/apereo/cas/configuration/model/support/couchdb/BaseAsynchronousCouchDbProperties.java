@@ -13,6 +13,7 @@ import lombok.Setter;
 @Setter
 public abstract class BaseAsynchronousCouchDbProperties extends BaseCouchDbProperties {
 
+    private static final long serialVersionUID = -7920471433876478891L;
     /**
      * Make DB updates asynchronously.
      */
