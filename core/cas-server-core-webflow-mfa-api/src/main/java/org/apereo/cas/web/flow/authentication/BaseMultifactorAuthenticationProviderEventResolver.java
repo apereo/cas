@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
-import org.apereo.cas.authentication.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -20,7 +19,6 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -51,22 +49,10 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
     @Override
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final Collection<String> requestMfaMethod) {
-        val providerFound = providers.values()
+        return providers.values()
             .stream()
             .filter(p -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(p::matches))
             .findFirst();
-        if (providerFound.isPresent()) {
-            val provider = providerFound.get();
-            if (provider instanceof VariegatedMultifactorAuthenticationProvider) {
-                val multi = VariegatedMultifactorAuthenticationProvider.class.cast(provider);
-                return multi.getProviders()
-                    .stream()
-                    .filter(p -> requestMfaMethod.stream().anyMatch(p::matches))
-                    .findFirst();
-            }
-        }
-
-        return providerFound;
     }
 
     /**
@@ -80,19 +66,6 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
     public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
                                                                        final String requestMfaMethod) {
         return resolveProvider(providers, CollectionUtils.wrap(requestMfaMethod));
-    }
-
-    @Override
-    public Collection<MultifactorAuthenticationProvider> flattenProviders(final Collection<? extends MultifactorAuthenticationProvider> providers) {
-        val flattenedProviders = new HashSet<MultifactorAuthenticationProvider>();
-        providers.forEach(p -> {
-            if (p instanceof VariegatedMultifactorAuthenticationProvider) {
-                flattenedProviders.addAll(VariegatedMultifactorAuthenticationProvider.class.cast(p).getProviders());
-            } else {
-                flattenedProviders.add(p);
-            }
-        });
-        return (Collection) flattenedProviders;
     }
 
     /**

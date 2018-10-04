@@ -10,17 +10,8 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface MultifactorAuthenticationProviderResolver {
-
-    /**
-     * Consolidate providers collection.
-     * If the provider is multi-instance in the collection, consolidate and flatten.
-     *
-     * @param providers the providers
-     * @return the collection
-     */
-    Collection<MultifactorAuthenticationProvider> flattenProviders(Collection<? extends MultifactorAuthenticationProvider> providers);
-
 
     /**
      * Locate the provider in the collection, and have it match the requested mfa.

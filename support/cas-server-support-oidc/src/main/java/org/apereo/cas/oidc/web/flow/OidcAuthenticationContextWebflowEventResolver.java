@@ -84,8 +84,7 @@ public class OidcAuthenticationContextWebflowEventResolver extends BaseMultifact
             throw new AuthenticationException();
         }
 
-        val flattenedProviders = flattenProviders(providerMap.values());
-        val provider = flattenedProviders
+        val provider = providerMap.values()
             .stream()
             .filter(v -> values.contains(v.getId()))
             .findAny();

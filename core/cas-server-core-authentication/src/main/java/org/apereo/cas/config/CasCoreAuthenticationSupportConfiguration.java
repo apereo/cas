@@ -31,6 +31,9 @@ import org.springframework.context.annotation.Lazy;
 public class CasCoreAuthenticationSupportConfiguration {
 
     @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 

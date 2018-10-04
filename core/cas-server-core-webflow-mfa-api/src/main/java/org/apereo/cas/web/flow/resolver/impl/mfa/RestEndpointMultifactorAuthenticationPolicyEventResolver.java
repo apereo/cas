@@ -76,11 +76,10 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
             LOGGER.error("No multifactor authentication providers are available in the application context");
             return null;
         }
-        val flattenedProviders = flattenProviders(providerMap.values());
         LOGGER.debug("Contacting [{}] to inquire about [{}]", restEndpoint, principal.getId());
         val results = callRestEndpointForMultifactor(principal, context);
         if (StringUtils.isNotBlank(results)) {
-            return resolveMultifactorEventViaRestResult(results, flattenedProviders);
+            return resolveMultifactorEventViaRestResult(results, providerMap.values());
         }
         LOGGER.debug("No providers are available to match rest endpoint results");
         return new HashSet<>(0);

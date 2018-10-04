@@ -103,19 +103,19 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver
             return Pair.of(resolveEvents, new HashSet<>(0));
         }
 
-        val flattenedProviders = flattenProviders(providers.values());
+        val providerValues = providers.values();
 
         // remove providers that don't support the event
-        flattenedProviders.removeIf(p -> resolveEvents.stream()
+        providerValues.removeIf(p -> resolveEvents.stream()
             .filter(e -> p.matches(e.getId()))
             .count() == 0);
 
         // remove events that are not supported by providers.
-        resolveEvents.removeIf(e -> flattenedProviders.stream()
+        resolveEvents.removeIf(e -> providerValues.stream()
             .filter(p -> p.matches(e.getId()))
             .count() == 0);
 
         LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);
-        return Pair.of(resolveEvents, flattenedProviders);
+        return Pair.of(resolveEvents, providerValues);
     }
 }

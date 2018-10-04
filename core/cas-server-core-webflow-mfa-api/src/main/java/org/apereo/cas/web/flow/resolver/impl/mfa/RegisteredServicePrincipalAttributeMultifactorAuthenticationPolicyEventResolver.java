@@ -67,7 +67,7 @@ public class RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyE
         }
 
         val principal = authentication.getPrincipal();
-        val providers = flattenProviders(getAuthenticationProviderForService(service));
+        val providers = getAuthenticationProviderForService(service);
         return resolveEventViaPrincipalAttribute(principal,
             org.springframework.util.StringUtils.commaDelimitedListToSet(policy.getPrincipalAttributeNameTrigger()),
             service, context, providers, Pattern.compile(policy.getPrincipalAttributeValueToMatch()).asPredicate());

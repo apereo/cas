@@ -82,7 +82,7 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
     protected Set<Event> resolveEventPerAuthenticationProvider(final Principal principal,
                                                                final RequestContext context,
                                                                final RegisteredService service) {
-        val providers = flattenProviders(getAuthenticationProviderForService(service));
+        val providers = getAuthenticationProviderForService(service);
         if (providers != null && !providers.isEmpty()) {
             val provider = this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
             LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);

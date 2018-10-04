@@ -89,7 +89,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
                                                                   final Principal principal) {
         val providerMap =
             MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        val providers = flattenProviders(providerMap.values());
+        val providers = providerMap.values();
         if (providers.size() == 1 && StringUtils.isNotBlank(globalPrincipalAttributeValueRegex)) {
             return resolveSingleMultifactorProvider(context, service, principal, providers);
         }

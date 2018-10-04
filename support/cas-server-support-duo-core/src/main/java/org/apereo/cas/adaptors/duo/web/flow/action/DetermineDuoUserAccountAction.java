@@ -34,7 +34,7 @@ public class DetermineDuoUserAccountAction extends AbstractMultifactorAuthentica
         val account = duoAuthenticationService.getDuoUserAccount(principal.getId());
 
         if (account.getStatus() == DuoUserAccountAuthStatus.ENROLL) {
-            if (!StringUtils.isEmpty(provider.getRegistrationUrl())) {
+            if (StringUtils.isBlank(provider.getRegistrationUrl())) {
                 LOGGER.error("Duo webflow resolved to event ENROLL, but no registration url was provided.");
                 return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
             }
