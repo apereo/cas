@@ -19,6 +19,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Setter
 public class CouchDbAuthenticationProperties extends BaseCouchDbProperties {
 
+    private static final long serialVersionUID = 1830797033934229732L;
     /**
      * Principal transformation settings.
      */
