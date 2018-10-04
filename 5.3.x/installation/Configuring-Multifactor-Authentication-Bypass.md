@@ -8,6 +8,11 @@ title: CAS - Multifactor Authentication Bypass
 Each [multifactor provider](Configuring-Multifactor-Authentication.html) is equipped with options to allow for bypass. Once the provider
 is chosen to honor the authentication request, bypass rules are then consulted to calculate whether the provider should ignore the request and skip MFA conditionally.
 
+## Default Bypass
+
+CAS provides a default bypass policy for each [multifactor provider](Configuring-Multifactor-Authentication.html) that can be configured through CAS properties.  
+All providers will consult this policy for bypass events before consulting any other configured bypass providers.
+
 Bypass rules allow for the following options for each provider:
 
 - Skip multifactor authentication based on designated **principal** attribute **names**.
@@ -28,7 +33,7 @@ Note that in addition to the above options, some multifactor authentication prov
 may also skip and bypass the authentication request in the event that the authenticated principal does not quite "qualify"
 for multifactor authentication. See the documentation for each specific provider to learn more.
 
-## Configuration
+### Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
@@ -36,7 +41,7 @@ Note that ticket validation requests shall successfully go through if multifacto
 bypassed for the given provider. In such cases, no authentication context is passed back to the application and
 additional attributes are supplanted to let the application know multifactor authentication is bypassed for the provider.
 
-## Bypass Per Service
+### Bypass Per Service
 
 MFA Bypass rules can be overridden per application via the CAS service registry. This is useful when
 MFA may be turned on globally for all applications and services, yet a few selectively need to be excluded. Services
@@ -55,7 +60,13 @@ whose access should bypass MFA may be defined as such in the CAS service registr
 }
 ```
 
-## Bypass via Groovy
+## Additional Bypass Providers
+
+In addition to the configurable default bypass rules, the following bypass providers can be defined and executed after default bypass rules are calculated.
+
+In the case where the default rules determine that the multifactor authentication should be bypassed, the chain will be short circuited and no additional bypass providers will be consulted.
+
+### Bypass via Groovy
 
 Multifactor authentication bypass may be determined using a Groovy script of your own design. The outcome of the script, if `true` indicates that multifactor
  authentication for the requested provider should proceed. Otherwise `false` indicates that  multifactor authentication for this provider should be skipped and bypassed. 
@@ -114,7 +125,7 @@ def String run(final Object... args) {
 }
 ```
 
-## Bypass via REST
+### Bypass via REST
 
 Multifactor authentication bypass may be determined using a REST API of your own design. Endpoints must be designed to accept/process `application/json` via 
 `GET` requests. A returned status code `202` meaning `ACCEPTED` indicates that multifactor authentication for the requested provider should proceed. Otherwise multifactor authentication for this provider should be skipped and bypassed.
