@@ -26,6 +26,8 @@ public class DuoDirectCredential extends AbstractCredential implements Multifact
 
     private final Authentication authentication;
 
+    private final String providerId;
+
     @Override
     public String getId() {
         return this.authentication.getPrincipal().getId();
