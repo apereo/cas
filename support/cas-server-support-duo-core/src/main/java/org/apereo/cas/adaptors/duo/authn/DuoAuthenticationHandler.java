@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.authn;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -97,6 +98,10 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     @Override
     public boolean supports(final Credential credential) {
-        return provider.validateMark(credential.getMark());
+        if (credential.getClass().isAssignableFrom(MultifactorAuthenticationCredential.class)) {
+            final String id = MultifactorAuthenticationCredential.class.cast(credential).getProviderId();
+            return provider.validateId(id);
+        }
+        return false;
     }
 }
