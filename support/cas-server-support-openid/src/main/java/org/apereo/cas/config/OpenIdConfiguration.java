@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.openid4java.server.InMemoryServerAssociationStore;
 import org.openid4java.server.ServerManager;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -54,7 +55,6 @@ import java.util.Properties;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OpenIdConfiguration {
-
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -94,7 +94,7 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("authenticationContextValidator")
@@ -102,7 +102,7 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
@@ -114,11 +114,11 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("serviceValidationAuthorizers")
@@ -144,7 +144,7 @@ public class OpenIdConfiguration {
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
         val openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
-        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService, servicesManager);
+        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService.getIfAvailable(), servicesManager.getIfAvailable());
     }
 
 
@@ -164,7 +164,7 @@ public class OpenIdConfiguration {
     @Bean
     public Action openIdSingleSignOnAction() {
         return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
-            adaptiveAuthenticationPolicy, defaultOpenIdUserNameExtractor(), ticketRegistrySupport);
+            adaptiveAuthenticationPolicy, defaultOpenIdUserNameExtractor(), ticketRegistrySupport.getIfAvailable());
     }
 
     @Bean
@@ -176,13 +176,20 @@ public class OpenIdConfiguration {
     @Bean
     public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         val c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
-            authenticationSystemSupport, servicesManager,
-            centralAuthenticationService, proxy20Handler,
-            argumentExtractor, multifactorTriggerSelectionStrategy,
-            authenticationContextValidator, cas3ServiceJsonView,
-            casOpenIdServiceSuccessView, casOpenIdServiceFailureView,
+            authenticationSystemSupport.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            proxy20Handler,
+            argumentExtractor,
+            multifactorTriggerSelectionStrategy,
+            authenticationContextValidator,
+            cas3ServiceJsonView,
+            casOpenIdServiceSuccessView,
+            casOpenIdServiceFailureView,
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serverManager(), validationAuthorizers, casProperties.getSso().isRenewAuthnEnabled());
+            serverManager(),
+            validationAuthorizers,
+            casProperties.getSso().isRenewAuthnEnabled());
 
         val controller = new DelegatingController();
         controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), c));

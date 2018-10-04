@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import com.google.common.base.Predicates;
@@ -8,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -21,7 +24,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Credential to principal resolver that extracts Subject Alternative Name UPN extension
@@ -120,13 +125,6 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         return null;
     }
 
-    /**
-     * Retrieves Subject Alternative Name UPN extension as a principal id String.
-     *
-     * @param certificate X.509 certificate credential.
-     * @return Resolved principal ID or null if no SAN UPN extension is available in provided certificate.
-     * @see java.security.cert.X509Certificate#getSubjectAlternativeNames()
-     */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);
@@ -147,5 +145,27 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         }
         LOGGER.debug("Returning null principal id...");
         return null;
+    }
+
+    @Override
+    protected Map<String, List<Object>> retrievePersonAttributes(final String principalId, final Credential credential) {
+        val attributes = new LinkedHashMap<>(super.retrievePersonAttributes(principalId, credential));
+        val certificate = ((X509CertificateCredential) credential).getCertificate();
+
+        if (certificate != null) {
+            if (StringUtils.isNotBlank(certificate.getSigAlgOID())) {
+                attributes.put("sigAlgOid", CollectionUtils.wrapList(certificate.getSigAlgOID()));
+            }
+            val subjectDn = certificate.getSubjectDN();
+            if (subjectDn != null) {
+                attributes.put("subjectDn", CollectionUtils.wrapList(subjectDn.getName()));
+            }
+            val subjectPrincipal = certificate.getSubjectX500Principal();
+            if (subjectPrincipal != null) {
+                attributes.put("subjectX500Principal", CollectionUtils.wrapList(subjectPrincipal.getName()));
+            }
+        }
+        return attributes;
+
     }
 }

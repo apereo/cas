@@ -103,7 +103,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-
     /**
      * Publish CAS events.
      *
@@ -182,7 +181,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     protected void evaluateProxiedServiceIfNeeded(final Service service, final TicketGrantingTicket ticketGrantingTicket, final RegisteredService registeredService) {
         val proxiedBy = ticketGrantingTicket.getProxiedBy();
         if (proxiedBy != null) {
-            LOGGER.debug("TGT is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
+            LOGGER.debug("Ticket-granting ticket is proxied by [{}]. Locating proxy service in registry...", proxiedBy.getId());
             val proxyingService = this.servicesManager.findServiceBy(proxiedBy);
             if (proxyingService != null) {
                 LOGGER.debug("Located proxying service [{}] in the service registry", proxyingService);
@@ -195,7 +194,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE + registeredService.getId());
             }
         } else {
-            LOGGER.trace("TGT is not proxied by another service");
+            LOGGER.trace("Ticket-granting ticket is not proxied by another service");
         }
     }
 

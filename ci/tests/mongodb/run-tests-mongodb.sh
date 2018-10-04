@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/mongodb/run-mongodb-server.sh
 
-gradleBuild="$gradleBuild testMongoDb  -x test -x javadoc -x check \
+gradleBuild="$gradleBuild testMongoDb jacocoRootReport -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

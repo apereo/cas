@@ -17,6 +17,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -48,7 +49,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     @Qualifier("communicationsManager")
@@ -87,7 +88,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
         if (!communicationsManager.validate()) {
             throw new BeanCreationException("Unable to submit tokens since no communication strategy is defined");
         }
-        return new CasSimpleSendTokenAction(ticketRegistry, communicationsManager,
+        return new CasSimpleSendTokenAction(ticketRegistry.getIfAvailable(), communicationsManager,
             casSimpleMultifactorAuthenticationTicketFactory(), simple);
     }
 

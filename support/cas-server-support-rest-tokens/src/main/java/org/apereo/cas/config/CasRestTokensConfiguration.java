@@ -11,6 +11,7 @@ import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.tokens.JWTServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.tokens.JWTTicketGrantingTicketResourceEntityResponseFactory;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,7 +29,7 @@ import org.springframework.context.annotation.Configuration;
 public class CasRestTokensConfiguration implements ServiceTicketResourceEntityResponseFactoryConfigurer {
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("tokenTicketBuilder")
@@ -36,20 +37,22 @@ public class CasRestTokensConfiguration implements ServiceTicketResourceEntityRe
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Bean
     public TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory() {
-        return new JWTTicketGrantingTicketResourceEntityResponseFactory(this.servicesManager, tokenTicketBuilder);
+        return new JWTTicketGrantingTicketResourceEntityResponseFactory(servicesManager.getIfAvailable(), tokenTicketBuilder);
     }
 
     @Override
     public void configureEntityResponseFactory(final ServiceTicketResourceEntityResponseFactoryPlan plan) {
-        plan.registerFactory(new JWTServiceTicketResourceEntityResponseFactory(centralAuthenticationService,
-            tokenTicketBuilder, ticketRegistrySupport, servicesManager));
+        plan.registerFactory(new JWTServiceTicketResourceEntityResponseFactory(centralAuthenticationService.getIfAvailable(),
+            tokenTicketBuilder,
+            ticketRegistrySupport.getIfAvailable(),
+            servicesManager.getIfAvailable()));
     }
 }

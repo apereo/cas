@@ -35,7 +35,7 @@ public class SamlIdPWebflowConfiguration implements CasWebflowExecutionPlanConfi
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -72,7 +72,7 @@ public class SamlIdPWebflowConfiguration implements CasWebflowExecutionPlanConfi
     @ConditionalOnMissingBean(name = "samlIdPMetadataUIParserAction")
     @Bean
     public Action samlIdPMetadataUIParserAction() {
-        return new SamlIdPMetadataUIAction(servicesManager,
+        return new SamlIdPMetadataUIAction(servicesManager.getIfAvailable(),
             defaultSamlRegisteredServiceCachingMetadataResolver,
             selectionStrategies);
     }

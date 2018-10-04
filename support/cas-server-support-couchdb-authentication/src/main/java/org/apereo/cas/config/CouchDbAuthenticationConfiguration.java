@@ -18,6 +18,7 @@ import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.pac4j.couch.profile.service.CouchProfileService;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,7 +43,7 @@ public class CouchDbAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
@@ -50,7 +51,7 @@ public class CouchDbAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Bean
     @RefreshScope
@@ -73,7 +74,7 @@ public class CouchDbAuthenticationConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer couchDbAuthenticationEventExecutionPlanConfigurer(
         @Qualifier("couchDbAuthenticationHandler") final AuthenticationHandler authenticationHandler) {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(authenticationHandler, personDirectoryPrincipalResolver);
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(authenticationHandler, personDirectoryPrincipalResolver.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "couchDbPrincipalFactory")
@@ -89,7 +90,7 @@ public class CouchDbAuthenticationConfiguration {
         @Qualifier("couchDbAuthenticatorProfileService") final CouchProfileService couchProfileService,
         @Qualifier("couchDbPrincipalFactory") final PrincipalFactory principalFactory) {
         val couchDb = casProperties.getAuthn().getCouchDb();
-        val handler = new CouchDbAuthenticationHandler(couchDb.getName(), servicesManager, principalFactory, couchDb.getOrder());
+        val handler = new CouchDbAuthenticationHandler(couchDb.getName(), servicesManager.getIfAvailable(), principalFactory, couchDb.getOrder());
         handler.setAuthenticator(couchProfileService);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(couchDb.getPrincipalTransformation()));
         return handler;

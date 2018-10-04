@@ -144,7 +144,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -159,7 +159,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -246,7 +246,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
-        return new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport, servicesManager.getIfAvailable(), webApplicationServiceFactory);
+        return new OAuth20UsernamePasswordAuthenticator(authenticationSystemSupport.getIfAvailable(), servicesManager.getIfAvailable(), webApplicationServiceFactory);
     }
 
     @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
@@ -355,36 +355,45 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     @Bean
     public Collection<AccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors() {
-        final AccessTokenGrantRequestExtractor pkceExt =
-            new AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
-                centralAuthenticationService, casProperties.getAuthn().getOauth(),
-                webApplicationServiceFactory);
+        val pkceExt = new AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            casProperties.getAuthn().getOauth(),
+            webApplicationServiceFactory);
 
-        final AccessTokenGrantRequestExtractor authzCodeExt =
-            new AccessTokenAuthorizationCodeGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
-                centralAuthenticationService, casProperties.getAuthn().getOauth(),
-                webApplicationServiceFactory);
+        val authzCodeExt = new AccessTokenAuthorizationCodeGrantRequestExtractor(servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            casProperties.getAuthn().getOauth(),
+            webApplicationServiceFactory);
 
-        final AccessTokenGrantRequestExtractor refreshTokenExt =
-            new AccessTokenRefreshTokenGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
-                centralAuthenticationService, casProperties.getAuthn().getOauth(),
-                webApplicationServiceFactory);
+        val refreshTokenExt = new AccessTokenRefreshTokenGrantRequestExtractor(servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            casProperties.getAuthn().getOauth(),
+            webApplicationServiceFactory);
 
         val authenticationBuilder = oauthCasAuthenticationBuilder();
-        final AccessTokenGrantRequestExtractor pswExt =
-            new AccessTokenPasswordGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
-                authenticationBuilder, centralAuthenticationService,
-                casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
+        val pswExt = new AccessTokenPasswordGrantRequestExtractor(servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
+            authenticationBuilder,
+            centralAuthenticationService.getIfAvailable(),
+            casProperties.getAuthn().getOauth(),
+            registeredServiceAccessStrategyEnforcer);
 
-        final AccessTokenGrantRequestExtractor credsExt =
-            new AccessTokenClientCredentialsGrantRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
-                authenticationBuilder, centralAuthenticationService,
-                casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
+        val credsExt = new AccessTokenClientCredentialsGrantRequestExtractor(servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
+            authenticationBuilder,
+            centralAuthenticationService.getIfAvailable(),
+            casProperties.getAuthn().getOauth(),
+            registeredServiceAccessStrategyEnforcer);
 
-        final AccessTokenGrantRequestExtractor deviceCodeExt =
-            new AccessTokenDeviceCodeResponseRequestExtractor(this.servicesManager.getIfAvailable(), this.ticketRegistry.getIfAvailable(),
-                centralAuthenticationService, casProperties.getAuthn().getOauth(),
-                authenticationBuilder, registeredServiceAccessStrategyEnforcer);
+        val deviceCodeExt = new AccessTokenDeviceCodeResponseRequestExtractor(servicesManager.getIfAvailable(),
+            ticketRegistry.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            casProperties.getAuthn().getOauth(),
+            authenticationBuilder,
+            registeredServiceAccessStrategyEnforcer);
 
         return CollectionUtils.wrapList(pkceExt, authzCodeExt, refreshTokenExt, deviceCodeExt, pswExt, credsExt);
     }
@@ -401,10 +410,9 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
             profileScopeToAttributesFilter(),
             casProperties,
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            centralAuthenticationService,
+            centralAuthenticationService.getIfAvailable(),
             registeredServiceAccessStrategyEnforcer);
     }
-
 
     @ConditionalOnMissingBean(name = "accessTokenController")
     @Bean
@@ -520,7 +528,6 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @Bean
     @ConditionalOnMissingBean(name = "oauthDeviceCodeResponseTypeRequestValidator")
     public OAuth20TokenRequestValidator oauthDeviceCodeResponseTypeRequestValidator() {
-        val registry = ticketRegistry.getIfAvailable();
         val svcManager = servicesManager.getIfAvailable();
         return new OAuth20DeviceCodeResponseTypeRequestValidator(svcManager, webApplicationServiceFactory);
     }

@@ -1,14 +1,15 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apereo.cas.authentication.AbstractCredential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
 
 /**
  * This is {@link DuoDirectCredential}.

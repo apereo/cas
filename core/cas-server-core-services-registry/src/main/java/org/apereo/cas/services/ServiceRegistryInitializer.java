@@ -1,9 +1,12 @@
 package org.apereo.cas.services;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.stream.Collectors;
 
 
 /**
@@ -24,9 +27,10 @@ public class ServiceRegistryInitializer {
     /**
      * Init service registry if necessary.
      */
+    @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     public void initServiceRegistryIfNecessary() {
         val size = this.serviceRegistry.size();
-        LOGGER.debug("Service registry contains [{}] service definition(s)", size);
+        LOGGER.trace("Service registry contains [{}] service definition(s)", size);
 
         LOGGER.warn("Service registry [{}] will be auto-initialized from JSON service definitions. "
             + "This behavior is only useful for testing purposes and MAY NOT be appropriate for production. "
@@ -34,7 +38,7 @@ public class ServiceRegistryInitializer {
             + "and explicitly register definitions in the services registry.", this.serviceRegistry.getName());
 
         val servicesLoaded = this.jsonServiceRegistry.load();
-        LOGGER.debug("Loading JSON services are [{}]", servicesLoaded);
+        LOGGER.debug("Loaded JSON services are [{}]", servicesLoaded.stream().map(RegisteredService::getName).collect(Collectors.joining(",")));
 
         servicesLoaded
             .stream()

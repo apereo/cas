@@ -20,6 +20,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,18 +45,18 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("ticketRegistry")
-    private TicketRegistry ticketRegistry;
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @ConditionalOnMissingBean(name = "casSimpleMultifactorAuthenticationHandler")
     @Bean
     @RefreshScope
     public AuthenticationHandler casSimpleMultifactorAuthenticationHandler() {
         return new CasSimpleMultifactorAuthenticationHandler(casProperties.getAuthn().getMfa().getSimple().getName(),
-            servicesManager, casSimpleMultifactorPrincipalFactory(), ticketRegistry);
+            servicesManager.getIfAvailable(), casSimpleMultifactorPrincipalFactory(), ticketRegistry.getIfAvailable());
     }
 
     @Bean

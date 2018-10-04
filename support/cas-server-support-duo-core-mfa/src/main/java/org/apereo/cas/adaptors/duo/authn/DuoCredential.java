@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apereo.cas.authentication.AbstractCredential;
 import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

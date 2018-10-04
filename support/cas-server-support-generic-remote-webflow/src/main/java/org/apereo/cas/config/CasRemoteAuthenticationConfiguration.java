@@ -18,6 +18,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,7 +45,7 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -73,7 +74,7 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "remoteAddressWebflowConfigurer")
     @Bean
@@ -87,7 +88,7 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
         val remoteAddress = casProperties.getAuthn().getRemoteAddress();
         val bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(),
-            servicesManager,
+            servicesManager.getIfAvailable(),
             remoteAddressPrincipalFactory());
         bean.configureIpNetworkRange(remoteAddress.getIpAddressRange());
         return bean;
@@ -109,7 +110,7 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
     @ConditionalOnMissingBean(name = "remoteAddressAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer remoteAddressAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(), personDirectoryPrincipalResolver);
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
     }
 
     @Override

@@ -12,6 +12,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -34,15 +35,15 @@ public class SurrogateWebflowEventResolutionConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
@@ -62,14 +63,15 @@ public class SurrogateWebflowEventResolutionConfiguration {
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Bean
     @RefreshScope
     public CasWebflowEventResolver surrogateMultifactorAuthenticationWebflowEventResolver() {
-        val r = new SurrogateMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
-            centralAuthenticationService, servicesManager,
-            ticketRegistrySupport,
+        val r = new SurrogateMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
             warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,
             selector,

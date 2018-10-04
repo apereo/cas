@@ -66,7 +66,9 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer() {
         return plan -> {
-            plan.registerAuthenticationHandlerResolver(byCredentialSourceAuthenticationHandlerResolver());
+            if (casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
+                plan.registerAuthenticationHandlerResolver(byCredentialSourceAuthenticationHandlerResolver());
+            }
             plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
         };
     }

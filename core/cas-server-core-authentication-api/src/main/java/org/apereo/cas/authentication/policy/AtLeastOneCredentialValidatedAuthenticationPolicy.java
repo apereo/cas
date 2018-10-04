@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.policy;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 
 import lombok.AllArgsConstructor;
@@ -8,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+
+import java.util.Set;
 
 /**
  * Authentication policy that is satisfied by at least one successfully authenticated credential.
@@ -19,7 +22,7 @@ import lombok.val;
 @Setter
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class AnyAuthenticationPolicy implements AuthenticationPolicy {
+public class AtLeastOneCredentialValidatedAuthenticationPolicy implements AuthenticationPolicy {
 
     /**
      * Flag to try all credentials before policy is satisfied. Defaults to {@code false}.
@@ -27,7 +30,7 @@ public class AnyAuthenticationPolicy implements AuthenticationPolicy {
     private final boolean tryAll;
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authn) throws Exception {
+    public boolean isSatisfiedBy(final Authentication authn, final Set<AuthenticationHandler> authenticationHandlers) throws Exception {
         if (this.tryAll) {
             val sum = authn.getSuccesses().size() + authn.getFailures().size();
             if (authn.getCredentials().size() != sum) {
