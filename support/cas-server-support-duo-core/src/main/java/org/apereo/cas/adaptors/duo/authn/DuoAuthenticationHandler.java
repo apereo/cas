@@ -98,8 +98,8 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     @Override
     public boolean supports(final Credential credential) {
-        if (credential.getClass().isAssignableFrom(MultifactorAuthenticationCredential.class)) {
-            final String id = MultifactorAuthenticationCredential.class.cast(credential).getProviderId();
+        if (credential instanceof MultifactorAuthenticationCredential) {
+            final String id = ((MultifactorAuthenticationCredential) credential).getProviderId();
             return provider.validateId(id);
         }
         return false;
