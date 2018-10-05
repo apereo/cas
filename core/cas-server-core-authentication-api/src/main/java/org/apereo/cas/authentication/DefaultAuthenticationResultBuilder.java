@@ -1,14 +1,17 @@
 package org.apereo.cas.authentication;
 
-import lombok.NoArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.services.persondir.support.merger.IAttributeMerger;
+import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
+
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -16,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationResultBuilder}.
@@ -29,7 +33,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     private static final long serialVersionUID = 6180465589526463843L;
 
-    private List<Credential> providedCredentials = new ArrayList<>();
+    private final List<Credential> providedCredentials = new ArrayList<>();
 
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
 
@@ -113,35 +117,15 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             final Principal authenticatedPrincipal = authn.getPrincipal();
             LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);
 
-            principalAttributes.putAll(authenticatedPrincipal.getAttributes());
+            principalAttributes.putAll(mergeAttributes(principalAttributes, authenticatedPrincipal.getAttributes()));
             LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
                 principalAttributes, authenticatedPrincipal.getId());
 
-            authn.getAttributes().keySet().forEach(attrName -> {
-                if (authenticationAttributes.containsKey(attrName)) {
-                    LOGGER.debug("Collecting multi-valued authentication attribute [{}]", attrName);
-                    final Object oldValue = authenticationAttributes.remove(attrName);
-
-                    LOGGER.debug("Converting authentication attribute [{}] to a collection of values", attrName);
-                    final Collection<Object> listOfValues = CollectionUtils.toCollection(oldValue);
-                    final Object newValue = authn.getAttributes().get(attrName);
-                    listOfValues.addAll(CollectionUtils.toCollection(newValue));
-                    authenticationAttributes.put(attrName, listOfValues);
-                    LOGGER.debug("Collected multi-valued authentication attribute [{}] -> [{}]", attrName, listOfValues);
-                } else {
-                    final Object value = authn.getAttributes().get(attrName);
-                    if (value != null) {
-                        authenticationAttributes.put(attrName, value);
-                        LOGGER.debug("Collected single authentication attribute [{}] -> [{}]", attrName, value);
-                    } else {
-                        LOGGER.warn("Authentication attribute [{}] has no value and is not collected", attrName);
-                    }
-                }
-            });
-
+            authenticationAttributes.putAll(mergeAttributes(authenticationAttributes, authn.getAttributes()));
             LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
 
-            authenticationBuilder.addSuccesses(authn.getSuccesses())
+            authenticationBuilder
+                .addSuccesses(authn.getSuccesses())
                 .addFailures(authn.getFailures())
                 .addCredentials(authn.getCredentials());
         });
@@ -152,9 +136,28 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * Based on that restriction, it's safe to simply grab the first principal id in the chain
      * when composing the authentication chain for the caller.
      */
-    private Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
-                                          final Set<Authentication> authentications,
-                                          final Map<String, Object> principalAttributes) {
+    private static Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
+                                                 final Set<Authentication> authentications,
+                                                 final Map<String, Object> principalAttributes) {
         return principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
+    }
+
+    private static Map<String, Object> mergeAttributes(final Map<String, Object> currentAttributes, final Map<String, Object> attributesToMerge) {
+        final IAttributeMerger merger = new MultivaluedAttributeMerger();
+
+        final Map toModify = currentAttributes.entrySet()
+            .stream()
+            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        final Map toMerge = attributesToMerge.entrySet()
+            .stream()
+            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        LOGGER.debug("Merging current attributes [{}] with [{}]", currentAttributes, attributesToMerge);
+        final Map results = merger.mergeAttributes((Map) toModify, (Map) toMerge);
+        LOGGER.debug("Merged attributes with the final result as [{}]", results);
+        return results;
     }
 }
