@@ -8,7 +8,11 @@ import java.util.Collection;
  *
  * @author Misagh Moayyed
  * @since 5.1.0
+ *
+ * @deprecated as of 5.3.4, use {@link MultifactorAuthenticationProviderFactory} to provide multiple instances
+ * of multifactor authentication providers.  This interface will be removed in the next 6.0 major release
  */
+@Deprecated
 public interface VariegatedMultifactorAuthenticationProvider extends MultifactorAuthenticationProvider {
 
     /**
