@@ -917,7 +917,7 @@ function run(uid, logger) {
     // If you want to call back into Java, this is one way to do so
     var javaObj = new JavaImporter(org.yourorgname.yourpackagename);
     with (javaObj) {
-    	var objFromJava = JavaClassInPackage.someStaticMethod(uid);
+        var objFromJava = JavaClassInPackage.someStaticMethod(uid);
     }
 
     var map = {};
@@ -2731,6 +2731,10 @@ Delegate authentication to Facebook. Common settings for this identity provider 
 # cas.authn.pac4j.facebook.fields=
 # cas.authn.pac4j.facebook.scope=
 ```
+
+### HiOrg Server
+
+Delegate authentication to HiOrg Server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.hiOrgServer`.
 
 ### LinkedIn
 
