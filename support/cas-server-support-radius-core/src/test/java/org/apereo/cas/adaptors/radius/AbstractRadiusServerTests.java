@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.radius;
 
-import org.apereo.cas.adaptors.radius.server.BlockingRadiusServer;
-
 import lombok.val;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;

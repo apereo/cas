@@ -409,7 +409,7 @@ In order to enable RSA functionality for encrypting payloads, you will need to e
 The following options related to Person Directory support in CAS when it attempts to resolve and build the authenticated principal, given the component's *configuration key*:
 
 ```properties
-# ${configurationKey}.principalAttribute=
+# ${configurationKey}.principalAttribute=uid,sAMAccountName,etc
 # ${configurationKey}.returnNull=false
 # ${configurationKey}.principalResolutionFailureFatal=false
 # ${configurationKey}.useExistingPrincipalId=false
