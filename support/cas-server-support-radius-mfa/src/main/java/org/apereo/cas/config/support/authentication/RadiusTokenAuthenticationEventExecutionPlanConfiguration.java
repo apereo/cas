@@ -1,6 +1,5 @@
 package org.apereo.cas.config.support.authentication;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
@@ -22,6 +21,8 @@ import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -77,12 +78,13 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         final RadiusServerProperties server = casProperties.getAuthn().getMfa().getRadius().getServer();
 
         final RadiusClientFactory factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
-                client.getInetAddress(), client.getSharedSecret());
+            client.getInetAddress(), client.getSharedSecret());
 
         final RadiusProtocol protocol = RadiusProtocol.valueOf(server.getProtocol());
         final JRadiusServerImpl impl = new JRadiusServerImpl(protocol, factory, server.getRetries(),
-                server.getNasIpAddress(), server.getNasIpv6Address(),
-                server.getNasPort(), server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort());
+            server.getNasIpAddress(), server.getNasIpv6Address(),
+            server.getNasPort(), server.getNasPortId(), server.getNasIdentifier(),
+            server.getNasRealPort(), server.getNasPortType());
 
         list.add(impl);
         return list;
@@ -99,7 +101,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
         final RadiusMultifactorProperties radius = casProperties.getAuthn().getMfa().getRadius();
         return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager, radiusTokenPrincipalFactory(), radiusTokenServers(),
-                radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
+            radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
     }
 
     @Bean
@@ -107,9 +109,9 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
         final String attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(
-                attribute,
-                radiusTokenAuthenticationHandler(),
-                radiusAuthenticationProvider().getId()
+            attribute,
+            radiusTokenAuthenticationHandler(),
+            radiusAuthenticationProvider().getId()
         );
     }
 
