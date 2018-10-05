@@ -35,6 +35,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -373,7 +374,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         final Authentication auth = assertion.getPrimaryAuthentication();
         final Map<String, Object> attributes = auth.getPrincipal().getAttributes();
         assertEquals(1, attributes.size());
-        assertEquals("adopters", attributes.get("groupMembership"));
+        assertEquals("adopters", List.class.cast(attributes.get("groupMembership")).get(0));
     }
 
     @Test
