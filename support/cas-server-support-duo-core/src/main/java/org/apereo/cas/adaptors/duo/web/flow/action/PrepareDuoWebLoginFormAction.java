@@ -29,7 +29,7 @@ public class PrepareDuoWebLoginFormAction extends AbstractMultifactorAuthenticat
 
         final DuoCredential c = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_CREDENTIAL, DuoCredential.class);
         c.setUsername(p.getId());
-        c.setMark(provider.createMark());
+        c.setProviderId(provider.createUniqueId());
 
         final DuoSecurityAuthenticationService duoAuthenticationService = provider.getDuoAuthenticationService();
         final MutableAttributeMap<Object> viewScope = requestContext.getViewScope();
