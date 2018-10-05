@@ -49,6 +49,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-throttle")
     testImplementation project(":core:cas-server-core-configuration-api")
     testImplementation project(":core:cas-server-core-services-registry")
+    testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-mfa")
     
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

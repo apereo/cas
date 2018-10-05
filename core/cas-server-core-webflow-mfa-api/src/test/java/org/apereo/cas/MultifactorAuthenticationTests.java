@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/core.properties"},
     properties = "cas.authn.policy.requiredHandlerAuthenticationPolicyEnabled=true")
 @Import(CasMultifactorTestAuthenticationEventExecutionPlanConfiguration.class)
-public class MultifactorAuthenticationTests extends BaseCasCoreTests {
+public class MultifactorAuthenticationTests extends BaseCasWebflowMfaTests {
 
     private static final Service NORMAL_SERVICE = newService("https://example.com/normal/");
     private static final Service HIGH_SERVICE = newService("https://example.com/high/");

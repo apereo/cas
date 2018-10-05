@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
     "cas.authn.adaptive.requireTimedMultifactor[0].onOrAfterHour=-1",
     "cas.authn.adaptive.requireTimedMultifactor[0].onDays=Saturday,Sunday,Monday,Tuesday,Wednesday,Thursday,Friday"
 })
-public class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasCoreTests {
+public class TimedMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMfaTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
