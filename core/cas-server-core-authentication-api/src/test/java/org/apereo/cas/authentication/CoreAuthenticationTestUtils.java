@@ -1,6 +1,9 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -133,6 +136,10 @@ public class CoreAuthenticationTestUtils {
 
     public static Authentication getAuthentication(final String name) {
         return getAuthentication(getPrincipal(name));
+    }
+
+    public static Authentication getAuthentication(final String name, final Map<String, Object> attributes) {
+        return getAuthentication(getPrincipal(name), attributes, null);
     }
 
     public static Authentication getAuthentication(final String name, final ZonedDateTime authnDate) {

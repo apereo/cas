@@ -29,7 +29,7 @@ echo -e "***********************************************"
 
 ./ci/tests/dynamodb/run-dynamodb-server.sh
 
-gradleBuild="$gradleBuild testDynamoDb  -x test -x javadoc -x check \
+gradleBuild="$gradleBuild testDynamoDb jacocoRootReport -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 

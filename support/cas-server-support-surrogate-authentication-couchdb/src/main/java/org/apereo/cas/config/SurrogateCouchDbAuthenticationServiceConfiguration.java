@@ -14,6 +14,7 @@ import lombok.val;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,7 +43,7 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("surrogateCouchDbFactory")
@@ -95,9 +96,10 @@ public class SurrogateCouchDbAuthenticationServiceConfiguration {
     public SurrogateAuthenticationService surrogateAuthenticationService() {
         val couchDb = casProperties.getAuthn().getSurrogate().getCouchDb();
         if (couchDb.isProfileBased()) {
-            return new SurrogateCouchDbProfileAuthenticationService(surrogateAuthorizationProfileCouchDbRepository(), couchDb.getSurrogatePrincipalsAttribute(), servicesManager);
-        } else {
-            return new SurrogateCouchDbAuthenticationService(surrogateAuthorizationCouchDbRepository(), servicesManager);
+            return new SurrogateCouchDbProfileAuthenticationService(surrogateAuthorizationProfileCouchDbRepository(),
+                couchDb.getSurrogatePrincipalsAttribute(), servicesManager.getIfAvailable());
         }
+        return new SurrogateCouchDbAuthenticationService(surrogateAuthorizationCouchDbRepository(), servicesManager.getIfAvailable());
+
     }
 }

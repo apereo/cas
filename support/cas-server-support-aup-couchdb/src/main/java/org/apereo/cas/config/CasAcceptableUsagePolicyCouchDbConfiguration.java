@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,7 +34,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
@@ -51,8 +52,7 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @RefreshScope
     public ProfileCouchDbRepository aupCouchDbRepository(@Qualifier("aupCouchDbFactory") final CouchDbConnectorFactory aupCouchDbFactory) {
         val couchDb = casProperties.getAcceptableUsagePolicy().getCouchDb();
-        val repository = new ProfileCouchDbRepository(aupCouchDbFactory.getCouchDbConnector(),
-            couchDb.isCreateIfNotExists());
+        val repository = new ProfileCouchDbRepository(aupCouchDbFactory.getCouchDbConnector(), couchDb.isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
     }
@@ -62,8 +62,9 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
     @RefreshScope
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository(
         @Qualifier("aupCouchDbRepository") final ProfileCouchDbRepository profileCouchDbRepository) {
-        return new CouchDbAcceptableUsagePolicyRepository(ticketRegistrySupport,
+        return new CouchDbAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable(),
             casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
-            profileCouchDbRepository, casProperties.getAcceptableUsagePolicy().getCouchDb().getRetries());
+            profileCouchDbRepository,
+            casProperties.getAcceptableUsagePolicy().getCouchDb().getRetries());
     }
 }

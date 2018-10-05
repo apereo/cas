@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow.login;
 
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -99,14 +99,16 @@ public class InitialFlowSetupAction extends AbstractAction {
             StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
                 || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
 
-        val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
-            .stream()
-            .filter(h -> h.supports(UsernamePasswordCredential.class))
-            .map(h -> StringUtils.capitalize(h.getName().trim()))
-            .distinct()
-            .sorted()
-            .collect(Collectors.toList());
-        WebUtils.putAvailableAuthenticationHandleNames(context, availableHandlers);
+        if (casProperties.getAuthn().getPolicy().isSourceSelectionEnabled()) {
+            val availableHandlers = authenticationEventExecutionPlan.getAuthenticationHandlers()
+                .stream()
+                .filter(h -> h.supports(UsernamePasswordCredential.class))
+                .map(h -> StringUtils.capitalize(h.getName().trim()))
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+            WebUtils.putAvailableAuthenticationHandleNames(context, availableHandlers);
+        }
     }
 
     private void configureCookieGenerators(final RequestContext context) {

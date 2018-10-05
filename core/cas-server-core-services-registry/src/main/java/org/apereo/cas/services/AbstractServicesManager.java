@@ -196,7 +196,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
         fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:60000}")
     @Override
     public Collection<RegisteredService> load() {
-        LOGGER.debug("Loading services from [{}]", this.serviceRegistry);
+        LOGGER.trace("Loading services from [{}]", this.serviceRegistry);
         this.services = this.serviceRegistry.load()
             .stream()
             .collect(Collectors.toConcurrentMap(r -> {
@@ -226,9 +226,8 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
     }
 
     private Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
-        val predicates = new ArrayList<Predicate<RegisteredService>>();
 
-        predicates.addAll(Stream.of(p).collect(Collectors.toList()));
+        val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
         return predicates.stream().reduce(x -> true, Predicate::and);
     }
 

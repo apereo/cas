@@ -1,10 +1,11 @@
-package org.apereo.cas.authentication;
+package org.apereo.cas.authentication.metadata;
+
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.CredentialMetaData;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 
 /**
  * Basic credential metadata implementation that stores the original credential ID and the original credential type.
@@ -16,7 +17,7 @@ import java.io.Serializable;
 @Getter
 @NoArgsConstructor(force = true)
 @EqualsAndHashCode
-public class BasicCredentialMetaData implements CredentialMetaData, Serializable {
+public class BasicCredentialMetaData implements CredentialMetaData {
 
     /**
      * Serialization version marker.

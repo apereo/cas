@@ -1,10 +1,11 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
+import org.apereo.cas.adaptors.radius.server.AbstractRadiusServer;
+import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -62,39 +63,37 @@ public class RadiusConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    /**
-     * Radius server j radius server.
-     *
-     * @return the j radius server
-     */
     @RefreshScope
     @Bean
-    public JRadiusServerImpl radiusServer() {
-        val client = casProperties.getAuthn().getRadius().getClient();
-        val server = casProperties.getAuthn().getRadius().getServer();
+    public AbstractRadiusServer radiusServer() {
+        val radius = casProperties.getAuthn().getRadius();
+        val client = radius.getClient();
+        val server = radius.getServer();
 
         val ips = getClientIps(client);
         return getSingleRadiusServer(client, server, ips.iterator().next());
     }
 
-    private JRadiusServerImpl getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
-        val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
-            clientInetAddress, client.getSharedSecret());
+    private AbstractRadiusServer getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
+        val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(),
+            client.getSocketTimeout(), clientInetAddress, client.getSharedSecret());
 
         val protocol = RadiusProtocol.valueOf(server.getProtocol());
 
-        return new JRadiusServerImpl(protocol, factory, server.getRetries(),
+        return new NonBlockingRadiusServer(protocol, factory, server.getRetries(),
             server.getNasIpAddress(), server.getNasIpv6Address(), server.getNasPort(),
-            server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort());
+            server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort(),
+            server.getNasPortType());
     }
 
     @RefreshScope
     @Bean
     public List<RadiusServer> radiusServers() {
-        val client = casProperties.getAuthn().getRadius().getClient();
-        val server = casProperties.getAuthn().getRadius().getServer();
+        val radius = casProperties.getAuthn().getRadius();
+        val client = radius.getClient();
+        val server = radius.getServer();
 
-        val ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
+        val ips = getClientIps(radius.getClient());
         return ips.stream().map(ip -> getSingleRadiusServer(client, server, ip)).collect(Collectors.toList());
     }
 

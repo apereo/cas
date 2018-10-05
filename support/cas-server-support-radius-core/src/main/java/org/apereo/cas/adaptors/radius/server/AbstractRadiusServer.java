@@ -1,10 +1,16 @@
-package org.apereo.cas.adaptors.radius;
+package org.apereo.cas.adaptors.radius.server;
 
-import lombok.Setter;
+import org.apereo.cas.adaptors.radius.CasRadiusResponse;
+import org.apereo.cas.adaptors.radius.RadiusClientFactory;
+import org.apereo.cas.adaptors.radius.RadiusProtocol;
+import org.apereo.cas.adaptors.radius.RadiusServer;
+
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jradius.client.RadiusClient;
+import net.jradius.client.auth.RadiusAuthenticator;
 import net.jradius.dictionary.Attr_ClientIPAddress;
 import net.jradius.dictionary.Attr_NASIPAddress;
 import net.jradius.dictionary.Attr_NASIPv6Address;
@@ -12,18 +18,22 @@ import net.jradius.dictionary.Attr_NASIdentifier;
 import net.jradius.dictionary.Attr_NASPort;
 import net.jradius.dictionary.Attr_NASPortId;
 import net.jradius.dictionary.Attr_NASPortType;
+import net.jradius.dictionary.Attr_State;
 import net.jradius.dictionary.Attr_UserName;
 import net.jradius.dictionary.Attr_UserPassword;
 import net.jradius.dictionary.vsa_redback.Attr_NASRealPort;
 import net.jradius.packet.AccessAccept;
 import net.jradius.packet.AccessRequest;
+import net.jradius.packet.RadiusResponse;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import java.io.Serializable;
 import java.security.Security;
+import java.util.Optional;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
@@ -36,8 +46,8 @@ import java.security.Security;
  */
 @Slf4j
 @ToString
-@Setter
-public class JRadiusServerImpl implements RadiusServer {
+@Getter
+public abstract class AbstractRadiusServer implements RadiusServer {
 
     /**
      * Default retry count, {@value}.
@@ -63,42 +73,26 @@ public class JRadiusServerImpl implements RadiusServer {
 
     private final String nasIpv6Address;
     private final String nasIdentifier;
+
     /**
      * Number of times to retry authentication when no response is received.
      */
-    private int retries = DEFAULT_RETRY_COUNT;
-    private long nasPort = -1;
-    private long nasPortId = -1;
-    private long nasRealPort = -1;
-    private long nasPortType = -1;
+    private final int retries;
 
-    /**
-     * Instantiates a new J radius server.
-     *
-     * @param protocol            the protocol
-     * @param radiusClientFactory the radius client factory
-     */
-    public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory radiusClientFactory) {
-        this(protocol, radiusClientFactory, 1, null, null, -1, -1, null, -1);
+    private final long nasPort;
+    private final long nasPortId;
+    private final long nasRealPort;
+
+    private final long nasPortType;
+
+    public AbstractRadiusServer(final RadiusProtocol protocol, final RadiusClientFactory radiusClientFactory) {
+        this(protocol, radiusClientFactory, 1, null,
+            null, -1, -1, null, -1, -1);
     }
 
-    /**
-     * Instantiates a new server implementation
-     * with the radius protocol and client factory specified.
-     *
-     * @param protocol       the protocol
-     * @param clientFactory  the client factory
-     * @param retries        the new retries
-     * @param nasIpAddress   the new nas ip address
-     * @param nasIpv6Address the new nas ipv6 address
-     * @param nasPort        the new nas port
-     * @param nasPortId      the new nas port id
-     * @param nasIdentifier  the new nas identifier
-     * @param nasRealPort    the new nas real port
-     */
-    public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory, final int retries,
-                             final String nasIpAddress, final String nasIpv6Address, final long nasPort, final long nasPortId,
-                             final String nasIdentifier, final long nasRealPort) {
+    public AbstractRadiusServer(final RadiusProtocol protocol, final RadiusClientFactory clientFactory, final int retries,
+                                final String nasIpAddress, final String nasIpv6Address, final long nasPort, final long nasPortId,
+                                final String nasIdentifier, final long nasRealPort, final long nasPortType) {
         this.protocol = protocol;
         this.radiusClientFactory = clientFactory;
         this.retries = retries;
@@ -108,12 +102,13 @@ public class JRadiusServerImpl implements RadiusServer {
         this.nasPortId = nasPortId;
         this.nasIdentifier = nasIdentifier;
         this.nasRealPort = nasRealPort;
+        this.nasPortType = nasPortType;
     }
 
     @Override
-    public RadiusResponse authenticate(final String username, final String password) throws Exception {
+    public final CasRadiusResponse authenticate(final String username, final String password, final Optional<Serializable> state) throws Exception {
         val attributeList = new AttributeList();
-        
+
         attributeList.add(new Attr_UserName(username));
         attributeList.add(new Attr_UserPassword(password));
 
@@ -124,6 +119,8 @@ public class JRadiusServerImpl implements RadiusServer {
             LOGGER.debug("Adding client IP address attribute [{}]", clientIpAttribute);
             attributeList.add(clientIpAttribute);
         }
+
+        state.ifPresent(value -> attributeList.add(new Attr_State(value)));
 
         if (StringUtils.isNotBlank(this.nasIpAddress)) {
             attributeList.add(new Attr_NASIPAddress(this.nasIpAddress));
@@ -149,16 +146,18 @@ public class JRadiusServerImpl implements RadiusServer {
         val client = this.radiusClientFactory.newInstance();
         try {
             val request = new AccessRequest(client, attributeList);
-            val authProtocol = RadiusClient.getAuthProtocol(this.protocol.getName());
-            val response = client.authenticate(request, authProtocol, this.retries);
-            LOGGER.debug("RADIUS response from [{}]: [{}]. Code: [{}], Identifier: [{}]", client.getRemoteInetAddress().getCanonicalHostName(),
-                response.getClass().getName(), response.getCode(), response.getIdentifier());
+            LOGGER.debug("RADIUS access request prepared as [{}]", request.toString(true, true));
+
+            val response = authenticateRequest(client, request);
+            LOGGER.debug("RADIUS response from [{}]: [{}] as [{}]", client.getRemoteInetAddress().getCanonicalHostName(),
+                response.getClass().getName(), response.toString(true, true));
+
             if (response instanceof AccessAccept) {
                 val attributes = response.getAttributes().getAttributeList();
                 LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]", response.getCode(), attributes, response.getIdentifier());
-                return new RadiusResponse(response.getCode(), response.getIdentifier(), attributes);
+                return new CasRadiusResponse(response.getCode(), response.getIdentifier(), attributes);
             }
-            LOGGER.debug("Response is not recognized");
+            LOGGER.warn("Response is not recognized");
         } finally {
             if (client != null) {
                 client.close();
@@ -166,4 +165,24 @@ public class JRadiusServerImpl implements RadiusServer {
         }
         return null;
     }
+
+    /**
+     * Gets radius authenticator.
+     *
+     * @return the radius authenticator
+     */
+    public RadiusAuthenticator getRadiusAuthenticator() {
+        return RadiusClient.getAuthProtocol(this.protocol.getName());
+    }
+
+    /**
+     * Authenticate request and produce a response.
+     *
+     * @param client        the client
+     * @param accessRequest the access request
+     * @return the radius response
+     * @throws Exception the exception
+     */
+    protected abstract RadiusResponse authenticateRequest(RadiusClient client, AccessRequest accessRequest) throws Exception;
+
 }

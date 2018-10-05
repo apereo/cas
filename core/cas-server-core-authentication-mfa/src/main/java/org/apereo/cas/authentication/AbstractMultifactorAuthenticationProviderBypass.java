@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractMultifactorAuthenticationProviderBypass implements MultifactorAuthenticationProviderBypass {
 
+    private static final long serialVersionUID = 4615581035655634359L;
+
     /**
      * Bypass settings used for configuration.
      */

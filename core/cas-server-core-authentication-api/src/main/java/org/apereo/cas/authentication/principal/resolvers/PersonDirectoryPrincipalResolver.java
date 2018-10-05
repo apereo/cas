@@ -67,7 +67,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     /**
      * Optional principal attribute name.
      */
-    protected final String principalAttributeName;
+    protected final String principalAttributeNames;
 
     /**
      * Use the current principal id for extraction.
@@ -79,23 +79,23 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             String::trim, null);
     }
 
-    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository, final String principalAttributeName) {
-        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(), false, formUserId -> formUserId, principalAttributeName);
+    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository, final String principalAttributeNames) {
+        this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(), false, formUserId -> formUserId, principalAttributeNames);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository) {
         this(attributeRepository, PrincipalFactoryUtils.newPrincipalFactory(), false, formUserId -> formUserId, null);
     }
 
-    public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeName) {
+    public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeNames) {
         this(new StubPersonAttributeDao(new HashMap<>()), PrincipalFactoryUtils.newPrincipalFactory(),
-            returnNullIfNoAttributes, String::trim, principalAttributeName);
+            returnNullIfNoAttributes, String::trim, principalAttributeNames);
     }
 
     public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                             final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                            final String principalAttributeName) {
-        this(attributeRepository, principalFactory, returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName);
+                                            final String principalAttributeNames) {
+        this(attributeRepository, principalFactory, returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeNames);
     }
 
     @Override
@@ -131,7 +131,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         }
         LOGGER.debug("Retrieved [{}] attribute(s) from the repository", attributes.size());
         val pair = convertPersonAttributesToPrincipal(principalId, attributes);
-        return this.principalFactory.createPrincipal(pair.getKey(), pair.getValue());
+        val principal = this.principalFactory.createPrincipal(pair.getKey(), pair.getValue());
+        LOGGER.info("Final resolved principal by [{}] is [{}]", getName(), principal);
+        return principal;
     }
 
     /**
@@ -143,28 +145,42 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      */
     protected Pair<String, Map<String, Object>> convertPersonAttributesToPrincipal(final String extractedPrincipalId,
                                                                                    final Map<String, List<Object>> attributes) {
-        final String[] principalId = {extractedPrincipalId};
         val convertedAttributes = new LinkedHashMap<String, Object>();
         attributes.forEach((key, attrValue) -> {
             val values = CollectionUtils.toCollection(attrValue, ArrayList.class);
             LOGGER.debug("Found attribute [{}] with value(s) [{}]", key, values);
-            if (StringUtils.isNotBlank(this.principalAttributeName) && key.equalsIgnoreCase(this.principalAttributeName)) {
-                if (values.isEmpty()) {
-                    LOGGER.debug("[{}] is empty, using [{}] for principal", this.principalAttributeName, extractedPrincipalId);
-                } else {
-                    principalId[0] = CollectionUtils.firstElement(values).get().toString();
-                    LOGGER.debug("Found principal attribute value [{}]; removing [{}] from attribute map.", extractedPrincipalId, this.principalAttributeName);
-                }
+            if (values.size() == 1) {
+                val value = CollectionUtils.firstElement(values).get();
+                convertedAttributes.put(key, value);
             } else {
-                if (values.size() == 1) {
-                    val value = CollectionUtils.firstElement(values).get();
-                    convertedAttributes.put(key, value);
-                } else {
-                    convertedAttributes.put(key, values);
-                }
+                convertedAttributes.put(key, values);
             }
         });
-        return Pair.of(principalId[0], convertedAttributes);
+
+        var principalId = extractedPrincipalId;
+
+        if (StringUtils.isNotBlank(this.principalAttributeNames)) {
+            val attrNames = org.springframework.util.StringUtils.commaDelimitedListToSet(this.principalAttributeNames);
+            val result = attrNames.stream()
+                .map(String::trim)
+                .filter(attributes::containsKey)
+                .map(attributes::get)
+                .findFirst();
+
+            if (result.isPresent()) {
+                val values = result.get();
+                if (!values.isEmpty()) {
+                    principalId = CollectionUtils.firstElement(values).get().toString();
+                    LOGGER.debug("Found principal id attribute value [{}] and removed it from the collection of attributes", principalId);
+                }
+            } else {
+                LOGGER.warn("Principal resolution is set to resolve the authenticated principal via attribute(s) [{}], and yet "
+                    + "the collection of attributes retrieved [{}] do not contain any of those attributes. This is likely due to misconfiguration "
+                    + "and CAS will switch to use [{}] as the final principal id", this.principalAttributeNames, attributes.keySet(), principalId);
+            }
+        }
+
+        return Pair.of(principalId, convertedAttributes);
     }
 
     /**
