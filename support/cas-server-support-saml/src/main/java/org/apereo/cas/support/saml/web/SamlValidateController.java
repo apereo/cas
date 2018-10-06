@@ -2,13 +2,12 @@ package org.apereo.cas.support.saml.web;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
-import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.RequestedContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -35,16 +34,14 @@ public class SamlValidateController extends AbstractServiceValidateController {
                                   final CentralAuthenticationService centralAuthenticationService,
                                   final ProxyHandler proxyHandler,
                                   final ArgumentExtractor argumentExtractor,
-                                  final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-                                  final MultifactorAuthenticationContextValidator authenticationContextValidator,
+                                  final RequestedContextValidator requestedContextValidator,
                                   final View jsonView, final View successView, final View failureView,
                                   final String authnContextAttribute,
                                   final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
                                   final boolean renewEnabled) {
         super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
             authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
-            successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
-            authenticationContextValidator, jsonView, authnContextAttribute, renewEnabled);
+            successView, failureView, argumentExtractor, requestedContextValidator, jsonView, authnContextAttribute, renewEnabled);
     }
 
     /**

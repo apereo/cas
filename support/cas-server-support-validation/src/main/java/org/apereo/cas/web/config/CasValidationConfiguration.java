@@ -3,8 +3,6 @@ package org.apereo.cas.web.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
-import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -14,6 +12,7 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.RequestedContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.LegacyValidateController;
 import org.apereo.cas.web.ProxyController;
@@ -67,10 +66,6 @@ public class CasValidationConfiguration {
     @Autowired
     @Qualifier("authenticationAttributeReleasePolicy")
     private AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
-
-    @Autowired
-    @Qualifier("authenticationContextValidator")
-    private MultifactorAuthenticationContextValidator authenticationContextValidator;
 
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
@@ -129,8 +124,8 @@ public class CasValidationConfiguration {
     private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
-    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
-    private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
+    @Qualifier("requestedContextValidator")
+    private ObjectProvider<RequestedContextValidator> requestedContextValidator;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -230,8 +225,7 @@ public class CasValidationConfiguration {
             centralAuthenticationService.getIfAvailable(),
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
-            multifactorTriggerSelectionStrategy,
-            authenticationContextValidator,
+            requestedContextValidator.getIfAvailable(),
             cas3ServiceJsonView(),
             cas3ServiceSuccessView(),
             cas3ServiceFailureView,
@@ -252,8 +246,7 @@ public class CasValidationConfiguration {
             centralAuthenticationService.getIfAvailable(),
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
-            multifactorTriggerSelectionStrategy,
-            authenticationContextValidator,
+            requestedContextValidator.getIfAvailable(),
             cas3ServiceJsonView(),
             cas3ServiceSuccessView(),
             cas3ServiceFailureView,
@@ -274,8 +267,7 @@ public class CasValidationConfiguration {
                 centralAuthenticationService.getIfAvailable(),
                 proxy20Handler.getIfAvailable(),
                 argumentExtractor.getIfAvailable(),
-                multifactorTriggerSelectionStrategy,
-                authenticationContextValidator,
+                requestedContextValidator.getIfAvailable(),
                 cas3ServiceJsonView(),
                 cas3ServiceSuccessView(),
                 cas3ServiceFailureView,
@@ -292,8 +284,7 @@ public class CasValidationConfiguration {
             centralAuthenticationService.getIfAvailable(),
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
-            multifactorTriggerSelectionStrategy,
-            authenticationContextValidator,
+            requestedContextValidator.getIfAvailable(),
             cas3ServiceJsonView(),
             cas2ServiceSuccessView(),
             cas2ServiceFailureView,
@@ -313,8 +304,7 @@ public class CasValidationConfiguration {
             centralAuthenticationService.getIfAvailable(),
             proxy10Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
-            multifactorTriggerSelectionStrategy,
-            authenticationContextValidator,
+            requestedContextValidator.getIfAvailable(),
             cas3ServiceJsonView(),
             cas1ServiceSuccessView(),
             cas1ServiceFailureView(),
@@ -335,8 +325,7 @@ public class CasValidationConfiguration {
                 centralAuthenticationService.getIfAvailable(),
                 proxy20Handler.getIfAvailable(),
                 argumentExtractor.getIfAvailable(),
-                multifactorTriggerSelectionStrategy,
-                authenticationContextValidator,
+                requestedContextValidator.getIfAvailable(),
                 cas3ServiceJsonView(),
                 cas3ServiceSuccessView(),
                 cas3ServiceFailureView,
@@ -353,8 +342,7 @@ public class CasValidationConfiguration {
             centralAuthenticationService.getIfAvailable(),
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
-            multifactorTriggerSelectionStrategy,
-            authenticationContextValidator,
+            requestedContextValidator.getIfAvailable(),
             cas3ServiceJsonView(),
             cas2ServiceSuccessView(),
             cas2ServiceFailureView,

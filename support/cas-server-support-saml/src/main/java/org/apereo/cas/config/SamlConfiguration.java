@@ -2,8 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
-import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -17,6 +15,7 @@ import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.RequestedContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
@@ -79,8 +78,8 @@ public class SamlConfiguration {
     private AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     @Autowired
-    @Qualifier("authenticationContextValidator")
-    private MultifactorAuthenticationContextValidator authenticationContextValidator;
+    @Qualifier("requestedContextValidator")
+    private ObjectProvider<RequestedContextValidator> requestedContextValidator;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -89,10 +88,6 @@ public class SamlConfiguration {
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
     private CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
-
-    @Autowired
-    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
-    private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
     @Autowired
     @Qualifier("serviceValidationAuthorizers")
@@ -150,8 +145,7 @@ public class SamlConfiguration {
             centralAuthenticationService.getIfAvailable(),
             proxy20Handler,
             argumentExtractor.getIfAvailable(),
-            multifactorTriggerSelectionStrategy,
-            authenticationContextValidator,
+            requestedContextValidator.getIfAvailable(),
             cas3ServiceJsonView,
             casSamlServiceSuccessView(),
             casSamlServiceFailureView(),
