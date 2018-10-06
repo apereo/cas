@@ -163,7 +163,9 @@
                     </div>
 
                     <script type="text/javascript" th:inline="javascript">
-                        var i = [[#{screen.welcome.button.loginwip}]]
+                        /*<![CDATA[*/
+                        var i = /*[[@{#{screen.welcome.button.loginwip}}]]*/
+                        /*]]>*/
                         $( document ).ready(function() {
                             $("#fm1").submit(function () {
                                 $(":submit").attr("disabled", true);
