@@ -1,31 +1,31 @@
 if (project.name =~ /cassandra/ && "CASSANDRA".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testCassandra(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.CassandraCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.CassandraCategory"
         }
     }
 }
 
 if (project.name =~ /cosmos/ && "COSMOSDB".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testCosmosDb(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.CosmosDbCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.CosmosDbCategory"
         }
     }
 }
 
 if (project.name =~ /radius/ && "RADIUS".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testRadius(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.RadiusCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.RadiusCategory"
         }
     }
 }
 
 if (project.name =~ /couchbase/ && "COUCHBASE".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testCouchbase(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.CouchbaseCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.CouchbaseCategory"
         }
     }
 
@@ -33,8 +33,8 @@ if (project.name =~ /couchbase/ && "COUCHBASE".equalsIgnoreCase(rootProject.test
 
 if (project.name =~ /couchdb/ && "COUCHDB".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testCouchDb(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.CouchDbCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.CouchDbCategory"
         }
     }
 
@@ -43,8 +43,8 @@ if (project.name =~ /couchdb/ && "COUCHDB".equalsIgnoreCase(rootProject.testCate
 if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
     if ("MYSQL".equalsIgnoreCase(rootProject.testCategoryType)) {
         task testMySQL(type: Test) {
-            useJUnit {
-                includeCategories "org.apereo.cas.category.MySQLCategory"
+            useJUnitPlatform {
+                includeTags "org.apereo.cas.category.MySQLCategory"
             }
         }
 
@@ -52,24 +52,24 @@ if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
 
     if ("POSTGRES".equalsIgnoreCase(rootProject.testCategoryType)) {
         task testPostgres(type: Test) {
-            useJUnit {
-                includeCategories "org.apereo.cas.category.PostgresCategory"
+            useJUnitPlatform {
+                includeTags "org.apereo.cas.category.PostgresCategory"
             }
         }
     }
 
     if ("MSSQLSERVER".equalsIgnoreCase(rootProject.testCategoryType)) {
         task testMsSqlServer(type: Test) {
-            useJUnit {
-                includeCategories "org.apereo.cas.category.MsSqlServerCategory"
+            useJUnitPlatform {
+                includeTags "org.apereo.cas.category.MsSqlServerCategory"
             }
         }
     }
 
     if ("MARIADB".equalsIgnoreCase(rootProject.testCategoryType)) {
         task testMariaDb(type: Test) {
-            useJUnit {
-                includeCategories "org.apereo.cas.category.MariaDbCategory"
+            useJUnitPlatform {
+                includeTags "org.apereo.cas.category.MariaDbCategory"
             }
         }
     }
@@ -77,8 +77,8 @@ if (project.name =~ /jpa/ || project.name =~ /jdbc/) {
 
 if (project.name =~ /dynamodb/ && "DYNAMODB".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testDynamoDb(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.DynamoDbCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.DynamoDbCategory"
         }
     }
 
@@ -86,8 +86,8 @@ if (project.name =~ /dynamodb/ && "DYNAMODB".equalsIgnoreCase(rootProject.testCa
 
 if ("FILESYSTEM".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testFileSystem(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.FileSystemCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.FileSystemCategory"
         }
     }
 
@@ -95,8 +95,8 @@ if ("FILESYSTEM".equalsIgnoreCase(rootProject.testCategoryType)) {
 
 if (project.name =~ /ignite/ && "IGNITE".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testIgnite(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.IgniteCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.IgniteCategory"
         }
         def list = []
         list.add("--add-exports")
@@ -110,8 +110,8 @@ if (project.name =~ /ignite/ && "IGNITE".equalsIgnoreCase(rootProject.testCatego
 
 if (project.name =~ /influxdb/ && "INFLUXDB".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testInfluxDb(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.InfluxDbCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.InfluxDbCategory"
         }
     }
 
@@ -119,32 +119,32 @@ if (project.name =~ /influxdb/ && "INFLUXDB".equalsIgnoreCase(rootProject.testCa
 
 if ("LDAP".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testLdap(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.LdapCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.LdapCategory"
         }
     }
 }
 
 if ("MAIL".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testMail(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.MailCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.MailCategory"
         }
     }
 }
 
 if ("RESTFUL".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testRestful(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.RestfulApiCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.RestfulApiCategory"
         }
     }
 }
 
 if (project.name =~ /memcached/ && "MEMCACHED".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testMemcached(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.MemcachedCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.MemcachedCategory"
         }
     }
 
@@ -152,8 +152,8 @@ if (project.name =~ /memcached/ && "MEMCACHED".equalsIgnoreCase(rootProject.test
 
 if (project.name =~ /mongo/ && "MONGODB".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testMongoDb(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.MongoDbCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.MongoDbCategory"
         }
     }
 
@@ -161,34 +161,36 @@ if (project.name =~ /mongo/ && "MONGODB".equalsIgnoreCase(rootProject.testCatego
 
 if (project.name =~ /redis/ && "REDIS".equalsIgnoreCase(rootProject.testCategoryType)) {
     task testRedis(type: Test) {
-        useJUnit {
-            includeCategories "org.apereo.cas.category.RedisCategory"
+        useJUnitPlatform {
+            includeTags "org.apereo.cas.category.RedisCategory"
         }
     }
 }
 
 test {
     include "**/*Tests.*"
-    useJUnit {
-        excludeCategories "org.apereo.cas.category.CassandraCategory"
-        excludeCategories "org.apereo.cas.category.CosmosDbCategory"
-        excludeCategories "org.apereo.cas.category.CouchbaseCategory"
-        excludeCategories "org.apereo.cas.category.DynamoDbCategory"
-        excludeCategories "org.apereo.cas.category.FileSystemCategory"
-        excludeCategories "org.apereo.cas.category.IgniteCategory"
-        excludeCategories "org.apereo.cas.category.InfluxDbCategory"
-        excludeCategories "org.apereo.cas.category.CouchDbCategory"
-        excludeCategories "org.apereo.cas.category.LdapCategory"
-        excludeCategories "org.apereo.cas.category.MailCategory"
-        excludeCategories "org.apereo.cas.category.MariaDbCategory"
-        excludeCategories "org.apereo.cas.category.MemcachedCategory"
-        excludeCategories "org.apereo.cas.category.MongoDbCategory"
-        excludeCategories "org.apereo.cas.category.MsSqlServerCategory"
-        excludeCategories "org.apereo.cas.category.MySQLCategory"
-        excludeCategories "org.apereo.cas.category.PostgresCategory"
-        excludeCategories "org.apereo.cas.category.RedisCategory"
-        excludeCategories "org.apereo.cas.category.RadiusCategory"
-        excludeCategories "org.apereo.cas.category.RestfulApiCategory"
+    useJUnitPlatform {
+        setExcludeTags Set.of(
+                "org.apereo.cas.category.CassandraCategory",
+                "org.apereo.cas.category.CosmosDbCategory",
+                "org.apereo.cas.category.CouchbaseCategory",
+                "org.apereo.cas.category.DynamoDbCategory",
+                "org.apereo.cas.category.FileSystemCategory",
+                "org.apereo.cas.category.IgniteCategory",
+                "org.apereo.cas.category.InfluxDbCategory",
+                "org.apereo.cas.category.CouchDbCategory",
+                "org.apereo.cas.category.LdapCategory",
+                "org.apereo.cas.category.MailCategory",
+                "org.apereo.cas.category.MariaDbCategory",
+                "org.apereo.cas.category.MemcachedCategory",
+                "org.apereo.cas.category.MongoDbCategory",
+                "org.apereo.cas.category.MsSqlServerCategory",
+                "org.apereo.cas.category.MySQLCategory",
+                "org.apereo.cas.category.PostgresCategory",
+                "org.apereo.cas.category.RedisCategory",
+                "org.apereo.cas.category.RadiusCategory",
+                "org.apereo.cas.category.RestfulApiCategory"
+        )
     }
     onlyIf {
         "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType)
@@ -200,7 +202,7 @@ tasks.withType(Test) {
     enabled = !Boolean.getBoolean("skipTests")
     scanForTestClasses = false
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-    maxParallelForks = 1
+    maxParallelForks = 4
     failFast = true
     jvmArgs "-Xmx1024m"
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
