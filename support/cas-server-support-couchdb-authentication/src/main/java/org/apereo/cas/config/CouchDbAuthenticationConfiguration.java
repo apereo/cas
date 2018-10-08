@@ -47,7 +47,7 @@ public class CouchDbAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -57,7 +57,7 @@ public class CouchDbAuthenticationConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "authenticationCouchDbFactory")
     public CouchDbConnectorFactory authenticationCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getCouchDb(), objectMapperFactory);
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getCouchDb(), objectMapperFactory.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "authenticationCouchDbRepository")

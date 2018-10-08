@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,14 +30,14 @@ public class MongoDbYubiKeyConfiguration {
 
     @Autowired
     @Qualifier("yubiKeyAccountValidator")
-    private YubiKeyAccountValidator yubiKeyAccountValidator;
+    private ObjectProvider<YubiKeyAccountValidator> yubiKeyAccountValidator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")
-    private CipherExecutor yubikeyAccountCipherExecutor;
+    private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
 
     @RefreshScope
     @Bean
@@ -58,10 +59,10 @@ public class MongoDbYubiKeyConfiguration {
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
-        val registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator,
+        val registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator.getIfAvailable(),
             mongoYubiKeyTemplate(),
             yubi.getMongo().getCollection());
-        registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
         return registry;
     }
 }

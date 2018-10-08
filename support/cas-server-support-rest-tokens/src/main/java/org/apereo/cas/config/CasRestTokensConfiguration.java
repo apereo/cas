@@ -33,7 +33,7 @@ public class CasRestTokensConfiguration implements ServiceTicketResourceEntityRe
 
     @Autowired
     @Qualifier("tokenTicketBuilder")
-    private TokenTicketBuilder tokenTicketBuilder;
+    private ObjectProvider<TokenTicketBuilder> tokenTicketBuilder;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -45,13 +45,13 @@ public class CasRestTokensConfiguration implements ServiceTicketResourceEntityRe
 
     @Bean
     public TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory() {
-        return new JWTTicketGrantingTicketResourceEntityResponseFactory(servicesManager.getIfAvailable(), tokenTicketBuilder);
+        return new JWTTicketGrantingTicketResourceEntityResponseFactory(servicesManager.getIfAvailable(), tokenTicketBuilder.getIfAvailable());
     }
 
     @Override
     public void configureEntityResponseFactory(final ServiceTicketResourceEntityResponseFactoryPlan plan) {
         plan.registerFactory(new JWTServiceTicketResourceEntityResponseFactory(centralAuthenticationService.getIfAvailable(),
-            tokenTicketBuilder,
+            tokenTicketBuilder.getIfAvailable(),
             ticketRegistrySupport.getIfAvailable(),
             servicesManager.getIfAvailable()));
     }

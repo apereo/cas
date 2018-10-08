@@ -14,6 +14,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServ
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,7 +45,7 @@ public class SamlIdPMongoDbIdPMetadataConfiguration implements SamlRegisteredSer
 
     @Autowired
     @Qualifier("samlSelfSignedCertificateWriter")
-    private SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter;
+    private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
     @Bean
     @ConditionalOnMissingBean(name = "mongoDbSamlIdPMetadataCipherExecutor")
@@ -81,9 +82,12 @@ public class SamlIdPMongoDbIdPMetadataConfiguration implements SamlRegisteredSer
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new MongoDbSamlIdPMetadataGenerator(
-            samlIdPMetadataLocator(), samlSelfSignedCertificateWriter,
-            idp.getEntityId(), resourceLoader,
-            casProperties.getServer().getPrefix(), idp.getScope(),
+            samlIdPMetadataLocator(),
+            samlSelfSignedCertificateWriter.getIfAvailable(),
+            idp.getEntityId(),
+            resourceLoader,
+            casProperties.getServer().getPrefix(),
+            idp.getScope(),
             mongoDbSamlIdPMetadataTemplate(),
             idp.getMetadata().getMongo().getIdpMetadataCollection(),
             mongoDbSamlIdPMetadataCipherExecutor());

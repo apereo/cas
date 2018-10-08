@@ -16,6 +16,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -52,7 +53,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
     @Autowired
     @Qualifier("samlSelfSignedCertificateWriter")
-    private SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter;
+    private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -125,7 +126,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
 
         return new JpaSamlIdPMetadataGenerator(
             samlIdPMetadataLocator(),
-            samlSelfSignedCertificateWriter,
+            samlSelfSignedCertificateWriter.getIfAvailable(),
             idp.getEntityId(),
             resourceLoader,
             casProperties.getServer().getPrefix(),
