@@ -90,10 +90,11 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Category(RestfulApiCategory.class)
 public class RestAuthenticationHandlerTests {
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
