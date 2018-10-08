@@ -4,6 +4,9 @@
         <cve>CVE-2011-4461</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2017-8316</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2018-1131</cve>
     </suppress>
     <suppress>
