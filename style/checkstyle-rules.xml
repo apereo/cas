@@ -377,7 +377,7 @@
             <property name="severity" value="error"/>
             <property name="format" value="Collections\.empty(List|Map|Set)"/>
             <property name="message"
-                      value="Returning an empty immutable collection is specially problematic for serialization tasks. To avoid future side effects try using an empty collection of size zero instead"/>
+                      value="Returning an empty immutable collection is specially problematic for serialization tasks. Try using an empty collection of size zero instead"/>
         </module>
 
         <module name="RegexpSinglelineJava">
@@ -405,6 +405,7 @@
             <property name="message"
                       value="Avoid string concatenation for constructing log messages. Use parametric messages instead"/>
         </module>
+        
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="JavaDoc @version tag"/>
             <property name="severity" value="error"/>
@@ -633,6 +634,7 @@
         <property name="format" value="new.*Set&lt;&gt;\((Arrays\.asList\([^,]+\)|Collections\.singletonList\(.*\))\)"/>
         <property name="message" value="Consider using Collections.singleton instead"/>
     </module>
+
 
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use specific request annotation"/>

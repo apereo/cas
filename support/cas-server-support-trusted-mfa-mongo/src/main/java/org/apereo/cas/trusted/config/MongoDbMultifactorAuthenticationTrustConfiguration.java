@@ -7,6 +7,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.authentication.storage.MongoDbMultifactorAuthenticationTrustStorage;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +32,7 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
 
     @Autowired
     @Qualifier("mfaTrustCipherExecutor")
-    private CipherExecutor mfaTrustCipherExecutor;
+    private ObjectProvider<CipherExecutor> mfaTrustCipherExecutor;
 
     @RefreshScope
     @Bean
@@ -58,7 +59,7 @@ public class MongoDbMultifactorAuthenticationTrustConfiguration {
             new MongoDbMultifactorAuthenticationTrustStorage(
                 mongodb.getCollection(),
                 mongoMfaTrustedAuthnTemplate());
-        m.setCipherExecutor(this.mfaTrustCipherExecutor);
+        m.setCipherExecutor(mfaTrustCipherExecutor.getIfAvailable());
         return m;
     }
 }

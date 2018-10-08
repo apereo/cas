@@ -19,6 +19,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.spi.support.BooleanAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.FirstParameterAuditResourceResolver;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,7 +43,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
 
     @Autowired
     @Qualifier("communicationsManager")
-    private CommunicationsManager communicationsManager;
+    private ObjectProvider<CommunicationsManager> communicationsManager;
 
     @ConditionalOnMissingBean(name = "passwordManagementCipherExecutor")
     @RefreshScope
@@ -105,7 +106,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     public void afterPropertiesSet() {
         val pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
-            communicationsManager.validate();
+            communicationsManager.getIfAvailable().validate();
         }
     }
 

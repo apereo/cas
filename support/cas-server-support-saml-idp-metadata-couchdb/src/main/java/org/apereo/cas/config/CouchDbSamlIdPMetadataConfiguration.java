@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,14 +43,14 @@ public class CouchDbSamlIdPMetadataConfiguration {
 
     @Autowired
     @Qualifier("samlSelfSignedCertificateWriter")
-    private SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter;
+    private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
     @Autowired
     private ResourceLoader resourceLoader;
 
     @Autowired
     @Qualifier("samlMetadataCouchDbFactory")
-    private CouchDbConnectorFactory samlMetadataCouchDbFactory;
+    private ObjectProvider<CouchDbConnectorFactory> samlMetadataCouchDbFactory;
 
     @Autowired
     @Qualifier("couchDbSamlIdPMetadataCipherExecutor")
@@ -57,31 +58,31 @@ public class CouchDbSamlIdPMetadataConfiguration {
 
     @Autowired
     @Qualifier("samlIdPMetadataCouchDbRepository")
-    private SamlIdPMetadataCouchDbRepository samlIdPMetadataRepository;
+    private ObjectProvider<SamlIdPMetadataCouchDbRepository> samlIdPMetadataRepository;
 
     @Autowired
     @Qualifier("samlIdPMetadataLocator")
-    private SamlIdPMetadataLocator metadataLocator;
+    private ObjectProvider<SamlIdPMetadataLocator> metadataLocator;
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbInstance")
     @RefreshScope
     @Bean
     public CouchDbInstance samlIdPMetadataCouchDbInstance() {
-        return samlMetadataCouchDbFactory.getCouchDbInstance();
+        return samlMetadataCouchDbFactory.getIfAvailable().getCouchDbInstance();
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector samlIdPMetadataCouchDbConnector() {
-        return samlMetadataCouchDbFactory.getCouchDbConnector();
+        return samlMetadataCouchDbFactory.getIfAvailable().getCouchDbConnector();
     }
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataCouchDbRepository")
     @Bean
     @RefreshScope
     public SamlIdPMetadataCouchDbRepository samlIdPMetadataCouchDbRepository() {
-        val repository = new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getCouchDbConnector(),
+        val repository = new SamlIdPMetadataCouchDbRepository(samlMetadataCouchDbFactory.getIfAvailable().getCouchDbConnector(),
             casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb().isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
@@ -107,26 +108,25 @@ public class CouchDbSamlIdPMetadataConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataGenerator")
-    @Autowired
     @Bean(initMethod = "generate")
     public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
 
         return new CouchDbSamlIdPMetadataGenerator(
-            metadataLocator,
-            samlSelfSignedCertificateWriter,
+            metadataLocator.getIfAvailable(),
+            samlSelfSignedCertificateWriter.getIfAvailable(),
             idp.getEntityId(),
             resourceLoader,
             casProperties.getServer().getPrefix(),
             idp.getScope(),
             cipherExecutor,
-            samlIdPMetadataRepository);
+            samlIdPMetadataRepository.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "couchDbSamlIdPMetadataLocator")
     @Bean
     @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
-        return new CouchDbSamlIdPMetadataLocator(cipherExecutor, samlIdPMetadataRepository);
+        return new CouchDbSamlIdPMetadataLocator(cipherExecutor, samlIdPMetadataRepository.getIfAvailable());
     }
 }

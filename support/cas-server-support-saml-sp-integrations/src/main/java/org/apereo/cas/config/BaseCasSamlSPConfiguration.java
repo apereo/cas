@@ -32,7 +32,7 @@ public abstract class BaseCasSamlSPConfiguration implements InitializingBean {
 
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-    private SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
+    private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> samlRegisteredServiceCachingMetadataResolver;
 
     @Override
     public void afterPropertiesSet() {
@@ -41,7 +41,7 @@ public abstract class BaseCasSamlSPConfiguration implements InitializingBean {
 
     public void init() {
         val service = SamlSPUtils.newSamlServiceProviderService(getServiceProvider(),
-            samlRegisteredServiceCachingMetadataResolver);
+            samlRegisteredServiceCachingMetadataResolver.getIfAvailable());
         if (service != null) {
             finalizeRegisteredService(service);
             SamlSPUtils.saveService(service, servicesManager.getIfAvailable());

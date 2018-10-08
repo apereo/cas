@@ -66,12 +66,12 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Lazy
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
-    private OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry;
+    private ObjectProvider<OneTimeTokenCredentialRepository> googleAuthenticatorAccountRegistry;
 
     @Lazy
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
-    private OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository;
+    private ObjectProvider<OneTimeTokenRepository> oneTimeTokenAuthenticatorTokenRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -97,8 +97,11 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         return new GoogleAuthenticatorAuthenticationHandler(casProperties.getAuthn().getMfa().getGauth().getName(),
-            servicesManager.getIfAvailable(), googlePrincipalFactory(),
-            googleAuthenticatorInstance(), oneTimeTokenAuthenticatorTokenRepository, googleAuthenticatorAccountRegistry);
+            servicesManager.getIfAvailable(),
+            googlePrincipalFactory(),
+            googleAuthenticatorInstance(),
+            oneTimeTokenAuthenticatorTokenRepository.getIfAvailable(),
+            googleAuthenticatorAccountRegistry.getIfAvailable());
     }
 
     @Bean
@@ -133,7 +136,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public Action googleAccountRegistrationAction() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
-        return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry,
+        return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry.getIfAvailable(),
             gauth.getLabel(),
             gauth.getIssuer());
     }
@@ -188,7 +191,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public Action googleSaveAccountRegistrationAction() {
-        return new OneTimeTokenAccountSaveRegistrationAction(this.googleAuthenticatorAccountRegistry);
+        return new OneTimeTokenAccountSaveRegistrationAction(googleAuthenticatorAccountRegistry.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "googlePrincipalFactory")

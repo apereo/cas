@@ -61,7 +61,7 @@ import org.springframework.context.annotation.Configuration;
 public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPlanConfigurer {
     @Autowired
     @Qualifier("casClientTicketValidator")
-    private AbstractUrlBasedTicketValidator casClientTicketValidator;
+    private ObjectProvider<AbstractUrlBasedTicketValidator> casClientTicketValidator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -128,7 +128,7 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
 
     @Autowired
     @Qualifier("samlAttributeQueryTicketFactory")
-    private SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory;
+    private ObjectProvider<SamlAttributeQueryTicketFactory> samlAttributeQueryTicketFactory;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -269,7 +269,7 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
             samlProfileSamlResponseBuilder.getObject(),
             casProperties,
             samlObjectSignatureValidator(),
-            this.casClientTicketValidator,
+            casClientTicketValidator.getIfAvailable(),
             samlIdPCallbackService());
     }
 
@@ -325,7 +325,7 @@ public class SamlIdPEndpointsConfiguration implements ServiceRegistryExecutionPl
             ticketRegistry.getIfAvailable(),
             samlProfileSamlAttributeQueryFaultResponseBuilder,
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
-            samlAttributeQueryTicketFactory,
+            samlAttributeQueryTicketFactory.getIfAvailable(),
             samlIdPCallbackService());
     }
 

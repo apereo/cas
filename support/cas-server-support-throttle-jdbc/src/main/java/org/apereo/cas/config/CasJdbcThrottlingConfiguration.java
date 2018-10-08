@@ -39,7 +39,7 @@ public class CasJdbcThrottlingConfiguration {
 
     @Autowired
     @Qualifier("throttledRequestResponseHandler")
-    private ThrottledRequestResponseHandler throttledRequestResponseHandler;
+    private ObjectProvider<ThrottledRequestResponseHandler> throttledRequestResponseHandler;
 
     @Bean
     public DataSource inspektrThrottleDataSource() {
@@ -61,6 +61,6 @@ public class CasJdbcThrottlingConfiguration {
             throttle.getAppcode(),
             throttle.getJdbc().getAuditQuery(),
             failure.getCode(),
-            throttledRequestResponseHandler);
+            throttledRequestResponseHandler.getIfAvailable());
     }
 }
