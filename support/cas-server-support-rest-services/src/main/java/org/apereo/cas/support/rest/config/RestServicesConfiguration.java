@@ -41,7 +41,7 @@ public class RestServicesConfiguration {
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
 
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
@@ -61,7 +61,7 @@ public class RestServicesConfiguration {
                 + "This is likely due to misconfiguration in CAS settings where the attribute value definition is absent");
         }
         return new RegisteredServiceResource(authenticationSystemSupport.getIfAvailable(),
-            webApplicationServiceFactory,
+            webApplicationServiceFactory.getIfAvailable(),
             servicesManager.getIfAvailable(),
             rest.getAttributeName(),
             rest.getAttributeValue());

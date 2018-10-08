@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServ
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,14 +40,14 @@ public class SamlIdPCouchDbMetadataConfiguration implements SamlRegisteredServic
 
     @Autowired
     @Qualifier("samlMetadataCouchDbFactory")
-    private CouchDbConnectorFactory samlMetadataCouchDbFactory;
+    private ObjectProvider<CouchDbConnectorFactory> samlMetadataCouchDbFactory;
 
     @ConditionalOnMissingBean(name = "samlMetadataDocumentCouchDbRepository")
     @Bean
     @RefreshScope
     public SamlMetadataDocumentCouchDbRepository samlMetadataDocumentCouchDbRepository() {
         val couch = casProperties.getAuthn().getSamlIdp().getMetadata().getCouchDb();
-        val repository = new SamlMetadataDocumentCouchDbRepository(samlMetadataCouchDbFactory.getCouchDbConnector(), couch.isCreateIfNotExists());
+        val repository = new SamlMetadataDocumentCouchDbRepository(samlMetadataCouchDbFactory.getIfAvailable().getCouchDbConnector(), couch.isCreateIfNotExists());
         repository.initStandardDesignDocument();
         return repository;
     }

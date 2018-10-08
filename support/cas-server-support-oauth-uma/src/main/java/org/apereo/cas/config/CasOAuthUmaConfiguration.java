@@ -82,7 +82,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Autowired
     @Qualifier("oauthTokenGenerator")
-    private OAuth20TokenGenerator oauthTokenGenerator;
+    private ObjectProvider<OAuth20TokenGenerator> oauthTokenGenerator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -115,7 +115,7 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
             casProperties,
             servicesManager.getIfAvailable(),
             ticketRegistry.getIfAvailable(),
-            oauthTokenGenerator,
+            oauthTokenGenerator.getIfAvailable(),
             umaResourceSetClaimPermissionExaminer(),
             umaRequestingPartyTokenGenerator());
     }

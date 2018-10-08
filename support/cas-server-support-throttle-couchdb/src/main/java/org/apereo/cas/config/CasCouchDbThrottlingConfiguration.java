@@ -37,11 +37,11 @@ public class CasCouchDbThrottlingConfiguration {
 
     @Autowired
     @Qualifier("auditActionContextCouchDbRepository")
-    private AuditActionContextCouchDbRepository couchDbRepository;
+    private ObjectProvider<AuditActionContextCouchDbRepository> couchDbRepository;
 
     @Autowired
     @Qualifier("throttledRequestResponseHandler")
-    private ThrottledRequestResponseHandler throttledRequestResponseHandler;
+    private ObjectProvider<ThrottledRequestResponseHandler> throttledRequestResponseHandler;
 
     @ConditionalOnMissingBean(name = "couchDbAuthenticationThrottle")
     @Bean
@@ -55,7 +55,7 @@ public class CasCouchDbThrottlingConfiguration {
             failure.getCode(),
             auditTrailManager.getIfAvailable(),
             throttle.getAppcode(),
-            couchDbRepository,
-            throttledRequestResponseHandler);
+            couchDbRepository.getIfAvailable(),
+            throttledRequestResponseHandler.getIfAvailable());
     }
 }

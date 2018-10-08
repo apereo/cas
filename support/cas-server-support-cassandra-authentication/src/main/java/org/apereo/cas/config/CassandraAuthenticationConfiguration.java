@@ -37,7 +37,7 @@ public class CassandraAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("cassandraSessionFactory")
-    private CassandraSessionFactory cassandraSessionFactory;
+    private ObjectProvider<CassandraSessionFactory> cassandraSessionFactory;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -59,7 +59,7 @@ public class CassandraAuthenticationConfiguration {
     @RefreshScope
     public CassandraRepository cassandraRepository() {
         val cassandra = casProperties.getAuthn().getCassandra();
-        return new DefaultCassandraRepository(cassandra, cassandraSessionFactory);
+        return new DefaultCassandraRepository(cassandra, cassandraSessionFactory.getIfAvailable());
     }
 
     @Bean

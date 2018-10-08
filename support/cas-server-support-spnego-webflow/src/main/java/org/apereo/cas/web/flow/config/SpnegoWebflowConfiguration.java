@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SpengoWebflowConfigurer;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,7 +35,7 @@ public class SpnegoWebflowConfiguration implements CasWebflowExecutionPlanConfig
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -44,7 +45,7 @@ public class SpnegoWebflowConfiguration implements CasWebflowExecutionPlanConfig
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer spnegoWebflowConfigurer() {
-        return new SpengoWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        return new SpengoWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @Override

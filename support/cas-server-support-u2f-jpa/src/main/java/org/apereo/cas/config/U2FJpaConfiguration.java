@@ -13,6 +13,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,7 +47,7 @@ public class U2FJpaConfiguration {
 
     @Autowired
     @Qualifier("u2fRegistrationRecordCipherExecutor")
-    private CipherExecutor u2fRegistrationRecordCipherExecutor;
+    private ObjectProvider<CipherExecutor> u2fRegistrationRecordCipherExecutor;
 
     @RefreshScope
     @Bean
@@ -96,7 +97,7 @@ public class U2FJpaConfiguration {
         val repo = new U2FJpaDeviceRepository(requestStorage,
             u2f.getExpireRegistrations(),
             u2f.getExpireDevicesTimeUnit());
-        repo.setCipherExecutor(this.u2fRegistrationRecordCipherExecutor);
+        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getIfAvailable());
         return repo;
     }
 

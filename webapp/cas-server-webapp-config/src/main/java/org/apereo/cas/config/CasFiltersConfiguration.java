@@ -49,7 +49,7 @@ public class CasFiltersConfiguration {
 
     @Autowired
     @Qualifier("argumentExtractor")
-    private ArgumentExtractor argumentExtractor;
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @RefreshScope
     @Bean
@@ -121,7 +121,7 @@ public class CasFiltersConfiguration {
             initParams.put("contentSecurityPolicy", header.getContentSecurityPolicy());
         }
         val bean = new FilterRegistrationBean();
-        bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager.getIfAvailable(), argumentExtractor));
+        bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager.getIfAvailable(), argumentExtractor.getIfAvailable()));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
         bean.setName("responseHeadersSecurityFilter");
