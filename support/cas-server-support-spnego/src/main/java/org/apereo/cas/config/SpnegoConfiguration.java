@@ -50,7 +50,7 @@ public class SpnegoConfiguration {
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -117,7 +117,8 @@ public class SpnegoConfiguration {
     @ConditionalOnMissingBean(name = "spnegoPrincipalResolver")
     public PrincipalResolver spnegoPrincipalResolver() {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new SpnegoPrincipalResolver(attributeRepository, spnegoPrincipalFactory(),
+        return new SpnegoPrincipalResolver(attributeRepository.getIfAvailable(),
+            spnegoPrincipalFactory(),
             spnegoProperties.getPrincipal().isReturnNull(),
             PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
             spnegoProperties.getPrincipal().getPrincipalAttribute());

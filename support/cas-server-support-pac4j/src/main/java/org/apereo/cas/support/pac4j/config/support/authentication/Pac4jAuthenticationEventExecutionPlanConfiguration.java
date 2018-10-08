@@ -55,7 +55,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
 
     @Autowired
     @Qualifier("authenticationActionResolver")
-    private AuditActionResolver authenticationActionResolver;
+    private ObjectProvider<AuditActionResolver> authenticationActionResolver;
 
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
@@ -121,7 +121,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
 
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditActionResolver("DELEGATED_CLIENT_ACTION_RESOLVER", this.authenticationActionResolver);
+        plan.registerAuditActionResolver("DELEGATED_CLIENT_ACTION_RESOLVER", authenticationActionResolver.getIfAvailable());
         plan.registerAuditResourceResolver("DELEGATED_CLIENT_RESOURCE_RESOLVER", delegatedAuthenticationAuditResourceResolver());
     }
 }

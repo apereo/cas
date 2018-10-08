@@ -50,7 +50,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -63,7 +63,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -87,7 +87,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
+    private ObjectProvider<CookieGenerator> warnCookieGenerator;
 
     @Bean
     public FlowDefinitionRegistry swivelAuthenticatorFlowRegistry() {
@@ -101,7 +101,7 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer swivelMultifactorWebflowConfigurer() {
-        return new SwivelMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new SwivelMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
             swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
@@ -112,8 +112,8 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
             ticketRegistrySupport.getIfAvailable(),
-            warnCookieGenerator,
-            authenticationRequestServiceSelectionStrategies,
+            warnCookieGenerator.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
     }
 
@@ -146,7 +146,8 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer() {
-            return new SwivelMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+            return new SwivelMultifactorTrustWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry.getIfAvailable(),
                 casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
                 swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
         }

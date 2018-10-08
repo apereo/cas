@@ -10,6 +10,7 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,7 +32,7 @@ public class U2FMongoDbConfiguration {
 
     @Autowired
     @Qualifier("u2fRegistrationRecordCipherExecutor")
-    private CipherExecutor u2fRegistrationRecordCipherExecutor;
+    private ObjectProvider<CipherExecutor> u2fRegistrationRecordCipherExecutor;
 
     @Bean
     public U2FDeviceRepository u2fDeviceRepository() {
@@ -49,7 +50,7 @@ public class U2FMongoDbConfiguration {
                 .build(key -> StringUtils.EMPTY);
         val repo = new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireRegistrations(),
             u2f.getExpireDevicesTimeUnit(), mongoProps.getCollection());
-        repo.setCipherExecutor(this.u2fRegistrationRecordCipherExecutor);
+        repo.setCipherExecutor(u2fRegistrationRecordCipherExecutor.getIfAvailable());
         return repo;
     }
 

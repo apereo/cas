@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -42,7 +43,7 @@ public class HazelcastTicketRegistryConfiguration {
 
     @Autowired
     @Qualifier("casHazelcastInstance")
-    private HazelcastInstance hazelcastInstance;
+    private ObjectProvider<HazelcastInstance> hazelcastInstance;
 
     @Autowired
     @Qualifier("ticketCatalog")
@@ -53,11 +54,11 @@ public class HazelcastTicketRegistryConfiguration {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val factory = new HazelcastConfigurationFactory();
         ticketCatalog.getIfAvailable().findAll().stream()
-                .map(t -> t.getProperties())
+                .map(TicketDefinition::getProperties)
                 .peek(p -> LOGGER.debug("Created Hazelcast map configuration for [{}]", p))
                 .map(p -> factory.buildMapConfig(hz, p.getStorageName(), p.getStorageTimeout()))
-                .forEach(m -> hazelcastInstance.getConfig().addMapConfig(m));
-        val r = new HazelcastTicketRegistry(hazelcastInstance,
+                .forEach(m -> hazelcastInstance.getIfAvailable().getConfig().addMapConfig(m));
+        val r = new HazelcastTicketRegistry(hazelcastInstance.getIfAvailable(),
             ticketCatalog.getIfAvailable(),
             hz.getPageSize());
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));

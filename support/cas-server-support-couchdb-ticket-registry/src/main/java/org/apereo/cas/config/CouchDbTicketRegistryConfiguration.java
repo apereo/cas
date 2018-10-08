@@ -12,6 +12,7 @@ import org.apereo.cas.util.CoreTicketUtils;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,13 +35,13 @@ public class CouchDbTicketRegistryConfiguration {
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "ticketRegistryCouchDbFactory")
     public CouchDbConnectorFactory ticketRegistryCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory);
+        return new CouchDbConnectorFactory(casProperties.getTicket().getRegistry().getCouchDb(), objectMapperFactory.getIfAvailable());
     }
 
     @Bean

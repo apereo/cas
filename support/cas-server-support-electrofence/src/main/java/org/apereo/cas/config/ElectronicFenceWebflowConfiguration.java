@@ -46,11 +46,11 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
 
     @Autowired
     @Qualifier("authenticationRiskMitigator")
-    private AuthenticationRiskMitigator authenticationRiskMitigator;
+    private ObjectProvider<AuthenticationRiskMitigator> authenticationRiskMitigator;
 
     @Autowired
     @Qualifier("authenticationRiskEvaluator")
-    private AuthenticationRiskEvaluator authenticationRiskEvaluator;
+    private ObjectProvider<AuthenticationRiskEvaluator> authenticationRiskEvaluator;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -66,11 +66,11 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
 
     @Autowired
     @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
+    private ObjectProvider<CookieGenerator> warnCookieGenerator;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     private ObjectProvider<FlowBuilderServices> flowBuilderServices;
@@ -87,28 +87,31 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
 
     @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
-    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+    private ObjectProvider<MultifactorAuthenticationProviderSelector> multifactorAuthenticationProviderSelector;
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @ConditionalOnMissingBean(name = "riskAwareAuthenticationWebflowEventResolver")
     @Bean
-    @Autowired
     @RefreshScope
-    public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
-                                                                               final AuthenticationSystemSupport authenticationSystemSupport) {
-        val r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport,
+    public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver() {
+        val r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
             ticketRegistrySupport.getIfAvailable(),
-            warnCookieGenerator,
-            authenticationRequestServiceSelectionStrategies,
-            multifactorAuthenticationProviderSelector,
-            authenticationRiskEvaluator,
-            authenticationRiskMitigator, casProperties);
-        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r, 0);
+            warnCookieGenerator.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
+            authenticationRiskEvaluator.getIfAvailable(),
+            authenticationRiskMitigator.getIfAvailable(),
+            casProperties);
+        this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r, 0);
         return r;
     }
 

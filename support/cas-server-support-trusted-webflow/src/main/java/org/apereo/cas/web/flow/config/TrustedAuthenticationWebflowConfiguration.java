@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.TrustedAuthenticationWebflowConfigurer;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -35,7 +36,7 @@ public class TrustedAuthenticationWebflowConfiguration implements CasWebflowExec
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -45,7 +46,7 @@ public class TrustedAuthenticationWebflowConfiguration implements CasWebflowExec
     @RefreshScope
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer trustedWebflowConfigurer() {
-        return new TrustedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new TrustedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
             applicationContext, casProperties);
     }
 

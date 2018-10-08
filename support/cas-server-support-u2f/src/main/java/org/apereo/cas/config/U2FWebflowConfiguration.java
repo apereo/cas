@@ -52,21 +52,21 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
     @Qualifier("u2fDeviceRepository")
-    private U2FDeviceRepository u2fDeviceRepository;
+    private ObjectProvider<U2FDeviceRepository> u2fDeviceRepository;
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -90,7 +90,7 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
 
     @Autowired
     @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
+    private ObjectProvider<CookieGenerator> warnCookieGenerator;
 
 
     @Bean
@@ -112,31 +112,31 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer u2fMultifactorWebflowConfigurer() {
         return new U2FMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, u2fFlowRegistry(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getIfAvailable(), u2fFlowRegistry(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "u2fStartAuthenticationAction")
     @Bean
     public Action u2fStartAuthenticationAction() {
-        return new U2FStartAuthenticationAction(casProperties.getServer().getName(), this.u2fDeviceRepository);
+        return new U2FStartAuthenticationAction(casProperties.getServer().getName(), u2fDeviceRepository.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "u2fStartRegistrationAction")
     @Bean
     public Action u2fStartRegistrationAction() {
-        return new U2FStartRegistrationAction(casProperties.getServer().getName(), this.u2fDeviceRepository);
+        return new U2FStartRegistrationAction(casProperties.getServer().getName(), u2fDeviceRepository.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "u2fCheckAccountRegistrationAction")
     @Bean
     public Action u2fCheckAccountRegistrationAction() {
-        return new U2FAccountCheckRegistrationAction(this.u2fDeviceRepository);
+        return new U2FAccountCheckRegistrationAction(u2fDeviceRepository.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "u2fSaveAccountRegistrationAction")
     @Bean
     public Action u2fSaveAccountRegistrationAction() {
-        return new U2FAccountSaveRegistrationAction(this.u2fDeviceRepository);
+        return new U2FAccountSaveRegistrationAction(u2fDeviceRepository.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "u2fAuthenticationWebflowEventResolver")
@@ -146,8 +146,8 @@ public class U2FWebflowConfiguration implements CasWebflowExecutionPlanConfigure
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
             ticketRegistrySupport.getIfAvailable(),
-            warnCookieGenerator,
-            authenticationRequestServiceSelectionStrategies,
+            warnCookieGenerator.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
     }
 

@@ -52,11 +52,11 @@ public class SamlIdPWebflowConfiguration implements CasWebflowExecutionPlanConfi
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan selectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> selectionStrategies;
 
     @Autowired
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-    private SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
+    private ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @ConditionalOnMissingBean(name = "samlIdPMetadataUIWebConfigurer")
     @Bean
@@ -73,8 +73,8 @@ public class SamlIdPWebflowConfiguration implements CasWebflowExecutionPlanConfi
     @Bean
     public Action samlIdPMetadataUIParserAction() {
         return new SamlIdPMetadataUIAction(servicesManager.getIfAvailable(),
-            defaultSamlRegisteredServiceCachingMetadataResolver,
-            selectionStrategies);
+            defaultSamlRegisteredServiceCachingMetadataResolver.getIfAvailable(),
+            selectionStrategies.getIfAvailable());
     }
 
     @Override

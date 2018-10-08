@@ -52,15 +52,15 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("casAttributeEncoder")
-    private ProtocolAttributeEncoder protocolAttributeEncoder;
+    private ObjectProvider<ProtocolAttributeEncoder> protocolAttributeEncoder;
 
     @Autowired
     @Qualifier("cas3ServiceJsonView")
-    private View cas3ServiceJsonView;
+    private ObjectProvider<View> cas3ServiceJsonView;
 
     @Autowired
     @Qualifier("proxy20Handler")
-    private ProxyHandler proxy20Handler;
+    private ObjectProvider<ProxyHandler> proxy20Handler;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
@@ -76,11 +76,11 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("authenticationAttributeReleasePolicy")
-    private AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
+    private ObjectProvider<AuthenticationAttributeReleasePolicy> authenticationAttributeReleasePolicy;
 
     @Autowired
     @Qualifier("authenticationContextValidator")
-    private AuthenticationContextValidator authenticationContextValidator;
+    private ObjectProvider<AuthenticationContextValidator> authenticationContextValidator;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -88,22 +88,22 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
-    private CasProtocolValidationSpecification cas20WithoutProxyProtocolValidationSpecification;
+    private ObjectProvider<CasProtocolValidationSpecification> cas20WithoutProxyProtocolValidationSpecification;
 
     @Autowired
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
-    private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
+    private ObjectProvider<MultifactorTriggerSelectionStrategy> multifactorTriggerSelectionStrategy;
 
     @Autowired
     @Qualifier("serviceValidationAuthorizers")
-    private ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers;
+    private ObjectProvider<ServiceTicketValidationAuthorizersExecutionPlan> validationAuthorizers;
 
     @ConditionalOnMissingBean(name = "casSamlServiceSuccessView")
     @RefreshScope
     @Bean
     public View casSamlServiceSuccessView() {
         val samlCore = casProperties.getSamlCore();
-        return new Saml10SuccessResponseView(protocolAttributeEncoder,
+        return new Saml10SuccessResponseView(protocolAttributeEncoder.getIfAvailable(),
             servicesManager.getIfAvailable(),
             saml10ObjectBuilder(),
             argumentExtractor.getIfAvailable(),
@@ -112,21 +112,21 @@ public class SamlConfiguration {
             samlCore.getIssueLength(),
             samlCore.getIssuer(),
             samlCore.getAttributeNamespace(),
-            authenticationAttributeReleasePolicy);
+            authenticationAttributeReleasePolicy.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "casSamlServiceFailureView")
     @RefreshScope
     @Bean
     public View casSamlServiceFailureView() {
-        return new Saml10FailureResponseView(protocolAttributeEncoder,
+        return new Saml10FailureResponseView(protocolAttributeEncoder.getIfAvailable(),
             servicesManager.getIfAvailable(),
             saml10ObjectBuilder(),
             argumentExtractor.getIfAvailable(),
             StandardCharsets.UTF_8.name(),
             casProperties.getSamlCore().getSkewAllowance(),
             casProperties.getSamlCore().getIssueLength(),
-            authenticationAttributeReleasePolicy);
+            authenticationAttributeReleasePolicy.getIfAvailable());
     }
 
 
@@ -144,19 +144,19 @@ public class SamlConfiguration {
 
     @Bean
     public SamlValidateController samlValidateController() {
-        return new SamlValidateController(cas20WithoutProxyProtocolValidationSpecification,
+        return new SamlValidateController(cas20WithoutProxyProtocolValidationSpecification.getIfAvailable(),
             authenticationSystemSupport.getIfAvailable(),
             servicesManager.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
-            proxy20Handler,
+            proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
-            multifactorTriggerSelectionStrategy,
-            authenticationContextValidator,
-            cas3ServiceJsonView,
+            multifactorTriggerSelectionStrategy.getIfAvailable(),
+            authenticationContextValidator.getIfAvailable(),
+            cas3ServiceJsonView.getIfAvailable(),
             casSamlServiceSuccessView(),
             casSamlServiceFailureView(),
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            validationAuthorizers,
+            validationAuthorizers.getIfAvailable(),
             casProperties.getSso().isRenewAuthnEnabled());
     }
 }

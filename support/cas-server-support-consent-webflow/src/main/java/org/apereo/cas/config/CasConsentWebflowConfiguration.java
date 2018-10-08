@@ -38,18 +38,18 @@ public class CasConsentWebflowConfiguration implements CasWebflowExecutionPlanCo
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("consentEngine")
-    private ConsentEngine consentEngine;
+    private ObjectProvider<ConsentEngine> consentEngine;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -65,21 +65,21 @@ public class CasConsentWebflowConfiguration implements CasWebflowExecutionPlanCo
     @Bean
     public Action checkConsentRequiredAction() {
         return new CheckConsentRequiredAction(servicesManager.getIfAvailable(),
-            authenticationRequestServiceSelectionStrategies, consentEngine, casProperties);
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(), consentEngine.getIfAvailable(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "confirmConsentAction")
     @Bean
     public Action confirmConsentAction() {
         return new ConfirmConsentAction(servicesManager.getIfAvailable(),
-            authenticationRequestServiceSelectionStrategies, consentEngine, casProperties);
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(), consentEngine.getIfAvailable(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "consentWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer consentWebflowConfigurer() {
-        return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
             applicationContext, casProperties);
     }
 

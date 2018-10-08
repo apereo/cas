@@ -34,7 +34,7 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
     
     @Autowired
     @Qualifier("servicesManager")
@@ -54,7 +54,7 @@ public class ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfigur
         return new ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(webApplicationServiceFactory,
             casProperties.getAuthn().getShibIdp().getServerUrl(),
             servicesManager.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer);
+            registeredServiceAccessStrategyEnforcer.getIfAvailable());
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.engine.DefaultCallbackLogic;
 import org.pac4j.core.engine.DefaultLogoutLogic;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -41,20 +42,20 @@ public class CasConsentReviewWebConfiguration implements WebMvcConfigurer, Servi
 
     @Autowired
     @Qualifier("casAdminPagesPac4jConfig")
-    private Config casAdminPagesPac4jConfig;
+    private ObjectProvider<Config> casAdminPagesPac4jConfig;
 
     @Autowired
     @Qualifier("consentRepository")
-    private ConsentRepository consentRepository;
+    private ObjectProvider<ConsentRepository> consentRepository;
 
     @Autowired
     @Qualifier("consentEngine")
-    private ConsentEngine consentEngine;
+    private ObjectProvider<ConsentEngine> consentEngine;
 
     @Bean
     @RefreshScope
     public CasConsentReviewController casConsentReviewController() {
-        return new CasConsentReviewController(consentRepository, consentEngine, casConsentPac4jConfig(), casProperties);
+        return new CasConsentReviewController(consentRepository.getIfAvailable(), consentEngine.getIfAvailable(), casConsentPac4jConfig(), casProperties);
     }
 
     @Bean
@@ -73,12 +74,12 @@ public class CasConsentReviewWebConfiguration implements WebMvcConfigurer, Servi
         config.setCallbackLogic(new DefaultCallbackLogic());
         config.setLogoutLogic(new DefaultLogoutLogic());
 
-        // get role authorizer from admin pages for smooth integration
-        val adminAuthorizers = casAdminPagesPac4jConfig.getAuthorizers();
+        val adminConfig = casAdminPagesPac4jConfig.getIfAvailable();
+        val adminAuthorizers = adminConfig.getAuthorizers();
         val auth = RequireAnyRoleAuthorizer.class.getSimpleName();
         if (adminAuthorizers.containsKey(auth)) {
             config.addAuthorizer(auth, adminAuthorizers.get(auth));
-            val adminClient = casAdminPagesPac4jConfig.getClients().findClient(DirectCasClient.class);
+            val adminClient = adminConfig.getClients().findClient(DirectCasClient.class);
             client.addAuthorizationGenerators(adminClient.getAuthorizationGenerators());
         }
         return config;

@@ -38,18 +38,18 @@ public class TokenAuthenticationWebflowConfiguration implements CasWebflowExecut
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
 
     @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -59,7 +59,7 @@ public class TokenAuthenticationWebflowConfiguration implements CasWebflowExecut
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -69,7 +69,7 @@ public class TokenAuthenticationWebflowConfiguration implements CasWebflowExecut
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer tokenWebflowConfigurer() {
-        return new TokenWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        return new TokenWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @Bean
@@ -81,10 +81,11 @@ public class TokenAuthenticationWebflowConfiguration implements CasWebflowExecut
     @Bean
     @ConditionalOnMissingBean(name = "tokenAuthenticationAction")
     public Action tokenAuthenticationAction() {
-        return new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver,
-            adaptiveAuthenticationPolicy,
-            tokenRequestExtractor(), servicesManager.getIfAvailable());
+        return new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
+            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
+            adaptiveAuthenticationPolicy.getIfAvailable(),
+            tokenRequestExtractor(),
+            servicesManager.getIfAvailable());
     }
 
     @Override

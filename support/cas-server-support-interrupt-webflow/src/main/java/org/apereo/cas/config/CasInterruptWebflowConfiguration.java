@@ -46,11 +46,11 @@ public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlan
 
     @Autowired
     @Qualifier("interruptInquirer")
-    private InterruptInquiryExecutionPlan interruptInquirer;
+    private ObjectProvider<InterruptInquiryExecutionPlan> interruptInquirer;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -62,13 +62,13 @@ public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlan
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer interruptWebflowConfigurer() {
-        return new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        return new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "inquireInterruptAction")
     @Bean
     public Action inquireInterruptAction() {
-        return new InquireInterruptAction(interruptInquirer.getInterruptInquirers());
+        return new InquireInterruptAction(interruptInquirer.getIfAvailable().getInterruptInquirers());
     }
 
     @ConditionalOnMissingBean(name = "prepareInterruptViewAction")

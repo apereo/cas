@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.jdbc.JdbcPasswordManagementService;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,7 +30,7 @@ public class JdbcPasswordManagementConfiguration {
 
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
-    private CipherExecutor passwordManagementCipherExecutor;
+    private ObjectProvider<CipherExecutor> passwordManagementCipherExecutor;
 
     @Bean
     public DataSource jdbcPasswordManagementDataSource() {
@@ -39,7 +40,7 @@ public class JdbcPasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public PasswordManagementService passwordChangeService() {
-        return new JdbcPasswordManagementService(passwordManagementCipherExecutor,
+        return new JdbcPasswordManagementService(passwordManagementCipherExecutor.getIfAvailable(),
             casProperties.getServer().getPrefix(),
             casProperties.getAuthn().getPm(),
             jdbcPasswordManagementDataSource());

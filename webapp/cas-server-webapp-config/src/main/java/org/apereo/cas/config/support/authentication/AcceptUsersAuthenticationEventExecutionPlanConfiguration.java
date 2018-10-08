@@ -39,7 +39,7 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("acceptUsersAuthenticationHandler")
-    private AuthenticationHandler acceptUsersAuthenticationHandler;
+    private ObjectProvider<AuthenticationHandler> acceptUsersAuthenticationHandler;
 
     @ConditionalOnMissingBean(name = "acceptUsersAuthenticationEventExecutionPlanConfigurer")
     @Bean
@@ -52,7 +52,7 @@ public class AcceptUsersAuthenticationEventExecutionPlanConfiguration {
                         + "that you DISABLE this authentication method (by setting 'cas.authn.accept.users' "
                         + "to a blank value) and switch to a mode that is more suitable for production.";
                 AsciiArtUtils.printAsciiArtWarning(LOGGER, "STOP!", header);
-                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler, personDirectoryPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(acceptUsersAuthenticationHandler.getIfAvailable(), personDirectoryPrincipalResolver.getIfAvailable());
             }
         };
     }

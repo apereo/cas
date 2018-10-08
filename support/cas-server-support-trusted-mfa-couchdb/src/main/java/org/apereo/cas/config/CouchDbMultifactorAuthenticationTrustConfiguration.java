@@ -9,6 +9,7 @@ import org.apereo.cas.trusted.authentication.storage.CouchDbMultifactorAuthentic
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,17 +33,17 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
 
     @Autowired
     @Qualifier("mfaTrustCipherExecutor")
-    private CipherExecutor mfaTrustCipherExecutor;
+    private ObjectProvider<CipherExecutor> mfaTrustCipherExecutor;
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @ConditionalOnMissingBean(name = "mfaTrustCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory mfaTrustCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getTrusted().getCouchDb(), objectMapperFactory);
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getTrusted().getCouchDb(), objectMapperFactory.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "couchDbTrustRecordRepository")
@@ -60,7 +61,7 @@ public class CouchDbMultifactorAuthenticationTrustConfiguration {
     public MultifactorAuthenticationTrustStorage mfaTrustEngine(
         @Qualifier("couchDbTrustRecordRepository") final MultifactorAuthenticationTrustRecordCouchDbRepository couchDbTrustRecordRepository) {
         val c = new CouchDbMultifactorAuthenticationTrustStorage(couchDbTrustRecordRepository);
-        c.setCipherExecutor(this.mfaTrustCipherExecutor);
+        c.setCipherExecutor(mfaTrustCipherExecutor.getIfAvailable());
         return c;
     }
 }

@@ -45,7 +45,7 @@ public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecu
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -62,7 +62,7 @@ public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecu
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer() {
         return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @Bean

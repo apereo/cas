@@ -10,6 +10,7 @@ import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 
 import lombok.SneakyThrows;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -40,11 +41,11 @@ public class JsonServiceRegistryConfiguration implements ServiceRegistryExecutio
 
     @Autowired
     @Qualifier("registeredServiceReplicationStrategy")
-    private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
+    private ObjectProvider<RegisteredServiceReplicationStrategy> registeredServiceReplicationStrategy;
 
     @Autowired
     @Qualifier("registeredServiceResourceNamingStrategy")
-    private RegisteredServiceResourceNamingStrategy resourceNamingStrategy;
+    private ObjectProvider<RegisteredServiceResourceNamingStrategy> resourceNamingStrategy;
 
     @Bean
     @SneakyThrows
@@ -52,7 +53,7 @@ public class JsonServiceRegistryConfiguration implements ServiceRegistryExecutio
         val registry = casProperties.getServiceRegistry();
         return new JsonServiceRegistry(registry.getJson().getLocation(),
             registry.isWatcherEnabled(), eventPublisher,
-            registeredServiceReplicationStrategy, resourceNamingStrategy);
+            registeredServiceReplicationStrategy.getIfAvailable(), resourceNamingStrategy.getIfAvailable());
     }
 
     @Override

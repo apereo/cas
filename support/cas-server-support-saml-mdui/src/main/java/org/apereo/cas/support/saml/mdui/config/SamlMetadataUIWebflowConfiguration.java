@@ -61,7 +61,7 @@ public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPl
 
     @Autowired
     @Qualifier("chainingSamlMetadataUIMetadataResolverAdapter")
-    private MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter;
+    private ObjectProvider<MetadataResolverAdapter> chainingSamlMetadataUIMetadataResolverAdapter;
 
     @ConditionalOnMissingBean(name = "samlMetadataUIWebConfigurer")
     @ConditionalOnBean(name = "defaultWebflowConfigurer")
@@ -77,7 +77,7 @@ public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPl
     @Bean
     public Action samlMetadataUIParserAction() {
         val parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
-        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter, serviceFactory, servicesManager.getIfAvailable());
+        return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter.getIfAvailable(), serviceFactory, servicesManager.getIfAvailable());
     }
 
     @Override

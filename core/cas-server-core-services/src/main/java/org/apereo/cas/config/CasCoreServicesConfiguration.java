@@ -66,7 +66,7 @@ import java.util.List;
 public class CasCoreServicesConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
-    private CommunicationsManager communicationsManager;
+    private ObjectProvider<CommunicationsManager> communicationsManager;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -143,7 +143,7 @@ public class CasCoreServicesConfiguration {
 
     @Bean
     public RegisteredServicesEventListener registeredServicesEventListener() {
-        return new RegisteredServicesEventListener(servicesManager(), casProperties, communicationsManager);
+        return new RegisteredServicesEventListener(servicesManager(), casProperties, communicationsManager.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "registeredServiceReplicationStrategy")

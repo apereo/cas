@@ -44,7 +44,7 @@ public class CasDiscoveryProfileConfiguration {
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
@@ -62,7 +62,7 @@ public class CasDiscoveryProfileConfiguration {
     @Bean
     public Set<String> availableAttributes() {
         val attributes = new LinkedHashSet<String>(0);
-        val possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
+        val possibleUserAttributeNames = attributeRepository.getIfAvailable().getPossibleUserAttributeNames();
         if (possibleUserAttributeNames != null) {
             attributes.addAll(possibleUserAttributeNames);
         }

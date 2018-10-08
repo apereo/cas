@@ -6,6 +6,7 @@ import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,26 +28,26 @@ public class MultifactorAuthnTrustWebflowConfiguration {
 
     @Autowired
     @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
-    private DeviceFingerprintStrategy deviceFingerprintStrategy;
+    private ObjectProvider<DeviceFingerprintStrategy> deviceFingerprintStrategy;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("mfaTrustEngine")
-    private MultifactorAuthenticationTrustStorage mfaTrustEngine;
+    private ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine;
 
     @Bean
     public Action mfaSetTrustAction() {
-        return new MultifactorAuthenticationSetTrustAction(mfaTrustEngine,
-            deviceFingerprintStrategy,
+        return new MultifactorAuthenticationSetTrustAction(mfaTrustEngine.getIfAvailable(),
+            deviceFingerprintStrategy.getIfAvailable(),
             casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
     public Action mfaVerifyTrustAction() {
-        return new MultifactorAuthenticationVerifyTrustAction(mfaTrustEngine,
-            deviceFingerprintStrategy,
+        return new MultifactorAuthenticationVerifyTrustAction(mfaTrustEngine.getIfAvailable(),
+            deviceFingerprintStrategy.getIfAvailable(),
             casProperties.getAuthn().getMfa().getTrusted());
     }
 }

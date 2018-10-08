@@ -50,7 +50,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -155,7 +155,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));
 
-                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository, wsfedPrincipalFactory(),
+                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getIfAvailable(), wsfedPrincipalFactory(),
                         wsfed.getPrincipal().isReturnNull(),
                         wsfed.getPrincipal().getPrincipalAttribute(),
                         cfg);

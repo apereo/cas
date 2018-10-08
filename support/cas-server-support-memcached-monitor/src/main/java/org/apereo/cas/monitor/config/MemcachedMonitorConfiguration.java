@@ -11,6 +11,7 @@ import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.transcoders.Transcoder;
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPool;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -33,12 +34,12 @@ public class MemcachedMonitorConfiguration {
 
     @Autowired
     @Qualifier("componentSerializationPlan")
-    private ComponentSerializationPlan componentSerializationPlan;
+    private ObjectProvider<ComponentSerializationPlan> componentSerializationPlan;
 
     @Bean
     public Transcoder memcachedMonitorTranscoder() {
         val memcached = casProperties.getMonitor().getMemcached();
-        return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getRegisteredClasses());
+        return MemcachedUtils.newTranscoder(memcached, componentSerializationPlan.getIfAvailable().getRegisteredClasses());
     }
 
     @Bean

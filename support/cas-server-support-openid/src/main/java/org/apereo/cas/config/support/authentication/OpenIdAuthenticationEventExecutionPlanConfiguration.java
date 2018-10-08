@@ -36,7 +36,7 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -54,10 +54,11 @@ public class OpenIdAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     public OpenIdPrincipalResolver openIdPrincipalResolver() {
-        val r = new OpenIdPrincipalResolver(attributeRepository, openidPrincipalFactory(),
-            casProperties.getAuthn().getOpenid().getPrincipal().isReturnNull(),
-            casProperties.getAuthn().getOpenid().getPrincipal().getPrincipalAttribute());
-        return r;
+        val principal = casProperties.getAuthn().getOpenid().getPrincipal();
+        return new OpenIdPrincipalResolver(attributeRepository.getIfAvailable(),
+            openidPrincipalFactory(),
+            principal.isReturnNull(),
+            principal.getPrincipalAttribute());
     }
 
     @ConditionalOnMissingBean(name = "openidPrincipalFactory")

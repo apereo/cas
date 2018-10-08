@@ -8,6 +8,7 @@ import org.apereo.cas.web.support.MongoDbThrottledSubmissionHandlerInterceptorAd
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,7 +31,7 @@ public class CasMongoDbThrottlingConfiguration {
 
     @Autowired
     @Qualifier("throttledRequestResponseHandler")
-    private ThrottledRequestResponseHandler throttledRequestResponseHandler;
+    private ObjectProvider<ThrottledRequestResponseHandler> throttledRequestResponseHandler;
 
     @Autowired
     @Bean
@@ -52,6 +53,6 @@ public class CasMongoDbThrottlingConfiguration {
             failure.getCode(),
             throttle.getAppcode(),
             mongo.getCollection(),
-            throttledRequestResponseHandler);
+            throttledRequestResponseHandler.getIfAvailable());
     }
 }

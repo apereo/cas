@@ -39,7 +39,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration implements CasWebflowE
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -73,7 +73,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration implements CasWebflowE
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
         return new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyRepository")
