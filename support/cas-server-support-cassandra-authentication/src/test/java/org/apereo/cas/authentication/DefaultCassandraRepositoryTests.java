@@ -49,7 +49,12 @@ import static org.junit.Assert.*;
     CassandraAuthenticationConfiguration.class
 })
 @EnableConfigurationProperties
-@TestPropertySource(locations = {"classpath:/cassandra-authn.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.cassandra.tableName=users_table",
+    "cas.authn.cassandra.usernameAttribute=user_attr",
+    "cas.authn.cassandra.passwordAttribute=pwd_attr",
+    "cas.authn.cassandra.keyspace=cas"
+})
 @Category(CassandraCategory.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class DefaultCassandraRepositoryTests {

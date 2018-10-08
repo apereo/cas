@@ -8,6 +8,7 @@ import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessage
 import org.apereo.cas.pm.web.flow.actions.InitPasswordChangeAction;
 import org.apereo.cas.pm.web.flow.actions.InitPasswordResetAction;
 import org.apereo.cas.pm.web.flow.actions.PasswordChangeAction;
+import org.apereo.cas.pm.web.flow.actions.SendForgotUsernameInstructionsAction;
 import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsAction;
 import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestAction;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsAction;
@@ -106,7 +107,7 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     @RefreshScope
     @Bean
     public Action passwordChangeAction() {
-        return new PasswordChangeAction(passwordManagementService, passwordValidationService);
+        return new PasswordChangeAction(passwordManagementService, passwordValidationService, communicationsManager);
     }
 
     @ConditionalOnMissingBean(name = "sendPasswordResetInstructionsAction")
@@ -114,6 +115,13 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     @RefreshScope
     public Action sendPasswordResetInstructionsAction() {
         return new SendPasswordResetInstructionsAction(casProperties, communicationsManager, passwordManagementService);
+    }
+
+    @ConditionalOnMissingBean(name = "sendForgotUsernameInstructionsAction")
+    @Bean
+    @RefreshScope
+    public Action sendForgotUsernameInstructionsAction() {
+        return new SendForgotUsernameInstructionsAction(casProperties, communicationsManager, passwordManagementService);
     }
 
     @ConditionalOnMissingBean(name = "verifyPasswordResetRequestAction")

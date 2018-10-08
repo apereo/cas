@@ -9,6 +9,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.webflow.execution.RequestContext;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -27,7 +28,8 @@ public class RegexAttributeInterruptInquirer extends BaseInterruptInquirer {
 
     @Override
     protected InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
-                                                final Service service, final Credential credential) {
+                                                final Service service, final Credential credential,
+                                                final RequestContext requestContext) {
         val attributes = new HashMap<String, Object>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());
 

@@ -5,9 +5,9 @@ import org.apereo.cas.adaptors.swivel.SwivelMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.swivel.SwivelTokenCredential;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -16,6 +16,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,7 +40,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Bean
     @RefreshScope
@@ -66,7 +67,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     public SwivelAuthenticationHandler swivelAuthenticationHandler() {
         val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         return new SwivelAuthenticationHandler(swivel.getName(),
-            servicesManager, swivelPrincipalFactory(), swivel);
+            servicesManager.getIfAvailable(), swivelPrincipalFactory(), swivel);
     }
 
     @Bean

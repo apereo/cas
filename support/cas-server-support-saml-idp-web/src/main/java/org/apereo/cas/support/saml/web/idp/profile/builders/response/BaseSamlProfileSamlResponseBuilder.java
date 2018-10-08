@@ -8,9 +8,10 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
@@ -34,8 +35,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.2
  */
 @Slf4j
-public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
-    extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
+public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
     /**
      * The Velocity engine factory.
@@ -52,13 +52,13 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
     protected CasConfigurationProperties casProperties;
 
     private final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder;
-    private final SamlObjectEncrypter samlObjectEncrypter;
+    private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     public BaseSamlProfileSamlResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
                                               final SamlIdPObjectSigner samlObjectSigner,
                                               final VelocityEngine velocityEngineFactory,
                                               final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
-                                              final SamlObjectEncrypter samlObjectEncrypter) {
+                                              final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(openSamlConfigBean);
         this.samlObjectSigner = samlObjectSigner;
         this.velocityEngineFactory = velocityEngineFactory;
@@ -209,15 +209,16 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
      * @return the saml object
      * @throws SamlException the saml exception
      */
+    @SneakyThrows
     protected SAMLObject encryptAssertion(final Assertion assertion,
-                                          final HttpServletRequest request, final HttpServletResponse response,
+                                          final HttpServletRequest request,
+                                          final HttpServletResponse response,
                                           final SamlRegisteredService service,
                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
         if (service.isEncryptAssertions()) {
             LOGGER.debug("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-            val encryptedAssertion =
-                this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
+            val encryptedAssertion = this.samlObjectEncrypter.encode(assertion, service, adaptor);
             return encryptedAssertion;
         }
         LOGGER.debug("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());

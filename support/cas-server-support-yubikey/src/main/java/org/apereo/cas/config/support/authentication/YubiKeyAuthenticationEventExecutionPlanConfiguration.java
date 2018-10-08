@@ -16,9 +16,9 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAc
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -31,6 +31,7 @@ import com.yubico.client.v2.YubicoClient;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
@@ -61,7 +62,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
@@ -115,7 +116,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler yubikeyAuthenticationHandler() {
         val yubi = this.casProperties.getAuthn().getMfa().getYubikey();
         val handler = new YubiKeyAuthenticationHandler(yubi.getName(),
-            servicesManager, yubikeyPrincipalFactory(),
+            servicesManager.getIfAvailable(), yubikeyPrincipalFactory(),
             yubicoClient(), yubiKeyAccountRegistry());
         return handler;
     }

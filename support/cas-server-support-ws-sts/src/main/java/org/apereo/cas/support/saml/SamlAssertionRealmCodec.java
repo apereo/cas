@@ -38,10 +38,10 @@ public class SamlAssertionRealmCodec implements SAMLRealmCodec {
     private String parseCNValue(final String name) {
         val index = name.indexOf(',');
         val len = index > 0 ? index : name.length();
-        var realm = name.substring(name.indexOf("CN=") + "CN=".length(), len);
+        var commonName = name.substring(name.indexOf("CN=") + "CN=".length(), len);
         if (uppercase) {
-            realm = realm.toUpperCase();
+            commonName = commonName.toUpperCase();
         }
-        return realm;
+        return commonName;
     }
 }

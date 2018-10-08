@@ -1,17 +1,17 @@
 package org.apereo.cas.config.support.authentication;
 
-import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenCredential;
+import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -20,6 +20,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -47,7 +48,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @RefreshScope
     @Bean
@@ -70,16 +71,18 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public List<RadiusServer> radiusTokenServers() {
         val list = new ArrayList<RadiusServer>();
-        val client = casProperties.getAuthn().getMfa().getRadius().getClient();
-        val server = casProperties.getAuthn().getMfa().getRadius().getServer();
+        val radius = casProperties.getAuthn().getMfa().getRadius();
+        val client = radius.getClient();
+        val server = radius.getServer();
 
         val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
             client.getInetAddress(), client.getSharedSecret());
 
         val protocol = RadiusProtocol.valueOf(server.getProtocol());
-        val impl = new JRadiusServerImpl(protocol, factory, server.getRetries(),
+        val impl = new NonBlockingRadiusServer(protocol, factory, server.getRetries(),
             server.getNasIpAddress(), server.getNasIpv6Address(),
-            server.getNasPort(), server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort());
+            server.getNasPort(), server.getNasPortId(),
+            server.getNasIdentifier(), server.getNasRealPort(), server.getNasPortType());
 
         list.add(impl);
         return list;
@@ -95,7 +98,8 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public RadiusTokenAuthenticationHandler radiusTokenAuthenticationHandler() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
-        return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager, radiusTokenPrincipalFactory(), radiusTokenServers(),
+        return new RadiusTokenAuthenticationHandler(radius.getName(), servicesManager.getIfAvailable(),
+            radiusTokenPrincipalFactory(), radiusTokenServers(),
             radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
     }
 

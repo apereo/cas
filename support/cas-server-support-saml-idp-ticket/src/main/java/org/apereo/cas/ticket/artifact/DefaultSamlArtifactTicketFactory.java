@@ -49,7 +49,7 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
             val codeId = createTicketIdFor(artifactId);
 
             val service = this.webApplicationServiceFactory.createService(relyingParty);
-            final SamlArtifactTicket at = new SamlArtifactTicketImpl(codeId, service, authentication,
+            val at = new SamlArtifactTicketImpl(codeId, service, authentication,
                 this.expirationPolicy, ticketGrantingTicket, issuer, relyingParty, w.toString());
             if (ticketGrantingTicket != null) {
                 ticketGrantingTicket.getDescendantTickets().add(at.getId());

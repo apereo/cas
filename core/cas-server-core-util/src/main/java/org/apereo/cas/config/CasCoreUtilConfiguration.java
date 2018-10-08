@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
@@ -58,6 +59,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     private ApplicationContext applicationContext;
 
     @Bean
+    @Scope(value = "prototype")
     public ApplicationContextProvider applicationContextProvider() {
         return new ApplicationContextProvider();
     }
@@ -68,6 +70,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "communicationsManager")
     public CommunicationsManager communicationsManager() {
         return new CommunicationsManager(smsSender.getIfAvailable(), mailSender.getIfAvailable());
     }

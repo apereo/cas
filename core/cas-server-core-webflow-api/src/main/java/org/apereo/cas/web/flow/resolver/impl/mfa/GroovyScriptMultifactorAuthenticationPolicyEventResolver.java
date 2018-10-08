@@ -84,8 +84,8 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends Ba
         }
 
         try {
-            final Object[] args = {service, registeredService, authentication, LOGGER};
-            val provider = ScriptingUtils.executeGroovyScript(groovyScript, args, String.class);
+            final Object[] args = {service, registeredService, authentication, context, LOGGER};
+            val provider = ScriptingUtils.executeGroovyScript(groovyScript, args, String.class, true);
             LOGGER.debug("Groovy script run for [{}] returned the provider id [{}]", service, provider);
             if (StringUtils.isBlank(provider)) {
                 return null;

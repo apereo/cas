@@ -129,7 +129,6 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .registeredService(holder.getRegisteredService())
             .deviceCode(deviceTokens.getLeft().getId())
             .userCode(deviceTokens.getValue().getId())
-
             .build();
     }
 
@@ -188,6 +187,8 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val authn = DefaultAuthenticationBuilder
             .newInstance(holder.getAuthentication())
             .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
+            .addAttribute(OAuth20Constants.SCOPE, holder.getScopes())
+            .addAttribute(OAuth20Constants.CLIENT_ID, holder.getRegisteredService().getClientId())
             .build();
 
         LOGGER.debug("Creating access token for [{}]", holder);

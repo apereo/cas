@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
@@ -197,6 +198,9 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(MY_SERVICE, mockRequest.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
         val flowScope = mockRequestContext.getFlowScope();
         assertEquals(service.getId(), ((Service) flowScope.get(CasProtocolConstants.PARAMETER_SERVICE)).getId());
+        val credential = (ClientCredential) flowScope.get(CasWebflowConstants.VAR_ID_CREDENTIAL);
+        assertNotNull(credential);
+        assertTrue(credential.getId().startsWith(ClientCredential.NOT_YET_AUTHENTICATED));
     }
 
     private ServicesManager getServicesManagerWith(final Service service, final BaseClient client) {
@@ -260,7 +264,7 @@ public class DelegatedClientAuthenticationActionTests {
             support,
             LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME,
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
+            mock(CentralAuthenticationService.class));
     }
 }

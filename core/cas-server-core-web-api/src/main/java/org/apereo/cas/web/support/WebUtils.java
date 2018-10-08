@@ -55,12 +55,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class WebUtils {
-
-    /**
-     * Request attribute that contains message key describing details of authorization failure.
-     */
-    public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
-
     /**
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
@@ -969,5 +963,15 @@ public class WebUtils {
      */
     public static void putDelegatedAuthenticationProviderDominant(final RequestContext context, final Object client) {
         context.getFlowScope().put("delegatedAuthenticationProviderDominant", client);
+    }
+
+    /**
+     * Put available authentication handle names.
+     *
+     * @param context           the context
+     * @param availableHandlers the available handlers
+     */
+    public static void putAvailableAuthenticationHandleNames(final RequestContext context, final Collection<String> availableHandlers) {
+        context.getFlowScope().put("availableAuthenticationHandlerNames", availableHandlers);
     }
 }

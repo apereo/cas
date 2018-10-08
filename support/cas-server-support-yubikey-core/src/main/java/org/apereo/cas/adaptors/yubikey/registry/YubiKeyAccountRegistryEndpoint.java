@@ -47,7 +47,7 @@ public class YubiKeyAccountRegistryEndpoint {
      * @return the collection
      */
     @ReadOperation
-    public Collection<YubiKeyAccount> load() {
+    public Collection<? extends YubiKeyAccount> load() {
         return registry.getAccounts();
     }
 

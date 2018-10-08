@@ -21,9 +21,6 @@
         <Logger name="net.spy.memcached" level="off" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="de.flapdoodle" level="off" additivity="false">
-            <AppenderRef ref="console"/>
-        </Logger>
         <Logger name="org.hibernate.validator" level="error" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>

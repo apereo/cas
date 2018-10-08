@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
@@ -92,6 +92,11 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      */
     protected abstract AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(UsernamePasswordCredential credential,
                                                                                                  String originalPassword) throws GeneralSecurityException, PreventedException;
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return UsernamePasswordCredential.class.isAssignableFrom(clazz);
+    }
 
     @Override
     public boolean supports(final Credential credential) {

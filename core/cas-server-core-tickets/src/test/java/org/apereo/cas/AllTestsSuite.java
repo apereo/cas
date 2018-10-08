@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.ticket.InvalidTicketExceptionTests;
 import org.apereo.cas.ticket.ServiceTicketImplTests;
 import org.apereo.cas.ticket.TicketGrantingTicketImplTests;
+import org.apereo.cas.ticket.TicketSerializersTests;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationExceptionTests;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandlerTests;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandlerTests;
@@ -39,6 +40,7 @@ import org.junit.runners.Suite;
     CachingTicketRegistryTests.class,
     DistributedTicketRegistryTests.class,
     Cas10ProxyHandlerTests.class,
+    TicketSerializersTests.class,
     Cas20ProxyHandlerTests.class})
 public class AllTestsSuite {
 }

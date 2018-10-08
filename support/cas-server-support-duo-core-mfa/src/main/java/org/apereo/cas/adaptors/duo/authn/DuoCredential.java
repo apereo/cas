@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,8 +21,8 @@ import org.apache.commons.lang3.StringUtils;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"username"})
-public class DuoCredential implements Credential {
+@EqualsAndHashCode(of = {"username"}, callSuper = true)
+public class DuoCredential extends AbstractCredential {
 
     private static final long serialVersionUID = -7570600733132111037L;
 
@@ -35,6 +35,7 @@ public class DuoCredential implements Credential {
         return this.username;
     }
 
+    @Override
     public boolean isValid() {
         return StringUtils.isNotBlank(this.username) && StringUtils.isNotBlank(this.signedDuoResponse);
     }

@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * This is {@link AbstractMapBasedTicketRegistry}.
@@ -39,21 +40,21 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
         val found = getMapInstance().get(encTicketId);
         if (found == null) {
-            LOGGER.debug("Ticket  [{}] could not be found", encTicketId);
+            LOGGER.debug("Ticket [{}] could not be found", encTicketId);
             return null;
         }
 
         val result = decodeTicket(found);
-        if (result != null && result.isExpired()) {
-            LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
-            getMapInstance().remove(encTicketId);
+        if (!predicate.test(result)) {
+            LOGGER.debug("The condition enforced by the predicate [{}] cannot successfully accept/test the ticket id [{}]", ticketId,
+                predicate.getClass().getSimpleName());
             return null;
         }
         return result;
@@ -76,7 +77,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return decodeTickets(getMapInstance().values());
     }
 

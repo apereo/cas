@@ -212,7 +212,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addSuccesses(final Map<String, AuthenticationHandlerExecutionResult> successes) {
-        successes.entrySet().forEach(entry -> addSuccess(entry.getKey(), entry.getValue()));
+        successes.forEach((key, value) -> addSuccess(key, value));
         return this;
     }
 
@@ -247,7 +247,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addFailures(final Map<String, Throwable> failures) {
-        failures.entrySet().forEach(entry -> addFailure(entry.getKey(), entry.getValue()));
+        failures.forEach((key, value) -> addFailure(key, value));
         return this;
     }
 
@@ -260,10 +260,10 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      */
     @Override
     public AuthenticationBuilder addFailure(final String key, final Throwable value) {
-        LOGGER.debug("Recording authentication handler failure under key [{}]", key);
+        LOGGER.trace("Recording authentication handler failure under key [{}]", key);
         if (this.successes.containsKey(key)) {
             val newKey = key + System.currentTimeMillis();
-            LOGGER.debug("Key mapped to authentication handler failure [{}] is recorded in the list of failed attempts. Overriding with [{}]", key, newKey);
+            LOGGER.trace("Key mapped to authentication handler failure [{}] is recorded in the list of failed attempts. Overriding with [{}]", key, newKey);
             this.failures.put(newKey, value);
         } else {
             this.failures.put(key, value);

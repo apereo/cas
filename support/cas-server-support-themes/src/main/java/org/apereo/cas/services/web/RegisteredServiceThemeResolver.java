@@ -135,7 +135,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             if (resource instanceof FileSystemResource && resource.exists()) {
                 LOGGER.debug("Executing groovy script to determine theme for [{}]", service.getId());
                 val result = ScriptingUtils.executeGroovyScript(resource, new Object[]{service, rService,
-                    request.getQueryString(), HttpRequestUtils.getRequestHeaders(request), LOGGER}, String.class);
+                    request.getQueryString(), HttpRequestUtils.getRequestHeaders(request), LOGGER}, String.class, true);
                 return StringUtils.defaultIfBlank(result, getDefaultThemeName());
             }
             if (resource instanceof UrlResource) {

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Monitoring & Statistics
+category: Monitoring & Statistics
 ---
 
 # Monitoring / Statistics
@@ -39,18 +40,20 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `spring-webflow`          | Provides a JSON representation of the CAS authentication webflows.
 | `events`                  | Provides a JSON representation of all CAS recorded events.
 | `audit-log`               | Provides a JSON representation of all the audit log.
-| `discovery-profile`       | Provides a JSON representation of the [CAS configuration and capabilities](Configuration-Discovery.html).
+| `discovery-profile`       | Provides a JSON representation of the [CAS configuration and capabilities](../configuration/Configuration-Discovery.html).
 | `registered-services`     | Provides a JSON representation of the [CAS service registry](Service-Management.html).
-| `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.
+| `export-registered-services`     | Provides a ZIP-file representation of the [CAS service registry](Service-Management.html).
+| `configuration-metadata`  | Exposes [CAS configuration metadata](../configuration/Configuration-Metadata-Repository.html) that can be used to query settings.
 | `statistics`              | Exposes statistics data on tickets, memory, server availability and uptime, etc.
 | `sso-sessions`            | Review the current single sign-on sessions establishes with CAS and manage each session remotely.
 | `sso`                     | Indicate the current status of the single signon session tied to the browser session and the SSO cookie.
 | `resolve-attributes/{name}`    | Invoke the CAS [attribute resolution](../integration/Attribute-Resolution.html) engine to locate attributes for `{name}`.
 | `release-attributes`           | Invoke the CAS [attribute release](../integration/Attribute-Release.html) engine to release attributes to an application.
-| `multifactor-trusted-devices`  | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine.
+| `multifactor-trusted-devices`  | Expose devices currently [registered and trusted](../mfa/Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine.
 | `attribute-consent`  | Manage and control [attribute consent decisions](../integration/Attribute-Release-Consent.html).
-| `gauth-credential-repository`  | Manage and control [Google Authenticator account records](GoogleAuthenticator-Authentication.html).
-| `yubikey-account-repository`  | Manage and control [Google Authenticator account records](YubiKey-Authentication.html).
+| `gauth-credential-repository`  | Manage and control [Google Authenticator account records](../mfa/GoogleAuthenticator-Authentication.html).
+| `yubikey-account-repository`  | Manage and control [Google Authenticator account records](../mfa/YubiKey-Authentication.html).
+| `oauth-tokens`  | Manage and control [OAuth2 access tokens](OAuth-OpenId-Authentication.html).
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>status</code>, <code>health</code> and <code>configuration-metadata</code>.
@@ -62,6 +65,10 @@ Actuator endpoints provided by Spring Boot can also be visually managed and moni
 <div class="alert alert-info"><strong>Obtaining Health Info</strong><p>Note that <code>/status</code> endpoint is kept mostly 
 as a legacy endpoint. If you wish to obtain health status of each monitor in detail, we recommend the <code>/status/health</code> endpoint instead.</p></div>
  
+### Registered Services Endpoint
+
+The endpoint can also accept a mime-type of `application/vnd.cas.services+yaml` to produce YAML output.
+
 ### Attribute Release Endpoint
 
 Supported parameters are the following:
@@ -107,6 +114,12 @@ A `DELETE` operation will delete all account records.
 A `GET` operation produces with a parameter selector of `/{username}` will list the record assigned to the user.
 A `DELETE` operation produces with a parameter selector of `/{username}` will remove the record assigned to the user.
 
+### OAuth Tokens
+
+A `GET` operation produces a list of all access/refresh tokens.
+A `DELETE` operation will delete the provided access/refresh token provided in form of a parameter selector. (i.e. `/{token}`)
+A `GET` operation produces with a parameter selector of `/{token}` will list the details of the fetched acces/refresh token.
+
 ### Metrics
 
 Navigating to `/actuator/metrics` displays a list of available meter names. You can drill down to view information about a 
@@ -121,8 +134,8 @@ So in the example above, the returned "Value" statistic is the sum of the maximu
 "Compressed Class Space", and "Metaspace" areas of the heap. If you just wanted to see the maximum size for the "Metaspace", 
 you could add an additional `tag=id:Metaspace`, i.e. `/actuator/metrics/jvm.memory.max?tag=area:nonheap&tag=id:Metaspace`.
 
-<div class="alert alert-info"><strong>Use `/status/health` instead of `/status` </strong><p>Note that `/status` endpoint is kept for legacy reason. 
-It is advised to use `/status/health` instead of `/status` for the purpose of general health status monitoring</p></div>
+<div class="alert alert-info"><strong>Use <code>/status/health</code> instead of <code>/status</code> </strong><p>Note that <code>/status</code> endpoint is kept for legacy reason. 
+It is advised to use <code>/status/health</code> instead of <code>/status</code> for the purpose of general health status monitoring</p></div>
 
 ## Security
 
@@ -143,7 +156,7 @@ that would authenticate the request via JAAS, LDAP, JDBC, etc.
 Depending on method of access and the `content-type` that is negotiated between the caller and CAS, (i.e. web-based vs. command-line access), 
 credentials may be supplied in headers via `curl` and family or they may be entered into a web-based login form.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#actuator-management-endpoints).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#actuator-management-endpoints).
 
 ### Troubleshooting
 
@@ -186,7 +199,7 @@ interactions with external systems should be instrumented automatically.
 Trace data is captured automatically and passed along to [Zipkin](https://github.com/openzipkin/zipkin), which helps 
 gather timing data needed to troubleshoot latency problems.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#sleuth-distributed-tracing).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#sleuth-distributed-tracing).
 
 ### Troubleshooting
 

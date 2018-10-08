@@ -1,11 +1,13 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.test.MockRequestContext;
@@ -20,6 +22,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Category(RestfulApiCategory.class)
 public class RestfulIPAddressIntelligenceServiceTests {
     @Test
     public void verifyAllowedOperation() {

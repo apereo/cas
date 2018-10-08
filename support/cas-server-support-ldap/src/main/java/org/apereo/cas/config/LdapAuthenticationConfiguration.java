@@ -35,6 +35,7 @@ import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -66,11 +67,11 @@ public class LdapAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     private static Predicate<LdapAuthenticationProperties> ldapInstanceConfigurationPredicate() {
         return l -> {
@@ -114,7 +115,7 @@ public class LdapAuthenticationConfiguration {
 
                 LOGGER.debug("Creating LDAP authentication handler for [{}]", l.getLdapUrl());
                 val handler = new LdapAuthenticationHandler(l.getName(),
-                    servicesManager, ldapPrincipalFactory(), l.getOrder(), authenticator, strategy);
+                    servicesManager.getIfAvailable(), ldapPrincipalFactory(), l.getOrder(), authenticator, strategy);
                 handler.setCollectDnAttribute(l.isCollectDnAttribute());
 
                 val additionalAttributes = l.getAdditionalAttributes();
@@ -252,7 +253,7 @@ public class LdapAuthenticationConfiguration {
     public AuthenticationEventExecutionPlanConfigurer ldapAuthenticationEventExecutionPlanConfigurer() {
         return plan -> ldapAuthenticationHandlers().forEach(handler -> {
             LOGGER.info("Registering LDAP authentication for [{}]", handler.getName());
-            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, personDirectoryPrincipalResolver);
+            plan.registerAuthenticationHandlerWithPrincipalResolver(handler, personDirectoryPrincipalResolver.getIfAvailable());
         });
     }
 }

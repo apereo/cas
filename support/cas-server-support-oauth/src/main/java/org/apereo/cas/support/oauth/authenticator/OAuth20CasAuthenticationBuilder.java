@@ -1,15 +1,11 @@
 package org.apereo.cas.support.oauth.authenticator;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.AuthenticationManager;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -30,9 +26,8 @@ import org.pac4j.core.profile.UserProfile;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
 
 /**
  * This is {@link OAuth20CasAuthenticationBuilder}.
@@ -63,22 +58,6 @@ public class OAuth20CasAuthenticationBuilder {
      * Collection of CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
-
-    private static Map<String, Object> getPrincipalAttributesFromProfile(final UserProfile profile) {
-        val profileAttributes = new HashMap<String, Object>(profile.getAttributes());
-        profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN);
-        profileAttributes.remove(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME);
-        profileAttributes.remove(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE);
-        profileAttributes.remove(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS);
-        profileAttributes.remove(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE);
-        return profileAttributes;
-    }
-
-    private static void addAuthenticationAttribute(final String name, final AuthenticationBuilder bldr,
-                                                   final UserProfile profile) {
-        bldr.addAttribute(name, profile.getAttribute(name));
-        LOGGER.debug("Added attribute [{}] to the authentication", name);
-    }
 
     /**
      * Build service.
@@ -114,7 +93,7 @@ public class OAuth20CasAuthenticationBuilder {
                                 final J2EContext context,
                                 final Service service) {
 
-        val profileAttributes = getPrincipalAttributesFromProfile(profile);
+        val profileAttributes = new LinkedHashMap<String, Object>(profile.getAttributes());
         val newPrincipal = this.principalFactory.createPrincipal(profile.getId(), profileAttributes);
         LOGGER.debug("Created final principal [{}] after filtering attributes based on [{}]", newPrincipal, registeredService);
 
@@ -133,28 +112,17 @@ public class OAuth20CasAuthenticationBuilder {
          * happily serializes to json but is unable to deserialize.
          * We have to transform those to HashSet to avoid such a problem
          */
-        val bldr = DefaultAuthenticationBuilder.newInstance()
+        return DefaultAuthenticationBuilder.newInstance()
             .addAttribute("permissions", new LinkedHashSet<>(profile.getPermissions()))
             .addAttribute("roles", new LinkedHashSet<>(profile.getRoles()))
             .addAttribute("scopes", scopes)
             .addAttribute(OAuth20Constants.STATE, state)
             .addAttribute(OAuth20Constants.NONCE, nonce)
+            .addAttribute(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
             .addCredential(metadata)
             .setPrincipal(newPrincipal)
             .setAuthenticationDate(ZonedDateTime.now())
-            .addSuccess(profile.getClass().getCanonicalName(), handlerResult);
-
-        collectionAuthenticationAttributesIfNecessary(profile, bldr);
-        return bldr.build();
-    }
-
-    private void collectionAuthenticationAttributesIfNecessary(final UserProfile profile, final AuthenticationBuilder bldr) {
-        if (casProperties.getAuthn().getOauth().getAccessToken().isReleaseProtocolAttributes()) {
-            addAuthenticationAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, bldr, profile);
-            addAuthenticationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN, bldr, profile);
-            addAuthenticationAttribute(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME, bldr, profile);
-            addAuthenticationAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE, bldr, profile);
-            addAuthenticationAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS, bldr, profile);
-        }
+            .addSuccess(profile.getClass().getCanonicalName(), handlerResult)
+            .build();
     }
 }

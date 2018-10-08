@@ -54,7 +54,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
     private void configureSessionClustering(final Tomcat tomcat) {
         if (!clusteringProperties.isSessionClusteringEnabled()) {
-            LOGGER.debug("Tomcat session clustering/replication is turned off");
+            LOGGER.trace("Tomcat session clustering/replication is turned off");
             return;
         }
 
@@ -114,7 +114,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
 
     private void configureContextForSessionClustering() {
         if (!clusteringProperties.isSessionClusteringEnabled()) {
-            LOGGER.debug("Tomcat session clustering/replication is turned off");
+            LOGGER.trace("Tomcat session clustering/replication is turned off");
             return;
         }
 

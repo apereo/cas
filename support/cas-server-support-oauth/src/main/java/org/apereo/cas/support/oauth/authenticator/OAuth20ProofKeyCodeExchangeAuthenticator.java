@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
  * @since 6.0.0
  */
 @Slf4j
-public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientAuthenticator {
+public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdClientSecretAuthenticator {
     private final TicketRegistry ticketRegistry;
 
     public OAuth20ProofKeyCodeExchangeAuthenticator(final ServicesManager servicesManager, final ServiceFactory webApplicationServiceFactory,
@@ -52,7 +52,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientAuthe
             LOGGER.error("Code verifier [{}] does not match the challenge [{}]", hash, token.getCodeChallenge());
             throw new CredentialsException("Code verification does not match the challenge assigned to: " + token.getId());
         }
-        LOGGER.debug("Validated code verifier using [{}] verification method [{}]", method);
+        LOGGER.debug("Validated code verifier using verification method [{}]", method);
     }
 
     private String calculateCodeVerifierHash(final String method, final String codeVerifier) {

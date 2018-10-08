@@ -1,6 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.web.support.WebUtils;
 

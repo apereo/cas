@@ -15,7 +15,15 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(locations = {"classpath:/jdbc-singlerow-attribute-repository.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.attributeRepository.jdbc[0].attributes.uid=uid",
+    "cas.authn.attributeRepository.jdbc[0].attributes.displayName=displayName",
+    "cas.authn.attributeRepository.jdbc[0].attributes.cn=commonName",
+    "cas.authn.attributeRepository.jdbc[0].singleRow=true",
+    "cas.authn.attributeRepository.jdbc[0].requireAllAttributes=true",
+    "cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table_users WHERE {0}",
+    "cas.authn.attributeRepository.jdbc[0].username=uid"
+})
 public class JdbcSingleRowAttributeRepositoryTests extends BaseJdbcAttributeRepositoryTests {
 
     @Test

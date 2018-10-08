@@ -7,22 +7,24 @@ import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTr
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
-import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintComponentExtractor;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.execution.Action;
 
 import java.time.LocalDateTime;
 
-import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
+import static org.apereo.cas.trusted.BeanNames.*;
 import static org.junit.Assert.*;
 
 
@@ -32,7 +34,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreAuditConfiguration.class,
@@ -41,25 +42,23 @@ import static org.junit.Assert.*;
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class
 })
 public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
-    @Autowired
-    @Qualifier("mfaTrustEngine")
-    protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
+
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("mfaVerifyTrustAction")
     protected Action mfaVerifyTrustAction;
 
     @Autowired
-    @Qualifier("mfaSetTrustAction")
-    protected Action mfaSetTrustAction;
-
-    @Autowired
     @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
     protected DeviceFingerprintStrategy deviceFingerprintStrategy;
-
-    @Autowired
-    @Qualifier("deviceFingerprintCookieComponent")
-    protected DeviceFingerprintComponentExtractor deviceFingerprintCookieComponent;
 
     @Autowired
     @Qualifier("mfaTrustStorageCleaner")
@@ -79,9 +78,11 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
     @Test
     public void verifyTrustEngine() {
         val record = getMultifactorAuthenticationTrustRecord();
-        mfaTrustEngine.set(record);
-        assertFalse(mfaTrustEngine.get(record.getPrincipal()).isEmpty());
-        assertFalse(mfaTrustEngine.get(LocalDateTime.MAX.now()).isEmpty());
-        assertFalse(mfaTrustEngine.get(record.getPrincipal(), LocalDateTime.now()).isEmpty());
+        getMfaTrustEngine().set(record);
+        assertFalse(getMfaTrustEngine().get(record.getPrincipal()).isEmpty());
+        assertFalse(getMfaTrustEngine().get(LocalDateTime.now()).isEmpty());
+        assertFalse(getMfaTrustEngine().get(record.getPrincipal(), LocalDateTime.now()).isEmpty());
     }
+
+    public abstract MultifactorAuthenticationTrustStorage getMfaTrustEngine();
 }

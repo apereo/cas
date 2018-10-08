@@ -24,20 +24,20 @@ import org.apereo.cas.config.SurrogateRestAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import lombok.val;
+import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +45,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
 
 import java.nio.charset.StandardCharsets;
 
@@ -56,8 +57,11 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {
+    SurrogateRestAuthenticationConfiguration.class,
+    SurrogateAuthenticationConfiguration.class,
+    SurrogateAuthenticationAuditConfiguration.class,
+    SurrogateAuthenticationMetadataConfiguration.class,
     RefreshAutoConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
@@ -81,39 +85,54 @@ import static org.junit.Assert.*;
     CasCoreLogoutConfiguration.class,
     CasCookieConfiguration.class,
     CasThemesConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    SurrogateAuthenticationConfiguration.class,
-    SurrogateAuthenticationAuditConfiguration.class,
-    SurrogateAuthenticationMetadataConfiguration.class,
-    SurrogateRestAuthenticationConfiguration.class
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
 })
 @TestPropertySource(properties = "cas.authn.surrogate.rest.url=http://localhost:9301")
-public class SurrogateRestAuthenticationServiceTests {
+@Getter
+public class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .findAndRegisterModules()
         .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, false)
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
-
-    @Autowired
     @Qualifier("surrogateAuthenticationService")
-    private SurrogateAuthenticationService surrogateAuthenticationService;
+    private SurrogateAuthenticationService service;
 
+    private MockWebServer webServer;
+
+    @Override
     @Test
-    public void verifyAccountsQualifying() throws Exception {
-        val data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+    public void verifyList() {
+        var data = "";
+        try {
+            data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+        } catch (final JsonProcessingException e) {
+            throw new AssertionError(e);
+        }
         try (val webServer = new MockWebServer(9301,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
-            webServer.start();
-            val results = surrogateAuthenticationService.getEligibleAccountsForSurrogateToProxy("casuser");
-            assertFalse(results.isEmpty());
+            this.webServer = webServer;
+            this.webServer.start();
+            assertTrue(this.webServer.isRunning());
+            super.verifyList();
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);
         }
+    }
 
+    @Override
+    @Test
+    public void verifyProxying() {
+        var data = "";
+        try {
+            data = MAPPER.writeValueAsString(CollectionUtils.wrapList("casuser", "otheruser"));
+        } catch (final JsonProcessingException e) {
+            throw new AssertionError(e);
+        }
         try (val webServer = new MockWebServer(9310,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
@@ -125,6 +144,7 @@ public class SurrogateRestAuthenticationServiceTests {
             val result = surrogateService.canAuthenticateAs("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
                 CoreAuthenticationTestUtils.getService());
+            // Can't use super() until the REST classes are completely refactored and don't need an actual server to connect to.
             assertTrue(result);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);

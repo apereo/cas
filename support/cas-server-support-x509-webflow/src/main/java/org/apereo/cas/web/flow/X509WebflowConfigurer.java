@@ -47,14 +47,11 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
         val flow = getLoginFlow();
         if (flow != null) {
             val actionState = createActionState(flow, EVENT_ID_START_X509, createEvaluateAction("x509Check"));
-            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
-            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
-                CasWebflowConstants.TRANSITION_ID_WARN));
-            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR,
-                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
-            actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
-                CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
+            val transitionSet = actionState.getTransitionSet();
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.TRANSITION_ID_WARN));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
 
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
             registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);

@@ -1,17 +1,18 @@
 package org.apereo.cas.authentication.mfa;
 
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -21,15 +22,20 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @DirtiesContext
 public class DefaultMultifactorAuthenticationContextValidatorTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
     public void verifyContextFailsValidationWithNoProviders() {
-        final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+        val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
         val result = v.validate(
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
@@ -40,7 +46,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     @Test
     public void verifyContextFailsValidationWithMissingProvider() {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+        val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
         val result = v.validate(
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
@@ -52,7 +58,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     @Test
     public void verifyContextPassesValidationWithProvider() {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+        val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
@@ -65,7 +71,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     @Test
     public void verifyTrustedAuthnFoundInContext() {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+        val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
@@ -78,7 +84,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     @Test
     public void verifyBypassAuthnFoundInContext() {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+        val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),
@@ -93,7 +99,7 @@ public class DefaultMultifactorAuthenticationContextValidatorTests {
     @Test
     public void verifyBypassAuthnNotFoundInContext() {
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        final AuthenticationContextValidator v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
+        val v = new DefaultMultifactorAuthenticationContextValidator("authn_method",
             "OPEN", "trusted_authn", applicationContext);
         val authentication = MultifactorAuthenticationTestUtils.getAuthentication(
             MultifactorAuthenticationTestUtils.getPrincipal("casuser"),

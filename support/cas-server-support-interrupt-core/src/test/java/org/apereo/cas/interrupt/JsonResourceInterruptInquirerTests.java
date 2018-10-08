@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.Test;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.webflow.test.MockRequestContext;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -34,8 +35,11 @@ public class JsonResourceInterruptInquirerTests {
         assertTrue(f.exists());
 
         val q = new JsonResourceInterruptInquirer(new FileSystemResource(f));
-        response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"), CoreAuthenticationTestUtils.getRegisteredService(),
-            CoreAuthenticationTestUtils.getService(), CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
+            CoreAuthenticationTestUtils.getRegisteredService(),
+            CoreAuthenticationTestUtils.getService(),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            new MockRequestContext());
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());

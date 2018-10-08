@@ -23,11 +23,28 @@ public interface LogoutExecutionPlan {
     }
 
     /**
+     * Register single logout service message handler.
+     *
+     * @param handler the handler
+     */
+    default void registerSingleLogoutServiceMessageHandler(final SingleLogoutServiceMessageHandler handler) {
+    }
+
+    /**
      * Gets logout handlers.
      *
      * @return the logout handlers
      */
     default Collection<LogoutHandler> getLogoutHandlers() {
+        return new ArrayList<>(0);
+    }
+
+    /**
+     * Gets single logout service message handlers.
+     *
+     * @return the single logout service message handlers
+     */
+    default Collection<SingleLogoutServiceMessageHandler> getSingleLogoutServiceMessageHandlers() {
         return new ArrayList<>(0);
     }
 }

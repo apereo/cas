@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,7 +84,7 @@ public class CollectionUtils {
             val set = (Set<Map.Entry>) map.entrySet();
             c.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
-            if ((byte[].class).isInstance(obj)) {
+            if (byte[].class.isInstance(obj)) {
                 c.add(obj);
             } else {
                 c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
@@ -400,6 +401,17 @@ public class CollectionUtils {
     }
 
     /**
+     * Wrap hash set.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the set
+     */
+    public static <T> HashSet<T> wrapHashSet(final Collection<T> source) {
+        return new HashSet<T>(source);
+    }
+
+    /**
      * Wrap set set.
      *
      * @param <T>    the type parameter
@@ -410,6 +422,41 @@ public class CollectionUtils {
         val list = new ArrayList<T>();
         addToCollection(list, source);
         return list;
+    }
+
+    /**
+     * As multi value map.
+     *
+     * @param innerMap the inner map
+     * @return the multi value map
+     */
+    public static MultiValueMap asMultiValueMap(final Map innerMap) {
+        return org.springframework.util.CollectionUtils.toMultiValueMap(innerMap);
+    }
+
+    /**
+     * As multi value map.
+     *
+     * @param key   the key
+     * @param value the value
+     * @return the multi value map
+     */
+    public static MultiValueMap asMultiValueMap(final String key, final Object value) {
+        return org.springframework.util.CollectionUtils.toMultiValueMap(wrap(key, value));
+    }
+
+    /**
+     * As multi value map.
+     *
+     * @param key1   the key 1
+     * @param value1 the value 1
+     * @param key2   the key 2
+     * @param value2 the value 2
+     * @return the multi value map
+     */
+    public static MultiValueMap asMultiValueMap(final String key1, final Object value1, final String key2, final Object value2) {
+        val wrap = (Map) wrap(key1, wrapList(value1), key2, wrapList(value2));
+        return org.springframework.util.CollectionUtils.toMultiValueMap(wrap);
     }
 
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {

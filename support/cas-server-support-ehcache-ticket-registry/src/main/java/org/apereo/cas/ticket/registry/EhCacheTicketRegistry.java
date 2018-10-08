@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 
+import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.sf.ehcache.CacheManager;
@@ -17,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -58,16 +60,17 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         val ticket = encodeTicket(ticketToAdd);
         val element = new Element(ticket.getId(), ticket);
 
-        var idleValue = ticketToAdd.getExpirationPolicy().getTimeToIdle().intValue();
+        val expirationPolicy = ticketToAdd.getExpirationPolicy();
+        var idleValue = expirationPolicy.getTimeToIdle().intValue();
         if (idleValue <= 0) {
-            idleValue = ticketToAdd.getExpirationPolicy().getTimeToLive().intValue();
+            idleValue = expirationPolicy.getTimeToLive().intValue();
         }
         if (idleValue <= 0) {
             idleValue = Integer.MAX_VALUE;
         }
         element.setTimeToIdle(idleValue);
 
-        var aliveValue = ticketToAdd.getExpirationPolicy().getTimeToLive().intValue();
+        var aliveValue = expirationPolicy.getTimeToLive().intValue();
         if (aliveValue <= 0) {
             aliveValue = Integer.MAX_VALUE;
         }
@@ -78,14 +81,9 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         cache.put(element);
     }
 
-    /**
-     * Either the element is removed from the cache
-     * or it's not found in the cache and is already removed.
-     * Thus the result of this op would always be true.
-     */
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        val ticket = getTicket(ticketId);
+        val ticket = getTicket(ticketId, Predicates.alwaysTrue());
         if (ticket == null) {
             LOGGER.debug("Ticket [{}] cannot be retrieved from the cache", ticketId);
             return true;
@@ -113,7 +111,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketIdToGet) {
+    public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
         if (StringUtils.isBlank(ticketIdToGet)) {
             return null;
         }
@@ -138,20 +136,18 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
         val ticket = decodeTicket((Ticket) element.getObjectValue());
 
         val config = new CacheConfiguration();
-        config.setTimeToIdleSeconds(ticket.getExpirationPolicy().getTimeToIdle());
-        config.setTimeToLiveSeconds(ticket.getExpirationPolicy().getTimeToLive());
+        val expirationPolicy = ticket.getExpirationPolicy();
+        config.setTimeToIdleSeconds(expirationPolicy.getTimeToIdle());
+        config.setTimeToLiveSeconds(expirationPolicy.getTimeToLive());
 
-        if (element.isExpired(config) || ticket.isExpired()) {
-            ehcache.remove(element);
-            LOGGER.debug("Ticket [{}] has expired and is now evicted from the cache", ticket.getId());
-            return null;
+        if (!element.isExpired(config) && predicate.test(ticket)) {
+            return ticket;
         }
-
-        return ticket;
+        return null;
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream()
             .map(this::getTicketCacheFor)
             .flatMap(map -> getAllExpired(map).values().stream())

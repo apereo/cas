@@ -64,23 +64,24 @@ public class SurrogateAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("communicationsManager")
-    private CommunicationsManager communicationsManager;
+    private ObjectProvider<CommunicationsManager> communicationsManager;
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
     @Autowired
     @Qualifier("surrogateEligibilityAuditableExecution")
-    private AuditableExecution surrogateEligibilityAuditableExecution;
+    private ObjectProvider<AuditableExecution> surrogateEligibilityAuditableExecution;
 
+    @RefreshScope
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
         val su = casProperties.getAuthn().getSurrogate();
@@ -92,6 +93,7 @@ public class SurrogateAuthenticationConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalFactory")
+    @RefreshScope
     @Bean
     public PrincipalFactory surrogatePrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
@@ -105,12 +107,12 @@ public class SurrogateAuthenticationConfiguration {
         val su = casProperties.getAuthn().getSurrogate();
         if (su.getJson().getLocation() != null) {
             LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
-            return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);
+            return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager.getIfAvailable());
         }
         val accounts = new HashMap<String, List>();
         su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
         LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
-        return new SimpleSurrogateAuthenticationService(accounts, servicesManager);
+        return new SimpleSurrogateAuthenticationService(accounts, servicesManager.getIfAvailable());
     }
 
     @RefreshScope
@@ -129,11 +131,10 @@ public class SurrogateAuthenticationConfiguration {
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
         return new SurrogateAuthenticationPostProcessor(
             surrogateAuthenticationService(),
-            servicesManager,
+            servicesManager.getIfAvailable(),
             eventPublisher,
-            registeredServiceAccessStrategyEnforcer,
-            surrogateEligibilityAuditableExecution,
-            surrogatePrincipalBuilder());
+            registeredServiceAccessStrategyEnforcer.getIfAvailable(),
+            surrogateEligibilityAuditableExecution.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "surrogatePrincipalBuilder")
@@ -161,6 +162,6 @@ public class SurrogateAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "surrogateAuthenticationEventListener")
     @Bean
     public SurrogateAuthenticationEventListener surrogateAuthenticationEventListener() {
-        return new SurrogateAuthenticationEventListener(communicationsManager, casProperties);
+        return new SurrogateAuthenticationEventListener(communicationsManager.getIfAvailable(), casProperties);
     }
 }

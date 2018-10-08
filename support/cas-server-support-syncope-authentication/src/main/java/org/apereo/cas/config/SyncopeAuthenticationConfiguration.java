@@ -16,6 +16,7 @@ import org.apereo.cas.syncope.authentication.SyncopeAuthenticationHandler;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,11 +38,11 @@ public class SyncopeAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "syncopePrincipalFactory")
     @Bean
@@ -56,7 +57,7 @@ public class SyncopeAuthenticationConfiguration {
         if (StringUtils.isBlank(syncope.getUrl())) {
             throw new BeanCreationException("Syncope URL must be defined");
         }
-        val h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager,
+        val h = new SyncopeAuthenticationHandler(syncope.getName(), servicesManager.getIfAvailable(),
             syncopePrincipalFactory(), syncope.getUrl(), syncope.getDomain());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder()));
@@ -70,7 +71,7 @@ public class SyncopeAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "syncopeAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer syncopeAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), personDirectoryPrincipalResolver);
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "syncopePasswordPolicyConfiguration")

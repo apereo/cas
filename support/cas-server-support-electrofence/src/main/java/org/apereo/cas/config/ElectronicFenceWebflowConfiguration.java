@@ -17,6 +17,7 @@ import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,15 +54,15 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
 
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -98,11 +99,14 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
     @RefreshScope
     public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
                                                                                final AuthenticationSystemSupport authenticationSystemSupport) {
-        final CasWebflowEventResolver r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
-            servicesManager,
-            ticketRegistrySupport, warnCookieGenerator,
+        val r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport,
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator,
             authenticationRequestServiceSelectionStrategies,
-            multifactorAuthenticationProviderSelector, authenticationRiskEvaluator,
+            multifactorAuthenticationProviderSelector,
+            authenticationRiskEvaluator,
             authenticationRiskMitigator, casProperties);
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r, 0);
         return r;

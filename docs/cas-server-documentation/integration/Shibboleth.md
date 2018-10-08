@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Shibboleth Integration
+category: Integration
 ---
 
 # Overview
@@ -40,7 +41,7 @@ https://sso.example.org/cas/login?service=<authentication-plugin-url>&entityId=<
 You can also take advantage of the `entityId` parameter and treat it as a normal CAS service definition,
 so it can be used for multifactor authentication and authorization.
 
-See [this guide](../installation/Configuring-Multifactor-Authentication-Triggers.html) for more info.
+See [this guide](../mfa/Configuring-Multifactor-Authentication-Triggers.html) for more info.
 
 ## Displaying SAML MDUI
 
@@ -63,7 +64,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 You may allow CAS to recognize SAML MDUI directly from metadata documents that are fed to CAS via settings. If the metadata for the relying party matches the requested `entityId` and contains MDUI elements, those will be passed onto the login page for decorations. If MDUI is not available in the metadata, the relevant elements from the matching service in the service registry will be used all the same.
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-metadata-ui).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-metadata-ui).
 
 ### Service Registry Metadata
 

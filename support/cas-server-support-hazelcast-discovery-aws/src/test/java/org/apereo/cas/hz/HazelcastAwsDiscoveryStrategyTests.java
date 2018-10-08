@@ -2,10 +2,14 @@ package org.apereo.cas.hz;
 
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.config.JoinConfig;
+import com.hazelcast.config.NetworkConfig;
 import lombok.val;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link HazelcastAwsDiscoveryStrategyTests}.
@@ -29,6 +33,7 @@ public class HazelcastAwsDiscoveryStrategyTests {
         aws.setSecurityGroupName("Group");
         aws.setTagKey("TagKey");
         aws.setTagValue("TagValue");
-        assertNotNull(strategy.get(properties));
+
+        assertNotNull(strategy.get(properties, mock(JoinConfig.class), mock(Config.class), mock(NetworkConfig.class)));
     }
 }

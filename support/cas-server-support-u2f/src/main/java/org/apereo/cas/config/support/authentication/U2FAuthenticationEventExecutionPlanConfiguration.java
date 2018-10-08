@@ -6,9 +6,9 @@ import org.apereo.cas.adaptors.u2f.U2FTokenCredential;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
-import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -17,6 +17,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,7 +42,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Lazy
     @Autowired
@@ -73,7 +74,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public U2FAuthenticationHandler u2fAuthenticationHandler() {
         val u2f = this.casProperties.getAuthn().getMfa().getU2f();
-        return new U2FAuthenticationHandler(u2f.getName(), servicesManager, u2fPrincipalFactory(), u2fDeviceRepository);
+        return new U2FAuthenticationHandler(u2f.getName(), servicesManager.getIfAvailable(), u2fPrincipalFactory(), u2fDeviceRepository);
     }
 
     @Bean

@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import lombok.val;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -12,6 +11,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static org.junit.Assert.*;
 
 /**
  * Unit test for {@link X509SubjectAlternativeNameUPNPrincipalResolver}.
@@ -32,16 +33,14 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
      * @param certPath       path to the cert
      * @param expectedResult the result expected from the test
      */
-    public X509SubjectAlternativeNameUPNPrincipalResolverTests(
-        final String certPath,
-        final String expectedResult) {
+    public X509SubjectAlternativeNameUPNPrincipalResolverTests(final String certPath, final String expectedResult) {
 
         this.resolver = new X509SubjectAlternativeNameUPNPrincipalResolver();
         try {
             this.certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
                 new FileInputStream(getClass().getResource(certPath).getPath()));
         } catch (final Exception e) {
-            Assert.fail(String.format("Error parsing certificate %s: %s", certPath, e.getMessage()));
+            fail(String.format("Error parsing certificate %s: %s", certPath, e.getMessage()));
         }
         this.expected = expectedResult;
     }
@@ -64,7 +63,14 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
 
     @Test
     public void verifyResolvePrincipalInternal() {
-        Assert.assertEquals(this.expected, this.resolver.resolvePrincipalInternal(this.certificate));
+        val userId = this.resolver.resolvePrincipalInternal(this.certificate);
+        assertEquals(this.expected, userId);
+
+        val credential = new X509CertificateCredential(new X509Certificate[]{this.certificate});
+        credential.setCertificate(this.certificate);
+        val principal = this.resolver.resolve(credential);
+        assertNotNull(principal);
+        assertFalse(principal.getAttributes().isEmpty());
     }
 
 }

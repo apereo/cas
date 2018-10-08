@@ -3,6 +3,7 @@ description = "Apereo CAS DuoSecurity Support"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-util")
     
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")

@@ -2,10 +2,10 @@ package org.apereo.cas.memcached.kryo;
 
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -14,20 +14,18 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.esotericsoftware.kryo.KryoException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -39,7 +37,6 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(JUnit4.class)
 @Slf4j
 public class CasKryoTranscoderTests {
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
@@ -168,11 +165,7 @@ public class CasKryoTranscoderTests {
     @Test
     public void verifyEncodeDecodeTGTWithUnmodifiableSet() {
         val newAttributes = new HashMap<String, Object>();
-        val values = new HashSet<String>();
-        values.add(NICKNAME_VALUE);
-        //CHECKSTYLE:OFF
-        newAttributes.put(NICKNAME_KEY, Collections.unmodifiableSet(values));
-        //CHECKSTYLE:ON
+        newAttributes.put(NICKNAME_KEY, Collections.unmodifiableSet(CollectionUtils.wrapSet(NICKNAME_VALUE)));
         val userPassCredential = new UsernamePasswordCredential(USERNAME, PASSWORD);
         val expectedTGT = new MockTicketGrantingTicket(TGT_ID, userPassCredential, newAttributes);
         expectedTGT.grantServiceTicket(ST_ID, null, null, false, true);

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Custom Service Registry
+category: Services
 ---
 
 # Custom Service Registry
@@ -12,12 +13,17 @@ package org.apereo.cas.support;
 
 @Configuration("myConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MyConfiguration {
+public class MyConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
   @Bean
   @RefreshScope
   public ServiceRegistryDao serviceRegistry() {
       ...
+  }
+  
+  @Override
+  public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+    plan.registerServiceRegistry(serviceRegistry());
   }
 }
 ```
@@ -32,4 +38,4 @@ At a minimum, your overlay will need to include the following modules:
 </dependency>
 ```
 
-[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.

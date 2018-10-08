@@ -14,7 +14,8 @@ import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RegExUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -37,7 +38,7 @@ import java.util.List;
 public class CasCoreValidationConfiguration implements ServiceTicketValidationAuthorizerConfigurer {
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Bean
     @Scope(value = "prototype")
@@ -63,8 +64,8 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
     public ServiceTicketValidationAuthorizersExecutionPlan serviceValidationAuthorizers(final List<ServiceTicketValidationAuthorizerConfigurer> configurers) {
         val plan = new DefaultServiceTicketValidationAuthorizersExecutionPlan();
         configurers.forEach(c -> {
-            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Configuring service ticket validation authorizer execution plan [{}]", name);
+            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            LOGGER.trace("Configuring service ticket validation authorizer execution plan [{}]", name);
             c.configureAuthorizersExecutionPlan(plan);
         });
         return plan;
@@ -72,7 +73,7 @@ public class CasCoreValidationConfiguration implements ServiceTicketValidationAu
 
     @Bean
     public ServiceTicketValidationAuthorizer requiredHandlersServiceTicketValidationAuthorizer() {
-        return new RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer(this.servicesManager);
+        return new RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer(this.servicesManager.getIfAvailable());
     }
 
     @Override

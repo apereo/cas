@@ -1,15 +1,19 @@
 package org.apereo.cas.memcached.kryo;
 
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
+import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
+import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
@@ -36,6 +40,9 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnMappedAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy;
 import org.apereo.cas.services.ScriptedRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
+import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
@@ -141,11 +148,13 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.setAutoReset(this.autoReset);
         kryo.setReferences(this.replaceObjectsByReferences);
         kryo.setRegistrationRequired(this.registrationRequired);
+
         LOGGER.debug("Constructing a kryo instance with the following settings:");
         LOGGER.debug("warnUnregisteredClasses: [{}]", this.warnUnregisteredClasses);
         LOGGER.debug("autoReset: [{}]", this.autoReset);
         LOGGER.debug("replaceObjectsByReferences: [{}]", this.replaceObjectsByReferences);
         LOGGER.debug("registrationRequired: [{}]", this.registrationRequired);
+
         registerCasAuthenticationWithKryo(kryo);
         registerExpirationPoliciesWithKryo(kryo);
         registerCasTicketsWithKryo(kryo);
@@ -153,7 +162,7 @@ public class CloseableKryoFactory implements KryoFactory {
         registerCasServicesWithKryo(kryo);
         registerImmutableOrEmptyCollectionsWithKryo(kryo);
         classesToRegister.forEach(c -> {
-            LOGGER.debug("Registering serializable class [{}] with Kryo", c.getName());
+            LOGGER.trace("Registering serializable class [{}] with Kryo", c.getName());
             kryo.register(c);
         });
         return kryo;
@@ -206,6 +215,8 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(UsernamePasswordCredential.class);
         kryo.register(RememberMeUsernamePasswordCredential.class);
         kryo.register(SimplePrincipal.class);
+        kryo.register(HttpBasedServiceCredential.class);
+        kryo.register(OneTimePasswordCredential.class);
         kryo.register(PublicKeyFactoryBean.class);
         kryo.register(ReturnAllowedAttributeReleasePolicy.class);
         kryo.register(ReturnAllAttributeReleasePolicy.class);
@@ -226,6 +237,11 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(AccountLockedException.class);
         kryo.register(InvalidLoginLocationException.class);
         kryo.register(InvalidLoginTimeException.class);
+        kryo.register(PrincipalException.class);
+        kryo.register(MixedPrincipalException.class);
+        kryo.register(UnauthorizedServiceException.class);
+        kryo.register(UnauthorizedServiceForPrincipalException.class);
+        kryo.register(UnauthorizedSsoServiceException.class);
     }
 
     private void registerCasTicketsWithKryo(final Kryo kryo) {

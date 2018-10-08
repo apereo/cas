@@ -14,7 +14,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
 import org.opensaml.saml.saml2.core.Response;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 public class SLOSamlPostProfileHandlerController extends AbstractSamlSLOProfileHandlerController {
 
     public SLOSamlPostProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                               final ParserPool parserPool,
                                                final AuthenticationSystemSupport authenticationSystemSupport,
                                                final ServicesManager servicesManager,
                                                final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -44,7 +42,6 @@ public class SLOSamlPostProfileHandlerController extends AbstractSamlSLOProfileH
                                                final SSOSamlHttpRequestExtractor samlHttpRequestExtractor,
                                                final Service callbackService) {
         super(samlObjectSigner,
-            parserPool,
             authenticationSystemSupport,
             servicesManager,
             webApplicationServiceFactory,

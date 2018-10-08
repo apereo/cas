@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -36,7 +37,7 @@ import org.springframework.core.Ordered;
 public class TokenCoreConfiguration {
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -56,7 +57,7 @@ public class TokenCoreConfiguration {
         val crypto = casProperties.getAuthn().getToken().getCrypto();
 
         val enabled = FunctionUtils.doIf(
-            !crypto.isEnabled() && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey()),
+            !crypto.isEnabled() && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey()),
             () -> {
                 LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
                     + "are defined for operations. CAS will proceed to enable the token encryption/signing functionality.");
@@ -86,6 +87,6 @@ public class TokenCoreConfiguration {
             casProperties.getServer().getPrefix(),
             tokenCipherExecutor(),
             grantingTicketExpirationPolicy,
-            this.servicesManager);
+            servicesManager.getIfAvailable());
     }
 }

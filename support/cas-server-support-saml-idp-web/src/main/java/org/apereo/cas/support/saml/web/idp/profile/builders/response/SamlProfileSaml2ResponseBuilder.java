@@ -7,8 +7,8 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlResponseEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponseArtifactEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponsePostEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponsePostSimpleSignEncoder;
@@ -57,7 +57,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                            final SamlIdPObjectSigner samlObjectSigner,
                                            final VelocityEngine velocityEngineFactory,
                                            final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
-                                           final SamlObjectEncrypter samlObjectEncrypter,
+                                           final SamlIdPObjectEncrypter samlObjectEncrypter,
                                            final TicketRegistry ticketRegistry,
                                            final SamlArtifactTicketFactory samlArtifactTicketFactory,
                                            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
@@ -81,7 +81,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                                   final HttpServletResponse response,
                                   final String binding,
                                   final MessageContext messageContext) throws SamlException {
-        val id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
         val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
         samlResponse.setIssuer(buildEntityIssuer());

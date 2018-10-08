@@ -36,13 +36,13 @@ public class ControllerUtils {
     public static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment, final ResourceLoader
         resourceLoader) {
         val logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
-        LOGGER.debug("Located logging configuration reference in the environment as [{}]", logFile);
+        LOGGER.info("Located logging configuration reference in the environment as [{}]", logFile);
 
         if (ResourceUtils.doesResourceExist(logFile, resourceLoader)) {
             val logConfigurationFile = resourceLoader.getResource(logFile);
-            LOGGER.debug("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
+            LOGGER.trace("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
             val loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
-            LOGGER.debug("Installing log configuration listener to detect changes and update");
+            LOGGER.trace("Installing log configuration listener to detect changes and update");
             loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
             return Optional.of(Pair.of(logConfigurationFile, loggerContext));
         }

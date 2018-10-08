@@ -213,6 +213,16 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     }
 
     /**
+     * Gets single logout service for the requested binding.
+     *
+     * @param binding the binding
+     * @return the single logout service or null
+     */
+    public SingleLogoutService getSingleLogoutService(final String binding) {
+        return getSingleLogoutServices().stream().filter(acs -> acs.getBinding().equals(binding)).findFirst().orElse(null);
+    }
+
+    /**
      * Gets assertion consumer service.
      *
      * @param binding the binding

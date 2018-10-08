@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -100,7 +101,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     }
 
     @Override
-    public Ticket getTicket(final String ticketIdToGet) {
+    public Ticket getTicket(final String ticketIdToGet, final Predicate<Ticket> predicate) {
         val ticketId = encodeTicketId(ticketIdToGet);
         if (StringUtils.isBlank(ticketId)) {
             return null;
@@ -116,11 +117,15 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
             LOGGER.debug("No ticket by id [{}] is found in the ignite ticket registry", ticketId);
             return null;
         }
-        return decodeTicket(ticket);
+        val result = decodeTicket(ticket);
+        if (predicate.test(result)) {
+            return result;
+        }
+        return null;
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream().map(this::getIgniteCacheFromMetadata)
             .map(cache -> cache.query(new ScanQuery<>()).getAll().stream()).flatMap(Function.identity())
             .map(Cache.Entry::getValue).map(object -> decodeTicket((Ticket) object)).collect(Collectors.toSet());

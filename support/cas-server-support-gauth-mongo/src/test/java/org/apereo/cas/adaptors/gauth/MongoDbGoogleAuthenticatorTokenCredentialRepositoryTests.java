@@ -28,9 +28,10 @@ import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.val;
 import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,7 +44,8 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import static org.junit.Assert.*;
@@ -54,7 +56,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
     GoogleAuthenticatorMongoDbConfiguration.class,
@@ -81,11 +82,25 @@ import static org.junit.Assert.*;
     CasCoreWebConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@TestPropertySource(locations = {"classpath:/mongogauth.properties"})
+@TestPropertySource(properties = {
+    "cas.authn.mfa.gauth.mongo.host=localhost",
+    "cas.authn.mfa.gauth.mongo.port=27017",
+    "cas.authn.mfa.gauth.mongo.dropCollection=true",
+    "cas.authn.mfa.gauth.mongo.userId=root",
+    "cas.authn.mfa.gauth.mongo.password=secret",
+    "cas.authn.mfa.gauth.mongo.authenticationDatabaseName=admin",
+    "cas.authn.mfa.gauth.mongo.databaseName=gauth-token-credential",
+    "cas.authn.mfa.gauth.crypto.enabled=false"
+})
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Category(MongoDbCategory.class)
 public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")

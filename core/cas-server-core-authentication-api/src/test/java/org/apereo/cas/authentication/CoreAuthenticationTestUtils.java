@@ -1,6 +1,9 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -135,6 +138,10 @@ public class CoreAuthenticationTestUtils {
         return getAuthentication(getPrincipal(name));
     }
 
+    public static Authentication getAuthentication(final String name, final Map<String, Object> attributes) {
+        return getAuthentication(getPrincipal(name), attributes, null);
+    }
+
     public static Authentication getAuthentication(final String name, final ZonedDateTime authnDate) {
         return getAuthentication(getPrincipal(name), new HashMap<>(0), authnDate);
     }
@@ -183,6 +190,14 @@ public class CoreAuthenticationTestUtils {
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support) throws AuthenticationException {
         return getAuthenticationResult(support, getService(), getCredentialsWithSameUsernameAndPassword());
     }
+
+    public static AuthenticationResult getAuthenticationResult() {
+        val result = mock(AuthenticationResult.class);
+        when(result.getAuthentication()).thenReturn(getAuthentication());
+        when(result.getService()).thenReturn(getService());
+        return result;
+    }
+
 
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support, final Credential... credentials)
         throws AuthenticationException {

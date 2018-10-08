@@ -21,6 +21,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockOnlyOneTicketRegistry;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 
@@ -30,7 +31,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -39,7 +39,6 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@DirtiesContext
 public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthenticationServiceTests {
 
     @Rule
@@ -189,7 +188,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val ticket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticket.getId(), getService(), ctx);
 
-        val service = AbstractWebApplicationService.class.cast(serviceTicketId.getService());
+        val service = (AbstractWebApplicationService) serviceTicketId.getService();
         assertEquals(service.getPrincipal(), ticket.getAuthentication().getPrincipal().getId());
     }
 
@@ -377,7 +376,7 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
         val auth = assertion.getPrimaryAuthentication();
         val attributes = auth.getPrincipal().getAttributes();
         assertEquals(1, attributes.size());
-        assertEquals("adopters", attributes.get("groupMembership"));
+        assertEquals(CollectionUtils.wrapList("adopters"), attributes.get("groupMembership"));
     }
 
     @Test

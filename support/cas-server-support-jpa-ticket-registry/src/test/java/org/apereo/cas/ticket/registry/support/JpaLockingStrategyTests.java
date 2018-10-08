@@ -24,8 +24,9 @@ import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,7 +39,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -65,9 +67,12 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
+    JpaTicketRegistryTicketCatalogConfiguration.class,
+    JpaTicketRegistryConfiguration.class,
     JpaLockingStrategyTests.JpaTestConfiguration.class,
+    JpaTicketRegistryTicketCatalogConfiguration.class,
+    JpaTicketRegistryConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -82,19 +87,23 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    JpaTicketRegistryTicketCatalogConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    JpaTicketRegistryConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @DirtiesContext
 @Slf4j
 public class JpaLockingStrategyTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
     /**
      * Number of clients contending for lock in concurrent test.
      */
     private static final int CONCURRENT_SIZE = 13;
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("ticketTransactionManager")

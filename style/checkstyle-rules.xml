@@ -12,6 +12,11 @@
             <property name="severity" value="error"/>
         </module>
         <module name="LambdaParameterName"/>
+        <module name="HiddenField">
+            <property name="tokens" value="VARIABLE_DEF" />
+            <property name="ignoreSetter" value="true"/>
+            <property name="ignoreConstructorParameter" value="true"/>
+        </module>
         <module name="JavadocMethod">
             <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
@@ -615,6 +620,12 @@
         <property name="severity" value="error"/>
         <property name="format" value="@Test\(expect"/>
         <property name="message" value="Use @Rule ExpectedException instead of expecting an exception"/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="@RunWith\((Conditional)?SpringRunner\.class\)"/>
+        <property name="message" value="Use Spring @Rule and @ClassRule instead of the Spring test runner."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>

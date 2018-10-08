@@ -18,7 +18,7 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactoryTests {
     public void verifyNoCredentials() {
         val f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
         val body = new LinkedMultiValueMap<String, String>();
-        val results = f.fromRequestBody(body);
+        val results = f.fromRequest(null, body);
         assertTrue(results.isEmpty());
     }
 
@@ -27,7 +27,7 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactoryTests {
         val f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
         val body = new LinkedMultiValueMap<String, String>();
         body.add(GoogleAuthenticatorRestHttpRequestCredentialFactory.PARAMETER_NAME_GAUTH_OTP, "132456");
-        val results = f.fromRequestBody(body);
+        val results = f.fromRequest(null, body);
         assertFalse(results.isEmpty());
         assertEquals("132456", results.get(0).getId());
     }

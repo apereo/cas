@@ -90,7 +90,7 @@ public class LdapConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+    public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
         val entry = readConsentEntry(principal);
         if (entry != null) {
             val consentDecisions = entry.getAttribute(this.ldap.getConsentAttributeName());
@@ -106,7 +106,7 @@ public class LdapConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions() {
+    public Collection<? extends ConsentDecision> findConsentDecisions() {
         val entries = readConsentEntries();
         if (entries != null && !entries.isEmpty()) {
             val decisions = new HashSet<ConsentDecision>();

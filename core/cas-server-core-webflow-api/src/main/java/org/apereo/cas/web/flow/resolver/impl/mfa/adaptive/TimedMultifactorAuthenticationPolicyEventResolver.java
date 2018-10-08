@@ -104,7 +104,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
             .filter(t -> {
                 var providerEvent = false;
                 if (!t.getOnDays().isEmpty()) {
-                    providerEvent = t.getOnDays().stream().filter(dayNamesForToday::contains).findAny().isPresent();
+                    providerEvent = t.getOnDays().stream().anyMatch(dayNamesForToday::contains);
                 }
                 if (t.getOnOrAfterHour() >= 0) {
                     providerEvent = now.getHour() >= t.getOnOrAfterHour();

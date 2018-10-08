@@ -32,7 +32,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
@@ -81,10 +80,6 @@ public abstract class AbstractSamlProfileHandlerController {
      * The Saml object signer.
      */
     protected final SamlIdPObjectSigner samlObjectSigner;
-    /**
-     * The Parser pool.
-     */
-    protected final ParserPool parserPool;
 
     /**
      * Authentication support to handle credentials and authn subsystem calls.
@@ -406,9 +401,7 @@ public abstract class AbstractSamlProfileHandlerController {
 
         val registeredService = verifySamlRegisteredService(issuer);
         LOGGER.debug("Fetching saml metadata adaptor for [{}]", issuer);
-        val adaptor =
-            SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-                registeredService, authnRequest);
+        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
 
         if (!adaptor.isPresent()) {
             LOGGER.warn("No metadata could be found for [{}]", issuer);
@@ -522,7 +515,7 @@ public abstract class AbstractSamlProfileHandlerController {
     protected MessageContext decodeSoapRequest(final HttpServletRequest request) {
         try {
             val decoder = new HTTPSOAP11Decoder();
-            decoder.setParserPool(parserPool);
+            decoder.setParserPool(this.configBean.getParserPool());
             decoder.setHttpServletRequest(request);
 
             val binding = new BindingDescriptor();
