@@ -90,6 +90,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @Category(RestfulApiCategory.class)
 public class RestAuthenticationHandlerTests {
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
+
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
@@ -120,14 +122,12 @@ public class RestAuthenticationHandlerTests {
     public void verifySuccess() throws Exception {
         val principalWritten = new DefaultPrincipalFactory().createPrincipal("casuser");
 
-        val mapper = new ObjectMapper().findAndRegisterModules();
         val writer = new StringWriter();
-        mapper.writeValue(writer, principalWritten);
+        MAPPER.writeValue(writer, principalWritten);
 
         server.andRespond(withSuccess(writer.toString(), MediaType.APPLICATION_JSON));
 
-        val res =
-            authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        val res = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("casuser", res.getPrincipal().getId());
     }
 
