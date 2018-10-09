@@ -55,7 +55,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Autowired
     @Qualifier("casClientTicketValidator")
-    private AbstractUrlBasedTicketValidator casClientTicketValidator;
+    private ObjectProvider<AbstractUrlBasedTicketValidator> casClientTicketValidator;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -63,7 +63,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
+    private ObjectProvider<HttpClient> httpClient;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
@@ -75,14 +75,14 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("securityTokenTicketFactory")
-    private SecurityTokenTicketFactory securityTokenTicketFactory;
+    private ObjectProvider<SecurityTokenTicketFactory> securityTokenTicketFactory;
 
     @Autowired
     @Qualifier("ticketRegistry")
@@ -92,11 +92,11 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
         return new WSFederationValidateRequestController(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory,
+            webApplicationServiceFactory.getIfAvailable(),
             casProperties,
             wsFederationAuthenticationServiceSelectionStrategy(),
-            httpClient,
-            securityTokenTicketFactory,
+            httpClient.getIfAvailable(),
+            securityTokenTicketFactory.getIfAvailable(),
             ticketRegistry.getIfAvailable(),
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             ticketRegistrySupport.getIfAvailable(),
@@ -109,22 +109,22 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
         @Qualifier("wsFederationRelyingPartyTokenProducer") final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
         return new WSFederationValidateRequestCallbackController(servicesManager.getIfAvailable(),
-            webApplicationServiceFactory,
+            webApplicationServiceFactory.getIfAvailable(),
             casProperties,
             wsFederationRelyingPartyTokenProducer,
             wsFederationAuthenticationServiceSelectionStrategy(),
-            httpClient,
-            securityTokenTicketFactory,
+            httpClient.getIfAvailable(),
+            securityTokenTicketFactory.getIfAvailable(),
             ticketRegistry.getIfAvailable(),
             ticketGrantingTicketCookieGenerator.getIfAvailable(),
             ticketRegistrySupport.getIfAvailable(),
-            casClientTicketValidator,
+            casClientTicketValidator.getIfAvailable(),
             wsFederationCallbackService());
     }
 
     @Bean
     public Service wsFederationCallbackService() {
-        return this.webApplicationServiceFactory.createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
+        return webApplicationServiceFactory.getIfAvailable().createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 
     @Lazy
@@ -146,7 +146,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Bean
     @RefreshScope
     public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy() {
-        return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory);
+        return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory.getIfAvailable());
     }
 
     @Override

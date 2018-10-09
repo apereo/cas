@@ -7,11 +7,10 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.val;
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -31,12 +30,10 @@ public class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     private Map<String, Object> attributes;
 
     @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     private static Collection<String> newSingleAttribute(final String attr) {

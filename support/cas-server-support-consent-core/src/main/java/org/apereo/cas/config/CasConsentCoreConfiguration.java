@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
@@ -44,11 +45,11 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
 
     @Autowired
     @Qualifier("authenticationActionResolver")
-    private AuditActionResolver authenticationActionResolver;
+    private ObjectProvider<AuditActionResolver> authenticationActionResolver;
 
     @Autowired
     @Qualifier("returnValueResourceResolver")
-    private AuditResourceResolver returnValueResourceResolver;
+    private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
 
     @ConditionalOnMissingBean(name = "consentEngine")
     @Bean
@@ -99,8 +100,8 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
 
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", this.authenticationActionResolver);
-        plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", this.returnValueResourceResolver);
+        plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", authenticationActionResolver.getIfAvailable());
+        plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", returnValueResourceResolver.getIfAvailable());
     }
 
     @Bean

@@ -31,6 +31,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     @Autowired
     private Environment environment;
+
     private CasConfigurationJasyptCipherExecutor jasypt;
 
     @Before

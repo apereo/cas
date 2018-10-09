@@ -82,11 +82,11 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
-    private ExpirationPolicy grantingTicketExpirationPolicy;
+    private ObjectProvider<ExpirationPolicy> grantingTicketExpirationPolicy;
 
     @Autowired
     @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
-    private AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy;
+    private ObjectProvider<AuthenticationServiceSelectionStrategy> wsFederationAuthenticationServiceSelectionStrategy;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -297,7 +297,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator securityTokenServiceAuthenticationMetaDataPopulator() {
         return new SecurityTokenServiceAuthenticationMetaDataPopulator(servicesManager.getIfAvailable(),
-            wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor(),
+            wsFederationAuthenticationServiceSelectionStrategy.getIfAvailable(), securityTokenServiceCredentialCipherExecutor(),
             securityTokenServiceClientBuilder());
     }
 
@@ -313,7 +313,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     @RefreshScope
     public SecurityTokenTicketFactory securityTokenTicketFactory() {
-        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy);
+        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")

@@ -8,6 +8,7 @@ import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.Test;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -34,7 +35,7 @@ public class X509CertificateCredentialsRequestHeaderActionTests extends Abstract
 
     @Autowired
     @Qualifier("x509Check")
-    private Action action;
+    private ObjectProvider<Action> action;
 
     @Test
     public void verifyCredentialsResultsInAuthnFailure() throws Exception {
@@ -42,6 +43,6 @@ public class X509CertificateCredentialsRequestHeaderActionTests extends Abstract
         val request = new MockHttpServletRequest();
         request.addHeader("ssl_client_cert", VALID_CERTIFICATE.getContent());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, action.getObject().execute(context).getId());
     }
 }

@@ -44,11 +44,11 @@ public class WsFederationAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -70,8 +70,8 @@ public class WsFederationAuthenticationConfiguration {
         return new WsFederationNavigationController(wsFederationCookieManager(),
             wsFederationHelper(),
             wsFederationConfigurations,
-            authenticationRequestServiceSelectionStrategies,
-            webApplicationServiceFactory,
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
             casProperties.getServer().getLoginUrl());
     }
 }

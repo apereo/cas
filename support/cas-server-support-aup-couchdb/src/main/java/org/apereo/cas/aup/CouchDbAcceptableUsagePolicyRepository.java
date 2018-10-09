@@ -72,27 +72,26 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
         if (profile == null) {
             couchDb.add(new CouchDbProfileDocument(username, null, CollectionUtils.wrap(aupAttributeName, Boolean.TRUE)));
             return true;
-        } else {
-            var success = false;
-            profile.setAttribute(aupAttributeName, Boolean.TRUE);
-            UpdateConflictException exception = null;
-            for (int retries = 0; retries < conflictRetries; retries++) {
-                try {
-                    exception = null;
-                    couchDb.update(profile);
-                    success = true;
-                } catch (final UpdateConflictException e) {
-                    exception = e;
-                }
-                if (success) {
-                    LOGGER.debug("Successfully updated AUP for [{}].", profile.getUsername());
-                    break;
-                }
-            }
-            if (exception != null) {
-                LOGGER.debug("Could not update AUP acceptance for [{}].\n{}", username, exception.getMessage());
-            }
-            return success;
         }
+        var success = false;
+        profile.setAttribute(aupAttributeName, Boolean.TRUE);
+        UpdateConflictException exception = null;
+        for (int retries = 0; retries < conflictRetries; retries++) {
+            try {
+                exception = null;
+                couchDb.update(profile);
+                success = true;
+            } catch (final UpdateConflictException e) {
+                exception = e;
+            }
+            if (success) {
+                LOGGER.debug("Successfully updated AUP for [{}].", profile.getUsername());
+                break;
+            }
+        }
+        if (exception != null) {
+            LOGGER.debug("Could not update AUP acceptance for [{}].\n{}", username, exception.getMessage());
+        }
+        return success;
     }
 }

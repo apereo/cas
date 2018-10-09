@@ -103,9 +103,11 @@ public abstract class AbstractOpenSamlTests {
     protected ApplicationContext applicationContext;
 
     @Autowired
+    @Qualifier("shibboleth.OpenSAMLConfig")
     protected OpenSamlConfigBean configBean;
 
     @Autowired
+    @Qualifier("shibboleth.ParserPool")
     protected ParserPool parserPool;
 
     @Autowired

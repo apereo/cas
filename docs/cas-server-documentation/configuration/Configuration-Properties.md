@@ -2714,7 +2714,7 @@ The following external identity providers share [common blocks of settings](Conf
 | Foursquare                | `cas.authn.pac4j.foursquare`
 | WindowsLive               | `cas.authn.pac4j.windowsLive`
 | Google                    | `cas.authn.pac4j.google`
-| HiOrg                     | `cas.authn.pac4j.hiOrgServer`
+| HiOrg-Server              | `cas.authn.pac4j.hiOrgServer`
 
 See below for other identity providers such as CAS, SAML2 and more.
 
@@ -2836,6 +2836,14 @@ Delegate authentication to Facebook. Common settings for this identity provider 
 ```properties
 # cas.authn.pac4j.facebook.fields=
 # cas.authn.pac4j.facebook.scope=
+```
+
+### HiOrg Server
+
+Delegate authentication to HiOrg Server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.hiOrgServer`.
+
+```properties
+# cas.authn.pac4j.hiOrgServer.scope=eigenedaten
 ```
 
 ### LinkedIn
