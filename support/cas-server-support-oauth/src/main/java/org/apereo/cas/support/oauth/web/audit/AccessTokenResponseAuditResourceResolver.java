@@ -20,7 +20,7 @@ public class AccessTokenResponseAuditResourceResolver extends ReturnValueAsStrin
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         val model = (ModelAndView) retval;
         val builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE);
-        model.getModel().forEach((key, value) -> builder.append(key, value));
+        model.getModel().forEach(builder::append);
         val result = builder.toString();
         return new String[]{result};
     }

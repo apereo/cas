@@ -83,13 +83,9 @@ public abstract class BaseResourceSetRepository implements ResourceSetRepository
         if (rs.getPolicies() == null || rs.getPolicies().isEmpty()) {
             return true;
         }
-        for (val policy : rs.getPolicies()) {
-            for (val permission : policy.getPermissions()) {
-                if (!rs.getScopes().containsAll(permission.getScopes())) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return rs.getPolicies()
+            .stream()
+            .flatMap(policy -> policy.getPermissions().stream())
+            .allMatch(permission -> rs.getScopes().containsAll(permission.getScopes()));
     }
 }

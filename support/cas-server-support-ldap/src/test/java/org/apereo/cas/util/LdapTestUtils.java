@@ -109,16 +109,7 @@ public class LdapTestUtils {
      * @param entries    the entries
      */
     public static void modifyLdapEntries(final LDAPConnection connection, final Collection<LdapEntry> entries) {
-        for (val entry : entries) {
-            val attrs = new ArrayList<Attribute>(entry.getAttributeNames().length);
-            attrs.addAll(entry.getAttributes().stream()
-                .map(a -> new Attribute(a.getName(), a.getStringValues()))
-                .collect(Collectors.toList()));
-            for (val ldapAttribute : entry.getAttributes()) {
-                modifyLdapEntry(connection, entry, ldapAttribute);
-            }
-        }
-
+        entries.forEach(entry -> entry.getAttributes().forEach(ldapAttribute -> modifyLdapEntry(connection, entry, ldapAttribute)));
     }
 
     /**
@@ -129,7 +120,8 @@ public class LdapTestUtils {
      * @param attr      the attr
      * @param add       the add
      */
-    public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn, final LdapAttribute attr,
+    public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn,
+                                       final LdapAttribute attr,
                                        final AttributeModificationType add) {
         try {
             val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
