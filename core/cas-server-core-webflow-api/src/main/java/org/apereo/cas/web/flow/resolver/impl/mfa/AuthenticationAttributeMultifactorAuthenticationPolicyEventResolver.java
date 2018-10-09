@@ -70,8 +70,7 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
             return null;
         }
 
-        val providerMap =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             return null;
