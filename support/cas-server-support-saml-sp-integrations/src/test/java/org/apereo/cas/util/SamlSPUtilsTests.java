@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.TestPropertySource;
 
