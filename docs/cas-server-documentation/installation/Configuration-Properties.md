@@ -2609,7 +2609,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) under the listed configuration keys listed below:
 
-| Identity Provider                       | Configuration Key
+| Identity Provider         | Configuration Key
 |---------------------------|----------------------------------------------------------
 | Twitter                   | `cas.authn.pac4j.twitter`
 | Paypal                    | `cas.authn.pac4j.paypal`
@@ -2620,7 +2620,8 @@ The following external identity providers share [common blocks of settings](Conf
 | GitHub                    | `cas.authn.pac4j.github`
 | Foursquare                | `cas.authn.pac4j.foursquare`
 | WindowsLive               | `cas.authn.pac4j.windowsLive`
-| Google                   | `cas.authn.pac4j.google`
+| Google                    | `cas.authn.pac4j.google`
+| HiOrg-Server              | `cas.authn.pac4j.hiOrgServer`
 
 See below for other identity providers such as CAS, SAML2 and more.
 
@@ -2735,6 +2736,10 @@ Delegate authentication to Facebook. Common settings for this identity provider 
 ### HiOrg Server
 
 Delegate authentication to HiOrg Server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.hiOrgServer`.
+
+```properties
+# cas.authn.pac4j.hiOrgServer.scope=eigenedaten
+```
 
 ### LinkedIn
 
