@@ -19,7 +19,10 @@ import org.junit.runners.Suite;
     DefaultPrincipalAttributesRepositoryTests.class,
     GroovyScriptMultifactorAuthenticationPolicyEventResolverTests.class,
     TimedMultifactorAuthenticationPolicyEventResolverTests.class,
-    MultifactorAuthenticationTests.class
+    MultifactorAuthenticationTests.class,
+    RequestHeaderMultifactorAuthenticationPolicyEventResolverTests.class,
+    RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
+    RequestParameterMultifactorAuthenticationPolicyEventResolverTests.class
 })
 public class AllCoreTestsSuite {
 }

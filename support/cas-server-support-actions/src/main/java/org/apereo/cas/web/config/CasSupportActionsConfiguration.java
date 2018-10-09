@@ -142,7 +142,8 @@ public class CasSupportActionsConfiguration {
     @Bean
     @RefreshScope
     public Action authenticationViaFormAction() {
-        return new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
+        return new InitialAuthenticationAction(
+            initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
             serviceTicketRequestWebflowEventResolver.getIfAvailable(),
             adaptiveAuthenticationPolicy.getIfAvailable());
     }

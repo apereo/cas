@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
@@ -45,9 +44,6 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
 
     private static final String CONST_CONTEXT_PATH = "/test";
     private static final String CONST_CONTEXT_PATH_2 = "/test1";
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
