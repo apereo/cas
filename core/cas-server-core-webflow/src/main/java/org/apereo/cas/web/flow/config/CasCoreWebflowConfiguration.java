@@ -226,6 +226,7 @@ public class CasCoreWebflowConfiguration {
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(),
             registeredServiceAccessStrategyEnforcer.getIfAvailable());
+
         r.addDelegate(adaptiveAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(timedAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(globalAuthenticationPolicyWebflowEventResolver());
