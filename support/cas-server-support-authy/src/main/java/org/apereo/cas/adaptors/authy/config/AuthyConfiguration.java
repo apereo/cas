@@ -59,7 +59,7 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -82,12 +82,12 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
+    private ObjectProvider<CookieGenerator> warnCookieGenerator;
 
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Bean
     public FlowDefinitionRegistry authyAuthenticatorFlowRegistry() {
@@ -104,8 +104,8 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
             ticketRegistrySupport.getIfAvailable(),
-            warnCookieGenerator,
-            authenticationRequestServiceSelectionStrategies,
+            warnCookieGenerator.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
     }
 
@@ -114,7 +114,7 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
         return new AuthyMultifactorWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getIfAvailable(), authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
     @RefreshScope
@@ -142,7 +142,7 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
         public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer() {
             val deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
             return new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, deviceRegistrationEnabled,
+                loginFlowDefinitionRegistry.getIfAvailable(), deviceRegistrationEnabled,
                 authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
         }
 

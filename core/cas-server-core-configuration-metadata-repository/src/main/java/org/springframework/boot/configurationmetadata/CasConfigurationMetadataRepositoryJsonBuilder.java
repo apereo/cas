@@ -104,12 +104,10 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
         val idx = item.getId().lastIndexOf('.');
         val name = idx > 0 ? item.getId().substring(0, idx) : StringUtils.EMPTY;
 
-        for (val source : metadata.getSources()) {
-            if (source.getType().equals(item.getSourceType()) && name.equals(source.getGroupId())) {
-                return source;
-            }
-        }
-        return null;
+        return metadata.getSources().stream()
+            .filter(source -> source.getType().equals(item.getSourceType()) && name.equals(source.getGroupId()))
+            .findFirst()
+            .orElse(null);
 
     }
 

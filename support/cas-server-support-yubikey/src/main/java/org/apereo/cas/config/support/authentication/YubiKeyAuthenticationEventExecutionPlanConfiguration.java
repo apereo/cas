@@ -55,7 +55,7 @@ import org.springframework.webflow.execution.Action;
 public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")
-    private CipherExecutor yubikeyAccountCipherExecutor;
+    private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -66,7 +66,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("noRedirectHttpClient")
-    private HttpClient httpClient;
+    private ObjectProvider<HttpClient> httpClient;
 
     @Bean
     @RefreshScope
@@ -151,14 +151,14 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         if (yubi.getJsonFile() != null) {
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
             val registry = new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator());
-            registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+            registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
             return registry;
         }
         if (yubi.getAllowedDevices() != null) {
             LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry",
                 yubi.getAllowedDevices().keySet());
             val registry = new WhitelistYubiKeyAccountRegistry(yubi.getAllowedDevices(), yubiKeyAccountValidator());
-            registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+            registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
             return registry;
         }
 
@@ -166,7 +166,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
                 + "Consider providing an account registry implementation via [{}]",
             YubiKeyAccountRegistry.class.getName());
         val registry = new OpenYubiKeyAccountRegistry(new DefaultYubiKeyAccountValidator(yubicoClient()));
-        registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
         return registry;
     }
 
@@ -180,7 +180,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
-        val p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), this.httpClient);
+        val p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), httpClient.getIfAvailable());
         p.setBypassEvaluator(yubikeyBypassEvaluator());
         p.setFailureMode(yubi.getFailureMode());
         p.setOrder(yubi.getRank());

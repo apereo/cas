@@ -9,6 +9,7 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.ektorp.impl.ObjectMapperFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,13 +34,13 @@ public class CasSupportCouchDbAuditConfiguration {
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
-    private ObjectMapperFactory defaultObjectMapperFactory;
+    private ObjectProvider<ObjectMapperFactory> defaultObjectMapperFactory;
 
     @ConditionalOnMissingBean(name = "auditCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory auditCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), defaultObjectMapperFactory);
+        return new CouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), defaultObjectMapperFactory.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "auditActionContextCouchDbRepository")

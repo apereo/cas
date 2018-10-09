@@ -8,6 +8,7 @@ import org.apereo.cas.support.events.CouchDbCasEventRepository;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,7 +33,7 @@ public class CouchDbEventsConfiguration {
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @ConditionalOnMissingBean(name = "couchDbEventRepository")
     @Bean
@@ -47,7 +48,7 @@ public class CouchDbEventsConfiguration {
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory eventCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getEvents().getCouchDb(), objectMapperFactory);
+        return new CouchDbConnectorFactory(casProperties.getEvents().getCouchDb(), objectMapperFactory.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "couchDbCasEventRepository")

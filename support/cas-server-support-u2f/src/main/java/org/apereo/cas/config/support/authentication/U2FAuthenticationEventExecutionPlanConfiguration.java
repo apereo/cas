@@ -47,7 +47,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Lazy
     @Autowired
     @Qualifier("u2fDeviceRepository")
-    private U2FDeviceRepository u2fDeviceRepository;
+    private ObjectProvider<U2FDeviceRepository> u2fDeviceRepository;
 
     @Bean
     @RefreshScope
@@ -76,7 +76,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public U2FAuthenticationHandler u2fAuthenticationHandler() {
         val u2f = this.casProperties.getAuthn().getMfa().getU2f();
-        return new U2FAuthenticationHandler(u2f.getName(), servicesManager.getIfAvailable(), u2fPrincipalFactory(), u2fDeviceRepository);
+        return new U2FAuthenticationHandler(u2f.getName(), servicesManager.getIfAvailable(), u2fPrincipalFactory(), u2fDeviceRepository.getIfAvailable());
     }
 
     @Bean

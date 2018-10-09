@@ -15,6 +15,7 @@ import org.apereo.cas.web.flow.ScimWebflowConfigurer;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,7 +42,7 @@ import org.springframework.webflow.execution.Action;
 public class CasScimConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -56,7 +57,7 @@ public class CasScimConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer scimWebflowConfigurer() {
-        return new ScimWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        return new ScimWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @RefreshScope
