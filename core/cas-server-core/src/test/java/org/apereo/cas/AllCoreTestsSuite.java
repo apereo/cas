@@ -22,6 +22,7 @@ import org.junit.runners.Suite;
     MultifactorAuthenticationTests.class,
     RequestHeaderMultifactorAuthenticationPolicyEventResolverTests.class,
     RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
+    AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
     RequestParameterMultifactorAuthenticationPolicyEventResolverTests.class
 })
 public class AllCoreTestsSuite {

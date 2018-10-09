@@ -186,10 +186,10 @@ public class CasCoreWebflowConfiguration {
     }
 
 
-    @ConditionalOnMissingBean(name = "authenticationAttributeAuthenticationPolicyWebflowEventResolver")
+    @ConditionalOnMissingBean(name = "authenticationAttributeMultifactorAuthenticationPolicyEventResolver")
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver authenticationAttributeAuthenticationPolicyWebflowEventResolver() {
+    public CasWebflowEventResolver authenticationAttributeMultifactorAuthenticationPolicyEventResolver() {
         return new AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
@@ -238,7 +238,7 @@ public class CasCoreWebflowConfiguration {
         r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(predicatedPrincipalAttributeMultifactorAuthenticationPolicyEventResolver());
         r.addDelegate(principalAttributeAuthenticationPolicyWebflowEventResolver());
-        r.addDelegate(authenticationAttributeAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(authenticationAttributeMultifactorAuthenticationPolicyEventResolver());
         r.addDelegate(registeredServiceAuthenticationPolicyWebflowEventResolver());
         r.setSelectiveResolver(selectiveAuthenticationProviderWebflowEventResolver());
         return r;

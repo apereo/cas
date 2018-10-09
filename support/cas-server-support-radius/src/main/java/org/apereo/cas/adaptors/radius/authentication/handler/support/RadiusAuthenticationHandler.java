@@ -15,6 +15,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Authentication Handler to authenticate a user against a RADIUS server.
@@ -43,16 +44,6 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      */
     private final boolean failoverOnAuthenticationFailure;
 
-    /**
-     * Instantiates a new Radius authentication handler.
-     *
-     * @param name                            the name
-     * @param servicesManager                 the services manager
-     * @param principalFactory                the principal factory
-     * @param servers                         RADIUS servers to authenticate against.
-     * @param failoverOnException             boolean on whether to failover or not.
-     * @param failoverOnAuthenticationFailure boolean on whether to failover or not.
-     */
     public RadiusAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                        final List<RadiusServer> servers, final boolean failoverOnException, final boolean failoverOnAuthenticationFailure) {
         super(name, servicesManager, principalFactory, null);
@@ -70,10 +61,10 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
         try {
             val username = credential.getUsername();
             val result = RadiusUtils.authenticate(username, credential.getPassword(), this.servers,
-                    this.failoverOnAuthenticationFailure, this.failoverOnException);
+                    this.failoverOnAuthenticationFailure, this.failoverOnException, Optional.empty());
             if (result.getKey()) {
                 return createHandlerResult(credential,
-                    this.principalFactory.createPrincipal(username, result.getValue().get()),
+                    principalFactory.createPrincipal(username, result.getValue().get()),
                     new ArrayList<>());
             }
             throw new FailedLoginException("Radius authentication failed for user " + username);

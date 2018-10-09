@@ -16,6 +16,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link RadiusTokenAuthenticationHandler}.
@@ -67,9 +68,8 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             val principal = authentication.getPrincipal();
             val username = principal.getId();
 
-            val result =
-                RadiusUtils.authenticate(username, password, this.servers,
-                    this.failoverOnAuthenticationFailure, this.failoverOnException);
+            val result = RadiusUtils.authenticate(username, password, this.servers,
+                this.failoverOnAuthenticationFailure, this.failoverOnException, Optional.empty());
             if (result.getKey()) {
                 val finalPrincipal = this.principalFactory.createPrincipal(username, result.getValue().get());
                 return createHandlerResult(credential, finalPrincipal, new ArrayList<>());
