@@ -39,6 +39,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Map;
 
+import static org.hamcrest.Matchers.isOneOf;
 import static org.junit.Assert.*;
 
 /**
@@ -88,7 +89,8 @@ public class HazelcastHealthIndicatorTests {
     @Test
     public void verifyMonitor() {
         val health = hazelcastHealthIndicator.health();
-        assertEquals(Status.UP, health.getStatus());
+        assertThat(health.getStatus(), isOneOf(Status.UP, Status.OUT_OF_SERVICE));
+
         val details = health.getDetails();
         details.values().stream()
             .map(Map.class::cast)

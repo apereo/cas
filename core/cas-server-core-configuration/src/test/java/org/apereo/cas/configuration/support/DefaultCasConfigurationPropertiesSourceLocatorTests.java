@@ -41,7 +41,8 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     static {
-        System.setProperty("spring.profiles.active", "standalone");
+        System.setProperty("spring.application.name", "cas");
+        System.setProperty("spring.profiles.active", "standalone,dev");
         System.setProperty("cas.standalone.configurationDirectory", "src/test/resources/directory");
         System.setProperty("cas.standalone.configurationFile", "src/test/resources/standalone.properties");
     }
@@ -70,8 +71,10 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
         assertTrue(source instanceof CompositePropertySource);
         val composite = (CompositePropertySource) source;
         assertEquals("file", composite.getProperty("test.file"));
-        assertEquals("dirCasProp", composite.getProperty("test.dir.cas"));
         assertEquals("dirAppYml", composite.getProperty("test.dir.app"));
         assertEquals("classpathAppYml", composite.getProperty("test.classpath"));
+        assertEquals("devProfileProp", composite.getProperty("test.dir.profile"));
+        assertEquals("standaloneProfileProp", composite.getProperty("profile.override.me"));
+        assertEquals("dirCasProp", composite.getProperty("test.dir.cas"));
     }
 }
