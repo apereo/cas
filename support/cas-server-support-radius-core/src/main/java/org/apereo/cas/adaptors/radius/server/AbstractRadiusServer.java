@@ -23,6 +23,7 @@ import net.jradius.dictionary.Attr_UserName;
 import net.jradius.dictionary.Attr_UserPassword;
 import net.jradius.dictionary.vsa_redback.Attr_NASRealPort;
 import net.jradius.packet.AccessAccept;
+import net.jradius.packet.AccessChallenge;
 import net.jradius.packet.AccessRequest;
 import net.jradius.packet.RadiusResponse;
 import net.jradius.packet.attribute.AttributeFactory;
@@ -109,8 +110,13 @@ public abstract class AbstractRadiusServer implements RadiusServer {
     public final CasRadiusResponse authenticate(final String username, final String password, final Optional<Serializable> state) throws Exception {
         val attributeList = new AttributeList();
 
-        attributeList.add(new Attr_UserName(username));
-        attributeList.add(new Attr_UserPassword(password));
+        if (StringUtils.isNotBlank(username)) {
+            attributeList.add(new Attr_UserName(username));
+        }
+
+        if (StringUtils.isNotBlank(password)) {
+            attributeList.add(new Attr_UserPassword(password));
+        }
 
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo != null) {
@@ -152,7 +158,7 @@ public abstract class AbstractRadiusServer implements RadiusServer {
             LOGGER.debug("RADIUS response from [{}]: [{}] as [{}]", client.getRemoteInetAddress().getCanonicalHostName(),
                 response.getClass().getName(), response.toString(true, true));
 
-            if (response instanceof AccessAccept) {
+            if (response instanceof AccessAccept || response instanceof AccessChallenge) {
                 val attributes = response.getAttributes().getAttributeList();
                 LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]", response.getCode(), attributes, response.getIdentifier());
                 return new CasRadiusResponse(response.getCode(), response.getIdentifier(), attributes);
