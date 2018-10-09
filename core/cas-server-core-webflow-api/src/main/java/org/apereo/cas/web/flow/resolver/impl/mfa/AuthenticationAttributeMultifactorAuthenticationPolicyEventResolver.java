@@ -86,9 +86,7 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
         }
 
         return resolveEventViaAuthenticationAttribute(authentication, attributeNames, service, context, providers,
-            input -> providers.stream()
-                .filter(provider -> input != null && provider.matches(input))
-                .count() > 0);
+            input -> providers.stream().anyMatch(provider -> input != null && provider.matches(input)));
     }
 
     @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
