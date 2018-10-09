@@ -20,19 +20,16 @@ public class DefaultOpenIdUserNameExtractorTests extends AbstractOpenIdTests {
 
     @Test
     public void verifyExtractionSuccessful() {
-        assertEquals("scootman28", this.extractor
-            .extractLocalUsernameFromUri("http://test.com/scootman28"));
+        assertEquals("scootman28", this.extractor.extractLocalUsernameFromUri("http://test.com/scootman28"));
     }
 
     @Test
     public void verifyExtractionFailed() {
-        assertNull(this.extractor
-            .extractLocalUsernameFromUri("test.com"));
+        assertNull(this.extractor.extractLocalUsernameFromUri("test.com"));
     }
 
     @Test
     public void verifyNull() {
-        assertNull(this.extractor
-            .extractLocalUsernameFromUri(null));
+        assertNull(this.extractor.extractLocalUsernameFromUri(null));
     }
 }

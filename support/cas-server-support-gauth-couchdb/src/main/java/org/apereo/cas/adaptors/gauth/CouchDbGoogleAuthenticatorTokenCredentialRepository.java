@@ -38,10 +38,8 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
         val tokenAccount = couchDb.findOneByUsername(username);
         if (tokenAccount == null) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
-        } else {
-            return decode(tokenAccount);
         }
-        return null;
+        return decode(tokenAccount);
     }
 
     @Override
@@ -56,10 +54,9 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
             val newAccount = new CouchDbOneTimeTokenAccount(encode(account));
             couchDb.add(newAccount);
             return newAccount;
-        } else {
-            couchDb.update(couchDbOneTimeTokenAccount.update(encode(account)));
-            return couchDbOneTimeTokenAccount;
         }
+        couchDb.update(couchDbOneTimeTokenAccount.update(encode(account)));
+        return couchDbOneTimeTokenAccount;
     }
 
     @Override

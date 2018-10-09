@@ -167,9 +167,8 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry implements D
                 if (decoded == null || decoded.isExpired()) {
                     LOGGER.warn("Ticket has expired or cannot be decoded");
                     return null;
-                } else {
-                    return decoded;
                 }
+                return decoded;
             }).collect(Collectors.toList());
     }
 
