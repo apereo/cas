@@ -37,11 +37,8 @@ public class SpnegoCredentialsTests {
     public void verifyCredentialsHashSafelyWithoutPrincipal() {
         val credential = new SpnegoCredential(new byte[]{});
         val set = new HashSet<SpnegoCredential>();
-        try {
-            set.add(credential);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage());
-        }
+        set.add(credential);
+        assertEquals(1, set.size());
     }
 
     /**

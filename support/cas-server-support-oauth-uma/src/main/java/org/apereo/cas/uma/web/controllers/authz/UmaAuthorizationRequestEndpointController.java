@@ -187,7 +187,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager,
             OAuth20Utils.getClientIdFromAuthenticatedProfile(profileResult));
 
-        val scopes = new LinkedHashSet<>();
+        val scopes = new LinkedHashSet<String>();
         scopes.add(OAuth20Constants.UMA_AUTHORIZATION_SCOPE);
         scopes.addAll(permissionTicket.getScopes());
         scopes.addAll(resourceSet.getScopes());
@@ -199,13 +199,13 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .responseType(OAuth20ResponseTypes.NONE)
             .registeredService(registeredService)
             .generateRefreshToken(false)
-            .scopes(CollectionUtils.wrapSet())
+            .scopes(scopes)
             .service(currentAat.getService())
             .build();
 
         val result = accessTokenGenerator.generate(holder);
         if (!result.getAccessToken().isPresent()) {
-            return new ResponseEntity("Unable to generate access token", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Unable to generate access token", HttpStatus.BAD_REQUEST);
         }
 
         val accessToken = result.getAccessToken().get();
@@ -221,6 +221,6 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             this.ticketRegistry.deleteTicket(umaRequest.getRpt());
         }
         val model = CollectionUtils.wrap("rpt", accessToken.getId(), "code", HttpStatus.CREATED);
-        return new ResponseEntity(model, HttpStatus.OK);
+        return new ResponseEntity<>(model, HttpStatus.OK);
     }
 }

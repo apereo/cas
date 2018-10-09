@@ -32,9 +32,6 @@ import static org.mockito.Mockito.*;
 @Category(FileSystemCategory.class)
 @TestPropertySource(properties = {"cas.authn.samlIdp.metadata.location=file:/tmp"})
 public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
-    @Autowired
-    @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
-    protected SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
     @BeforeClass
     public static void beforeClass() {
