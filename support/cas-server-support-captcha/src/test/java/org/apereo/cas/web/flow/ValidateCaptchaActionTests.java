@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -94,7 +95,7 @@ public class ValidateCaptchaActionTests {
 
     @Autowired
     @Qualifier("validateCaptchaAction")
-    private Action validateCaptchaAction;
+    private ObjectProvider<Action> validateCaptchaAction;
 
     @Test
     public void verifyCaptchaValidated() {
@@ -109,7 +110,7 @@ public class ValidateCaptchaActionTests {
         try (val webServer = new MockWebServer(9294,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val result = validateCaptchaAction.execute(context);
+            val result = validateCaptchaAction.getObject().execute(context);
             assertNull(result);
         } catch (final Exception e) {
             throw new AssertionError(e.getMessage(), e);

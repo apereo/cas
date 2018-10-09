@@ -8,6 +8,7 @@ import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.Test;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -34,14 +35,14 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
 
     @Autowired
     @Qualifier("x509Check")
-    private Action action;
+    private ObjectProvider<Action> action;
 
     @Test
     public void verifyNoCredentialsResultsInError() throws Exception {
         val context = new MockRequestContext();
         context.setExternalContext(new ServletExternalContext(
             new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, this.action.getObject().execute(context).getId());
     }
 
     @Test
@@ -50,6 +51,6 @@ public class X509CertificateCredentialsNonInteractiveActionTests extends Abstrac
         val request = new MockHttpServletRequest();
         request.setAttribute(X509CertificateCredentialsNonInteractiveAction.REQUEST_ATTRIBUTE_X509_CERTIFICATE, new X509Certificate[]{VALID_CERTIFICATE});
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.getObject().execute(context).getId());
     }
 }

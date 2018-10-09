@@ -54,6 +54,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolverTests extends B
     private ConfigurableApplicationContext applicationContext;
 
     private MockRequestContext context;
+
     private MockHttpServletRequest request;
 
     @Before

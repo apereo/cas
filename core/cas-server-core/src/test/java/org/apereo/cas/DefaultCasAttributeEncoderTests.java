@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 
 import java.util.Collection;
@@ -32,6 +33,7 @@ public class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
     private Map<String, Object> attributes;
 
     @Autowired
+    @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     private static Collection<String> newSingleAttribute(final String attr) {
