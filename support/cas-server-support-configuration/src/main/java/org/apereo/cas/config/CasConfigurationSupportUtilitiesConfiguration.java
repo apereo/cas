@@ -60,10 +60,6 @@ public class CasConfigurationSupportUtilitiesConfiguration {
         @Qualifier("configurationPropertiesEnvironmentManager")
         private ObjectProvider<CasConfigurationPropertiesEnvironmentManager> configurationPropertiesEnvironmentManager;
 
-        @Autowired
-        @Qualifier("configurationPropertiesEnvironmentManager")
-        private CasConfigurationPropertiesEnvironmentManager dfdfg;
-        
         private PathWatcherService watcher;
 
         public void init() {

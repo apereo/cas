@@ -11,8 +11,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -27,15 +25,12 @@ import java.util.Collection;
 @Slf4j
 public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
 
-    /**
-     * Geolocation service.
-     */
-    @Autowired
-    @Qualifier("geoLocationService")
-    protected GeoLocationService geoLocationService;
+    private final GeoLocationService geoLocationService;
 
-    public GeoLocationAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository) {
+    public GeoLocationAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository,
+                                                          final GeoLocationService geoLocationService) {
         super(casEventRepository);
+        this.geoLocationService = geoLocationService;
     }
 
     @Override

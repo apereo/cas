@@ -370,7 +370,7 @@
             <property name="message"
                       value="Do not create a standalone instance of SecureRandom. Use RandomUtils instead."/>
         </module>
-
+        
         <module name="RegexpSinglelineJava">
             <property name="id" value="collectionsEmpty"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Avoid using an empty immutable collection"/>
@@ -540,6 +540,23 @@
     <module name="UniqueProperties">
         <property name="severity" value="error"/>
     </module>
+
+    <module name="RegexpMultiline">
+        <property name="id" value="objectProvider"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="@Autowired\s*@Qualifier\(&quot;(\w+)&quot;\)\s*(private|public|protected)\s+(\w+)\s+(\w+)\s*;"/>
+        <property name="message" value="Use ObjectProvider&lt;T&gt; for dependency injections to avoid premature/circular bean initializations"/>
+        <property name="fileExtensions" value="java" />
+    </module>
+
+    <module name="RegexpMultiline">
+        <property name="id" value="useQualifier"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="@Autowired\s*(private|public|protected)\s+(?!.*Properties|.*Environment|FlowBuilderServices|SpringTemplateEngine|.*EventPublisher|.*ApplicationContext|ResourceLoader)\w+\s+\w+\s*;"/>
+        <property name="message" value="Use @Qualifier annotation when injecting dependencies"/>
+        <property name="fileExtensions" value="java" />
+    </module>
+
     <module name="NewlineAtEndOfFile">
         <property name="fileExtensions" value="java, xml, properties, txt"/>
         <property name="lineSeparator" value="lf"/>

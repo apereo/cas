@@ -7,6 +7,7 @@ import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
@@ -50,6 +51,10 @@ import java.util.HashSet;
 @EnableScheduling
 @Slf4j
 public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
+
+    @Autowired
+    @Qualifier("geoLocationService")
+    private ObjectProvider<GeoLocationService> geoLocationService;
 
     @Autowired
     @Qualifier("returnValueResourceResolver")
@@ -134,7 +139,7 @@ public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionP
     @Bean
     @RefreshScope
     public AuthenticationRequestRiskCalculator geoLocationAuthenticationRequestRiskCalculator() {
-        return new GeoLocationAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable());
+        return new GeoLocationAuthenticationRequestRiskCalculator(casEventRepository.getIfAvailable(), geoLocationService.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "authenticationRiskEvaluator")
