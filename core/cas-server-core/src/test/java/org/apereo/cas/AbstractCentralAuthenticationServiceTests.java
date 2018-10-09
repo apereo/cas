@@ -28,6 +28,7 @@ import org.springframework.test.context.TestPropertySource;
 @Getter
 public abstract class AbstractCentralAuthenticationServiceTests extends BaseCasCoreTests {
     @Autowired
+    @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
     @Autowired
