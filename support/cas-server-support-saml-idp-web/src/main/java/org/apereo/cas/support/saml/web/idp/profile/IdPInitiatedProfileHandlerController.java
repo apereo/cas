@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.concurrent.TimeUnit;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
 
 /**
  * This is {@link IdPInitiatedProfileHandlerController}.
@@ -148,6 +149,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
+        SAMLBindingSupport.setRelayState(ctx, target);
 
         val pair = Pair.<SignableSAMLObject, MessageContext>of(authnRequest, ctx);
         initiateAuthenticationRequest(pair, response, request);
