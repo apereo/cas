@@ -149,7 +149,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
-		SAMLBindingSupport.setRelayState(ctx, target);
+        SAMLBindingSupport.setRelayState(ctx, target);
 
         val pair = Pair.<SignableSAMLObject, MessageContext>of(authnRequest, ctx);
         initiateAuthenticationRequest(pair, response, request);
