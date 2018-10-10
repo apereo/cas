@@ -5,7 +5,7 @@
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
         <RollingFile name="file" fileName="build/gauth.log" append="true"
-                     filePattern="yubi-%d{yyyy-MM-dd-HH}-%i.log.gz">
+                     filePattern="gauth-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />

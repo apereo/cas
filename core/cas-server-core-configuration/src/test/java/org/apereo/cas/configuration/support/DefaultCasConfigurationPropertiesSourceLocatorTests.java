@@ -50,8 +50,10 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
     @Autowired
     @Qualifier("casConfigurationPropertiesSourceLocator")
     private CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator;
+
     @Autowired
     private Environment environment;
+
     @Autowired
     private ResourceLoader resourceLoader;
 
