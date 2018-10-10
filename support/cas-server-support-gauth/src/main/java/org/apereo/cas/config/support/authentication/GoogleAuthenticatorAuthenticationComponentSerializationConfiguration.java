@@ -2,8 +2,8 @@ package org.apereo.cas.config.support.authentication;
 
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.ComponentSerializationPlanConfigurator;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
