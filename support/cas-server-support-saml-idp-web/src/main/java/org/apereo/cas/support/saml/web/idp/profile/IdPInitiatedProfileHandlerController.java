@@ -151,6 +151,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
+		ctx.getSubcontext(SAMLBindingContext.class, false).setRelayState(ctx, target);
 
         final Pair<SignableSAMLObject, MessageContext> pair = Pair.of(authnRequest, ctx);
         initiateAuthenticationRequest(pair, response, request);
