@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientPropertie
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.saml.Pac4jSamlClientProperties;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -49,6 +50,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DelegatedClientFactory}.
@@ -377,7 +379,7 @@ public class DelegatedClientFactory {
                 cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
                 cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
-                cfg.setDestinationBindingType(saml.getDestinationBinding());
+                cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
@@ -407,6 +409,15 @@ public class DelegatedClientFactory {
                         .map(attribute -> new SAML2ServiceProvicerRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
                             attribute.getNameFormat(), attribute.isRequired()))
                         .forEach(attribute -> cfg.getRequestedServiceProviderAttributes().add(attribute));
+                }
+
+                val mappedAttributes = saml.getMappedAttributes();
+                if (!mappedAttributes.isEmpty()) {
+                    val results = mappedAttributes
+                        .stream()
+                        .collect(Collectors.toMap(Pac4jSamlClientProperties.ServiceProviderMappedAttribute::getName,
+                            Pac4jSamlClientProperties.ServiceProviderMappedAttribute::getMappedTo));
+                    cfg.setMappedAttributes(results);
                 }
 
                 val client = new SAML2Client(cfg);
