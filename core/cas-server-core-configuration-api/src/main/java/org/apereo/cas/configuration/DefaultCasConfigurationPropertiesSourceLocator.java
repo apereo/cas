@@ -2,6 +2,7 @@ package org.apereo.cas.configuration;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,6 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -40,19 +40,6 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     private final CipherExecutor<String, String> configurationCipherExecutor;
     private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
 
-
-    private List<String> getApplicationNames() {
-        val appNames = new ArrayList<String>();
-        val appName = casConfigurationPropertiesEnvironmentManager.getApplicationName();
-        appNames.add("application");
-        val appNameLower = appName.toLowerCase();
-        appNames.add(appNameLower);
-        if (!appName.equals(appNameLower)) {
-            appNames.add(appName);
-        }
-        return appNames;
-    }
-
     /**
      * Make a list of files that will be processed in order where the last one processed wins.
      * Profiles are added after base property names like application.properties, cas.properties, CAS.properties so that
@@ -63,8 +50,10 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
      */
     private List<File> getAllPossibleExternalConfigDirFilenames(final File configdir, final List<String> profiles) {
 
-        val fileNames = getApplicationNames()
+        val applicationName = casConfigurationPropertiesEnvironmentManager.getApplicationName();
+        val fileNames = CollectionUtils.wrapList("application", applicationName.toLowerCase(), applicationName)
                 .stream()
+                .distinct()
                 .flatMap(appName -> EXTENSIONS
                         .stream()
                         .map(ext -> new File(configdir, String.format("%s.%s", appName, ext))))
