@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.adaptors.gauth.CouchDbGoogleAuthenticatorTokenCredentialRepository;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorCouchDbTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
-import org.apereo.cas.couchdb.gauth.OneTimeTokenAccountCouchDbRepository;
-import org.apereo.cas.couchdb.gauth.OneTimeTokenCouchDbRepository;
+import org.apereo.cas.couchdb.gauth.credential.OneTimeTokenAccountCouchDbRepository;
+import org.apereo.cas.couchdb.gauth.token.OneTimeTokenCouchDbRepository;
+import org.apereo.cas.gauth.credential.CouchDbGoogleAuthenticatorTokenCredentialRepository;
+import org.apereo.cas.gauth.token.GoogleAuthenticatorCouchDbTokenRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 
