@@ -33,6 +33,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
     private Action action;
 
     @Autowired
+    @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
     @Test

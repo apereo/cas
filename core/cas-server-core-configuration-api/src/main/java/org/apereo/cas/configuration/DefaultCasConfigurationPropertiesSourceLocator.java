@@ -44,8 +44,8 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     private List<String> getApplicationNames() {
         val appNames = new ArrayList<String>();
         val appName = casConfigurationPropertiesEnvironmentManager.getApplicationName();
-        val appNameLower = appName.toLowerCase();
         appNames.add("application");
+        val appNameLower = appName.toLowerCase();
         appNames.add(appNameLower);
         if (!appName.equals(appNameLower)) {
             appNames.add(appName);

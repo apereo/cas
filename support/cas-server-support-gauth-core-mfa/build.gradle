@@ -4,6 +4,7 @@ dependencies {
     api libraries.zxingbarcode
 
     api project(":api:cas-server-core-api-util")
+    api project(":support:cas-server-support-otp-mfa")
     
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -11,6 +12,6 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-rest")
 
-    testImplementation project(":support:cas-server-support-otp-mfa")
+    implementation project(":support:cas-server-support-otp-mfa")
 
 }
