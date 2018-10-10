@@ -77,16 +77,22 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
      * @param validationCode the validation code
      * @param scratchCodes   the scratch codes
      */
-    @JsonCreator
-    public OneTimeTokenAccount(@JsonProperty("username") final String username,
-                               @JsonProperty("secretKey") final String secretKey,
-                               @JsonProperty("validationCode") final int validationCode,
-                               @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
+    public OneTimeTokenAccount(final String username, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
         this();
         this.secretKey = secretKey;
         this.validationCode = validationCode;
         this.scratchCodes = scratchCodes;
         this.username = username;
+    }
+
+    @JsonCreator
+    public OneTimeTokenAccount(@JsonProperty("username") final String username,
+                               @JsonProperty("secretKey") final String secretKey,
+                               @JsonProperty("validationCode") final int validationCode,
+                               @JsonProperty("scratchCodes") final List<Integer> scratchCodes,
+                               @JsonProperty("registrationDate") final ZonedDateTime registrationDate) {
+        this(username, secretKey, validationCode, scratchCodes);
+        this.registrationDate = registrationDate;
     }
 
     @Override
