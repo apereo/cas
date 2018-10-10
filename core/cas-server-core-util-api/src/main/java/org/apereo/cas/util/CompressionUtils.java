@@ -30,40 +30,6 @@ import java.util.zip.InflaterInputStream;
 @UtilityClass
 public class CompressionUtils {
 
-    private static final int INFLATED_ARRAY_LENGTH = 10000;
-
-    /**
-     * Inflate the given byte array by {@link #INFLATED_ARRAY_LENGTH}.
-     *
-     * @param bytes the bytes
-     * @return the array as a string with {@code UTF-8} encoding
-     */
-    public static String inflate(final byte[] bytes) {
-        final Inflater inflater = new Inflater(true);
-        final byte[] xmlMessageBytes = new byte[INFLATED_ARRAY_LENGTH];
-
-        final byte[] extendedBytes = new byte[bytes.length + 1];
-        System.arraycopy(bytes, 0, extendedBytes, 0, bytes.length);
-        extendedBytes[bytes.length] = 0;
-
-        inflater.setInput(extendedBytes);
-
-        try {
-            final int resultLength = inflater.inflate(xmlMessageBytes);
-            inflater.end();
-
-            if (!inflater.finished()) {
-                throw new IllegalArgumentException("buffer not large enough.");
-            }
-
-            inflater.end();
-            return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
-        } catch (final DataFormatException e) {
-            return null;
-        }
-    }
-
-
     /**
      * Deflate the given bytes using zlib.
      *
@@ -93,12 +59,12 @@ public class CompressionUtils {
     }
 
     /**
-     * Decode the byte[] in base64 to a string.
+     * Inflate the byte[] to a string.
      *
-     * @param bytes the data to encode
+     * @param bytes the data to decode
      * @return the new string
      */
-    public static String decodeByteArrayToString(final byte[] bytes) {
+    public static String inflate(final byte[] bytes) {
         final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         final byte[] buf = new byte[bytes.length];

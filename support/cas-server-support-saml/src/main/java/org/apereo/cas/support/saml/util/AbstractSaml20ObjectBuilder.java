@@ -442,8 +442,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         final String inflated = CompressionUtils.inflate(decodedBytes);
         if (!StringUtils.isEmpty(inflated)) {
             return inflated;
-        } else {
-            return new String(decodedBytes, StandardCharsets.UTF_8);
         }
+
+        return new String(decodedBytes, StandardCharsets.UTF_8);
     }
 }
