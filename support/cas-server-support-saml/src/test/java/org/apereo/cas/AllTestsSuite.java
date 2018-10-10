@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationRequestTests;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceTests;
+import org.apereo.cas.support.saml.util.Saml20ObjectBuilderTests;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseViewTests;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseViewTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulatorTests;
@@ -23,7 +24,8 @@ import org.junit.runners.Suite;
         SamlCompliantUniqueTicketIdGeneratorTests.class,
         WebUtilTests.class,
         Saml10FailureResponseViewTests.class,
-        Saml10SuccessResponseViewTests.class
+        Saml10SuccessResponseViewTests.class,
+        Saml20ObjectBuilderTests.class
 })
 public class AllTestsSuite {
 }
