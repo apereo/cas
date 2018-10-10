@@ -35,8 +35,10 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
     private static final int EDIPI_LENGTH = 10;
 
     public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                                final boolean returnNullIfNoAttributes, final String principalAttributeName) {
-        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
+                                                final boolean returnNullIfNoAttributes,
+                                                final String principalAttributeName,
+                                                final String alternatePrincipalAttribute) {
+        super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, alternatePrincipalAttribute);
     }
 
     @Override
@@ -44,13 +46,16 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
         val subjectDn = certificate.getSubjectDN().getName();
         LOGGER.debug("Creating principal based on subject DN [{}]", subjectDn);
         if (StringUtils.isBlank(subjectDn)) {
-            return null;
+            return getAlternatePrincipal(certificate);
         }
         val commonName = retrieveTheCommonName(subjectDn);
         if (StringUtils.isBlank(commonName)) {
-            return null;
+            return getAlternatePrincipal(certificate);
         }
         val result = retrieveTheEDIPI(commonName);
+        if (StringUtils.isBlank(result)) {
+            return getAlternatePrincipal(certificate);
+        }
         LOGGER.debug("Final principal id extracted from [{}] is [{}]", subjectDn, result);
         return result;
     }

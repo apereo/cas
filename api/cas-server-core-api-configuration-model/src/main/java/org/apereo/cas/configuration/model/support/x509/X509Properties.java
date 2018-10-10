@@ -47,16 +47,7 @@ public class X509Properties implements Serializable {
      * Format of header should be compatible with Tomcat SSLValve.
      */
     private static final String DEFAULT_CERT_HEADER_NAME = "ssl_client_cert";
-    /**
-     * The serial number prefix used for principal resolution
-     * when type is set to {@link PrincipalTypes#SERIAL_NO_DN}.
-     */
-    private String serialNumberPrefix = "SERIALNUMBER=";
-    /**
-     * Value delimiter used for principal resolution
-     * when type is set to {@link PrincipalTypes#SERIAL_NO_DN}.
-     */
-    private String valueDelimiter = ", ";
+
     /**
      * Threshold value if expired CRL revocation policy is to be handled via threshold.
      */
@@ -184,14 +175,6 @@ public class X509Properties implements Serializable {
      */
     private String crlExpiredPolicy = "DENY";
     /**
-     * Radix used when {@link #principalType} is {@link PrincipalTypes#SERIAL_NO}.
-     */
-    private int principalSNRadix;
-    /**
-     * If radix hex padding should be used when {@link #principalType} is {@link PrincipalTypes#SERIAL_NO}.
-     */
-    private boolean principalHexSNZeroPadding;
-    /**
      * Principal resolution properties.
      */
     @NestedConfigurationProperty
@@ -276,6 +259,30 @@ public class X509Properties implements Serializable {
         CN_EDIPI
     }
 
+    /**
+     * Principal resolver properties for CN_EDIPI resolver type.
+     */
+    @NestedConfigurationProperty
+    private CnEdipiPrincipalResolverProperties cnEdipi = new CnEdipiPrincipalResolverProperties();
+
+    /**
+     * Principal resolver properties for SUBJECT_ALT_NAME resolver type.
+     */
+    @NestedConfigurationProperty
+    private SubjectAltNamePrincipalResolverProperties subjectAltName = new SubjectAltNamePrincipalResolverProperties();
+
+    /**
+     * Principal resolver properties for SERIAL_NO_DN resolver type.
+     */
+    @NestedConfigurationProperty
+    private SerialNoDnPrincipalResolverProperties serialNoDn = new SerialNoDnPrincipalResolverProperties();
+
+    /**
+     * Principal resolver properties for SERIAL_NO resolver type.
+     */
+    @NestedConfigurationProperty
+    private SerialNoPrincipalResolverProperties serialNo = new SerialNoPrincipalResolverProperties();
+
     @Getter
     @Setter
     public static class Ldap extends AbstractLdapSearchProperties {
@@ -287,5 +294,4 @@ public class X509Properties implements Serializable {
          */
         private String certificateAttribute = "certificateRevocationList";
     }
-
 }
