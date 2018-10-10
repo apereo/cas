@@ -136,8 +136,6 @@ public class TicketGrantingTicketImplTests {
     @Test
     public void verifyCheckCreationTime() {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
-        val principals = new ArrayList<Authentication>();
-        principals.add(authentication);
 
         val startTime = ZonedDateTime.now(ZoneOffset.UTC).minusNanos(100);
         val t = new TicketGrantingTicketImpl(TGT_ID, null, null,

@@ -44,11 +44,11 @@ public class TokenCoreConfiguration {
 
     @Autowired
     @Qualifier("casClientTicketValidator")
-    private AbstractUrlBasedTicketValidator casClientTicketValidator;
+    private ObjectProvider<AbstractUrlBasedTicketValidator> casClientTicketValidator;
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
-    private ExpirationPolicy grantingTicketExpirationPolicy;
+    private ObjectProvider<ExpirationPolicy> grantingTicketExpirationPolicy;
 
     @Bean
     @RefreshScope
@@ -83,10 +83,10 @@ public class TokenCoreConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "tokenTicketBuilder")
     public TokenTicketBuilder tokenTicketBuilder() {
-        return new JWTTokenTicketBuilder(casClientTicketValidator,
+        return new JWTTokenTicketBuilder(casClientTicketValidator.getIfAvailable(),
             casProperties.getServer().getPrefix(),
             tokenCipherExecutor(),
-            grantingTicketExpirationPolicy,
+            grantingTicketExpirationPolicy.getIfAvailable(),
             servicesManager.getIfAvailable());
     }
 }

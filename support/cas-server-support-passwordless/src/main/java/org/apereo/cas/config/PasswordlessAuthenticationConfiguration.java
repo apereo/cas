@@ -61,14 +61,14 @@ import java.util.stream.Collectors;
 public class PasswordlessAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     @Qualifier("communicationsManager")
-    private CommunicationsManager communicationsManager;
+    private ObjectProvider<CommunicationsManager> communicationsManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -90,11 +90,11 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
 
     @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Bean
     public PrincipalFactory passwordlessPrincipalFactory() {
@@ -169,8 +169,8 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @Bean
     @ConditionalOnMissingBean(name = "acceptPasswordlessAuthenticationAction")
     public Action acceptPasswordlessAuthenticationAction() {
-        return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver,
+        return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
+            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
             adaptiveAuthenticationPolicy.getIfAvailable(),
             passwordlessTokenRepository(),
             authenticationSystemSupport.getIfAvailable(),
@@ -181,7 +181,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @ConditionalOnMissingBean(name = "displayBeforePasswordlessAuthenticationAction")
     public Action displayBeforePasswordlessAuthenticationAction() {
         return new DisplayBeforePasswordlessAuthenticationAction(passwordlessTokenRepository(),
-            passwordlessUserAccountStore(), communicationsManager, casProperties.getAuthn().getPasswordless());
+            passwordlessUserAccountStore(), communicationsManager.getIfAvailable(), casProperties.getAuthn().getPasswordless());
     }
 
     @Bean
@@ -194,7 +194,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer passwordlessAuthenticationWebflowConfigurer() {
         return new PasswordlessAuthenticationWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "passwordlessAuthenticationEventExecutionPlanConfigurer")

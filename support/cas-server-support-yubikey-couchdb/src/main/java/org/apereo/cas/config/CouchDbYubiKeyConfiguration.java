@@ -12,6 +12,7 @@ import lombok.val;
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
 import org.ektorp.impl.ObjectMapperFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,29 +33,29 @@ public class CouchDbYubiKeyConfiguration {
 
     @Autowired
     @Qualifier("yubikeyCouchDbFactory")
-    private CouchDbConnectorFactory yubikeyCouchDbFactory;
+    private ObjectProvider<CouchDbConnectorFactory> yubikeyCouchDbFactory;
 
     @Autowired
     @Qualifier("yubiKeyAccountValidator")
-    private YubiKeyAccountValidator yubiKeyAccountValidator;
+    private ObjectProvider<YubiKeyAccountValidator> yubiKeyAccountValidator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")
-    private CipherExecutor yubikeyAccountCipherExecutor;
+    private ObjectProvider<CipherExecutor> yubikeyAccountCipherExecutor;
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @ConditionalOnMissingBean(name = "couchDbYubiKeyAccountRepository")
     @Bean
     @RefreshScope
     public YubiKeyAccountCouchDbRepository couchDbYubiKeyAccountRepository() {
         val couchDb = casProperties.getAuthn().getMfa().getYubikey().getCouchDb();
-        return new YubiKeyAccountCouchDbRepository(yubikeyCouchDbFactory.getCouchDbConnector(),
+        return new YubiKeyAccountCouchDbRepository(yubikeyCouchDbFactory.getIfAvailable().getCouchDbConnector(),
             couchDb.isCreateIfNotExists());
     }
 
@@ -62,29 +63,29 @@ public class CouchDbYubiKeyConfiguration {
     @RefreshScope
     @Bean
     public CouchDbInstance yubikeyCouchDbInstance() {
-        return yubikeyCouchDbFactory.getCouchDbInstance();
+        return yubikeyCouchDbFactory.getIfAvailable().getCouchDbInstance();
     }
 
     @ConditionalOnMissingBean(name = "yubikeyCouchDbConnector")
     @RefreshScope
     @Bean
     public CouchDbConnector yubikeyCouchDbConnector() {
-        return yubikeyCouchDbFactory.getCouchDbConnector();
+        return yubikeyCouchDbFactory.getIfAvailable().getCouchDbConnector();
     }
 
     @ConditionalOnMissingBean(name = "yubikeyCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory yubikeyCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getYubikey().getCouchDb(), objectMapperFactory);
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getYubikey().getCouchDb(), objectMapperFactory.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "couchDbYubikeyAccountRegistry")
     @RefreshScope
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        val registry = new CouchDbYubiKeyAccountRegistry(yubiKeyAccountValidator, couchDbYubiKeyAccountRepository());
-        registry.setCipherExecutor(yubikeyAccountCipherExecutor);
+        val registry = new CouchDbYubiKeyAccountRegistry(yubiKeyAccountValidator.getIfAvailable(), couchDbYubiKeyAccountRepository());
+        registry.setCipherExecutor(yubikeyAccountCipherExecutor.getIfAvailable());
         return registry;
     }
 }

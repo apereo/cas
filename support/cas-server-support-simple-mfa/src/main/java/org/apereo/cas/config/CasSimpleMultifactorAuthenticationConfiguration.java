@@ -53,14 +53,14 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
 
     @Autowired
     @Qualifier("communicationsManager")
-    private CommunicationsManager communicationsManager;
+    private ObjectProvider<CommunicationsManager> communicationsManager;
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -77,7 +77,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer mfaSimpleMultifactorWebflowConfigurer() {
-        return new CasSimpleMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new CasSimpleMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
             mfaSimpleAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
@@ -85,10 +85,10 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
     @Bean
     public Action mfaSimpleMultifactorSendTokenAction() {
         val simple = casProperties.getAuthn().getMfa().getSimple();
-        if (!communicationsManager.validate()) {
+        if (!communicationsManager.getIfAvailable().validate()) {
             throw new BeanCreationException("Unable to submit tokens since no communication strategy is defined");
         }
-        return new CasSimpleSendTokenAction(ticketRegistry.getIfAvailable(), communicationsManager,
+        return new CasSimpleSendTokenAction(ticketRegistry.getIfAvailable(), communicationsManager.getIfAvailable(),
             casSimpleMultifactorAuthenticationTicketFactory(), simple);
     }
 
@@ -122,7 +122,7 @@ public class CasSimpleMultifactorAuthenticationConfiguration implements CasWebfl
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer mfaSimpleMultifactorTrustWebflowConfigurer() {
-            return new CasSimpleMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+            return new CasSimpleMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
                 casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), mfaSimpleAuthenticatorFlowRegistry(),
                 applicationContext, casProperties);
         }

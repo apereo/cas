@@ -1900,6 +1900,13 @@ X.509 principal resolution can act on the following principal types:
 | `SUBJECT_DN`            | The default type; Resolve the principal by the certificate's subject dn.
 | `CN_EDIPI`              | Resolve the principal by the Electronic Data Interchange Personal Identifier (EDIPI) from the Common Name.
 
+For the ```CN_EDIPI``` and ```SUBJECT_ALT_NAME``` principal resolvers, since not all certificates have those attributes, 
+you may specify the following property in order to have a different attribute from the certificate used as the principal.  
+If no alternative attribute is specified then the principal will be null and CAS will fail auth or use a different authenticator.
+```properties
+# cas.authn.x509.alternatePrincipalAttribute=subjectDn|sigAlgOid|subjectX500Principal
+```
+
 ### CRL Fetching / Revocation
 
 CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability
@@ -1960,16 +1967,27 @@ To fetch CRLs, the following options are available:
 
 # cas.authn.x509.name=
 # cas.authn.x509.principalDescriptor=
-# cas.authn.x509.principalSNRadix=10
-# cas.authn.x509.principalHexSNZeroPadding=false
 # cas.authn.x509.maxPathLength=1
 # cas.authn.x509.throwOnFetchFailure=false
-# cas.authn.x509.valueDelimiter=,
+
 # cas.authn.x509.checkAll=false
 # cas.authn.x509.requireKeyUsage=false
-# cas.authn.x509.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
+
+# SERIAL_NO_DN
+# cas.authn.x509.serialNoDn.serialNumberPrefix=SERIALNUMBER=
+# cas.authn.x509.serialNoDn.valueDelimiter=,
+
+# SERIAL_NO
+# cas.authn.x509.serialNo.principalSNRadix=10
+# cas.authn.x509.serialNo.principalHexSNZeroPadding=false
+
+# SUBJECT_ALT_NAME
+# cas.authn.x509.subjectAltName.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal]
+
+# CN_EDIPI 
+# cas.authn.x509.cnEdipi.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal]
 ```
 
 ### X509 Certificate Extraction
@@ -2714,7 +2732,7 @@ The following external identity providers share [common blocks of settings](Conf
 | Foursquare                | `cas.authn.pac4j.foursquare`
 | WindowsLive               | `cas.authn.pac4j.windowsLive`
 | Google                    | `cas.authn.pac4j.google`
-| HiOrg                     | `cas.authn.pac4j.hiOrgServer`
+| HiOrg-Server              | `cas.authn.pac4j.hiOrgServer`
 
 See below for other identity providers such as CAS, SAML2 and more.
 
@@ -2802,7 +2820,8 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].serviceProviderEntityId=
 # cas.authn.pac4j.saml[0].serviceProviderMetadataPath=
 
-# cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=
+# cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=3600
+# cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=300
 # cas.authn.pac4j.saml[0].destinationBinding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
 
 # Path/URL to delegated IdP metadata
@@ -2825,6 +2844,9 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].requestedAttributes[0].friendlyName=
 # cas.authn.pac4j.saml[0].requestedAttributes[0].nameFormat=urn:oasis:names:tc:SAML:2.0:attrname-format:uri
 # cas.authn.pac4j.saml[0].requestedAttributes[0].required=false
+
+# cas.authn.pac4j.saml[0].mappedAttributes[0].name=urn:oid:2.5.4.42
+# cas.authn.pac4j.saml[0].mappedAttributes[0].mappedAs=displayName
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.
@@ -2836,6 +2858,14 @@ Delegate authentication to Facebook. Common settings for this identity provider 
 ```properties
 # cas.authn.pac4j.facebook.fields=
 # cas.authn.pac4j.facebook.scope=
+```
+
+### HiOrg Server
+
+Delegate authentication to HiOrg Server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.hiOrgServer`.
+
+```properties
+# cas.authn.pac4j.hiOrgServer.scope=eigenedaten
 ```
 
 ### LinkedIn

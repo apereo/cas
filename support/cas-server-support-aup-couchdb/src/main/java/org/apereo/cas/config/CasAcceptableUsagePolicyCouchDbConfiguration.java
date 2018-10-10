@@ -38,13 +38,13 @@ public class CasAcceptableUsagePolicyCouchDbConfiguration {
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @ConditionalOnMissingBean(name = "aupCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory aupCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAcceptableUsagePolicy().getCouchDb(), objectMapperFactory);
+        return new CouchDbConnectorFactory(casProperties.getAcceptableUsagePolicy().getCouchDb(), objectMapperFactory.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "aupCouchDbRepository")

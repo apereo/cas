@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -35,17 +36,17 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
 
     @Autowired
     @Qualifier("serviceRegistryCouchDbFactory")
-    private CouchDbConnectorFactory couchDbFactory;
+    private ObjectProvider<CouchDbConnectorFactory> couchDbFactory;
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "serviceRegistryCouchDbFactory")
     public CouchDbConnectorFactory serviceRegistryCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory);
+        return new CouchDbConnectorFactory(casProperties.getServiceRegistry().getCouchDb(), objectMapperFactory.getIfAvailable());
     }
 
     @Bean
@@ -54,7 +55,7 @@ public class CouchDbServiceRegistryConfiguration implements ServiceRegistryExecu
     public RegisteredServiceCouchDbRepository serviceRegistryCouchDbRepository() {
         val couchDbProperties = casProperties.getServiceRegistry().getCouchDb();
 
-        val serviceRepository = new RegisteredServiceCouchDbRepository(couchDbFactory.getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
+        val serviceRepository = new RegisteredServiceCouchDbRepository(couchDbFactory.getIfAvailable().getCouchDbConnector(), couchDbProperties.isCreateIfNotExists());
         serviceRepository.initStandardDesignDocument();
         return serviceRepository;
     }

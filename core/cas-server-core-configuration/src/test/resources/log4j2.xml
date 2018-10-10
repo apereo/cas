@@ -5,7 +5,7 @@
             <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
         </Console>
         <RollingFile name="file" fileName="build/config.log" append="true"
-                     filePattern="events-%d{yyyy-MM-dd-HH}-%i.log.gz">
+                     filePattern="config-api-%d{yyyy-MM-dd-HH}-%i.log.gz">
             <PatternLayout pattern="%d %p [%c] - %m%n"/>
             <Policies>
                 <OnStartupTriggeringPolicy />

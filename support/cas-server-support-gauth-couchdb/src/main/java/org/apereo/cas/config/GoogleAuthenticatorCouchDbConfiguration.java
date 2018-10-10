@@ -1,12 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.adaptors.gauth.CouchDbGoogleAuthenticatorTokenCredentialRepository;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorCouchDbTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
-import org.apereo.cas.couchdb.gauth.OneTimeTokenAccountCouchDbRepository;
-import org.apereo.cas.couchdb.gauth.OneTimeTokenCouchDbRepository;
+import org.apereo.cas.couchdb.gauth.credential.OneTimeTokenAccountCouchDbRepository;
+import org.apereo.cas.couchdb.gauth.token.OneTimeTokenCouchDbRepository;
+import org.apereo.cas.gauth.credential.CouchDbGoogleAuthenticatorTokenCredentialRepository;
+import org.apereo.cas.gauth.token.GoogleAuthenticatorCouchDbTokenRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 
@@ -14,6 +14,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.impl.ObjectMapperFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -40,13 +41,13 @@ public class GoogleAuthenticatorCouchDbConfiguration {
 
     @Autowired
     @Qualifier("defaultObjectMapperFactory")
-    private ObjectMapperFactory objectMapperFactory;
+    private ObjectProvider<ObjectMapperFactory> objectMapperFactory;
 
     @ConditionalOnMissingBean(name = "oneTimeTokenAccountCouchDbFactory")
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory oneTimeTokenAccountCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory);
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "couchDbGoogleAuthenticatotAccountRegistry")
@@ -84,7 +85,7 @@ public class GoogleAuthenticatorCouchDbConfiguration {
     @Bean
     @RefreshScope
     public CouchDbConnectorFactory oneTimeTokenCouchDbFactory() {
-        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory);
+        return new CouchDbConnectorFactory(casProperties.getAuthn().getMfa().getGauth().getCouchDb(), objectMapperFactory.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "couchDbbOneTimeTokenRepository")
