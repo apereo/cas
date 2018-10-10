@@ -118,7 +118,6 @@ public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTe
         final String deflator = CompressionUtils.deflate(SAML_REQUEST);
         final GoogleSaml20ObjectBuilder builder = new GoogleSaml20ObjectBuilder(configBean);
         final String msg = builder.decodeSamlAuthnRequest(deflator);
-        assertEquals(msg, SAML_REQUEST);
+        assertEquals(SAML_REQUEST, msg);
     }
-
 }
