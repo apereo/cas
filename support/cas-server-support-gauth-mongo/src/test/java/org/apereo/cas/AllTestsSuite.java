@@ -1,7 +1,7 @@
 package org.apereo.cas;
 
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMongoDbTokenRepositoryTests;
-import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests;
+import org.apereo.cas.gauth.credential.MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests;
+import org.apereo.cas.gauth.token.GoogleAuthenticatorMongoDbTokenRepositoryTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
