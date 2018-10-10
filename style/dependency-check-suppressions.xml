@@ -10,6 +10,9 @@
         <cve>CVE-2018-13742</cve>
     </suppress>
     <suppress>
+        <cve>CVE-2017-8316</cve>
+    </suppress>
+    <suppress>
         <cve>CVE-2014-4167</cve>
     </suppress>
     <suppress>
