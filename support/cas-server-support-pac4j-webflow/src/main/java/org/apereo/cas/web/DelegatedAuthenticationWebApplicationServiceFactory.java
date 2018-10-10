@@ -35,10 +35,10 @@ public class DelegatedAuthenticationWebApplicationServiceFactory extends WebAppl
         }
 
         val clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
-        LOGGER.debug("Indicated client name for service extraction is [{}]", clientName);
+        LOGGER.trace("Indicated client name for service extraction is [{}]", clientName);
 
         if (StringUtils.isBlank(clientName)) {
-            LOGGER.debug("No client name found in the request");
+            LOGGER.trace("No client name found in the request");
             return null;
         }
 

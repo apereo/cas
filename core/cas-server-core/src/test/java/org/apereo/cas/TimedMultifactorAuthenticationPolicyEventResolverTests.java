@@ -16,7 +16,6 @@ import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -50,10 +49,8 @@ public class TimedMultifactorAuthenticationPolicyEventResolverTests extends Base
     @Qualifier("timedAuthenticationPolicyWebflowEventResolver")
     protected CasWebflowEventResolver resolver;
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     private MockRequestContext context;
+
     private MockHttpServletRequest request;
 
     @Before
