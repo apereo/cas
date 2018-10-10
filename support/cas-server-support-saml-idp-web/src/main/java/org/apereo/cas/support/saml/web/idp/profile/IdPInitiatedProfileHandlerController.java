@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
 
 /**
  * This is {@link IdPInitiatedProfileHandlerController}.
@@ -151,7 +152,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
-		ctx.getSubcontext(SAMLBindingContext.class, false).setRelayState(ctx, target);
+        SAMLBindingSupport.setRelayState(ctx, target);
 
         final Pair<SignableSAMLObject, MessageContext> pair = Pair.of(authnRequest, ctx);
         initiateAuthenticationRequest(pair, response, request);
