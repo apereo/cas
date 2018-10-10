@@ -30,7 +30,7 @@ public class RadiusUtilsTests {
         val server = mock(RadiusServer.class);
         val attribute = new Attr_ClientId("client_id");
         val response = new CasRadiusResponse(100, 100, CollectionUtils.wrapList(attribute));
-        when(server.authenticate(anyString(), anyString())).thenReturn(response);
+        when(server.authenticate(anyString(), anyString(), any())).thenReturn(response);
         val result = RadiusUtils.authenticate("casuser", "Mellon",
             CollectionUtils.wrapList(server), true, false, Optional.empty());
         assertTrue(result.getKey());
@@ -49,8 +49,8 @@ public class RadiusUtilsTests {
     @Test
     public void verifyActionFailsWithException() throws Exception {
         val server = mock(RadiusServer.class);
-        when(server.authenticate(anyString(), anyString())).thenThrow(RuntimeException.class);
-        thrown.expect(RuntimeException.class);
+        when(server.authenticate(anyString(), anyString())).thenThrow(FailedLoginException.class);
+        thrown.expect(FailedLoginException.class);
         RadiusUtils.authenticate("casuser", "Mellon",
             CollectionUtils.wrapList(server), false, false, Optional.empty());
     }
