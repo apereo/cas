@@ -39,7 +39,7 @@ public class DelegatedAuthenticationWebApplicationServiceFactory extends WebAppl
         }
 
         final String clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
-        LOGGER.debug("Indicated client name for service extraction is [{}]", clientName);
+        LOGGER.trace("Indicated client name for service extraction is [{}]", clientName);
 
         if (StringUtils.isBlank(clientName)) {
             LOGGER.trace("No client name found in the request");
