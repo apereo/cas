@@ -1900,6 +1900,13 @@ X.509 principal resolution can act on the following principal types:
 | `SUBJECT_DN`            | The default type; Resolve the principal by the certificate's subject dn.
 | `CN_EDIPI`              | Resolve the principal by the Electronic Data Interchange Personal Identifier (EDIPI) from the Common Name.
 
+For the ```CN_EDIPI``` and ```SUBJECT_ALT_NAME``` principal resolvers, since not all certificates have those attributes, 
+you may specify the following property in order to have a different attribute from the certificate used as the principal.  
+If no alternative attribute is specified then the principal will be null and CAS will fail auth or use a different authenticator.
+```properties
+# cas.authn.x509.alternatePrincipalAttribute=subjectDn|sigAlgOid|subjectX500Principal
+```
+
 ### CRL Fetching / Revocation
 
 CAS provides a flexible policy engine for certificate revocation checking. This facility arose due to lack of configurability
@@ -1960,16 +1967,27 @@ To fetch CRLs, the following options are available:
 
 # cas.authn.x509.name=
 # cas.authn.x509.principalDescriptor=
-# cas.authn.x509.principalSNRadix=10
-# cas.authn.x509.principalHexSNZeroPadding=false
 # cas.authn.x509.maxPathLength=1
 # cas.authn.x509.throwOnFetchFailure=false
-# cas.authn.x509.valueDelimiter=,
+
 # cas.authn.x509.checkAll=false
 # cas.authn.x509.requireKeyUsage=false
-# cas.authn.x509.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
+
+# SERIAL_NO_DN
+# cas.authn.x509.serialNoDn.serialNumberPrefix=SERIALNUMBER=
+# cas.authn.x509.serialNoDn.valueDelimiter=,
+
+# SERIAL_NO
+# cas.authn.x509.serialNo.principalSNRadix=10
+# cas.authn.x509.serialNo.principalHexSNZeroPadding=false
+
+# SUBJECT_ALT_NAME
+# cas.authn.x509.subjectAltName.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal]
+
+# CN_EDIPI 
+# cas.authn.x509.cnEdipi.alternatePrincipalAttribute=[sigAlgOid|subjectDn|subjectX500Principal]
 ```
 
 ### X509 Certificate Extraction
