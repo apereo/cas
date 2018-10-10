@@ -32,10 +32,15 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
      *
      * @param certPath       path to the cert
      * @param expectedResult the result expected from the test
+     * @param alternatePrincipalAttribute alternate principal attribute (optional)
      */
-    public X509SubjectAlternativeNameUPNPrincipalResolverTests(final String certPath, final String expectedResult) {
+    public X509SubjectAlternativeNameUPNPrincipalResolverTests(
+            final String certPath,
+            final String expectedResult,
+            final String alternatePrincipalAttribute) {
 
         this.resolver = new X509SubjectAlternativeNameUPNPrincipalResolver();
+        this.resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
         try {
             this.certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
                 new FileInputStream(getClass().getResource(certPath).getPath()));
@@ -54,9 +59,32 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
     public static Collection<Object[]> getTestParameters() {
         val params = new ArrayList<Object[]>();
 
+        // test with cert with UPN and no alternate
         params.add(new Object[]{
             "/x509-san-upn-resolver.crt",
-            "test-user@some-company-domain"
+            "test-user@some-company-domain",
+            null,
+        });
+
+        // test with alternate parameter and cert with UPN
+        params.add(new Object[]{
+            "/x509-san-upn-resolver.crt",
+            "test-user@some-company-domain",
+            "subjectDn",
+        });
+
+        // test with alternate parameter and cert without UPN
+        params.add(new Object[]{
+            "/user-valid.crt",
+            "CN=Alice, OU=CAS, O=Jasig, L=Westminster, ST=Colorado, C=US",
+            "subjectDn",
+        });
+
+        // test with bad alternate parameter and cert without UPN
+        params.add(new Object[]{
+            "/user-valid.crt",
+            null,
+            "badAttribute",
         });
         return params;
     }
@@ -69,8 +97,10 @@ public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
         val credential = new X509CertificateCredential(new X509Certificate[]{this.certificate});
         credential.setCertificate(this.certificate);
         val principal = this.resolver.resolve(credential);
-        assertNotNull(principal);
-        assertFalse(principal.getAttributes().isEmpty());
+        if (expected != null) {
+            assertNotNull(principal);
+            assertFalse(principal.getAttributes().isEmpty());
+        }
     }
 
 }
