@@ -11,11 +11,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 /**
@@ -76,7 +74,6 @@ public class CompressionUtils {
             }
             return new String(baos.toByteArray(), StandardCharsets.UTF_8);
         } catch (final Exception e) {
-            LOGGER.error("Base64 decoding failed", e);
             return null;
         }
     }
