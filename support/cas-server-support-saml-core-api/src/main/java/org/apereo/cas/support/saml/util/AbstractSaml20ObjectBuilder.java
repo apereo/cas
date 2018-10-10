@@ -38,6 +38,7 @@ import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -486,6 +487,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return inflated;
         }
 
-        return CompressionUtils.decodeByteArrayToString(decodedBytes);
+        return new String(decodedBytes, StandardCharsets.UTF_8);
     }
 }
