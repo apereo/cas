@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.util;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -35,6 +34,7 @@ import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
 import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -444,6 +444,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
             return inflated;
         }
 
-        return CompressionUtils.decodeByteArrayToString(decodedBytes);
+        return new String(decodedBytes, StandardCharsets.UTF_8);
     }
 }
