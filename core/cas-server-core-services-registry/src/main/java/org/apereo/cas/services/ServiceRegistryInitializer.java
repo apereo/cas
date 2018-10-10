@@ -41,11 +41,11 @@ public class ServiceRegistryInitializer {
         LOGGER.debug("Loaded JSON services are [{}]", servicesLoaded.stream().map(RegisteredService::getName).collect(Collectors.joining(",")));
 
         servicesLoaded
-            .stream()
-            .filter(s -> !findExistingMatchForService(s))
             .forEach(r -> {
-                LOGGER.debug("Initializing service registry with the [{}] JSON service definition...", r.getName());
-                this.serviceRegistry.save(r);
+                if (!findExistingMatchForService(r)) {
+                    LOGGER.debug("Initializing service registry with the [{}] JSON service definition...", r.getName());
+                    this.serviceRegistry.save(r);
+                }
             });
         this.servicesManager.load();
         LOGGER.info("Service registry [{}] contains [{}] service definitions", this.serviceRegistry.getName(), this.servicesManager.count());
