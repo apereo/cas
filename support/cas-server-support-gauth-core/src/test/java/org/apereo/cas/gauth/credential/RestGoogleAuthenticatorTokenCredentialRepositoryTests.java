@@ -64,11 +64,9 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
 
     @Override
     public OneTimeTokenCredentialRepository getRegistry(final String testName) {
-        return repositoryMap.computeIfAbsent(testName, name -> {
-            return new RestGoogleAuthenticatorTokenCredentialRepository(getGoogle(), new RestTemplate(),
-                casProperties.getAuthn().getMfa().getGauth(),
-                CipherExecutor.noOpOfStringToString());
-        });
+        return repositoryMap.computeIfAbsent(testName, name -> new RestGoogleAuthenticatorTokenCredentialRepository(getGoogle(), new RestTemplate(),
+            casProperties.getAuthn().getMfa().getGauth(),
+            CipherExecutor.noOpOfStringToString()));
     }
 
     @Test
