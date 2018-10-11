@@ -1,11 +1,10 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.util.CompressionUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,17 +27,11 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class DefaultLogoutManager implements LogoutManager {
-    private final SingleLogoutMessageCreator logoutMessageBuilder;
     private final boolean singleLogoutCallbacksDisabled;
     private final LogoutExecutionPlan logoutExecutionPlan;
 
-    /**
-     * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.
-     *
-     * @param ticket a given ticket granting ticket.
-     * @return all logout requests.
-     */
     @Override
     public List<SingleLogoutRequest> performLogout(final TicketGrantingTicket ticket) {
         LOGGER.info("Performing logout operations for [{}]", ticket.getId());
@@ -80,18 +73,5 @@ public class DefaultLogoutManager implements LogoutManager {
                 .collect(Collectors.toList()))
             .flatMap(Collection::stream)
             .collect(Collectors.toList());
-    }
-
-    /**
-     * Create a logout message for front channel logout.
-     *
-     * @param logoutRequest the logout request.
-     * @return a front SAML logout message.
-     */
-    @Override
-    public String createFrontChannelLogoutMessage(final SingleLogoutRequest logoutRequest) {
-        val logoutMessage = this.logoutMessageBuilder.create(logoutRequest);
-        LOGGER.trace("Attempting to deflate the logout message [{}]", logoutMessage);
-        return CompressionUtils.deflate(logoutMessage);
     }
 }

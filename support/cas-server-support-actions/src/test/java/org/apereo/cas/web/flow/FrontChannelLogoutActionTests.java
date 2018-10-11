@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
-import org.apereo.cas.logout.DefaultLogoutManager;
 import org.apereo.cas.logout.DefaultSingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
@@ -59,9 +58,7 @@ public class FrontChannelLogoutActionTests {
 
         val plan = new DefaultLogoutExecutionPlan();
         plan.registerSingleLogoutServiceMessageHandler(handler);
-        val logoutManager = new DefaultLogoutManager(new DefaultSingleLogoutMessageCreator(), false, plan);
-
-        this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
+        this.frontChannelLogoutAction = new FrontChannelLogoutAction(plan);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
