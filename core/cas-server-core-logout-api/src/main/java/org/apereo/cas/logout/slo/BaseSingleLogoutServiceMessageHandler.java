@@ -49,7 +49,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         }
         val selectedService = (WebApplicationService) this.authenticationRequestServiceSelectionStrategies.resolveService(singleLogoutService);
 
-        LOGGER.debug("Processing logout request for service [{}]...", selectedService);
+        LOGGER.trace("Processing logout request for service [{}]...", selectedService);
         val registeredService = this.servicesManager.findServiceBy(selectedService);
 
         LOGGER.debug("Service [{}] supports single logout and is found in the registry as [{}]. Proceeding...", selectedService, registeredService);
@@ -131,18 +131,13 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
             .ticketId(ticketId)
             .service(selectedService)
             .logoutUrl(new URL(logoutUrl.getUrl()))
+            .logoutType(logoutUrl.getLogoutType())
             .registeredService(registeredService)
             .ticketGrantingTicket(ticketGrantingTicket)
             .build();
         LOGGER.debug("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
 
-        val type = registeredService.getLogoutType() == null
-            ? RegisteredServiceLogoutType.BACK_CHANNEL
-            : registeredService.getLogoutType();
-
-        LOGGER.debug("Logout type registered for [{}] is [{}]", selectedService, type);
-
-        if (type == RegisteredServiceLogoutType.BACK_CHANNEL) {
+        if (logoutRequest.getLogoutType() == RegisteredServiceLogoutType.BACK_CHANNEL) {
             if (performBackChannelLogout(logoutRequest)) {
                 logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
             } else {
@@ -150,7 +145,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
                 LOGGER.warn("Logout message is not sent to [{}]; Continuing processing...", selectedService);
             }
         } else {
-            LOGGER.debug("Logout operation is not yet attempted for [{}] given logout type is set to [{}]", selectedService, type);
+            LOGGER.debug("Logout operation is not yet attempted for [{}] given logout type is set to [{}]", selectedService, logoutRequest.getLogoutType());
             logoutRequest.setStatus(LogoutRequestStatus.NOT_ATTEMPTED);
         }
         return logoutRequest;

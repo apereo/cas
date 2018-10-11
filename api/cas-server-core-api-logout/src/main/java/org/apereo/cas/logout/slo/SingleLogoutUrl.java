@@ -25,7 +25,7 @@ public class SingleLogoutUrl implements Serializable {
     private final String url;
 
     /**
-     * The http-method or binding that should be used to send the message to the url.
+     * The http-logoutType or binding that should be used to send the message to the url.
      */
-    private final RegisteredServiceLogoutType method;
+    private final RegisteredServiceLogoutType logoutType;
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.logout;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -56,5 +57,11 @@ public class DefaultSingleLogoutRequest implements SingleLogoutRequest {
      */
     @Builder.Default
     private LogoutRequestStatus status = LogoutRequestStatus.NOT_ATTEMPTED;
+
+    /**
+     * The http-logoutType or binding that should be used to send the message to the url.
+     */
+    @Builder.Default
+    private final RegisteredServiceLogoutType logoutType = RegisteredServiceLogoutType.BACK_CHANNEL;
 
 }

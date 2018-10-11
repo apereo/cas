@@ -2,6 +2,7 @@ package org.apereo.cas.logout;
 
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -31,15 +32,21 @@ public class DefaultSingleLogoutMessageCreator implements SingleLogoutMessageCre
      */
     private static final String LOGOUT_REQUEST_TEMPLATE =
         "<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"%s\" Version=\"2.0\" "
-            + "IssueInstant=\"%s\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">@NOT_USED@"
+            + "IssueInstant=\"%s\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s"
             + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>";
 
     @Override
     public String create(final SingleLogoutRequest request) {
-        val logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
-            new ISOStandardDateFormat().getCurrentDateAndTime(), request.getTicketId());
-        LOGGER.trace("Attempting to deflate the logout message [{}]", logoutRequest);
-        return CompressionUtils.deflate(logoutRequest);
-    }
+        val logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE,
+            GENERATOR.getNewTicketId("LR"),
+            new ISOStandardDateFormat().getCurrentDateAndTime(),
+            request.getTicketGrantingTicket().getAuthentication().getPrincipal().getId(),
+            request.getTicketId());
 
+        if (request.getLogoutType() == RegisteredServiceLogoutType.FRONT_CHANNEL) {
+            LOGGER.trace("Attempting to deflate the logout message [{}]", logoutRequest);
+            return CompressionUtils.deflate(logoutRequest);
+        }
+        return logoutRequest;
+    }
 }
