@@ -13,7 +13,7 @@ public interface SingleLogoutMessageCreator {
      * Builds the logout message to be sent.
      *
      * @param request the request
-     * @return the message. Message may or may not be encoded.
+     * @return the string
      */
     String create(SingleLogoutRequest request);
 }
