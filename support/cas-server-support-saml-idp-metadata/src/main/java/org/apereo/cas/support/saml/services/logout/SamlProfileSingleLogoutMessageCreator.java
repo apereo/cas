@@ -1,8 +1,8 @@
 package org.apereo.cas.support.saml.services.logout;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
-import org.apereo.cas.logout.LogoutMessageCreator;
-import org.apereo.cas.logout.LogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
+import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -25,13 +25,13 @@ import org.joda.time.DateTimeZone;
 import org.opensaml.saml.saml2.core.NameID;
 
 /**
- * This is {@link SamlProfileLogoutMessageCreator}.
+ * This is {@link SamlProfileSingleLogoutMessageCreator}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @Slf4j
-public class SamlProfileLogoutMessageCreator extends AbstractSaml20ObjectBuilder implements LogoutMessageCreator {
+public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectBuilder implements SingleLogoutMessageCreator {
 
     private static final long serialVersionUID = -5895467960534493675L;
 
@@ -50,10 +50,10 @@ public class SamlProfileLogoutMessageCreator extends AbstractSaml20ObjectBuilder
      */
     protected final SamlIdPProperties samlIdPProperties;
 
-    public SamlProfileLogoutMessageCreator(final OpenSamlConfigBean configBean,
-                                           final ServicesManager servicesManager,
-                                           final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                           final SamlIdPProperties samlIdPProperties) {
+    public SamlProfileSingleLogoutMessageCreator(final OpenSamlConfigBean configBean,
+                                                 final ServicesManager servicesManager,
+                                                 final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
+                                                 final SamlIdPProperties samlIdPProperties) {
         super(configBean);
         this.servicesManager = servicesManager;
         this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
@@ -62,7 +62,7 @@ public class SamlProfileLogoutMessageCreator extends AbstractSaml20ObjectBuilder
 
     @Override
     @SneakyThrows
-    public String create(final LogoutRequest request) {
+    public String create(final SingleLogoutRequest request) {
         val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
         val issueInstant = DateTime.now(DateTimeZone.UTC).plusSeconds(samlIdPProperties.getResponse().getSkewAllowance());
 
