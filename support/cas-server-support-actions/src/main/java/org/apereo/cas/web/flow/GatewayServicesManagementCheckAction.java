@@ -19,7 +19,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class GatewayServicesManagementCheck extends AbstractAction {
+public class GatewayServicesManagementCheckAction extends AbstractAction {
     private final ServicesManager servicesManager;
 
     @Override

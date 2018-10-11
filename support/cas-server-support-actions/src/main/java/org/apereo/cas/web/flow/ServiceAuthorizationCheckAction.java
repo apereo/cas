@@ -21,7 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
  **/
 @Slf4j
 @RequiredArgsConstructor
-public class ServiceAuthorizationCheck extends AbstractAction {
+public class ServiceAuthorizationCheckAction extends AbstractAction {
 
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
