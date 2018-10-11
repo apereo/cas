@@ -82,8 +82,8 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         }
         if (attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)
             && attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)) {
-            val isBypass = Boolean.class.cast(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA));
-            val bypassedId = attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER).toString();
+            val isBypass = Boolean.class.cast(CollectionUtils.firstElement(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)).get());
+            val bypassedId = CollectionUtils.firstElement(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)).get().toString();
             LOGGER.debug("Found multifactor authentication bypass attributes for provider [{}]", bypassedId);
             if (isBypass && StringUtils.equals(bypassedId, requestedContext)) {
                 LOGGER.debug("Requested authentication context [{}] is satisfied given mfa was bypassed for the authentication attempt", requestedContext);
