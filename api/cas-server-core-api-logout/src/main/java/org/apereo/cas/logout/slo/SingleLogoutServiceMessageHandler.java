@@ -1,4 +1,4 @@
-package org.apereo.cas.logout;
+package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -23,7 +23,7 @@ public interface SingleLogoutServiceMessageHandler {
      * @param ticketGrantingTicket the ticket granting ticket
      * @return the logout request
      */
-    Collection<LogoutRequest> handle(WebApplicationService singleLogoutService, String ticketId, TicketGrantingTicket ticketGrantingTicket);
+    Collection<SingleLogoutRequest> handle(WebApplicationService singleLogoutService, String ticketId, TicketGrantingTicket ticketGrantingTicket);
 
     /**
      * Gets name.

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.services.logout;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.logout.DefaultLogoutRequest;
+import org.apereo.cas.logout.DefaultSingleLogoutRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
@@ -23,11 +23,11 @@ public class SamlProfileLogoutMessageCreatorTests extends BaseSamlIdPConfigurati
 
     @Test
     public void verifyOperation() throws Exception {
-        val creator = new SamlProfileLogoutMessageCreator(openSamlConfigBean, servicesManager,
+        val creator = new SamlProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,
             defaultSamlRegisteredServiceCachingMetadataResolver,
             casProperties.getAuthn().getSamlIdp());
 
-        val logoutRequest = DefaultLogoutRequest.builder()
+        val logoutRequest = DefaultSingleLogoutRequest.builder()
             .logoutUrl(new URL("https://sp.example.org/slo"))
             .registeredService(SamlIdPTestUtils.getSamlRegisteredService())
             .service(CoreAuthenticationTestUtils.getWebApplicationService())

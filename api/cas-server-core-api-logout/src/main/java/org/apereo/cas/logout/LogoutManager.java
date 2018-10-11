@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public interface LogoutManager {
      * @param ticket a given ticket granting ticket.
      * @return all logout requests.
      */
-    List<LogoutRequest> performLogout(TicketGrantingTicket ticket);
+    List<SingleLogoutRequest> performLogout(TicketGrantingTicket ticket);
 
     /**
      * Create a logout message for front channel logout.
@@ -26,5 +27,5 @@ public interface LogoutManager {
      * @param logoutRequest the logout request.
      * @return a front SAML logout message.
      */
-    String createFrontChannelLogoutMessage(LogoutRequest logoutRequest);
+    String createFrontChannelLogoutMessage(SingleLogoutRequest logoutRequest);
 }

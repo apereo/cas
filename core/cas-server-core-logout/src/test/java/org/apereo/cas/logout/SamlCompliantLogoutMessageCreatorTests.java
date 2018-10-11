@@ -1,6 +1,7 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
 
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.*;
 public class SamlCompliantLogoutMessageCreatorTests {
     private static final String CONST_TEST_URL = "https://google.com";
 
-    private final LogoutMessageCreator builder = new SamlCompliantLogoutMessageCreator();
+    private final SingleLogoutMessageCreator builder = new DefaultSingleLogoutMessageCreator();
 
     @Test
     public void verifyMessageBuilding() throws Exception {
@@ -31,7 +32,7 @@ public class SamlCompliantLogoutMessageCreatorTests {
         when(service.getOriginalUrl()).thenReturn(CONST_TEST_URL);
 
         val logoutUrl = new URL(service.getOriginalUrl());
-        val request = DefaultLogoutRequest.builder()
+        val request = DefaultSingleLogoutRequest.builder()
             .ticketId("TICKET-ID")
             .service(service)
             .logoutUrl(logoutUrl)
