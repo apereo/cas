@@ -15,7 +15,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-import org.apereo.cas.services.RegisteredService.LogoutType;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.RandomUtils;
 
@@ -131,7 +130,7 @@ public class RegisteredServiceTestUtils {
         accessStrategy.setRequiredAttributes(getTestAttributes());
         s.setAccessStrategy(accessStrategy);
         s.setLogo("https://logo.example.org/logo.png");
-        s.setLogoutType(LogoutType.BACK_CHANNEL);
+        s.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         s.setLogoutUrl("https://sys.example.org/logout.png");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
 

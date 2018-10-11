@@ -10,7 +10,7 @@ import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService.LogoutType;
+import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.RandomUtils;
@@ -141,7 +141,7 @@ public class DefaultLogoutManagerTests {
 
     @Test
     public void verifyLogoutTypeBack() {
-        this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
+        this.registeredService.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
         val logoutRequest = logoutRequests.iterator().next();
@@ -152,7 +152,7 @@ public class DefaultLogoutManagerTests {
 
     @Test
     public void verifyLogoutTypeNone() {
-        this.registeredService.setLogoutType(LogoutType.NONE);
+        this.registeredService.setLogoutType(RegisteredServiceLogoutType.NONE);
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());
     }
@@ -168,7 +168,7 @@ public class DefaultLogoutManagerTests {
 
     @Test
     public void verifyLogoutTypeFront() {
-        this.registeredService.setLogoutType(LogoutType.FRONT_CHANNEL);
+        this.registeredService.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
         val logoutRequest = logoutRequests.iterator().next();
@@ -179,7 +179,7 @@ public class DefaultLogoutManagerTests {
 
     @Test
     public void verifyAsynchronousLogout() {
-        this.registeredService.setLogoutType(LogoutType.BACK_CHANNEL);
+        this.registeredService.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(1, logoutRequests.size());
     }
