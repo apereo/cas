@@ -29,6 +29,7 @@ import java.util.HashMap;
 public class FrontChannelLogoutAction extends AbstractLogoutAction {
 
     private final LogoutExecutionPlan logoutExecutionPlan;
+    private final boolean singleLogoutCallbacksDisabled;
 
     @Override
     protected Event doInternalExecute(final HttpServletRequest request,
@@ -39,6 +40,11 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
         val logoutUrls = new HashMap<SingleLogoutRequest, LogoutHttpMessage>();
 
         if (logoutRequests == null || logoutRequests.isEmpty()) {
+            return getFinishLogoutEvent();
+        }
+
+        if (this.singleLogoutCallbacksDisabled) {
+            LOGGER.debug("Single logout callbacks are disabled");
             return getFinishLogoutEvent();
         }
 
