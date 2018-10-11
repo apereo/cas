@@ -14,7 +14,7 @@ import org.apereo.cas.authentication.exceptions.MixedPrincipalException;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.logout.LogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServiceContext;
@@ -90,7 +90,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         actionResolverName = "DESTROY_TICKET_GRANTING_TICKET_RESOLVER",
         resourceResolverName = "DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Override
-    public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
+    public List<SingleLogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         try {
             LOGGER.debug("Removing ticket [{}] from registry...", ticketGrantingTicketId);
             val ticket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);

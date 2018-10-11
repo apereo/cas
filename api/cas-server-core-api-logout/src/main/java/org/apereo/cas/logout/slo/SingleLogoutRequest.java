@@ -1,6 +1,7 @@
-package org.apereo.cas.logout;
+package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
@@ -13,7 +14,7 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public interface LogoutRequest extends Serializable {
+public interface SingleLogoutRequest extends Serializable {
     /**
      * Gets status of the request.
      *

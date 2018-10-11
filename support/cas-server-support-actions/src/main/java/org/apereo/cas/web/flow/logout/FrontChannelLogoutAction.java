@@ -2,8 +2,8 @@ package org.apereo.cas.web.flow.logout;
 
 import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -35,7 +35,7 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                                       final RequestContext context) {
 
         val logoutRequests = WebUtils.getLogoutRequests(context);
-        val logoutUrls = new HashMap<LogoutRequest, LogoutHttpMessage>();
+        val logoutUrls = new HashMap<SingleLogoutRequest, LogoutHttpMessage>();
 
         if (logoutRequests != null) {
             logoutRequests.stream()

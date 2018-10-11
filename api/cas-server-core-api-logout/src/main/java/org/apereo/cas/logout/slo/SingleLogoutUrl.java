@@ -1,6 +1,5 @@
-package org.apereo.cas.logout;
+package org.apereo.cas.logout.slo;
 
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 
 import lombok.EqualsAndHashCode;

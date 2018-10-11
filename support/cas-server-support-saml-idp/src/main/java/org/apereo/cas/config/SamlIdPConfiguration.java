@@ -10,16 +10,16 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
-import org.apereo.cas.logout.LogoutMessageCreator;
-import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.logout.SingleLogoutServiceMessageHandler;
+import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
+import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.logout.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.services.logout.SamlIdPSingleLogoutServiceMessageHandler;
-import org.apereo.cas.support.saml.services.logout.SamlProfileLogoutMessageCreator;
+import org.apereo.cas.support.saml.services.logout.SamlProfileSingleLogoutMessageCreator;
 import org.apereo.cas.support.saml.web.idp.audit.SamlRequestAuditResourceResolver;
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditPrincipalIdProvider;
 import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditResourceResolver;
@@ -153,8 +153,8 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
 
     @ConditionalOnMissingBean(name = "samlLogoutBuilder")
     @Bean
-    public LogoutMessageCreator samlLogoutBuilder() {
-        return new SamlProfileLogoutMessageCreator(
+    public SingleLogoutMessageCreator samlLogoutBuilder() {
+        return new SamlProfileSingleLogoutMessageCreator(
             openSamlConfigBean.getObject(),
             servicesManager.getObject(),
             defaultSamlRegisteredServiceCachingMetadataResolver.getObject(),

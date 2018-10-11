@@ -1,5 +1,7 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
+
 import java.util.ArrayList;
 import java.util.Collection;
 

@@ -1,4 +1,4 @@
-package org.apereo.cas.logout;
+package org.apereo.cas.logout.slo;
 
 /**
  * Contract that defines the format of the logout message sent to a client to indicate
@@ -8,12 +8,12 @@ package org.apereo.cas.logout;
  * @since 4.0.0
  */
 @FunctionalInterface
-public interface LogoutMessageCreator {
+public interface SingleLogoutMessageCreator {
     /**
      * Builds the logout message to be sent.
      *
      * @param request the request
      * @return the message. Message may or may not be encoded.
      */
-    String create(LogoutRequest request);
+    String create(SingleLogoutRequest request);
 }

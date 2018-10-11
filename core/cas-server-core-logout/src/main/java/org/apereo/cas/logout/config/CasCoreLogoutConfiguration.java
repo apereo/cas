@@ -4,15 +4,15 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
 import org.apereo.cas.logout.DefaultLogoutManager;
+import org.apereo.cas.logout.DefaultSingleLogoutMessageCreator;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.logout.LogoutMessageCreator;
-import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
-import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
-import org.apereo.cas.logout.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
+import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
+import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
@@ -55,6 +55,7 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     private ObjectProvider<HttpClient> httpClient;
 
     @Autowired
+    @Qualifier("urlValidator")
     private ObjectProvider<UrlValidator> urlValidator;
 
     @Autowired
@@ -75,7 +76,7 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @Bean
     public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler() {
         return new DefaultSingleLogoutServiceMessageHandler(httpClient.getIfAvailable(),
-            defaultLogoutBuilder(),
+            defaultSingleLogoutMessageCreator(),
             servicesManager.getIfAvailable(),
             singleLogoutServiceLogoutUrlBuilder(),
             casProperties.getSlo().isAsynchronous(),
@@ -87,13 +88,13 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @Autowired
     @Bean
     public LogoutManager logoutManager(@Qualifier("logoutExecutionPlan") final LogoutExecutionPlan logoutExecutionPlan) {
-        return new DefaultLogoutManager(defaultLogoutBuilder(), casProperties.getSlo().isDisabled(), logoutExecutionPlan);
+        return new DefaultLogoutManager(defaultSingleLogoutMessageCreator(), casProperties.getSlo().isDisabled(), logoutExecutionPlan);
     }
 
-    @ConditionalOnMissingBean(name = "defaultLogoutBuilder")
+    @ConditionalOnMissingBean(name = "defaultSingleLogoutMessageCreator")
     @Bean
-    public LogoutMessageCreator defaultLogoutBuilder() {
-        return new SamlCompliantLogoutMessageCreator();
+    public SingleLogoutMessageCreator defaultSingleLogoutMessageCreator() {
+        return new DefaultSingleLogoutMessageCreator();
     }
 
     @ConditionalOnMissingBean(name = "logoutExecutionPlan")
