@@ -116,7 +116,7 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
 
         if (casProperties.getLogout().isRemoveDescendantTickets()) {
             LOGGER.debug("CAS is configured to remove descendant tickets of the ticket-granting tickets");
-            plan.registerLogoutHandler(ticketGrantingTicket -> ticketGrantingTicket.getDescendantTickets()
+            plan.registerLogoutPostProcessor(ticketGrantingTicket -> ticketGrantingTicket.getDescendantTickets()
                 .forEach(t -> {
                     LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, ticketGrantingTicket.getId());
                     ticketRegistry.getObject().deleteTicket(t);

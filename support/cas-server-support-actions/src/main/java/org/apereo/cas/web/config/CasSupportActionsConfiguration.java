@@ -266,7 +266,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "frontChannelLogoutAction")
     public Action frontChannelLogoutAction(@Qualifier("logoutExecutionPlan") final LogoutExecutionPlan logoutExecutionPlan) {
-        return new FrontChannelLogoutAction(logoutExecutionPlan);
+        return new FrontChannelLogoutAction(logoutExecutionPlan, casProperties.getSlo().isDisabled());
     }
 
     @Bean

@@ -37,6 +37,7 @@ import static org.mockito.Mockito.*;
 public class FrontChannelLogoutActionTests {
 
     private static final String FLOW_EXECUTION_KEY = "12234";
+
     private FrontChannelLogoutAction frontChannelLogoutAction;
 
     private RequestContext requestContext;
@@ -58,7 +59,7 @@ public class FrontChannelLogoutActionTests {
 
         val plan = new DefaultLogoutExecutionPlan();
         plan.registerSingleLogoutServiceMessageHandler(handler);
-        this.frontChannelLogoutAction = new FrontChannelLogoutAction(plan);
+        this.frontChannelLogoutAction = new FrontChannelLogoutAction(plan, false);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
