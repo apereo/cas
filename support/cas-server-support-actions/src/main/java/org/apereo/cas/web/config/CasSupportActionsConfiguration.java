@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -161,7 +162,8 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action sendTicketGrantingTicketAction() {
         return new SendTicketGrantingTicketAction(centralAuthenticationService.getIfAvailable(),
-            ticketGrantingTicketCookieGenerator.getIfAvailable(), webflowSingleSignOnParticipationStrategy.getIfAvailable());
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            webflowSingleSignOnParticipationStrategy.getIfAvailable());
     }
 
     @RefreshScope
@@ -260,10 +262,11 @@ public class CasSupportActionsConfiguration {
         return new GatewayServicesManagementCheck(this.servicesManager.getIfAvailable());
     }
 
+    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "frontChannelLogoutAction")
-    public Action frontChannelLogoutAction() {
-        return new FrontChannelLogoutAction(this.logoutManager.getIfAvailable());
+    public Action frontChannelLogoutAction(@Qualifier("logoutExecutionPlan") final LogoutExecutionPlan logoutExecutionPlan) {
+        return new FrontChannelLogoutAction(logoutExecutionPlan);
     }
 
     @Bean

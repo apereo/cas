@@ -88,7 +88,7 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @Autowired
     @Bean
     public LogoutManager logoutManager(@Qualifier("logoutExecutionPlan") final LogoutExecutionPlan logoutExecutionPlan) {
-        return new DefaultLogoutManager(defaultSingleLogoutMessageCreator(), casProperties.getSlo().isDisabled(), logoutExecutionPlan);
+        return new DefaultLogoutManager(casProperties.getSlo().isDisabled(), logoutExecutionPlan);
     }
 
     @ConditionalOnMissingBean(name = "defaultSingleLogoutMessageCreator")

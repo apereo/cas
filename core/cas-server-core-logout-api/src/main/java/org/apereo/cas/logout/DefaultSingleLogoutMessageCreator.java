@@ -3,6 +3,7 @@ package org.apereo.cas.logout;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.ISOStandardDateFormat;
 
@@ -37,9 +38,8 @@ public class DefaultSingleLogoutMessageCreator implements SingleLogoutMessageCre
     public String create(final SingleLogoutRequest request) {
         val logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE, GENERATOR.getNewTicketId("LR"),
             new ISOStandardDateFormat().getCurrentDateAndTime(), request.getTicketId());
-
-        LOGGER.debug("Generated logout message: [{}]", logoutRequest);
-        return logoutRequest;
+        LOGGER.trace("Attempting to deflate the logout message [{}]", logoutRequest);
+        return CompressionUtils.deflate(logoutRequest);
     }
 
 }

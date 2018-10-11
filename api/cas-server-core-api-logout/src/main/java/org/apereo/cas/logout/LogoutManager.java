@@ -11,6 +11,7 @@ import java.util.List;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface LogoutManager {
 
     /**
@@ -20,12 +21,4 @@ public interface LogoutManager {
      * @return all logout requests.
      */
     List<SingleLogoutRequest> performLogout(TicketGrantingTicket ticket);
-
-    /**
-     * Create a logout message for front channel logout.
-     *
-     * @param logoutRequest the logout request.
-     * @return a front SAML logout message.
-     */
-    String createFrontChannelLogoutMessage(SingleLogoutRequest logoutRequest);
 }
