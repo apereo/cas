@@ -14,12 +14,12 @@ import java.net.URL;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link SamlProfileLogoutMessageCreatorTests}.
+ * This is {@link SamlProfileSingleLogoutMessageCreatorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public class SamlProfileLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
+public class SamlProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
     public void verifyOperation() throws Exception {
