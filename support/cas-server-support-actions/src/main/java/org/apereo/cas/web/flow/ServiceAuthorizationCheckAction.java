@@ -43,8 +43,7 @@ public class ServiceAuthorizationCheckAction extends AbstractAction {
         val registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
-            val msg = String.format("Service Management: missing service. "
-                + "Service [%s] is not found in service registry.", service.getId());
+            val msg = String.format("Service [%s] is not found in service registry.", service.getId());
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
