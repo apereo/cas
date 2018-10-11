@@ -101,7 +101,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                    final String binding) throws SamlException {
         val subjectLocality = newSamlObject(SubjectLocality.class);
         val hostAddress = InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName());
-        val issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+        val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         LOGGER.debug("Built subject locality address [{}] for the saml authentication statement prepped for [{}]", hostAddress, issuer);
         subjectLocality.setAddress(hostAddress);
         return subjectLocality;
