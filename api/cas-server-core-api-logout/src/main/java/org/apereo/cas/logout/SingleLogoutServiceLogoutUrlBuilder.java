@@ -3,7 +3,6 @@ package org.apereo.cas.logout;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 
-import java.net.URL;
 import java.util.Collection;
 
 /**
@@ -23,5 +22,5 @@ public interface SingleLogoutServiceLogoutUrlBuilder {
      * @param singleLogoutService the single logout service
      * @return the URL
      */
-    Collection<URL> determineLogoutUrl(RegisteredService registeredService, WebApplicationService singleLogoutService);
+    Collection<SingleLogoutUrl> determineLogoutUrl(RegisteredService registeredService, WebApplicationService singleLogoutService);
 }

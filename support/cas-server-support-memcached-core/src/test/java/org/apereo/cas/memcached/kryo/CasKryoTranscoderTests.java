@@ -207,16 +207,14 @@ public class CasKryoTranscoderTests {
 
     @Test
     public void verifySTWithServiceTicketExpirationPolicy() {
-        // ServiceTicketExpirationPolicy is not registered with Kryo...
+
         transcoder.getKryo().getClassResolver().reset();
         val tgt = new MockTicketGrantingTicket(USERNAME);
         val expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
-        val step
-            = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
+        val step = new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(1, 600);
         expectedST.setExpiration(step);
         val result = transcoder.encode(expectedST);
         assertEquals(expectedST, transcoder.decode(result));
-        // Test it a second time - Ensure there's no problem with subsequent de-serializations.
         assertEquals(expectedST, transcoder.decode(result));
     }
 
@@ -225,7 +223,6 @@ public class CasKryoTranscoderTests {
         val tgt = new MockTicketGrantingTicket(USERNAME);
         val expectedST = new MockServiceTicket(ST_ID, RegisteredServiceTestUtils.getService(), tgt);
 
-        // This class is not registered with Kryo
         val step = new UnregisteredServiceTicketExpirationPolicy(1, 600);
         expectedST.setExpiration(step);
         try {

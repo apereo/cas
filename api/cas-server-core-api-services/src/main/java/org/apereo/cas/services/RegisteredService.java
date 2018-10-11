@@ -161,7 +161,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      *
      * @return the logout type of the service.
      */
-    LogoutType getLogoutType();
+    RegisteredServiceLogoutType getLogoutType();
 
     /**
      * Gets the attribute filtering policy to determine
@@ -260,23 +260,5 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * values or object instances, etc.
      */
     default void initialize() {
-    }
-
-    /**
-     * The logout type.
-     */
-    enum LogoutType {
-        /**
-         * For no SLO.
-         */
-        NONE,
-        /**
-         * For back channel SLO.
-         */
-        BACK_CHANNEL,
-        /**
-         * For front channel SLO.
-         */
-        FRONT_CHANNEL
     }
 }

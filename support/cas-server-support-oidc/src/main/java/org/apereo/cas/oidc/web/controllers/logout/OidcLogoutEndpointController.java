@@ -96,7 +96,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
 
             val urls = singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, service);
             if (StringUtils.isNotBlank(postLogoutRedirectUrl)) {
-                val matchResult = urls.stream().anyMatch(url -> url.toExternalForm().equalsIgnoreCase(postLogoutRedirectUrl));
+                val matchResult = urls.stream().anyMatch(url -> url.getUrl().equalsIgnoreCase(postLogoutRedirectUrl));
                 if (matchResult) {
                     return getLogoutRedirectView(state, postLogoutRedirectUrl);
                 }
