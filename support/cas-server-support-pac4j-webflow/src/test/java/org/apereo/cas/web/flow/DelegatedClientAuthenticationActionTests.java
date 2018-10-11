@@ -181,7 +181,7 @@ public class DelegatedClientAuthenticationActionTests {
         val mockRequestContext = new MockRequestContext();
         mockRequestContext.setExternalContext(servletExternalContext);
 
-        final FacebookClient facebookClient = new FacebookClient() {
+        val facebookClient = new FacebookClient() {
             @Override
             protected OAuth20Credentials retrieveCredentials(final WebContext context) {
                 return new OAuth20Credentials("fakeVerifier");

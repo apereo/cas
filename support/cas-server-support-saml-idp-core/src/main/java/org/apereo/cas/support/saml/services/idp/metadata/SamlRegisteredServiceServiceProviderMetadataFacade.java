@@ -77,7 +77,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                                    final SamlRegisteredService registeredService,
                                                                                    final RequestAbstractType request) {
-        return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlRequest(request));
+        return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlObject(request));
     }
 
     @SneakyThrows

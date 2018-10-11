@@ -457,8 +457,7 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void serializePublicKeyForServiceAndVerify() {
-        final RegisteredServicePublicKey publicKey = new RegisteredServicePublicKeyImpl(
-            "classpath:RSA1024Public.key", "RSA");
+        val publicKey = new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA");
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
         r.setPublicKey(publicKey);
 

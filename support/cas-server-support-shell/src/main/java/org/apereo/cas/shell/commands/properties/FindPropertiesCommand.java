@@ -67,12 +67,6 @@ public class FindPropertiesCommand {
                 }
             } else {
                 LOGGER.info("Property: {}", k);
-                /*
-                final String relaxedName = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(k).spliterator(), false)
-                        .map(Object::toString)
-                        .collect(Collectors.joining(","));
-                LOGGER.info("Synonyms: {}", relaxedName);
-                */
                 LOGGER.info("Group: {}", StringUtils.substringBeforeLast(k, "."));
                 LOGGER.info("Default Value: {}", ObjectUtils.defaultIfNull(v.getDefaultValue(), "[blank]"));
                 LOGGER.info("Type: {}", v.getType());

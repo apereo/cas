@@ -21,7 +21,7 @@ public class AmazonDynamoDbClientFactoryTests {
     @Test
     public void verifyAction() {
         val factory = new AmazonDynamoDbClientFactory();
-        final AbstractDynamoDbProperties properties = new AbstractDynamoDbProperties() {
+        val properties = new AbstractDynamoDbProperties() {
             private static final long serialVersionUID = -3599433486448467450L;
         };
         val client = factory.createAmazonDynamoDb(properties);

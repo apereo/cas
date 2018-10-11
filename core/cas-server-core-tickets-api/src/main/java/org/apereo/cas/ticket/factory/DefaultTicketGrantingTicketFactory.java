@@ -63,8 +63,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
      */
     protected <T extends TicketGrantingTicket> T produceTicket(final Authentication authentication,
                                                                final String tgtId, final Class<T> clazz) {
-        final TicketGrantingTicket result = new TicketGrantingTicketImpl(
-            tgtId, authentication, this.ticketGrantingTicketExpirationPolicy);
+        val result = new TicketGrantingTicketImpl(tgtId, authentication, this.ticketGrantingTicketExpirationPolicy);
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result
                 + " is of type " + result.getClass()

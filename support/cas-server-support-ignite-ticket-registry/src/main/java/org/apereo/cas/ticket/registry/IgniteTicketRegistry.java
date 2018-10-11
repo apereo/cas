@@ -194,7 +194,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
 
         @Override
         public Duration getExpiryForAccess() {
-            final long idleTime = ticket.getExpirationPolicy().getTimeToIdle() <= 0
+            val idleTime = ticket.getExpirationPolicy().getTimeToIdle() <= 0
                 ? ticket.getExpirationPolicy().getTimeToLive() : ticket.getExpirationPolicy().getTimeToIdle();
             return new Duration(TimeUnit.SECONDS, idleTime);
         }

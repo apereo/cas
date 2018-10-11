@@ -64,7 +64,7 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
     @Bean
     @Lazy
     public LocaleResolver localeResolver() {
-        final CookieLocaleResolver bean = new CookieLocaleResolver() {
+        return new CookieLocaleResolver() {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
                 val locale = request.getLocale();
@@ -75,7 +75,6 @@ public class CasWebAppConfiguration implements WebMvcConfigurer {
                 return new Locale(casProperties.getLocale().getDefaultValue());
             }
         };
-        return bean;
     }
 
     @Bean

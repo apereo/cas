@@ -42,8 +42,7 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     public RefreshToken create(final Service service, final Authentication authentication,
                                final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
         val codeId = this.refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
-        final RefreshToken rt = new RefreshTokenImpl(codeId, service, authentication,
-            this.expirationPolicy, ticketGrantingTicket, scopes);
+        val rt = new RefreshTokenImpl(codeId, service, authentication, this.expirationPolicy, ticketGrantingTicket, scopes);
 
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(rt.getId());

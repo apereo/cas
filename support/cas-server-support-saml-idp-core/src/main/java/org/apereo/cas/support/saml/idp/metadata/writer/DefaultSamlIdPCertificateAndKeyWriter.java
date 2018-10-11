@@ -12,7 +12,6 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
-import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
@@ -38,6 +37,8 @@ import java.util.List;
 @NoArgsConstructor
 @Setter
 public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificateAndKeyWriter {
+    private static final int X509_CERT_BITS_SIZE = 160;
+
     private int keySize = 2048;
     private String hostname;
     private String keyType = "RSA";
@@ -74,9 +75,9 @@ public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificate
         val notOnOrAfter = new GregorianCalendar();
         notOnOrAfter.set(GregorianCalendar.YEAR, notOnOrAfter.get(GregorianCalendar.YEAR) + certificateLifetimeInYears);
 
-        final X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
+        val builder = new JcaX509v3CertificateBuilder(
             dn,
-            new BigInteger(160, RandomUtils.getNativeInstance()),
+            new BigInteger(X509_CERT_BITS_SIZE, RandomUtils.getNativeInstance()),
             notBefore.getTime(),
             notOnOrAfter.getTime(),
             dn,

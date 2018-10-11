@@ -12,7 +12,6 @@ import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.HashMap;
-import java.util.Optional;
 
 /**
  * This is {@link RegexAttributeInterruptInquirer}.
@@ -34,7 +33,7 @@ public class RegexAttributeInterruptInquirer extends BaseInterruptInquirer {
         attributes.putAll(authentication.getPrincipal().getAttributes());
 
         LOGGER.debug("Looking for [{}] in attributes [{}]", this.interruptAttributeName, attributes);
-        final Optional result = attributes.entrySet()
+        val result = attributes.entrySet()
             .stream()
             .filter(entry -> entry.getKey().matches(this.interruptAttributeName))
             .filter(entry -> {

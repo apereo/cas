@@ -101,8 +101,7 @@ public class ImmutableAssertionTests {
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
-        final Assertion assertion = new ImmutableAssertion(
-            CoreAuthenticationTestUtils.getAuthentication(), list, false, service);
+        val assertion = new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(), list, false, service);
 
         assertEquals(service, assertion.getService());
     }

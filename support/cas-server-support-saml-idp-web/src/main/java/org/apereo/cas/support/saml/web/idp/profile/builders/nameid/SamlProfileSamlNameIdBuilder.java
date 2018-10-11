@@ -165,7 +165,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
         if (StringUtils.isNotBlank(service.getNameIdQualifier())) {
             nameid.setNameQualifier(service.getNameIdQualifier());
         } else {
-            val issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+            val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             nameid.setNameQualifier(issuer);
         }
 
@@ -194,7 +194,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
                     + "The requested NameID format may not be honored. You should consult the metadata for this service "
                     + "and ensure the requested NameID format is present in the collection of supported "
                     + "metadata formats in the metadata, which are the following: [{}]",
-                requiredNameFormat, SamlIdPUtils.getIssuerFromSamlRequest(authnRequest),
+                requiredNameFormat, SamlIdPUtils.getIssuerFromSamlObject(authnRequest),
                 adaptor.getEntityId(), adaptor.getSupportedNameIdFormats());
         }
     }

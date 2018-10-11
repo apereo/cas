@@ -132,7 +132,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         val prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
         val validator = buildCasClientTicketValidator(prefix);
 
-        final HttpURLConnectionFactory factory = new HttpURLConnectionFactory() {
+        val factory = new HttpURLConnectionFactory() {
             private static final long serialVersionUID = 3692658214483917813L;
 
             @Override

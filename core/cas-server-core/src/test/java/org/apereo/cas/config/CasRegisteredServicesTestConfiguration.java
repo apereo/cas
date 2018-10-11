@@ -24,7 +24,6 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -69,8 +68,7 @@ public class CasRegisteredServicesTestConfiguration {
         val svc4 = RegisteredServiceTestUtils.getRegisteredService("https://example\\.com/high/.*");
         svc4.setEvaluationOrder(20);
         svc4.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final HashSet handlers = CollectionUtils.wrapHashSet(AcceptUsersAuthenticationHandler.class.getSimpleName(),
-            TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
+        val handlers = CollectionUtils.wrapHashSet(AcceptUsersAuthenticationHandler.class.getSimpleName(), TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
         svc4.setRequiredHandlers(handlers);
         svc4.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         l.add(svc4);
