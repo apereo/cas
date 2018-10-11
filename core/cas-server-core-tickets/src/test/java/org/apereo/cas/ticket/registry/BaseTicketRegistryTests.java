@@ -325,7 +325,7 @@ public abstract class BaseTicketRegistryTests {
     @Test
     @Transactional
     public void verifyWriteGetDelete() {
-        final Ticket ticket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
+        val ticket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
             CoreAuthenticationTestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);

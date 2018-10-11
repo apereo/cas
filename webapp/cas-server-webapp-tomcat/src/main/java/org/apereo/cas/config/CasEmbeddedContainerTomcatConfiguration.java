@@ -144,7 +144,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         if (ResourceUtils.doesResourceExist(res)) {
             LOGGER.debug("Configuring rewrite valve at [{}]", res);
 
-            final RewriteValve valve = new RewriteValve() {
+            val valve = new RewriteValve() {
                 @Override
                 public synchronized void startInternal() {
                     try {

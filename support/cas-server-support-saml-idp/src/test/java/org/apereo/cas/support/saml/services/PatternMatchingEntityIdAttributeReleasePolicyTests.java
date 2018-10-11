@@ -12,8 +12,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.core.io.FileSystemResource;
 
-import java.util.Map;
-
 import static org.junit.Assert.*;
 
 /**
@@ -35,7 +33,7 @@ public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSaml
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         val registeredService = getSamlRegisteredServiceForTestShib();
         registeredService.setAttributeReleasePolicy(filter);
-        final Map attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(), registeredService);
         assertTrue(attributes.isEmpty());
     }
@@ -47,7 +45,7 @@ public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSaml
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
         val registeredService = getSamlRegisteredServiceForTestShib();
         registeredService.setAttributeReleasePolicy(filter);
-        final Map attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(), registeredService);
         assertFalse(attributes.isEmpty());
     }

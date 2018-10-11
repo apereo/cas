@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlResponseEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponseArtifactEncoder;
@@ -129,7 +128,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         LOGGER.debug("Constructing encoder based on binding [{}] for [{}]", binding, adaptor.getEntityId());
 
         if (binding.equalsIgnoreCase(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
-            final BaseSamlResponseEncoder encoder = new SamlResponseArtifactEncoder(this.velocityEngineFactory,
+            val encoder = new SamlResponseArtifactEncoder(this.velocityEngineFactory,
                 adaptor, httpRequest, httpResponse, authnRequest,
                 ticketRegistry, samlArtifactTicketFactory,
                 ticketGrantingTicketCookieGenerator, samlArtifactMap);

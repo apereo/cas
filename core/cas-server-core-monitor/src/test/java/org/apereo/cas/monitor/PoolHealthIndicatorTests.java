@@ -21,7 +21,7 @@ public class PoolHealthIndicatorTests {
 
     @Test
     public void verifyObserveOK() {
-        final AbstractPoolHealthIndicator monitor = new AbstractPoolHealthIndicator(1000, executor) {
+        val monitor = new AbstractPoolHealthIndicator(1000, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {
                 return builder.up();
@@ -43,7 +43,7 @@ public class PoolHealthIndicatorTests {
 
     @Test
     public void verifyObserveDown() {
-        final AbstractPoolHealthIndicator monitor = new AbstractPoolHealthIndicator(200, executor) {
+        val monitor = new AbstractPoolHealthIndicator(200, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) throws Exception {
                 Thread.sleep(300);
@@ -66,7 +66,7 @@ public class PoolHealthIndicatorTests {
 
     @Test
     public void verifyObserveError() {
-        final AbstractPoolHealthIndicator monitor = new AbstractPoolHealthIndicator(500, executor) {
+        val monitor = new AbstractPoolHealthIndicator(500, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {
                 throw new IllegalArgumentException("Pool check failed.");

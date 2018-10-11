@@ -3,9 +3,7 @@ package org.apereo.cas.support.oauth.web;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
@@ -257,9 +255,9 @@ public abstract class AbstractOAuth20Tests {
     }
 
     protected static Authentication getAuthentication(final Principal principal) {
-        final CredentialMetaData metadata = new BasicCredentialMetaData(
+        val metadata = new BasicCredentialMetaData(
             new BasicIdentifiableCredential(principal.getId()));
-        final AuthenticationHandlerExecutionResult handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
+        val handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
             metadata, principal, new ArrayList<>());
 
         return DefaultAuthenticationBuilder.newInstance()

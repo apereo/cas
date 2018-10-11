@@ -14,19 +14,18 @@ import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.opensaml.saml.saml2.binding.encoding.impl.BaseSAML2MessageEncoder;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.opensaml.saml.saml2.core.Response;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This is {@link BaseSamlResponseEncoder}.
+ * This is {@link BaseHttpServletAwareSamlObjectEncoder}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @RequiredArgsConstructor
-public abstract class BaseSamlResponseEncoder {
+public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject> {
     /**
      * The Velocity engine factory.
      */
@@ -54,7 +53,7 @@ public abstract class BaseSamlResponseEncoder {
      * @throws SamlException the saml exception
      */
     @SneakyThrows
-    public final Response encode(final RequestAbstractType authnRequest, final Response samlResponse, final String relayState) throws SamlException {
+    public final T encode(final RequestAbstractType authnRequest, final T samlResponse, final String relayState) throws SamlException {
         if (httpResponse != null) {
             val encoder = getMessageEncoderInstance();
             encoder.setHttpServletResponse(httpResponse);
@@ -75,13 +74,13 @@ public abstract class BaseSamlResponseEncoder {
      * @param relayState   the relay state
      * @return the message context
      */
-    protected MessageContext getEncoderMessageContext(final RequestAbstractType authnRequest, final Response samlResponse, final String relayState) {
+    protected MessageContext getEncoderMessageContext(final RequestAbstractType authnRequest, final T samlResponse, final String relayState) {
         val ctx = new MessageContext<SAMLObject>();
         ctx.setMessage(samlResponse);
         SAMLBindingSupport.setRelayState(ctx, relayState);
         SamlIdPUtils.preparePeerEntitySamlEndpointContext(authnRequest, ctx, adaptor, getBinding());
         val self = ctx.getSubcontext(SAMLSelfEntityContext.class, true);
-        self.setEntityId(samlResponse.getIssuer().getValue());
+        self.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(samlResponse));
         return ctx;
     }
 
@@ -96,7 +95,7 @@ public abstract class BaseSamlResponseEncoder {
      */
     protected void finalizeEncode(final RequestAbstractType authnRequest,
                                   final BaseSAML2MessageEncoder encoder,
-                                  final Response samlResponse,
+                                  final T samlResponse,
                                   final String relayState) throws Exception {
         encoder.initialize();
         encoder.encode();

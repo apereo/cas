@@ -86,7 +86,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         }
 
         if (SAMLBindingSupport.isMessageSigned(ctx)) {
-            val entityId = SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest);
+            val entityId = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
             val registeredService = this.servicesManager.findServiceBy(entityId, SamlRegisteredService.class);
             val facade = SamlRegisteredServiceServiceProviderMetadataFacade
                 .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId).get();

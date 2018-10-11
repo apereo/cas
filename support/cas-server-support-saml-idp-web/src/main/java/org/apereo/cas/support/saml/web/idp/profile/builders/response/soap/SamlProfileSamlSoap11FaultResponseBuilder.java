@@ -66,7 +66,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
         fault.setCode(faultCode);
 
         val faultActor = newSoapObject(FaultActor.class);
-        faultActor.setValue(SamlIdPUtils.getIssuerFromSamlRequest(authnRequest));
+        faultActor.setValue(SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
         fault.setActor(faultActor);
 
         val faultString = newSoapObject(FaultString.class);
