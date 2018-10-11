@@ -11,7 +11,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.LogoutRequest;
+import org.apereo.cas.logout.slo.SingleLogoutRequest;
+import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -43,6 +44,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +53,6 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
-
 @Slf4j
 @UtilityClass
 public class WebUtils {
@@ -265,8 +266,18 @@ public class WebUtils {
      * @param context  the context
      * @param requests the requests
      */
-    public static void putLogoutRequests(final RequestContext context, final List<LogoutRequest> requests) {
+    public static void putLogoutRequests(final RequestContext context, final List<SingleLogoutRequest> requests) {
         context.getFlowScope().put(PARAMETER_LOGOUT_REQUESTS, requests);
+    }
+
+    /**
+     * Put logout urls into flow scope.
+     *
+     * @param context  the context
+     * @param urls the requests
+     */
+    public static void putLogoutUrls(final RequestContext context, final Map urls) {
+        context.getFlowScope().put("logoutUrls", urls);
     }
 
     /**
@@ -275,8 +286,8 @@ public class WebUtils {
      * @param context the context
      * @return the logout requests
      */
-    public static List<LogoutRequest> getLogoutRequests(final RequestContext context) {
-        return (List<LogoutRequest>) context.getFlowScope().get(PARAMETER_LOGOUT_REQUESTS);
+    public static List<SingleLogoutRequest> getLogoutRequests(final RequestContext context) {
+        return (List<SingleLogoutRequest>) context.getFlowScope().get(PARAMETER_LOGOUT_REQUESTS);
     }
 
     /**

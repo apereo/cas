@@ -19,6 +19,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -79,7 +80,7 @@ public class PasswordManagementWebflowConfiguration implements CasWebflowExecuti
     @RefreshScope
     @Bean
     public HandlerAdapter passwordResetHandlerAdapter() {
-        final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
+        val handler = new FlowHandlerAdapter() {
             @Override
             public boolean supports(final Object handler) {
                 return super.supports(handler) && ((FlowHandler) handler)

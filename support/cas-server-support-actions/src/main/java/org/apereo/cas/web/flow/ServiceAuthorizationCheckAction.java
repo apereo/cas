@@ -21,7 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
  **/
 @Slf4j
 @RequiredArgsConstructor
-public class ServiceAuthorizationCheck extends AbstractAction {
+public class ServiceAuthorizationCheckAction extends AbstractAction {
 
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -43,8 +43,7 @@ public class ServiceAuthorizationCheck extends AbstractAction {
         val registeredService = this.servicesManager.findServiceBy(service);
 
         if (registeredService == null) {
-            val msg = String.format("Service Management: missing service. "
-                + "Service [%s] is not found in service registry.", service.getId());
+            val msg = String.format("Service [%s] is not found in service registry.", service.getId());
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }

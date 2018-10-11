@@ -8,14 +8,15 @@ import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
-import org.apereo.cas.web.flow.GatewayServicesManagementCheck;
+import org.apereo.cas.web.flow.GatewayServicesManagementCheckAction;
 import org.apereo.cas.web.flow.GenerateServiceTicketAction;
-import org.apereo.cas.web.flow.ServiceAuthorizationCheck;
+import org.apereo.cas.web.flow.ServiceAuthorizationCheckAction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
 import org.apereo.cas.web.flow.login.CreateTicketGrantingTicketAction;
@@ -152,7 +153,7 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "serviceAuthorizationCheck")
     @Bean
     public Action serviceAuthorizationCheck() {
-        return new ServiceAuthorizationCheck(this.servicesManager.getIfAvailable(),
+        return new ServiceAuthorizationCheckAction(this.servicesManager.getIfAvailable(),
             authenticationRequestServiceSelectionStrategies.getIfAvailable());
     }
 
@@ -161,7 +162,8 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action sendTicketGrantingTicketAction() {
         return new SendTicketGrantingTicketAction(centralAuthenticationService.getIfAvailable(),
-            ticketGrantingTicketCookieGenerator.getIfAvailable(), webflowSingleSignOnParticipationStrategy.getIfAvailable());
+            ticketGrantingTicketCookieGenerator.getIfAvailable(),
+            webflowSingleSignOnParticipationStrategy.getIfAvailable());
     }
 
     @RefreshScope
@@ -257,13 +259,14 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "gatewayServicesManagementCheck")
     @RefreshScope
     public Action gatewayServicesManagementCheck() {
-        return new GatewayServicesManagementCheck(this.servicesManager.getIfAvailable());
+        return new GatewayServicesManagementCheckAction(this.servicesManager.getIfAvailable());
     }
 
+    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "frontChannelLogoutAction")
-    public Action frontChannelLogoutAction() {
-        return new FrontChannelLogoutAction(this.logoutManager.getIfAvailable());
+    public Action frontChannelLogoutAction(@Qualifier("logoutExecutionPlan") final LogoutExecutionPlan logoutExecutionPlan) {
+        return new FrontChannelLogoutAction(logoutExecutionPlan, casProperties.getSlo().isDisabled());
     }
 
     @Bean

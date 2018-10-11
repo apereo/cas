@@ -552,7 +552,8 @@
     <module name="RegexpMultiline">
         <property name="id" value="useQualifier"/>
         <property name="severity" value="error"/>
-        <property name="format" value="@Autowired\s*(private|public|protected)\s+(?!.*Properties|.*Environment|FlowBuilderServices|SpringTemplateEngine|.*EventPublisher|.*ApplicationContext|ResourceLoader)\w+\s+\w+\s*;"/>
+        <property name="format"
+                  value="@Autowired\s*(private|public|protected)\s+(?!.*Properties|.*Environment|FlowBuilderServices|SpringTemplateEngine|.*EventPublisher|.*ApplicationContext|ResourceLoader)\w+\s+\w+\s*;"/>
         <property name="message" value="Use @Qualifier annotation when injecting dependencies"/>
         <property name="fileExtensions" value="java" />
     </module>

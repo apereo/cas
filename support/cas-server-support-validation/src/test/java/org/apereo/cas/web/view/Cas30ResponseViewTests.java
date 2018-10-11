@@ -113,7 +113,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
         val encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
-        final View viewDelegated = new View() {
+        val viewDelegated = new View() {
             @Override
             public String getContentType() {
                 return MediaType.TEXT_HTML_VALUE;

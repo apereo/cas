@@ -76,7 +76,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
         val resp = new MockHttpServletResponse();
-        final View delegatedView = new View() {
+        val delegatedView = new View() {
             @Override
             public String getContentType() {
                 return "text/html";

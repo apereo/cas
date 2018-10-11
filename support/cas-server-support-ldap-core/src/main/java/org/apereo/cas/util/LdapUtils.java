@@ -324,15 +324,14 @@ public class LdapUtils {
                 LOGGER.debug("Executing password modification op for active directory based on "
                     + "[https://support.microsoft.com/en-us/kb/269190]");
                 val operation = new ModifyOperation(modifyConnection);
-                final Response response = operation.execute(new ModifyRequest(currentDn,
-                    new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
+                val response = operation.execute(new ModifyRequest(currentDn, new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
 
             LOGGER.debug("Executing password modification op for generic LDAP");
             val operation = new PasswordModifyOperation(modifyConnection);
-            final Response response = operation.execute(new PasswordModifyRequest(currentDn,
+            val response = operation.execute(new PasswordModifyRequest(currentDn,
                 StringUtils.isNotBlank(oldPassword) ? new Credential(oldPassword) : null,
                 new Credential(newPassword)));
             LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
@@ -938,7 +937,7 @@ public class LdapUtils {
                         cp.setPassivator(new BindPassivator(bindRequest));
                         LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     } else {
-                        final List values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
+                        val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
                             .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
                             .collect(Collectors.toList());
                         LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "

@@ -39,29 +39,28 @@ public abstract class BaseOneTimeTokenRepositoryTests {
 
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")
-    protected OneTimeTokenRepository repository;
+    protected OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository;
 
     @Test
     public void verifyTokenSave() {
-        val repository = getRepository();
         var token = (OneTimeToken) new GoogleAuthenticatorToken(1234, CASUSER);
-        repository.store(token);
-        assertTrue(repository.exists(CASUSER, 1234));
-        token = repository.get(CASUSER, 1234);
+        oneTimeTokenAuthenticatorTokenRepository.store(token);
+        assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(CASUSER, 1234));
+        token = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 1234);
         assertTrue(token.getId() > 0);
     }
 
     @Test
     public void verifyTokensWithUniqueIdsSave() {
-        val repository = getRepository();
+
         val token = new GoogleAuthenticatorToken(1111, CASUSER);
-        repository.store(token);
+        oneTimeTokenAuthenticatorTokenRepository.store(token);
 
         val token2 = new GoogleAuthenticatorToken(5678, CASUSER);
-        repository.store(token2);
+        oneTimeTokenAuthenticatorTokenRepository.store(token2);
 
-        val t1 = repository.get(CASUSER, 1111);
-        val t2 = repository.get(CASUSER, 5678);
+        val t1 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 1111);
+        val t2 = oneTimeTokenAuthenticatorTokenRepository.get(CASUSER, 5678);
 
         assertTrue(t1.getId() > 0);
         assertTrue(t2.getId() > 0);

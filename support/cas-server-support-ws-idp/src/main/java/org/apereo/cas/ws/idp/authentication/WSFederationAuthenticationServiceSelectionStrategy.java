@@ -33,7 +33,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
     private static Optional<NameValuePair> getRealmAsParameter(final Service service) {
         try {
             val builder = new URIBuilder(service.getId());
-            final Optional param = builder.getQueryParams()
+            val param = builder.getQueryParams()
                 .stream()
                 .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
                 .findFirst();
@@ -51,7 +51,7 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
             }
 
             val builder = new URIBuilder(service.getId());
-            final Optional param = builder.getQueryParams()
+            val param = builder.getQueryParams()
                 .stream()
                 .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
                 .findFirst();

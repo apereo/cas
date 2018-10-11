@@ -3,8 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.logout.DefaultLogoutExecutionPlan;
-import org.apereo.cas.logout.DefaultLogoutManager;
-import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
+import org.apereo.cas.logout.DefaultSingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
 import org.apereo.cas.services.ServicesManager;
@@ -38,6 +37,7 @@ import static org.mockito.Mockito.*;
 public class FrontChannelLogoutActionTests {
 
     private static final String FLOW_EXECUTION_KEY = "12234";
+
     private FrontChannelLogoutAction frontChannelLogoutAction;
 
     private RequestContext requestContext;
@@ -54,14 +54,12 @@ public class FrontChannelLogoutActionTests {
         val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
 
         val handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
-            new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
+            new DefaultSingleLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
         val plan = new DefaultLogoutExecutionPlan();
         plan.registerSingleLogoutServiceMessageHandler(handler);
-        val logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), false, plan);
-
-        this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
+        this.frontChannelLogoutAction = new FrontChannelLogoutAction(plan, false);
 
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
