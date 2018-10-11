@@ -42,7 +42,7 @@ public class CacheHealthIndicatorTests {
     @Test
     public void verifyObserveOk() {
         val warn = casProperties.getMonitor().getWarn();
-        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
+        val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
             warn.getThreshold()) {
             @Override
@@ -57,7 +57,7 @@ public class CacheHealthIndicatorTests {
     @Test
     public void verifyObserveWarn() {
         val warn = casProperties.getMonitor().getWarn();
-        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
+        val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
             warn.getThreshold()
         ) {
@@ -73,7 +73,7 @@ public class CacheHealthIndicatorTests {
     @Test
     public void verifyObserveError() {
         val warn = casProperties.getMonitor().getWarn();
-        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
+        val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
             warn.getThreshold()) {
             @Override
@@ -88,7 +88,7 @@ public class CacheHealthIndicatorTests {
     @Test
     public void verifyObserveError2() {
         val warn = casProperties.getMonitor().getWarn();
-        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
+        val monitor = new AbstractCacheHealthIndicator(
             warn.getEvictionThreshold(),
             warn.getThreshold()) {
             @Override

@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
@@ -99,8 +98,7 @@ public class OAuth20CasAuthenticationBuilder {
 
         val authenticator = profile.getClass().getCanonicalName();
         val metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(profile.getId()));
-        final AuthenticationHandlerExecutionResult handlerResult =
-            new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>());
+        val handlerResult = new DefaultAuthenticationHandlerExecutionResult(authenticator, metadata, newPrincipal, new ArrayList<>());
         val scopes = CollectionUtils.toCollection(context.getRequest().getParameterValues(OAuth20Constants.SCOPE));
 
         val state = StringUtils.defaultIfBlank(context.getRequestParameter(OAuth20Constants.STATE), StringUtils.EMPTY);

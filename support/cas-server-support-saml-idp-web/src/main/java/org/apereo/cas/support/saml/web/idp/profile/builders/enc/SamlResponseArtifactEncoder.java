@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class SamlResponseArtifactEncoder extends BaseSamlResponseEncoder {
+public class SamlResponseArtifactEncoder extends BaseHttpServletAwareSamlObjectEncoder<Response> {
     private final TicketRegistry ticketRegistry;
     private final SamlArtifactTicketFactory samlArtifactTicketFactory;
     private final RequestAbstractType authnRequest;

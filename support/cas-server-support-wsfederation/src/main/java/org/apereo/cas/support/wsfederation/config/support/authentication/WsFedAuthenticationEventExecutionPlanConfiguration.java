@@ -2,7 +2,6 @@ package org.apereo.cas.support.wsfederation.config.support.authentication;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -144,8 +143,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
                 && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
             .forEach(wsfed -> {
-                final AuthenticationHandler handler =
-                    new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager.getIfAvailable(), wsfedPrincipalFactory());
+                val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager.getIfAvailable(), wsfedPrincipalFactory());
                 if (!wsfed.isAttributeResolverEnabled()) {
                     plan.registerAuthenticationHandler(handler);
                 } else {

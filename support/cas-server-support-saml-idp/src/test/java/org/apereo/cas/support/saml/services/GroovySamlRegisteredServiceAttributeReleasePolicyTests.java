@@ -12,8 +12,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.springframework.core.io.FileSystemResource;
 
-import java.util.Map;
-
 import static org.junit.Assert.*;
 
 /**
@@ -37,7 +35,7 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends Base
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
         val registeredService = getSamlRegisteredServiceForTestShib();
         registeredService.setAttributeReleasePolicy(filter);
-        final Map attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
+        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
             CoreAuthenticationTestUtils.getService(), registeredService);
         assertFalse(attributes.isEmpty());
     }
