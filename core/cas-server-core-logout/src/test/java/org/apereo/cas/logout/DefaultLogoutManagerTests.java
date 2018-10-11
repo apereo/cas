@@ -87,7 +87,7 @@ public class DefaultLogoutManagerTests {
         val validator = new SimpleUrlValidatorFactoryBean(true).getObject();
 
         singleLogoutServiceMessageHandler = new DefaultSingleLogoutServiceMessageHandler(client,
-            new SamlCompliantLogoutMessageCreator(), servicesManager,
+            new DefaultSingleLogoutMessageCreator(), servicesManager,
             new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), true,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
 
@@ -99,7 +99,7 @@ public class DefaultLogoutManagerTests {
         val plan = new DefaultLogoutExecutionPlan();
         plan.registerSingleLogoutServiceMessageHandler(singleLogoutServiceMessageHandler);
 
-        this.logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), false, plan);
+        this.logoutManager = new DefaultLogoutManager(new DefaultSingleLogoutMessageCreator(), false, plan);
         this.registeredService = getRegisteredService(URL);
         when(servicesManager.findServiceBy(this.simpleWebApplicationServiceImpl)).thenReturn(this.registeredService);
     }
@@ -116,7 +116,7 @@ public class DefaultLogoutManagerTests {
     public void verifyLogoutDisabled() {
         val plan = new DefaultLogoutExecutionPlan();
         plan.registerSingleLogoutServiceMessageHandler(singleLogoutServiceMessageHandler);
-        this.logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(), true, plan);
+        this.logoutManager = new DefaultLogoutManager(new DefaultSingleLogoutMessageCreator(), true, plan);
 
         val logoutRequests = this.logoutManager.performLogout(tgt);
         assertEquals(0, logoutRequests.size());

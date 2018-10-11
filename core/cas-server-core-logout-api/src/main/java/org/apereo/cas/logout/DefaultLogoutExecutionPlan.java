@@ -1,5 +1,7 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.OrderComparator;
 
