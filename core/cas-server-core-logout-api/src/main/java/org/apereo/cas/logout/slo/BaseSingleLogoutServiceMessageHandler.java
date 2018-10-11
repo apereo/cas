@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.http.HttpClient;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
     private final HttpClient httpClient;
     private final SingleLogoutMessageCreator logoutMessageBuilder;
@@ -37,14 +39,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
     private final boolean asynchronous;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    
-    /**
-     * Handle logout for slo service.
-     *
-     * @param singleLogoutService the service
-     * @param ticketId            the ticket id
-     * @return the logout request
-     */
+
     @Override
     public Collection<SingleLogoutRequest> handle(final WebApplicationService singleLogoutService, final String ticketId,
                                                   final TicketGrantingTicket ticketGrantingTicket) {
@@ -161,17 +156,11 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         return logoutRequest;
     }
 
-
-    /**
-     * Log out of a service through back channel.
-     *
-     * @param request the logout request.
-     * @return if the logout has been performed.
-     */
-    protected boolean performBackChannelLogout(final SingleLogoutRequest request) {
+    @Override
+    public boolean performBackChannelLogout(final SingleLogoutRequest request) {
         try {
             LOGGER.debug("Creating back-channel logout request based on [{}]", request);
-            val logoutRequest = this.logoutMessageBuilder.create(request);
+            val logoutRequest = createLogoutMessage(request);
             val logoutService = request.getService();
             logoutService.setLoggedOutAlready(true);
 
@@ -184,5 +173,10 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
             LOGGER.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    @Override
+    public String createLogoutMessage(final SingleLogoutRequest logoutRequest) {
+        return this.logoutMessageBuilder.create(logoutRequest);
     }
 }
