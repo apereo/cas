@@ -1,8 +1,5 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
@@ -12,6 +9,10 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.mfa.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -34,12 +35,10 @@ public class DetermineDuoUserAccountAction extends AbstractMultifactorAuthentica
         final DuoSecurityAuthenticationService duoAuthenticationService = provider.getDuoAuthenticationService();
         final DuoUserAccount account = duoAuthenticationService.getDuoUserAccount(p.getId());
         if (account.getStatus() == DuoUserAccountAuthStatus.ENROLL) {
-            if (StringUtils.isBlank(provider.getRegistrationUrl())) {
-                LOGGER.error("Duo webflow resolved to event ENROLL, but no registration url was provided.");
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
+            if (StringUtils.isNotBlank(provider.getRegistrationUrl())) {
+                requestContext.getFlowScope().put("duoRegistrationUrl", provider.getRegistrationUrl());
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
             }
-            requestContext.getFlowScope().put("duoRegistrationUrl", provider.getRegistrationUrl());
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
         }
         if (account.getStatus() == DuoUserAccountAuthStatus.ALLOW) {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
