@@ -9,12 +9,15 @@ import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.SingleLogoutServiceMessageHandler;
+import org.apereo.cas.logout.SingleLogoutUrl;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.http.HttpClient;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -39,8 +42,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
     private final boolean asynchronous;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
-
+    
     /**
      * Handle logout for slo service.
      *
@@ -80,7 +82,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
 
         if (registeredService != null
             && registeredService.getAccessStrategy().isServiceAccessAllowed()
-            && registeredService.getLogoutType() != RegisteredService.LogoutType.NONE) {
+            && registeredService.getLogoutType() != RegisteredServiceLogoutType.NONE) {
             return supportsInternal(singleLogoutService, registeredService);
         }
         return false;
@@ -110,7 +112,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     protected Collection<LogoutRequest> createLogoutRequests(final String ticketId,
                                                              final WebApplicationService selectedService,
                                                              final RegisteredService registeredService,
-                                                             final Collection<URL> logoutUrls,
+                                                             final Collection<SingleLogoutUrl> logoutUrls,
                                                              final TicketGrantingTicket ticketGrantingTicket) {
         return logoutUrls
             .stream()
@@ -129,27 +131,28 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
      * @param ticketGrantingTicket the ticket granting ticket
      * @return the logout request
      */
+    @SneakyThrows
     protected LogoutRequest createLogoutRequest(final String ticketId,
                                                 final WebApplicationService selectedService,
                                                 final RegisteredService registeredService,
-                                                final URL logoutUrl,
+                                                final SingleLogoutUrl logoutUrl,
                                                 final TicketGrantingTicket ticketGrantingTicket) {
         val logoutRequest = DefaultLogoutRequest.builder()
             .ticketId(ticketId)
             .service(selectedService)
-            .logoutUrl(logoutUrl)
+            .logoutUrl(new URL(logoutUrl.getUrl()))
             .registeredService(registeredService)
             .ticketGrantingTicket(ticketGrantingTicket)
             .build();
         LOGGER.debug("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
 
         val type = registeredService.getLogoutType() == null
-            ? RegisteredService.LogoutType.BACK_CHANNEL
+            ? RegisteredServiceLogoutType.BACK_CHANNEL
             : registeredService.getLogoutType();
 
         LOGGER.debug("Logout type registered for [{}] is [{}]", selectedService, type);
 
-        if (type == RegisteredService.LogoutType.BACK_CHANNEL) {
+        if (type == RegisteredServiceLogoutType.BACK_CHANNEL) {
             if (performBackChannelLogout(logoutRequest)) {
                 logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
             } else {
