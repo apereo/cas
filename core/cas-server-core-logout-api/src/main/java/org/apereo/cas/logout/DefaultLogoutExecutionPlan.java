@@ -18,17 +18,17 @@ import java.util.List;
 @Slf4j
 public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
 
-    private final List<LogoutHandler> handlers = new ArrayList<>();
+    private final List<LogoutPostProcessor> handlers = new ArrayList<>();
     private final List<SingleLogoutServiceMessageHandler> singleLogoutServiceMessageHandlers = new ArrayList<>();
 
     @Override
-    public void registerLogoutHandler(final LogoutHandler handler) {
+    public void registerLogoutPostProcessor(final LogoutPostProcessor handler) {
         LOGGER.debug("Registering logout handler [{}]", handler.getName());
         handlers.add(handler);
     }
 
     @Override
-    public Collection<LogoutHandler> getLogoutHandlers() {
+    public Collection<LogoutPostProcessor> getLogoutPostProcessor() {
         OrderComparator.sort(this.handlers);
         return this.handlers;
     }

@@ -21,7 +21,7 @@ public interface LogoutExecutionPlan {
      *
      * @param handler the handler
      */
-    default void registerLogoutHandler(final LogoutHandler handler) {
+    default void registerLogoutPostProcessor(final LogoutPostProcessor handler) {
     }
 
     /**
@@ -37,7 +37,7 @@ public interface LogoutExecutionPlan {
      *
      * @return the logout handlers
      */
-    default Collection<LogoutHandler> getLogoutHandlers() {
+    default Collection<LogoutPostProcessor> getLogoutPostProcessor() {
         return new ArrayList<>(0);
     }
 
