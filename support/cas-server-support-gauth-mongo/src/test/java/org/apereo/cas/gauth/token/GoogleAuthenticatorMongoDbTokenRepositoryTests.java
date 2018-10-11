@@ -92,7 +92,7 @@ public class GoogleAuthenticatorMongoDbTokenRepositoryTests extends BaseOneTimeT
 
     @Before
     public void initialize() {
-        repository.removeAll();
+        oneTimeTokenAuthenticatorTokenRepository.removeAll();
     }
 
     @TestConfiguration
