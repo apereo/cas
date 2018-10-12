@@ -134,6 +134,7 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
             .logoutType(logoutUrl.getLogoutType())
             .registeredService(registeredService)
             .ticketGrantingTicket(ticketGrantingTicket)
+            .properties(logoutUrl.getProperties())
             .build();
         LOGGER.debug("Logout request [{}] created for [{}] and ticket id [{}]", logoutRequest, selectedService, ticketId);
 
@@ -155,23 +156,33 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
     public boolean performBackChannelLogout(final SingleLogoutRequest request) {
         try {
             LOGGER.debug("Creating back-channel logout request based on [{}]", request);
-            val logoutRequest = createLogoutMessage(request);
-            val logoutService = request.getService();
-            logoutService.setLoggedOutAlready(true);
-
-            LOGGER.debug("Preparing logout request for [{}] to [{}]", logoutService.getId(), request.getLogoutUrl());
-            val msg = new LogoutHttpMessage(request.getLogoutUrl(), logoutRequest, this.asynchronous);
-
-            LOGGER.debug("Prepared logout message to send is [{}]. Sending...", msg);
-            return this.httpClient.sendMessageToEndPoint(msg);
+            val logoutRequest = createSingleLogoutMessage(request);
+            return sendSingleLogoutMessage(request, logoutRequest);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return false;
     }
 
+    /**
+     * Send single logout message.
+     *
+     * @param request       the request
+     * @param logoutRequest the logout request
+     * @return true if the message was successfully sent.
+     */
+    protected boolean sendSingleLogoutMessage(final SingleLogoutRequest request, final SingleLogoutMessage logoutRequest) {
+        val logoutService = request.getService();
+        LOGGER.debug("Preparing logout request for [{}] to [{}]", logoutService.getId(), request.getLogoutUrl());
+        val msg = new LogoutHttpMessage(request.getLogoutUrl(), logoutRequest.getPayload(), this.asynchronous);
+        LOGGER.debug("Prepared logout message to send is [{}]. Sending...", msg);
+        val result = this.httpClient.sendMessageToEndPoint(msg);
+        logoutService.setLoggedOutAlready(result);
+        return result;
+    }
+
     @Override
-    public String createLogoutMessage(final SingleLogoutRequest logoutRequest) {
+    public SingleLogoutMessage createSingleLogoutMessage(final SingleLogoutRequest logoutRequest) {
         return this.logoutMessageBuilder.create(logoutRequest);
     }
 }
