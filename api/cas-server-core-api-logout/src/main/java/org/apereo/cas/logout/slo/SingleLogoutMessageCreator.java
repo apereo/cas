@@ -15,5 +15,5 @@ public interface SingleLogoutMessageCreator {
      * @param request the request
      * @return the string
      */
-    String create(SingleLogoutRequest request);
+    SingleLogoutMessage create(SingleLogoutRequest request);
 }

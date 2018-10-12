@@ -57,9 +57,9 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
                     .stream()
                     .filter(handler -> handler.supports(r.getService()))
                     .forEach(handler -> {
-                        val logoutMessage = handler.createLogoutMessage(r);
+                        val logoutMessage = handler.createSingleLogoutMessage(r);
                         LOGGER.debug("Front-channel logout message to send to [{}] is [{}]", r.getLogoutUrl(), logoutMessage);
-                        val msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage, true);
+                        val msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage.getPayload(), true);
                         logoutUrls.put(r, msg);
                         r.setStatus(LogoutRequestStatus.SUCCESS);
                         r.getService().setLoggedOutAlready(true);

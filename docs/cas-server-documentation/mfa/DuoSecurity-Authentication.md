@@ -27,7 +27,7 @@ You may need to add the following repositories to the WAR overlay:
 
 ```xml
 <repository>
-    <id>duo-unicon</id>
+    <id>uniconiam</id>
     <url>https://dl.bintray.com/uniconiam/maven</url>
 </repository>
 

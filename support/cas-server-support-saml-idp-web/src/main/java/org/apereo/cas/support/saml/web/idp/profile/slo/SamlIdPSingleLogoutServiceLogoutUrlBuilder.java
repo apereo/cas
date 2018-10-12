@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.services.logout;
+package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
@@ -28,6 +28,11 @@ import java.util.Collection;
  */
 @Slf4j
 public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLogoutServiceLogoutUrlBuilder {
+    /**
+     * Property to indicate the binding for the saml logout profile.
+     */
+    public static final String PROPERTY_NAME_SINGLE_LOGOUT_BINDING = "singleLogoutSamlBinding";
+
     /**
      * The Services manager.
      */
@@ -70,7 +75,8 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
         val entityID = singleLogoutService.getId();
         LOGGER.trace("Located entity id [{}]", entityID);
 
-        val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, (SamlRegisteredService) registeredService, entityID);
+        val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
+            (SamlRegisteredService) registeredService, entityID);
         if (!adaptorRes.isPresent()) {
             LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
             return null;
@@ -91,6 +97,8 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
 
     private SingleLogoutUrl finalizeSingleLogoutUrl(final SingleLogoutService sloService, final RegisteredServiceLogoutType type) {
         val location = StringUtils.isBlank(sloService.getResponseLocation()) ? sloService.getLocation() : sloService.getResponseLocation();
-        return new SingleLogoutUrl(location, type);
+        val url = new SingleLogoutUrl(location, type);
+        url.getProperties().put(PROPERTY_NAME_SINGLE_LOGOUT_BINDING, sloService.getBinding());
+        return url;
     }
 }
