@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link TrustedDevicesMultifactorTestSuite}.
+ * This is {@link TrustedDevicesMultifactorTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -27,5 +27,5 @@ import org.junit.runners.Suite;
     DefaultDeviceFingerprintStrategyTests.class,
     MultifactorAuthenticationTrustStorageCleanerTests.class
 })
-public class TrustedDevicesMultifactorTestSuite {
+public class TrustedDevicesMultifactorTestsSuite {
 }

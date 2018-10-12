@@ -55,5 +55,5 @@ import org.junit.runners.Suite;
     AccessTokenGrantRequestAuditResourceResolverTests.class,
     OAuth20UserProfileDataAuditResourceResolverTests.class
 })
-public class OAuthTestSuite {
+public class OAuthTestsSuite {
 }

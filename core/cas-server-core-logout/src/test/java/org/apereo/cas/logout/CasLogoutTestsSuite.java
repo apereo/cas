@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link CasLogoutTestSuite}.
+ * This is {@link CasLogoutTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -16,5 +16,5 @@ import org.junit.runners.Suite;
     LogoutHttpMessageTests.class,
     SamlCompliantLogoutMessageCreatorTests.class
 })
-public class CasLogoutTestSuite {
+public class CasLogoutTestsSuite {
 }

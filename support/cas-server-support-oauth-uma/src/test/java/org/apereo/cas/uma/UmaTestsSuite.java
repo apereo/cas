@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link UmaTestSuite}.
+ * This is {@link UmaTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -33,5 +33,5 @@ import org.junit.runners.Suite;
     UmaUpdatePolicyForResourceSetEndpointControllerTests.class,
     UmaAuthorizationRequestEndpointControllerTests.class
 })
-public class UmaTestSuite {
+public class UmaTestsSuite {
 }

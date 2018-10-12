@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link JpaSamlTestSuite}.
+ * This is {@link JpaSamlTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -21,5 +21,5 @@ import org.junit.runners.Suite;
     MySQLJpaSamlIdPMetadataGeneratorTests.class,
     MicrosoftSQLServerJpaSamlIdPMetadataGeneratorTests.class
 })
-public class JpaSamlTestSuite {
+public class JpaSamlTestsSuite {
 }

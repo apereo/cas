@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link SurrogateTestSuite}.
+ * This is {@link SurrogateTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -15,5 +15,5 @@ import org.junit.runners.Suite;
     SurrogateSelectionActionTests.class,
     SurrogateAuthorizationActionTests.class
 })
-public class SurrogateTestSuite {
+public class SurrogateTestsSuite {
 }

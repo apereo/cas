@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link AllWebflowTestSuite}.
+ * This is {@link AllWebflowTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -15,5 +15,5 @@ import org.junit.runners.Suite;
     CasWebflowServerSessionContextConfigurationTests.class,
     CasWebflowClientSessionContextConfigurationTests.class
 })
-public class AllWebflowTestSuite {
+public class AllWebflowTestsSuite {
 }

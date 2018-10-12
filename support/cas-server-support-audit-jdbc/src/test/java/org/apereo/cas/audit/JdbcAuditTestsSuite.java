@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link JdbcAuditTestSuite}.
+ * This is {@link JdbcAuditTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -16,5 +16,5 @@ import org.junit.runners.Suite;
     CasSupportMySQLJdbcAuditConfigurationTests.class,
     CasSupportPostgresJdbcAuditConfigurationTests.class
 })
-public class JdbcAuditTestSuite {
+public class JdbcAuditTestsSuite {
 }

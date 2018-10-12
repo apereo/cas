@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link MultifactorAuthenticationTestSuite}.
+ * This is {@link MultifactorAuthenticationTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -17,5 +17,5 @@ import org.junit.runners.Suite;
     DefaultMultifactorAuthenticationContextValidatorTests.class,
     DefaultMultifactorAuthenticationProviderBypassTests.class
 })
-public class MultifactorAuthenticationTestSuite {
+public class MultifactorAuthenticationTestsSuite {
 }

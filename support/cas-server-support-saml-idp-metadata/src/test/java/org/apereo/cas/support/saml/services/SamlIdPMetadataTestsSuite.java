@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link SamlIdPMetadataTestSuite}.
+ * This is {@link SamlIdPMetadataTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -22,5 +22,5 @@ import org.junit.runners.Suite;
     GroovyResourceMetadataResolverTests.class,
     UrlResourceMetadataResolverTests.class
 })
-public class SamlIdPMetadataTestSuite {
+public class SamlIdPMetadataTestsSuite {
 }
