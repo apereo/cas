@@ -55,7 +55,7 @@ dependencies {
 
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
-
+    
     implementation libraries.pac4j
     implementation libraries.thymeleaf
 

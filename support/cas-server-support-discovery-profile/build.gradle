@@ -8,7 +8,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-rest")
     implementation project(":support:cas-server-support-person-directory")
-    implementation project(":core:cas-server-core-authentication-mfa")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-authentication-api")
 
     implementation project(":core:cas-server-core-services-api")
@@ -39,5 +39,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":support:cas-server-support-pac4j")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testImplementation project(path: ":core:cas-server-core-authentication-mfa", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
 }
