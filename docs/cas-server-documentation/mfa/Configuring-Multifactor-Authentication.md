@@ -46,6 +46,30 @@ provider available to CAS and the provider cannot be reached, authentication wil
 will be displayed. You can of course change this behavior so that authentication proceeds without exercising the provider
 functionality, if that provider cannot respond.
 
+The following failure modes are supported:
+
+| Field                | Description
+|----------------------|----------------------------------
+| `CLOSED`             | Authentication is blocked if the provider cannot be reached.
+| `OPEN`               | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
+| `PHANTOM`            | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
+| `NONE`               | Do not contact the provider at all to check for availability. Assume the provider is available.
+
+## Determining Failure Mode
+
+CAS will consult the current configuration in the event that the provider being requested is unreachable to determine how to proceed.  
+The failure mode can be configured at these locations and CAS will use the first defined failure mode in this order:
+
+- Registered Service Multifactor Authentication Policy
+- Mulifactor Authentication Provider Configuration
+- Global Multifactor Authentication Configuration  
+
+If no actionable failure mode is encountered the user will be shown a generic "Authentication Failed" message.
+
+### Failure Mode by Registered Service
+
+Set as part of the "multifactorPolicy".  This location will override a failure a mode set at any other location.
+
 ```json
 {
   "@class" : "org.apereo.cas.services.RegexRegisteredService",
@@ -59,16 +83,16 @@ functionality, if that provider cannot respond.
 }
 ```
 
-The following failure modes are supported:
+### Failure Mode by Multifactor Authentication Provider
 
-| Field                | Description
-|----------------------|----------------------------------
-| `CLOSED`             | Authentication is blocked if the provider cannot be reached.
-| `OPEN`               | Authentication proceeds yet requested MFA is NOT communicated to the client if provider is unavailable.
-| `PHANTOM`            | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
-| `NONE`               | Do not contact the provider at all to check for availability. Assume the provider is available.
+Each defined multifactor authentication provider can set its own failure mode policy. Failure modes set at this location will override the glovbal failure mode, but defer to any failure mode set by the registered service.
 
-A default failure mode can also be specified globally via CAS properties and may be overridden individually by CAS registered services.
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties-Common.html#multifactor-authentication-providers).
+
+### Gloabal Failure Mode
+
+A default failure mode can be specified globally via CAS properties and will be used in the case where no failure mode is set in either the provider or the registered service.
+
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#multifactor-authentication).
 
 ## Multiple Provider Selection

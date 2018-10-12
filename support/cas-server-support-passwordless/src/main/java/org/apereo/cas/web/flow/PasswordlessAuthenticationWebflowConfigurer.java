@@ -61,7 +61,6 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
             val targetStateId = transition.getTargetStateId();
             createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetStateId);
 
-            registerMultifactorProvidersStateTransitionsIntoWebflow(acceptState);
         }
     }
 }
