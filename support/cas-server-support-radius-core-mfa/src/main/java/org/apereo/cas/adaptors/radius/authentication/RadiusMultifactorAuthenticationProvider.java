@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.radius.authentication;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.RadiusMultifactorProperties;
+import org.apereo.cas.services.RegisteredService;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -35,7 +36,7 @@ public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactor
     }
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         return canPing();
     }
 
