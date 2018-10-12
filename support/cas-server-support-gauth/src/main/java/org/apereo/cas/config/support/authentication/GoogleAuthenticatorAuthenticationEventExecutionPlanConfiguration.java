@@ -4,6 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
@@ -24,7 +25,7 @@ import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
+
 import org.apereo.cas.services.ServicesManager;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
@@ -33,6 +34,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import com.warrenstrange.googleauth.KeyRepresentation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,7 +118,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(googleBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(gauth.getFailureMode());
         p.setOrder(gauth.getRank());
         p.setId(gauth.getId());
         return p;
@@ -128,7 +130,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             googleAuthenticatorAuthenticationHandler(),
-            googleAuthenticatorAuthenticationProvider()
+            googleAuthenticatorAuthenticationProvider().getId()
         );
     }
 

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Response;
@@ -52,7 +53,6 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
-
 @Slf4j
 @UtilityClass
 public class WebUtils {

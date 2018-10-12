@@ -4,8 +4,8 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -84,8 +84,7 @@ public class OidcAuthenticationContextWebflowEventResolver extends BaseMultifact
             throw new AuthenticationException();
         }
 
-        val flattenedProviders = flattenProviders(providerMap.values());
-        val provider = flattenedProviders
+        val provider = providerMap.values()
             .stream()
             .filter(v -> values.contains(v.getId()))
             .findAny();
