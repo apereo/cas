@@ -17,6 +17,7 @@ The current members of the PMC are:
 - [Travis Schmidt](https://github.com/tsschmidt)
 - [Jeff Sittler](https://github.com/mindblender)
 - [Jérôme Leleu](https://github.com/leleuj)
+- [Hal Deadman](https://github.com/hdeadman)
 - [Timur Duehr](https://github.com/tduehr)
 - [Misagh Moayyed](https://github.com/mmoayyed) [Chairman]
 - [Ian Dolphin](https://www.apereo.org/content/leadership) [Executive Director, Apereo Foundation]
