@@ -27,6 +27,7 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.MessageDecodingException;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.SignableSAMLObject;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLBindingContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -148,6 +149,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         }
         ctx.setMessage(authnRequest);
         ctx.getSubcontext(SAMLBindingContext.class, true).setHasBindingSignature(false);
+        SAMLBindingSupport.setRelayState(ctx, target);
 
         val pair = Pair.<SignableSAMLObject, MessageContext>of(authnRequest, ctx);
         initiateAuthenticationRequest(pair, response, request);

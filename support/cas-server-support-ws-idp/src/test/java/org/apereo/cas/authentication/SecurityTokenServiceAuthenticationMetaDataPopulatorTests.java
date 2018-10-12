@@ -106,8 +106,7 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulatorTests {
         val service = CoreAuthenticationTestUtils.getService("http://example.org?"
             + WSFederationConstants.WREPLY + '=' + registeredService.getServiceId() + '&'
             + WSFederationConstants.WTREALM + '=' + realm);
-        final AuthenticationTransaction transaction =
-            DefaultAuthenticationTransaction.of(service, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        val transaction = DefaultAuthenticationTransaction.of(service, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
 
         thrown.expect(AuthenticationException.class);
         populator.populateAttributes(builder, transaction);

@@ -44,15 +44,14 @@ SPNEGO support is enabled by including the following dependency in the WAR overl
 </dependency>
 ```
 
-You may also need to declare the following repository in
-your CAS overlay to be able to resolve dependencies:
+You may also need to declare the following repository in your CAS overlay to be able to resolve dependencies:
 
 ```xml
 <repositories>
     ...
     <repository>
-        <id>jasig-releases</id>
-        <url>http://developer.jasig.org/repo/content/groups/m2-legacy</url>
+        <id>uniconiam</id>
+        <url>https://dl.bintray.com/uniconiam/maven</url>
     </repository>
     ...
 </repositories>

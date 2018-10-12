@@ -141,7 +141,7 @@ public class SamlObjectSignatureValidator {
                                                           final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
         val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
         val peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
-        peer.setEntityId(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest));
+        peer.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(profileRequest));
 
         val peerEntityId = peer.getEntityId();
         LOGGER.debug("Validating request signature for [{}] via [{}]...", peerEntityId, handler.getClass().getSimpleName());
@@ -266,7 +266,7 @@ public class SamlObjectSignatureValidator {
      * @param criteriaSet    the criteria set
      */
     protected void buildEntityCriteriaForSigningCredential(final RequestAbstractType profileRequest, final CriteriaSet criteriaSet) {
-        criteriaSet.add(new EntityIdCriterion(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest)));
+        criteriaSet.add(new EntityIdCriterion(SamlIdPUtils.getIssuerFromSamlObject(profileRequest)));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
     }
 

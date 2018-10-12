@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -96,7 +96,7 @@ public class OidcLogoutEndpointController extends BaseOAuth20Controller {
 
             val urls = singleLogoutServiceLogoutUrlBuilder.determineLogoutUrl(registeredService, service);
             if (StringUtils.isNotBlank(postLogoutRedirectUrl)) {
-                val matchResult = urls.stream().anyMatch(url -> url.toExternalForm().equalsIgnoreCase(postLogoutRedirectUrl));
+                val matchResult = urls.stream().anyMatch(url -> url.getUrl().equalsIgnoreCase(postLogoutRedirectUrl));
                 if (matchResult) {
                     return getLogoutRedirectView(state, postLogoutRedirectUrl);
                 }

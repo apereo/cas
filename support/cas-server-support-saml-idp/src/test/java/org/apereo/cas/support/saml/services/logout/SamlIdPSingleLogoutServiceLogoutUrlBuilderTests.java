@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services.logout;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 
 import lombok.val;
 import org.junit.Test;
@@ -24,6 +25,6 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilderTests extends BaseSamlIdP
         val results = builder.determineLogoutUrl(SamlIdPTestUtils.getSamlRegisteredService(),
             RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"));
         assertFalse(results.isEmpty());
-        assertEquals("https://sp.testshib.org/Shibboleth.sso/SLO/POST", results.iterator().next().toExternalForm());
+        assertEquals("https://sp.testshib.org/Shibboleth.sso/SLO/POST", results.iterator().next().getUrl());
     }
 }

@@ -4,15 +4,14 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.DefaultMultifactorAuthenticationContextValidator;
-import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
 
 import lombok.val;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +26,7 @@ import org.springframework.web.servlet.support.RequestContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
@@ -61,8 +61,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             getCentralAuthenticationService(),
             getProxyHandler(),
             getArgumentExtractor(),
-            new DefaultMultifactorTriggerSelectionStrategy(new MultifactorAuthenticationProperties()),
-            new DefaultMultifactorAuthenticationContextValidator("", "OPEN", "test", applicationContext),
+            (assertion, request) -> Pair.of(Boolean.TRUE, Optional.empty()),
             cas3ServiceJsonView, cas2SuccessView,
             cas2ServiceFailureView, "authenticationContext",
             new DefaultServiceTicketValidationAuthorizersExecutionPlan(),
@@ -77,7 +76,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
         val resp = new MockHttpServletResponse();
-        final View delegatedView = new View() {
+        val delegatedView = new View() {
             @Override
             public String getContentType() {
                 return "text/html";

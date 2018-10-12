@@ -36,7 +36,7 @@ public class ServiceAuthorizationCheckTests {
     private final WebApplicationService unauthorizedService = mock(WebApplicationService.class);
     private final WebApplicationService undefinedService = mock(WebApplicationService.class);
     private final ServicesManager servicesManager = mock(ServicesManager.class);
-    private ServiceAuthorizationCheck serviceAuthorizationCheck;
+    private ServiceAuthorizationCheckAction serviceAuthorizationCheck;
 
     @Before
     public void setUpMocks() {
@@ -53,7 +53,7 @@ public class ServiceAuthorizationCheckTests {
         when(this.servicesManager.findServiceBy(this.undefinedService)).thenReturn(null);
         when(this.servicesManager.getAllServices()).thenReturn((Collection) list);
 
-        this.serviceAuthorizationCheck = new ServiceAuthorizationCheck(this.servicesManager,
+        this.serviceAuthorizationCheck = new ServiceAuthorizationCheckAction(this.servicesManager,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
     }
 
