@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -29,7 +30,7 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     private final transient HttpClient httpClient;
 
     @Override
-    protected boolean isAvailable() {
+    public boolean isAvailable(final RegisteredService service) {
         try {
             val endpoints = client.getWsapiUrls();
             for (val endpoint : endpoints) {

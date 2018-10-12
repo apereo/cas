@@ -4,11 +4,11 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -94,15 +94,11 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
 
         if (providerFound.isPresent()) {
             val provider = providerFound.get();
-            if (provider.isAvailable(service)) {
-                LOGGER.debug("Attempting to build event based on the authentication provider [{}] and service [{}]",
-                    provider, service.getName());
-                val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
-                    buildEventAttributeMap(authentication.getPrincipal(), service, provider));
-                return CollectionUtils.wrapSet(event);
-            }
-            LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", providerFound.get());
-            return null;
+            LOGGER.debug("Attempting to build event based on the authentication provider [{}] and service [{}]",
+                provider, service.getName());
+            val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
+                buildEventAttributeMap(authentication.getPrincipal(), service, provider));
+            return CollectionUtils.wrapSet(event);
         }
         LOGGER.debug("No multifactor provider could be found based on [{}]'s Grouper groups", principal.getId());
         return null;
