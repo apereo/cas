@@ -32,6 +32,10 @@ public class InquireInterruptAction extends AbstractAction {
         final RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
         final Credential credential = WebUtils.getCredential(requestContext);
 
+        if (authentication.getAttributes().containsKey("finalizedInterrupt")) {
+            LOGGER.debug("Authentication event has already finalized interrupt. Skipping...");
+            return no();
+        }
         final InterruptResponse response = this.interruptInquirer.inquire(authentication, registeredService, service, credential);
         if (response == null || !response.isInterrupt()) {
             return no();
