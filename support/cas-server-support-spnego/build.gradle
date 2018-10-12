@@ -1,10 +1,5 @@
 description = "Apereo CAS SPNEGO/NTLM Support"
 
-repositories {
-    maven { url "https://developer.jasig.org/repo/content/groups/m2-legacy/" }
-    jcenter()
-}
-
 dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-api")
