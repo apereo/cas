@@ -49,8 +49,8 @@ your CAS overlay to be able to resolve dependencies:
 <repositories>
     ...
     <repository>
-        <id>jasig-releases</id>
-        <url>http://developer.jasig.org/repo/content/groups/m2-legacy</url>
+        <id>iam-releases</id>
+        <url>https://dl.bintray.com/uniconiam/maven</url>
     </repository>
     ...
 </repositories>
