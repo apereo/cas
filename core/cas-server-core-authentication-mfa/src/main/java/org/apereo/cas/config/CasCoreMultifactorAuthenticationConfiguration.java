@@ -15,6 +15,7 @@ import lombok.val;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,10 +46,11 @@ public class CasCoreMultifactorAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
+    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
+    private ObjectProvider<MultifactorTriggerSelectionStrategy> multifactorTriggerSelectionStrategy;
 
     @RefreshScope
     @Bean
@@ -65,11 +67,11 @@ public class CasCoreMultifactorAuthenticationConfiguration {
     public RequestedContextValidator<MultifactorAuthenticationProvider> requestedContextValidator() {
         return (assertion, request) -> {
             LOGGER.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
-            val service = servicesManager.findServiceBy(assertion.getService());
+            val service = servicesManager.getIfAvailable().findServiceBy(assertion.getService());
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
             val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
             val authentication = assertion.getPrimaryAuthentication();
-            val requestedContext = multifactorTriggerSelectionStrategy.resolve(providers.values(), request, service, authentication);
+            val requestedContext = multifactorTriggerSelectionStrategy.getIfAvailable().resolve(providers.values(), request, service, authentication);
 
             if (!requestedContext.isPresent()) {
                 LOGGER.debug("No particular authentication context is required for this request");
