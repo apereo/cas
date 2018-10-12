@@ -9,6 +9,7 @@ import org.apereo.cas.adaptors.radius.authentication.RadiusTokenCredential;
 import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
@@ -16,7 +17,6 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -53,11 +53,12 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
+        val radius = casProperties.getAuthn().getMfa().getRadius();
         val p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
         p.setBypassEvaluator(radiusBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-        p.setOrder(casProperties.getAuthn().getMfa().getRadius().getRank());
-        p.setId(casProperties.getAuthn().getMfa().getRadius().getId());
+        p.setFailureMode(radius.getFailureMode());
+        p.setOrder(radius.getRank());
+        p.setId(radius.getId());
         return p;
     }
 
@@ -107,7 +108,10 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator radiusAuthenticationMetaDataPopulator() {
         val attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(attribute, radiusTokenAuthenticationHandler(), radiusAuthenticationProvider());
+        return new AuthenticationContextAttributeMetaDataPopulator(attribute,
+                radiusTokenAuthenticationHandler(),
+                radiusAuthenticationProvider().getId()
+        );
     }
 
     @ConditionalOnMissingBean(name = "radiusTokenAuthenticationEventExecutionPlanConfigurer")

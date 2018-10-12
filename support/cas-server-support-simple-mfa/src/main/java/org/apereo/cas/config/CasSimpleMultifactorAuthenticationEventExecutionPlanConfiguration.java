@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
@@ -13,7 +14,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationHandler;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorAuthenticationProvider;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
+
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 
@@ -70,7 +71,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         val simple = casProperties.getAuthn().getMfa().getSimple();
         val p = new CasSimpleMultifactorAuthenticationProvider();
         p.setBypassEvaluator(casSimpleMultifactorBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(simple.getFailureMode());
         p.setOrder(simple.getRank());
         p.setId(simple.getId());
         return p;
@@ -82,7 +83,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             casSimpleMultifactorAuthenticationHandler(),
-            casSimpleMultifactorAuthenticationProvider()
+            casSimpleMultifactorAuthenticationProvider().getId()
         );
     }
 

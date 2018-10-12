@@ -16,6 +16,7 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAc
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
@@ -23,7 +24,6 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -72,9 +72,11 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator yubikeyAuthenticationMetaDataPopulator() {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
+        return new AuthenticationContextAttributeMetaDataPopulator(
+            authenticationContextAttribute,
             yubikeyAuthenticationHandler(),
-            yubikeyAuthenticationProvider());
+            yubikeyAuthenticationProvider().getId()
+        );
     }
 
     @Bean
@@ -177,11 +179,12 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
+        val yubi = casProperties.getAuthn().getMfa().getYubikey();
         val p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), httpClient.getIfAvailable());
         p.setBypassEvaluator(yubikeyBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-        p.setOrder(casProperties.getAuthn().getMfa().getYubikey().getRank());
-        p.setId(casProperties.getAuthn().getMfa().getYubikey().getId());
+        p.setFailureMode(yubi.getFailureMode());
+        p.setOrder(yubi.getRank());
+        p.setId(yubi.getId());
         return p;
     }
 

@@ -33,7 +33,6 @@ public class TokenWebflowConfigurer extends AbstractCasWebflowConfigurer {
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
-            registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
             createStateDefaultTransition(actionState, getStartState(flow).getId());
             setStartState(flow, actionState);
         }

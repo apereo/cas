@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -57,10 +56,9 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                                                             final TicketRegistrySupport ticketRegistrySupport,
                                                             final CookieGenerator warnCookieGenerator,
                                                             final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                            final MultifactorAuthenticationProviderSelector selector,
                                                             final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-            warnCookieGenerator, authenticationSelectionStrategies, selector);
+            warnCookieGenerator, authenticationSelectionStrategies);
         this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
 
     }

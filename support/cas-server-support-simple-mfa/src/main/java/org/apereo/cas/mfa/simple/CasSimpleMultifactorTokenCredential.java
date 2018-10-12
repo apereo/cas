@@ -18,7 +18,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class CasSimpleMultifactorTokenCredential extends OneTimeTokenCredential {
     private static final long serialVersionUID = -4245600701132111037L;
 

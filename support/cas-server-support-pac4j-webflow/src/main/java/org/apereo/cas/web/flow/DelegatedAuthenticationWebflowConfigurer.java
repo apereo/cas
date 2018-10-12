@@ -60,7 +60,6 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_STOP, CasWebflowConstants.STATE_ID_STOP_WEBFLOW));
         setStartState(flow, actionState);
-        registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
     }
 
     private void createStopWebflowViewState(final Flow flow) {

@@ -64,4 +64,9 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
      * The name of the authentication handler used to verify credentials in MFA.
      */
     private String name;
+
+    /**
+     * The failure mode policy for this MFA provider.
+     */
+    private String failureMode = "UNDEFINED";
 }

@@ -2,13 +2,12 @@ package org.apereo.cas.discovery;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 
 import com.google.common.base.Predicates;
 import lombok.RequiredArgsConstructor;
@@ -73,7 +72,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         };
         val collector = Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName);
         return (Map) locateSubtypesByReflection(mapper, collector, AbstractMultifactorAuthenticationProvider.class,
-            o -> !VariegatedMultifactorAuthenticationProvider.class.isAssignableFrom(Class.class.cast(o)),
+            Predicates.alwaysTrue(),
             CentralAuthenticationService.NAMESPACE);
     }
 

@@ -1,9 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -17,6 +15,7 @@ import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.RequestedContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
@@ -79,8 +78,8 @@ public class SamlConfiguration {
     private ObjectProvider<AuthenticationAttributeReleasePolicy> authenticationAttributeReleasePolicy;
 
     @Autowired
-    @Qualifier("authenticationContextValidator")
-    private ObjectProvider<AuthenticationContextValidator> authenticationContextValidator;
+    @Qualifier("requestedContextValidator")
+    private ObjectProvider<RequestedContextValidator> requestedContextValidator;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -89,10 +88,6 @@ public class SamlConfiguration {
     @Autowired
     @Qualifier("cas20WithoutProxyProtocolValidationSpecification")
     private ObjectProvider<CasProtocolValidationSpecification> cas20WithoutProxyProtocolValidationSpecification;
-
-    @Autowired
-    @Qualifier("defaultMultifactorTriggerSelectionStrategy")
-    private ObjectProvider<MultifactorTriggerSelectionStrategy> multifactorTriggerSelectionStrategy;
 
     @Autowired
     @Qualifier("serviceValidationAuthorizers")
@@ -150,8 +145,7 @@ public class SamlConfiguration {
             centralAuthenticationService.getIfAvailable(),
             proxy20Handler.getIfAvailable(),
             argumentExtractor.getIfAvailable(),
-            multifactorTriggerSelectionStrategy.getIfAvailable(),
-            authenticationContextValidator.getIfAvailable(),
+            requestedContextValidator.getIfAvailable(),
             cas3ServiceJsonView.getIfAvailable(),
             casSamlServiceSuccessView(),
             casSamlServiceFailureView(),

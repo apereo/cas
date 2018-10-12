@@ -6,6 +6,7 @@ dependencies {
     api project(":api:cas-server-core-api-logout")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-mfa")
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")

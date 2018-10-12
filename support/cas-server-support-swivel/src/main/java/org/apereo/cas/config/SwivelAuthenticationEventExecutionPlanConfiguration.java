@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.swivel.SwivelMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.swivel.SwivelTokenCredential;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
@@ -12,7 +13,6 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -46,8 +46,11 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator swivelAuthenticationMetaDataPopulator() {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
-        return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute,
-            swivelAuthenticationHandler(), swivelAuthenticationProvider());
+        return new AuthenticationContextAttributeMetaDataPopulator(
+            authenticationContextAttribute,
+            swivelAuthenticationHandler(),
+            swivelAuthenticationProvider().getId()
+        );
     }
 
     @Bean
@@ -76,7 +79,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
         val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         val p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
         p.setBypassEvaluator(swivelBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(swivel.getFailureMode());
         p.setOrder(swivel.getRank());
         p.setId(swivel.getId());
         return p;

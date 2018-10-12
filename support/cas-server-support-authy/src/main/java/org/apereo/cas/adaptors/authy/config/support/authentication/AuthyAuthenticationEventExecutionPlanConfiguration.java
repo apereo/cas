@@ -8,6 +8,7 @@ import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationRegistrationWeb
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
@@ -15,7 +16,6 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.SneakyThrows;
@@ -82,7 +82,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     public MultifactorAuthenticationProvider authyAuthenticatorAuthenticationProvider() {
         val p = new AuthyMultifactorAuthenticationProvider();
         p.setBypassEvaluator(authyBypassEvaluator());
-        p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+        p.setFailureMode(casProperties.getAuthn().getMfa().getAuthy().getFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getAuthy().getRank());
         p.setId(casProperties.getAuthn().getMfa().getAuthy().getId());
         return p;
@@ -100,7 +100,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             authyAuthenticationHandler(),
-            authyAuthenticatorAuthenticationProvider()
+            authyAuthenticatorAuthenticationProvider().getId()
         );
     }
 
