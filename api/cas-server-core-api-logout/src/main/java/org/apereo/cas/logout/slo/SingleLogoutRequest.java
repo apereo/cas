@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Map;
 
 /**
  * Identifies a CAS logout request and its properties.
@@ -71,4 +72,11 @@ public interface SingleLogoutRequest extends Serializable {
      * @return the logout type
      */
     RegisteredServiceLogoutType getLogoutType();
+
+    /**
+     * Gets properties.
+     *
+     * @return the properties
+     */
+    Map<String, String> getProperties();
 }

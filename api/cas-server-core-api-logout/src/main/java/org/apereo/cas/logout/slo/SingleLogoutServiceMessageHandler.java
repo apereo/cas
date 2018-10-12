@@ -55,7 +55,7 @@ public interface SingleLogoutServiceMessageHandler {
      * Create a logout message typically for front channel logout.
      *
      * @param logoutRequest the logout request.
-     * @return a front SAML logout message.
+     * @return the single logout message payload
      */
-    String createLogoutMessage(SingleLogoutRequest logoutRequest);
+    SingleLogoutMessage createSingleLogoutMessage(SingleLogoutRequest logoutRequest);
 }
