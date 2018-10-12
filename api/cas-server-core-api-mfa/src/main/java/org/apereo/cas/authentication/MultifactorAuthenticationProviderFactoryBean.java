@@ -10,7 +10,8 @@ import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorProviderPro
  * @author Travis Schmidt
  * @since 6.0
  */
-public interface MultifactorAuthenticationProviderFactory<T extends MultifactorAuthenticationProvider,
+@FunctionalInterface
+public interface MultifactorAuthenticationProviderFactoryBean<T extends MultifactorAuthenticationProvider,
                                                               P extends BaseMultifactorProviderProperties> {
 
     /**
@@ -19,7 +20,7 @@ public interface MultifactorAuthenticationProviderFactory<T extends MultifactorA
     String PROVIDER_SUFFIX = "-provider";
 
     /**
-     * Create an instance of MultifactorAuthenticationProvider based on passed properties.
+     * Create an instance of {@link MultifactorAuthenticationProvider} based on passed properties.
      *
      * @param properties - the properties
      * @return - the provider
