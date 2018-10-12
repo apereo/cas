@@ -33,7 +33,7 @@ public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenti
     private final List<P> properties;
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         properties.forEach(p -> {
             val name = providerFactory.beanName(p.getId());
             beanFactory.destroySingleton(name);
@@ -44,13 +44,11 @@ public class MultifactorAuthenticationProviderBean<T extends MultifactorAuthenti
     /**
      * Returns the provider assigned to the passed id.
      *
-     * @param <T>   the type parameter
-     * @param id    - the id
-     * @param clazz the clazz
+     * @param id - the id
      * @return {@link MultifactorAuthenticationProvider}
      */
-    public <T extends MultifactorAuthenticationProvider> T getProvider(final String id, final Class<T> clazz) {
-        return beanFactory.getBean(providerFactory.beanName(id), clazz);
+    public T getProvider(final String id) {
+        return (T) beanFactory.getBean(providerFactory.beanName(id));
     }
 
     /**

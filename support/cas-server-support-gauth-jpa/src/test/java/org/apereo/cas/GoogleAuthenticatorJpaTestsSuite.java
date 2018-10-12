@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link GoogleAuthenticatorJpaTestSuite}.
+ * This is {@link GoogleAuthenticatorJpaTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -21,5 +21,5 @@ import org.junit.runners.Suite;
     MariaDbJpaGoogleAuthenticatorTokenCredentialRepositoryTests.class,
     GoogleAuthenticatorJpaTokenRepositoryTests.class
 })
-public class GoogleAuthenticatorJpaTestSuite {
+public class GoogleAuthenticatorJpaTestsSuite {
 }

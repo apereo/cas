@@ -115,7 +115,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             authenticationHandler,
-            duoProviderBean().getProvider(authenticationHandler.getName(), DuoMultifactorAuthenticationProvider.class).getId()
+            duoProviderBean().getProvider(authenticationHandler.getName()).getId()
         );
     }
 
@@ -130,7 +130,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
             .map(d -> new DuoAuthenticationHandler(d.getId(),
                 servicesManager.getIfAvailable(),
                 duoPrincipalFactory(),
-                duoProviderBean().getProvider(d.getId(), DuoMultifactorAuthenticationProvider.class))
+                duoProviderBean().getProvider(d.getId()))
             ).collect(Collectors.toList());
     }
 
