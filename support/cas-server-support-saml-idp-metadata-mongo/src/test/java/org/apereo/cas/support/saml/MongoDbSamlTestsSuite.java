@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link MongoDbSamlTestSuite}.
+ * This is {@link MongoDbSamlTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -17,5 +17,5 @@ import org.junit.runners.Suite;
     MongoDbSamlIdPMetadataGeneratorTests.class,
     MongoDbSamlRegisteredServiceMetadataResolverTests.class
 })
-public class MongoDbSamlTestSuite {
+public class MongoDbSamlTestsSuite {
 }

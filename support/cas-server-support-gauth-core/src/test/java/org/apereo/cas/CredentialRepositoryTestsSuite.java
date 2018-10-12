@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link CredentialRepositoryTestSuite}.
+ * This is {@link CredentialRepositoryTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -17,5 +17,5 @@ import org.junit.runners.Suite;
     InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests.class,
     RestGoogleAuthenticatorTokenCredentialRepositoryTests.class
 })
-public class CredentialRepositoryTestSuite {
+public class CredentialRepositoryTestsSuite {
 }
