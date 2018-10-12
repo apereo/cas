@@ -1,11 +1,13 @@
 package org.apereo.cas.adaptors.duo;
 
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
-import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 
@@ -17,12 +19,13 @@ import org.springframework.boot.actuate.health.Health;
  */
 @RequiredArgsConstructor
 public class DuoSecurityHealthIndicator extends AbstractHealthIndicator {
-    private final VariegatedMultifactorAuthenticationProvider duoMultifactorAuthenticationProvider;
 
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
-        duoMultifactorAuthenticationProvider.getProviders()
+        val context = ApplicationContextProvider.getApplicationContext();
+        val providers = context.getBeansOfType(DuoMultifactorAuthenticationProvider.class).values();
+        providers
             .stream()
             .filter(DuoMultifactorAuthenticationProvider.class::isInstance)
             .map(DuoMultifactorAuthenticationProvider.class::cast)
