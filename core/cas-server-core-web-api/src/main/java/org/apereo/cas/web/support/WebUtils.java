@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.SingleLogoutRequest;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -273,8 +272,8 @@ public class WebUtils {
     /**
      * Put logout urls into flow scope.
      *
-     * @param context  the context
-     * @param urls the requests
+     * @param context the context
+     * @param urls    the requests
      */
     public static void putLogoutUrls(final RequestContext context, final Map urls) {
         context.getFlowScope().put("logoutUrls", urls);
