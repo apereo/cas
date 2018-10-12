@@ -77,8 +77,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     AopAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreWebflowConfiguration.class,
-    CasCoreValidationConfiguration.class,
-    AdaptiveMultifactorAuthenticationPolicyEventResolverTests.GeoLocationServiceTestConfiguration.class
+    CasCoreValidationConfiguration.class
 })
 @EnableAspectJAutoProxy
 @DirtiesContext

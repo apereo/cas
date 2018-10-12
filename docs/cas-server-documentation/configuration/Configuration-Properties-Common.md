@@ -787,6 +787,17 @@ The following  options apply equally to SAML2 service provider integrations, giv
 # ${configurationKey}.signAssertions=
 ```
 
+## Multifactor Authentication Providers
+
+All configurable multifactor authentication providers have these base properties available given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.rank=
+# ${configurationKey}.id=
+# ${configurationKey}.name=
+# ${configurationKey}.failureMode=UNDEFINED
+```
+
 ## Multifactor Authentication Bypass
 
 The following bypass options apply equally to multifactor authentication providers given the provider's *configuration key*:

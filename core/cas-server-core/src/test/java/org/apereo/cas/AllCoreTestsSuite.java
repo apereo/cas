@@ -15,15 +15,7 @@ import org.junit.runners.Suite;
     DefaultCentralAuthenticationServiceTests.class,
     DefaultCentralAuthenticationServiceMockitoTests.class,
     DefaultCasAttributeEncoderTests.class,
-    AdaptiveMultifactorAuthenticationPolicyEventResolverTests.class,
-    DefaultPrincipalAttributesRepositoryTests.class,
-    GroovyScriptMultifactorAuthenticationPolicyEventResolverTests.class,
-    TimedMultifactorAuthenticationPolicyEventResolverTests.class,
-    MultifactorAuthenticationTests.class,
-    RequestHeaderMultifactorAuthenticationPolicyEventResolverTests.class,
-    RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
-    AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests.class,
-    RequestParameterMultifactorAuthenticationPolicyEventResolverTests.class
+    DefaultPrincipalAttributesRepositoryTests.class
 })
 public class AllCoreTestsSuite {
 }

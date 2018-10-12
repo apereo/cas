@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskBasedAuthenticationEvaluationStartedEvent;
@@ -37,7 +36,6 @@ import java.util.Set;
 @Slf4j
 public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
-
     private final AuthenticationRiskEvaluator authenticationRiskEvaluator;
     private final AuthenticationRiskMitigator authenticationRiskMitigator;
     private final double threshold;
@@ -46,12 +44,11 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
                                                        final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
                                                        final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
                                                        final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                       final MultifactorAuthenticationProviderSelector selector,
                                                        final AuthenticationRiskEvaluator authenticationRiskEvaluator,
                                                        final AuthenticationRiskMitigator authenticationRiskMitigator,
                                                        final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
-            authenticationSelectionStrategies, selector);
+            authenticationSelectionStrategies);
         this.authenticationRiskEvaluator = authenticationRiskEvaluator;
         this.authenticationRiskMitigator = authenticationRiskMitigator;
         threshold = casProperties.getAuthn().getAdaptive().getRisk().getThreshold();

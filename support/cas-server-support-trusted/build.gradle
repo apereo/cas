@@ -8,7 +8,7 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-authentication-api")
-    implementation project(":core:cas-server-core-authentication-mfa")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
     
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-tickets")

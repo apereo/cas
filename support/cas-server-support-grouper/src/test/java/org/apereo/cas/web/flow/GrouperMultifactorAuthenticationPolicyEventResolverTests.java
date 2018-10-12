@@ -19,6 +19,7 @@ import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -60,6 +61,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreWebflowConfiguration.class,
     CasWebflowContextConfiguration.class,
     CasCoreServicesConfiguration.class,

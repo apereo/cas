@@ -16,10 +16,10 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class InitialAuthenticationRequestValidationAction extends AbstractAction {
 
-    private final CasWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver;
+    private final CasWebflowEventResolver initialAuthenticationProviderWebflowEventResolver;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        return this.rankedAuthenticationProviderWebflowEventResolver.resolveSingle(requestContext);
+        return this.initialAuthenticationProviderWebflowEventResolver.resolveSingle(requestContext);
     }
 }
