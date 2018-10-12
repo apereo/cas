@@ -166,7 +166,7 @@ public interface CasWebflowConstants {
     /**
      * State to determine the MFA failure mode and what action to take.
      */
-    String TRANSITION_ID_FAILURE = "mfaFailure";
+    String TRANSITION_ID_MFA_FAILURE = "mfaFailure";
 
     /*
      ****************************************
@@ -421,12 +421,12 @@ public interface CasWebflowConstants {
     /**
      * State to check if the MFA provider is available.
      */
-    String STATE_ID_CHECK_AVAILABLE = "checkAvailable";
+    String STATE_ID_MFA_CHECK_AVAILABLE = "mfaCheckAvailable";
 
     /**
      * State to check if the MFA provider should be bypassed.
      */
-    String STATE_ID_CHECK_BYPASS = "checkBypass";
+    String STATE_ID_MFA_CHECK_BYPASS = "mfaCheckBypass";
 
     /**
      * State that can be used by MFA providers that offer preAuth endpoints.
@@ -593,7 +593,7 @@ public interface CasWebflowConstants {
     /**
      * The flow var id 'providerId'.
      */
-    String VAR_ID_PROVIDER_ID = "providerId";
+    String VAR_ID_MFA_PROVIDER_ID = "mfaProviderId";
 
 
     /**

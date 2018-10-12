@@ -9,7 +9,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -26,7 +25,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class DetermineDuoUserAccountAction extends AbstractMultifactorAuthenticationAction<DuoMultifactorAuthenticationProvider> {
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
 
@@ -34,12 +33,10 @@ public class DetermineDuoUserAccountAction extends AbstractMultifactorAuthentica
         val account = duoAuthenticationService.getDuoUserAccount(principal.getId());
 
         if (account.getStatus() == DuoUserAccountAuthStatus.ENROLL) {
-            if (StringUtils.isBlank(provider.getRegistrationUrl())) {
-                LOGGER.error("Duo webflow resolved to event ENROLL, but no registration url was provided.");
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ERROR);
+            if (StringUtils.isNotBlank(provider.getRegistrationUrl())) {
+                requestContext.getFlowScope().put("duoRegistrationUrl", provider.getRegistrationUrl());
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
             }
-            requestContext.getFlowScope().put("duoRegistrationUrl", provider.getRegistrationUrl());
-            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
         }
         if (account.getStatus() == DuoUserAccountAuthStatus.ALLOW) {
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
