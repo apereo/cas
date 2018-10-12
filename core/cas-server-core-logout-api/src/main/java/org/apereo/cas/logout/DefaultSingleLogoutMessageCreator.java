@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -36,17 +37,18 @@ public class DefaultSingleLogoutMessageCreator implements SingleLogoutMessageCre
             + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>";
 
     @Override
-    public String create(final SingleLogoutRequest request) {
+    public SingleLogoutMessage create(final SingleLogoutRequest request) {
         val logoutRequest = String.format(LOGOUT_REQUEST_TEMPLATE,
             GENERATOR.getNewTicketId("LR"),
             new ISOStandardDateFormat().getCurrentDateAndTime(),
             request.getTicketGrantingTicket().getAuthentication().getPrincipal().getId(),
             request.getTicketId());
 
+        val builder = SingleLogoutMessage.builder();
         if (request.getLogoutType() == RegisteredServiceLogoutType.FRONT_CHANNEL) {
             LOGGER.trace("Attempting to deflate the logout message [{}]", logoutRequest);
-            return CompressionUtils.deflate(logoutRequest);
+            return builder.payload(CompressionUtils.deflate(logoutRequest)).build();
         }
-        return logoutRequest;
+        return builder.payload(logoutRequest).build();
     }
 }

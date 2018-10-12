@@ -1,9 +1,11 @@
-package org.apereo.cas.support.saml.services.logout;
+package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.logout.slo.BaseSingleLogoutServiceMessageHandler;
+import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
+import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -34,5 +36,10 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
     @Override
     protected boolean supportsInternal(final WebApplicationService singleLogoutService, final RegisteredService registeredService) {
         return registeredService instanceof SamlRegisteredService;
+    }
+
+    @Override
+    protected boolean sendSingleLogoutMessage(final SingleLogoutRequest request, final SingleLogoutMessage logoutRequest) {
+        return super.sendSingleLogoutMessage(request, logoutRequest);
     }
 }

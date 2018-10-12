@@ -14,6 +14,8 @@ import lombok.ToString;
 
 import javax.persistence.Transient;
 import java.net.URL;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Define a logout request for a service accessed by a user.
@@ -64,4 +66,9 @@ public class DefaultSingleLogoutRequest implements SingleLogoutRequest {
     @Builder.Default
     private final RegisteredServiceLogoutType logoutType = RegisteredServiceLogoutType.BACK_CHANNEL;
 
+    /**
+     * Additional settings relevant for the logout url.
+     */
+    @Builder.Default
+    private Map<String, String> properties = new LinkedHashMap<>();
 }

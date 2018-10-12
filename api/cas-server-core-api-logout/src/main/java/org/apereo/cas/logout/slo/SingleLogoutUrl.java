@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This is {@link SingleLogoutUrl}.
@@ -28,4 +30,9 @@ public class SingleLogoutUrl implements Serializable {
      * The http-logoutType or binding that should be used to send the message to the url.
      */
     private final RegisteredServiceLogoutType logoutType;
+
+    /**
+     * Additional settings relevant for the logout url.
+     */
+    private Map<String, String> properties = new LinkedHashMap<>();
 }

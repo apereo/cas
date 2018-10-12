@@ -1,10 +1,5 @@
 description = "Apereo CAS SPNEGO Webflow Support"
 
-repositories {
-    maven { url "https://developer.jasig.org/repo/content/groups/m2-legacy/" }
-    jcenter()
-}
-
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     

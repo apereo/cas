@@ -185,13 +185,6 @@ def generatePom() {
                     }
                 }
                 repository {
-                    id "jasig-legacy"
-                    url "https://developer.jasig.org/repo/content/groups/m2-legacy"
-                    releases {
-                        enabled true
-                    }
-                }
-                repository {
                     id "couchbase"
                     url "https://files.couchbase.com/maven2/"
                     releases {
