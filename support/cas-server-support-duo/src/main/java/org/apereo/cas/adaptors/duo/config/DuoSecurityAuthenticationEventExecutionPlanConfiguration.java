@@ -107,15 +107,15 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @RefreshScope
     public MultifactorAuthenticationProviderBean<DuoMultifactorAuthenticationProvider, DuoSecurityMultifactorProperties> duoProviderBean() {
         return new MultifactorAuthenticationProviderBean(duoProviderFactory(),
-                applicationContext.getDefaultListableBeanFactory(),
-                casProperties.getAuthn().getMfa().getDuo());
+            applicationContext.getDefaultListableBeanFactory(),
+            casProperties.getAuthn().getMfa().getDuo());
     }
 
     private AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator(final AuthenticationHandler authenticationHandler) {
         return new AuthenticationContextAttributeMetaDataPopulator(
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                authenticationHandler,
-                duoProviderBean().getProvider(authenticationHandler.getName()).getId()
+            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+            authenticationHandler,
+            duoProviderBean().getProvider(authenticationHandler.getName(), DuoMultifactorAuthenticationProvider.class).getId()
         );
     }
 
@@ -127,11 +127,11 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
             throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
         }
         return duos.stream()
-                .map(d -> new DuoAuthenticationHandler(d.getId(),
-                        servicesManager.getIfAvailable(),
-                        duoPrincipalFactory(),
-                        duoProviderBean().getProvider(d.getId()))
-                ).collect(Collectors.toList());
+            .map(d -> new DuoAuthenticationHandler(d.getId(),
+                servicesManager.getIfAvailable(),
+                duoPrincipalFactory(),
+                duoProviderBean().getProvider(d.getId(), DuoMultifactorAuthenticationProvider.class))
+            ).collect(Collectors.toList());
     }
 
     @ConditionalOnMissingBean(name = "duoMultifactorWebflowConfigurer")
@@ -150,10 +150,11 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Bean
     public AuthenticationEventExecutionPlanConfigurer duoSecurityAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            duoAuthenticationHandler().stream().forEach(dh -> {
-                plan.registerAuthenticationHandler(dh);
-                plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator(dh));
-            });
+            duoAuthenticationHandler()
+                .forEach(dh -> {
+                    plan.registerAuthenticationHandler(dh);
+                    plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator(dh));
+                });
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(DuoCredential.class, DuoDirectCredential.class));
         };
     }

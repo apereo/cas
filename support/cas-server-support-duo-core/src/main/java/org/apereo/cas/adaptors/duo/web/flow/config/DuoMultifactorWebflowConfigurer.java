@@ -268,12 +268,12 @@ public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedD
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_BYPASS);
-        transModel.setTo(CasWebflowConstants.STATE_ID_CHECK_BYPASS);
+        transModel.setTo(CasWebflowConstants.STATE_ID_MFA_CHECK_BYPASS);
         trans.add(transModel);
 
         transModel = new TransitionModel();
         transModel.setOn(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
-        transModel.setTo(CasWebflowConstants.TRANSITION_ID_FAILURE);
+        transModel.setTo(CasWebflowConstants.TRANSITION_ID_MFA_FAILURE);
         trans.add(transModel);
 
         transModel = new TransitionModel();

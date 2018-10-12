@@ -12,6 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@FunctionalInterface
 public interface MultifactorAuthenticationProviderBypass extends Serializable, Ordered {
 
     /**

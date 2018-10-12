@@ -23,7 +23,6 @@ public interface MultifactorAuthenticationCredential {
      * @param providerId - the id
      */
     default void setProviderId(final String providerId) {
-        // Sets the id of the provider
     }
 
 }

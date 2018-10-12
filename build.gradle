@@ -201,6 +201,7 @@ subprojects {
         maven { url "https://repo.spring.io/milestone/" }
         maven { url "https://repo.spring.io/libs-milestone" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
+        maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
         maven { url "https://jitpack.io" }
         jcenter()
     }

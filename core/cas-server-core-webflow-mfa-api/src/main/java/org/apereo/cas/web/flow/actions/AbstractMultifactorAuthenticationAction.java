@@ -30,7 +30,7 @@ public abstract class AbstractMultifactorAuthenticationAction<T extends Multifac
 
     @Override
     protected Event doPreExecute(final RequestContext requestContext) throws Exception {
-        val flowId = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_PROVIDER_ID, String.class);
+        val flowId = requestContext.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class);
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         provider = (T) MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(flowId, applicationContext)
                 .orElseThrow(AuthenticationException::new);

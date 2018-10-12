@@ -26,7 +26,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
+
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
- * This is {@link BaseCasWebflowMfaTests}.
+ * This is {@link BaseCasWebflowMultifactorAuthenticationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -82,7 +82,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 @EnableAspectJAutoProxy
 @DirtiesContext
 @EnableScheduling
-public abstract class BaseCasWebflowMfaTests {
+public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 

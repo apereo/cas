@@ -71,7 +71,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
             LOGGER.debug("Requested authentication provider cannot be recognized.");
             return Pair.of(Boolean.FALSE, Optional.empty());
         }
-        LOGGER.debug("RequestedContext is [{}] and Available Contexts are [{}]", requestedContext, contexts);
+        LOGGER.debug("Requested context is [{}] and available contexts are [{}]", requestedContext, contexts);
         if (contexts.stream().filter(ctx -> ctx.toString().equals(requestedContext)).count() > 0) {
             LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContext);
             return Pair.of(Boolean.TRUE, requestedProvider);
