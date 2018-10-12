@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public class RequestParameterMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMfaTests {
+public class RequestParameterMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
     @Qualifier("requestParameterAuthenticationPolicyWebflowEventResolver")

@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @TestPropertySource(properties = "cas.authn.mfa.groovyScript=classpath:GroovyMfaResolver.groovy")
-public class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMfaTests {
+public class GroovyScriptMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 

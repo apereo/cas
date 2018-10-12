@@ -370,6 +370,14 @@
             <property name="message"
                       value="Do not create a standalone instance of SecureRandom. Use RandomUtils instead."/>
         </module>
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="streamed-foreach-loop"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using stream().forEach() is unnecessary where forEach() can be used directly."/>
+            <property name="severity" value="error"/>
+            <property name="format" value="\.stream\(\)\.forEach\("/>
+            <property name="message" value="Simplify the Stream API. Using stream().forEach() is unnecessary where forEach() can be used directly."/>
+        </module>
         
         <module name="RegexpSinglelineJava">
             <property name="id" value="collectionsEmpty"/>
