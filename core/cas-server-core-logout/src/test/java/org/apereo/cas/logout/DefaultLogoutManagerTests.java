@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -40,9 +41,8 @@ public class DefaultLogoutManagerTests {
     private static final String ID = "id";
     private static final String URL = "http://www.github.com";
 
-    private DefaultLogoutManager logoutManager;
+    private LogoutManager logoutManager;
 
-    @Mock
     private TicketGrantingTicket tgt;
 
     private AbstractWebApplicationService simpleWebApplicationServiceImpl;
@@ -72,6 +72,7 @@ public class DefaultLogoutManagerTests {
         return s;
     }
 
+
     public static AbstractWebApplicationService getService(final String url) {
         val request = new MockHttpServletRequest();
         request.addParameter("service", url);
@@ -80,6 +81,8 @@ public class DefaultLogoutManagerTests {
 
     @Before
     public void initialize() {
+        tgt = new MockTicketGrantingTicket("casuser");
+
         when(client.isValidEndPoint(any(String.class))).thenReturn(true);
         when(client.isValidEndPoint(any(URL.class))).thenReturn(true);
         when(client.sendMessageToEndPoint(any(HttpMessage.class))).thenReturn(true);
@@ -93,8 +96,7 @@ public class DefaultLogoutManagerTests {
 
         val services = new HashMap<String, Service>();
         this.simpleWebApplicationServiceImpl = getService(URL);
-        services.put(ID, this.simpleWebApplicationServiceImpl);
-        when(this.tgt.getServices()).thenReturn(services);
+        tgt.getServices().put(ID, this.simpleWebApplicationServiceImpl);
 
         val plan = new DefaultLogoutExecutionPlan();
         plan.registerSingleLogoutServiceMessageHandler(singleLogoutServiceMessageHandler);

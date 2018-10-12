@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link OidcTestSuite}.
+ * This is {@link OidcTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -35,5 +35,5 @@ import org.junit.runners.Suite;
     OidcServiceJsonWebKeystoreCacheLoaderTests.class,
     OidcAuthorizationRequestSupportTests.class
 })
-public class OidcTestSuite {
+public class OidcTestsSuite {
 }
