@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
-import org.apereo.cas.logout.DefaultLogoutRequest;
+import org.apereo.cas.logout.DefaultSingleLogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultServicesManager;
@@ -121,7 +121,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     public void verifyLogoutRequestBack() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        val logoutRequest = DefaultLogoutRequest.builder()
+        val logoutRequest = DefaultSingleLogoutRequest.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .build();
@@ -137,7 +137,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     public void verifyLogoutRequestFront() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        val logoutRequest = DefaultLogoutRequest.builder()
+        val logoutRequest = DefaultSingleLogoutRequest.builder()
             .registeredService(RegisteredServiceTestUtils.getRegisteredService())
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .build();

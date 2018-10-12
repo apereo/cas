@@ -28,8 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Resolves principals by querying a data source using the Jasig
- * <a href="http://developer.jasig.org/projects/person-directory/1.5.0-SNAPSHOT/apidocs/">Person Directory API</a>.
+ * Resolves principals by querying a data source using the Person Directory API.
  * The {@link Principal#getAttributes()} are populated by the results of the
  * query and the principal ID may optionally be set by proving an attribute whose first non-null value is used;
  * otherwise the credential ID is used for the principal ID.

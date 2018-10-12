@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -125,7 +124,7 @@ public class ConfigurationMetadataGenerator {
         jsonMap.put("hints", hints);
 
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        final PrettyPrinter pp = new MinimalPrettyPrinter();
+        final var pp = new MinimalPrettyPrinter();
         final var writer = mapper.writer(pp);
         writer.writeValue(jsonFile, jsonMap);
     }
@@ -215,8 +214,7 @@ public class ConfigurationMetadataGenerator {
 
                 val matcher = PATTERN_GENERICS.matcher(grp.getType());
                 val className = matcher.find() ? matcher.group(1) : grp.getType();
-                final Class clazz = ClassUtils.getClass(className);
-
+                val clazz = ClassUtils.getClass(className);
 
                 val hint = new ConfigurationMetadataHint();
                 hint.setName(entry.getName());

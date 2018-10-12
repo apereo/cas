@@ -100,7 +100,7 @@ public abstract class BaseJWTTokenTicketBuilderTests {
 
         @Bean
         public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-            final AbstractUrlBasedTicketValidator validator = new AbstractUrlBasedTicketValidator("https://cas.example.org") {
+            val validator = new AbstractUrlBasedTicketValidator("https://cas.example.org") {
                 @Override
                 protected String getUrlSuffix() {
                     return "/cas";

@@ -43,8 +43,7 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
     private String getCurrentPrincipal(final Object returnValue, final Exception exception) {
         val authn = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         val principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(authn, returnValue, exception);
-
-        final String id = FunctionUtils.doIfNull(principal,
+        val id = FunctionUtils.doIfNull(principal,
             AuthenticationCredentialsThreadLocalBinder::getCurrentCredentialIdsAsString,
             () -> principal)
             .get();
