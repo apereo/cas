@@ -2,8 +2,8 @@
 package org.apereo.cas;
 
 import org.apereo.cas.adaptors.yubikey.JsonYubiKeyAccountRegistryTests;
-import org.apereo.cas.adaptors.yubikey.YubiKeyConfigurationTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandlerTests;
+import org.apereo.cas.adaptors.yubikey.YubiKeyConfigurationTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

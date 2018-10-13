@@ -1,9 +1,9 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.audit.spi.ServiceAccessEnforcementAuditResourceResolverTests;
 import org.apereo.cas.audit.spi.ShortenedReturnValueAsStringResourceResolverTests;
 import org.apereo.cas.audit.spi.ThreadLocalPrincipalResolverTests;
-import org.apereo.cas.audit.spi.ServiceAccessEnforcementAuditResourceResolverTests;
 import org.apereo.cas.audit.spi.TicketValidationResourceResolverTests;
 
 import org.junit.runner.RunWith;

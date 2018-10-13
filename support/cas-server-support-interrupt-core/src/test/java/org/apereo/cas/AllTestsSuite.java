@@ -1,9 +1,9 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.interrupt.RegexAttributeInterruptInquirerTests;
 import org.apereo.cas.interrupt.GroovyScriptInterruptInquirerTests;
 import org.apereo.cas.interrupt.JsonResourceInterruptInquirerTests;
+import org.apereo.cas.interrupt.RegexAttributeInterruptInquirerTests;
 import org.apereo.cas.interrupt.RestEndpointInterruptInquirerTests;
 
 import org.junit.runner.RunWith;
