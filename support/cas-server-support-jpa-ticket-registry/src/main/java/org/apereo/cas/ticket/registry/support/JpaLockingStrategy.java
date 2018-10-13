@@ -80,7 +80,6 @@ public class JpaLockingStrategy implements LockingStrategy {
         if (lock == null) {
             return;
         }
-        // Only the current owner can release the lock
         val owner = lock.getUniqueId();
         if (!this.uniqueId.equals(owner)) {
             throw new IllegalStateException("Cannot release lock owned by " + owner);

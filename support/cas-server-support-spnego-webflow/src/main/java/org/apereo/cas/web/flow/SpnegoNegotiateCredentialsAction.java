@@ -115,9 +115,11 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
             response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
 
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            // The responseComplete flag tells the pausing view-state not to render the response
-            // because another object has taken care of it. If mixed mode authentication is allowed
-            // then responseComplete should not be called so that webflow will display the login page.
+            /*
+             The responseComplete flag tells the pausing view-state not to render the response
+             because another object has taken care of it. If mixed mode authentication is allowed
+             then responseComplete should not be called so that webflow will display the login page.
+              */
             if (!this.mixedModeAuthentication) {
                 LOGGER.debug("Mixed-mode authentication is disabled. Executing completion of response");
                 context.getExternalContext().recordResponseComplete();

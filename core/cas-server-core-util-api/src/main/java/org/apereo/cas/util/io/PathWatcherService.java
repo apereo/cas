@@ -87,7 +87,6 @@ public class PathWatcherService implements Runnable, Closeable {
             key.pollEvents().forEach(event -> {
                 val eventName = event.kind().name();
 
-                // The filename is the context of the event.
                 val ev = (WatchEvent<Path>) event;
                 val filename = ev.context();
 

@@ -136,11 +136,9 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
             return;
         }
 
-        // Fetch CRL data synchronously and throw exception to abort if any fail
         val results = this.fetcher.fetch(getResources());
         ResourceCRLRevocationChecker.this.addCrls(results);
 
-        // Set up the scheduler to fetch periodically to implement refresh
         final Runnable scheduledFetcher = () -> {
             try {
                 val fetchedResults = getFetcher().fetch(getResources());

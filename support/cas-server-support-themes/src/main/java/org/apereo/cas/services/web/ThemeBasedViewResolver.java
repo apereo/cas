@@ -56,7 +56,6 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
         } catch (final Exception e) {
             LOGGER.debug("error resolving view '{}' for theme '{}'", viewName, theme.orElse(null), e);
         }
-        // default to not resolving any view
         return null;
     }
 

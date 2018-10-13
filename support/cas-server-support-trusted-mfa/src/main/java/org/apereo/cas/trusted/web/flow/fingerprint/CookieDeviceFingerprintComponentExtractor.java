@@ -35,7 +35,6 @@ public class CookieDeviceFingerprintComponentExtractor implements DeviceFingerpr
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val cookieValue = Optional.ofNullable(cookieGenerator.retrieveCookieValue(request)).orElseGet(createDeviceFingerPrintCookieValue());
 
-        // set/update the cookie in the response if we are "creating" a fingerprint
         if (isNew) {
             createDeviceFingerPrintCookie(context, request, cookieValue);
         }

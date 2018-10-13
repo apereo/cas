@@ -59,7 +59,6 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
 
         val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(flowId);
 
-        // Set the verify action
         val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
         val transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         val targetStateId = transition.getTargetStateId();
@@ -68,7 +67,6 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
             CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE,
             createEvaluateAction(MFA_VERIFY_TRUST_ACTION_BEAN_ID));
 
-        // handle device registration
         if (enableDeviceRegistration) {
             createTransitionForState(verifyAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.STATE_ID_FINISH_MFA_TRUSTED_AUTH);
         } else {

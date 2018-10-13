@@ -137,33 +137,25 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             val ref = sigFactory.newReference(StringUtils.EMPTY, sigFactory
                 .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform, null, null);
 
-            // Create the SignatureMethod based on the type of key
             val signatureMethod = getSignatureMethodFromPublicKey(pubKey, sigFactory);
             val canonicalizationMethod = sigFactory
                 .newCanonicalizationMethod(
                     CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
                     (C14NMethodParameterSpec) null);
 
-            // Create the SignedInfo
             val signedInfo = sigFactory.newSignedInfo(canonicalizationMethod, signatureMethod, CollectionUtils.wrap(ref));
 
-            // Create a KeyValue containing the DSA or RSA PublicKey
             val keyInfoFactory = sigFactory.getKeyInfoFactory();
             val keyValuePair = keyInfoFactory.newKeyValue(pubKey);
 
-            // Create a KeyInfo and add the KeyValue to it
             val keyInfo = keyInfoFactory.newKeyInfo(CollectionUtils.wrap(keyValuePair));
-            // Convert the JDOM document to w3c (Java XML signature API requires w3c representation)
             val w3cElement = toDom(element);
 
-            // Create a DOMSignContext and specify the DSA/RSA PrivateKey and
-            // location of the resulting XMLSignature's parent element
             val dsc = new DOMSignContext(privKey, w3cElement);
 
             val xmlSigInsertionPoint = getXmlSignatureInsertLocation(w3cElement);
             dsc.setNextSibling(xmlSigInsertionPoint);
 
-            // Marshal, generate (and sign) the enveloped signature
             val signature = sigFactory.newXMLSignature(signedInfo, keyInfo);
             signature.sign(dsc);
 
