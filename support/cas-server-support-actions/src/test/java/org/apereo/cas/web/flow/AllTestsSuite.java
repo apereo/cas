@@ -25,7 +25,9 @@ import org.junit.runners.Suite;
     ServiceAuthorizationCheckTests.class,
     CreateTicketGrantingTicketActionTests.class,
     TicketGrantingTicketCheckActionTests.class,
-    ServiceWarningActionTests.class
+    ServiceWarningActionTests.class,
+    TerminateSessionActionTests.class,
+    TerminateSessionConfirmingActionTests.class
 })
 public class AllTestsSuite {
 }

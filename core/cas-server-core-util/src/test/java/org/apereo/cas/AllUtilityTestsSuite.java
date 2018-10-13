@@ -4,6 +4,7 @@ import org.apereo.cas.util.CollectionUtilsTests;
 import org.apereo.cas.util.CompressionUtilsTests;
 import org.apereo.cas.util.DateTimeUtilsTests;
 import org.apereo.cas.util.EncodingUtilsTests;
+import org.apereo.cas.util.RandomUtilsTests;
 import org.apereo.cas.util.RegexUtilsTests;
 import org.apereo.cas.util.ResourceUtilsTests;
 import org.apereo.cas.util.ScriptingUtilsTests;
@@ -60,6 +61,7 @@ import org.junit.runners.Suite;
     BinaryCipherExecutorTests.class,
     ResourceUtilsTests.class,
     ScriptingUtilsTests.class,
+    RandomUtilsTests.class,
     CopyServletOutputStreamTests.class
 })
 public class AllUtilityTestsSuite {

@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import org.apereo.cas.web.support.MongoDbThrottledSubmissionHandlerInterceptorAdapterTests;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -10,5 +12,8 @@ import org.junit.runners.Suite;
  * @since 4.2.0
  */
 @RunWith(Suite.class)
+@Suite.SuiteClasses(
+    MongoDbThrottledSubmissionHandlerInterceptorAdapterTests.class
+)
 public class AllTestsSuite {
 }

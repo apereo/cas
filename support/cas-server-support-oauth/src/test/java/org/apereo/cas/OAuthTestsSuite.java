@@ -13,6 +13,7 @@ import org.apereo.cas.support.oauth.web.OAuth20AccessTokenControllerNoGrantTypeT
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenControllerTests;
 import org.apereo.cas.support.oauth.web.OAuth20AuthorizeControllerTests;
 import org.apereo.cas.support.oauth.web.OAuth20ProfileControllerTests;
+import org.apereo.cas.support.oauth.web.OAuth20RefreshTokenTests;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenGrantRequestAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolverTests;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRendererFlatTests;
@@ -53,7 +54,8 @@ import org.junit.runners.Suite;
     OAuth20DefaultUserProfileViewRendererFlatTests.class,
     OAuth20DefaultUserProfileViewRendererNestedTests.class,
     AccessTokenGrantRequestAuditResourceResolverTests.class,
-    OAuth20UserProfileDataAuditResourceResolverTests.class
+    OAuth20UserProfileDataAuditResourceResolverTests.class,
+    OAuth20RefreshTokenTests.class
 })
 public class OAuthTestsSuite {
 }

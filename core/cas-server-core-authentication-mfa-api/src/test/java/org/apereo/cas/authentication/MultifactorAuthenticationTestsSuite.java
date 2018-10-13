@@ -15,7 +15,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     DefaultMultifactorAuthenticationContextValidatorTests.class,
-    DefaultMultifactorAuthenticationProviderBypassTests.class
+    DefaultMultifactorAuthenticationProviderBypassTests.class,
+    GroovyMultifactorAuthenticationProviderBypassTests.class
 })
 public class MultifactorAuthenticationTestsSuite {
 }

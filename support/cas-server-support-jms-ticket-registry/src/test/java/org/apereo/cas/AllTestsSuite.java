@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import org.apereo.cas.ticket.registry.JmsTicketRegistryTests;
 import org.apereo.cas.ticket.registry.queue.AddTicketMessageQueueCommandTests;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketMessageQueueCommandTests;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketsMessageQueueCommandTests;
@@ -15,10 +16,12 @@ import org.junit.runners.Suite;
  * @since 5.2.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({AddTicketMessageQueueCommandTests.class,
+@Suite.SuiteClasses({
+    AddTicketMessageQueueCommandTests.class,
     DeleteTicketsMessageQueueCommandTests.class,
     DeleteTicketMessageQueueCommandTests.class,
-    UpdateTicketMessageQueueCommandTests.class})
+    UpdateTicketMessageQueueCommandTests.class,
+    JmsTicketRegistryTests.class})
 public class AllTestsSuite {
 }
 

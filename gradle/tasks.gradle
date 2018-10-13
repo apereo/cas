@@ -57,14 +57,15 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 task cleanLogs(description: "Clean build log files") {
-    delete fileTree(dir: project.projectDir, includes: ["**/*.log", "**/*.gz", "**/*.log.gz"])
+    delete fileTree(dir: project.projectDir, includes: ["**/*.log", "**/*.gz", "**/*.log.gz", "**/*.orig"])
 }
 
-task spotbugs(type: FindBugs, description: "Set up classpath for Findbugs") {
+task spotbugs(type: FindBugs, description: "Set up classpath for Spotbugs") {
     pluginClasspath = project.configurations.spotbugsPlugins
 }
 
 task showConfiguration {
+    description "Shows the configuration used by the build"
     doLast() {
         def cfg = project.hasProperty("configuration") ? project.property("configuration") : "compile"
         configurations.getByName(cfg).each { println it }
@@ -106,17 +107,39 @@ task verifySpringConfigurationFactories(description: "Examine spring.factories f
 
 task ensureTestsSuiteExists(description: "Ensure all projects contain a tests suite") {
     doLast {
-        def file = new File(project.getProjectDir(), "src/test/java")
-        def testSuites = new FileNameByRegexFinder().getFileNames(file.canonicalPath, /.*TestsSuite\.java/)
-        def testClasses = new FileNameByRegexFinder().getFileNames(file.canonicalPath, /.*Tests\.java/, /.*(Base|Abstract).+Tests\.java/)
+        def testSources = new File(project.getProjectDir(), "src/test/java")
+        def testSuites = new FileNameByRegexFinder().getFileNames(testSources.canonicalPath, /.*TestsSuite\.java/)
+        def testClasses = new FileNameByRegexFinder().getFileNames(testSources.canonicalPath, /.*Tests\.java/, /.*(Base|Abstract).+Tests\.java/)
+        
         if (testClasses.size() > 1 && testSuites.isEmpty()) {
             throw new GradleException("Project ${project.displayName} is missing a TestsSuite class, while it contains ${testClasses.size()} tests")
+        }
+        
+        if (testSuites.size() > 1) {
+            throw new GradleException("Project ${project.displayName} has more than one TestsSuite")
+        }
+        
+        if (!testSuites.isEmpty()) {
+            def testSuiteFile = new File(testSuites.get(0))
+            def testSuiteFileBody = testSuiteFile.text
+            def missingClasses = testClasses.findAll({
+                def testClass = new File(it).name.replace(".java", ".class")
+                !testSuiteFileBody.contains(testClass)
+            })
+            if (!missingClasses.isEmpty()) {
+                println "${testSuiteFile.name} of ${project.displayName} does not include:"
+                println missingClasses
+                        .sort()
+                        .collect({ new File(it).name.replace(".java", ".class") })
+                        .join(", ")
+
+                throw new GradleException("Found ${missingClasses.size()} missing test class(es) in test suites")
+            }
         }
     }
 }
 
-
-task outputSpotbugsReports(description: "Display Findbugs output") {
+task outputSpotbugsReports(description: "Display Spotbugs output") {
     doLast {
         printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)
     }

@@ -13,7 +13,8 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     SurrogateInitialAuthenticationActionTests.class,
     SurrogateSelectionActionTests.class,
-    SurrogateAuthorizationActionTests.class
+    SurrogateAuthorizationActionTests.class,
+    LoadSurrogatesListActionTests.class
 })
 public class SurrogateTestsSuite {
 }
