@@ -14,7 +14,8 @@ import org.junit.runners.Suite;
     JpaServiceRegistryTests.class,
     JpaServiceRegistryMySQLTests.class,
     JpaServiceRegistryMicrosoftSqlServerTests.class,
-    JpaServiceRegistryPostgresTests.class
+    JpaServiceRegistryPostgresTests.class,
+    JpaServiceRegistryMariaDbTests.class
 })
 public class AllJpaServiceRegistryTestsSuite {
 }
