@@ -72,7 +72,6 @@ public class LogoutAction extends AbstractLogoutAction {
             LOGGER.debug("No target service is located for redirection after logout, or CAS is not allowed to follow redirects after logout");
         }
 
-        // there are some front services to logout, perform front SLO
         if (needFrontSlo) {
             LOGGER.debug("Proceeding forward with front-channel single logout");
             return new Event(this, CasWebflowConstants.TRANSITION_ID_FRONT);
