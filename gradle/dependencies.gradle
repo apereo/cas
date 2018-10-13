@@ -2002,37 +2002,11 @@ ext.libraries = [
 
         ],
         springbootadminserver   : [
-                dependencies.create("de.codecentric:spring-boot-admin-server:$springBootAdminVersion") {
+                dependencies.create("de.codecentric:spring-boot-admin-starter-server:$springBootAdminVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.slf4j", module: "jul-to-slf4j")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "com.netflix.archaius", module: "archaius-core")
-                    exclude(group: "org.apache.cassandra", module: "cassandra-all")
-                    force = true
-                },
-                dependencies.create("de.codecentric:spring-boot-admin-server-ui:$springBootAdminVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "org.apache.cassandra", module: "cassandra-all")
-                    force = true
-                },
-                dependencies.create("com.netflix.zuul:zuul-core:$zuulVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "commons-lang", module: "commons-lang")
-                    exclude(group: "commons-io", module: "commons-io")
-                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
-                    exclude(group: "com.google.guava", module: "guava")
-                    exclude(group: "org.mockito", module: "mockito-all")
-                    exclude(group: "org.codehaus.groovy", module: "groovy-all")
                     force = true
                 }
         ],
