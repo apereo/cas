@@ -105,7 +105,7 @@ task verifySpringConfigurationFactories(description: "Examine spring.factories f
     }
 }
 
-task ensureTestsSuiteExists(description: "Ensure all projects contain a tests suite") {
+task validateTestsSuites(description: "Ensure all projects contain a tests suite that contains test classes") {
     doLast {
         def testSources = new File(project.getProjectDir(), "src/test/java")
         def testSuites = new FileNameByRegexFinder().getFileNames(testSources.canonicalPath, /.*TestsSuite\.java/)
