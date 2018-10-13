@@ -11,7 +11,7 @@
 
         <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
                      filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -26,7 +26,7 @@
         </RollingFile>
         <RollingFile name="auditlogfile" fileName="${baseDir}/cas_audit.log" append="true"
                      filePattern="${baseDir}/cas_audit-%d{yyyy-MM-dd-HH}-%i.log">
-            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
