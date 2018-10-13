@@ -1,9 +1,9 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryWithoutEncryptionTests;
 import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryFacilitatorTests;
 import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryWithEncryptionTests;
+import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryWithoutEncryptionTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

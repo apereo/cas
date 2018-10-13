@@ -1,8 +1,8 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.config.RadiusConfigurationTests;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandlerTests;
+import org.apereo.cas.config.RadiusConfigurationTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

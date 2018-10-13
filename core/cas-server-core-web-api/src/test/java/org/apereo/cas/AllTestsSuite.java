@@ -1,9 +1,9 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilterTests;
 import org.apereo.cas.web.view.ChainingTemplateViewResolverTests;
 import org.apereo.cas.web.view.RestfulUrlTemplateResolverTests;
-import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilterTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

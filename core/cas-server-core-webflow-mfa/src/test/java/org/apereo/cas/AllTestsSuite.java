@@ -1,16 +1,6 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.RequestHeaderMultifactorAuthenticationPolicyEventResolverTests;
-import org.apereo.cas.RequestParameterMultifactorAuthenticationPolicyEventResolverTests;
-import org.apereo.cas.GroovyScriptMultifactorAuthenticationPolicyEventResolverTests;
-import org.apereo.cas.AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests;
-import org.apereo.cas.AdaptiveMultifactorAuthenticationPolicyEventResolverTests;
-import org.apereo.cas.MultifactorAuthenticationTests;
-import org.apereo.cas.RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests;
-import org.apereo.cas.TimedMultifactorAuthenticationPolicyEventResolverTests;
-import org.apereo.cas.AllMultifactorAuthenticationWebflowTests;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

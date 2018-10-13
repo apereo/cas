@@ -1,11 +1,6 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.JdbcMultiRowAttributeRepositoryTests;
-import org.apereo.cas.JdbcSingleRowAttributeRepositoryTests;
-import org.apereo.cas.RestfulPersonAttributeDaoTests;
-import org.apereo.cas.CachingAttributeRepositoryTests;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 

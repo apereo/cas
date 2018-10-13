@@ -1,12 +1,12 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepositoryTests;
-import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStoreTests;
+import org.apereo.cas.authentication.PasswordlessTokenAuthenticationHandlerTests;
 import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStoreTests;
+import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStoreTests;
+import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepositoryTests;
 import org.apereo.cas.web.flow.DisplayBeforePasswordlessAuthenticationActionTests;
 import org.apereo.cas.web.flow.PrepareForPasswordlessAuthenticationActionTests;
-import org.apereo.cas.authentication.PasswordlessTokenAuthenticationHandlerTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

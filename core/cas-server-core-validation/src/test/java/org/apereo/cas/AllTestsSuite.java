@@ -1,10 +1,10 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.validation.Cas20ProtocolValidationSpecificationTests;
-import org.apereo.cas.validation.ImmutableAssertionTests;
 import org.apereo.cas.validation.Cas10ProtocolValidationSpecificationTests;
+import org.apereo.cas.validation.Cas20ProtocolValidationSpecificationTests;
 import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecificationTests;
+import org.apereo.cas.validation.ImmutableAssertionTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

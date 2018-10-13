@@ -1,8 +1,8 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutorTests;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializerTests;
+import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutorTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

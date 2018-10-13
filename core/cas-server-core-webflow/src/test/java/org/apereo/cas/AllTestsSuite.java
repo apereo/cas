@@ -1,10 +1,10 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.web.flow.actions.InjectResponseHeadersActionTests;
-import org.apereo.cas.web.flow.actions.CasDefaultFlowUrlHandlerTests;
-import org.apereo.cas.web.flow.actions.RedirectToServiceActionTests;
 import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerActionTests;
+import org.apereo.cas.web.flow.actions.CasDefaultFlowUrlHandlerTests;
+import org.apereo.cas.web.flow.actions.InjectResponseHeadersActionTests;
+import org.apereo.cas.web.flow.actions.RedirectToServiceActionTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

@@ -1,8 +1,8 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.web.flow.PrepareForGraphicalAuthenticationActionTests;
 import org.apereo.cas.web.flow.DisplayUserGraphicsBeforeAuthenticationActionTests;
+import org.apereo.cas.web.flow.PrepareForGraphicalAuthenticationActionTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

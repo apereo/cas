@@ -1,8 +1,8 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.CouchbasePersonAttributeDaoTests;
 import org.apereo.cas.authentication.CouchbaseAuthenticationHandlerTests;
+import org.apereo.cas.authentication.CouchbasePersonAttributeDaoTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

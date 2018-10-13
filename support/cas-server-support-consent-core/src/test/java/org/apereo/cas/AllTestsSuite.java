@@ -1,9 +1,9 @@
 
 package org.apereo.cas;
 
+import org.apereo.cas.consent.DefaultConsentDecisionBuilderTests;
 import org.apereo.cas.consent.DefaultConsentEngineTests;
 import org.apereo.cas.consent.GroovyConsentRepositoryTests;
-import org.apereo.cas.consent.DefaultConsentDecisionBuilderTests;
 import org.apereo.cas.consent.InMemoryConsentRepositoryTests;
 import org.apereo.cas.consent.JsonConsentRepositoryTests;
 

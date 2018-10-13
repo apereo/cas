@@ -1,8 +1,8 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.configuration.CommaSeparatedStringToThrowablesConverterTests;
 import org.apereo.cas.configuration.CasConfigurationPropertiesTests;
+import org.apereo.cas.configuration.CommaSeparatedStringToThrowablesConverterTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

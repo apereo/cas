@@ -1,8 +1,8 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.web.flow.ConfirmConsentActionTests;
 import org.apereo.cas.web.flow.CheckConsentRequiredActionTests;
+import org.apereo.cas.web.flow.ConfirmConsentActionTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

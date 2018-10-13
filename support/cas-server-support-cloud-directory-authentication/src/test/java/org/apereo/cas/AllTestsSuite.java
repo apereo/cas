@@ -1,8 +1,8 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.clouddirectory.DefaultCloudDirectoryRepositoryTests;
 import org.apereo.cas.authentication.CloudDirectoryAuthenticationHandlerTests;
+import org.apereo.cas.clouddirectory.DefaultCloudDirectoryRepositoryTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

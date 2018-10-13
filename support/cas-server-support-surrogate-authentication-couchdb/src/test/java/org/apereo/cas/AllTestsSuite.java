@@ -1,8 +1,8 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.authentication.surrogate.SurrogateCouchDbProfileAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SurrogateCouchDbAuthenticationTests;
+import org.apereo.cas.authentication.surrogate.SurrogateCouchDbProfileAuthenticationServiceTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

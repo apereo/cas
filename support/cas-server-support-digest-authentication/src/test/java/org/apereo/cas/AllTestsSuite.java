@@ -1,9 +1,9 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.digest.util.DigestAuthenticationUtilsTests;
 import org.apereo.cas.digest.DefaultDigestHashedCredentialRetrieverTests;
 import org.apereo.cas.digest.DigestCredentialTests;
+import org.apereo.cas.digest.util.DigestAuthenticationUtilsTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

@@ -1,8 +1,8 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.gauth.token.GoogleAuthenticatorCouchDbTokenRepositoryTests;
 import org.apereo.cas.gauth.credential.CouchDbGoogleAuthenticatorTokenCredentialRepositoryTests;
+import org.apereo.cas.gauth.token.GoogleAuthenticatorCouchDbTokenRepositoryTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
