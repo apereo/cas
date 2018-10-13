@@ -169,7 +169,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         if (onlyTrackMostRecentSession) {
             val path = normalizePath(service);
             val existingServices = this.services.values();
-            // loop on existing services
             existingServices.stream().filter(existingService -> path.equals(normalizePath(existingService))).findFirst().ifPresent(existingServices::remove);
         }
         this.services.put(id, service);

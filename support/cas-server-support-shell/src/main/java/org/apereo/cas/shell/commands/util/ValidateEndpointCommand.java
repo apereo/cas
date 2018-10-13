@@ -25,6 +25,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
@@ -91,7 +92,7 @@ public class ValidateEndpointCommand {
             LOGGER.info("Setting connection timeout to [{}]", timeout);
             conn.setConnectTimeout(timeout);
 
-            try (val reader = new InputStreamReader(conn.getInputStream(), "UTF-8");
+            try (val reader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
                  val in = new BufferedReader(reader)) {
                 in.readLine();
 
@@ -149,10 +150,9 @@ public class ValidateEndpointCommand {
 
             val httpsConnection = (HttpsURLConnection) urlConnection;
 
-            // Setting our own Trust Manager so the connection completes and we can examine the server cert chain.
             httpsConnection.setSSLSocketFactory(getTheAllTrustingSSLContext().getSocketFactory());
 
-            try (val reader = new InputStreamReader(httpsConnection.getInputStream(), "UTF-8")) {
+            try (val reader = new InputStreamReader(httpsConnection.getInputStream(), StandardCharsets.UTF_8)) {
                 tlsConnectionReport(httpsConnection);
             }
         } catch (final Exception e) {
