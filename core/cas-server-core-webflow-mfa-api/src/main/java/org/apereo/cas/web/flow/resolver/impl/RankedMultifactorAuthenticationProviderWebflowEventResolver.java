@@ -62,12 +62,12 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         }
 
         if (StringUtils.isBlank(tgt)) {
-            LOGGER.trace("TGT is blank; proceed with flow normally.");
+            LOGGER.trace("Ticket-granting ticket is blank; proceed with flow normally.");
             return resumeFlow();
         }
         val authentication = this.ticketRegistrySupport.getAuthenticationFrom(tgt);
         if (authentication == null) {
-            LOGGER.trace("TGT has no authentication and is blank; proceed with flow normally.");
+            LOGGER.trace("Ticket-granting ticket has no authentication and is blank; proceed with flow normally.");
             return resumeFlow();
         }
 

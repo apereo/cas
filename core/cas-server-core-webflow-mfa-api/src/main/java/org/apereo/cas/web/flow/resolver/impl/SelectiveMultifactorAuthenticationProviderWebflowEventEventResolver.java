@@ -92,13 +92,11 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver
      */
     protected Pair<Set<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
         final Set<Event> resolveEvents, final Authentication authentication,
-        final RegisteredService registeredService,
-        final HttpServletRequest request) {
+        final RegisteredService registeredService, final HttpServletRequest request) {
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
-        val providers =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
 
-        if (providers == null || providers.isEmpty()) {
+        if (providers.isEmpty()) {
             LOGGER.debug("No providers are available to honor this request. Moving on...");
             return Pair.of(resolveEvents, new HashSet<>(0));
         }
@@ -106,14 +104,10 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver
         val providerValues = providers.values();
 
         // remove providers that don't support the event
-        providerValues.removeIf(p -> resolveEvents.stream()
-            .filter(e -> p.matches(e.getId()))
-            .count() == 0);
+        providerValues.removeIf(p -> resolveEvents.stream().noneMatch(e -> p.matches(e.getId())));
 
         // remove events that are not supported by providers.
-        resolveEvents.removeIf(e -> providerValues.stream()
-            .filter(p -> p.matches(e.getId()))
-            .count() == 0);
+        resolveEvents.removeIf(e -> providerValues.stream().noneMatch(p -> p.matches(e.getId())));
 
         LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);
         return Pair.of(resolveEvents, providerValues);

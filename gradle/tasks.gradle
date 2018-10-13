@@ -104,6 +104,18 @@ task verifySpringConfigurationFactories(description: "Examine spring.factories f
     }
 }
 
+task ensureTestsSuiteExists(description: "Ensure all projects contain a tests suite") {
+    doLast {
+        def file = new File(project.getProjectDir(), "src/test/java")
+        def testSuites = new FileNameByRegexFinder().getFileNames(file.canonicalPath, /.*TestsSuite\.java/)
+        def testClasses = new FileNameByRegexFinder().getFileNames(file.canonicalPath, /.*Tests\.java/, /.*(Base|Abstract).+Tests\.java/)
+        if (testClasses.size() > 1 && testSuites.isEmpty()) {
+            throw new GradleException("Project ${project.displayName} is missing a TestsSuite class, while it contains ${testClasses.size()} tests")
+        }
+    }
+}
+
+
 task outputSpotbugsReports(description: "Display Findbugs output") {
     doLast {
         printSpotbugsReportToConsole(spotbugsMain.reports.xml.destination)

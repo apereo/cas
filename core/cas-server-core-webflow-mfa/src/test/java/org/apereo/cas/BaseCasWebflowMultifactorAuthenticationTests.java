@@ -26,6 +26,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -47,37 +48,38 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
-        AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCookieConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        AopAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasCoreValidationConfiguration.class,
-        AdaptiveMultifactorAuthenticationPolicyEventResolverTests.GeoLocationServiceTestConfiguration.class
+    AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
+    CasAuthenticationEventExecutionPlanTestConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCookieConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    AopAutoConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasCoreValidationConfiguration.class,
+    AdaptiveMultifactorAuthenticationPolicyEventResolverTests.GeoLocationServiceTestConfiguration.class
 })
 @EnableAspectJAutoProxy
 @DirtiesContext

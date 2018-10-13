@@ -28,7 +28,7 @@ import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
 import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.InitialAuthenticationAttemptWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.DefaultCasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.InitialAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
 
@@ -99,7 +99,7 @@ public class CasCoreWebflowConfiguration {
     @Bean
     @RefreshScope
     public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
-        val r = new InitialAuthenticationAttemptWebflowEventResolver(
+        val r = new DefaultCasDelegatingWebflowEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
