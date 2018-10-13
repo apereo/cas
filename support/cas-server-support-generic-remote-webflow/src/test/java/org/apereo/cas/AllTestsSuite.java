@@ -1,8 +1,8 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.adaptors.generic.remote.RemoteAddressCredentialTests;
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandlerTests;
+import org.apereo.cas.adaptors.generic.remote.RemoteAddressCredentialTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
