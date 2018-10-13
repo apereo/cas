@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link InitialAuthenticationAttemptWebflowEventResolver},
+ * This is {@link DefaultCasDelegatingWebflowEventResolver},
  * which handles the initial authentication attempt and calls upon a number of
  * embedded resolvers to produce the next event in the authentication flow.
  *
@@ -44,19 +44,19 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Setter
-public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver implements CasDelegatingWebflowEventResolver {
+public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflowEventResolver implements CasDelegatingWebflowEventResolver {
 
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
     private CasWebflowEventResolver selectiveResolver;
 
-    public InitialAuthenticationAttemptWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                            final CentralAuthenticationService centralAuthenticationService,
-                                                            final ServicesManager servicesManager,
-                                                            final TicketRegistrySupport ticketRegistrySupport,
-                                                            final CookieGenerator warnCookieGenerator,
-                                                            final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+    public DefaultCasDelegatingWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                    final CentralAuthenticationService centralAuthenticationService,
+                                                    final ServicesManager servicesManager,
+                                                    final TicketRegistrySupport ticketRegistrySupport,
+                                                    final CookieGenerator warnCookieGenerator,
+                                                    final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
+                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
             warnCookieGenerator, authenticationSelectionStrategies);
         this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
