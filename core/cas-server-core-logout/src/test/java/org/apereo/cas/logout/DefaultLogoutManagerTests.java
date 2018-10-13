@@ -3,7 +3,6 @@ package org.apereo.cas.logout;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
@@ -28,7 +27,6 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.URL;
-import java.util.HashMap;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -93,8 +91,7 @@ public class DefaultLogoutManagerTests {
             new DefaultSingleLogoutMessageCreator(), servicesManager,
             new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), true,
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
-
-        val services = new HashMap<String, Service>();
+        
         this.simpleWebApplicationServiceImpl = getService(URL);
         tgt.getServices().put(ID, this.simpleWebApplicationServiceImpl);
 

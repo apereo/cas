@@ -69,8 +69,6 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
             LOGGER.debug("Signature verification request unsuccessful.");
             return new ModelAndView(getFailureView(), parameters);
         }
-        // we should probably fail here(?),
-        // since we only deal OpenId signature verification
         return super.handleRequestInternal(request, response);
     }
 

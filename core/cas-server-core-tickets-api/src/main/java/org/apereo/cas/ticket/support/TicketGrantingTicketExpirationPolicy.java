@@ -61,7 +61,6 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         Assert.isTrue(this.maxTimeToLiveInSeconds >= this.timeToKillInSeconds,
             "maxTimeToLiveInSeconds must be greater than or equal to timeToKillInSeconds.");
 
-        // Ticket has been used, check maxTimeToLive (hard window)
         val currentSystemTime = getCurrentSystemTime();
         val creationTime = ticketState.getCreationTime();
         val lastTimeUsed = ticketState.getLastTimeUsed();
