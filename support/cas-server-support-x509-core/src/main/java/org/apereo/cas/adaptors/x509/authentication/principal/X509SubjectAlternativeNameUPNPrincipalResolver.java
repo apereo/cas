@@ -58,25 +58,24 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
      * @return UPN string or null
      */
     private static String getUPNStringFromSequence(final ASN1Sequence seq) {
-        if (seq != null) {
-            // First in sequence is the object identifier, that we must check
-            val id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
-            if (id != null && UPN_OBJECTID.equals(id.getId())) {
-                val obj = (ASN1TaggedObject) seq.getObjectAt(1);
-                val primitiveObj = obj.getObject();
+        if (seq == null) {
+            return null;
+        }
+        val id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
+        if (id != null && UPN_OBJECTID.equals(id.getId())) {
+            val obj = (ASN1TaggedObject) seq.getObjectAt(1);
+            val primitiveObj = obj.getObject();
 
-                val func = FunctionUtils.doIf(Predicates.instanceOf(ASN1TaggedObject.class),
-                    () -> ASN1TaggedObject.getInstance(primitiveObj).getObject(),
-                    () -> primitiveObj);
-                val prim = func.apply(primitiveObj);
+            val func = FunctionUtils.doIf(Predicates.instanceOf(ASN1TaggedObject.class),
+                () -> ASN1TaggedObject.getInstance(primitiveObj).getObject(),
+                () -> primitiveObj);
+            val prim = func.apply(primitiveObj);
 
-                if (prim instanceof ASN1OctetString) {
-                    return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
-                }
-                if (prim instanceof ASN1String) {
-                    return ((ASN1String) prim).getString();
-                }
-                return null;
+            if (prim instanceof ASN1OctetString) {
+                return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
+            }
+            if (prim instanceof ASN1String) {
+                return ((ASN1String) prim).getString();
             }
         }
         return null;
@@ -124,13 +123,6 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
         return null;
     }
 
-    /**
-     * Retrieves Subject Alternative Name UPN extension as a principal id String.
-     *
-     * @param certificate X.509 certificate credential.
-     * @return Resolved principal ID or null if no SAN UPN extension is available in provided certificate.
-     * @see java.security.cert.X509Certificate#getSubjectAlternativeNames()
-     */
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);

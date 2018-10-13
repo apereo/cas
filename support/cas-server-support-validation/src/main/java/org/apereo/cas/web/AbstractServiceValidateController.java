@@ -291,7 +291,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param assertion       the assertion
      */
     protected void onSuccessfulValidation(final String serviceTicketId, final Assertion assertion) {
-        // template method with nothing to do.
     }
 
     /**
