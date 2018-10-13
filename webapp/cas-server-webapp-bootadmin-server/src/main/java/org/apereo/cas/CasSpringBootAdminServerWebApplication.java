@@ -2,6 +2,8 @@ package org.apereo.cas;
 
 import de.codecentric.boot.admin.server.config.EnableAdminServer;
 import lombok.NoArgsConstructor;
+import org.springframework.boot.Banner;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
@@ -50,7 +52,9 @@ public class CasSpringBootAdminServerWebApplication {
     public static void main(final String[] args) {
         new SpringApplicationBuilder(CasSpringBootAdminServerWebApplication.class)
             .banner(new CasSpringBootAdminServerBanner())
+            .bannerMode(Banner.Mode.CONSOLE)
             .logStartupInfo(true)
+            .web(WebApplicationType.SERVLET)
             .run(args);
     }
 }

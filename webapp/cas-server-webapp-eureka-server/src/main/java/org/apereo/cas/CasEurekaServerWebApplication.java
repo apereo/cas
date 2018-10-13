@@ -1,6 +1,8 @@
 package org.apereo.cas;
 
 import lombok.NoArgsConstructor;
+import org.springframework.boot.Banner;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -44,6 +46,11 @@ public class CasEurekaServerWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        new SpringApplicationBuilder(CasEurekaServerWebApplication.class).banner(new CasEurekaServerBanner()).logStartupInfo(true).run(args);
+        new SpringApplicationBuilder(CasEurekaServerWebApplication.class)
+            .banner(new CasEurekaServerBanner())
+            .logStartupInfo(true)
+            .bannerMode(Banner.Mode.CONSOLE)
+            .web(WebApplicationType.SERVLET)
+            .run(args);
     }
 }

@@ -3,12 +3,12 @@
 <Configuration monitorInterval="5">
     <Appenders>
         <Console name="casConsole" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
 
         <RollingFile name="casFile" fileName="caseurekaserver.log" append="true"
                      filePattern="caseurekaserver-%d{yyyy-MM-dd-HH}-%i.log">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>

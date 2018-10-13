@@ -197,7 +197,7 @@ To disable CAS' own logging, define a `log4j2.xml` under `src/main/resources` an
 <Configuration>
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
     </Appenders>
     <Loggers>

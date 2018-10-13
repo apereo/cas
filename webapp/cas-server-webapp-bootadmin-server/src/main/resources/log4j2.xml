@@ -8,7 +8,7 @@
 
         <RollingFile name="casFile" fileName="casbootadmin.log" append="true"
                      filePattern="casbootadmin-%d{yyyy-MM-dd-HH}-%i.log">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
