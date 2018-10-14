@@ -24,7 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link InitialAuthenticationProviderWebflowEventResolver}.
+ * This is {@link RankedMultifactorAuthenticationProviderWebflowEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
