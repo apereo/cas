@@ -314,6 +314,8 @@ include "support:cas-server-support-session-mongo"
 include "support:cas-server-support-session-jdbc"
 
 include "webapp:cas-server-webapp-init"
+include "webapp:cas-server-webapp-init-bootadmin-server"
+
 include "webapp:cas-server-webapp-config"
 include "webapp:cas-server-webapp-config-server"
 include "webapp:cas-server-webapp-eureka-server"
