@@ -162,7 +162,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "initialAuthenticationAttemptWebflowEventResolver")
     @Bean
     @RefreshScope
-    public CasWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
+    public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
         return new RankedMultifactorAuthenticationProviderWebflowEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),

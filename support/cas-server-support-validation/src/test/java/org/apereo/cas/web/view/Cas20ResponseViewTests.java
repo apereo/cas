@@ -10,12 +10,10 @@ import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
 
 import lombok.val;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -37,10 +35,6 @@ import static org.junit.Assert.*;
  * @since 4.0.0
  */
 public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTests {
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
     @Autowired
     @Qualifier("cas3ServiceJsonView")
     private View cas3ServiceJsonView;

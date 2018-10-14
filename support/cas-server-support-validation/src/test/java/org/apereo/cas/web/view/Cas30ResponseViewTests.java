@@ -23,7 +23,6 @@ import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
@@ -31,7 +30,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
@@ -82,9 +80,6 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     @Autowired
     @Qualifier("cas3ServiceFailureView")
     private View cas3ServiceFailureView;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
 
     @Override
     public AbstractServiceValidateController getServiceValidateControllerInstance() {
