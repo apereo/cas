@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = {"cas.authn.mfa.globalAuthenticationAttributeNameTriggers=authn-method-dummy", "cas.authn.mfa.globalAuthenticationAttributeValueRegex=mfa.*"})
 public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
-    @Qualifier("authenticationAttributeMultifactorAuthenticationPolicyEventResolver")
+    @Qualifier("authenticationAttributeAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver authenticationAttributeMultifactorAuthenticationPolicyEventResolver;
 
     @Test
