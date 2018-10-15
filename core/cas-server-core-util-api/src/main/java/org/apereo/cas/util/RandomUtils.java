@@ -50,7 +50,6 @@ public class RandomUtils {
             'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
             'p'};
 
-        // 160 bits
         val bytes = new byte[SECURE_ID_BYTES_LENGTH];
         generator.nextBytes(bytes);
 

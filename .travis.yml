@@ -112,6 +112,9 @@ jobs:
     name: "Dependency Update Report"
     ############################################
   - stage: test
+    script: ./ci/tests/validate-tests.sh
+    name: "Validate Tests & Suites"
+  - stage: test
     script: ./ci/tests/run-tests-simple.sh
     name: "Simple Unit Tests"
   - stage: test

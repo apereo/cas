@@ -186,6 +186,13 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         return X509CertificateCredential.class.isAssignableFrom(clazz);
     }
 
+    /**
+     * Note: The call to getBasicConstraints returns pathLenConstraints which is generally greater than or equal to zero
+     * when this is a CA cert and -1 when it's not.
+     * @param credential Credential to authenticate.
+     * @return Authn handler execution result.
+     * @throws GeneralSecurityException security exception
+     */
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
 
@@ -204,8 +211,6 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                 hasTrustedIssuer = isCertificateFromTrustedIssuer(certificate);
             }
 
-            // getBasicConstraints returns pathLenConstraints which is generally
-            // >=0 when this is a CA cert and -1 when it's not
             val pathLength = certificate.getBasicConstraints();
             if (pathLength < 0) {
                 LOGGER.debug("Found valid client certificate");
