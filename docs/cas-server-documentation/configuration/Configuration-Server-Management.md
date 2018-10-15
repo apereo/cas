@@ -30,22 +30,34 @@ files that can be used to control CAS behavior. Also note that this configuratio
 and refresh the application context as needed. Please [review this guide](Configuration-Management-Reload.html#reload-strategy) to learn more.
 
 Note that by default, all CAS settings and configuration is controlled via the embedded `application.properties` file in the CAS server
-web application. There is also an embedded `application.yml` file that allows you to override all defaults if you wish to ship the configuration
-inside the main CAS web application and not rely on externalized configuration files.
+web application. There is also an embedded `application.yml` file that allows you to override all defaults if you wish to ship the configuration inside the main CAS web application and not rely on externalized configuration files. If you prefer properties to yaml, then `application-standalone.properties` will override `application.properties` as well. 
 
 Settings found in external configuration files are and will be able to override the defaults provide by CAS. The naming of the configuration files 
 inside the CAS configuration directory follows the below pattern:
 
-- An `application.(properties|yml)` file is always loaded, if found.
-- Settings located inside `properties|yml` files whose name matches the value of `spring.application.name` are loaded (i.e `cas.properties`)
-- Settings located inside `properties|yml` files whose name matches the value of `spring.profiles.active` are loaded (i.e `ldap.properties`).
-- Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml`)
+- An `application.(properties|yml|yaml)` file is always loaded, if found.
+- Settings located inside `properties|yml|yaml` files whose name matches the value of `spring.application.name` are loaded (i.e `cas.properties`) Note: `spring.application.name` defaults to uppercase `CAS` but the lowercase name will also be loaded.
+- Settings located inside `properties|yml|yaml` files whose name matches the value of `spring.profiles.active` are loaded (i.e `ldap.properties`).
+- Profile-specific application properties outside of your packaged web application (`application-{profile}.properties|yml|yaml`)
 This allows you to, if needed, split your settings into multiple property files and then locate them by assigning their name
 to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap,stagingMfa`)
 
+Configuration files are loaded in the following order where `spring.profiles.active=standalone,profile1,profile2`. Note that the last configuration file loaded will override any duplicate properties from configuration files loaded earlier:
+- application.(properties|yml|yaml)
+- [lowercase] `spring.application.name`.(properties|yml|yaml)
+- `spring.application.name`.(properties|yml|yaml)
+- application-standalone.(properties|yml|yaml)
+- standalone.(properties|yml|yaml)
+- application-profile1.(properties|yml|yaml)
+- profile1.(properties|yml|yaml)
+- application-profile2.(properties|yml|yaml)
+- profile2.(properties|yml|yaml)
+
+If two configuration files with same base name and different extensions exist, they are processed in the order of properties, yml and then yaml (last one processed wins where duplicate properties exist). These external configuration files will override files located in the classpath (e.g. files from src/main/resources in your CAS overlay that end up in WEB-INF/classes) but the internal files are loaded per the [spring boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) rules which differ from the CAS standalone configuration rules described here (e.g. <profile>.properties would not be loaded from classpath but application-<profile>.properties would).
+
 <div class="alert alert-warning"><strong>Remember</strong><p>You are advised to not overlay or otherwise
 modify the built in <code>application.properties</code> or <code>bootstrap.properties</code> files. This will only complicate and weaken your deployment.
-Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the defaults, override via <code>application.yml</code> or
+Instead try to comply with the CAS defaults and bootstrap CAS as much as possible via the defaults, override via <code>application.yml</code>, <code>application-standalone.properties</code> or
 use the <a href="Configuration-Management.html#overview">outlined strategies</a>. Likewise, try to instruct CAS to locate
 configuration files external to its own. Premature optimization will only lead to chaos.</p></div>
 
