@@ -1,13 +1,23 @@
 package org.apereo.cas.mongo;
 
 import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.mongodb.DBObject;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.services.persondir.IPersonAttributes;
+import org.bson.BsonReader;
+import org.bson.BsonTimestamp;
+import org.bson.BsonWriter;
+import org.bson.Transformer;
+import org.bson.codecs.Codec;
+import org.bson.codecs.DecoderContext;
+import org.bson.codecs.EncoderContext;
+import org.bson.codecs.configuration.CodecProvider;
+import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter; 
@@ -15,8 +25,10 @@ import org.springframework.data.convert.WritingConverter;
 
 import java.lang.ref.ReferenceQueue;
 import java.security.cert.CertPath;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 
 /**
@@ -103,14 +115,6 @@ public abstract class BaseConverters {
     }
 
     /**
-     * The type Cache builder converter.
-     *
-     * @since 4.1
-     */
-    public static class CacheBuilderConverter extends NullConverter<CacheBuilder, DBObject> {
-    }
-
-    /**
      * The type Runnable converter.
      *
      * @since 4.1
@@ -156,10 +160,33 @@ public abstract class BaseConverters {
      * The type String to zoned date time converter.
      */
     @ReadingConverter
+    public static class StringToDateConverter implements Converter<String, Date> {
+        @Override
+        public Date convert(final String source) {
+            if (StringUtils.isBlank(source)) {
+                return null;
+            }
+            try {
+                final ZonedDateTime zdt = ZonedDateTime.parse(source);
+                return DateTimeUtils.dateOf(zdt);
+            } catch (final DateTimeParseException e) {
+                final LocalDateTime ldt = DateTimeUtils.localDateTimeOf(source);
+                return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+            }
+        }
+    }
+
+    /**
+     * The type String to zoned date time converter.
+     */
+    @ReadingConverter
     public static class StringToZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
         @Override
         public ZonedDateTime convert(final String source) {
-            return source == null ? null : ZonedDateTime.parse(source);
+            if (StringUtils.isBlank(source)) {
+                return null;
+            }
+            return ZonedDateTime.parse(source);
         }
     }
 
@@ -181,6 +208,49 @@ public abstract class BaseConverters {
         @Override
         public String convert(final ZonedDateTime source) {
             return source == null ? null : source.toString();
+        }
+    }
+
+    /**
+     * The type Zoned date time transformer.
+     */
+    public static class ZonedDateTimeTransformer implements Transformer {
+        @Override
+        public Object transform(final Object o) {
+            final ZonedDateTime value = (ZonedDateTime) o;
+            return value.toString();
+        }
+    }
+
+    /**
+     * The type Zoned date time codec provider.
+     */
+    public static class ZonedDateTimeCodecProvider implements CodecProvider {
+        @Override
+        public <T> Codec<T> get(final Class<T> aClass, final CodecRegistry codecRegistry) {
+            if (aClass == ZonedDateTime.class) {
+                return (Codec<T>) new ZonedDateTimeCodec();
+            }
+            return null;
+        }
+
+        private static class ZonedDateTimeCodec implements Codec<ZonedDateTime> {
+            @Override
+            public ZonedDateTime decode(final BsonReader reader, final DecoderContext decoderContext) {
+                final BsonTimestamp stamp = reader.readTimestamp();
+                final Date dt = new Date(stamp.getTime());
+                return DateTimeUtils.zonedDateTimeOf(dt);
+            }
+
+            @Override
+            public void encode(final BsonWriter writer, final ZonedDateTime zonedDateTime, final EncoderContext encoderContext) {
+                writer.writeTimestamp(new BsonTimestamp(DateTimeUtils.dateOf(zonedDateTime).getTime()));
+            }
+
+            @Override
+            public Class<ZonedDateTime> getEncoderClass() {
+                return ZonedDateTime.class;
+            }
         }
     }
 }
