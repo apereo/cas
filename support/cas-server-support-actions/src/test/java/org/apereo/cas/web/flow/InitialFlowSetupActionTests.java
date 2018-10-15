@@ -1,14 +1,11 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
-import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
@@ -24,8 +21,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @TestPropertySource(locations = {"classpath:/core.properties"})
-@Import(CasSupportActionsConfiguration.class)
-public class InitialFlowSetupActionTests extends AbstractCentralAuthenticationServiceTests {
+public class InitialFlowSetupActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("initialFlowSetupAction")
     private Action action;

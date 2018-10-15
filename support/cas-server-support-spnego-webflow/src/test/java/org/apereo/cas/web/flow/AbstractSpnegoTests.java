@@ -22,6 +22,7 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.SpnegoWebflowActionsConfiguration;
 
 import org.junit.ClassRule;
@@ -47,6 +48,7 @@ import org.springframework.webflow.execution.Action;
     CasCoreServicesConfiguration.class,
     CasPersonDirectoryConfiguration.class,
     CasCoreWebConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasCoreConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,

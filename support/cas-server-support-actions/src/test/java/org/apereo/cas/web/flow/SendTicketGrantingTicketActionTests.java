@@ -1,8 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -13,11 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
@@ -31,9 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.0
  */
-@DirtiesContext
-@Import(CasSupportActionsConfiguration.class)
-public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTests {
+public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";
     private static final String TEST_STRING = "test";

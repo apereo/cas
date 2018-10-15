@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlan;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -110,16 +109,12 @@ public class CasSupportActionsConfiguration {
     private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
 
     @Autowired
-    @Qualifier("logoutManager")
-    private ObjectProvider<LogoutManager> logoutManager;
-
-    @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
-    @Qualifier("initialAuthenticationProviderWebflowEventResolver")
-    private ObjectProvider<CasWebflowEventResolver> initialAuthenticationProviderWebflowEventResolver;
+    @Qualifier("rankedAuthenticationProviderWebflowEventResolver")
+    private ObjectProvider<CasWebflowEventResolver> rankedAuthenticationProviderWebflowEventResolver;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
@@ -223,7 +218,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "initialAuthenticationRequestValidationAction")
     public Action initialAuthenticationRequestValidationAction() {
-        return new InitialAuthenticationRequestValidationAction(initialAuthenticationProviderWebflowEventResolver.getIfAvailable());
+        return new InitialAuthenticationRequestValidationAction(rankedAuthenticationProviderWebflowEventResolver.getIfAvailable());
     }
 
     @RefreshScope

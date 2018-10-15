@@ -35,6 +35,7 @@ import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -94,10 +95,12 @@ import static org.junit.Assert.*;
     CasWebAppConfiguration.class,
     CasWebflowServerSessionContextConfigurationTests.TestWebflowContextConfiguration.class,
     CasWebflowContextConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreWebflowConfiguration.class,
-    CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationMetadataConfiguration.class,

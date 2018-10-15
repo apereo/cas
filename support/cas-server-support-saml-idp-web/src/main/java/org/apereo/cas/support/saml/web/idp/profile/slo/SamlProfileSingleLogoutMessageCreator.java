@@ -97,7 +97,7 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
             nameId);
 
         if (samlIdPProperties.getLogout().isForceSignedLogoutRequests()) {
-            val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, samlService, samlLogoutRequest);
+            val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, samlService, samlService.getServiceId());
             val adaptor = adaptorRes.orElseThrow(() -> new IllegalArgumentException("Unable to find metadata for saml service " + samlService.getServiceId()));
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();

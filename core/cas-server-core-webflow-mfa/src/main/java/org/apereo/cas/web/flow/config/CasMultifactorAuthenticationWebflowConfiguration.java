@@ -159,10 +159,10 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             casProperties);
     }
 
-    @ConditionalOnMissingBean(name = "initialAuthenticationAttemptWebflowEventResolver")
+    @ConditionalOnMissingBean(name = "rankedAuthenticationProviderWebflowEventResolver")
     @Bean
     @RefreshScope
-    public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
+    public CasDelegatingWebflowEventResolver rankedAuthenticationProviderWebflowEventResolver() {
         return new RankedMultifactorAuthenticationProviderWebflowEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
@@ -172,7 +172,7 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
             authenticationServiceSelectionPlan.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(),
             authenticationContextValidator.getIfAvailable(),
-            defaultCasDelegatingWebflowEventResolver());
+            initialAuthenticationAttemptWebflowEventResolver());
     }
 
     @ConditionalOnMissingBean(name = "authenticationAttributeAuthenticationPolicyWebflowEventResolver")
@@ -202,10 +202,10 @@ public class CasMultifactorAuthenticationWebflowConfiguration {
         return new RankedMultifactorAuthenticationProviderSelector();
     }
 
-    @ConditionalOnMissingBean(name = "defaultCasDelegatingWebflowEventResolver")
+    @ConditionalOnMissingBean(name = "initialAuthenticationAttemptWebflowEventResolver")
     @Bean
     @RefreshScope
-    public CasDelegatingWebflowEventResolver defaultCasDelegatingWebflowEventResolver() {
+    public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
         val r = new DefaultCasDelegatingWebflowEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),

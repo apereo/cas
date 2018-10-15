@@ -1,11 +1,9 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -15,11 +13,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
@@ -34,10 +30,8 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.0
  */
-@DirtiesContext
-@Import(CasSupportActionsConfiguration.class)
 @TestPropertySource(properties = "cas.sso.createSsoCookieOnRenewAuthn=false")
-public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthenticationServiceTests {
+public class SendTicketGrantingTicketActionSsoTests extends AbstractWebflowActionsTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";
     private static final String TEST_STRING = "test";
