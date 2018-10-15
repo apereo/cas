@@ -171,9 +171,7 @@ public abstract class BaseConverters {
                 return DateTimeUtils.dateOf(zdt);
             } catch (final DateTimeParseException e) {
                 final LocalDateTime ldt = DateTimeUtils.localDateTimeOf(source);
-                return java.util.Date
-                        .from(ldt.atZone(ZoneId.systemDefault())
-                                .toInstant());
+                return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
             }
         }
     }
