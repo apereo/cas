@@ -3,12 +3,16 @@ package org.apereo.cas.support.saml.services.logout;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.logout.DefaultSingleLogoutRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
+import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlProfileSingleLogoutMessageCreator;
+import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.junit.Test;
+import org.opensaml.saml.common.xml.SAMLConstants;
 
 import java.net.URL;
 
@@ -35,6 +39,9 @@ public class SamlProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfi
             .service(CoreAuthenticationTestUtils.getWebApplicationService())
             .ticketId("ST-123456789")
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
+            .properties(CollectionUtils.wrap(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING,
+                SAMLConstants.SAML2_POST_BINDING_URI))
             .build();
 
         val result = creator.create(logoutRequest);

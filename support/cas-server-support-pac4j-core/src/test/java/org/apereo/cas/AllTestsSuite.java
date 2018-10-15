@@ -1,9 +1,9 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.web.pac4j.DelegatedSessionCookieCipherExecutorTests;
 import org.apereo.cas.audit.DelegatedAuthenticationAuditResourceResolverTests;
 import org.apereo.cas.validation.DelegatedAuthenticationServiceTicketValidationAuthorizerTests;
+import org.apereo.cas.web.pac4j.DelegatedSessionCookieCipherExecutorTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

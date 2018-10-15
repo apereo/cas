@@ -371,7 +371,7 @@ subprojects {
         api libraries.springcloud
         api libraries.springboot
 
-        provided libraries.javax
+        api libraries.javax
 
         if (!Boolean.getBoolean("skipFindbugs")) {
             spotbugs libraries.findbugs

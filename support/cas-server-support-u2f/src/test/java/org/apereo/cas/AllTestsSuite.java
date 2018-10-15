@@ -1,10 +1,10 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.adaptors.u2f.storage.U2FRestResourceDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FGroovyResourceDeviceRepositoryTests;
-import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepositoryTests;
 import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRepositoryTests;
+import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepositoryTests;
+import org.apereo.cas.adaptors.u2f.storage.U2FRestResourceDeviceRepositoryTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

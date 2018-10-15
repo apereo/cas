@@ -72,7 +72,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
             return Pair.of(Boolean.FALSE, Optional.empty());
         }
         LOGGER.debug("Requested context is [{}] and available contexts are [{}]", requestedContext, contexts);
-        if (contexts.stream().filter(ctx -> ctx.toString().equals(requestedContext)).count() > 0) {
+        if (contexts.stream().anyMatch(ctx -> ctx.toString().equals(requestedContext))) {
             LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContext);
             return Pair.of(Boolean.TRUE, requestedProvider);
         }

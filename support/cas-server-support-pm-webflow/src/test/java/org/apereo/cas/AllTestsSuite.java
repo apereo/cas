@@ -1,11 +1,11 @@
 
 package org.apereo.cas;
 
-import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsActionTests;
-import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsActionTests;
-import org.apereo.cas.pm.web.flow.actions.InitPasswordResetActionTests;
-import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestActionTests;
 import org.apereo.cas.pm.web.flow.actions.HandlePasswordExpirationWarningMessagesActionTests;
+import org.apereo.cas.pm.web.flow.actions.InitPasswordResetActionTests;
+import org.apereo.cas.pm.web.flow.actions.SendPasswordResetInstructionsActionTests;
+import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestActionTests;
+import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsActionTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

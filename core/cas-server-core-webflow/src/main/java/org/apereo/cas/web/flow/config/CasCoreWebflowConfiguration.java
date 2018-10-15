@@ -26,10 +26,7 @@ import org.apereo.cas.web.flow.actions.CheckWebAuthenticationRequestAction;
 import org.apereo.cas.web.flow.actions.ClearWebflowCredentialAction;
 import org.apereo.cas.web.flow.actions.InjectResponseHeadersAction;
 import org.apereo.cas.web.flow.actions.RedirectToServiceAction;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.DefaultCasDelegatingWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.InitialAuthenticationProviderWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.ServiceTicketRequestWebflowEventResolver;
 
 import lombok.extern.slf4j.Slf4j;
@@ -95,21 +92,6 @@ public class CasCoreWebflowConfiguration {
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
 
-    @ConditionalOnMissingBean(name = "initialAuthenticationAttemptWebflowEventResolver")
-    @Bean
-    @RefreshScope
-    public CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver() {
-        val r = new DefaultCasDelegatingWebflowEventResolver(
-            authenticationSystemSupport.getIfAvailable(),
-            centralAuthenticationService.getIfAvailable(),
-            servicesManager.getIfAvailable(),
-            ticketRegistrySupport.getIfAvailable(),
-            warnCookieGenerator.getIfAvailable(),
-            authenticationServiceSelectionPlan.getIfAvailable(),
-            registeredServiceAccessStrategyEnforcer.getIfAvailable());
-        return r;
-    }
-
     @ConditionalOnMissingBean(name = "serviceTicketRequestWebflowEventResolver")
     @Bean
     @RefreshScope
@@ -123,21 +105,6 @@ public class CasCoreWebflowConfiguration {
             registeredServiceAccessStrategyEnforcer.getIfAvailable(),
             casProperties);
     }
-
-    @ConditionalOnMissingBean(name = "initialAuthenticationProviderWebflowEventResolver")
-    @Bean
-    @RefreshScope
-    public CasWebflowEventResolver initialAuthenticationProviderWebflowEventResolver() {
-        return new InitialAuthenticationProviderWebflowEventResolver(
-                authenticationSystemSupport.getIfAvailable(),
-                centralAuthenticationService.getIfAvailable(),
-                servicesManager.getIfAvailable(),
-                ticketRegistrySupport.getIfAvailable(),
-                warnCookieGenerator.getIfAvailable(),
-                authenticationServiceSelectionPlan.getIfAvailable(),
-                initialAuthenticationAttemptWebflowEventResolver());
-    }
-
 
     @Bean
     @RefreshScope

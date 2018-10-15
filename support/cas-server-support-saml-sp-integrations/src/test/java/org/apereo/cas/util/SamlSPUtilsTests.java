@@ -30,7 +30,6 @@ import static org.mockito.Mockito.*;
 @Category(FileSystemCategory.class)
 @TestPropertySource(properties = {"cas.authn.samlIdp.metadata.location=file:/tmp"})
 public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
-
     @BeforeClass
     public static void beforeClass() {
         METADATA_DIRECTORY = new FileSystemResource(FileUtils.getTempDirectoryPath());

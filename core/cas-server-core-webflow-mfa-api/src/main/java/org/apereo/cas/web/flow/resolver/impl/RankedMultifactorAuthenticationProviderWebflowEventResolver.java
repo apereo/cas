@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,16 +25,15 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
 
 /**
- * This is {@link InitialAuthenticationProviderWebflowEventResolver}.
+ * This is {@link RankedMultifactorAuthenticationProviderWebflowEventResolver}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends AbstractCasMultifactorAuthenticationWebflowEventResolver {
+public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends AbstractCasMultifactorAuthenticationWebflowEventResolver implements CasDelegatingWebflowEventResolver {
 
-
-    private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver;
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;
 
     public RankedMultifactorAuthenticationProviderWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
@@ -48,7 +48,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
             authenticationSelectionStrategies, selector);
         this.authenticationContextValidator = authenticationContextValidator;
-        this.initialAuthenticationAttemptWebflowEventResolver = casDelegatingWebflowEventResolver;
+        this.casDelegatingWebflowEventResolver = casDelegatingWebflowEventResolver;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putAuthentication(authentication, context);
 
-        val event = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
+        val event = this.casDelegatingWebflowEventResolver.resolveSingle(context);
         if (event == null) {
             LOGGER.trace("Request does not indicate a requirement for authentication policy; proceed with flow normally.");
             return resumeFlow();
@@ -122,5 +122,15 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
 
     private Set<Event> resumeFlow() {
         return CollectionUtils.wrapSet(new EventFactorySupport().success(this));
+    }
+
+    @Override
+    public void addDelegate(final CasWebflowEventResolver r) {
+        casDelegatingWebflowEventResolver.addDelegate(r);
+    }
+
+    @Override
+    public void addDelegate(final CasWebflowEventResolver r, final int index) {
+        casDelegatingWebflowEventResolver.addDelegate(r, index);
     }
 }
