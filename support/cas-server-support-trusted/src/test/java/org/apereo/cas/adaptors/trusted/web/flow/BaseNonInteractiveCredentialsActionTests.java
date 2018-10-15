@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.adaptors.trusted.config.TrustedAuthenticationConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
@@ -12,5 +13,5 @@ import org.springframework.context.annotation.Import;
  * @since 6.0.0
  */
 @Import({CasMultifactorAuthenticationWebflowConfiguration.class, TrustedAuthenticationConfiguration.class})
-public class BaseNonInteractiveCredentialsActionTests {
+public abstract class BaseNonInteractiveCredentialsActionTests extends AbstractCentralAuthenticationServiceTests {
 }
