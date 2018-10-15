@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.DefaultSingleLogoutRequest;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests {
+public class LogoutActionTests extends AbstractWebflowActionsTests {
 
     private static final String COOKIE_TGC_ID = "CASTGC";
     private static final String TEST_SERVICE_ID = "TestService";

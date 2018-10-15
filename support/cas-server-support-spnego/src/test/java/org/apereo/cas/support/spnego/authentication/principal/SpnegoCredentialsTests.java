@@ -5,8 +5,6 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import lombok.val;
 import org.junit.Test;
 
-import java.util.HashSet;
-
 import static org.junit.Assert.*;
 
 
@@ -29,21 +27,7 @@ public class SpnegoCredentialsTests {
         credentials.setPrincipal(principal);
         assertEquals("test", credentials.getId());
     }
-
-    /**
-     * Important for SPNEGO in particular as the credential will be hashed prior to Principal resolution
-     */
-    @Test
-    public void verifyCredentialsHashSafelyWithoutPrincipal() {
-        val credential = new SpnegoCredential(new byte[]{});
-        val set = new HashSet<SpnegoCredential>();
-        try {
-            set.add(credential);
-        } catch (final Exception e) {
-            throw new AssertionError(e.getMessage());
-        }
-    }
-
+    
     /**
      * Make sure that when the Principal becomes populated / changes we return a new hash
      */
