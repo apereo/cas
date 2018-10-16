@@ -2,6 +2,7 @@ description = "Apereo CAS SAML Server Google Apps SAML Core Support"
 dependencies {
     implementation project(":support:cas-server-support-saml")
     implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-authentication-api")

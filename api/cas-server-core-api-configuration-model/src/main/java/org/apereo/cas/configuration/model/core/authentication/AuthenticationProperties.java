@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.couchdb.authentication.CouchDbAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.configuration.model.support.fortress.FortressAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
@@ -34,6 +35,7 @@ import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationP
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.uma.UmaProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
 import org.apereo.cas.configuration.model.support.x509.X509Properties;
@@ -235,6 +237,12 @@ public class AuthenticationProperties implements Serializable {
     private MongoAuthenticationProperties mongo = new MongoAuthenticationProperties();
 
     /**
+     * CouchDb authentication settings.
+     */
+    @NestedConfigurationProperty
+    private CouchDbAuthenticationProperties couchDb = new CouchDbAuthenticationProperties();
+
+    /**
      * NTLM authentication settings.
      */
     @NestedConfigurationProperty
@@ -245,6 +253,12 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private OAuthProperties oauth = new OAuthProperties();
+
+    /**
+     * OAuth UMA authentication settings.
+     */
+    @NestedConfigurationProperty
+    private UmaProperties uma = new UmaProperties();
 
     /**
      * OpenID Connect authentication settings.
@@ -311,10 +325,4 @@ public class AuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuthenticationAttributeReleaseProperties authenticationAttributeRelease = new AuthenticationAttributeReleaseProperties();
-
-    /**
-     * Whether CAS authentication/protocol attributes
-     * should be released as part of ticket validation.
-     */
-    private boolean releaseProtocolAttributes = true;
 }

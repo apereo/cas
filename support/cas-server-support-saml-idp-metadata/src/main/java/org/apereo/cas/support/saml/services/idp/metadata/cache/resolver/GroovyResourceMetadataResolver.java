@@ -28,14 +28,14 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
     }
 
     @Override
-    public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
+    public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
             val metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata via [{}]", metadataLocation);
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             final Object[] args = {service, this.configBean, this.samlIdPProperties, LOGGER};
             val metadataResolver =
-                ScriptingUtils.executeGroovyScript(metadataResource, args, MetadataResolver.class);
+                ScriptingUtils.executeGroovyScript(metadataResource, args, MetadataResolver.class, true);
             if (metadataResolver != null) {
                 return CollectionUtils.wrap(metadataResolver);
             }

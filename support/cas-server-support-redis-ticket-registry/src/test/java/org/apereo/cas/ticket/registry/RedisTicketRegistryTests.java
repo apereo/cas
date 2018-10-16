@@ -41,7 +41,11 @@ import java.util.Collection;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
-@TestPropertySource(locations = {"classpath:/redis.properties"})
+@TestPropertySource(properties = {
+    "cas.ticket.registry.redis.host=localhost",
+    "cas.ticket.registry.redis.port=6379",
+    "cas.ticket.registry.redis.pool.max-active=20"
+})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 public class RedisTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {

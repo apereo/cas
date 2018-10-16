@@ -1,9 +1,9 @@
 package org.apereo.cas.web.view.json;
 
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.view.Cas30ResponseView;
 
@@ -45,27 +45,23 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     public Cas30JsonResponseView(final boolean successResponse,
                                  final ProtocolAttributeEncoder protocolAttributeEncoder,
                                  final ServicesManager servicesManager,
-                                 final String authenticationContextAttribute,
                                  final View delegatedView,
-                                 final boolean releaseProtocolAttributes,
                                  final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                                  final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
                                  final CasProtocolAttributesRenderer attributesRenderer) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-            delegatedView, releaseProtocolAttributes, authenticationAttributeReleasePolicy,
+        super(successResponse, protocolAttributeEncoder, servicesManager,
+            delegatedView, authenticationAttributeReleasePolicy,
             serviceSelectionStrategy, attributesRenderer);
     }
 
     public Cas30JsonResponseView(final boolean successResponse,
                                  final ProtocolAttributeEncoder protocolAttributeEncoder,
                                  final ServicesManager servicesManager,
-                                 final String authenticationContextAttribute,
-                                 final boolean releaseProtocolAttributes,
                                  final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                                  final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
                                  final CasProtocolAttributesRenderer attributesRenderer) {
-        this(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-            createDelegatedView(), releaseProtocolAttributes, authenticationAttributeReleasePolicy,
+        this(successResponse, protocolAttributeEncoder, servicesManager,
+            createDelegatedView(), authenticationAttributeReleasePolicy,
             serviceSelectionStrategy, attributesRenderer);
     }
 

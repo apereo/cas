@@ -24,7 +24,6 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.data.annotation.Persistent;
 import org.springframework.data.convert.JodaTimeConverters;
 import org.springframework.data.convert.Jsr310Converters;
-import org.springframework.data.mapping.model.CamelCaseAbbreviatingFieldNamingStrategy;
 import org.springframework.data.mapping.model.FieldNamingStrategy;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
 import org.springframework.data.mongodb.MongoDbFactory;
@@ -195,13 +194,8 @@ public class MongoDbConnectionFactory {
         return initialEntitySet;
     }
 
-    private boolean abbreviateFieldNames() {
-        return false;
-    }
-
     private FieldNamingStrategy fieldNamingStrategy() {
-        return abbreviateFieldNames() ? new CamelCaseAbbreviatingFieldNamingStrategy()
-            : PropertyNameFieldNamingStrategy.INSTANCE;
+        return PropertyNameFieldNamingStrategy.INSTANCE;
     }
 
     /**
@@ -269,7 +263,13 @@ public class MongoDbConnectionFactory {
         return clientOptions.build();
     }
 
-    private MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
+    /**
+     * Build mongo db client.
+     *
+     * @param mongo the mongo
+     * @return the mongo client
+     */
+    public MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {
             LOGGER.debug("Using MongoDb client URI [{}] to connect to MongoDb instance", mongo.getClientUri());

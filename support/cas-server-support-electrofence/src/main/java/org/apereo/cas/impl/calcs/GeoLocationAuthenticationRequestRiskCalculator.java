@@ -11,8 +11,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
@@ -27,20 +25,17 @@ import java.util.Collection;
 @Slf4j
 public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
 
-    /**
-     * Geolocation service.
-     */
-    @Autowired
-    @Qualifier("geoLocationService")
-    protected GeoLocationService geoLocationService;
+    private final GeoLocationService geoLocationService;
 
-    public GeoLocationAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository) {
+    public GeoLocationAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository,
+                                                          final GeoLocationService geoLocationService) {
         super(casEventRepository);
+        this.geoLocationService = geoLocationService;
     }
 
     @Override
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
-                                        final RegisteredService service, final Collection<CasEvent> events) {
+                                        final RegisteredService service, final Collection<? extends CasEvent> events) {
         val loc = WebUtils.getHttpServletRequestGeoLocation(request);
         if (loc != null && loc.isValid()) {
             LOGGER.debug("Filtering authentication events for geolocation [{}]", loc);

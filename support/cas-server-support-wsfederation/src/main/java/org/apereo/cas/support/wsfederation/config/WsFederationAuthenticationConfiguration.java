@@ -10,6 +10,7 @@ import org.apereo.cas.support.wsfederation.WsFederationHelper;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,7 +36,7 @@ public class WsFederationAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("wsFederationConfigurations")
@@ -43,11 +44,11 @@ public class WsFederationAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")
-    private ServiceFactory webApplicationServiceFactory;
+    private ObjectProvider<ServiceFactory> webApplicationServiceFactory;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -55,7 +56,7 @@ public class WsFederationAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public WsFederationHelper wsFederationHelper() {
-        return new WsFederationHelper(this.configBean, servicesManager);
+        return new WsFederationHelper(this.configBean, servicesManager.getIfAvailable());
     }
 
     @Bean
@@ -69,8 +70,8 @@ public class WsFederationAuthenticationConfiguration {
         return new WsFederationNavigationController(wsFederationCookieManager(),
             wsFederationHelper(),
             wsFederationConfigurations,
-            authenticationRequestServiceSelectionStrategies,
-            webApplicationServiceFactory,
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            webApplicationServiceFactory.getIfAvailable(),
             casProperties.getServer().getLoginUrl());
     }
 }

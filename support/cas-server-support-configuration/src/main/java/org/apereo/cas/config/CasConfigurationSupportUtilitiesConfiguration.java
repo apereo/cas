@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -52,10 +53,13 @@ public class CasConfigurationSupportUtilitiesConfiguration {
     public class CasCoreConfigurationWatchConfiguration implements InitializingBean, DisposableBean {
         @Autowired
         private ApplicationEventPublisher eventPublisher;
+
         private final Consumer<AbstractCasEvent> publish = event -> eventPublisher.publishEvent(event);
+        
         @Autowired
         @Qualifier("configurationPropertiesEnvironmentManager")
-        private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
+        private ObjectProvider<CasConfigurationPropertiesEnvironmentManager> configurationPropertiesEnvironmentManager;
+
         private PathWatcherService watcher;
 
         public void init() {
@@ -69,7 +73,7 @@ public class CasConfigurationSupportUtilitiesConfiguration {
 
         @SneakyThrows
         public void runNativeConfigurationDirectoryPathWatchService() {
-            val config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
+            val config = configurationPropertiesEnvironmentManager.getIfAvailable().getStandaloneProfileConfigurationDirectory();
             if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
                 LOGGER.debug("Starting to watch configuration directory [{}]", config);
                 this.watcher = new PathWatcherService(config.toPath(),

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Apache Fortress Authentication
+category: Authentication
 ---
 
 # Apache Fortress Authentication

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Service Required Authentication
+category: Services
 ---
 
 # Configure Service Required Authentication

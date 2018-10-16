@@ -24,6 +24,6 @@ public class GroovyPrincipalNameTransformer implements PrincipalNameTransformer 
     public String transform(final String formUserId) {
         return ScriptingUtils.executeGroovyScript(this.script,
             new Object[]{formUserId, LOGGER},
-            String.class);
+            String.class, true);
     }
 }

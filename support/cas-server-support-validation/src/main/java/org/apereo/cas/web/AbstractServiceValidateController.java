@@ -3,18 +3,16 @@ package org.apereo.cas.web;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HttpBasedServiceCredential;
-import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
+
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -28,6 +26,7 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.RequestedContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
 import org.apereo.cas.validation.ValidationResponseType;
@@ -38,7 +37,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
@@ -84,8 +82,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private final View failureView;
 
     private final ArgumentExtractor argumentExtractor;
-    private final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
-    private final AuthenticationContextValidator authenticationContextValidator;
+    private final RequestedContextValidator<MultifactorAuthenticationProvider> requestedContextValidator;
     private final View jsonView;
     private final String authnContextAttribute;
 
@@ -132,28 +129,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             }
         }
         return null;
-    }
-
-    /**
-     * Validate authentication context pair.
-     *
-     * @param assertion the assertion
-     * @param request   the request
-     * @return the pair
-     */
-    protected Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validateAuthenticationContext(final Assertion assertion, final HttpServletRequest request) {
-        LOGGER.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
-        val service = this.servicesManager.findServiceBy(assertion.getService());
-        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
-        val providers = this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
-        val authentication = assertion.getPrimaryAuthentication();
-        val requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request, service, authentication);
-
-        if (!requestedContext.isPresent()) {
-            LOGGER.debug("No particular authentication context is required for this request");
-            return Pair.of(Boolean.TRUE, Optional.empty());
-        }
-        return this.authenticationContextValidator.validate(authentication, requestedContext.get(), service);
     }
 
     /**
@@ -249,10 +224,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (!validateAssertion(request, serviceTicketId, assertion, service)) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, new Object[]{serviceTicketId}, request, service);
         }
-        val ctxResult = validateAuthenticationContext(assertion, request);
+
+        val ctxResult = requestedContextValidator.validateAuthenticationContext(assertion, request);
         if (!ctxResult.getKey()) {
             throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
         }
+
         var proxyIou = StringUtils.EMPTY;
         if (serviceCredential != null && this.proxyHandler != null && this.proxyHandler.canHandle(serviceCredential)) {
             proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
@@ -314,7 +291,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param assertion       the assertion
      */
     protected void onSuccessfulValidation(final String serviceTicketId, final Assertion assertion) {
-        // template method with nothing to do.
     }
 
     /**

@@ -31,7 +31,7 @@ import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.security.criteria.UsageCriterion;
 import org.opensaml.xmlsec.SignatureValidationConfiguration;
 import org.opensaml.xmlsec.SignatureValidationParameters;
-import org.opensaml.xmlsec.config.DefaultSecurityConfigurationBootstrap;
+import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureValidationConfigurationCriterion;
 import org.opensaml.xmlsec.keyinfo.impl.StaticKeyInfoCredentialResolver;
@@ -141,7 +141,7 @@ public class SamlObjectSignatureValidator {
                                                           final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
         val handler = new SAML2HTTPRedirectDeflateSignatureSecurityHandler();
         val peer = context.getSubcontext(SAMLPeerEntityContext.class, true);
-        peer.setEntityId(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest));
+        peer.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(profileRequest));
 
         val peerEntityId = peer.getEntityId();
         LOGGER.debug("Validating request signature for [{}] via [{}]...", peerEntityId, handler.getClass().getSimpleName());
@@ -266,7 +266,7 @@ public class SamlObjectSignatureValidator {
      * @param criteriaSet    the criteria set
      */
     protected void buildEntityCriteriaForSigningCredential(final RequestAbstractType profileRequest, final CriteriaSet criteriaSet) {
-        criteriaSet.add(new EntityIdCriterion(SamlIdPUtils.getIssuerFromSamlRequest(profileRequest)));
+        criteriaSet.add(new EntityIdCriterion(SamlIdPUtils.getIssuerFromSamlObject(profileRequest)));
         criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
     }
 

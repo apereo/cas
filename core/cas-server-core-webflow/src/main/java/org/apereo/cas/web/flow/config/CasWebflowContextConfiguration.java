@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -14,7 +15,6 @@ import org.apereo.cas.web.flow.configurer.DefaultLogoutWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.plan.DefaultCasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
-import org.apereo.cas.web.support.AuthenticationThrottlingExecutionPlan;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -84,7 +84,7 @@ public class CasWebflowContextConfiguration {
 
     @Autowired
     @Qualifier("webflowCipherExecutor")
-    private CipherExecutor webflowCipherExecutor;
+    private ObjectProvider<CipherExecutor> webflowCipherExecutor;
 
     @Bean
     public ExpressionParser expressionParser() {
@@ -204,7 +204,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     public FlowExecutor logoutFlowExecutor() {
         val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-            logoutFlowRegistry(), this.webflowCipherExecutor, new FlowExecutionListener[0]);
+            logoutFlowRegistry(), this.webflowCipherExecutor.getIfAvailable(), new FlowExecutionListener[0]);
         return factory.build();
     }
 
@@ -212,7 +212,7 @@ public class CasWebflowContextConfiguration {
     @Bean
     public FlowExecutor loginFlowExecutor() {
         val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-            loginFlowRegistry(), this.webflowCipherExecutor,
+            loginFlowRegistry(), this.webflowCipherExecutor.getIfAvailable(),
             new FlowExecutionListener[0]);
 
         return factory.build();

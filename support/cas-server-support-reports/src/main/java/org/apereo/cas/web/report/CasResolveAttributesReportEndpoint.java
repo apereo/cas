@@ -1,6 +1,6 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.authentication.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasMvcEndpoint;

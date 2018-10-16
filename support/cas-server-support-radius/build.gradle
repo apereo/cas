@@ -1,6 +1,8 @@
 description = "Apereo CAS RADIUS Support"
 
 dependencies {
+    api project(":api:cas-server-core-api-audit")
+    
     implementation project(":support:cas-server-support-radius-core")
     implementation project(":core:cas-server-core-authentication-api")
     
@@ -9,4 +11,9 @@ dependencies {
 
     testImplementation project(":core:cas-server-core-configuration-api")
     testImplementation project(":core:cas-server-core-configuration")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

@@ -33,7 +33,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.stream.Collectors;
 
 /**
  * Generic class to serialize objects to/from JSON based on jackson.
@@ -94,7 +93,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public T from(final Reader json) {
         val jsonString = isJsonFormat()
             ? JsonValue.readHjson(json).toString()
-            : IOUtils.readLines(json).stream().collect(Collectors.joining());
+            : String.join("", IOUtils.readLines(json));
         return readObjectFromJson(jsonString);
     }
 
@@ -120,7 +119,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     protected String readJsonFrom(final InputStream json) throws IOException {
         return isJsonFormat()
             ? JsonValue.readHjson(IOUtils.toString(json, StandardCharsets.UTF_8)).toString()
-            : IOUtils.readLines(json, StandardCharsets.UTF_8).stream().collect(Collectors.joining("\n"));
+            : String.join("\n", IOUtils.readLines(json, StandardCharsets.UTF_8));
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -19,7 +21,15 @@ public interface LogoutExecutionPlan {
      *
      * @param handler the handler
      */
-    default void registerLogoutHandler(final LogoutHandler handler) {
+    default void registerLogoutPostProcessor(final LogoutPostProcessor handler) {
+    }
+
+    /**
+     * Register single logout service message handler.
+     *
+     * @param handler the handler
+     */
+    default void registerSingleLogoutServiceMessageHandler(final SingleLogoutServiceMessageHandler handler) {
     }
 
     /**
@@ -27,7 +37,16 @@ public interface LogoutExecutionPlan {
      *
      * @return the logout handlers
      */
-    default Collection<LogoutHandler> getLogoutHandlers() {
+    default Collection<LogoutPostProcessor> getLogoutPostProcessor() {
+        return new ArrayList<>(0);
+    }
+
+    /**
+     * Gets single logout service message handlers.
+     *
+     * @return the single logout service message handlers
+     */
+    default Collection<SingleLogoutServiceMessageHandler> getSingleLogoutServiceMessageHandlers() {
         return new ArrayList<>(0);
     }
 }

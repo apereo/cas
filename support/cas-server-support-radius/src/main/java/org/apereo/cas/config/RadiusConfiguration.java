@@ -1,10 +1,11 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
+import org.apereo.cas.adaptors.radius.server.AbstractRadiusServer;
+import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -19,6 +20,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,7 +51,7 @@ public class RadiusConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     public static Set<String> getClientIps(final RadiusClientProperties client) {
         return StringUtils.commaDelimitedListToSet(StringUtils.trimAllWhitespace(client.getInetAddress()));
@@ -61,53 +63,45 @@ public class RadiusConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    /**
-     * Radius server j radius server.
-     *
-     * @return the j radius server
-     */
     @RefreshScope
     @Bean
-    public JRadiusServerImpl radiusServer() {
-        val client = casProperties.getAuthn().getRadius().getClient();
-        val server = casProperties.getAuthn().getRadius().getServer();
+    public AbstractRadiusServer radiusServer() {
+        val radius = casProperties.getAuthn().getRadius();
+        val client = radius.getClient();
+        val server = radius.getServer();
 
         val ips = getClientIps(client);
         return getSingleRadiusServer(client, server, ips.iterator().next());
     }
 
-    private JRadiusServerImpl getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
-        val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
-            clientInetAddress, client.getSharedSecret());
+    private AbstractRadiusServer getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
+        val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(),
+            client.getSocketTimeout(), clientInetAddress, client.getSharedSecret());
 
         val protocol = RadiusProtocol.valueOf(server.getProtocol());
 
-        return new JRadiusServerImpl(protocol, factory, server.getRetries(),
+        return new NonBlockingRadiusServer(protocol, factory, server.getRetries(),
             server.getNasIpAddress(), server.getNasIpv6Address(), server.getNasPort(),
-            server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort());
+            server.getNasPortId(), server.getNasIdentifier(), server.getNasRealPort(),
+            server.getNasPortType());
     }
 
-    /**
-     * Radius servers list.
-     * <p>
-     * Handles definition of several redundant servers provided on different IP addresses seprated by space.
-     *
-     * @return the list
-     */
     @RefreshScope
     @Bean
     public List<RadiusServer> radiusServers() {
-        val client = casProperties.getAuthn().getRadius().getClient();
-        val server = casProperties.getAuthn().getRadius().getServer();
+        val radius = casProperties.getAuthn().getRadius();
+        val client = radius.getClient();
+        val server = radius.getServer();
 
-        val ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
+        val ips = getClientIps(radius.getClient());
         return ips.stream().map(ip -> getSingleRadiusServer(client, server, ip)).collect(Collectors.toList());
     }
 
+    @ConditionalOnMissingBean(name = "radiusAuthenticationHandler")
     @Bean
     public AuthenticationHandler radiusAuthenticationHandler() {
         val radius = casProperties.getAuthn().getRadius();
-        val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager, radiusPrincipalFactory(), radiusServers(),
+        val h = new RadiusAuthenticationHandler(radius.getName(), servicesManager.getIfAvailable(), radiusPrincipalFactory(), radiusServers(),
             radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(radius.getPasswordEncoder()));

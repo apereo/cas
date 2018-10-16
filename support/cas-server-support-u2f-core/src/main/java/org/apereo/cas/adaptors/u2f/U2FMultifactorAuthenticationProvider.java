@@ -23,11 +23,6 @@ public class U2FMultifactorAuthenticationProvider extends AbstractMultifactorAut
     }
 
     @Override
-    protected boolean isAvailable() {
-        return true;
-    }
-
-    @Override
     public String getFriendlyName() {
         return "FIDO U2F";
     }

@@ -1,11 +1,11 @@
 package org.apereo.cas.web.view;
 
 import lombok.Getter;
-import lombok.val;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
 import org.thymeleaf.templateresolver.AbstractTemplateResolver;
+import org.thymeleaf.templateresolver.TemplateResolution;
 import org.thymeleaf.templateresource.ITemplateResource;
 
 import java.util.ArrayList;
@@ -50,12 +50,12 @@ public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateRe
                                                         final String resourceName,
                                                         final String characterEncoding,
                                                         final Map<String, Object> templateResolutionAttributes) {
-        for (val r : this.resolvers) {
-            val resource = r.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes);
-            if (resource != null && resource.isTemplateResourceExistenceVerified()) {
-                return resource.getTemplateResource();
-            }
-        }
-        return null;
+        return this.resolvers
+            .stream()
+            .map(r -> r.resolveTemplate(configuration, ownerTemplate, template, templateResolutionAttributes))
+            .filter(resource -> resource != null && resource.isTemplateResourceExistenceVerified())
+            .findFirst()
+            .map(TemplateResolution::getTemplateResource)
+            .orElse(null);
     }
 }

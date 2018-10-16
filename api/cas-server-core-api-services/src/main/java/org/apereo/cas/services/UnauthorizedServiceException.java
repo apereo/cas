@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Exception that is thrown when an Unauthorized Service attempts to use CAS.
@@ -9,6 +11,7 @@ import lombok.Getter;
  * @since 3.0.0
  */
 @Getter
+@ResponseStatus(value = HttpStatus.FORBIDDEN, reason = "Unauthorized Service Usage")
 public class UnauthorizedServiceException extends RuntimeException {
 
     /**
@@ -22,8 +25,10 @@ public class UnauthorizedServiceException extends RuntimeException {
     public static final String CODE_EMPTY_SVC_MGMR = "screen.service.empty.error.message";
 
     /**
-     * The Unique ID for serialization.
-     */
+     * Exception object that indicates the service is expired.
+     **/
+    public static final String CODE_EXPIRED_SERVICE = "screen.service.expired.message";
+
     private static final long serialVersionUID = 3905807495715960369L;
 
     private final String code;

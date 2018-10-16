@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import java.util.List;
  */
 @Slf4j
 @ToString
+@Getter
 @RequiredArgsConstructor
 public class RestConsentRepository implements ConsentRepository {
 
@@ -38,7 +40,7 @@ public class RestConsentRepository implements ConsentRepository {
     private final String endpoint;
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+    public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
@@ -55,7 +57,7 @@ public class RestConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public Collection<ConsentDecision> findConsentDecisions() {
+    public Collection<? extends ConsentDecision> findConsentDecisions() {
         try {
             val headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));

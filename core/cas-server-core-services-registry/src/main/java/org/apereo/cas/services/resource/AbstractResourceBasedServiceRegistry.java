@@ -34,7 +34,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -120,7 +119,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      * @param resourceNamingStrategy               the registered service naming strategy
      */
     public AbstractResourceBasedServiceRegistry(final Path configDirectory,
-                                                final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
+                                                final Collection<StringSerializer<RegisteredService>> serializers,
+                                                final boolean enableWatcher,
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) {
@@ -144,7 +144,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                                                 final ApplicationEventPublisher eventPublisher,
                                                 final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                                 final RegisteredServiceResourceNamingStrategy resourceNamingStrategy) throws Exception {
-        val servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
+
+        val pattern = String.join("|", getExtensions());
+        val servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, pattern);
         if (servicesDirectory == null) {
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
         }
@@ -160,10 +162,12 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         setEventPublisher(eventPublisher);
         this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy,
             new NoOpRegisteredServiceReplicationStrategy());
-        this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy,
-            new DefaultRegisteredServiceResourceNamingStrategy());
+        this.resourceNamingStrategy = ObjectUtils.defaultIfNull(resourceNamingStrategy, new DefaultRegisteredServiceResourceNamingStrategy());
         this.registeredServiceSerializers = serializers;
-        this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME + getExtension());
+
+        val pattern = String.join("|", getExtensions());
+        this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME.concat(pattern));
+
         this.serviceRegistryDirectory = configDirectory;
         val file = this.serviceRegistryDirectory.toFile();
         Assert.isTrue(file.exists(), this.serviceRegistryDirectory + " does not exist");
@@ -225,7 +229,6 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         }
         publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
         return result;
-
     }
 
     /**
@@ -238,8 +241,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
     }
 
     @Override
-    public synchronized List<RegisteredService> load() {
-        val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
+    public synchronized Collection<RegisteredService> load() {
+        val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), getExtensions(), true);
         this.serviceMap = files
             .stream()
             .map(this::load)
@@ -358,7 +361,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     /**
      * Creates a file for a registered service.
-     * The file is named as {@code [SERVICE-NAME]-[SERVICE-ID]-.{@value #getExtension()}}
+     * The file is named as {@code [SERVICE-NAME]-[SERVICE-ID]-.{@value #getExtensions()}}
      *
      * @param service Registered service.
      * @return file in service registry directory.
@@ -366,8 +369,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      */
     @SneakyThrows
     protected File getRegisteredServiceFileName(final RegisteredService service) {
-        val fileName = resourceNamingStrategy.build(service, getExtension());
-
+        val fileName = resourceNamingStrategy.build(service, getExtensions()[0]);
         val svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
         LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
         return svcFile;
@@ -379,5 +381,5 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
      *
      * @return the extension
      */
-    protected abstract String getExtension();
+    protected abstract String[] getExtensions();
 }

@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Surrogate Authentication
+category: Authentication
 ---
 
 # Surrogate Authentication
@@ -33,7 +34,7 @@ The following account stores may be configured and used to locate surrogates aut
 
 ### Static
 
-Surrogate accounts may be defined statically in the CAS configuration. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#surrogate-authentication).
+Surrogate accounts may be defined statically in the CAS configuration. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#surrogate-authentication).
 
 ### JSON
 
@@ -46,7 +47,7 @@ Similar to above, except that surrogate accounts may be defined in an external J
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#surrogate-authentication).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#surrogate-authentication).
 
 ### LDAP
 
@@ -60,7 +61,21 @@ LDAP support for surrogate authentication is enabled by including the following 
 </dependency>
 ```
 
-Surrogate accounts may also be retrieved from an LDAP instance. Such accounts are expected to be found in a configured attribute defined for the primary user in LDAP whose value(s) may be examined against a regular expression pattern of your own choosing to further narrow down the list of authorized surrogate accounts. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#surrogate-authentication).
+Surrogate accounts may also be retrieved from an LDAP instance. Such accounts are expected to be found in a configured attribute defined for the primary user in LDAP whose value(s) may be examined against a regular expression pattern of your own choosing to further narrow down the list of authorized surrogate accounts. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#surrogate-authentication).
+
+### CouchDb
+
+CouchDb support for surrogate authentication is enabled by including the following dependencies in the WAR overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-surrogate-authentication-couchdb</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+Surrogate accounts may also be retrieved from an CouchDb instance. By default, this takes the form of surrogate/principal key/value pairs. Users authorized as surrogates may be listed multiple times to authorize them to access multiple accounts. Additionally, the CouchDb surrogate support may be configured to use a profile attribute containing a list of principals the user may surrogate for with the `profileBased` property. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#surrogate-authentication).
 
 ### JDBC
 
@@ -75,7 +90,7 @@ JDBC support for surrogate authentication is enabled by including the following 
 ```
 
 Aside from the usual database settings, this mode requires the specification of two SQL queries; one that determines eligibility and one that is able to retrieve
-the list of accounts that can be impersonated for a given admin user. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jdbc-surrogate-accounts).
+the list of accounts that can be impersonated for a given admin user. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#jdbc-surrogate-accounts).
 
 ### REST
 
@@ -94,7 +109,7 @@ REST support for surrogate authentication is enabled by including the following 
 | `GET`        | Whether principal can authenticate as a surrogate account.    | `surrogate`, `principal` | `202`
 | `GET`        | List of accounts principal is eligible to impersonate.        | `principal` | JSON list of usernames.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-surrogate-accounts).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#rest-surrogate-accounts).
 
 ### Custom
 
@@ -115,7 +130,7 @@ public class MySurrogateConfiguration {
 }
 ```
 
-[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
 
 ## Account Selection
 

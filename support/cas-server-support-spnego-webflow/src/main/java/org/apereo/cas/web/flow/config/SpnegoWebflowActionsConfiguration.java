@@ -14,6 +14,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,15 +39,15 @@ public class SpnegoWebflowActionsConfiguration {
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
 
     @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -55,9 +56,9 @@ public class SpnegoWebflowActionsConfiguration {
     @RefreshScope
     public Action spnego() {
         val spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver,
-            adaptiveAuthenticationPolicy,
+        return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
+            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
+            adaptiveAuthenticationPolicy.getIfAvailable(),
             spnegoProperties.isNtlm(),
             spnegoProperties.isSend401OnAuthenticationFailure());
     }

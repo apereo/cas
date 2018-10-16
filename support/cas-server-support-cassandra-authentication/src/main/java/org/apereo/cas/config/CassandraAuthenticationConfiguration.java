@@ -15,6 +15,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,15 +37,15 @@ public class CassandraAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("cassandraSessionFactory")
-    private CassandraSessionFactory cassandraSessionFactory;
+    private ObjectProvider<CassandraSessionFactory> cassandraSessionFactory;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -58,13 +59,13 @@ public class CassandraAuthenticationConfiguration {
     @RefreshScope
     public CassandraRepository cassandraRepository() {
         val cassandra = casProperties.getAuthn().getCassandra();
-        return new DefaultCassandraRepository(cassandra, cassandraSessionFactory);
+        return new DefaultCassandraRepository(cassandra, cassandraSessionFactory.getIfAvailable());
     }
 
     @Bean
     public AuthenticationHandler cassandraAuthenticationHandler() {
         val cassandra = casProperties.getAuthn().getCassandra();
-        val handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager,
+        val handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager.getIfAvailable(),
             cassandraPrincipalFactory(),
             cassandra.getOrder(), cassandra, cassandraRepository());
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(cassandra.getPrincipalTransformation()));
@@ -75,6 +76,6 @@ public class CassandraAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "cassandraAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer cassandraAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cassandraAuthenticationHandler(), personDirectoryPrincipalResolver);
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(cassandraAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
     }
 }

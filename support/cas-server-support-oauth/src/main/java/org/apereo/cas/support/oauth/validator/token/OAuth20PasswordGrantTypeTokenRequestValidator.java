@@ -3,7 +3,6 @@ package org.apereo.cas.support.oauth.validator.token;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -24,15 +23,10 @@ import org.pac4j.core.profile.UserProfile;
  */
 @Slf4j
 public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20TokenRequestValidator {
-    private final ServicesManager servicesManager;
-    private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
-
     public OAuth20PasswordGrantTypeTokenRequestValidator(final AuditableExecution registeredServiceAccessStrategyEnforcer,
                                                          final ServicesManager servicesManager,
                                                          final ServiceFactory webApplicationServiceServiceFactory) {
-        super(registeredServiceAccessStrategyEnforcer);
-        this.servicesManager = servicesManager;
-        this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
+        super(registeredServiceAccessStrategyEnforcer, servicesManager, webApplicationServiceServiceFactory);
     }
 
     @Override
@@ -43,20 +37,26 @@ public class OAuth20PasswordGrantTypeTokenRequestValidator extends BaseOAuth20To
     @Override
     protected boolean validateInternal(final J2EContext context, final String grantType,
                                        final ProfileManager manager, final UserProfile uProfile) {
+
         val request = context.getRequest();
+        if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)) {
+            return false;
+        }
         val clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
+        val audit = AuditableContext.builder()
+            .service(service)
+            .registeredService(registeredService)
+            .build();
+        val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        accessResult.throwExceptionIfNeeded();
 
-        if (HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)) {
-            val service = webApplicationServiceServiceFactory.createService(registeredService.getServiceId());
-            val audit = AuditableContext.builder()
-                .service(service)
-                .registeredService(registeredService)
-                .build();
-            val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
-            return !accessResult.isExecutionFailure();
+        if (!isGrantTypeSupportedBy(registeredService, grantType)) {
+            LOGGER.warn("Requested grant type [{}] is not authorized by service definition [{}]", getGrantType(), registeredService.getServiceId());
+            return false;
         }
-        return false;
+        return true;
     }
 }

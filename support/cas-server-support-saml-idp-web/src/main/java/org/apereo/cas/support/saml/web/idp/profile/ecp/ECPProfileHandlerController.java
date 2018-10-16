@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -23,7 +23,6 @@ import org.apereo.cas.util.Pac4jUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -52,7 +51,6 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
     private final SamlProfileObjectBuilder<? extends SAMLObject> samlEcpFaultResponseBuilder;
 
     public ECPProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                       final ParserPool parserPool,
                                        final AuthenticationSystemSupport authenticationSystemSupport,
                                        final ServicesManager servicesManager,
                                        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -63,11 +61,16 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                        final CasConfigurationProperties casProperties,
                                        final SamlObjectSignatureValidator samlObjectSignatureValidator,
                                        final Service callbackService) {
-        super(samlObjectSigner, parserPool, authenticationSystemSupport,
-            servicesManager, webApplicationServiceFactory,
+        super(samlObjectSigner,
+            authenticationSystemSupport,
+            servicesManager,
+            webApplicationServiceFactory,
             samlRegisteredServiceCachingMetadataResolver,
-            configBean, responseBuilder, casProperties,
-            samlObjectSignatureValidator, callbackService);
+            configBean,
+            responseBuilder,
+            casProperties,
+            samlObjectSignatureValidator,
+            callbackService);
         this.samlEcpFaultResponseBuilder = samlEcpFaultResponseBuilder;
     }
 
@@ -126,7 +129,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                 credential.getId(), authentication.getPrincipal());
 
             LOGGER.debug("Building ECP SAML response for [{}]", credential.getId());
-            val issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+            val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
             val service = webApplicationServiceFactory.createService(issuer);
             val casAssertion = buildCasAssertion(authentication, service, serviceRequest.getKey(), new LinkedHashMap<>());
 
@@ -171,7 +174,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      */
     protected Authentication authenticateEcpRequest(final Credential credential,
                                                     final Pair<AuthnRequest, MessageContext> authnRequest) {
-        val issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest.getKey());
+        val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest.getKey());
         LOGGER.debug("Located issuer [{}] from request prior to authenticating [{}]", issuer, credential.getId());
 
         val service = webApplicationServiceFactory.createService(issuer);

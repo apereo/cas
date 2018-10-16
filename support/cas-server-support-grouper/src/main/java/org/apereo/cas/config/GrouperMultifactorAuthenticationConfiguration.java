@@ -3,9 +3,9 @@ package org.apereo.cas.config;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.grouper.GrouperFacade;
-import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.GrouperMultifactorAuthenticationPolicyEventResolver;
@@ -13,6 +13,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,34 +38,34 @@ import org.springframework.web.util.CookieGenerator;
 public class GrouperMultifactorAuthenticationConfiguration {
     @Autowired
     @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("warnCookieGenerator")
-    private CookieGenerator warnCookieGenerator;
+    private ObjectProvider<CookieGenerator> warnCookieGenerator;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
-    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+    private ObjectProvider<MultifactorAuthenticationProviderSelector> multifactorAuthenticationProviderSelector;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -79,18 +80,18 @@ public class GrouperMultifactorAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public CasWebflowEventResolver grouperMultifactorAuthenticationWebflowEventResolver() {
-        final CasWebflowEventResolver r = new GrouperMultifactorAuthenticationPolicyEventResolver(
+        val r = new GrouperMultifactorAuthenticationPolicyEventResolver(
             authenticationSystemSupport.getIfAvailable(),
-            centralAuthenticationService,
-            servicesManager,
-            ticketRegistrySupport,
-            warnCookieGenerator,
-            authenticationRequestServiceSelectionStrategies,
-            multifactorAuthenticationProviderSelector,
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
             casProperties,
             grouperFacade());
         LOGGER.debug("Activating MFA event resolver based on Grouper groups...");
-        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
+        this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r);
         return r;
     }
 }

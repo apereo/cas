@@ -39,10 +39,10 @@ public class SamlRegisteredServiceCacheKey implements Serializable {
      * @return the string
      */
     public static String buildRegisteredServiceCacheKey(final SamlRegisteredService service) {
-        val key = String.valueOf(service.getId()).concat("@").concat(service.getName());
-        LOGGER.debug("Determined cache key for service [{}] as [{}]", service.getName(), key);
+        val key = service.getMetadataLocation();
+        LOGGER.trace("Determined cache key for service [{}] as [{}]", service.getName(), key);
         val hashedKey = DigestUtils.sha512(key);
-        LOGGER.debug("Hashed service cache key as [{}]", hashedKey);
+        LOGGER.trace("Hashed service cache key as [{}]", hashedKey);
         return hashedKey;
     }
 }

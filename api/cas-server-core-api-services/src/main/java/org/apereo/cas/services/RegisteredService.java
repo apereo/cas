@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,7 +161,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      *
      * @return the logout type of the service.
      */
-    LogoutType getLogoutType();
+    RegisteredServiceLogoutType getLogoutType();
 
     /**
      * Gets the attribute filtering policy to determine
@@ -209,7 +208,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return the logout url for this service
      * @since 4.1
      */
-    URL getLogoutUrl();
+    String getLogoutUrl();
 
     /**
      * Gets the public key associated with this service
@@ -261,23 +260,5 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * values or object instances, etc.
      */
     default void initialize() {
-    }
-
-    /**
-     * The logout type.
-     */
-    enum LogoutType {
-        /**
-         * For no SLO.
-         */
-        NONE,
-        /**
-         * For back channel SLO.
-         */
-        BACK_CHANNEL,
-        /**
-         * For front channel SLO.
-         */
-        FRONT_CHANNEL
     }
 }

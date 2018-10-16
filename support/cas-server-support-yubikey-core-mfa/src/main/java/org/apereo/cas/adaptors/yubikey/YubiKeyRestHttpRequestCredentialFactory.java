@@ -9,6 +9,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +28,11 @@ public class YubiKeyRestHttpRequestCredentialFactory implements RestHttpRequestC
     public static final String PARAMETER_NAME_YUBIKEY_OTP = "yubikeyotp";
 
     @Override
-    public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
+    public List<Credential> fromRequest(final HttpServletRequest request, final MultiValueMap<String, String> requestBody) {
+        if (requestBody == null || requestBody.isEmpty()) {
+            LOGGER.debug("Skipping {} because the requestBody is null or empty", getClass().getSimpleName());
+            return new ArrayList<>(0);
+        }
         val otp = requestBody.getFirst(PARAMETER_NAME_YUBIKEY_OTP);
         LOGGER.debug("YubiKey token in the request body: [{}]", otp);
         if (StringUtils.isBlank(otp)) {

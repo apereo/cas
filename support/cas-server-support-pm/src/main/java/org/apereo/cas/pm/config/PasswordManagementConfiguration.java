@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pm.DefaultPasswordValidationService;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidationService;
@@ -18,6 +19,7 @@ import lombok.val;
 import org.apereo.inspektr.audit.spi.support.BooleanAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.FirstParameterAuditResourceResolver;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -25,7 +27,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
 /**
  * This is {@link PasswordManagementConfiguration}.
@@ -42,7 +43,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
 
     @Autowired
     @Qualifier("communicationsManager")
-    private CommunicationsManager communicationsManager;
+    private ObjectProvider<CommunicationsManager> communicationsManager;
 
     @ConditionalOnMissingBean(name = "passwordManagementCipherExecutor")
     @RefreshScope
@@ -64,9 +65,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     @Bean
     public PasswordValidationService passwordValidationService() {
         val policyPattern = casProperties.getAuthn().getPm().getPolicyPattern();
-        return (credential, bean) -> StringUtils.hasText(bean.getPassword())
-            && bean.getPassword().equals(bean.getConfirmedPassword())
-            && bean.getPassword().matches(policyPattern);
+        return new DefaultPasswordValidationService(policyPattern);
     }
 
     @ConditionalOnMissingBean(name = "passwordChangeService")
@@ -107,7 +106,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
     public void afterPropertiesSet() {
         val pm = casProperties.getAuthn().getPm();
         if (pm.isEnabled()) {
-            communicationsManager.validate();
+            communicationsManager.getIfAvailable().validate();
         }
     }
 

@@ -52,6 +52,7 @@ import org.apache.cxf.ws.security.sts.provider.operation.ValidateOperation;
 import org.apache.wss4j.dom.validate.Validator;
 import org.opensaml.saml.saml2.core.NameID;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -76,20 +77,20 @@ import java.util.Map;
  */
 @Configuration("coreWsSecuritySecurityTokenServiceConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ImportResource(locations = {"classpath:jaxws-realms.xml", "classpath:META-INF/cxf/cxf.xml"})
+@ImportResource(locations = {"classpath:jaxws-realms.xml"})
 public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
     @Autowired
     @Qualifier("grantingTicketExpirationPolicy")
-    private ExpirationPolicy grantingTicketExpirationPolicy;
+    private ObjectProvider<ExpirationPolicy> grantingTicketExpirationPolicy;
 
     @Autowired
     @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
-    private AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy;
+    private ObjectProvider<AuthenticationServiceSelectionStrategy> wsFederationAuthenticationServiceSelectionStrategy;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -295,8 +296,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator securityTokenServiceAuthenticationMetaDataPopulator() {
-        return new SecurityTokenServiceAuthenticationMetaDataPopulator(servicesManager,
-            wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor(),
+        return new SecurityTokenServiceAuthenticationMetaDataPopulator(servicesManager.getIfAvailable(),
+            wsFederationAuthenticationServiceSelectionStrategy.getIfAvailable(), securityTokenServiceCredentialCipherExecutor(),
             securityTokenServiceClientBuilder());
     }
 
@@ -312,7 +313,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     @RefreshScope
     public SecurityTokenTicketFactory securityTokenTicketFactory() {
-        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy);
+        return new DefaultSecurityTokenTicketFactory(securityTokenTicketIdGenerator(), grantingTicketExpirationPolicy.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "securityTokenTicketIdGenerator")
@@ -327,4 +328,5 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     public AuthenticationEventExecutionPlanConfigurer coreWsSecuritySecurityTokenServiceAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerMetadataPopulator(securityTokenServiceAuthenticationMetaDataPopulator());
     }
+
 }

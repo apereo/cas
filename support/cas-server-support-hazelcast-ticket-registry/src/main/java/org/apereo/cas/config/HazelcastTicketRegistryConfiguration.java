@@ -3,26 +3,22 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.util.CoreTicketUtils;
 
-import com.hazelcast.config.Config;
-import com.hazelcast.config.MapConfig;
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Spring's Java configuration component for {@code HazelcastInstance} that is consumed and used by
@@ -42,16 +38,28 @@ import java.util.Map;
 @Slf4j
 public class HazelcastTicketRegistryConfiguration {
 
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
+    @Qualifier("casHazelcastInstance")
+    private ObjectProvider<HazelcastInstance> hazelcastInstance;
+
+    @Autowired
+    @Qualifier("ticketCatalog")
+    private ObjectProvider<TicketCatalog> ticketCatalog;
+
     @Bean
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+    public TicketRegistry ticketRegistry() {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
-        val r = new HazelcastTicketRegistry(hazelcast(ticketCatalog),
-            ticketCatalog,
+        val factory = new HazelcastConfigurationFactory();
+        ticketCatalog.getIfAvailable().findAll().stream()
+                .map(TicketDefinition::getProperties)
+                .peek(p -> LOGGER.debug("Created Hazelcast map configuration for [{}]", p))
+                .map(p -> factory.buildMapConfig(hz, p.getStorageName(), p.getStorageTimeout()))
+                .forEach(m -> hazelcastInstance.getIfAvailable().getConfig().addMapConfig(m));
+        val r = new HazelcastTicketRegistry(hazelcastInstance.getIfAvailable(),
+            ticketCatalog.getIfAvailable(),
             hz.getPageSize());
         r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
         return r;
@@ -62,31 +70,4 @@ public class HazelcastTicketRegistryConfiguration {
         return NoOpTicketRegistryCleaner.getInstance();
     }
 
-    @Autowired
-    @Bean
-    public HazelcastInstance hazelcast(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
-        return Hazelcast.newHazelcastInstance(getConfig(ticketCatalog));
-    }
-
-    private Config getConfig(final TicketCatalog ticketCatalog) {
-        val hz = casProperties.getTicket().getRegistry().getHazelcast();
-        val configs = buildHazelcastMapConfigurations(ticketCatalog);
-        val factory = new HazelcastConfigurationFactory();
-        return factory.build(hz, configs);
-    }
-
-    private Map<String, MapConfig> buildHazelcastMapConfigurations(final TicketCatalog ticketCatalog) {
-        val mapConfigs = new HashMap<String, MapConfig>();
-
-        val hz = casProperties.getTicket().getRegistry().getHazelcast();
-        val factory = new HazelcastConfigurationFactory();
-
-        val definitions = ticketCatalog.findAll();
-        definitions.forEach(t -> {
-            val mapConfig = factory.buildMapConfig(hz, t.getProperties().getStorageName(), t.getProperties().getStorageTimeout());
-            LOGGER.debug("Created Hazelcast map configuration for [{}]", t);
-            mapConfigs.put(t.getProperties().getStorageName(), mapConfig);
-        });
-        return mapConfigs;
-    }
 }

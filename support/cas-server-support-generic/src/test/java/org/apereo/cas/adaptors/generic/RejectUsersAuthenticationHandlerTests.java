@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.generic;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.HttpBasedServiceCredential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 
 import lombok.val;
 import org.junit.Rule;

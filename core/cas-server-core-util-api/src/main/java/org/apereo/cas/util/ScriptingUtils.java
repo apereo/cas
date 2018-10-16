@@ -4,12 +4,14 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
+import org.codehaus.groovy.runtime.InvokerInvocationException;
 import org.springframework.core.io.Resource;
 
 import javax.script.Invocable;
@@ -19,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -128,11 +131,13 @@ public class ScriptingUtils {
      * @param groovyScript the groovy script
      * @param args         the args
      * @param clazz        the clazz
+     * @param failOnError  the fail on error
      * @return the object
      */
     public static <T> T executeGroovyScript(final Resource groovyScript,
-                                            final Object[] args, final Class<T> clazz) {
-        return executeGroovyScript(groovyScript, "run", args, clazz);
+                                            final Object[] args, final Class<T> clazz,
+                                            final boolean failOnError) {
+        return executeGroovyScript(groovyScript, "run", args, clazz, failOnError);
     }
 
     /**
@@ -149,7 +154,7 @@ public class ScriptingUtils {
                                             final String methodName,
                                             final Class<T> clazz,
                                             final Object... args) {
-        return executeGroovyScript(groovyScript, methodName, args, clazz);
+        return executeGroovyScript(groovyScript, methodName, args, clazz, false);
     }
 
     /**
@@ -164,7 +169,7 @@ public class ScriptingUtils {
     public static <T> T executeGroovyScript(final Resource groovyScript,
                                             final String methodName,
                                             final Class<T> clazz) {
-        return executeGroovyScript(groovyScript, methodName, new Object[]{}, clazz);
+        return executeGroovyScript(groovyScript, methodName, new Object[]{}, clazz, false);
     }
 
     /**
@@ -175,23 +180,43 @@ public class ScriptingUtils {
      * @param methodName   the method name
      * @param args         the args
      * @param clazz        the clazz
+     * @param failOnError  the fail on error
      * @return the t
      */
+    @SneakyThrows
     public static <T> T executeGroovyScript(final Resource groovyScript,
                                             final String methodName,
                                             final Object[] args,
-                                            final Class<T> clazz) {
+                                            final Class<T> clazz,
+                                            final boolean failOnError) {
 
         if (groovyScript == null || StringUtils.isBlank(methodName)) {
             return null;
         }
 
         val parent = ScriptingUtils.class.getClassLoader();
-        return AccessController.doPrivileged((PrivilegedAction<T>) () -> getGroovyResult(groovyScript, methodName, args, clazz, parent));
+        try {
+            return AccessController.doPrivileged((PrivilegedAction<T>) () -> getGroovyResult(groovyScript, methodName, args, clazz, parent, failOnError));
+        } catch (final Exception e) {
+            var cause = (Throwable) null;
+            if (e instanceof PrivilegedActionException) {
+                cause = PrivilegedActionException.class.cast(e).getException();
+            } else {
+                cause = e;
+            }
+
+            if (failOnError) {
+                throw cause;
+            }
+            LOGGER.error(cause.getMessage(), cause);
+        }
+        return null;
     }
 
+    @SneakyThrows
     private static <T> T getGroovyResult(final Resource groovyScript, final String methodName,
-                                         final Object[] args, final Class<T> clazz, final ClassLoader parent) {
+                                         final Object[] args, final Class<T> clazz, final ClassLoader parent,
+                                         final boolean failOnError) {
         try (val loader = new GroovyClassLoader(parent)) {
             val groovyFile = groovyScript.getFile();
             if (groovyFile.exists()) {
@@ -213,7 +238,16 @@ public class ScriptingUtils {
             }
             LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            var cause = (Throwable) null;
+            if (e instanceof InvokerInvocationException) {
+                cause = e.getCause();
+            } else {
+                cause = e;
+            }
+            if (failOnError) {
+                throw cause;
+            }
+            LOGGER.error(cause.getMessage(), cause);
         }
         return null;
     }

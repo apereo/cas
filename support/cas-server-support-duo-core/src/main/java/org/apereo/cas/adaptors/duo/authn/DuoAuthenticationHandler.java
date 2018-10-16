@@ -2,17 +2,13 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -28,10 +24,11 @@ import java.util.ArrayList;
 @Slf4j
 public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private final VariegatedMultifactorAuthenticationProvider provider;
+    private final DuoMultifactorAuthenticationProvider provider;
 
-    public DuoAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                    final VariegatedMultifactorAuthenticationProvider provider) {
+    public DuoAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                    final PrincipalFactory principalFactory,
+                                    final DuoMultifactorAuthenticationProvider provider) {
         super(name, servicesManager, principalFactory, null);
         this.provider = provider;
     }
@@ -57,10 +54,10 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
 
     private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
-            val duoAuthenticationService = getDuoAuthenticationService();
-            val c = DuoDirectCredential.class.cast(credential);
-            if (duoAuthenticationService.authenticate(c).getKey()) {
-                val principal = c.getAuthentication().getPrincipal();
+            val duoAuthenticationService = provider.getDuoAuthenticationService();
+            val credential1 = DuoDirectCredential.class.cast(credential);
+            if (duoAuthenticationService.authenticate(credential1).getKey()) {
+                val principal = credential1.getAuthentication().getPrincipal();
                 LOGGER.debug("Duo has successfully authenticated [{}]", principal.getId());
                 return createHandlerResult(credential, principal, new ArrayList<>());
             }
@@ -78,7 +75,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
                     + " and the signed Duo response is configured and passed. Credential received: " + duoCredential);
             }
 
-            val duoAuthenticationService = getDuoAuthenticationService();
+            val duoAuthenticationService = provider.getDuoAuthenticationService();
             val duoVerifyResponse = duoAuthenticationService.authenticate(duoCredential).getValue();
             LOGGER.debug("Response from Duo verify: [{}]", duoVerifyResponse);
             val primaryCredentialsUsername = duoCredential.getUsername();
@@ -100,26 +97,12 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         }
     }
 
-    private DuoSecurityAuthenticationService getDuoAuthenticationService() {
-        val requestContext = RequestContextHolder.getRequestContext();
-        if (requestContext == null) {
-            throw new IllegalArgumentException("No request context is held to locate the Duo authentication service");
-        }
-        val providerIds = WebUtils.getResolvedMultifactorAuthenticationProviders(requestContext);
-        val providers =
-            MultifactorAuthenticationUtils.getMultifactorAuthenticationProvidersByIds(providerIds,
-                ApplicationContextProvider.getApplicationContext());
-
-        if (providers.isEmpty()) {
-            throw new IllegalArgumentException("No multifactor providers are found in the current request context");
-        }
-        val pr = providers.iterator().next();
-        return provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class).getDuoAuthenticationService();
-    }
-
     @Override
     public boolean supports(final Credential credential) {
-        return DuoCredential.class.isAssignableFrom(credential.getClass())
-            || credential instanceof DuoDirectCredential;
+        if (credential instanceof MultifactorAuthenticationCredential) {
+            val id = ((MultifactorAuthenticationCredential) credential).getProviderId();
+            return provider.validateId(id);
+        }
+        return false;
     }
 }

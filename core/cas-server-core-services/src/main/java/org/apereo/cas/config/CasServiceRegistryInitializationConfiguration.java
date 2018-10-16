@@ -61,7 +61,6 @@ public class CasServiceRegistryInitializationConfiguration {
     @Qualifier("serviceRegistry")
     private ObjectProvider<ServiceRegistry> serviceRegistry;
 
-    @RefreshScope
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer() {
         val serviceRegistryInstance = serviceRegistry.getIfAvailable();
@@ -76,7 +75,6 @@ public class CasServiceRegistryInitializationConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public CasServiceRegistryInitializerConfigurationEventListener serviceRegistryInitializerConfigurationEventListener() {
         return new CasServiceRegistryInitializerConfigurationEventListener(serviceRegistryInitializer());
     }
@@ -110,8 +108,8 @@ public class CasServiceRegistryInitializationConfiguration {
         }
 
         @Override
-        protected String getExtension() {
-            return "json";
+        protected String[] getExtensions() {
+            return new String[]{"json"};
         }
     }
 }

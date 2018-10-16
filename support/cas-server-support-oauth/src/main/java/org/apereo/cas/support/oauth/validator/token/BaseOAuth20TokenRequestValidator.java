@@ -1,8 +1,12 @@
 package org.apereo.cas.support.oauth.validator.token;
 
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.Pac4jUtils;
 
@@ -35,6 +39,16 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
      */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
+    /**
+     * Service manager instance, managing the registry.
+     */
+    protected final ServicesManager servicesManager;
+
+    /**
+     * Service factory instance.
+     */
+    protected final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
+
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     /**
@@ -53,6 +67,28 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
         }
         LOGGER.error("Unsupported grant type: [{}]", type);
         return false;
+    }
+
+    /**
+     * Is grant type supported.
+     *
+     * @param registeredService the registered service
+     * @param type              the type
+     * @return the boolean
+     */
+    protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final OAuth20GrantTypes type) {
+        return isGrantTypeSupportedBy(registeredService, type.getType());
+    }
+
+    /**
+     * Is grant type supported service.
+     *
+     * @param registeredService the registered service
+     * @param type              the type
+     * @return true/false
+     */
+    protected boolean isGrantTypeSupportedBy(final OAuthRegisteredService registeredService, final String type) {
+        return OAuth20Utils.isAuthorizedGrantTypeForService(type, registeredService);
     }
 
     @Override

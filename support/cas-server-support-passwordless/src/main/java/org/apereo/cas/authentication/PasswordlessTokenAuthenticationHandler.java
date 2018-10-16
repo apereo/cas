@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.api.PasswordlessTokenRepository;
+import org.apereo.cas.authentication.credential.OneTimePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -39,6 +40,11 @@ public class PasswordlessTokenAuthenticationHandler extends AbstractPreAndPostPr
             return createHandlerResult(credential, principal, new ArrayList<>());
         }
         throw new FailedLoginException("Passwordless authentication has failed");
+    }
+
+    @Override
+    public boolean supports(final Class<? extends Credential> clazz) {
+        return OneTimePasswordCredential.class.isAssignableFrom(clazz);
     }
 
     @Override

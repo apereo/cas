@@ -1,11 +1,13 @@
 package org.apereo.cas.logging;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * This is {@link SplunkAppenderTests}.
@@ -13,10 +15,15 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Slf4j
 public class SplunkAppenderTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Test
     public void verifyAction() {
         try {

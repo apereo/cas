@@ -89,7 +89,6 @@ public class EhCacheTicketRegistryTests extends BaseSpringRunnableTicketRegistry
         return ticketRegistry;
     }
 
-
     @Configuration("EhcacheTicketRegistryTestConfiguration")
     public static class EhcacheTicketRegistryTestConfiguration {
         @Bean

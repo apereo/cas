@@ -1,11 +1,12 @@
 package org.apereo.cas.pm.web.flow.actions;
 
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.pm.InvalidPasswordException;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
+import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -40,15 +41,17 @@ public class PasswordChangeAction extends AbstractAction {
 
     private final PasswordManagementService passwordManagementService;
     private final PasswordValidationService passwordValidationService;
+    private final CommunicationsManager communicationsManager;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
             val c = (UsernamePasswordCredential) WebUtils.getCredential(requestContext);
-            val bean = requestContext.getFlowScope()
-                .get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
+            val bean = requestContext.getFlowScope().get(PasswordManagementWebflowConfigurer.FLOW_VAR_ID_PASSWORD, PasswordChangeBean.class);
 
+            LOGGER.debug("Attempting to validate the password change bean for username [{}}", c.getUsername());
             if (!passwordValidationService.isValid(c, bean)) {
+                LOGGER.error("Failed to validate the provided password");
                 return getErrorEvent(requestContext, PASSWORD_VALIDATION_FAILURE_CODE, DEFAULT_MESSAGE);
             }
             if (passwordManagementService.change(c, bean)) {

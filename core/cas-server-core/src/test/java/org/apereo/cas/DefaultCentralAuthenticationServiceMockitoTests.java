@@ -6,33 +6,15 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationResult;
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
@@ -66,18 +48,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -91,28 +70,7 @@ import static org.mockito.Mockito.*;
  * @author Dmitriy Kopylenko
  * @since 3.0.0
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class
-})
-public class DefaultCentralAuthenticationServiceMockitoTests {
-
+public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
     private static final String TGT_ID = "tgt-id";
     private static final String TGT2_ID = "tgt2-id";
 
@@ -182,8 +140,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests {
     public void prepareNewCAS() {
         this.authentication = mock(Authentication.class);
         when(this.authentication.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
-        final CredentialMetaData metadata = new BasicCredentialMetaData(
-            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
+        val metadata = new BasicCredentialMetaData(RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
         val successes = new HashMap<String, AuthenticationHandlerExecutionResult>();
         successes.put("handler1", new DefaultAuthenticationHandlerExecutionResult(mock(AuthenticationHandler.class), metadata));
         when(this.authentication.getCredentials()).thenReturn(Arrays.asList(metadata));
@@ -216,15 +173,19 @@ public class DefaultCentralAuthenticationServiceMockitoTests {
         val smMock = getServicesManager(service1, service2);
         val factory = getTicketFactory();
 
-        final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies =
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
+        val authenticationRequestServiceSelectionStrategies = new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
         val enforcer = mock(AuditableExecution.class);
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
         this.cas = new DefaultCentralAuthenticationService(
-            mock(ApplicationEventPublisher.class), ticketRegMock, smMock,
-            mock(LogoutManager.class), factory,
-            authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(),
-            new DefaultPrincipalFactory(), null,
+            mock(ApplicationEventPublisher.class),
+            ticketRegMock,
+            smMock,
+            mock(LogoutManager.class),
+            factory,
+            authenticationRequestServiceSelectionStrategies,
+            new AcceptAnyAuthenticationPolicyFactory(),
+            new DefaultPrincipalFactory(),
+            CipherExecutor.noOpOfStringToString(),
             enforcer);
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
@@ -257,7 +218,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests {
         when(ticketRegMock.getTicket(eq(tgtMock2.getId()), eq(TicketGrantingTicket.class))).thenReturn(tgtMock2);
         when(ticketRegMock.getTicket(eq(stMock.getId()), eq(ServiceTicket.class))).thenReturn(stMock);
         when(ticketRegMock.getTicket(eq(stMock2.getId()), eq(ServiceTicket.class))).thenReturn(stMock2);
-        when(ticketRegMock.getTickets()).thenReturn(Arrays.asList(tgtMock, tgtMock2, stMock, stMock2));
+        when(ticketRegMock.getTickets()).thenReturn((Collection) Arrays.asList(tgtMock, tgtMock2, stMock, stMock2));
     }
 
     @Test

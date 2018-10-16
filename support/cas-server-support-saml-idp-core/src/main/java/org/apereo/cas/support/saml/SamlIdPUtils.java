@@ -15,6 +15,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
+import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.messaging.context.SAMLEndpointContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -26,6 +27,7 @@ import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.StatusResponseType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
@@ -92,7 +94,7 @@ public class SamlIdPUtils {
         val endpoint = endpointReq == null
             ? adaptor.getAssertionConsumerService(binding)
             : endpointReq;
-        if (StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
+        if (endpoint == null || StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
             throw new SamlException("Assertion consumer service does not define a binding or location");
         }
         return endpoint;
@@ -215,8 +217,34 @@ public class SamlIdPUtils {
      * @param request the request
      * @return the issuer from saml request
      */
-    public static String getIssuerFromSamlRequest(final RequestAbstractType request) {
+    private static String getIssuerFromSamlRequest(final RequestAbstractType request) {
         return request.getIssuer().getValue();
+    }
+
+    /**
+     * Gets issuer from saml response.
+     *
+     * @param response the response
+     * @return the issuer from saml response
+     */
+    private static String getIssuerFromSamlResponse(final StatusResponseType response) {
+        return response.getIssuer().getValue();
+    }
+
+    /**
+     * Gets issuer from saml object.
+     *
+     * @param object the object
+     * @return the issuer from saml object
+     */
+    public static String getIssuerFromSamlObject(final SAMLObject object) {
+        if (object instanceof RequestAbstractType) {
+            return RequestAbstractType.class.cast(object).getIssuer().getValue();
+        }
+        if (object instanceof StatusResponseType) {
+            return StatusResponseType.class.cast(object).getIssuer().getValue();
+        }
+        return null;
     }
 
     /**

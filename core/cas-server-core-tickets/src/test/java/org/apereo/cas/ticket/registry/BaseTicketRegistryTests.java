@@ -43,6 +43,7 @@ public abstract class BaseTicketRegistryTests {
     private static final String CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED = "Caught an exception. But no exception should have been thrown: ";
 
     private final boolean useEncryption;
+
     private TicketRegistry ticketRegistry;
 
     public BaseTicketRegistryTests(final boolean useEncryption) {
@@ -324,7 +325,7 @@ public abstract class BaseTicketRegistryTests {
     @Test
     @Transactional
     public void verifyWriteGetDelete() {
-        final Ticket ticket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
+        val ticket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
             CoreAuthenticationTestUtils.getAuthentication(),
             new NeverExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);

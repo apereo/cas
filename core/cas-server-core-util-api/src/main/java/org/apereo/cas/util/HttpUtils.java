@@ -371,7 +371,7 @@ public class HttpUtils {
         if (StringUtils.isNotBlank(basicAuthUser) && StringUtils.isNotBlank(basicAuthPassword)) {
             val authorization = basicAuthUser + ':' + basicAuthPassword;
             val basic = EncodingUtils.encodeBase64(authorization.getBytes(Charset.forName("US-ASCII")));
-            acceptHeaders.set("Authorization", "Basic " + basic);
+            acceptHeaders.set(org.springframework.http.HttpHeaders.AUTHORIZATION, "Basic " + basic);
         }
         return acceptHeaders;
     }

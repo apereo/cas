@@ -31,11 +31,13 @@ import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFac
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.val;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
-import org.junit.runner.RunWith;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,7 +45,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.net.URL;
 import java.util.List;
@@ -54,11 +57,13 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    BaseTicketResourceEntityResponseFactoryTests.TicketResourceTestConfiguration.class,
+    CasRestTokensConfiguration.class,
+    CasRestConfiguration.class,
+    TokenCoreConfiguration.class,
     CasCoreConfiguration.class,
-    CasCoreTicketsConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreLogoutConfiguration.class,
@@ -75,14 +80,20 @@ import java.util.List;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    TokenCoreConfiguration.class,
-    BaseTicketResourceEntityResponseFactoryTests.TicketResourceTestConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
+    CasRestTokensConfiguration.class,
     CasRestConfiguration.class,
-    CasRestTokensConfiguration.class})
+    CasCoreTicketsConfiguration.class
+})
 public abstract class BaseTicketResourceEntityResponseFactoryTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Autowired
     @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")
     protected TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
@@ -121,7 +132,7 @@ public abstract class BaseTicketResourceEntityResponseFactoryTests {
 
         @Bean
         public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-            final AbstractUrlBasedTicketValidator validator = new AbstractUrlBasedTicketValidator("https://cas.example.org") {
+            val validator = new AbstractUrlBasedTicketValidator("https://cas.example.org") {
                 @Override
                 protected String getUrlSuffix() {
                     return "/cas";

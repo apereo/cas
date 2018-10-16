@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Security Guide
+category: Planning
 ---
 
 # Security Guide
@@ -15,6 +16,7 @@ be considered to achieve suitable security.
 
 ## Announcements
 
+- [Sep 26 2018 Vulnerability Disclosure](https://apereo.github.io/2018/09/26/mfavulndisc/)
 - [Mar 6 2017 Vulnerability Disclosure](https://apereo.github.io/2017/03/06/moncfgsecvulndisc/)
 - [Oct 24 2016 Vulnerability Disclosure](https://apereo.github.io/2016/10/24/servlvulndisc/)
 - [Apr 8 2016 Vulnerability Disclosure](https://apereo.github.io/2016/04/08/commonsvulndisc/)
@@ -40,7 +42,7 @@ from the CAS server to the application must be done using HTTPS:
 - when the generated service ticket is sent back to the application on the "service" url
 - when a proxy callback url is called.
 
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../installation/Configuration-Properties.html#http-client).
+To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-client).
 
 
 ### Connections to Dependent Systems
@@ -160,9 +162,9 @@ Please [see this guide](../installation/Password-Policy-Enforcement.html) for mo
 
 Protocol tickets that are issued by CAS and shared with other applications such as service tickets may optionally go through a signing/encryption process. Even though the CAS server will always cross check ticket validity and expiration policy, this may be forced as an extra check to ensure tickets in transit to other applications are not tampered with and remain to be authentic. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment.
 
-<div class="alert alert-warn"><strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
+<div class="alert alert-warning"><strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
 
-To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#protocol-ticket-security).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#protocol-ticket-security).
 
 
 ### Ticket Registry Encryption
@@ -218,7 +220,7 @@ section for further information.
 
 ### Credential Encryption
 
-To learn how sensitive CAS settings can be secured via encryption, [please review this guide](Configuration-Properties-Security.html).
+To learn how sensitive CAS settings can be secured via encryption, [please review this guide](../configuration/Configuration-Properties-Security.html).
 
 ### CAS Security Filter
 
@@ -237,14 +239,14 @@ One application of CORS is when a resource makes a cross-origin HTTP request whe
 different domain than the one which the first resource itself serves. This should help more with CAS-enabled
 applications are accessed via XHR/Ajax requests.
 
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../installation/Configuration-Properties.html#http-web-requests).
+To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-web-requests).
 
 #### Security Response Headers
 
 As part of the CAS Security Filter, the CAS project automatically provides the necessary configuration to
 insert HTTP Security headers into the web response to prevent against HSTS, XSS, X-FRAME and other attacks.
 These settings are presently off by default.
-To see the relevant list of CAS properties and tune this behavior, please [review this guide](../installation/Configuration-Properties.html#http-web-requests).
+To see the relevant list of CAS properties and tune this behavior, please [review this guide](../configuration/Configuration-Properties.html#http-web-requests).
 
 To review and learn more about these options, please visit [this guide][cas-sec-filter].
 

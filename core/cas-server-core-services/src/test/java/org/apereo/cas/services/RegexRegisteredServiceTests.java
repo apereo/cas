@@ -111,7 +111,7 @@ public class RegexRegisteredServiceTests {
     @Test
     public void verifySerializeARegexRegisteredServiceToJson() throws IOException {
         val serviceWritten = newService("serviceId");
-        serviceWritten.setLogoutType(RegisteredService.LogoutType.FRONT_CHANNEL);
+        serviceWritten.setLogoutType(RegisteredServiceLogoutType.FRONT_CHANNEL);
         MAPPER.writeValue(JSON_FILE, serviceWritten);
         val serviceRead = MAPPER.readValue(JSON_FILE, RegexRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);

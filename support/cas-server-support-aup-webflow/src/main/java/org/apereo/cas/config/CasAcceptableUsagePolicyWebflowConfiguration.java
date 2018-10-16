@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,14 +39,14 @@ public class CasAcceptableUsagePolicyWebflowConfiguration implements CasWebflowE
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
-    private TicketRegistrySupport ticketRegistrySupport;
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -72,14 +73,14 @@ public class CasAcceptableUsagePolicyWebflowConfiguration implements CasWebflowE
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
         return new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices,
-            loginFlowDefinitionRegistry, applicationContext, casProperties);
+            loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyRepository")
     @Bean
     @RefreshScope
     public AcceptableUsagePolicyRepository acceptableUsagePolicyRepository() {
-        return new DefaultAcceptableUsagePolicyRepository(ticketRegistrySupport);
+        return new DefaultAcceptableUsagePolicyRepository(ticketRegistrySupport.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "casAcceptableUsagePolicyWebflowExecutionPlanConfigurer")

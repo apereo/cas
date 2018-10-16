@@ -12,6 +12,7 @@ import org.apereo.cas.web.support.AuthenticationCredentialsThreadLocalBinderClea
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -44,11 +45,11 @@ public class CasFiltersConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("argumentExtractor")
-    private ArgumentExtractor argumentExtractor;
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
 
     @RefreshScope
     @Bean
@@ -120,7 +121,7 @@ public class CasFiltersConfiguration {
             initParams.put("contentSecurityPolicy", header.getContentSecurityPolicy());
         }
         val bean = new FilterRegistrationBean();
-        bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager, argumentExtractor));
+        bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager.getIfAvailable(), argumentExtractor.getIfAvailable()));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
         bean.setName("responseHeadersSecurityFilter");

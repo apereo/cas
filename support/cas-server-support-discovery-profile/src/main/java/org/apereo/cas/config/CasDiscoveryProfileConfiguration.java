@@ -33,7 +33,7 @@ public class CasDiscoveryProfileConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -44,11 +44,11 @@ public class CasDiscoveryProfileConfiguration {
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
-        return new CasServerProfileRegistrar(this.servicesManager, casProperties,
+        return new CasServerProfileRegistrar(servicesManager.getIfAvailable(), casProperties,
             this.builtClients.getIfAvailable(),
             availableAttributes());
     }
@@ -56,13 +56,13 @@ public class CasDiscoveryProfileConfiguration {
     @Bean
     @ConditionalOnEnabledEndpoint
     public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint() {
-        return new CasServerDiscoveryProfileEndpoint(casProperties, servicesManager, casServerProfileRegistrar());
+        return new CasServerDiscoveryProfileEndpoint(casProperties, servicesManager.getIfAvailable(), casServerProfileRegistrar());
     }
 
     @Bean
     public Set<String> availableAttributes() {
         val attributes = new LinkedHashSet<String>(0);
-        val possibleUserAttributeNames = attributeRepository.getPossibleUserAttributeNames();
+        val possibleUserAttributeNames = attributeRepository.getIfAvailable().getPossibleUserAttributeNames();
         if (possibleUserAttributeNames != null) {
             attributes.addAll(possibleUserAttributeNames);
         }
@@ -76,8 +76,7 @@ public class CasDiscoveryProfileConfiguration {
         }
         val jdbcProps = casProperties.getAuthn().getJdbc();
         if (jdbcProps != null) {
-            jdbcProps.getQuery().stream()
-                .forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
+            jdbcProps.getQuery().forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
         }
         return attributes;
     }
@@ -86,7 +85,6 @@ public class CasDiscoveryProfileConfiguration {
         val attributeSet = new LinkedHashSet<String>();
         CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
             .values()
-            .stream()
             .forEach(v -> attributeSet.add(v.toString()));
         return attributeSet;
     }

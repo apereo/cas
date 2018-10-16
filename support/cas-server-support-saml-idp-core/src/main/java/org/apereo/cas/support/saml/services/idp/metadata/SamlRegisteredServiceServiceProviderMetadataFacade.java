@@ -77,7 +77,7 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     public static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                                    final SamlRegisteredService registeredService,
                                                                                    final RequestAbstractType request) {
-        return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlRequest(request));
+        return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlObject(request));
     }
 
     @SneakyThrows
@@ -210,6 +210,16 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
 
     public SingleLogoutService getSingleLogoutService() {
         return getSingleLogoutServices().get(0);
+    }
+
+    /**
+     * Gets single logout service for the requested binding.
+     *
+     * @param binding the binding
+     * @return the single logout service or null
+     */
+    public SingleLogoutService getSingleLogoutService(final String binding) {
+        return getSingleLogoutServices().stream().filter(acs -> acs.getBinding().equals(binding)).findFirst().orElse(null);
     }
 
     /**

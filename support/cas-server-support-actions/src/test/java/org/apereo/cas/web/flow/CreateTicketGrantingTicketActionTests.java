@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -11,7 +10,6 @@ import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -19,11 +17,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
@@ -39,9 +35,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@DirtiesContext
-@Import(CasSupportActionsConfiguration.class)
-public class CreateTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTests {
+public class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests {
     @Autowired
     @Qualifier("createTicketGrantingTicketAction")
     private Action action;

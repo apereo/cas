@@ -1,16 +1,12 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
 import org.junit.Test;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
@@ -21,9 +17,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@DirtiesContext
-@Import(CasSupportActionsConfiguration.class)
-public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthenticationServiceTests {
+public class TicketGrantingTicketCheckActionTests extends AbstractWebflowActionsTests {
 
     @Test
     public void verifyNullTicket() throws Exception {

@@ -26,6 +26,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -60,9 +61,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      * Makes the assumption that the CAS server date and the Mongo server date are in sync.
      */
     private static Date getExpireAt(final Ticket ticket) {
+        val expirationPolicy = ticket.getExpirationPolicy();
         val ttl = ticket instanceof TicketState
-            ? ticket.getExpirationPolicy().getTimeToLive((TicketState) ticket)
-            : ticket.getExpirationPolicy().getTimeToLive();
+            ? expirationPolicy.getTimeToLive((TicketState) ticket)
+            : expirationPolicy.getTimeToLive();
 
         if (ttl < 1) {
             return null;
@@ -180,7 +182,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
             LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
             val encTicketId = encodeTicketId(ticketId);
@@ -200,12 +202,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 val decoded = deserializeTicketFromMongoDocument(d);
                 val result = decodeTicket(decoded);
 
-                if (result != null && result.isExpired()) {
-                    LOGGER.debug("Ticket [{}] has expired and is now removed from the collection", result.getId());
-                    deleteSingleTicket(result.getId());
-                    return null;
+                if (predicate.test(result)) {
+                    return result;
                 }
-                return result;
+                return null;
             }
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}]: [{}]", ticketId, e);
@@ -214,7 +214,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .map(map -> mongoTemplate.findAll(TicketHolder.class, map))

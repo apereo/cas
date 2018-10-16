@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Mongo Service Registry
+category: Services
 ---
 
 # Mongo Service Registry
@@ -19,7 +20,7 @@ Support is enabled by adding the following module into the overlay:
 ## Configuration
 
 This implementation auto-configures most of the internal details.
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-service-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#mongodb-service-registry).
 
 ## Auto Initialization
 

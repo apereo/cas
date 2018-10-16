@@ -10,7 +10,6 @@ import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthen
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,15 +35,17 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     private final ApplicationEventPublisher applicationEventPublisher;
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
     private final AuditableExecution surrogateEligibilityAuditableExecution;
-    private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
 
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
         val authentication = builder.build();
         val primaryPrincipal = authentication.getPrincipal();
 
-        @NonNull
-        val surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getPrimaryCredential().get();
+        val primaryCredential = transaction.getPrimaryCredential();
+        if (!primaryCredential.isPresent()) {
+            throw new AuthenticationException("Unable to determine primary credentials");
+        }
+        val surrogateCredentials = (SurrogateUsernamePasswordCredential) primaryCredential.get();
         val targetUserId = surrogateCredentials.getSurrogateUsername();
 
         try {
@@ -60,7 +61,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                     .service(transaction.getService())
                     .authentication(authentication)
                     .registeredService(svc)
-                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
+                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
                     .build();
 
                 val accessResult = this.registeredServiceAccessStrategyEnforcer.execute(serviceAccessAudit);
