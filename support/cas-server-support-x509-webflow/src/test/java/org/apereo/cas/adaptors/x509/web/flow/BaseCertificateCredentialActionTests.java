@@ -3,9 +3,7 @@ package org.apereo.cas.adaptors.x509.web.flow;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
 import org.apereo.cas.web.extractcert.X509CertificateExtractorConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
 
 import org.springframework.beans.factory.ObjectProvider;
