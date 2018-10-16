@@ -12,12 +12,15 @@ import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Configuration properties class for cas.monitor.
@@ -177,14 +180,6 @@ public class MonitorProperties implements Serializable {
         private Map<String, ActuatorEndpointProperties> endpoint = new HashMap<>();
 
         /**
-         * Allow CAS to auto-configure the security of the endpoints
-         * via properties, versus letting Spring Security handle the security
-         * or other custom configuration that might be designed and injected
-         * into the context.
-         */
-        private boolean enableEndpointSecurity = true;
-
-        /**
          * Enable Spring Security's JAAS authentication provider
          * for admin status authorization and access control.
          */
@@ -270,6 +265,16 @@ public class MonitorProperties implements Serializable {
              */
             @NestedConfigurationProperty
             private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
+        }
+
+        public Endpoints() {
+            val defaultProps = new ActuatorEndpointProperties();
+            defaultProps.setAccess(Stream.of(ActuatorEndpointProperties.EndpointAccessLevel.DENY).collect(Collectors.toList()));
+            getEndpoint().put("defaults", defaultProps);
+        }
+
+        public ActuatorEndpointProperties getDefaultEndpointProperties() {
+            return getEndpoint().get("defaults");
         }
     }
 }

@@ -543,20 +543,14 @@ under the configuration key `cas.monitor.endpoints.jdbc`.
 
 ### Enabling Endpoints
 
-Endpoint security configuration controlled and activated by CAS may be controlled via the following settings:
-
-```properties
-# cas.monitor.endpoints.enableEndpointSecurity=true
-```
-
 To determine whether an endpoint is available, the calculation order for all endpoints is as follows:
 
 1. The `enabled` setting of the individual endpoint (i.e. `info`) is consulted in CAS settings, as demonstrated below:
 
 ```properties
-# management.endpoint.info.enabled=true
+# management.endpoint.<endpoint-name>.enabled=true
 ```
-2. If undefined, the global setting noted above is consulted from CAS settings.
+2. If undefined, the global endpoint security is consulted from CAS settings.
 3. If undefined, the default built-in setting for the endpoint in CAS is consulted, which is typically `false` by default.
 
 All available endpoint ids [should be listed here](../installation/Monitoring-Statistics.html).
@@ -580,6 +574,34 @@ The `health` endpoint may also be configured to show details using `management.e
 # management.endpoint.health.show-details=never
 ```
 
+### Endpoint Security
+
+Global endpoint security configuration activated by CAS may be controlled under the configuration key `cas.monitor.endpoints.endpoint.<endpoint-name>`.
+There is a special endpoint named `defaults`  which serves as a shortcut that controls the security of all endpoints, if left undefined in CAS settings. 
+
+Note that any individual endpoint must be first enabled before any security can be applied.
+
+The security of all endpoints is controlled using the following settings:
+
+```properties
+# ${configurationKey}.requiredRoles[0]=
+# ${configurationKey}.requiredAuthorities[0]=
+# ${configurationKey}.requiredIpAddresses[0]=
+# ${configurationKey}.access[0]=PERMIT|ANONYMOUS|DENY|AUTHENTICATED|ROLE|AUTHORITY|IP_ADDRESS
+```
+
+The following access levels are allowed for each individual endpoint:
+
+| Type                    | Description
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `PERMIT`                | Allow open access to the endpoint.
+| `ANONYMOUS`             | Allow anonymous access to the endpoint. 
+| `DENY`                  | Default. Block access to the endpoint.
+| `AUTHENTICATED`         | Require authenticated access to the endpoint.
+| `ROLE`                  | Require authenticated access to the endpoint along with a role requirement.
+| `AUTHORITY`             | Require authenticated access to the endpoint along with an authority requirement.
+| `IP_ADDRESS`            | Require authenticated access to the endpoint using a collection of IP addresses.
+    
 ### Spring Boot Admin Server
 
 To learn more about this topic, [please review this guide](../installation/Configuring-Monitoring-Administration.html).
@@ -738,7 +760,7 @@ Attributes may be allowed to be virtually renamed and remapped. The following de
 
 ### Merging Strategies
 
-The following mergeing strategies can be used to resolve conflicts when the same attribute are found from multiple sources:
+The following merging strategies can be used to resolve conflicts when the same attribute are found from multiple sources:
 
 | Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
