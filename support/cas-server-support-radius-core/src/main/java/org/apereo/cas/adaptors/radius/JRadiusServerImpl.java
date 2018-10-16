@@ -129,7 +129,7 @@ public class JRadiusServerImpl implements RadiusServer {
     }
 
     @Override
-    public RadiusResponse authenticate(final String username, final String password, final Optional<Serializable> state) throws Exception {
+    public RadiusResponse authenticate(final String username, final String password, final Optional state) throws Exception {
         final AttributeList attributeList = new AttributeList();
         attributeList.add(new Attr_UserName(username));
 
@@ -145,7 +145,7 @@ public class JRadiusServerImpl implements RadiusServer {
             attributeList.add(clientIpAttribute);
         }
 
-        state.ifPresent(value -> attributeList.add(new Attr_State(value)));
+        state.ifPresent(value -> attributeList.add(new Attr_State((Serializable) value)));
 
         if (StringUtils.isNotBlank(this.nasIpAddress)) {
             attributeList.add(new Attr_NASIPAddress(this.nasIpAddress));
