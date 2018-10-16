@@ -71,7 +71,7 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             final Map<String, Object> attributes = principal.getAttributes();
             if (attributes.containsKey(Attr_State.NAME)) {
                 LOGGER.debug("Found state attribute in principal attributes for multifactor authentication");
-                final AttributeValue stateAttr = (AttributeValue) attributes.get(Attr_State.NAME);
+                final AttributeValue stateAttr = (AttributeValue) CollectionUttils.first attributes.get(Attr_State.NAME);
                 state = Optional.of(stateAttr.getValueObject());
             }
             final Pair<Boolean, Optional<Map<String, Object>>> result =
