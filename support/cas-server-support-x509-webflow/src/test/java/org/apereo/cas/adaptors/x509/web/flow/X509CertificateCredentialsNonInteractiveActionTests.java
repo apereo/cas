@@ -1,41 +1,25 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
-import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
-import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.X509CertificateCredentialsNonInteractiveAction;
-import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.Test;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.security.cert.X509Certificate;
 
 import static org.junit.Assert.*;
 
-
 /**
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@TestPropertySource(locations = {"classpath:/x509.properties"})
-@Import(value = {X509AuthenticationWebflowConfiguration.class, X509AuthenticationConfiguration.class})
-public class X509CertificateCredentialsNonInteractiveActionTests extends AbstractX509CertificateTests {
-
-    @Autowired
-    @Qualifier("x509Check")
-    private ObjectProvider<Action> action;
+public class X509CertificateCredentialsNonInteractiveActionTests extends BaseCertificateCredentialActionTests {
 
     @Test
     public void verifyNoCredentialsResultsInError() throws Exception {
