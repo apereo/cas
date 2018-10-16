@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.radius.authentication.handler.support;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -9,6 +7,9 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -44,16 +45,6 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
      */
     private final boolean failoverOnAuthenticationFailure;
 
-    /**
-     * Instantiates a new Radius authentication handler.
-     *
-     * @param name                            the name
-     * @param servicesManager                 the services manager
-     * @param principalFactory                the principal factory
-     * @param servers                         RADIUS servers to authenticate against.
-     * @param failoverOnException             boolean on whether to failover or not.
-     * @param failoverOnAuthenticationFailure boolean on whether to failover or not.
-     */
     public RadiusAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                        final List<RadiusServer> servers, final boolean failoverOnException, final boolean failoverOnAuthenticationFailure) {
         super(name, servicesManager, principalFactory, null);
@@ -71,7 +62,8 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
         try {
             final String username = credential.getUsername();
             final Pair<Boolean, Optional<Map<String, Object>>> result =
-                RadiusUtils.authenticate(username, credential.getPassword(), this.servers,
+                RadiusUtils.authenticate(username, credential.getPassword(),
+                    Optional.empty(), this.servers,
                     this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {
                 return createHandlerResult(credential,

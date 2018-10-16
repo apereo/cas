@@ -17,7 +17,7 @@ import net.jradius.dictionary.Attr_State;
 import net.jradius.dictionary.Attr_UserName;
 import net.jradius.dictionary.Attr_UserPassword;
 import net.jradius.dictionary.vsa_redback.Attr_NASRealPort;
-import net.jradius.packet.AccessAccept;
+import net.jradius.packet.AccessReject;
 import net.jradius.packet.AccessRequest;
 import net.jradius.packet.attribute.AttributeFactory;
 import net.jradius.packet.attribute.AttributeList;
@@ -132,7 +132,10 @@ public class JRadiusServerImpl implements RadiusServer {
     public RadiusResponse authenticate(final String username, final String password, final Optional<Serializable> state) throws Exception {
         final AttributeList attributeList = new AttributeList();
         attributeList.add(new Attr_UserName(username));
-        attributeList.add(new Attr_UserPassword(password));
+
+        if (StringUtils.isNotBlank(password)) {
+            attributeList.add(new Attr_UserPassword(password));
+        }
 
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         if (clientInfo != null) {
@@ -175,18 +178,19 @@ public class JRadiusServerImpl implements RadiusServer {
             authenticator.processRequest(request);
 
             final net.jradius.packet.RadiusResponse response = client.sendReceive(request, this.retries);
-            LOGGER.debug("RADIUS response from [{}]: [{}]", client.getRemoteInetAddress().getCanonicalHostName(), response.getClass().getName());
-            if (response instanceof AccessAccept) {
-                final List<RadiusAttribute> attributes = response.getAttributes().getAttributeList();
-                LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]", response.getCode(), attributes, response.getIdentifier());
-                return new RadiusResponse(response.getCode(), response.getIdentifier(), attributes);
+            LOGGER.debug("RADIUS response from [{}]: [{}]", client.getRemoteInetAddress().getCanonicalHostName(), response.toString(true, true));
+            if (response instanceof AccessReject) {
+                LOGGER.error("Radius authentication attempt is rejected");
+                return null;
             }
-            LOGGER.debug("Response is not recognized");
+            final List<RadiusAttribute> attributes = response.getAttributes().getAttributeList();
+            LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]", response.getCode(), attributes, response.getIdentifier());
+            return new RadiusResponse(response.getCode(), response.getIdentifier(), attributes);
+
         } finally {
             if (client != null) {
                 client.close();
             }
         }
-        return null;
     }
 }

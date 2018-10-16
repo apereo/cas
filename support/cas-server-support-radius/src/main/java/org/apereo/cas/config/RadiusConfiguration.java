@@ -1,12 +1,16 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
+import org.apereo.cas.adaptors.radius.web.flow.RadiusAccessChallengedAuthenticationWebflowEventResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
@@ -16,9 +20,15 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
+import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
+import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,6 +37,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.CookieGenerator;
 
 import java.util.List;
 import java.util.Set;
@@ -55,17 +66,40 @@ public class RadiusConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private ObjectProvider<CentralAuthenticationService> centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
+
+    @Autowired(required = false)
+    @Qualifier("multifactorAuthenticationProviderSelector")
+    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector = new RankedMultifactorAuthenticationProviderSelector();
+
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
+
+    @Autowired
+    @Qualifier("warnCookieGenerator")
+    private ObjectProvider<CookieGenerator> warnCookieGenerator;
+
+    @Autowired
+    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
+
     @ConditionalOnMissingBean(name = "radiusPrincipalFactory")
     @Bean
     public PrincipalFactory radiusPrincipalFactory() {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
-    /**
-     * Radius server j radius server.
-     *
-     * @return the j radius server
-     */
     @RefreshScope
     @Bean
     public JRadiusServerImpl radiusServer() {
@@ -92,13 +126,6 @@ public class RadiusConfiguration {
             server.getNasPortType());
     }
 
-    /**
-     * Radius servers list.
-     * <p>
-     * Handles definition of several redundant servers provided on different IP addresses seprated by space.
-     *
-     * @return the list
-     */
     @RefreshScope
     @Bean
     public List<RadiusServer> radiusServers() {
@@ -122,6 +149,24 @@ public class RadiusConfiguration {
             h.setPasswordPolicyConfiguration(passwordPolicyConfiguration);
         }
         return h;
+    }
+
+    @RefreshScope
+    @Bean
+    public CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver() {
+        final CasWebflowEventResolver r = new RadiusAccessChallengedAuthenticationWebflowEventResolver(authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager,
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            multifactorAuthenticationProviderSelector,
+            casProperties.getAuthn().getMfa().getRadius().getId());
+
+
+        LOGGER.debug("Activating MFA event resolver based on RADIUS...");
+        this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r);
+        return r;
     }
 
     @ConditionalOnMissingBean(name = "radiusAuthenticationEventExecutionPlanConfigurer")

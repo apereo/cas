@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.security.auth.login.FailedLoginException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,23 +26,26 @@ public class RadiusUtils {
      *
      * @param username                        the username
      * @param password                        the password
+     * @param state                           the state
      * @param servers                         the servers
      * @param failoverOnAuthenticationFailure the failover on authentication failure
      * @param failoverOnException             the failover on exception
      * @return the pair
      * @throws Exception the exception
      */
-    public static Pair<Boolean, Optional<Map<String, Object>>> authenticate(final String username, final String password,
+    public static Pair<Boolean, Optional<Map<String, Object>>> authenticate(final String username,
+                                                                            final String password,
+                                                                            final Optional<Serializable> state,
                                                                             final List<RadiusServer> servers,
                                                                             final boolean failoverOnAuthenticationFailure,
                                                                             final boolean failoverOnException) throws Exception {
         for (final RadiusServer radiusServer : servers) {
             LOGGER.debug("Attempting to authenticate [{}] at [{}]", username, radiusServer);
             try {
-                final RadiusResponse response = radiusServer.authenticate(username, password);
+                final RadiusResponse response = radiusServer.authenticate(username, password, state);
                 if (response != null) {
                     final Map<String, Object> attributes = new HashMap<>();
-                    response.getAttributes().forEach(attribute -> attributes.put(attribute.getAttributeName(), attribute.getValue().toString()));
+                    response.getAttributes().forEach(attribute -> attributes.put(attribute.getAttributeName(), attribute.getValue()));
                     return Pair.of(Boolean.TRUE, Optional.of(attributes));
                 }
 
