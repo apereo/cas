@@ -16,4 +16,7 @@ dependencies {
 
     testImplementation project(":core:cas-server-core-configuration-api")
     testImplementation project(":core:cas-server-core-configuration")
+
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-web")
 }
