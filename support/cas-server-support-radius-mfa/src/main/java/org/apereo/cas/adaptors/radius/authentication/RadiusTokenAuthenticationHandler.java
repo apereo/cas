@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
 import lombok.extern.slf4j.Slf4j;
+import net.jradius.dictionary.Attr_State;
+import net.jradius.packet.attribute.value.AttributeValue;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
@@ -65,9 +67,15 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             final Principal principal = authentication.getPrincipal();
             final String username = principal.getId();
 
+            Optional state = Optional.empty();
+            final Map<String, Object> attributes = principal.getAttributes();
+            if (attributes.containsKey(Attr_State.NAME)) {
+                LOGGER.debug("Found state attribute in principal attributes for multifactor authentication");
+                final AttributeValue stateAttr = (AttributeValue) attributes.get(Attr_State.NAME);
+                state = Optional.of(stateAttr.getValueObject());
+            }
             final Pair<Boolean, Optional<Map<String, Object>>> result =
-                RadiusUtils.authenticate(username, password, this.servers,
-                    this.failoverOnAuthenticationFailure, this.failoverOnException);
+                RadiusUtils.authenticate(username, password, state, this.servers, this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {
                 final Principal finalPrincipal = this.principalFactory.createPrincipal(username, result.getValue().get());
                 return createHandlerResult(credential, finalPrincipal, new ArrayList<>());

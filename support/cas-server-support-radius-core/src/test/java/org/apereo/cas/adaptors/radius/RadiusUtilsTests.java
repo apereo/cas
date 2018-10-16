@@ -1,9 +1,10 @@
 package org.apereo.cas.adaptors.radius;
 
+import org.apereo.cas.util.CollectionUtils;
+
 import net.jradius.dictionary.Attr_ClientId;
 import net.jradius.packet.attribute.RadiusAttribute;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.cas.util.CollectionUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -30,9 +31,9 @@ public class RadiusUtilsTests {
         final RadiusServer server = mock(RadiusServer.class);
         final RadiusAttribute attribute = new Attr_ClientId("client_id");
         final RadiusResponse response = new RadiusResponse(100, 100, CollectionUtils.wrapList(attribute));
-        when(server.authenticate(anyString(), anyString())).thenReturn(response);
+        when(server.authenticate(anyString(), anyString(), anyObject())).thenReturn(response);
         final Pair<Boolean, Optional<Map<String, Object>>> result = RadiusUtils.authenticate("casuser", "Mellon",
-            CollectionUtils.wrapList(server), true, false);
+            Optional.empty(), CollectionUtils.wrapList(server), true, false);
         assertTrue(result.getKey());
         assertTrue(result.getRight().isPresent());
     }
@@ -40,18 +41,18 @@ public class RadiusUtilsTests {
     @Test
     public void verifyActionFails() throws Exception {
         final RadiusServer server = mock(RadiusServer.class);
-        when(server.authenticate(anyString(), anyString())).thenReturn(null);
+        when(server.authenticate(anyString(), anyString(), anyObject())).thenReturn(null);
         thrown.expect(FailedLoginException.class);
         RadiusUtils.authenticate("casuser", "Mellon",
-            CollectionUtils.wrapList(server), false, false);
+            Optional.empty(), CollectionUtils.wrapList(server), false, false);
     }
 
     @Test
     public void verifyActionFailsWithException() throws Exception {
         final RadiusServer server = mock(RadiusServer.class);
-        when(server.authenticate(anyString(), anyString())).thenThrow(RuntimeException.class);
+        when(server.authenticate(anyString(), anyString(), anyObject())).thenThrow(RuntimeException.class);
         thrown.expect(RuntimeException.class);
-        RadiusUtils.authenticate("casuser", "Mellon",
+        RadiusUtils.authenticate("casuser", "Mellon", Optional.empty(),
             CollectionUtils.wrapList(server), false, false);
     }
 }
