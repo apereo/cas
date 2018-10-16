@@ -205,7 +205,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
 
         val result = accessTokenGenerator.generate(holder);
         if (!result.getAccessToken().isPresent()) {
-            return new ResponseEntity("Unable to generate access token", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Unable to generate access token", HttpStatus.BAD_REQUEST);
         }
 
         val accessToken = result.getAccessToken().get();
@@ -221,6 +221,6 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             this.ticketRegistry.deleteTicket(umaRequest.getRpt());
         }
         val model = CollectionUtils.wrap("rpt", accessToken.getId(), "code", HttpStatus.CREATED);
-        return new ResponseEntity(model, HttpStatus.OK);
+        return new ResponseEntity<>(model, HttpStatus.OK);
     }
 }
