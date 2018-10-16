@@ -27,7 +27,7 @@ public class SpnegoCredentialsTests {
         credentials.setPrincipal(principal);
         assertEquals("test", credentials.getId());
     }
-    
+
     /**
      * Make sure that when the Principal becomes populated / changes we return a new hash
      */
