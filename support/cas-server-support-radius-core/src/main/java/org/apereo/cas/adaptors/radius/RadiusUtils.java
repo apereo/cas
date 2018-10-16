@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.security.auth.login.FailedLoginException;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,7 @@ public class RadiusUtils {
      */
     public static Pair<Boolean, Optional<Map<String, Object>>> authenticate(final String username,
                                                                             final String password,
-                                                                            final Optional<Serializable> state,
+                                                                            final Optional state,
                                                                             final List<RadiusServer> servers,
                                                                             final boolean failoverOnAuthenticationFailure,
                                                                             final boolean failoverOnException) throws Exception {

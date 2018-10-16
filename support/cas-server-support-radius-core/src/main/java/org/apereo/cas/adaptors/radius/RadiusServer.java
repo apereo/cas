@@ -48,6 +48,6 @@ public interface RadiusServer extends Serializable {
      * @return {@link RadiusResponse} on success, null otherwise.
      * @throws Exception On indeterminate case where authentication was prevented by a system (e.g. IO) error.
      */
-    RadiusResponse authenticate(String username, String password, Optional<Serializable> state) throws Exception;
+    RadiusResponse authenticate(String username, String password, Optional state) throws Exception;
 
 }

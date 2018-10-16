@@ -1,9 +1,5 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
-import lombok.extern.slf4j.Slf4j;
-import net.jradius.dictionary.Attr_State;
-import net.jradius.packet.attribute.value.AttributeValue;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -13,7 +9,12 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import net.jradius.dictionary.Attr_State;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -71,8 +72,10 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             final Map<String, Object> attributes = principal.getAttributes();
             if (attributes.containsKey(Attr_State.NAME)) {
                 LOGGER.debug("Found state attribute in principal attributes for multifactor authentication");
-                final AttributeValue stateAttr = (AttributeValue) CollectionUttils.first attributes.get(Attr_State.NAME);
-                state = Optional.of(stateAttr.getValueObject());
+                final Optional attrValue = CollectionUtils.firstElement(attributes.get(Attr_State.NAME));
+                if (attrValue.isPresent()) {
+                    state = Optional.of(attrValue);
+                }
             }
             final Pair<Boolean, Optional<Map<String, Object>>> result =
                 RadiusUtils.authenticate(username, password, state, this.servers, this.failoverOnAuthenticationFailure, this.failoverOnException);
