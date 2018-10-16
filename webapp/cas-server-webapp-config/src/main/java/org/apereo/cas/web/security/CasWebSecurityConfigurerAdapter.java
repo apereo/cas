@@ -30,6 +30,11 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
+    /**
+     * Endpoint url used for admin-level form-login of endpoints.
+     */
+    public static final String ENDPOINT_URL_ADMIN_FORM_LOGIN = "/adminlogin";
+
     private final CasConfigurationProperties casProperties;
     private final SecurityProperties securityProperties;
 
@@ -44,7 +49,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             .requiresSecure();
 
         val requests = http.authorizeRequests();
-        configureEndpointAccessToDenyUndefined(requests);
+        configureEndpointAccessToDenyUndefined(http, requests);
         configureEndpointAccessForStaticResources(requests);
 
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint();
@@ -125,14 +130,17 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     /**
      * Configure endpoint access to deny undefined.
      *
+     * @param http     the http
      * @param requests the requests
      */
-    protected void configureEndpointAccessToDenyUndefined(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
+    protected void configureEndpointAccessToDenyUndefined(final HttpSecurity http,
+                                                          final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
         val configuredEndpoints = endpoints.toArray(new String[]{});
-        requests
-            .requestMatchers(EndpointRequest.toAnyEndpoint().excluding(configuredEndpoints).excludingLinks())
-            .denyAll();
+
+        val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
+        endpointDefaults.getAccess().forEach(Unchecked.consumer(access ->
+            configureEndpointAccess(http, requests, access, endpointDefaults, EndpointRequest.toAnyEndpoint().excluding(configuredEndpoints).excludingLinks())));
     }
 
     /**
@@ -160,7 +168,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     protected void configureEndpointAccessByFormLogin(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) throws Exception {
         requests.and()
             .formLogin()
-            .loginPage("/adminlogin")
+            .loginPage(ENDPOINT_URL_ADMIN_FORM_LOGIN)
             .permitAll();
     }
 
@@ -220,6 +228,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
 
     private void configureEndpointAccessAnonymously(final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests,
                                                     final EndpointRequest.EndpointRequestMatcher endpoint) {
+
         requests.requestMatchers(endpoint).anonymous();
     }
 
@@ -230,6 +239,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
             .stream()
             .map(address -> "hasIpAddress('" + address + "')")
             .collect(Collectors.joining(" or "));
+
         requests
             .requestMatchers(endpoint)
             .access(addresses);
