@@ -221,7 +221,8 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param provider  the provider
      * @return the map
      */
-    protected static Map<String, Object> buildEventAttributeMap(final Principal principal, final RegisteredService service,
+    protected static Map<String, Object> buildEventAttributeMap(final Principal principal,
+                                                                final RegisteredService service,
                                                                 final MultifactorAuthenticationProvider provider) {
         final Map<String, Object> map = new HashMap<>();
         map.put(Principal.class.getName(), principal);

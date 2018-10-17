@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -54,10 +53,9 @@ public class RadiusAccessChallengedAuthenticationWebflowEventResolver extends Ba
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final RegisteredService registeredService = resolveRegisteredServiceInRequestContext(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
-        if (authentication == null || registeredService == null) {
+        if (authentication == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return null;
         }
@@ -77,7 +75,7 @@ public class RadiusAccessChallengedAuthenticationWebflowEventResolver extends Ba
             if (providerFound.isPresent()) {
                 final MultifactorAuthenticationProvider multifactorAuthenticationProvider = providerFound.get();
                 final Event event = validateEventIdForMatchingTransitionInContext(multifactorAuthenticationProvider.getId(), context,
-                    buildEventAttributeMap(authentication.getPrincipal(), registeredService, multifactorAuthenticationProvider));
+                    buildEventAttributeMap(authentication.getPrincipal(), null, multifactorAuthenticationProvider));
                 return CollectionUtils.wrapSet(event);
             }
             LOGGER.warn("No multifactor provider could be found for [{}]", this.radiusMultifactorAuthenticationProviderId);
