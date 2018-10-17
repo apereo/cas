@@ -1,14 +1,12 @@
 package org.apereo.cas.adaptors.radius.web.flow;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -54,7 +52,7 @@ public class RadiusAccessChallengedAuthenticationWebflowEventResolver extends Ba
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        final Authentication authentication = WebUtils.getAuthentication(context);
+        val authentication = WebUtils.getAuthentication(context);
 
         if (authentication == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
@@ -72,7 +70,7 @@ public class RadiusAccessChallengedAuthenticationWebflowEventResolver extends Ba
         LOGGER.debug("Evaluating principal attributes [{}] for multifactor authentication", attributes.keySet());
         if (attributes.containsKey(Attr_ReplyMessage.NAME) && attributes.containsKey(Attr_State.NAME)) {
             LOGGER.debug("Authentication requires multifactor authentication via provider [{}]", this.radiusMultifactorAuthenticationProviderId);
-            final Optional<MultifactorAuthenticationProvider> providerFound = resolveProvider(providerMap, this.radiusMultifactorAuthenticationProviderId);
+            val providerFound = resolveProvider(providerMap, this.radiusMultifactorAuthenticationProviderId);
             if (providerFound.isPresent()) {
                 val multifactorAuthenticationProvider = providerFound.get();
                 final Event event = validateEventIdForMatchingTransitionInContext(multifactorAuthenticationProvider.getId(), context,
