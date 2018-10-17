@@ -112,16 +112,13 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
                         request.getParameter(OAuth20Constants.TOKEN));
 
                 LOGGER.debug("Located access token [{}] in the request", accessToken);
-                final AccessToken ticket = null;
+                AccessToken ticket = null;
                 try {
-                    this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
+                    ticket = this.centralAuthenticationService.getTicket(accessToken, AccessToken.class);
                 } catch (final org.apereo.cas.ticket.InvalidTicketException ite) {
                     LOGGER.info("No ticket for supplied access token");
                 }
-
-                if (ticket != null) {
-                    return createIntrospectionResponse(service, ticket);
-                }
+                return createIntrospectionResponse(service, ticket);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
