@@ -30,6 +30,7 @@ import java.time.format.TextStyle;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -135,7 +136,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
         LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
             provider, service.getName());
         val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
-            buildEventAttributeMap(authentication.getPrincipal(), service, provider));
+            buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider));
         return CollectionUtils.wrapSet(event);
     }
 
