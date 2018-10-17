@@ -64,7 +64,6 @@ The following commandline boolean flags are supported by the build:
 | `skipSonarqube`                   | Ignore reporting results to Sonarqube.
 | `skipErrorProneCompiler`          | Skip running the `error-prone` static-analysis compiler.
 | `skipBootifulArtifact`            | Do not apply the Spring Boot plugin to web application artifacts.
-| `ignoreTestFailures`              | Ignore test failures and let the build resume.
 | `skipNpmLint`                     | Skip running the linter for resources managed by NPM, such as Javascript files.
 | `forceBom`                        | Force the generation of the CAS Maven BOM.
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
@@ -98,7 +97,7 @@ The following IDEA settings for Gradle may also be useful:
 ![image](https://user-images.githubusercontent.com/1205228/42181347-5e55351a-7def-11e8-8204-f681c36eed2c.png)
 
 - Note how 'Use auto-import' is turned off. To resolve Gradle modules and dependencies, you are required to force refresh the project rather than have IDEA auto-refresh the project as you make changes to the build script. Disabling auto-import usually results in much better performance.
-- You must also decide to use the 'default gradle wrapper' option as opposed to your own local Gradle installation. 
+- You must use the 'default gradle wrapper' option as opposed to your own local Gradle installation. 
 
 You may also need to adjust the 'Compiler' settings so modules are built in parallel and automatically:
 
@@ -311,3 +310,14 @@ Travis CI is mainly responsible for the following tasks:
 
 The build is triggered for automatically for all pull requests, direct commits, etc where different
 policies may apply for each change type.
+
+## Manual submodule testing
+
+The following shell commands may be used to test a submodule manually:
+
+```bash
+# change directory to a submodule
+../../gradlew --build-cache -DtestCategoryType=SIMPLE test --parallel -x check
+```
+
+`testCategoryType` need to be specified in order for the test to run. List of `testCategoryType` and their usage can be found in `gradle/tests.gradle` file.
