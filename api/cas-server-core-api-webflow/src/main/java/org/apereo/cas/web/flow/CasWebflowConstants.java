@@ -558,6 +558,10 @@ public interface CasWebflowConstants {
      */
     String VIEW_ID_SENT_RESET_PASSWORD_ACCT_INFO = "casResetPasswordSentInstructionsView";
 
+    /**
+     * View name used for form-login into admin/actuator endpoints.
+     */
+    String VIEW_ID_ENDPOINT_ADMIN_LOGIN_VIEW = "casAdminLoginView";
     /*
      ****************************************
      * Decisions.
