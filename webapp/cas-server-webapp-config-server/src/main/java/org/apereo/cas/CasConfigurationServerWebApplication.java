@@ -1,8 +1,14 @@
 package org.apereo.cas;
 
+import org.apereo.cas.util.AsciiArtUtils;
+import org.apereo.cas.util.DateTimeUtils;
+
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
+import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -16,7 +22,9 @@ import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.config.server.EnableConfigServer;
+import org.springframework.context.event.EventListener;
 
 /**
  * This is {@link CasConfigurationServerWebApplication}.
@@ -34,11 +42,13 @@ import org.springframework.cloud.config.server.EnableConfigServer;
     MongoAutoConfiguration.class,
     MongoDataAutoConfiguration.class,
     CassandraAutoConfiguration.class,
+    MetricsAutoConfiguration.class,
     DataSourceTransactionManagerAutoConfiguration.class,
     RedisRepositoriesAutoConfiguration.class
 })
 @EnableConfigServer
 @NoArgsConstructor
+@Slf4j
 public class CasConfigurationServerWebApplication {
 
     /**
@@ -53,5 +63,16 @@ public class CasConfigurationServerWebApplication {
             .web(WebApplicationType.SERVLET)
             .logStartupInfo(true)
             .run(args);
+    }
+
+    /**
+     * Handle application ready event.
+     *
+     * @param event the event
+     */
+    @EventListener
+    public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
+        AsciiArtUtils.printAsciiArtInfo(LOGGER, "READY", StringUtils.EMPTY);
+        LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
     }
 }
