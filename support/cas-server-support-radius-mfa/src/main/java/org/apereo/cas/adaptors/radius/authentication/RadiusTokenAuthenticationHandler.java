@@ -14,6 +14,7 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.dictionary.Attr_State;
+import net.jradius.packet.attribute.value.AttributeValue;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.security.auth.login.FailedLoginException;
@@ -74,7 +75,7 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
                 LOGGER.debug("Found state attribute in principal attributes for multifactor authentication");
                 final Optional attrValue = CollectionUtils.firstElement(attributes.get(Attr_State.NAME));
                 if (attrValue.isPresent()) {
-                    state = Optional.of(attrValue);
+                    state = Optional.of(AttributeValue.class.cast(attrValue.get()).getValueObject());
                 }
             }
             final Pair<Boolean, Optional<Map<String, Object>>> result =
