@@ -3,7 +3,7 @@
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=SIMPLE --scan "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon -DtestCategoryType=SIMPLE "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -14,7 +14,7 @@ gradleBuild="$gradleBuild test jacocoRootReport --parallel -x javadoc -x check \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-    gradleBuild="$gradleBuild -DshowStandardStreams=true "
+   gradleBuild="$gradleBuild -DshowStandardStreams=true "
 fi
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
