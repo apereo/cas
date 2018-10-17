@@ -21,6 +21,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -73,7 +74,7 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         if (providerFound.isPresent()) {
             val provider = providerFound.get();
             LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service);
-            val attributes = buildEventAttributeMap(authentication.getPrincipal(), service, provider);
+            val attributes = buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider);
             val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context, attributes);
             return CollectionUtils.wrapSet(event);
         }

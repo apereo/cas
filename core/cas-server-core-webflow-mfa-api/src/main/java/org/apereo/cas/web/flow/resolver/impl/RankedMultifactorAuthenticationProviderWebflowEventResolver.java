@@ -22,6 +22,7 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -105,7 +106,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
 
         val value = result.getValue();
         if (value.isPresent()) {
-            val attributeMap = buildEventAttributeMap(authentication.getPrincipal(), service, value.get());
+            val attributeMap = buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), value.get());
             return CollectionUtils.wrapSet(validateEventIdForMatchingTransitionInContext(id, context, attributeMap));
         }
         LOGGER.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);

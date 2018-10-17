@@ -16,7 +16,6 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -53,7 +52,7 @@ public abstract class AbstractCasMultifactorAuthenticationWebflowEventResolver e
                                                                     final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
                                                                     final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-                warnCookieGenerator, authenticationRequestServiceSelectionStrategies);
+            warnCookieGenerator, authenticationRequestServiceSelectionStrategies);
         this.multifactorAuthenticationProviderSelector = multifactorAuthenticationProviderSelector;
     }
 
@@ -65,13 +64,12 @@ public abstract class AbstractCasMultifactorAuthenticationWebflowEventResolver e
      * @param provider  the provider
      * @return the map
      */
-    protected static Map<String, Object> buildEventAttributeMap(final Principal principal, final RegisteredService service,
+    protected static Map<String, Object> buildEventAttributeMap(final Principal principal,
+                                                                final Optional<RegisteredService> service,
                                                                 final MultifactorAuthenticationProvider provider) {
         val map = new HashMap<String, Object>();
         map.put(Principal.class.getName(), principal);
-        if (service != null) {
-            map.put(RegisteredService.class.getName(), service);
-        }
+        service.ifPresent(svc -> map.put(RegisteredService.class.getName(), svc));
         map.put(MultifactorAuthenticationProvider.class.getName(), provider);
         return map;
     }
@@ -111,7 +109,7 @@ public abstract class AbstractCasMultifactorAuthenticationWebflowEventResolver e
                         LOGGER.debug("Provider [{}] is successfully verified", provider);
                         val id = provider.getId();
                         val event = validateEventIdForMatchingTransitionInContext(id, context,
-                            buildEventAttributeMap(principal, service, provider));
+                            buildEventAttributeMap(principal, Optional.of(service), provider));
                         events.add(event);
                     } else {
                         LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, value);
@@ -163,7 +161,7 @@ public abstract class AbstractCasMultifactorAuthenticationWebflowEventResolver e
         if (provider != null) {
             LOGGER.debug("Provider [{}] is successfully verified", provider);
             val id = provider.getId();
-            val event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, service, provider));
+            val event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, Optional.of(service), provider));
             return CollectionUtils.wrapSet(event);
         }
         LOGGER.debug("Provider [{}] could not be verified", provider);

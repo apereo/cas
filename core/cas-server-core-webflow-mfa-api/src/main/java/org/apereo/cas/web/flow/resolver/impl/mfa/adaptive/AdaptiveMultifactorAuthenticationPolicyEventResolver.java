@@ -26,6 +26,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -152,7 +153,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
         LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
             provider, service.getName());
         val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
-            buildEventAttributeMap(authentication.getPrincipal(), service, provider));
+            buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider));
         return CollectionUtils.wrapSet(event);
     }
 
