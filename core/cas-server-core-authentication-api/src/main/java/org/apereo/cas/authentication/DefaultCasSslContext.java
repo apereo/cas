@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.http.ssl.SSLContexts;
@@ -16,6 +15,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
 import java.net.Socket;
 import java.security.KeyStore;
 import java.security.Principal;
@@ -36,16 +36,21 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-
-@Slf4j
 @Getter
 public class DefaultCasSslContext {
     private static final String ALG_NAME_PKIX = "PKIX";
 
     private final SSLContext sslContext;
 
-    @SneakyThrows
-    public DefaultCasSslContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
+    public DefaultCasSslContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) throws IOException {
+        try {
+            this.sslContext = initialize(trustStoreFile, trustStorePassword, trustStoreType);
+        } catch (final Exception e) {
+            throw new IOException(e.getMessage(), e);
+        }
+    }
+
+    private static SSLContext initialize(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) throws Exception {
         val casTrustStore = KeyStore.getInstance(trustStoreType);
         val trustStorePasswordCharArray = trustStorePassword.toCharArray();
 
@@ -68,8 +73,9 @@ public class DefaultCasSslContext {
         allManagers.addAll(jvmTrustManagers);
         val trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
 
-        this.sslContext = SSLContexts.custom().setProtocol("SSL").build();
+        val sslContext = SSLContexts.custom().setProtocol("SSL").build();
         sslContext.init(keyManagers, trustManagers, null);
+        return sslContext;
     }
 
     /**
@@ -165,6 +171,7 @@ public class DefaultCasSslContext {
      * Represents an ordered list of {@link X509TrustManager}s with additive trust. If any one of the
      * composed managers trusts a certificate chain, then it is trusted by the composite manager.
      */
+    @Slf4j
     private static class CompositeX509TrustManager implements X509TrustManager {
 
 
@@ -187,8 +194,7 @@ public class DefaultCasSslContext {
                     return true;
                 } catch (final CertificateException e) {
                     val msg = "Unable to trust the client certificates [%s] for auth type [%s]: [%s]";
-                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
-                        authType, e.getMessage()), e);
+                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()), authType, e.getMessage()), e);
                     return false;
                 }
             });
@@ -207,8 +213,7 @@ public class DefaultCasSslContext {
                     return true;
                 } catch (final CertificateException e) {
                     val msg = "Unable to trust the server certificates [%s] for auth type [%s]: [%s]";
-                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
-                        authType, e.getMessage()), e);
+                    LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()), authType, e.getMessage()), e);
                     return false;
                 }
             });
