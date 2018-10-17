@@ -15,16 +15,6 @@
 
       /*]]>*/
     </script>
-    <script type="text/javascript" th:inline="javascript">
-        var i = [[#{screen.welcome.button.loginwip}]];
-        $(document).ready(function() {
-            $('#passwordManagementForm').submit(function () {
-                $(':submit').attr('disabled', true);
-                $(':submit').attr('value', i);
-                return true;
-            });
-        });
-    </script>
 </head>
 <body>
 <main role="main" class="container mt-3 mb-3">
@@ -61,6 +51,7 @@
                        name="submit"
                        accesskey="s"
                        th:value="#{screen.pm.button.submit}"
+                       th:attr="data-processing-text=#{screen.welcome.button.loginwip}"
                        value="SUBMIT"
                        id="submit"
                        type="submit"
