@@ -21,6 +21,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -90,7 +91,7 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
             val identifier = provider.getId();
             LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
 
-            val event = validateEventIdForMatchingTransitionInContext(identifier, context, buildEventAttributeMap(principal, service, provider));
+            val event = validateEventIdForMatchingTransitionInContext(identifier, context, buildEventAttributeMap(principal, Optional.of(service), provider));
             return CollectionUtils.wrapSet(event);
         }
 

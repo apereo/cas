@@ -23,6 +23,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -95,7 +96,7 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends Ba
             if (providerFound.isPresent()) {
                 val multifactorAuthenticationProvider = providerFound.get();
                 val event = validateEventIdForMatchingTransitionInContext(multifactorAuthenticationProvider.getId(), context,
-                    buildEventAttributeMap(authentication.getPrincipal(), registeredService, multifactorAuthenticationProvider));
+                    buildEventAttributeMap(authentication.getPrincipal(), Optional.of(registeredService), multifactorAuthenticationProvider));
                 return CollectionUtils.wrapSet(event);
             }
             LOGGER.warn("No multifactor provider could be found for [{}]", provider);
