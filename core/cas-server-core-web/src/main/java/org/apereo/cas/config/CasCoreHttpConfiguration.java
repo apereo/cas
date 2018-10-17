@@ -51,7 +51,6 @@ public class CasCoreHttpConfiguration {
     @Bean
     @SneakyThrows
     public SSLContext sslContext() {
-
         val client = casProperties.getHttpClient().getTruststore();
         if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
             val ctx = new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
@@ -64,11 +63,7 @@ public class CasCoreHttpConfiguration {
     @ConditionalOnMissingBean(name = "httpClient")
     @Bean
     public FactoryBean<SimpleHttpClient> httpClient() {
-        val c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        val httpClient = casProperties.getHttpClient();
-        c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
-        c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
-        return c;
+        return buildHttpClientFactoryBean();
     }
 
     @ConditionalOnMissingBean(name = "noRedirectHttpClient")
@@ -93,14 +88,19 @@ public class CasCoreHttpConfiguration {
     }
 
     private HttpClient getHttpClient(final boolean redirectEnabled) {
-        val c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        val httpClient = casProperties.getHttpClient();
-        c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
-        c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
+        val c = buildHttpClientFactoryBean();
         c.setRedirectsEnabled(redirectEnabled);
         c.setCircularRedirectsAllowed(redirectEnabled);
         c.setSslSocketFactory(trustStoreSslSocketFactory());
         c.setHostnameVerifier(hostnameVerifier());
         return c.getObject();
+    }
+
+    private SimpleHttpClientFactoryBean buildHttpClientFactoryBean() {
+        val c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
+        val httpClient = casProperties.getHttpClient();
+        c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
+        c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
+        return c;
     }
 }

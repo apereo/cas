@@ -23,6 +23,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -97,7 +98,7 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
             LOGGER.debug("Attempting to build event based on the authentication provider [{}] and service [{}]",
                 provider, service.getName());
             val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
-                buildEventAttributeMap(authentication.getPrincipal(), service, provider));
+                buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider));
             return CollectionUtils.wrapSet(event);
         }
         LOGGER.debug("No multifactor provider could be found based on [{}]'s Grouper groups", principal.getId());

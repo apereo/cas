@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.category.RadiusCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.ClassRule;
@@ -24,6 +25,7 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     RadiusConfiguration.class,
     RefreshAutoConfiguration.class
 })
