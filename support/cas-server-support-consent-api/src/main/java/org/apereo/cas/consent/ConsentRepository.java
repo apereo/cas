@@ -53,7 +53,7 @@ public interface ConsentRepository extends Serializable {
     /**
      * Delete consent decision.
      *
-     * @param id        the decicion's id
+     * @param id        the decision id
      * @param principal the principal
      * @return true / false
      */
