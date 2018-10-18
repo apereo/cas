@@ -108,7 +108,7 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
         val isAuthorized = policy != null && policy.isAuthorizedToReleaseCredentialPassword() && isAttributeAllowedForRelease(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
 
         val element = CollectionUtils.firstElement(authentication.getAttributes().get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL));
-        val credential = element.isPresent() ? element.get().toString() : null;
+        val credential = element.map(Object::toString).orElse(null);
         decideAttributeReleaseBasedOnServiceAttributePolicy(attributes, credential,
             CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, service, isAuthorized);
     }
