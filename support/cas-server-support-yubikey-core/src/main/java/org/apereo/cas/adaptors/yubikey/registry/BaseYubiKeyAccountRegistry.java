@@ -47,10 +47,7 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         try {
             val account = getAccount(uid);
-            if (account.isPresent()) {
-                return account.get().getPublicId().equals(yubikeyPublicId);
-            }
-            return false;
+            return account.map(yubiKeyAccount -> yubiKeyAccount.getPublicId().equals(yubikeyPublicId)).orElse(false);
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found for id [{}] and public id [{}]", uid, yubikeyPublicId);
         } catch (final Exception e) {
