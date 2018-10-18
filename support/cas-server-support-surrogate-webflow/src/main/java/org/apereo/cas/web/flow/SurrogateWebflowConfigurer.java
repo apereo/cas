@@ -23,6 +23,11 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
      */
     public static final String VIEW_ID_SURROGATE_VIEW = "surrogateListView";
 
+    /**
+     * Skip surrogate view if no surrogates can be found.
+     */
+    public static final String TRANSITION_ID_SKIP_SURROGATE = "skipSurrogateView";
+    
     public SurrogateWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                       final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                       final ApplicationContext applicationContext,
@@ -54,7 +59,9 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final String targetSuccessId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
 
         final ActionState loadSurrogatesAction = createActionState(flow, "loadSurrogatesAction", "loadSurrogatesListAction");
+        
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId);
+        createTransitionForState(loadSurrogatesAction, TRANSITION_ID_SKIP_SURROGATE, targetSuccessId);
         createTransitionForState(loadSurrogatesAction, VIEW_ID_SURROGATE_VIEW, VIEW_ID_SURROGATE_VIEW);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, loadSurrogatesAction.getId(), true);
 

@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -38,7 +39,7 @@ public class LoadSurrogatesListAction extends AbstractAction {
             if (loadSurrogates(requestContext)) {
                 return new Event(this, SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW);
             }
-            return error();
+            return new EventFactorySupport().event(this, SurrogateWebflowConfigurer.TRANSITION_ID_SKIP_SURROGATE);
         }
 
         final Credential c = WebUtils.getCredential(requestContext);
@@ -47,9 +48,7 @@ public class LoadSurrogatesListAction extends AbstractAction {
             final SurrogateUsernamePasswordCredential credential = (SurrogateUsernamePasswordCredential) c;
             final Optional<AuthenticationResultBuilder> result =
                 surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, c, credential.getSurrogateUsername());
-            if (result.isPresent()) {
-                WebUtils.putAuthenticationResultBuilder(result.get(), requestContext);
-            }
+            result.ifPresent(authenticationResultBuilder1 -> WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder1, requestContext));
         }
         return success();
     }
