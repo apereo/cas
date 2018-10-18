@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.services.MultifactorAuthenticationProviderFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 
@@ -17,10 +18,14 @@ import java.util.stream.Collectors;
  *
  * @author Misagh Moayyed
  * @since 5.1.0
+ *
+ * @deprecated as of 5.3.4, provide an instance of {@link MultifactorAuthenticationProviderFactory} to provide multiple instances
+ * of multifactor authentication providers.  This interface will be removed in the next 6.0 major release
  */
 @Slf4j
 @NoArgsConstructor
 @Getter
+@Deprecated
 public class DefaultVariegatedMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements VariegatedMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148134156909L;

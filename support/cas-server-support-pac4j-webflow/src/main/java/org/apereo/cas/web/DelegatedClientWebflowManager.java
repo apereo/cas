@@ -27,6 +27,7 @@ import org.pac4j.oauth.config.OAuth20Configuration;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
+import org.pac4j.saml.state.SAML2StateGenerator;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -84,7 +85,7 @@ public class DelegatedClientWebflowManager {
         webContext.setRequestAttribute(PARAMETER_CLIENT_ID, ticketId);
 
         if (client instanceof SAML2Client) {
-            webContext.getSessionStore().set(webContext, SAML2Client.SAML_RELAY_STATE_ATTRIBUTE, ticketId);
+            webContext.getSessionStore().set(webContext, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE, ticketId);
         }
         if (client instanceof OAuth20Client) {
             final OAuth20Client oauthClient = (OAuth20Client) client;

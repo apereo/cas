@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jOidcClientProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jSamlClientProperties;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -43,9 +44,13 @@ import org.pac4j.saml.metadata.SAML2ServiceProvicerRequestedAttribute;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import org.pac4j.oauth.client.HiOrgServerClient;
 
 /**
  * This is {@link DelegatedClientFactory}.
@@ -352,7 +357,7 @@ public class DelegatedClientFactory {
                 cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
                 cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
-                cfg.setDestinationBindingType(saml.getDestinationBinding());
+                cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
@@ -379,6 +384,15 @@ public class DelegatedClientFactory {
                         .map(attribute -> new SAML2ServiceProvicerRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
                             attribute.getNameFormat(), attribute.isRequired()))
                         .forEach(attribute -> cfg.getRequestedServiceProviderAttributes().add(attribute));
+                }
+
+                final List<Pac4jSamlClientProperties.ServiceProviderMappedAttribute> mappedAttributes = saml.getMappedAttributes();
+                if (!mappedAttributes.isEmpty()) {
+                    final Map results = mappedAttributes
+                        .stream()
+                        .collect(Collectors.toMap(Pac4jSamlClientProperties.ServiceProviderMappedAttribute::getName,
+                            Pac4jSamlClientProperties.ServiceProviderMappedAttribute::getMappedTo));
+                    cfg.setMappedAttributes(results);
                 }
 
                 final SAML2Client client = new SAML2Client(cfg);
@@ -500,6 +514,26 @@ public class DelegatedClientFactory {
         cfg.setLogoutUrl(oidc.getLogoutUrl());
         return cfg;
     }
+    
+    /**
+     * Configure HiOrg-Server client.
+     *
+     * @param properties the properties
+     */
+    protected void configureHiOrgServerClient(final Collection<BaseClient> properties) {
+        final Pac4jDelegatedAuthenticationProperties.HiOrgServer hiOrgServer = pac4jProperties.getHiOrgServer();
+        if (StringUtils.isNotBlank(hiOrgServer.getId()) && StringUtils.isNotBlank(hiOrgServer.getSecret())) {
+            final HiOrgServerClient client = new HiOrgServerClient(hiOrgServer.getId(), hiOrgServer.getSecret());
+            configureClient(client, hiOrgServer);
+
+            if (StringUtils.isNotBlank(hiOrgServer.getScope())) {
+                client.getConfiguration().setScope(hiOrgServer.getScope());
+            }
+
+            LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
+            properties.add(client);
+        }
+    }
 
     /**
      * Build set of clients configured.
@@ -526,6 +560,7 @@ public class DelegatedClientFactory {
         configureWordpressClient(clients);
         configureBitbucketClient(clients);
         configureOrcidClient(clients);
+        configureHiOrgServerClient(clients);
 
         return clients;
     }

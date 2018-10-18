@@ -43,10 +43,11 @@ public class DelegatedClientFactoryTests {
         configureIdentifiableClient(props.getWindowsLive());
         configureIdentifiableClient(props.getWordpress());
         configureIdentifiableClient(props.getYahoo());
+        configureIdentifiableClient(props.getHiOrgServer());
 
         final DelegatedClientFactory factory = new DelegatedClientFactory(props);
         final Set clients = factory.build();
-        assertEquals(13, clients.size());
+        assertEquals(14, clients.size());
     }
 
     @Test

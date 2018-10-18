@@ -917,7 +917,7 @@ function run(uid, logger) {
     // If you want to call back into Java, this is one way to do so
     var javaObj = new JavaImporter(org.yourorgname.yourpackagename);
     with (javaObj) {
-    	var objFromJava = JavaClassInPackage.someStaticMethod(uid);
+        var objFromJava = JavaClassInPackage.someStaticMethod(uid);
     }
 
     var map = {};
@@ -2609,7 +2609,7 @@ To learn more about this topic, [please review this guide](../integration/Delega
 
 The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) under the listed configuration keys listed below:
 
-| Identity Provider                       | Configuration Key
+| Identity Provider         | Configuration Key
 |---------------------------|----------------------------------------------------------
 | Twitter                   | `cas.authn.pac4j.twitter`
 | Paypal                    | `cas.authn.pac4j.paypal`
@@ -2620,7 +2620,8 @@ The following external identity providers share [common blocks of settings](Conf
 | GitHub                    | `cas.authn.pac4j.github`
 | Foursquare                | `cas.authn.pac4j.foursquare`
 | WindowsLive               | `cas.authn.pac4j.windowsLive`
-| Google                   | `cas.authn.pac4j.google`
+| Google                    | `cas.authn.pac4j.google`
+| HiOrg-Server              | `cas.authn.pac4j.hiOrgServer`
 
 See below for other identity providers such as CAS, SAML2 and more.
 
@@ -2697,7 +2698,8 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].serviceProviderEntityId=
 # cas.authn.pac4j.saml[0].serviceProviderMetadataPath=
 
-# cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=
+# cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=3600
+# cas.authn.pac4j.saml[0].acceptedSkew=300
 # cas.authn.pac4j.saml[0].destinationBinding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect
 
 # Path/URL to delegated IdP metadata
@@ -2719,6 +2721,9 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].requestedAttributes[0].friendlyName=
 # cas.authn.pac4j.saml[0].requestedAttributes[0].nameFormat=urn:oasis:names:tc:SAML:2.0:attrname-format:uri
 # cas.authn.pac4j.saml[0].requestedAttributes[0].required=false
+
+# cas.authn.pac4j.saml[0].mappedAttributes[0].name=urn:oid:2.5.4.42
+# cas.authn.pac4j.saml[0].mappedAttributes[0].mappedAs=displayName
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.
@@ -2730,6 +2735,14 @@ Delegate authentication to Facebook. Common settings for this identity provider 
 ```properties
 # cas.authn.pac4j.facebook.fields=
 # cas.authn.pac4j.facebook.scope=
+```
+
+### HiOrg Server
+
+Delegate authentication to HiOrg Server. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.hiOrgServer`.
+
+```properties
+# cas.authn.pac4j.hiOrgServer.scope=eigenedaten
 ```
 
 ### LinkedIn

@@ -8,6 +8,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 
 /**
  * This is {@link DuoDirectCredential}.
@@ -21,10 +22,12 @@ import org.apereo.cas.authentication.Credential;
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
-public class DuoDirectCredential implements Credential {
+public class DuoDirectCredential implements Credential, MultifactorAuthenticationCredential {
     private static final long serialVersionUID = -7570699733132111037L;
 
     private final Authentication authentication;
+
+    private String providerId;
 
     @Override
     public String getId() {

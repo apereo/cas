@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -11,7 +9,13 @@ import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessin
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
+
+import lombok.extern.slf4j.Slf4j;
+import net.jradius.dictionary.Attr_State;
+import net.jradius.packet.attribute.value.AttributeValue;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -65,9 +69,17 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
             final Principal principal = authentication.getPrincipal();
             final String username = principal.getId();
 
+            Optional state = Optional.empty();
+            final Map<String, Object> attributes = principal.getAttributes();
+            if (attributes.containsKey(Attr_State.NAME)) {
+                LOGGER.debug("Found state attribute in principal attributes for multifactor authentication");
+                final Optional attrValue = CollectionUtils.firstElement(attributes.get(Attr_State.NAME));
+                if (attrValue.isPresent()) {
+                    state = Optional.of(AttributeValue.class.cast(attrValue.get()).getValueObject());
+                }
+            }
             final Pair<Boolean, Optional<Map<String, Object>>> result =
-                RadiusUtils.authenticate(username, password, this.servers,
-                    this.failoverOnAuthenticationFailure, this.failoverOnException);
+                RadiusUtils.authenticate(username, password, state, this.servers, this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {
                 final Principal finalPrincipal = this.principalFactory.createPrincipal(username, result.getValue().get());
                 return createHandlerResult(credential, finalPrincipal, new ArrayList<>());
