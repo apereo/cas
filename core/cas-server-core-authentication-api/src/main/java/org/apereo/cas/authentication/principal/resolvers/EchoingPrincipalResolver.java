@@ -25,7 +25,7 @@ public class EchoingPrincipalResolver implements PrincipalResolver {
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
         LOGGER.debug("Echoing back the authenticated principal [{}]", principal);
-        return principal.isPresent() ? principal.get() : null;
+        return principal.orElse(null);
     }
 
     @Override
