@@ -240,7 +240,7 @@ The certificate exported out of your keystore needs to also be imported into the
 keytool -export -file /etc/cas/config/cas.crt -keystore /etc/cas/thekeystore -alias cas
 
 # Import the certificate into the global keystore
-sudo keytool -import -file /etc/cas/config/cas.crt -alias cas -keystore $JAVA_HOME/jre/lib/security/cacerts
+sudo keytool -import -file /etc/cas/config/cas.crt -alias cas -keystore $JAVA_HOME/lib/security/cacerts
 ```
 
 ...where `JAVA_HOME` is where you have the JDK installed (i.e `/Library/Java/JavaVirtualMachines/jdk[version].jdk/Contents/Home`).
