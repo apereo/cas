@@ -36,6 +36,13 @@ public class ViewProperties implements Serializable {
     private List<String> templatePrefixes = new ArrayList<>();
 
     /**
+     * CAS1 views and locations.
+     */
+    @NestedConfigurationProperty
+    private Cas10ViewProperties cas1 = new Cas10ViewProperties();
+
+
+    /**
      * CAS2 views and locations.
      */
     @NestedConfigurationProperty

@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.web.view;
 
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
 import org.junit.Before;
@@ -33,7 +35,8 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
         val builder = new Saml10ObjectBuilder(this.configBean);
         view = new Saml10FailureResponseView(null, null,
             builder, new DefaultArgumentExtractor(new SamlServiceFactory(new Saml10ObjectBuilder(configBean))),
-            StandardCharsets.UTF_8.name(), 0, 30, null);
+            StandardCharsets.UTF_8.name(), 0, 30, null,
+            new DefaultAuthenticationServiceSelectionPlan(), new NoOpProtocolAttributesRenderer());
     }
 
     @Test
@@ -43,8 +46,7 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
         request.addParameter("TARGET", "service");
 
         val description = "Validation failed";
-        this.view.renderMergedOutputModel(
-            Collections.singletonMap("description", description), request, response);
+        this.view.renderMergedOutputModel(Collections.singletonMap("description", description), request, response);
 
         val responseText = response.getContentAsString();
         assertTrue(responseText.contains("Status"));

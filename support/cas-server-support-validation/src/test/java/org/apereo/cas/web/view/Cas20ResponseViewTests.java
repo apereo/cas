@@ -8,6 +8,7 @@ import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecut
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
+import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -83,7 +84,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
         };
         val view = new Cas20ResponseView(true, null,
             null, delegatedView, new DefaultAuthenticationAttributeReleasePolicy("attribute"),
-            new DefaultAuthenticationServiceSelectionPlan());
+            new DefaultAuthenticationServiceSelectionPlan(), new NoOpProtocolAttributesRenderer());
         view.render(modelAndView.getModel(), req, resp);
 
         assertNotNull(req.getAttribute(CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS));
