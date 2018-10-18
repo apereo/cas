@@ -28,7 +28,7 @@ public interface Credential extends Serializable {
      * Gets a credential identifier that is safe to record for logging, auditing, or presentation to the user.
      * In most cases this has a natural meaning for most credential types (e.g. username, certificate DN), while
      * for others it may be awkward to construct a meaningful identifier. In any case credentials require some means
-     * of identification for a number of cases and implementers should make a best effor to satisfy that need.
+     * of identification for a number of cases and implementers should make a best effort to satisfy that need.
      *
      * @return Non-null credential identifier. Implementers should return {@link #UNKNOWN_ID} for cases where an ID
      * is not readily available or meaningful.

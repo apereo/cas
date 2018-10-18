@@ -151,7 +151,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     /**
      * Property files processed in order of non-profiles first and then profiles, and profiles are first to last
      * with properties in the last profile overriding properties in previous profiles or non-profiles.
-     * @param environment Spring environnment
+     * @param environment Spring environment
      * @param config Location of config files
      * @param configFiles List of all config files to load
      * @return Merged properties
