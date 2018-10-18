@@ -24,8 +24,10 @@ import org.apereo.cas.web.v3.V3ServiceValidateController;
 import org.apereo.cas.web.view.Cas10ResponseView;
 import org.apereo.cas.web.view.Cas20ResponseView;
 import org.apereo.cas.web.view.Cas30ResponseView;
+import org.apereo.cas.web.view.attributes.AttributeValuesPerLineProtocolAttributesRenderer;
 import org.apereo.cas.web.view.attributes.DefaultCas30ProtocolAttributesRenderer;
 import org.apereo.cas.web.view.attributes.InlinedCas30ProtocolAttributesRenderer;
+import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -145,7 +147,9 @@ public class CasValidationConfiguration {
         return new Cas10ResponseView(true,
             protocolAttributeEncoder.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            authenticationAttributeReleasePolicy.getIfAvailable());
+            authenticationAttributeReleasePolicy.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            cas1ProtocolAttributesRenderer());
     }
 
     @Bean
@@ -154,7 +158,9 @@ public class CasValidationConfiguration {
         return new Cas10ResponseView(false,
             protocolAttributeEncoder.getIfAvailable(),
             servicesManager.getIfAvailable(),
-            authenticationAttributeReleasePolicy.getIfAvailable());
+            authenticationAttributeReleasePolicy.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            cas1ProtocolAttributesRenderer());
     }
 
     @Bean
@@ -165,7 +171,8 @@ public class CasValidationConfiguration {
             servicesManager.getIfAvailable(),
             cas2SuccessView.getIfAvailable(),
             authenticationAttributeReleasePolicy.getIfAvailable(),
-            authenticationServiceSelectionPlan.getIfAvailable());
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            new NoOpProtocolAttributesRenderer());
     }
 
     @Bean
@@ -188,6 +195,18 @@ public class CasValidationConfiguration {
             case DEFAULT:
             default:
                 return new DefaultCas30ProtocolAttributesRenderer();
+        }
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "cas1ProtocolAttributesRenderer")
+    public CasProtocolAttributesRenderer cas1ProtocolAttributesRenderer() {
+        switch (casProperties.getView().getCas1().getAttributeRendererType()) {
+            case VALUES_PER_LINE:
+                return new AttributeValuesPerLineProtocolAttributesRenderer();
+            case DEFAULT:
+            default:
+                return new NoOpProtocolAttributesRenderer();
         }
     }
 

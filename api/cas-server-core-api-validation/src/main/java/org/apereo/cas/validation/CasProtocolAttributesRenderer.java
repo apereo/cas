@@ -21,4 +21,5 @@ public interface CasProtocolAttributesRenderer {
      * @return the collection
      */
     Collection<String> render(Map<String, Object> attributes);
+
 }

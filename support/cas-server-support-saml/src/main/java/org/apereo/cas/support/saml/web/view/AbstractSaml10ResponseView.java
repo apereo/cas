@@ -1,11 +1,13 @@
 package org.apereo.cas.support.saml.web.view;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -59,8 +61,10 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
                                       final String encoding,
                                       final int skewAllowance,
                                       final int issueLength,
-                                      final AuthenticationAttributeReleasePolicy authAttrReleasePolicy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authAttrReleasePolicy);
+                                      final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
+                                      final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
+                                      final CasProtocolAttributesRenderer attributesRenderer) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authAttrReleasePolicy, serviceSelectionStrategy, attributesRenderer);
         this.samlObjectBuilder = samlObjectBuilder;
         this.samlArgumentExtractor = samlArgumentExtractor;
         this.encoding = encoding;
