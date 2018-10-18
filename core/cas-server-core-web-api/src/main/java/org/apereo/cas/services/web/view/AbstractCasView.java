@@ -3,6 +3,7 @@ package org.apereo.cas.services.web.view;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
@@ -11,6 +12,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import lombok.val;
 import org.springframework.web.servlet.view.AbstractView;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -54,6 +57,15 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
+    /**
+     * The Service selection strategy.
+     */
+    protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
+    /**
+     * CAS attribute renderer.
+     */
+    protected final CasProtocolAttributesRenderer attributesRenderer;
 
     /**
      * Gets the assertion from the model.
@@ -198,4 +210,71 @@ public abstract class AbstractCasView extends AbstractView {
         return authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(authn, assertion, model, registeredService);
     }
 
+    /**
+     * Prepare view model with authentication principal.
+     *
+     * @param model the model
+     * @return the map
+     */
+    protected Map prepareViewModelWithAuthenticationPrincipal(final Map<String, Object> model) {
+        putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL, getPrincipal(model));
+        putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_CHAINED_AUTHENTICATIONS, getChainedAuthentications(model));
+        putIntoModel(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRIMARY_AUTHENTICATION, getPrimaryAuthenticationFrom(model));
+        LOGGER.debug("Prepared CAS response output model with attribute names [{}]", model.keySet());
+        return model;
+    }
+
+    /**
+     * Prepare cas response attributes for view model.
+     *
+     * @param model the model
+     */
+    protected void prepareCasResponseAttributesForViewModel(final Map<String, Object> model) {
+        val service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
+        val registeredService = this.servicesManager.findServiceBy(service);
+
+        val principalAttributes = getCasPrincipalAttributes(model, registeredService);
+        val attributes = new HashMap<String, Object>(principalAttributes);
+
+        LOGGER.debug("Processed principal attributes from the output model to be [{}]", principalAttributes.keySet());
+        val protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
+        attributes.putAll(protocolAttributes);
+
+        LOGGER.debug("Final collection of attributes for the response are [{}].", attributes.keySet());
+        putCasResponseAttributesIntoModel(model, attributes, registeredService, this.attributesRenderer);
+    }
+
+    /**
+     * Put cas principal attributes into model.
+     *
+     * @param model             the model
+     * @param registeredService the registered service
+     * @return the cas principal attributes
+     */
+    protected Map<String, Object> getCasPrincipalAttributes(final Map<String, Object> model, final RegisteredService registeredService) {
+        return getPrincipalAttributesAsMultiValuedAttributes(model);
+    }
+
+    /**
+     * Put cas response attributes into model.
+     *
+     * @param model              the model
+     * @param attributes         the attributes
+     * @param registeredService  the registered service
+     * @param attributesRenderer the attributes renderer
+     */
+    protected void putCasResponseAttributesIntoModel(final Map<String, Object> model,
+                                                     final Map<String, Object> attributes,
+                                                     final RegisteredService registeredService,
+                                                     final CasProtocolAttributesRenderer attributesRenderer) {
+
+        LOGGER.debug("Beginning to encode attributes for the response");
+        val encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
+
+        LOGGER.debug("Encoded attributes for the response are [{}]", encodedAttributes);
+        putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
+
+        val formattedAttributes = attributesRenderer.render(encodedAttributes);
+        putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
+    }
 }
