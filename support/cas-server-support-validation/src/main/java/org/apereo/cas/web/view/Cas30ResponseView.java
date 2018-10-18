@@ -57,10 +57,8 @@ public class Cas30ResponseView extends Cas20ResponseView {
         final Service service = authenticationRequestServiceSelectionStrategies.resolveService(getServiceFrom(model));
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
-        final Map<String, Object> attributes = new HashMap<>();
-
         final Map<String, Object> principalAttributes = getCasPrincipalAttributes(model, registeredService);
-        attributes.putAll(principalAttributes);
+        final Map<String, Object> attributes = new HashMap<>(principalAttributes);
 
         LOGGER.debug("Processed principal attributes from the output model to be [{}]", principalAttributes.keySet());
         if (this.releaseProtocolAttributes) {
