@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -80,6 +81,23 @@ public class ReturnMappedAttributeReleasePolicyTests {
             CoreAttributesTestUtils.getService(), registeredService);
         assertTrue(result.containsKey("attr1"));
         assertTrue(result.containsValue("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME));
+    }
+
+    @Test
+    public void verifyInlinedGroovyMultipleAttributes() {
+        val allowedAttributes = ArrayListMultimap.<String, Object>create();
+        allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return ['one', 'two'] }");
+        val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
+        val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
+        val registeredService = CoreAttributesTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
+        val principalAttributes = new HashMap<String, Object>();
+        principalAttributes.put("uid", CoreAttributesTestUtils.CONST_USERNAME);
+        val result = policyWritten.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
+            CoreAttributesTestUtils.getService(), registeredService);
+        assertTrue(result.containsKey("attr1"));
+        assertEquals(2, Collection.class.cast(result.get("attr1")).size());
     }
 
     @Test
