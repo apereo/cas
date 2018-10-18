@@ -98,7 +98,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
             .stream()
             .filter(entry -> entry.getValue().getEmail().equalsIgnoreCase(email))
             .findFirst();
-        return result.isPresent() ? result.get().getKey() : null;
+        return result.map(Map.Entry::getKey).orElse(null);
     }
 
     @Override

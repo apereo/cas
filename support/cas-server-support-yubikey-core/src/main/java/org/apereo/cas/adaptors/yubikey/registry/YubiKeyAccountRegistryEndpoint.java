@@ -35,10 +35,7 @@ public class YubiKeyAccountRegistryEndpoint {
     @ReadOperation
     public YubiKeyAccount get(@Selector final String username) {
         val result = registry.getAccount(username);
-        if (result.isPresent()) {
-            return result.get();
-        }
-        return null;
+        return result.orElse(null);
     }
 
     /**

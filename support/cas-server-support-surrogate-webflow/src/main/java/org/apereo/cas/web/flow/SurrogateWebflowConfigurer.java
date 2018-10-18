@@ -22,7 +22,12 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /**
      * The view id 'surrogateListView'.
      */
-    public static final String VIEW_ID_SURROGATE_VIEW = "surrogateListView";
+    public static final String TRANSITION_ID_SURROGATE_VIEW = "surrogateListView";
+
+    /**
+     * Skip surrogate view if no surrogates can be found.
+     */
+    public static final String TRANSITION_ID_SKIP_SURROGATE = "skipSurrogateView";
 
     public SurrogateWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                       final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -56,7 +61,8 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
         val loadSurrogatesAction = createActionState(flow, "loadSurrogatesAction", "loadSurrogatesListAction");
         createTransitionForState(loadSurrogatesAction, CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId);
-        createTransitionForState(loadSurrogatesAction, VIEW_ID_SURROGATE_VIEW, VIEW_ID_SURROGATE_VIEW);
+        createTransitionForState(loadSurrogatesAction, TRANSITION_ID_SURROGATE_VIEW, TRANSITION_ID_SURROGATE_VIEW);
+        createTransitionForState(loadSurrogatesAction, TRANSITION_ID_SKIP_SURROGATE, targetSuccessId);
         createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, loadSurrogatesAction.getId(), true);
 
     }
@@ -69,7 +75,7 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createSurrogateListViewState(final Flow flow) {
-        val viewState = createViewState(flow, VIEW_ID_SURROGATE_VIEW, "casSurrogateAuthnListView");
+        val viewState = createViewState(flow, TRANSITION_ID_SURROGATE_VIEW, "casSurrogateAuthnListView");
         createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, "selectSurrogate");
     }
 }
