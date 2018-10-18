@@ -29,7 +29,7 @@ public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewR
     protected boolean isConsentApprovalBypassed(final J2EContext context, final OAuthRegisteredService service) {
         final String url = context.getFullRequestURL();
         final Set<String> prompts = OidcAuthorizationRequestSupport.getOidcPromptFromAuthorizationRequest(url);
-        if (prompts.contains(OidcConstants.PROMPT_CONSENT) || service.isGenerateRefreshToken()) {
+        if (prompts.contains(OidcConstants.PROMPT_CONSENT)) {
             return false;
         }
         return super.isConsentApprovalBypassed(context, service);
