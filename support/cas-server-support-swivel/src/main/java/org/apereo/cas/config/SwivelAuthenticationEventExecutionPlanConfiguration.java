@@ -90,7 +90,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer swivelAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(swivelAuthenticationHandler());
-            plan.registerMetadataPopulator(swivelAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(swivelAuthenticationMetaDataPopulator());
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(SwivelTokenCredential.class));
         };
     }

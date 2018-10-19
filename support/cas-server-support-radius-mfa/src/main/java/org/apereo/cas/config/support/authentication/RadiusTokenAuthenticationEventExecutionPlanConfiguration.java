@@ -119,7 +119,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer radiusTokenAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(radiusTokenAuthenticationHandler());
-            plan.registerMetadataPopulator(radiusAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(radiusAuthenticationMetaDataPopulator());
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(RadiusTokenCredential.class));
         };
     }

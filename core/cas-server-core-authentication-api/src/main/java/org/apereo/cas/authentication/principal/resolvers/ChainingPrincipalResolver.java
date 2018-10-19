@@ -49,15 +49,6 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      */
     private List<PrincipalResolver> chain;
 
-    /**
-     * {@inheritDoc}
-     * Resolves a credential by delegating to each of the configured resolvers in sequence. Note that the
-     * final principal is taken from the last resolved principal in the chain, yet attributes are merged.
-     *
-     * @param credential Authenticated credential.
-     * @param principal  Authenticated principal, if any.
-     * @return The principal from the last configured resolver in the chain.
-     */
     @Override
     public Principal resolve(final Credential credential, final Optional<Principal> principal, final Optional<AuthenticationHandler> handler) {
         val principals = new ArrayList<Principal>();

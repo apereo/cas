@@ -153,7 +153,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
             duoAuthenticationHandler()
                 .forEach(dh -> {
                     plan.registerAuthenticationHandler(dh);
-                    plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator(dh));
+                    plan.registerAuthenticationMetadataPopulator(duoAuthenticationMetaDataPopulator(dh));
                 });
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(DuoCredential.class, DuoDirectCredential.class));
         };
