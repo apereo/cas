@@ -1,6 +1,7 @@
-package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
+package org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso;
 
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.BaseHttpServletAwareSamlObjectEncoder;
 
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
