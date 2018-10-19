@@ -48,7 +48,7 @@ public class CasConfigurationEventListener {
      */
     @EventListener
     public void handleRefreshEvent(final EnvironmentChangeEvent event) {
-        LOGGER.debug("Received event [{}]", event);
+        LOGGER.trace("Received event [{}]", event);
         rebind();
     }
 
