@@ -80,13 +80,13 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
     @Override
     public boolean isExpired(final TicketState ticketState) {
         val match = getExpirationPolicyFor(ticketState);
-        if (!match.isPresent()) {
+        if (match.isEmpty()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
                 + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
             return super.isExpired(ticketState);
         }
         val policy = match.get();
-        LOGGER.debug("Activating expiration policy [{}] for ticket [{}]", policy, ticketState);
+        LOGGER.trace("Activating expiration policy [{}] for ticket [{}]", policy.getName(), ticketState);
         return policy.isExpired(ticketState);
     }
 
@@ -99,13 +99,13 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
     @Override
     public Long getTimeToLive(final TicketState ticketState) {
         val match = getExpirationPolicyFor(ticketState);
-        if (!match.isPresent()) {
+        if (match.isEmpty()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
                 + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
             return super.getTimeToLive(ticketState);
         }
         val policy = match.get();
-        LOGGER.debug("Getting TTL from policy [{}] for ticket [{}]", policy, ticketState);
+        LOGGER.trace("Getting TTL from policy [{}] for ticket [{}]", policy.getName(), ticketState);
         return policy.getTimeToLive(ticketState);
     }
 

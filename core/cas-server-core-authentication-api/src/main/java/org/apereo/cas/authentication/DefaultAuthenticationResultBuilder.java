@@ -2,13 +2,10 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.CollectionUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -19,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultAuthenticationResultBuilder}.
@@ -45,11 +41,11 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             val authenticatedPrincipal = authn.getPrincipal();
             LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);
 
-            principalAttributes.putAll(mergeAttributes(principalAttributes, authenticatedPrincipal.getAttributes()));
+            principalAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(principalAttributes, authenticatedPrincipal.getAttributes()));
             LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
                 principalAttributes, authenticatedPrincipal.getId());
 
-            authenticationAttributes.putAll(mergeAttributes(authenticationAttributes, authn.getAttributes()));
+            authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes, authn.getAttributes()));
             LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
 
             authenticationBuilder
@@ -138,24 +134,5 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                                           final Set<Authentication> authentications,
                                           final Map<String, Object> principalAttributes) {
         return principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
-    }
-
-    private static Map<String, Object> mergeAttributes(final Map<String, Object> currentAttributes, final Map<String, Object> attributesToMerge) {
-        val merger = new MultivaluedAttributeMerger();
-
-        val toModify = currentAttributes.entrySet()
-            .stream()
-            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-
-        val toMerge = attributesToMerge.entrySet()
-            .stream()
-            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-
-        LOGGER.debug("Merging current attributes [{}] with [{}]", currentAttributes, attributesToMerge);
-        val results = merger.mergeAttributes((Map) toModify, (Map) toMerge);
-        LOGGER.debug("Merged attributes with the final result as [{}]", results);
-        return results;
     }
 }
