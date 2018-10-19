@@ -112,22 +112,17 @@ public class CasCoreAuthenticationPrincipalConfiguration implements PrincipalRes
         plan.registerPrincipalResolver(new EchoingPrincipalResolver());
 
         val resolver = new ChainingPrincipalResolver();
-        if (!Objects.requireNonNull(attributeRepositories.getIfAvailable()).isEmpty()) {
-            LOGGER.debug("Attribute repository sources are defined and available for the principal resolution chain. "
-                + "The principal resolver will use a combination of attributes collected from attribute repository sources "
-                + "and whatever may be collected during the authentication phase where results are eventually merged.");
-            resolver.setChain(plan.getRegisteredPrincipalResolvers());
-        } else {
-            LOGGER.debug("Attribute repository sources are not available for principal resolution so principal resolver will echo "
-                + "back the principal resolved during authentication directly.");
-            resolver.setChain(plan.getRegisteredPrincipalResolvers());
-        }
-
+        resolver.setChain(plan.getRegisteredPrincipalResolvers());
         return resolver;
     }
 
     @Override
     public void configurePrincipalResolutionExecutionPlan(final PrincipalResolutionExecutionPlan plan) {
-        plan.registerPrincipalResolver(personDirectoryPrincipalResolver());
+        if (!Objects.requireNonNull(attributeRepositories.getIfAvailable()).isEmpty()) {
+            LOGGER.debug("Attribute repository sources are defined and available for person-directory principal resolution chain. ");
+            plan.registerPrincipalResolver(personDirectoryAttributeRepositoryPrincipalResolver());
+        } else {
+            LOGGER.debug("Attribute repository sources are not available for person-directory principal resolution");
+        }
     }
 }

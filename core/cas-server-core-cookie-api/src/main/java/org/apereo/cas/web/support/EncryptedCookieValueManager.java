@@ -36,7 +36,7 @@ public class EncryptedCookieValueManager implements CookieValueManager {
     @Override
     public final String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
         val cookieValue = cipherExecutor.decode(cookie.getValue(), new Object[]{}).toString();
-        LOGGER.debug("Decoded cookie value is [{}]", cookieValue);
+        LOGGER.trace("Decoded cookie value is [{}]", cookieValue);
         if (StringUtils.isBlank(cookieValue)) {
             LOGGER.trace("Retrieved decoded cookie value is blank. Failed to decode cookie [{}]", cookie.getName());
             return null;
