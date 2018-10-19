@@ -35,7 +35,6 @@ import java.util.Collection;
 @Category(CouchDbCategory.class)
 public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
-
     @Autowired
     @Qualifier("couchDbServiceRegistry")
     private ServiceRegistry serviceRegistry;
