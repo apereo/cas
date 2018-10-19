@@ -106,7 +106,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
         } finally {
             if (this.signingKey == null) {
                 setSigningKey(new AesKey(signingSecretKey.getBytes(StandardCharsets.UTF_8)));
-                LOGGER.debug("Created signing key instance [{}] based on provided secret key", this.signingKey.getClass().getSimpleName());
+                LOGGER.trace("Created signing key instance [{}] based on provided secret key", this.signingKey.getClass().getSimpleName());
             }
         }
     }
