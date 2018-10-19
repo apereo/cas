@@ -35,7 +35,6 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
 
-
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
@@ -57,9 +56,8 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationHandler jsonResourceAuthenticationHandler() {
         val jsonProps = casProperties.getAuthn().getJson();
-        val h =
-            new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager.getIfAvailable(), jsonPrincipalFactory(),
-                null, jsonProps.getLocation());
+        val h = new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager.getIfAvailable(), jsonPrincipalFactory(),
+            null, jsonProps.getLocation());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jsonProps.getPasswordEncoder()));
         if (jsonProps.getPasswordPolicy().isEnabled()) {
             h.setPasswordPolicyConfiguration(new PasswordPolicyConfiguration(jsonProps.getPasswordPolicy()));

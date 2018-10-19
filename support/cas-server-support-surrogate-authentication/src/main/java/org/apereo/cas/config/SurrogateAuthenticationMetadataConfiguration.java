@@ -27,6 +27,6 @@ public class SurrogateAuthenticationMetadataConfiguration {
     @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationMetadataConfigurer() {
-        return plan -> plan.registerMetadataPopulator(surrogateAuthenticationMetadataPopulator());
+        return plan -> plan.registerAuthenticationMetadataPopulator(surrogateAuthenticationMetadataPopulator());
     }
 }
