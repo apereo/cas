@@ -27,7 +27,7 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/tests/couchdb/run-couchdb-server.sh
+./ci/tests/couchdb/run-couchdb-server-admin.sh
 
 gradleBuild="$gradleBuild testCouchDb jacocoRootReport -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
