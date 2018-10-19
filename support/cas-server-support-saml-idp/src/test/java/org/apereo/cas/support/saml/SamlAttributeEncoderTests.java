@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.attribute.SamlAttributeEncoder;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
