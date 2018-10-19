@@ -29,12 +29,13 @@ public class TicketIdSanitizationUtils {
      */
     private static final int VISIBLE_TAIL_LENGTH = 10;
 
+    private static final int OBFUSCATION_LENGTH = 5;
+
     /**
      * Gets the default suffix used when the default ticket id generator is used so the poroper
      * visible length is shown.
      */
     private static final int HOST_NAME_LENGTH = InetAddressUtils.getCasServerHostName().length();
-
 
     /**
      * Remove ticket id from the message.
@@ -54,7 +55,7 @@ public class TicketIdSanitizationUtils {
                 if (replaceLength <= 0) {
                     replaceLength = length;
                 }
-                val newId = match.replace(group.substring(0, replaceLength), StringUtils.repeat("*", replaceLength));
+                val newId = match.replace(group.substring(0, replaceLength), StringUtils.repeat("*", OBFUSCATION_LENGTH));
                 modifiedMessage = modifiedMessage.replaceAll(match, newId);
             }
         }

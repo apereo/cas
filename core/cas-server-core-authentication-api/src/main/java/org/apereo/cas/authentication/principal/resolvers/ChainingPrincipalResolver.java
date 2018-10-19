@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.NullPrincipal;
@@ -20,7 +21,6 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -55,7 +55,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
         chain.stream()
             .filter(resolver -> resolver.supports(credential))
             .forEach(resolver -> {
-                LOGGER.debug("Invoking principal resolver [{}]", resolver);
+                LOGGER.debug("Invoking principal resolver [{}]", resolver.getName());
                 val p = resolver.resolve(credential, principal, handler);
                 if (p != null) {
                     LOGGER.debug("Resolved principal [{}]", p);
@@ -73,12 +73,11 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 val principalAttributes = p.getAttributes();
                 if (principalAttributes != null && !principalAttributes.isEmpty()) {
                     LOGGER.debug("Adding attributes [{}] for the final principal", principalAttributes);
-                    attributes.putAll(principalAttributes);
+                    attributes.putAll(CoreAuthenticationUtils.mergeAttributes(attributes, principalAttributes));
                 }
             }
         });
-        final Set<String> principalIds = principals
-            .stream()
+        val principalIds = principals.stream()
             .map(p -> p.getId().trim().toLowerCase())
             .collect(Collectors.toCollection(LinkedHashSet::new));
         val count = principalIds.size();

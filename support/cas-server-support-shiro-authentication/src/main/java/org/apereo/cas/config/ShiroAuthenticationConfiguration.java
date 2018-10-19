@@ -35,8 +35,8 @@ import org.springframework.context.annotation.Configuration;
 public class ShiroAuthenticationConfiguration {
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -72,7 +72,7 @@ public class ShiroAuthenticationConfiguration {
             val shiroConfigFile = casProperties.getAuthn().getShiro().getLocation();
             if (shiroConfigFile != null) {
                 LOGGER.debug("Injecting shiro authentication handler configured at [{}]", shiroConfigFile.getDescription());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
             }
         };
     }

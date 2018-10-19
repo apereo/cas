@@ -161,7 +161,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     public List<IPersonAttributeDao> stubAttributeRepositories() {
         val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository().getStub().getAttributes();
-        if (!attrs.isEmpty() && list.isEmpty()) {
+        if (!attrs.isEmpty()) {
             LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
             list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
         }

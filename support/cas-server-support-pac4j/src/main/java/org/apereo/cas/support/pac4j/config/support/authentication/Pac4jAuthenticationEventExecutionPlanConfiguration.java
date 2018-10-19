@@ -50,8 +50,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @Autowired
     @Qualifier("authenticationActionResolver")
@@ -107,7 +107,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
         return plan -> {
             if (!builtClients().findAllClients().isEmpty()) {
                 LOGGER.info("Registering delegated authentication clients...");
-                plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
                 plan.registerAuthenticationMetadataPopulator(clientAuthenticationMetaDataPopulator());
             }
         };

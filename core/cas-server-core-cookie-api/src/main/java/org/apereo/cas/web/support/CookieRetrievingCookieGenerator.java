@@ -79,7 +79,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val theCookieValue = this.casCookieValueManager.buildCookieValue(cookieValue, request);
         if (isRememberMeAuthentication(requestContext)) {
-            LOGGER.debug("Creating cookie [{}] for remember-me authentication with max-age [{}]", getCookieName(), this.rememberMeMaxAge);
+            LOGGER.trace("Creating cookie [{}] for remember-me authentication with max-age [{}]", getCookieName(), this.rememberMeMaxAge);
             val cookie = createCookie(theCookieValue);
             cookie.setMaxAge(this.rememberMeMaxAge);
             cookie.setSecure(isCookieSecure());
@@ -87,7 +87,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             cookie.setComment("CAS Cookie w/ Remember-Me");
             response.addCookie(cookie);
         } else {
-            LOGGER.debug("Creating cookie [{}]", getCookieName());
+            LOGGER.trace("Creating cookie [{}]", getCookieName());
             super.addCookie(response, theCookieValue);
         }
     }
@@ -101,7 +101,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
      */
     public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
         val theCookieValue = this.casCookieValueManager.buildCookieValue(cookieValue, request);
-        LOGGER.debug("Creating cookie [{}]", getCookieName());
+        LOGGER.trace("Creating cookie [{}]", getCookieName());
         super.addCookie(response, theCookieValue);
     }
 
@@ -124,7 +124,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             return Boolean.FALSE;
         }
         val attributes = auth.getAttributes();
-        LOGGER.debug("Located authentication attributes [{}]", attributes);
+        LOGGER.trace("Located authentication attributes [{}]", attributes);
         if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
             val rememberMeValue = attributes.getOrDefault(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.FALSE);
             LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
@@ -136,7 +136,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
     private boolean isRememberMeProvidedInRequest(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
-        LOGGER.debug("Locating request parameter [{}] with value [{}]", RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, value);
+        LOGGER.trace("Locating request parameter [{}] with value [{}]", RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, value);
         return StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
     }
 
@@ -152,7 +152,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             if (cookie == null) {
                 val cookieValue = request.getHeader(getCookieName());
                 if (StringUtils.isNotBlank(cookieValue)) {
-                    LOGGER.debug("Found cookie [{}] under header name [{}]", cookieValue, getCookieName());
+                    LOGGER.trace("Found cookie [{}] under header name [{}]", cookieValue, getCookieName());
                     cookie = createCookie(cookieValue);
                 }
             }

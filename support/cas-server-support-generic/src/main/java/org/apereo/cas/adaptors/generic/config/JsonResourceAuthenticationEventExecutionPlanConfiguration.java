@@ -43,8 +43,8 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "jsonPrincipalFactory")
     @Bean
@@ -72,8 +72,8 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             val file = casProperties.getAuthn().getJson().getLocation();
             if (file != null) {
-                LOGGER.debug("Added JSON resource authentication handler for the target file [{}]", file.getDescription());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(jsonResourceAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
+                LOGGER.debug("Added JSON resource authentication handler for the target file [{}]", file.getFilename());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(jsonResourceAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
             }
         };
     }
