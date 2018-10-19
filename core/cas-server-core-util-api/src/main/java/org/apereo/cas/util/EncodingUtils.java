@@ -408,7 +408,7 @@ public class EncodingUtils {
             jwe.setEncryptionMethodHeaderParameter(contentEncryptionAlgorithmIdentifier);
             jwe.setKey(secretKeyEncryptionKey);
             jwe.setHeader("typ", "JWT");
-            LOGGER.debug("Encrypting via [{}]", contentEncryptionAlgorithmIdentifier);
+            LOGGER.trace("Encrypting via [{}]", contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
             throw new IllegalArgumentException("Is JCE Unlimited Strength Jurisdiction Policy installed? " + e.getMessage(), e);

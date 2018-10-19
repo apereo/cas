@@ -21,12 +21,12 @@ import java.util.Map;
  */
 @Endpoint(id = "resolve-attributes", enableByDefault = false)
 public class CasResolveAttributesReportEndpoint extends BaseCasMvcEndpoint {
-    private final PrincipalResolver personDirectoryPrincipalResolver;
+    private final PrincipalResolver defaultPrincipalResolver;
 
     public CasResolveAttributesReportEndpoint(final CasConfigurationProperties casProperties,
-                                              final PrincipalResolver personDirectoryPrincipalResolver) {
+                                              final PrincipalResolver defaultPrincipalResolver) {
         super(casProperties);
-        this.personDirectoryPrincipalResolver = personDirectoryPrincipalResolver;
+        this.defaultPrincipalResolver = defaultPrincipalResolver;
     }
 
 
@@ -38,7 +38,7 @@ public class CasResolveAttributesReportEndpoint extends BaseCasMvcEndpoint {
      */
     @ReadOperation
     public Map<String, Object> resolvePrincipalAttributes(@Selector final String uid) {
-        val p = personDirectoryPrincipalResolver.resolve(new BasicIdentifiableCredential(uid));
+        val p = defaultPrincipalResolver.resolve(new BasicIdentifiableCredential(uid));
         val map = new HashMap<String, Object>();
         map.put("uid", p.getId());
         map.put("attributes", p.getAttributes());
