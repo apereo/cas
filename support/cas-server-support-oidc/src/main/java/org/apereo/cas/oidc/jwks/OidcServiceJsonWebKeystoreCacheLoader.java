@@ -104,7 +104,7 @@ public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRe
     @Override
     public Optional<RsaJsonWebKey> load(final OidcRegisteredService svc) {
         val jwks = buildJsonWebKeySet(svc);
-        if (!jwks.isPresent() || jwks.get().getJsonWebKeys().isEmpty()) {
+        if (jwks.isEmpty() || jwks.get().getJsonWebKeys().isEmpty()) {
             return Optional.empty();
         }
         val key = getJsonWebKeyFromJwks(jwks.get());

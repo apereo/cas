@@ -85,7 +85,7 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
 
         val registeredService = verifySamlRegisteredService(providerId);
         val adaptor = getSamlMetadataFacadeFor(registeredService, providerId);
-        if (!adaptor.isPresent()) {
+        if (adaptor.isEmpty()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + providerId);
         }
 

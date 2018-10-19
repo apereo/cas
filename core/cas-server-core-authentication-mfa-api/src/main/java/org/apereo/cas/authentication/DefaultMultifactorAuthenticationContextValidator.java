@@ -67,7 +67,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         }
         LOGGER.debug("Available MFA Providers are [{}]", providerMap.values());
         val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
-        if (!requestedProvider.isPresent()) {
+        if (requestedProvider.isEmpty()) {
             LOGGER.debug("Requested authentication provider cannot be recognized.");
             return Pair.of(Boolean.FALSE, Optional.empty());
         }

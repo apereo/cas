@@ -55,7 +55,7 @@ public abstract class BaseIdTokenGeneratorService implements IdTokenGeneratorSer
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         val profile = (Optional<CommonProfile>) manager.get(true);
 
-        if (!profile.isPresent()) {
+        if (profile.isEmpty()) {
             throw new IllegalArgumentException("Unable to determine the user profile from the context");
         }
         return profile.get();

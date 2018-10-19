@@ -62,7 +62,7 @@ public abstract class BaseUmaEndpointController {
                                                     final String requiredPermission) {
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         val profile = (Optional<CommonProfile>) manager.get(true);
-        if (profile == null || !profile.isPresent()) {
+        if (profile == null || profile.isEmpty()) {
             throw new AuthenticationException("Unable to locate authenticated profile");
         }
         val p = profile.get();

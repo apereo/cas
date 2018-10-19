@@ -43,7 +43,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
             && generatedToken.getDeviceCode().isPresent()
             && generatedToken.getUserCode().isPresent()
-            && !generatedToken.getAccessToken().isPresent();
+            && generatedToken.getAccessToken().isEmpty();
     }
 
     /**

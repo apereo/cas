@@ -113,7 +113,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
 
             val providerFound = resolveProvider(providerMap, mfaMethod);
 
-            if (!providerFound.isPresent()) {
+            if (providerFound.isEmpty()) {
                 LOGGER.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] is absent in the configuration.",
                     mfaMethod, pattern, mfaMethod);
                 throw new AuthenticationException();

@@ -42,7 +42,7 @@ public class SamlIdPMetadataUIAction extends AbstractAction {
                 val adaptor =
                     SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, samlService, service.getId());
 
-                if (!adaptor.isPresent()) {
+                if (adaptor.isEmpty()) {
                     throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
                         "Cannot find metadata linked to " + service.getId());
                 }

@@ -120,7 +120,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
 
         if (timed != null) {
             val providerFound = resolveProvider(providerMap, timed.getProviderId());
-            if (!providerFound.isPresent()) {
+            if (providerFound.isEmpty()) {
                 LOGGER.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] absent in the configuration.",
                     timed.getProviderId(), service, timed.getProviderId());
                 throw new AuthenticationException();
