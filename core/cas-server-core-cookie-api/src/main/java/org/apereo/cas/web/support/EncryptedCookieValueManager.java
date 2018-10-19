@@ -29,7 +29,7 @@ public class EncryptedCookieValueManager implements CookieValueManager {
     @Override
     public final String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
         val res = buildCompoundCookieValue(givenCookieValue, request);
-        LOGGER.debug("Encoding cookie value [{}]", res);
+        LOGGER.trace("Encoding cookie value [{}]", res);
         return cipherExecutor.encode(res, new Object[]{}).toString();
     }
 
@@ -38,7 +38,7 @@ public class EncryptedCookieValueManager implements CookieValueManager {
         val cookieValue = cipherExecutor.decode(cookie.getValue(), new Object[]{}).toString();
         LOGGER.debug("Decoded cookie value is [{}]", cookieValue);
         if (StringUtils.isBlank(cookieValue)) {
-            LOGGER.debug("Retrieved decoded cookie value is blank. Failed to decode cookie [{}]", cookie.getName());
+            LOGGER.trace("Retrieved decoded cookie value is blank. Failed to decode cookie [{}]", cookie.getName());
             return null;
         }
 
