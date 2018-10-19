@@ -5,8 +5,6 @@ import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -32,11 +30,9 @@ import java.util.Collections;
     CouchDbServiceRegistryConfiguration.class
 },
     properties = {
-        "org.ektorp.support.AutoUpdateViewOnChange=true",
-        "cas.serviceRegistry.couchDb.username=",
-        "cas.serviceRegistry.couchDb.password="
+        "cas.serviceRegistry.couchDb.username=cas",
+        "cas.serviceRegistry.couchDb.password=password"
     })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @Category(CouchDbCategory.class)
 public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 

@@ -31,7 +31,11 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
     CouchDbEventsConfiguration.class,
     RefreshAutoConfiguration.class
     },
-    properties = {"cas.events.couchDb.asynchronous=false"})
+    properties = {
+        "cas.events.couchDb.asynchronous=false",
+        "cas.events.couchDb.username=cas",
+        "cas.events.couchdb.password=password"
+    })
 @Getter
 public class CouchDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 

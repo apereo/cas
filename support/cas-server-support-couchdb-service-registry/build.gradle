@@ -1,4 +1,9 @@
 description = "Apereo CAS CouchDB Service Registry"
+
+ext {
+    maxParallelForksForTests = 1
+}
+
 dependencies {
     api project(":api:cas-server-core-api-services")
 
@@ -6,6 +11,8 @@ dependencies {
 
     implementation libraries.caffein
     
+    api project(":api:cas-server-core-api-services")
+
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -13,6 +20,7 @@ dependencies {
     implementation project(":support:cas-server-support-couchdb-core")
 
     testImplementation project(":core:cas-server-core-services")
+    
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

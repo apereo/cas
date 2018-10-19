@@ -27,8 +27,6 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/tests/couchdb/run-couchdb-server-admin.sh
-
 gradleBuild="$gradleBuild testCouchDb jacocoRootReport -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
@@ -48,6 +46,15 @@ fi
 if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
 else
+    ./ci/tests/couchdb/run-couchdb-server.sh
+    retVal=$?
+    if [ $retVal == 0 ]; then
+        echo "CouchDb initialization finished successfully."
+    else
+        echo "CouchDb initialization did NOT finish successfully."
+        exit $retVal
+    fi
+
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"
     echo $prepCommand

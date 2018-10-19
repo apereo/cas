@@ -157,11 +157,8 @@ jobs:
     script: ./ci/tests/mail/run-tests-mail.sh
     name: "Mail Tests"
   - stage: test
-    script: ./ci/tests/couchdb/run-tests-couchdb-admin.sh
-    name: "CouchDb Admin Tests"
-  - stage: test
-    script: ./ci/tests/couchdb/run-tests-couchdb-user.sh
-    name: "CouchDb User Tests"
+    script: ./ci/tests/couchdb/run-tests-couchdb.sh
+    name: "CouchDb Tests"
   - stage: test
     script: ./ci/tests/memcached/run-tests-memcached.sh
     name: "Memcached Tests"

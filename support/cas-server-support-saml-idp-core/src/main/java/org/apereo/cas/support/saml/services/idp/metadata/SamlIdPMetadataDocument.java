@@ -2,6 +2,8 @@ package org.apereo.cas.support.saml.services.idp.metadata;
 
 import org.apereo.cas.util.EncodingUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,6 +42,7 @@ public class SamlIdPMetadataDocument {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "id", columnDefinition = "BIGINT")
+    @JsonProperty
     private long id = -1;
 
     /**
@@ -48,6 +51,7 @@ public class SamlIdPMetadataDocument {
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
     @Column(name = "metadata", length = 8_000)
+    @JsonProperty
     private String metadata;
 
     /**
@@ -56,6 +60,7 @@ public class SamlIdPMetadataDocument {
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
     @Column(name = "signingCertificate", length = 3_000)
+    @JsonProperty
     private String signingCertificate;
 
     /**
@@ -64,6 +69,7 @@ public class SamlIdPMetadataDocument {
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
     @Column(name = "signingKey", length = 3_000)
+    @JsonProperty
     private String signingKey;
 
     /**
@@ -72,6 +78,7 @@ public class SamlIdPMetadataDocument {
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
     @Column(name = "encryptionCertificate", length = 3_000)
+    @JsonProperty
     private String encryptionCertificate;
 
     /**
@@ -80,6 +87,7 @@ public class SamlIdPMetadataDocument {
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
     @Column(name = "encryptionKey", length = 3_000)
+    @JsonProperty
     private String encryptionKey;
 
     /**
@@ -94,6 +102,7 @@ public class SamlIdPMetadataDocument {
      *
      * @return true /false
      */
+    @JsonIgnore
     public boolean isValid() {
         return StringUtils.isNotBlank(getMetadata())
             && StringUtils.isNotBlank(getSigningCertificate())

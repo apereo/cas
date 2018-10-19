@@ -2,11 +2,13 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
 import org.apereo.cas.couchdb.services.RegisteredServiceDocument;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.ektorp.UpdateConflictException;
+import org.ektorp.DbAccessException;
+import org.ektorp.DocumentNotFoundException;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -29,35 +31,35 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService save(final RegisteredService registeredService) {
         LOGGER.debug("Saving service [{}]", registeredService.getName());
         if (registeredService.getId() < 0) {
-            registeredService.setId(registeredService.hashCode());
+            registeredService.setId(RandomUtils.getNativeInstance().nextLong());
         }
-        dbClient.add(new RegisteredServiceDocument(registeredService));
+        try {
+            val svc = dbClient.get(registeredService.getId());
+            val doc = new RegisteredServiceDocument(registeredService);
+            doc.setRevision(svc.getRevision());
+            dbClient.update(doc);
+        } catch (final DocumentNotFoundException ignored) {
+            LOGGER.debug("New service record created.");
+            dbClient.add(new RegisteredServiceDocument(registeredService));
+        } catch (final DbAccessException e) {
+            LOGGER.debug("Failed to update service [{}] {}", registeredService.getName(), e.getMessage());
+            return null;
+        }
         return registeredService;
     }
 
     @Override
     public boolean delete(final RegisteredService service) {
         LOGGER.debug("Deleting service [{}]", service.getName());
-        var exception = (UpdateConflictException) null;
-        var success = false;
-        for (var retries = 0; retries < conflictRetries; retries++) {
-            try {
-                exception = null;
-                val serviceDocument = dbClient.get(service.getId());
-                dbClient.remove(serviceDocument);
-                success = true;
-            } catch (final UpdateConflictException e) {
-                exception = e;
-            }
-            if (success) {
-                LOGGER.debug("Successfully deleted service [{}].", service.getName());
-                return true;
-            }
-        }
-        if (exception != null) {
+
+        try {
+            dbClient.deleteRecord(new RegisteredServiceDocument(service));
+            LOGGER.debug("Successfully deleted service [{}].", service.getName());
+            return true;
+        } catch (final DbAccessException exception) {
             LOGGER.debug("Could not delete service [{}] {}", service.getName(), exception.getMessage());
+            return false;
         }
-        return false;
     }
 
     @Override

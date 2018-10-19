@@ -83,7 +83,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     }, properties = {
     "cas.authn.surrogate.couchDb.profileBased=true",
     "cas.authn.surrogate.couchDb.surrogatePrincipalsAttribute=surrogateFor",
-    "org.ektorp.support.AutoUpdateViewOnChange=true"
+    "cas.authn.surrogate.couchDb.username=cas",
+    "cas.authn.surrogate.couchdb.password=password"
 })
 @Getter
 public class SurrogateCouchDbProfileAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
