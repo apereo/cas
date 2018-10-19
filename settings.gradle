@@ -317,6 +317,7 @@ include "webapp:cas-server-webapp-init"
 include "webapp:cas-server-webapp-init-bootadmin-server"
 include "webapp:cas-server-webapp-init-eureka-server"
 include "webapp:cas-server-webapp-init-config-server"
+include "webapp:cas-server-webapp-init-tomcat"
 
 include "webapp:cas-server-webapp-config"
 include "webapp:cas-server-webapp-config-server"

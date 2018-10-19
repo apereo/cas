@@ -104,10 +104,10 @@ public interface CipherExecutor<I, O> {
         val decrypted = new HashMap<String, Object>();
         properties.forEach((key, value) -> {
             try {
-                LOGGER.debug("Attempting to decode key [{}]", key);
+                LOGGER.trace("Attempting to decode key [{}]", key);
                 val result = decode((I) value, parameters);
                 if (result != null) {
-                    LOGGER.debug("Decrypted key [{}] successfully", key);
+                    LOGGER.trace("Decrypted key [{}] successfully", key);
                     decrypted.put(key, result);
                 }
             } catch (final ClassCastException e) {
