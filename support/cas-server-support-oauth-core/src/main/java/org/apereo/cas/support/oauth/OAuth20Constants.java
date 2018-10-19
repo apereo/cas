@@ -79,6 +79,9 @@ public interface OAuth20Constants {
     /** The error view. */
     String ERROR_VIEW = "casServiceErrorView";
 
+    /** The invalid client. */
+    String INVALID_CLIENT = "invalid_client";
+
     /** The invalid request. */
     String INVALID_REQUEST = "invalid_request";
 
@@ -114,4 +117,7 @@ public interface OAuth20Constants {
 
     /** The bearer type. */
     String TOKEN_TYPE_BEARER = "bearer";
+
+    /** The unauthorized client. */
+    String UNAUTHORIZED_CLIENT = "unauthorized_client";
 }
