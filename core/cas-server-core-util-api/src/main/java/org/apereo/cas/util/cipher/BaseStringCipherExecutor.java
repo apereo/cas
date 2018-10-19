@@ -113,7 +113,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
                 signingKeyToUse, SIGNING_KEY_SIZE, getName(), getSigningKeySetting());
         } else {
-            LOGGER.debug("Located signing key to use for [{}]", getName());
+            LOGGER.trace("Located signing key to use for [{}]", getName());
         }
         configureSigningKey(signingKeyToUse);
     }

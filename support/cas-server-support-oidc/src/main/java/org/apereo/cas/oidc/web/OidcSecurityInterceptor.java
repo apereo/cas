@@ -35,7 +35,7 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
 
         var clearCreds = false;
         val authentication = authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
-        if (!authentication.isPresent()) {
+        if (authentication.isEmpty()) {
             clearCreds = true;
         }
 

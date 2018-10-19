@@ -335,7 +335,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     public IPersonAttributeDao aggregatingAttributeRepository() {
         val mergingDao = new MergingPersonAttributeDaoImpl();
         val merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace".trim());
-        LOGGER.debug("Configured merging strategy for attribute sources is [{}]", merger);
+        LOGGER.trace("Configured merging strategy for attribute sources is [{}]", merger);
         mergingDao.setMerger(getAttributeMerger(merger));
 
         val list = attributeRepositories();
