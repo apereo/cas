@@ -104,7 +104,7 @@ public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String
     @Override
     public Optional<RsaJsonWebKey> load(final String issuer) {
         val jwks = buildJsonWebKeySet();
-        if (jwks.isEmpty() || jwks.get().getJsonWebKeys().isEmpty()) {
+        if (!jwks.isPresent() || jwks.get().getJsonWebKeys().isEmpty()) {
             return Optional.empty();
         }
         val key = getJsonSigningWebKeyFromJwks(jwks.get());

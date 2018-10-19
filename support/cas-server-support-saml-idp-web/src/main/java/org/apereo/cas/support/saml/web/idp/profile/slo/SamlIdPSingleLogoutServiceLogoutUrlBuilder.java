@@ -77,7 +77,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
 
         val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
             (SamlRegisteredService) registeredService, entityID);
-        if (adaptorRes.isEmpty()) {
+        if (!adaptorRes.isPresent()) {
             LOGGER.warn("Cannot find metadata linked to [{}]", entityID);
             return null;
         }

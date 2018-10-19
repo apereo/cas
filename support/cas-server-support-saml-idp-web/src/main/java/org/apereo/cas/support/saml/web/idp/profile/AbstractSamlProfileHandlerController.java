@@ -402,7 +402,7 @@ public abstract class AbstractSamlProfileHandlerController {
         LOGGER.debug("Fetching saml metadata adaptor for [{}]", issuer);
         val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
 
-        if (adaptor.isEmpty()) {
+        if (!adaptor.isPresent()) {
             LOGGER.warn("No metadata could be found for [{}]", issuer);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
         }
@@ -496,7 +496,7 @@ public abstract class AbstractSamlProfileHandlerController {
         val adaptor =
             getSamlMetadataFacadeFor(registeredService, request);
 
-        if (adaptor.isEmpty()) {
+        if (!adaptor.isPresent()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
                 "Cannot find metadata linked to " + issuer);
         }

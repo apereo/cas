@@ -204,7 +204,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .build();
 
         val result = accessTokenGenerator.generate(holder);
-        if (result.getAccessToken().isEmpty()) {
+        if (!result.getAccessToken().isPresent()) {
             return new ResponseEntity<>("Unable to generate access token", HttpStatus.BAD_REQUEST);
         }
 

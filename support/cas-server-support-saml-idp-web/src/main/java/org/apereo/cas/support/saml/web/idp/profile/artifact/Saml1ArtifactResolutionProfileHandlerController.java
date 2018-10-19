@@ -78,7 +78,7 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
             val issuer = artifactMsg.getIssuer().getValue();
             val service = verifySamlRegisteredService(issuer);
             val adaptor = getSamlMetadataFacadeFor(service, artifactMsg);
-            if (adaptor.isEmpty()) {
+            if (!adaptor.isPresent()) {
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
             }
             val facade = adaptor.get();

@@ -54,7 +54,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseIdTokenSigningAn
     private String encryptIdToken(final OidcRegisteredService svc, final JsonWebSignature jws, final String innerJwt) throws Exception {
         LOGGER.debug("Service [{}] is set to encrypt id tokens", svc);
         val jwks = this.serviceJsonWebKeystoreCache.get(svc);
-        if (jwks.isEmpty()) {
+        if (!jwks.isPresent()) {
             throw new IllegalArgumentException("Service " + svc.getServiceId()
                 + " with client id " + svc.getClientId()
                 + " is configured to encrypt id tokens, yet no JSON web key is available");
@@ -83,7 +83,7 @@ public class OidcIdTokenSigningAndEncryptionService extends BaseIdTokenSigningAn
     @Override
     protected PublicJsonWebKey getSigningKey() {
         val jwks = defaultJsonWebKeystoreCache.get(getIssuer());
-        if (jwks.isEmpty()) {
+        if (!jwks.isPresent()) {
             throw new IllegalArgumentException("No signing key could be found for issuer " + getIssuer());
         }
         return jwks.get();

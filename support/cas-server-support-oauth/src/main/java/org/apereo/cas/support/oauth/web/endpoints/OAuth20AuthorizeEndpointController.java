@@ -188,7 +188,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                          final J2EContext context,
                                                          final String clientId) {
         val profile = (Optional<CommonProfile>) manager.get(true);
-        if (profile == null || profile.isEmpty()) {
+        if (profile == null || !profile.isPresent()) {
             LOGGER.error("Unexpected null profile from profile manager. Request is not fully authenticated.");
             return OAuth20Utils.produceUnauthorizedErrorView();
         }

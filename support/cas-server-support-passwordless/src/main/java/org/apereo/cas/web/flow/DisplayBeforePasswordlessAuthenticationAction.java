@@ -43,7 +43,7 @@ public class DisplayBeforePasswordlessAuthenticationAction extends AbstractActio
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         val account = passwordlessUserAccountStore.findUser(username);
-        if (account.isEmpty()) {
+        if (!account.isPresent()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         val user = account.get();

@@ -46,7 +46,7 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
             LOGGER.debug("Field [{}] is static and will be ignored for metadata generation", var.getNameAsString());
             return;
         }
-        if (field.getJavadoc().isEmpty()) {
+        if (!field.getJavadoc().isPresent()) {
             LOGGER.error("Field [{}] has no Javadoc defined", field);
         }
         val creator = new ConfigurationMetadataPropertyCreator(indexNameWithBrackets, properties, groups, parentClass);

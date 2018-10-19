@@ -48,15 +48,15 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
         var provider = resolveRequestParameterTrigger(request, validProviderIds);
 
-        if (provider.isEmpty()) {
+        if (!provider.isPresent()) {
             provider = resolveRegisteredServiceTrigger(service, principal, validProviderIds);
         }
 
-        if (provider.isEmpty()) {
+        if (!provider.isPresent()) {
             provider = resolvePrincipalAttributeTrigger(principal, validProviderIds);
         }
 
-        if (provider.isEmpty()) {
+        if (!provider.isPresent()) {
             provider = resolveAuthenticationAttributeTrigger(authentication, validProviderIds);
         }
 
