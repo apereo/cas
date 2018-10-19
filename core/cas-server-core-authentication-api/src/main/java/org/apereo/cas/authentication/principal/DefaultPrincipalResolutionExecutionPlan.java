@@ -2,11 +2,8 @@ package org.apereo.cas.authentication.principal;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**

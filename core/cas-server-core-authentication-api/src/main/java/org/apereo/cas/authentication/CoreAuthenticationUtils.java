@@ -200,7 +200,7 @@ public class CoreAuthenticationUtils {
             return new GroovyPasswordPolicyHandlingStrategy(location);
         }
 
-        LOGGER.debug("Created default password policy handling strategy");
+        LOGGER.trace("Created default password policy handling strategy");
         return new DefaultPasswordPolicyHandlingStrategy();
     }
 }
