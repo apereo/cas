@@ -277,7 +277,7 @@ public class MongoDbConnectionFactory {
         }
 
         val serverAddresses = mongo.getHost().split(",");
-        if (serverAddresses == null || serverAddresses.length == 0) {
+        if (serverAddresses.length == 0) {
             throw new BeanCreationException("Unable to build a MongoDb client without any hosts/servers defined");
         }
 
