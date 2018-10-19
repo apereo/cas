@@ -96,7 +96,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer u2fAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(u2fAuthenticationHandler());
-            plan.registerMetadataPopulator(u2fAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(u2fAuthenticationMetaDataPopulator());
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(U2FTokenCredential.class));
         };
     }

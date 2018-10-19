@@ -254,7 +254,7 @@ public class CloudWatchAppender extends AbstractAppender {
                 LOGGER.error(e.getMessage(), e);
             }
         }
-        if (queue.size() > 0) {
+        if (!queue.isEmpty()) {
             flush();
         }
     }

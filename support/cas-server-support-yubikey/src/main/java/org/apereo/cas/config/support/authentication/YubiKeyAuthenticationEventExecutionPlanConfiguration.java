@@ -195,7 +195,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
             val yubi = casProperties.getAuthn().getMfa().getYubikey();
             if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
                 plan.registerAuthenticationHandler(yubikeyAuthenticationHandler());
-                plan.registerMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());
+                plan.registerAuthenticationMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());
                 plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(YubiKeyCredential.class));
             }
         };

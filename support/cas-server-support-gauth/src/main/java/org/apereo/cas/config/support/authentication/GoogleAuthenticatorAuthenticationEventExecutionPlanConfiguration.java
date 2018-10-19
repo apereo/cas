@@ -208,7 +208,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
                 plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
-                plan.registerMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
+                plan.registerAuthenticationMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
                 plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(GoogleAuthenticatorTokenCredential.class));
             }
         };

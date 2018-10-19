@@ -73,14 +73,14 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     }
 
     @Override
-    public void registerMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
+    public void registerAuthenticationMetadataPopulator(final AuthenticationMetaDataPopulator populator) {
         LOGGER.trace("Registering metadata populator [{}] into the execution plan", populator);
         authenticationMetaDataPopulatorList.add(populator);
     }
 
     @Override
-    public void registerMetadataPopulators(final Collection<AuthenticationMetaDataPopulator> populators) {
-        populators.forEach(this::registerMetadataPopulator);
+    public void registerAuthenticationMetadataPopulators(final Collection<AuthenticationMetaDataPopulator> populators) {
+        populators.forEach(this::registerAuthenticationMetadataPopulator);
     }
 
     @Override

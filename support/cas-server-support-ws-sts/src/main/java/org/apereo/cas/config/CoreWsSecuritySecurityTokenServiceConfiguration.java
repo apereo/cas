@@ -326,7 +326,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @ConditionalOnMissingBean(name = "coreWsSecuritySecurityTokenServiceAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer coreWsSecuritySecurityTokenServiceAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerMetadataPopulator(securityTokenServiceAuthenticationMetaDataPopulator());
+        return plan -> plan.registerAuthenticationMetadataPopulator(securityTokenServiceAuthenticationMetaDataPopulator());
     }
 
 }

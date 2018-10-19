@@ -40,7 +40,6 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                                                    final Map<String, Object> principalAttributes,
                                                    final AuthenticationBuilder authenticationBuilder) {
 
-
         LOGGER.debug("Collecting authentication history based on [{}] authentication events", authentications.size());
         authentications.forEach(authn -> {
             val authenticatedPrincipal = authn.getPrincipal();

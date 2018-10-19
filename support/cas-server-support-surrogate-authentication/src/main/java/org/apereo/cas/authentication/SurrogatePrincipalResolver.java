@@ -39,7 +39,7 @@ public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver
             LOGGER.debug("Provided credential is not one of [{}]", SurrogateUsernamePasswordCredential.class.getName());
             return super.extractPrincipalId(credential, currentPrincipal);
         }
-        if (!currentPrincipal.isPresent()) {
+        if (currentPrincipal.isEmpty()) {
             throw new IllegalArgumentException("Current principal resolved cannot be null");
         }
         val id = currentPrincipal.get().getId();

@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.audit.SurrogateAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.event.SurrogateAuthenticationEventListener;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.surrogate.JsonResourceSurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
@@ -81,14 +82,18 @@ public class SurrogateAuthenticationConfiguration {
     @Qualifier("surrogateEligibilityAuditableExecution")
     private ObjectProvider<AuditableExecution> surrogateEligibilityAuditableExecution;
 
+    @Autowired
+    @Qualifier("ticketGrantingTicketExpirationPolicy")
+    private ObjectProvider<ExpirationPolicy> ticketGrantingTicketExpirationPolicy;
+
     @RefreshScope
     @Bean
-    public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
+    public ExpirationPolicy grantingTicketExpirationPolicy() {
         val su = casProperties.getAuthn().getSurrogate();
         val surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
         val policy = new SurrogateSessionExpirationPolicy(surrogatePolicy);
         policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.SURROGATE, surrogatePolicy);
-        policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy);
+        policy.addPolicy(SurrogateSessionExpirationPolicy.PolicyTypes.DEFAULT, ticketGrantingTicketExpirationPolicy.getIfAvailable());
         return policy;
     }
 
@@ -113,17 +118,6 @@ public class SurrogateAuthenticationConfiguration {
         su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
         LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
         return new SimpleSurrogateAuthenticationService(accounts, servicesManager.getIfAvailable());
-    }
-
-    @RefreshScope
-    @Bean
-    public PrincipalResolver personDirectoryPrincipalResolver() {
-        val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
-        return new SurrogatePrincipalResolver(attributeRepository.getIfAvailable(),
-            surrogatePrincipalFactory(),
-            principal.isReturnNull(),
-            org.apache.commons.lang3.StringUtils.defaultIfBlank(principal.getPrincipalAttribute(),
-                casProperties.getPersonDirectory().getPrincipalAttribute()));
     }
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationPostProcessor")
@@ -163,5 +157,23 @@ public class SurrogateAuthenticationConfiguration {
     @Bean
     public SurrogateAuthenticationEventListener surrogateAuthenticationEventListener() {
         return new SurrogateAuthenticationEventListener(communicationsManager.getIfAvailable(), casProperties);
+    }
+
+    @ConditionalOnMissingBean(name = "surrogatePrincipalResolver")
+    @Bean
+    @RefreshScope
+    public PrincipalResolver surrogatePrincipalResolver() {
+        val principal = casProperties.getAuthn().getSurrogate().getPrincipal();
+        return new SurrogatePrincipalResolver(attributeRepository.getIfAvailable(),
+            surrogatePrincipalFactory(),
+            principal.isReturnNull(),
+            org.apache.commons.lang3.StringUtils.defaultIfBlank(principal.getPrincipalAttribute(),
+                casProperties.getPersonDirectory().getPrincipalAttribute()));
+    }
+
+    @ConditionalOnMissingBean(name = "surrogatePrincipalResolutionExecutionPlanConfigurer")
+    @Bean
+    public PrincipalResolutionExecutionPlanConfigurer surrogatePrincipalResolutionExecutionPlanConfigurer() {
+        return plan -> plan.registerPrincipalResolver(surrogatePrincipalResolver());
     }
 }

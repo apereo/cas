@@ -98,7 +98,7 @@ public class CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer casSimpleMultifactorAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(casSimpleMultifactorAuthenticationHandler());
-            plan.registerMetadataPopulator(casSimpleMultifactorAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(casSimpleMultifactorAuthenticationMetaDataPopulator());
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(CasSimpleMultifactorTokenCredential.class));
         };
     }

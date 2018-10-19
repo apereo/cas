@@ -115,7 +115,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationEventExecutionPlanConfigurer authyAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandler(authyAuthenticationHandler());
-            plan.registerMetadataPopulator(authyAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(authyAuthenticationMetaDataPopulator());
             plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AuthyTokenCredential.class));
         };
     }

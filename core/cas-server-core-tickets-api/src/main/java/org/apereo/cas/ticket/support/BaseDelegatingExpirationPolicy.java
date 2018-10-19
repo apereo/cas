@@ -135,10 +135,10 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      */
     protected Optional<ExpirationPolicy> getExpirationPolicyFor(final TicketState ticketState) {
         val name = getExpirationPolicyNameFor(ticketState);
-        LOGGER.debug("Received expiration policy name [{}] to activate", name);
+        LOGGER.trace("Received expiration policy name [{}] to activate", name);
         if (StringUtils.isNotBlank(name) && policies.containsKey(name)) {
             val policy = policies.get(name);
-            LOGGER.debug("Located expiration policy [{}] by name [{}]", policy, name);
+            LOGGER.trace("Located expiration policy [{}] by name [{}]", policy, name);
             return Optional.of(policy);
         }
         LOGGER.warn("No expiration policy could be found by the name [{}] for ticket state [{}]", name, ticketState);

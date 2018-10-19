@@ -34,11 +34,11 @@ public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPo
         val attributes = ticketState.getAuthentication().getAttributes();
         if (attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL)
             && attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER)) {
-            LOGGER.debug("Ticket is associated with a surrogate authentication.");
+            LOGGER.trace("Ticket is associated with a surrogate authentication.");
             return PolicyTypes.SURROGATE.name();
         }
 
-        LOGGER.debug("Ticket is not associated with a surrogate authentication.");
+        LOGGER.trace("Ticket is not associated with a surrogate authentication.");
         return PolicyTypes.DEFAULT.name();
     }
 

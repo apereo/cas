@@ -160,7 +160,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @return the boolean
      */
     protected boolean invokeAuthenticationPreProcessors(final AuthenticationTransaction transaction) {
-        LOGGER.debug("Invoking authentication pre processors for authentication transaction");
+        LOGGER.trace("Invoking authentication pre processors for authentication transaction");
         val pops = authenticationEventExecutionPlan.getAuthenticationPreProcessors(transaction);
 
         final Collection<AuthenticationPreProcessor> supported = pops.stream()
@@ -203,7 +203,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         var principal = result.getPrincipal();
 
-        val resolverName = resolver != null ? resolver.getClass().getSimpleName() : "N/A";
+        val resolverName = resolver != null ? resolver.getName(): "N/A";
         if (resolver == null) {
             LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", authenticationHandlerName, principal);
         } else {

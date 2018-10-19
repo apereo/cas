@@ -44,7 +44,7 @@ public class ConfigurationMetadataUnitParser {
         try (val is = Files.newInputStream(Paths.get(typePath))) {
             val cu = JavaParser.parse(is);
             new ConfigurationMetadataFieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets, typeName, sourcePath).visit(cu, p);
-            if (cu.getTypes().size() > 0) {
+            if (!cu.getTypes().isEmpty()) {
                 val decl = ClassOrInterfaceDeclaration.class.cast(cu.getType(0));
                 for (var i = 0; i < decl.getExtendedTypes().size(); i++) {
                     val parentType = decl.getExtendedTypes().get(i);
