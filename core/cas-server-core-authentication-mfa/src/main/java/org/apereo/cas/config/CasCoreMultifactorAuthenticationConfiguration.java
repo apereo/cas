@@ -73,7 +73,7 @@ public class CasCoreMultifactorAuthenticationConfiguration {
             val authentication = assertion.getPrimaryAuthentication();
             val requestedContext = multifactorTriggerSelectionStrategy.getIfAvailable().resolve(providers.values(), request, service, authentication);
 
-            if (!requestedContext.isPresent()) {
+            if (requestedContext.isEmpty()) {
                 LOGGER.debug("No particular authentication context is required for this request");
                 return Pair.of(Boolean.TRUE, Optional.empty());
             }
