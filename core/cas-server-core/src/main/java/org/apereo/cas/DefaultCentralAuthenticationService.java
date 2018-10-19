@@ -270,7 +270,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Resolved service [{}] from the authentication request", selectedService);
 
             val registeredService = this.servicesManager.findServiceBy(selectedService);
-            LOGGER.debug("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
+            LOGGER.trace("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
             val root = serviceTicket.getTicketGrantingTicket().getRoot();

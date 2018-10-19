@@ -393,7 +393,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             LOGGER.warn("Service access for [{}] is denied", registeredService);
             return false;
         }
-        LOGGER.debug("Located registered service definition [{}] matching [{}]", registeredService, service);
+        LOGGER.trace("Located registered service definition [{}] matching [{}]", registeredService, service);
         val context = AuditableContext.builder()
             .registeredService(registeredService)
             .properties(CollectionUtils.wrap(Client.class.getSimpleName(), client.getName()))

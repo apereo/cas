@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
+package org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.SamlException;

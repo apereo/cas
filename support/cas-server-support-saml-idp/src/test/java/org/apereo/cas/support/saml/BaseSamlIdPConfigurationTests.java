@@ -35,7 +35,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.config.CasCookieConfiguration;

@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
+package org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder;
 
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -46,41 +46,42 @@ public abstract class BaseHttpServletAwareSamlObjectEncoder<T extends SAMLObject
     /**
      * Encode.
      *
-     * @param authnRequest the authn request
-     * @param samlResponse the saml response
-     * @param relayState   the relay state
+     * @param request    the request
+     * @param samlObject the saml response
+     * @param relayState the relay state
      * @return the response
      * @throws SamlException the saml exception
      */
     @SneakyThrows
-    public final T encode(final RequestAbstractType authnRequest, final T samlResponse, final String relayState) throws SamlException {
+    public final T encode(final RequestAbstractType request, final T samlObject, final String relayState) throws SamlException {
         if (httpResponse != null) {
             val encoder = getMessageEncoderInstance();
             encoder.setHttpServletResponse(httpResponse);
 
-            val ctx = getEncoderMessageContext(authnRequest, samlResponse, relayState);
+            val ctx = getEncoderMessageContext(request, samlObject, relayState);
             encoder.setMessageContext(ctx);
-            finalizeEncode(authnRequest, encoder, samlResponse, relayState);
+            finalizeEncode(request, encoder, samlObject, relayState);
         }
-        return samlResponse;
+        return samlObject;
 
     }
+
 
     /**
      * Build encoder message context.
      *
-     * @param authnRequest the authn request
-     * @param samlResponse the saml response
-     * @param relayState   the relay state
+     * @param request    the authn request
+     * @param samlObject the saml response
+     * @param relayState the relay state
      * @return the message context
      */
-    protected MessageContext getEncoderMessageContext(final RequestAbstractType authnRequest, final T samlResponse, final String relayState) {
+    protected MessageContext getEncoderMessageContext(final RequestAbstractType request, final T samlObject, final String relayState) {
         val ctx = new MessageContext<SAMLObject>();
-        ctx.setMessage(samlResponse);
+        ctx.setMessage(samlObject);
         SAMLBindingSupport.setRelayState(ctx, relayState);
-        SamlIdPUtils.preparePeerEntitySamlEndpointContext(authnRequest, ctx, adaptor, getBinding());
+        SamlIdPUtils.preparePeerEntitySamlEndpointContext(request, ctx, adaptor, getBinding());
         val self = ctx.getSubcontext(SAMLSelfEntityContext.class, true);
-        self.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(samlResponse));
+        self.setEntityId(SamlIdPUtils.getIssuerFromSamlObject(samlObject));
         return ctx;
     }
 

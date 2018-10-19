@@ -26,9 +26,11 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.RoleDescriptorResolver;
 import org.opensaml.saml.metadata.resolver.impl.PredicateRoleDescriptorResolver;
 import org.opensaml.saml.saml2.core.AuthnRequest;
+import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.StatusResponseType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
+import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
 
@@ -48,13 +50,13 @@ public class SamlIdPUtils {
     /**
      * Prepare peer entity saml endpoint.
      *
-     * @param authnRequest    the authn request
+     * @param request         the authn request
      * @param outboundContext the outbound context
      * @param adaptor         the adaptor
      * @param binding         the binding
      * @throws SamlException the saml exception
      */
-    public static void preparePeerEntitySamlEndpointContext(final RequestAbstractType authnRequest,
+    public static void preparePeerEntitySamlEndpointContext(final RequestAbstractType request,
                                                             final MessageContext outboundContext,
                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                             final String binding) throws SamlException {
@@ -74,7 +76,7 @@ public class SamlIdPUtils {
             throw new SamlException("SAMLEndpointContext could not be defined for entity " + entityId);
         }
 
-        val endpoint = determineAssertionConsumerService(authnRequest, adaptor, binding);
+        val endpoint = determineEndpointForRequest(request, adaptor, binding);
         LOGGER.debug("Configured peer entity endpoint to be [{}] with binding [{}]", endpoint.getLocation(), endpoint.getBinding());
         endpointContext.setEndpoint(endpoint);
     }
@@ -87,15 +89,25 @@ public class SamlIdPUtils {
      * @param binding      the binding
      * @return the assertion consumer service
      */
-    public static AssertionConsumerService determineAssertionConsumerService(final RequestAbstractType authnRequest,
-                                                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                                             final String binding) {
-        val endpointReq = getAssertionConsumerServiceFromRequest(authnRequest, binding);
-        val endpoint = endpointReq == null
-            ? adaptor.getAssertionConsumerService(binding)
-            : endpointReq;
-        if (endpoint == null || StringUtils.isBlank(endpoint.getBinding()) || StringUtils.isBlank(endpoint.getLocation())) {
-            throw new SamlException("Assertion consumer service does not define a binding or location");
+    public static Endpoint determineEndpointForRequest(final RequestAbstractType authnRequest,
+                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                       final String binding) {
+        var endpoint = (Endpoint) null;
+        if (authnRequest instanceof LogoutRequest) {
+            endpoint = adaptor.getSingleLogoutService(binding);
+        } else {
+            val endpointReq = getAssertionConsumerServiceFromRequest(authnRequest, binding);
+            endpoint = endpointReq == null
+                ? adaptor.getAssertionConsumerService(binding)
+                : endpointReq;
+        }
+
+        if (endpoint == null || StringUtils.isBlank(endpoint.getBinding())) {
+            throw new SamlException("Assertion consumer service does not define a binding");
+        }
+        val location = StringUtils.isBlank(endpoint.getResponseLocation()) ? endpoint.getLocation() : endpoint.getResponseLocation();
+        if (StringUtils.isBlank(location)) {
+            throw new SamlException("Assertion consumer service does not define a target location");
         }
         return endpoint;
     }

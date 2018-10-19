@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
+package org.apereo.cas.support.saml.web.idp.profile.builders.enc.attribute;
 
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.RegisteredService;

@@ -8,9 +8,9 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponseArtifactEncoder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponsePostEncoder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlResponsePostSimpleSignEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponseArtifactEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostSimpleSignEncoder;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
