@@ -15,3 +15,11 @@ else
     exit $retVal
 fi
 
+curl -X PUT http://127.0.0.1:5984/_node/couchdb@127.0.0.1/_config/admins/admin -d '"password"'
+retVal=$?
+if [ $retVal == 0 ]; then
+    echo "CouchDb admin initialized."
+else
+    echo "CouchDb admin failed to initialize."
+    exit $retVal
+fi
