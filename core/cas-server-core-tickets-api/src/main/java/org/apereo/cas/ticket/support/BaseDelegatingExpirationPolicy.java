@@ -80,13 +80,13 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
     @Override
     public boolean isExpired(final TicketState ticketState) {
         val match = getExpirationPolicyFor(ticketState);
-        if (!match.isPresent()) {
+        if (match.isEmpty()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
                 + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
             return super.isExpired(ticketState);
         }
         val policy = match.get();
-        LOGGER.debug("Activating expiration policy [{}] for ticket [{}]", policy, ticketState);
+        LOGGER.trace("Activating expiration policy [{}] for ticket [{}]", policy.getName(), ticketState);
         return policy.isExpired(ticketState);
     }
 
@@ -99,13 +99,13 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
     @Override
     public Long getTimeToLive(final TicketState ticketState) {
         val match = getExpirationPolicyFor(ticketState);
-        if (!match.isPresent()) {
+        if (match.isEmpty()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
                 + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
             return super.getTimeToLive(ticketState);
         }
         val policy = match.get();
-        LOGGER.debug("Getting TTL from policy [{}] for ticket [{}]", policy, ticketState);
+        LOGGER.trace("Getting TTL from policy [{}] for ticket [{}]", policy.getName(), ticketState);
         return policy.getTimeToLive(ticketState);
     }
 
@@ -135,10 +135,10 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      */
     protected Optional<ExpirationPolicy> getExpirationPolicyFor(final TicketState ticketState) {
         val name = getExpirationPolicyNameFor(ticketState);
-        LOGGER.debug("Received expiration policy name [{}] to activate", name);
+        LOGGER.trace("Received expiration policy name [{}] to activate", name);
         if (StringUtils.isNotBlank(name) && policies.containsKey(name)) {
             val policy = policies.get(name);
-            LOGGER.debug("Located expiration policy [{}] by name [{}]", policy, name);
+            LOGGER.trace("Located expiration policy [{}] by name [{}]", policy, name);
             return Optional.of(policy);
         }
         LOGGER.warn("No expiration policy could be found by the name [{}] for ticket state [{}]", name, ticketState);

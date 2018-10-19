@@ -161,7 +161,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     public List<IPersonAttributeDao> stubAttributeRepositories() {
         val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository().getStub().getAttributes();
-        if (!attrs.isEmpty() && list.isEmpty()) {
+        if (!attrs.isEmpty()) {
             LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
             list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
         }
@@ -335,7 +335,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     public IPersonAttributeDao aggregatingAttributeRepository() {
         val mergingDao = new MergingPersonAttributeDaoImpl();
         val merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace".trim());
-        LOGGER.debug("Configured merging strategy for attribute sources is [{}]", merger);
+        LOGGER.trace("Configured merging strategy for attribute sources is [{}]", merger);
         mergingDao.setMerger(getAttributeMerger(merger));
 
         val list = attributeRepositories();

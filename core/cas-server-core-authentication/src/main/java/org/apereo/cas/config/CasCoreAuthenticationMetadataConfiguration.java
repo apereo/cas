@@ -70,15 +70,15 @@ public class CasCoreAuthenticationMetadataConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            plan.registerMetadataPopulator(successfulHandlerMetaDataPopulator());
-            plan.registerMetadataPopulator(rememberMeAuthenticationMetaDataPopulator());
-            plan.registerMetadataPopulator(authenticationCredentialTypeMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(successfulHandlerMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(rememberMeAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationMetadataPopulator(authenticationCredentialTypeMetaDataPopulator());
 
             val cp = casProperties.getClearpass();
             if (cp.isCacheCredential()) {
                 LOGGER.warn("Cas is configured to capture and cache credentials via Clearpass. Sharing the user credential with other applications "
                     + "is generally NOT recommended, may lead to security vulnerabilities and MUST only be used as a last resort .");
-                plan.registerMetadataPopulator(new CacheCredentialsMetaDataPopulator(cacheCredentialsCipherExecutor()));
+                plan.registerAuthenticationMetadataPopulator(new CacheCredentialsMetaDataPopulator(cacheCredentialsCipherExecutor()));
             }
         };
     }

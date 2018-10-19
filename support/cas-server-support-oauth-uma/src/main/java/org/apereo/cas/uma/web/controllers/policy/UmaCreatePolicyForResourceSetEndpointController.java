@@ -56,7 +56,7 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
             val resourceSetResult = umaResourceSetRepository.getById(resourceId);
-            if (!resourceSetResult.isPresent()) {
+            if (resourceSetResult.isEmpty()) {
                 val model = buildResponseEntityErrorModel(HttpStatus.NOT_FOUND, "Requested resource-set cannot be found");
                 return new ResponseEntity(model, model, HttpStatus.BAD_REQUEST);
             }

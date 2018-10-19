@@ -86,7 +86,7 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
             return null;
         }
         val optionalAttribute = CollectionUtils.firstElement(attribute);
-        if (!optionalAttribute.isPresent()) {
+        if (optionalAttribute.isEmpty()) {
             LOGGER.debug("Alternate attribute list for {} was empty.", alternatePrincipalAttribute);
             return null;
         }

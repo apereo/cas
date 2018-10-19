@@ -84,7 +84,7 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
             val issuer = query.getIssuer().getValue();
             val service = verifySamlRegisteredService(issuer);
             val adaptor = getSamlMetadataFacadeFor(service, query);
-            if (!adaptor.isPresent()) {
+            if (adaptor.isEmpty()) {
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
             }
 

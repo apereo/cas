@@ -105,7 +105,7 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
 
     private void configureSigningParametersForDecoding() {
         val result = findRsaJsonWebKeyByProvidedKeyId(webKeySet.getJsonWebKeys());
-        if (!result.isPresent()) {
+        if (result.isEmpty()) {
             throw new IllegalArgumentException("Could not locate RSA JSON web key from keystore");
         }
         val key = result.get();
@@ -116,14 +116,14 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
     }
 
     private void configureEncryptionParametersForDecoding() {
-        if (!httpsJkws.isPresent()) {
+        if (httpsJkws.isEmpty()) {
             LOGGER.debug("No JWKS endpoint is defined. Configuration of encryption parameters and keys are skipped");
         } else {
             try {
                 val keys = this.httpsJkws.get().getJsonWebKeys();
                 val encKeyResult = findRsaJsonWebKey(keys, Predicates.alwaysTrue());
 
-                if (!encKeyResult.isPresent()) {
+                if (encKeyResult.isEmpty()) {
                     throw new IllegalArgumentException("Could not locate RSA JSON web key from endpoint");
                 }
                 val encKey = encKeyResult.get();
@@ -140,14 +140,14 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
     }
 
     private void configureEncryptionParametersForEncoding() {
-        if (!httpsJkws.isPresent()) {
+        if (httpsJkws.isEmpty()) {
             LOGGER.debug("No JWKS endpoint is defined. Configuration of encryption parameters and keys are skipped");
         } else {
             try {
                 val keys = this.httpsJkws.get().getJsonWebKeys();
                 val encKeyResult = findRsaJsonWebKey(keys, Predicates.alwaysTrue());
 
-                if (!encKeyResult.isPresent()) {
+                if (encKeyResult.isEmpty()) {
                     throw new IllegalArgumentException("Could not locate RSA JSON web key from endpoint");
                 }
                 val encKey = encKeyResult.get();
@@ -165,7 +165,7 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
 
     private void configureSigningParametersForEncoding() {
         val result = findRsaJsonWebKeyByProvidedKeyId(webKeySet.getJsonWebKeys());
-        if (!result.isPresent()) {
+        if (result.isEmpty()) {
             throw new IllegalArgumentException("Could not locate RSA JSON web key from keystore");
         }
         val key = result.get();

@@ -95,7 +95,7 @@ public class CasCoreConfiguration {
         val plan = new DefaultAuthenticationServiceSelectionPlan();
         configurers.forEach(c -> {
             val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Configuring authentication request service selection strategy plan [{}]", name);
+            LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", name);
             c.configureAuthenticationServiceSelectionStrategy(plan);
         });
         return plan;

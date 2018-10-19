@@ -162,7 +162,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
             valve.setAsyncSupported(true);
             valve.setEnabled(true);
 
-            LOGGER.debug("Creating Rewrite valve configuration for the embedded tomcat container...");
+            LOGGER.debug("Creating rewrite valve configuration for the embedded tomcat container...");
             tomcat.addContextValves(valve);
         }
     }
