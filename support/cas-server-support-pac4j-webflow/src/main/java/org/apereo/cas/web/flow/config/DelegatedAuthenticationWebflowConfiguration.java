@@ -47,6 +47,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -205,6 +206,9 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
 
     @Override
     public Collection<ServiceFactory<? extends WebApplicationService>> buildServiceFactories() {
-        return CollectionUtils.wrap(new DelegatedAuthenticationWebApplicationServiceFactory(builtClients.getIfAvailable(), delegatedClientWebflowManager()));
+        if (!casProperties.getSso().isAllowMissingServiceParameter()) {
+            return CollectionUtils.wrap(new DelegatedAuthenticationWebApplicationServiceFactory(builtClients.getIfAvailable(), delegatedClientWebflowManager()));
+        }
+        return new ArrayList<>();
     }
 }
