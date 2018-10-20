@@ -53,7 +53,7 @@
     <Loggers>
         <AsyncLogger name="com.couchbase" level="warn" includeLocation="true" />
         <AsyncLogger name="org.apereo.cas.web.CasWebApplication" level="info" includeLocation="true"/>
-        <AsyncLogger name="org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration" level="info" additivity="false">
+        <AsyncLogger name="org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration" level="info" additivity="false" />
         <AsyncLogger name="org.springframework.security" level="warn" />
         <AsyncLogger name="org.springframework.boot.autoconfigure.security" level="info" />
         <AsyncLogger name="org.apereo.cas" level="info" includeLocation="true" />
