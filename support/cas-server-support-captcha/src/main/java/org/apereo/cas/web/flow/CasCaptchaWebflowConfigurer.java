@@ -56,9 +56,10 @@ public class CasCaptchaWebflowConfigurer extends AbstractCasWebflowConfigurer {
         flow.getStartActionList().add(new Action() {
             @Override
             public Event execute(final RequestContext requestContext) {
-                WebUtils.putRecaptchaSiteKeyIntoFlowScope(requestContext, casProperties.getGoogleRecaptcha().getSiteKey());
-                WebUtils.putRecaptchaInvisibleIntoFlowScope(requestContext, casProperties.getGoogleRecaptcha().isInvisible());
-                WebUtils.putRecaptchaPositionIntoFlowScope(requestContext, casProperties.getGoogleRecaptcha().getPosition());
+                val googleRecaptcha = casProperties.getGoogleRecaptcha();
+                WebUtils.putRecaptchaSiteKeyIntoFlowScope(requestContext, googleRecaptcha.getSiteKey());
+                WebUtils.putRecaptchaInvisibleIntoFlowScope(requestContext, googleRecaptcha.isInvisible());
+                WebUtils.putRecaptchaPositionIntoFlowScope(requestContext, googleRecaptcha.getPosition());
                 return new EventFactorySupport().success(this);
             }
         });
