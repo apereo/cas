@@ -4223,7 +4223,7 @@ To learn more about this topic, [please review this guide](../installation/Servi
 # spring.cloud.consul.enabled=true
 # spring.cloud.consul.host=localhost
 
-# spring.cloud.consul.discovery.healthCheckPath=${management.context-path}/health
+# spring.cloud.consul.discovery.healthCheckPath=<health-endpoint-url>
 # spring.cloud.consul.discovery.healthCheckPath=15s
 # spring.cloud.consul.discovery.instanceId=${spring.application.name}:${random.value}
 
