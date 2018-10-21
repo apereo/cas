@@ -104,17 +104,12 @@ public abstract class BaseOAuth20TokenRequestValidator implements OAuth20TokenRe
 
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         val profile = (Optional<CommonProfile>) manager.get(true);
-        if (profile == null || !profile.isPresent()) {
+        if (profile.isEmpty()) {
             LOGGER.warn("Could not locate authenticated profile for this request. Request is not authenticated");
             return false;
         }
 
         val uProfile = profile.get();
-        if (uProfile == null) {
-            LOGGER.warn("Could not locate authenticated profile for this request as null");
-            return false;
-        }
-
         return validateInternal(context, grantType, manager, uProfile);
     }
 

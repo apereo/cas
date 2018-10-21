@@ -10,7 +10,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 import java.security.cert.X509Certificate;
 
 /**
- * Returns a new principal based on the Sereial Number of the certificate.
+ * Returns a new principal based on the serial number of the certificate.
  *
  * @author Scott Battaglia
  * @since 3.0.0

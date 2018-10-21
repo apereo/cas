@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.view;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
@@ -8,6 +9,7 @@ import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +38,6 @@ import java.util.Map;
  */
 @Slf4j
 public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
-
-
     private final String issuer;
     private final String defaultAttributeNamespace;
 
@@ -50,9 +50,12 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
                                      final int issueLength,
                                      final String issuer,
                                      final String defaultAttributeNamespace,
-                                     final AuthenticationAttributeReleasePolicy authAttrReleasePolicy) {
+                                     final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
+                                     final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
+                                     final CasProtocolAttributesRenderer attributesRenderer) {
         super(true, protocolAttributeEncoder, servicesManager, samlObjectBuilder,
-            samlArgumentExtractor, encoding, skewAllowance, issueLength, authAttrReleasePolicy);
+            samlArgumentExtractor, encoding, skewAllowance, issueLength, authAttrReleasePolicy,
+            serviceSelectionStrategy, attributesRenderer);
         this.issuer = issuer;
         this.defaultAttributeNamespace = defaultAttributeNamespace;
     }

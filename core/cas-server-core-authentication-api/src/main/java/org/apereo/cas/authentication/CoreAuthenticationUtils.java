@@ -18,12 +18,15 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.core.io.DefaultResourceLoader;
 
 import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -75,6 +78,32 @@ public class CoreAuthenticationUtils {
                 }
                 return CollectionUtils.wrap(value);
             }));
+    }
+
+    /**
+     * Merge attributes map.
+     *
+     * @param currentAttributes the current attributes
+     * @param attributesToMerge the attributes to merge
+     * @return the map
+     */
+    public static Map<String, Object> mergeAttributes(final Map<String, Object> currentAttributes, final Map<String, Object> attributesToMerge) {
+        val merger = new MultivaluedAttributeMerger();
+
+        val toModify = currentAttributes.entrySet()
+            .stream()
+            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        val toMerge = attributesToMerge.entrySet()
+            .stream()
+            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        LOGGER.debug("Merging current attributes [{}] with [{}]", currentAttributes, attributesToMerge);
+        val results = merger.mergeAttributes((Map) toModify, (Map) toMerge);
+        LOGGER.debug("Merged attributes with the final result as [{}]", results);
+        return results;
     }
 
     /**
@@ -171,7 +200,7 @@ public class CoreAuthenticationUtils {
             return new GroovyPasswordPolicyHandlingStrategy(location);
         }
 
-        LOGGER.debug("Created default password policy handling strategy");
+        LOGGER.trace("Created default password policy handling strategy");
         return new DefaultPasswordPolicyHandlingStrategy();
     }
 }

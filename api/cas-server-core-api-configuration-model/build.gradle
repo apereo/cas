@@ -18,7 +18,6 @@ dependencies {
     
 }
 
-
 if (!skipConfigurationMetadata) {
     task generateConfigurationMetadata(type: JavaExec) {
         doFirst {

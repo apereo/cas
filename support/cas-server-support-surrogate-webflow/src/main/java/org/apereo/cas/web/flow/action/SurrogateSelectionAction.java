@@ -39,9 +39,7 @@ public class SurrogateSelectionAction extends AbstractAction {
                 val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
                 val result =
                     surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, credential, target);
-                if (result.isPresent()) {
-                    WebUtils.putAuthenticationResultBuilder(result.get(), requestContext);
-                }
+                result.ifPresent(authenticationResultBuilder1 -> WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder1, requestContext));
             } else {
                 LOGGER.warn("No surrogate identifier was selected or provided");
             }

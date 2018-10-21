@@ -35,7 +35,6 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
 
-
     @Autowired
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
@@ -44,8 +43,8 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private ObjectProvider<PrincipalResolver> personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "jsonPrincipalFactory")
     @Bean
@@ -57,9 +56,8 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationHandler jsonResourceAuthenticationHandler() {
         val jsonProps = casProperties.getAuthn().getJson();
-        val h =
-            new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager.getIfAvailable(), jsonPrincipalFactory(),
-                null, jsonProps.getLocation());
+        val h = new JsonResourceAuthenticationHandler(jsonProps.getName(), servicesManager.getIfAvailable(), jsonPrincipalFactory(),
+            null, jsonProps.getLocation());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jsonProps.getPasswordEncoder()));
         if (jsonProps.getPasswordPolicy().isEnabled()) {
             h.setPasswordPolicyConfiguration(new PasswordPolicyConfiguration(jsonProps.getPasswordPolicy()));
@@ -74,8 +72,8 @@ public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             val file = casProperties.getAuthn().getJson().getLocation();
             if (file != null) {
-                LOGGER.debug("Added JSON resource authentication handler for the target file [{}]", file.getDescription());
-                plan.registerAuthenticationHandlerWithPrincipalResolver(jsonResourceAuthenticationHandler(), personDirectoryPrincipalResolver.getIfAvailable());
+                LOGGER.debug("Added JSON resource authentication handler for the target file [{}]", file.getFilename());
+                plan.registerAuthenticationHandlerWithPrincipalResolver(jsonResourceAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
             }
         };
     }

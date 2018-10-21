@@ -645,31 +645,43 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # the cas web application.
 # spring.thymeleaf.prefix=classpath:/templates/
 
-# Ensure CAS protocol v2 can behave like v3 when
-# validating service tickets, etc.
-# cas.view.cas2.v3ForwardCompatible=false
-
-# Indicate where core CAS-protocol related views should be found
-# in the view directory hierarchy.
-# cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
-# cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
-# cas.view.cas2.proxy.success=protocol/2.0/casProxySuccessView
-# cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
-
-# cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
-# cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
-
-# Indicates how attributes should be rendered in the validation response
-# cas.view.cas3.attributeRendererType=DEFAULT|INLINE
-
-# Defines a default URL to which CAS may redirect if there is no service
-# provided in the authentication request.
+# Defines a default URL to which CAS may redirect if there is no service provided in the authentication request.
 # cas.view.defaultRedirectUrl=https://www.github.com
 
 # CAS views may be located at the following paths outside
 # the web application context, in addition to prefix specified
 # above which is handled via Thymeleaf.
 # cas.view.templatePrefixes[0]=file:///etc/cas/templates
+```
+
+### CAS v1
+
+```properties
+# Indicates how attributes should be rendered in the validation response
+# cas.view.cas1.attributeRendererType=DEFAULT|VALUES_PER_LINE
+```
+
+### CAS v2
+
+```properties
+# Ensure CAS protocol v2 can behave like v3 when validating service tickets, etc.
+# cas.view.cas2.v3ForwardCompatible=false
+
+# Indicate where core CAS-protocol related views should be found in the view directory hierarchy.
+# cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
+# cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
+# cas.view.cas2.proxy.success=protocol/2.0/casProxySuccessView
+# cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
+```
+
+### CAS v3
+
+```properties
+# cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
+# cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
+
+# Indicates how attributes should be rendered in the validation response
+# cas.view.cas3.attributeRendererType=DEFAULT|INLINE
 ```
 
 ### Restful Views

@@ -85,10 +85,11 @@ jobs:
   - stage: build
     script: ./ci/analyze-style.sh
     name: "Checkstyle Analysis"
-  - stage: build
-    if: type != pull_request
-    script: ./ci/analyze-sonarqube.sh
-    name: "Sonarqube Analysis"
+# Commented out until Sonarqube adds support for JDK 11
+#  - stage: build
+#    if: type != pull_request
+#    script: ./ci/analyze-sonarqube.sh
+#    name: "Sonarqube Analysis"
   - stage: build
     script: ./ci/push-docs-ghpages.sh
     if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
@@ -151,8 +152,11 @@ jobs:
     script: ./ci/tests/mail/run-tests-mail.sh
     name: "Mail Tests"
   - stage: test
-    script: ./ci/tests/couchdb/run-tests-couchdb.sh
-    name: "CouchDb Tests"
+    script: ./ci/tests/couchdb/run-tests-couchdb-admin.sh
+    name: "CouchDb Admin Tests"
+  - stage: test
+    script: ./ci/tests/couchdb/run-tests-couchdb-user.sh
+    name: "CouchDb User Tests"
   - stage: test
     script: ./ci/tests/memcached/run-tests-memcached.sh
     name: "Memcached Tests"

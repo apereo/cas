@@ -13,7 +13,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -78,7 +78,7 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
             val issuer = artifactMsg.getIssuer().getValue();
             val service = verifySamlRegisteredService(issuer);
             val adaptor = getSamlMetadataFacadeFor(service, artifactMsg);
-            if (!adaptor.isPresent()) {
+            if (adaptor.isEmpty()) {
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
             }
             val facade = adaptor.get();

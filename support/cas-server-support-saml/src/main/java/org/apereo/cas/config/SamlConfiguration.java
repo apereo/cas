@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
@@ -18,6 +19,7 @@ import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.RequestedContextValidator;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -56,6 +58,10 @@ public class SamlConfiguration {
     @Autowired
     @Qualifier("cas3ServiceJsonView")
     private ObjectProvider<View> cas3ServiceJsonView;
+
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationServiceSelectionPlan;
 
     @Autowired
     @Qualifier("proxy20Handler")
@@ -107,7 +113,9 @@ public class SamlConfiguration {
             samlCore.getIssueLength(),
             samlCore.getIssuer(),
             samlCore.getAttributeNamespace(),
-            authenticationAttributeReleasePolicy.getIfAvailable());
+            authenticationAttributeReleasePolicy.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            new NoOpProtocolAttributesRenderer());
     }
 
     @ConditionalOnMissingBean(name = "casSamlServiceFailureView")
@@ -121,7 +129,9 @@ public class SamlConfiguration {
             StandardCharsets.UTF_8.name(),
             casProperties.getSamlCore().getSkewAllowance(),
             casProperties.getSamlCore().getIssueLength(),
-            authenticationAttributeReleasePolicy.getIfAvailable());
+            authenticationAttributeReleasePolicy.getIfAvailable(),
+            authenticationServiceSelectionPlan.getIfAvailable(),
+            new NoOpProtocolAttributesRenderer());
     }
 
 

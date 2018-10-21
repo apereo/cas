@@ -46,7 +46,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
 
         val map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
         val name = map.keySet().iterator().next();
-        LOGGER.debug("Reloading CAS configuration via [{}]", name);
+        LOGGER.trace("Reloading CAS configuration via [{}]", name);
         val e = applicationContext.getBean(name);
         binder.postProcessBeforeInitialization(e, name);
         val bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
