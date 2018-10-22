@@ -6,7 +6,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -31,7 +35,11 @@ import java.util.Map;
 @UtilityClass
 public class HttpUtils {
 
-    private static final HttpClient httpClient = HttpClientBuilder.create().setMaxConnTotal(200).setMaxConnPerRoute(20).build();
+    private static final int MAX_CONNECTIONS = 200;
+    private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
+
+    private static final HttpClient HTTP_CLIENT = HttpClientBuilder.create().setMaxConnTotal(MAX_CONNECTIONS)
+            .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE).build();
 
     /**
      * Execute http response.
@@ -133,7 +141,7 @@ public class HttpUtils {
             }
             headers.forEach((k, v) -> request.addHeader(k, v.toString()));
             prepareHttpRequest(request, basicAuthUsername, basicAuthPassword, parameters);
-            return httpClient.execute(request);
+            return HTTP_CLIENT.execute(request);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
