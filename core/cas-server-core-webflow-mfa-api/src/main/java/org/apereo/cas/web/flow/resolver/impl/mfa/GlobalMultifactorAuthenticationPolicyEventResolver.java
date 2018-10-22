@@ -73,7 +73,7 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         val providerFound = resolveProvider(providerMap, globalProviderId);
         if (providerFound.isPresent()) {
             val provider = providerFound.get();
-            LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service);
+            LOGGER.trace("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service);
             val attributes = buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider);
             val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context, attributes);
             return CollectionUtils.wrapSet(event);
@@ -83,7 +83,8 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
     }
 
 
-    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+    @Audit(action = "AUTHENTICATION_EVENT",
+        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
         resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
