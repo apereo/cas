@@ -5,21 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.*;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
@@ -36,6 +30,8 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class HttpUtils {
+
+    private static final HttpClient httpClient = HttpClientBuilder.create().setMaxConnTotal(200).setMaxConnPerRoute(20).build();
 
     /**
      * Execute http response.
@@ -117,7 +113,6 @@ public class HttpUtils {
                                        final Map<String, Object> headers,
                                        final String entity) {
         try {
-            final HttpClient client = buildHttpClient(basicAuthUsername, basicAuthPassword);
             final URI uri = buildHttpUri(url, parameters);
             final HttpUriRequest request;
             switch (method.toLowerCase()) {
@@ -138,11 +133,27 @@ public class HttpUtils {
             }
             headers.forEach((k, v) -> request.addHeader(k, v.toString()));
             prepareHttpRequest(request, basicAuthUsername, basicAuthPassword, parameters);
-            return client.execute(request);
+            return httpClient.execute(request);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    /**
+     * Close the response.
+     *
+     * @param response the response to close
+     */
+    public static void close(final HttpResponse response) {
+        if (response != null) {
+            final CloseableHttpResponse closeableHttpResponse = (CloseableHttpResponse) response;
+            try {
+                closeableHttpResponse.close();
+            } catch (final IOException e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
     }
 
     /**
@@ -294,25 +305,6 @@ public class HttpUtils {
     }
 
     /**
-     * Prepare credentials if needed.
-     *
-     * @param builder           the builder
-     * @param basicAuthUsername username for basic auth
-     * @param basicAuthPassword password for basic auth
-     * @return the http client builder
-     */
-    private static HttpClientBuilder prepareCredentialsIfNeeded(final HttpClientBuilder builder, final String basicAuthUsername,
-                                                                final String basicAuthPassword) {
-        if (StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword)) {
-            final CredentialsProvider provider = new BasicCredentialsProvider();
-            final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(basicAuthUsername, basicAuthPassword);
-            provider.setCredentials(AuthScope.ANY, credentials);
-            return builder.setDefaultCredentialsProvider(provider);
-        }
-        return builder;
-    }
-
-    /**
      * Prepare http request. Tries to set the authorization header
      * in cases where the URL endpoint does not actually produce the header
      * on its own.
@@ -335,12 +327,6 @@ public class HttpUtils {
         parameters.forEach((k, v) -> uriBuilder.addParameter(k, v.toString()));
         return uriBuilder.build();
     }
-
-    private static HttpClient buildHttpClient(final String basicAuthUsername, final String basicAuthPassword) {
-        final HttpClientBuilder builder = HttpClientBuilder.create();
-        return prepareCredentialsIfNeeded(builder, basicAuthUsername, basicAuthPassword).build();
-    }
-
 
     /**
      * Create headers org . springframework . http . http headers.

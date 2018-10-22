@@ -32,11 +32,12 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
 
     @Override
     public Optional<PasswordlessUserAccount> findUser(final String username) {
+        HttpResponse response = null;
         try {
             final Map<String, Object> parameters = new HashMap<>();
             parameters.put("username", username);
 
-            final HttpResponse response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
+            response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
             if (response != null && response.getEntity() != null) {
@@ -45,6 +46,8 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return Optional.empty();
     }

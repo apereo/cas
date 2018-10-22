@@ -129,6 +129,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     protected String determineThemeNameToChoose(final HttpServletRequest request,
                                                 final Service service,
                                                 final RegisteredService rService) {
+        HttpResponse response = null;
         try {
             LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", rService, rService.getTheme());
 
@@ -142,7 +143,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             if (resource instanceof UrlResource) {
                 final String url = resource.getURL().toExternalForm();
                 LOGGER.debug("Executing URL [{}] to determine theme for [{}]", url, service.getId());
-                final HttpResponse response = HttpUtils.executeGet(url, CollectionUtils.wrap("service", service.getId()));
+                response = HttpUtils.executeGet(url, CollectionUtils.wrap("service", service.getId()));
                 if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                     final String result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
                     return StringUtils.defaultIfBlank(result, getDefaultThemeName());
@@ -158,6 +159,8 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...", rService.getTheme(), rService);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return getDefaultThemeName();
     }

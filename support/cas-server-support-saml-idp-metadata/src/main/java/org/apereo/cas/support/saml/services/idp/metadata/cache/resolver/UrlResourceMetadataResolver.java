@@ -65,6 +65,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
 
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
+        HttpResponse response = null;
         try {
             final String metadataLocation = getMetadataLocationForService(service);
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
@@ -75,7 +76,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
             FileUtils.forceMkdirParent(backupFile);
 
-            final HttpResponse response = fetchMetadata(metadataLocation);
+            response = fetchMetadata(metadataLocation);
             cleanUpExpiredBackupMetadataFilesFor(metadataResource, service);
             if (response != null) {
                 final HttpStatus status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
@@ -87,6 +88,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return new ArrayList<>(0);
     }

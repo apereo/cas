@@ -36,6 +36,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
     @Override
     public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
                                              final Service service, final Credential credential) {
+        HttpResponse response = null;
         try {
             final Map<String, Object> parameters = new HashMap<>();
             parameters.put("username", authentication.getPrincipal().getId());
@@ -46,7 +47,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             if (registeredService != null) {
                 parameters.put("registeredService", registeredService.getServiceId());
             }
-            final HttpResponse response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
+            response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
             if (response != null && response.getEntity() != null) {
@@ -54,6 +55,8 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return InterruptResponse.none();
     }

@@ -53,8 +53,9 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
             headers.put("locale", request.getLocale().getCountry());
             headers.putAll(HttpRequestUtils.getRequestHeaders(request));
         }
+        HttpResponse response = null;
         try {
-            final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(), rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), headers);
+            response = HttpUtils.execute(rest.getUrl(), rest.getMethod(), rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), headers);
             final int statusCode = response.getStatusLine().getStatusCode();
             if (response != null && HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
                 final String result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
@@ -62,6 +63,8 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
 
         return super.computeTemplateResource(configuration, ownerTemplate, template, resourceName,

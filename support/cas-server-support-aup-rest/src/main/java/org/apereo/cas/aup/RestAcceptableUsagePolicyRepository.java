@@ -37,14 +37,17 @@ public class RestAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
+        HttpResponse response = null;
         try {
-            final HttpResponse response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
+            response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
                 CollectionUtils.wrap("username", credential.getId()), new HashMap<>());
             final int statusCode = response.getStatusLine().getStatusCode();
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return false;
     }

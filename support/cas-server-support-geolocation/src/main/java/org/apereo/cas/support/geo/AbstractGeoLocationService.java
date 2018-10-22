@@ -60,19 +60,24 @@ public abstract class AbstractGeoLocationService implements GeoLocationService {
         } catch (final Exception e) {
             if (StringUtils.isNotBlank(ipStackAccessKey)) {
                 final String url = String.format("http://api.ipstack.com/%s?access_key=%s", address, ipStackAccessKey);
-                final HttpResponse response = HttpUtils.executeGet(url);
-                if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                    final String result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    final Map infos = MAPPER.readValue(result, Map.class);
-                    final GeoLocationResponse geoResponse = new GeoLocationResponse();
-                    geoResponse.setLatitude((double) infos.getOrDefault("latitude", 0D));
-                    geoResponse.setLongitude((double) infos.getOrDefault("longitude", 0D));
-                    geoResponse
-                        .addAddress((String) infos.getOrDefault("city", StringUtils.EMPTY))
-                        .addAddress((String) infos.getOrDefault("region_name", StringUtils.EMPTY))
-                        .addAddress((String) infos.getOrDefault("region_code", StringUtils.EMPTY))
-                        .addAddress((String) infos.getOrDefault("county_name", StringUtils.EMPTY));
-                    return geoResponse;
+                HttpResponse response = null;
+                try {
+                    response = HttpUtils.executeGet(url);
+                    if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                        final String result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                        final Map infos = MAPPER.readValue(result, Map.class);
+                        final GeoLocationResponse geoResponse = new GeoLocationResponse();
+                        geoResponse.setLatitude((double) infos.getOrDefault("latitude", 0D));
+                        geoResponse.setLongitude((double) infos.getOrDefault("longitude", 0D));
+                        geoResponse
+                                .addAddress((String) infos.getOrDefault("city", StringUtils.EMPTY))
+                                .addAddress((String) infos.getOrDefault("region_name", StringUtils.EMPTY))
+                                .addAddress((String) infos.getOrDefault("region_code", StringUtils.EMPTY))
+                                .addAddress((String) infos.getOrDefault("county_name", StringUtils.EMPTY));
+                        return geoResponse;
+                    }
+                } finally {
+                    HttpUtils.close(response);
                 }
             }
         }
