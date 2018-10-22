@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apache.http.HttpResponse;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import org.apereo.cas.util.HttpUtils;
 
@@ -43,8 +44,9 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
 
     @Override
     public Map<String, List<U2FDeviceRegistration>> readDevicesFromResource() {
+        HttpResponse response = null;
         try {
-            val response = HttpUtils.executeGet(restProperties.getUrl(),
+            response = HttpUtils.executeGet(restProperties.getUrl(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
             if (response.getStatusLine().getStatusCode() == HttpStatus.OK.value()) {
                 final Map<String, List<U2FDeviceRegistration>> result = mapper.readValue(response.getEntity().getContent(),
@@ -54,22 +56,27 @@ public class U2FRestResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return new HashMap<>(0);
     }
 
     @Override
     public void writeDevicesBackToResource(final List<U2FDeviceRegistration> list) {
+        HttpResponse response = null;
         try (val writer = new StringWriter()) {
             val newDevices = new HashMap<String, List<U2FDeviceRegistration>>();
             newDevices.put(MAP_KEY_DEVICES, list);
             mapper.writer(new MinimalPrettyPrinter()).writeValue(writer, newDevices);
-            HttpUtils.executePost(restProperties.getUrl(),
+            response = HttpUtils.executePost(restProperties.getUrl(),
                 restProperties.getBasicAuthUsername(),
                 restProperties.getBasicAuthPassword(),
                 writer.toString());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
     }
 }

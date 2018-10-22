@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.decorator;
 
+import org.apache.http.HttpResponse;
 import org.apereo.cas.configuration.model.webapp.WebflowLoginDecoratorProperties;
 import org.apereo.cas.util.HttpUtils;
 
@@ -30,12 +31,17 @@ public class RestfulLoginWebflowDecorator implements WebflowDecorator {
     @Override
     @SneakyThrows
     public void decorate(final RequestContext requestContext, final ApplicationContext applicationContext) {
-        val response = HttpUtils.execute(restProperties.getUrl(), restProperties.getUrl(),
-            restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
-        val statusCode = response.getStatusLine().getStatusCode();
-        if (response != null && HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
-            val jsonObject = MAPPER.readValue(response.getEntity().getContent(), Map.class);
-            requestContext.getFlowScope().put("decoration", jsonObject);
+        HttpResponse response = null;
+        try {
+            response = HttpUtils.execute(restProperties.getUrl(), restProperties.getUrl(),
+                    restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword());
+            val statusCode = response.getStatusLine().getStatusCode();
+            if (response != null && HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
+                val jsonObject = MAPPER.readValue(response.getEntity().getContent(), Map.class);
+                requestContext.getFlowScope().put("decoration", jsonObject);
+            }
+        } finally {
+            HttpUtils.close(response);
         }
     }
 }

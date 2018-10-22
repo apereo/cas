@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope.authentication;
 
+import org.apache.http.HttpResponse;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -51,24 +52,29 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     @SneakyThrows
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
                                                                                         final String originalPassword) {
-        val syncopeRestUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
-        val response = HttpUtils.executeGet(syncopeRestUrl, c.getUsername(), c.getPassword(),
-            new HashMap<>(), CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain));
+        HttpResponse response = null;
+        try {
+            val syncopeRestUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
+            response = HttpUtils.executeGet(syncopeRestUrl, c.getUsername(), c.getPassword(),
+                    new HashMap<>(), CollectionUtils.wrap("X-Syncope-Domain", this.syncopeDomain));
 
-        LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
+            LOGGER.debug("Received http response status as [{}]", response.getStatusLine());
 
-        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-            LOGGER.debug("Received user object as [{}]", result);
-            val user = this.objectMapper.readValue(result, UserTO.class);
-            if (user.isSuspended()) {
-                throw new AccountDisabledException("Could not authenticate forbidden account for " + c.getUsername());
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                LOGGER.debug("Received user object as [{}]", result);
+                val user = this.objectMapper.readValue(result, UserTO.class);
+                if (user.isSuspended()) {
+                    throw new AccountDisabledException("Could not authenticate forbidden account for " + c.getUsername());
+                }
+                if (user.isMustChangePassword()) {
+                    throw new AccountPasswordMustChangeException("Account password must change for " + c.getUsername());
+                }
+                val principal = this.principalFactory.createPrincipal(user.getUsername(), buildSyncopeUserAttributes(user));
+                return createHandlerResult(c, principal, new ArrayList<>());
             }
-            if (user.isMustChangePassword()) {
-                throw new AccountPasswordMustChangeException("Account password must change for " + c.getUsername());
-            }
-            val principal = this.principalFactory.createPrincipal(user.getUsername(), buildSyncopeUserAttributes(user));
-            return createHandlerResult(c, principal, new ArrayList<>());
+        } finally {
+            HttpUtils.close(response);
         }
 
         throw new FailedLoginException("Could not authenticate account for " + c.getUsername());

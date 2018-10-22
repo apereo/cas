@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import org.apache.http.HttpResponse;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -35,9 +36,10 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+        HttpResponse response = null;
         try {
             val rest = samlIdPProperties.getMetadata().getRest();
-            val response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
+            response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
                 rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
                 CollectionUtils.wrap("entityId", service.getServiceId()),
                 CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_XML_VALUE));
@@ -48,6 +50,8 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return null;
     }

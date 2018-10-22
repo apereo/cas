@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.token;
 
+import org.apache.http.HttpResponse;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.support.passwordless.PasswordlessAuthenticationProperties;
 import org.apereo.cas.util.HttpUtils;
@@ -35,10 +36,11 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
 
     @Override
     public Optional<String> findToken(final String username) {
+        HttpResponse response = null;
         try {
             val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
-            val response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
+            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
             if (response != null && response.getEntity() != null) {
@@ -48,48 +50,59 @@ public class RestfulPasswordlessTokenRepository extends BasePasswordlessTokenRep
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return Optional.empty();
     }
 
     @Override
     public void deleteTokens(final String username) {
+        HttpResponse response = null;
         try {
             val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
-            HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
+            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
     }
 
     @Override
     public void deleteToken(final String username, final String token) {
+        HttpResponse response = null;
         try {
             val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
             parameters.put("token", cipherExecutor.encode(token).toString());
-            HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
+            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.DELETE.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
     }
 
     @Override
     public void saveToken(final String username, final String token) {
+        HttpResponse response = null;
         try {
             val parameters = new HashMap<String, Object>();
             parameters.put("username", username);
             parameters.put("token", cipherExecutor.encode(token).toString());
-            HttpUtils.execute(restProperties.getUrl(), HttpMethod.POST.name(),
+            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.POST.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
     }
 }

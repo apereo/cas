@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import org.apache.http.HttpResponse;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -38,14 +39,17 @@ public class RestAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
 
     @Override
     public boolean submit(final RequestContext requestContext, final Credential credential) {
+        HttpResponse response = null;
         try {
-            val response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
+            response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
                 CollectionUtils.wrap("username", credential.getId()), new HashMap<>());
             val statusCode = response.getStatusLine().getStatusCode();
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return false;
     }
