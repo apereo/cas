@@ -1,11 +1,12 @@
 package org.apereo.cas.authentication;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.Map;
@@ -35,7 +36,9 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
         final Principal finalPrincipal;
 
         if (principal instanceof SurrogatePrincipal) {
-            finalPrincipal = this.principalFactory.createPrincipal(principal.getId(), principal.getAttributes());
+            final Principal surrogatePrincipal = ((SurrogatePrincipal) principal).getSurrogate();
+            LOGGER.debug("Principal [{}] indicates a surrogate", surrogatePrincipal);
+            finalPrincipal = this.principalFactory.createPrincipal(surrogatePrincipal.getId(), surrogatePrincipal.getAttributes());
         } else {
             finalPrincipal = this.principalFactory.createPrincipal(principal.getId(), principalAttributes);
         }
