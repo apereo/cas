@@ -101,8 +101,9 @@ may load CAS settings and properties via the following order and mechanics:
 The configuration and behavior of the configuration server is also controlled by its own
 `src/main/resources/bootstrap.properties` file. By default, it runs under port `8888` at `/casconfigserver` inside
 an embedded Apache Tomcat server whose endpoints are protected with basic authentication
-where the default credentials are `casuser` and `Mellon` defined in `src/main/resources/application.properties`. Furthermore, by default it runs
-under a `native` profile described below.
+where the default credentials are `casuser` and an auto-generated password defined in `src/main/resources/application.properties`. 
+
+Furthermore, by default it runs under a `native` profile described below.
 
 The following endpoints are secured and exposed by the configuration server:
 
@@ -117,14 +118,13 @@ The following endpoints are secured and exposed by the configuration server:
 | `/bus/refresh`                    | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.
 | `/bus/env`                        | Sends key/values pairs to update each CAS node if the cloud bus is turned on.
 
-Once you have the configuration server deployed, you can observe the collection of settings via:
+Once you have the configuration server deployed and assuming the credentials used to secure the configuration server match the example below, you can observe the collection of settings via:
 
 ```bash
 curl -u casuser:Mellon http://config.server.url:8888/casconfigserver/cas/native
 ```
 
-Assuming actuator endpoints are enabled in the configuration, 
-you can also observe the collection of property sources that provide settings to the configuration server:
+Assuming actuator endpoints are enabled in the configuration, you can also observe the collection of property sources that provide settings to the configuration server:
 
 ```bash
 curl -u casuser:Mellon http://localhost:8888/casconfigserver/actuator/env
