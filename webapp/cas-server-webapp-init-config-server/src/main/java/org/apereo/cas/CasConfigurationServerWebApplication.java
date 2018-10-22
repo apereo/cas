@@ -5,7 +5,9 @@ import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
@@ -21,10 +23,14 @@ import org.springframework.boot.autoconfigure.jersey.JerseyAutoConfiguration;
 import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cloud.config.server.EnableConfigServer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
 /**
  * This is {@link CasConfigurationServerWebApplication}.
@@ -74,5 +80,25 @@ public class CasConfigurationServerWebApplication {
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
         AsciiArtUtils.printAsciiArtInfo(LOGGER, "READY", StringUtils.EMPTY);
         LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
+    }
+
+    /**
+     * Cas configuration server web security configurer.
+     *
+     * @param serverProperties the server properties
+     * @return the web security configurer adapter
+     */
+    @Autowired
+    @Bean
+    public WebSecurityConfigurerAdapter casConfigurationServerWebSecurityConfigurerAdapter(final ServerProperties serverProperties) {
+        return new WebSecurityConfigurerAdapter() {
+            @Override
+            protected void configure(final HttpSecurity http) throws Exception {
+                super.configure(http);
+                val path = serverProperties.getServlet().getContextPath();
+                http.authorizeRequests().antMatchers(path + "/decrypt/**").authenticated().and().csrf().disable();
+                http.authorizeRequests().antMatchers(path + "/encrypt/**").authenticated().and().csrf().disable();
+            }
+        };
     }
 }

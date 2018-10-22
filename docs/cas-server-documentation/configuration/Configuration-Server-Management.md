@@ -43,17 +43,18 @@ This allows you to, if needed, split your settings into multiple property files 
 to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap,stagingMfa`)
 
 Configuration files are loaded in the following order where `spring.profiles.active=standalone,profile1,profile2`. Note that the last configuration file loaded will override any duplicate properties from configuration files loaded earlier:
-- application.(properties|yml|yaml)
-- [lowercase] `spring.application.name`.(properties|yml|yaml)
-- `spring.application.name`.(properties|yml|yaml)
-- application-standalone.(properties|yml|yaml)
-- standalone.(properties|yml|yaml)
-- application-profile1.(properties|yml|yaml)
-- profile1.(properties|yml|yaml)
-- application-profile2.(properties|yml|yaml)
-- profile2.(properties|yml|yaml)
 
-If two configuration files with same base name and different extensions exist, they are processed in the order of properties, yml and then yaml (last one processed wins where duplicate properties exist). These external configuration files will override files located in the classpath (e.g. files from src/main/resources in your CAS overlay that end up in WEB-INF/classes) but the internal files are loaded per the [spring boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) rules which differ from the CAS standalone configuration rules described here (e.g. <profile>.properties would not be loaded from classpath but application-<profile>.properties would).
+1.`application.(properties|yml|yaml) `
+2. (lower case) `spring.application.name.(properties|yml|yaml)`  
+3. `spring.application.name.(properties|yml|yaml)`
+4. `application-standalone.(properties|yml|yaml)`
+5. `standalone.(properties|yml|yaml)`
+6. `application-profile1.(properties|yml|yaml)`
+7. `profile1.(properties|yml|yaml)`
+8. `application-profile2.(properties|yml|yaml)`
+9. `profile2.(properties|yml|yaml)`     
+
+If two configuration files with same base name and different extensions exist, they are processed in the order of properties, yml and then yaml (last one processed wins where duplicate properties exist). These external configuration files will override files located in the classpath (e.g. files from src/main/resources in your CAS overlay that end up in `WEB-INF/classes`) but the internal files are loaded per the [spring boot](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) rules which differ from the CAS standalone configuration rules described here (e.g. <profile>.properties would not be loaded from classpath but application-<profile>.properties would).
 
 <div class="alert alert-warning"><strong>Remember</strong><p>You are advised to not overlay or otherwise
 modify the built in <code>application.properties</code> or <code>bootstrap.properties</code> files. This will only complicate and weaken your deployment.
