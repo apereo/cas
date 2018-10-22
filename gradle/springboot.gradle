@@ -1,10 +1,10 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
-if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases  && !rootProject.publishSnapshots && !rootProject.skipBootifulArtifact)) {
+if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootProject.publishSnapshots && !rootProject.skipBootifulArtifact)) {
     logger.info "Applying Spring Boot plugin to bootify web application artifact for project $project.name..."
 
     apply plugin: "org.springframework.boot"
-    
+
     sourceSets {
         bootRun {
             resources {
@@ -61,7 +61,11 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases  && !root
         list.add("-XX:TieredStopAtLevel=1")
         list.add("-Xverify:none")
         if (rootProject.enableRemoteDebugging) {
-            list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
+            def port = findAvailableTcpPort(5000..5010)
+            if (port > 0) {
+                println "Listening on port ${port} for remote debugging requests"
+                list.add("-Xrunjdwp:transport=dt_socket,address=${port},server=y,suspend=n")
+            }
         }
         jvmArgs = list
     }
@@ -70,4 +74,18 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases  && !root
 Ignoring application of Spring Boot plugin, since the build is preparing to publish SNAPSHOTs or releases,
 or the build is signaled to skip the plugin explicitly.
     """
+}
+
+int findAvailableTcpPort(List<Integer> portRange) {
+    for (int port : portRange) {
+        try {
+            println "Checking port ${port}"
+            def serverSocket = new ServerSocket(port)
+            serverSocket.close()
+            return port
+        } catch (Exception e) {
+             logger.debug "Port ${port} is not available: ${e.message}"
+        }
+    }
+    return -1
 }
