@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication.surrogate;
 
-import org.apache.http.HttpResponse;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
@@ -12,6 +11,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;

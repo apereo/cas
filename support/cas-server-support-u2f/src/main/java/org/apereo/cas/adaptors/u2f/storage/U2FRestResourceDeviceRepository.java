@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
-import org.apache.http.HttpResponse;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import org.apereo.cas.util.HttpUtils;
 
@@ -11,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 
 import java.io.StringWriter;

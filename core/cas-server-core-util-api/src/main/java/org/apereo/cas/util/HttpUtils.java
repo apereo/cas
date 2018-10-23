@@ -8,7 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.*;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -151,7 +155,7 @@ public class HttpUtils {
      */
     public static void close(final HttpResponse response) {
         if (response != null) {
-            final CloseableHttpResponse closeableHttpResponse = (CloseableHttpResponse) response;
+            val closeableHttpResponse = (CloseableHttpResponse) response;
             try {
                 closeableHttpResponse.close();
             } catch (final IOException e) {

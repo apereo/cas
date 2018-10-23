@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.decorator;
 
-import org.apache.http.HttpResponse;
 import org.apereo.cas.configuration.model.webapp.WebflowLoginDecoratorProperties;
 import org.apereo.cas.util.HttpUtils;
 
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.http.HttpResponse;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;

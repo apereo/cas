@@ -1,6 +1,5 @@
 package org.apereo.cas.aup;
 
-import org.apache.http.HttpResponse;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -9,6 +8,7 @@ import org.apereo.cas.util.HttpUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
