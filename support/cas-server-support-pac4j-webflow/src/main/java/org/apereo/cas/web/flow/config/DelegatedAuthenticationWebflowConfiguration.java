@@ -5,9 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
-import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -48,7 +46,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import java.util.Collection;
+import java.util.ArrayList;
 
 /**
  * This is {@link DelegatedAuthenticationWebflowConfiguration}.
@@ -58,7 +56,7 @@ import java.util.Collection;
  */
 @Configuration("delegatedAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer, ServiceFactoryConfigurer {
+public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("defaultTicketFactory")
@@ -218,8 +216,14 @@ public class DelegatedAuthenticationWebflowConfiguration implements CasWebflowEx
         plan.registerWebflowConfigurer(delegatedAuthenticationWebflowConfigurer());
     }
 
-    @Override
-    public Collection<ServiceFactory<? extends WebApplicationService>> buildServiceFactories() {
-        return CollectionUtils.wrap(new DelegatedAuthenticationWebApplicationServiceFactory(builtClients.getIfAvailable(), delegatedClientWebflowManager()));
+    @Bean
+    @RefreshScope
+    public ServiceFactoryConfigurer delegatedClientServiceFactoryConfigurer() {
+        return () -> {
+            if (!casProperties.getSso().isAllowMissingServiceParameter()) {
+                return CollectionUtils.wrap(new DelegatedAuthenticationWebApplicationServiceFactory(builtClients.getIfAvailable(), delegatedClientWebflowManager()));
+            }
+            return new ArrayList<>();
+        };
     }
 }
