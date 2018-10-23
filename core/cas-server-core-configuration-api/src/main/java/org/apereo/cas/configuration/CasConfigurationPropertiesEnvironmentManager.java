@@ -3,14 +3,8 @@ package org.apereo.cas.configuration;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -84,24 +78,4 @@ public class CasConfigurationPropertiesEnvironmentManager {
     public String getApplicationName() {
         return environment.getRequiredProperty("spring.application.name");
     }
-
-    /**
-     * Save property for standalone profile.
-     *
-     * @param pair the pair
-     */
-    @SneakyThrows
-    public void savePropertyForStandaloneProfile(final Pair<String, String> pair) {
-        val file = getStandaloneProfileConfigurationDirectory();
-        val params = new Parameters();
-
-        val builder =
-            new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-                .configure(params.properties().setFile(new File(file, getApplicationName() + ".properties")));
-
-        val config = builder.getConfiguration();
-        config.setProperty(pair.getKey(), pair.getValue());
-        builder.save();
-    }
-
 }
