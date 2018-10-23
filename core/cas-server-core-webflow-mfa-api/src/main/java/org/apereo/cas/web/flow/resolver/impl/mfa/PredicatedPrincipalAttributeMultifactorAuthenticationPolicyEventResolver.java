@@ -66,6 +66,11 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
             return null;
         }
 
+        if (providers == null || providers.isEmpty()) {
+            LOGGER.error("No multifactor authentication providers are available in the application context");
+            return null;
+        }
+
         final Object[] args = {service, principal, providers, LOGGER};
         final Predicate<MultifactorAuthenticationProvider> predicate =
             ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS,
@@ -73,11 +78,6 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
 
         LOGGER.debug("Created predicate instance [{}] from [{}] to filter multifactor authentication providers [{}]",
             predicate.getClass().getSimpleName(), predicateResource, providers);
-
-        if (providers == null || providers.isEmpty()) {
-            LOGGER.error("No multifactor authentication providers are available in the application context");
-            return null;
-        }
 
         val provider = providers
             .stream()
