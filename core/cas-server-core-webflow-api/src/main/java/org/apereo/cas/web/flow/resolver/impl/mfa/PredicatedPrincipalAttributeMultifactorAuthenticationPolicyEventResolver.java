@@ -1,7 +1,5 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -14,6 +12,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
+
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
@@ -64,18 +65,18 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
             return null;
         }
 
-        final Object[] args = {service, principal, providers, LOGGER};
-        final Predicate<MultifactorAuthenticationProvider> predicate =
-            ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS,
-                args, Predicate.class);
-
-        LOGGER.debug("Created predicate instance [{}] from [{}] to filter multifactor authentication providers [{}]",
-            predicate.getClass().getSimpleName(), predicateResource, providers);
-
         if (providers == null || providers.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             return null;
         }
+
+        final Object[] args = {service, principal, providers, LOGGER};
+        final Predicate<MultifactorAuthenticationProvider> predicate =
+            ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS, args, Predicate.class);
+
+        LOGGER.debug("Created predicate instance [{}] from [{}] to filter multifactor authentication providers [{}]",
+            predicate.getClass().getSimpleName(), predicateResource, providers);
+
 
         final MultifactorAuthenticationProvider provider = providers
             .stream()
