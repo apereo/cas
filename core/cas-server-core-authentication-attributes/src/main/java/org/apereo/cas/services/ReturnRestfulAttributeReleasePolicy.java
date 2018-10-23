@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import org.apache.http.HttpResponse;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
@@ -8,6 +7,7 @@ import org.apereo.cas.util.HttpUtils;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,6 +16,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 
 import java.io.StringWriter;
