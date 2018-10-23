@@ -63,7 +63,7 @@ Other endpoints need to be explicitly enabled and then exposed over the web in C
 Actuator endpoints provided by Spring Boot can also be visually managed and monitored
  via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
 <div class="alert alert-info"><strong>Obtaining Health Info</strong><p>Note that <code>/status</code> endpoint is kept mostly 
-as a legacy endpoint. If you wish to obtain health status of each monitor in detail, we recommend the <code>/status/health</code> endpoint instead.</p></div>
+as a legacy endpoint. If you wish to obtain health status of each monitor in detail, we recommend the <code>/actuator/health</code> endpoint instead.</p></div>
  
 ### Registered Services Endpoint
 
@@ -135,7 +135,7 @@ So in the example above, the returned "Value" statistic is the sum of the maximu
 you could add an additional `tag=id:Metaspace`, i.e. `/actuator/metrics/jvm.memory.max?tag=area:nonheap&tag=id:Metaspace`.
 
 <div class="alert alert-info"><strong>Use <code>/status/health</code> instead of <code>/status</code> </strong><p>Note that <code>/status</code> endpoint is kept for legacy reason. 
-It is advised to use <code>/status/health</code> instead of <code>/status</code> for the purpose of general health status monitoring</p></div>
+It is advised to use <code>/actuator/health</code> instead of <code>/status</code> for the purpose of general health status monitoring</p></div>
 
 ## Security
 
