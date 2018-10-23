@@ -4206,8 +4206,8 @@ To learn more about this topic, [please review this guide](../installation/Servi
 ```properties
 # eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
 # eureka.client.enabled=true
-# eureka.instance.statusPageUrl=${cas.server.prefix}/status/info
-# eureka.instance.healthCheckUrl=${cas.server.prefix}/status/health
+# eureka.instance.statusPageUrl=${cas.server.prefix}/actuator/info
+# eureka.instance.healthCheckUrl=${cas.server.prefix}/actuator/health
 # eureka.instance.homePageUrl=${cas.server.prefix}/
 # eureka.client.healthcheck.enabled=true
 

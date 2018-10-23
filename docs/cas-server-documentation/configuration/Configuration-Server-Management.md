@@ -111,12 +111,10 @@ The following endpoints are secured and exposed by the configuration server:
 |-----------------------------------|------------------------------------------
 | `/encrypt`                        | Accepts a `POST` to encrypt CAS configuration settings.
 | `/decrypt`                        | Accepts a `POST` to decrypt CAS configuration settings.
-| `/refresh`                        | Accepts a `POST` and attempts to refresh the internal state of configuration server.
-| `/actuator/env`                   | Accepts a `GET` and describes all configuration sources of the configuration server.
-| `/cas/default`                    | Describes what the configuration server knows about the `default` settings profile.
-| `/cas/native`                     | Describes what the configuration server knows about the `native` settings profile.
-| `/bus/refresh`                    | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.
-| `/bus/env`                        | Sends key/values pairs to update each CAS node if the cloud bus is turned on.
+| `/actuator/refresh`                        | Accepts a `POST` and attempts to refresh the internal state of configuration server.
+| `/actuator/actuator/env`                   | Accepts a `GET` and describes all configuration sources of the configuration server.
+| `/actuator/cas/default`                    | Describes what the configuration server knows about the `default` settings profile.
+| `/actuator/cas/native`                     | Describes what the configuration server knows about the `native` settings profile.
 
 Once you have the configuration server deployed and assuming the credentials used to secure the configuration server match the example below, you can observe the collection of settings via:
 
