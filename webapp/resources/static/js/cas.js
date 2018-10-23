@@ -60,6 +60,17 @@ function preserveAnchorTagOnForm() {
     });
 }
 
+function preventFormResubmission() {
+    $('form').submit(function () {
+        $(':submit').attr('disabled', true);
+        var altText = $(':submit').attr('data-processing-text');
+        if (altText) {
+            $(':submit').attr('value', altText);
+        }
+        return true;
+    });
+}
+
 function areCookiesEnabled() {
     if ($.cookie == undefined) {
         return;
@@ -90,6 +101,7 @@ function resourceLoadedSuccessfully() {
         }
 
         preserveAnchorTagOnForm();
+        preventFormResubmission();
 
         $('#capslock-on').hide();
         $('#fm1 input[name="username"],[name="password"]').trigger('input');
