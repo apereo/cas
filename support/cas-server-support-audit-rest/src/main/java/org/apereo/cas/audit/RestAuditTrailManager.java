@@ -51,7 +51,12 @@ public class RestAuditTrailManager implements AuditTrailManager {
         final Runnable task = () -> {
             final String auditJson = serializer.toString(audit);
             LOGGER.debug("Sending audit action context to REST endpoint [{}]", properties.getUrl());
-            HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
+            HttpResponse response = null;
+            try {
+                response = HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
+            } finally {
+                HttpUtils.close(response);
+            }
         };
 
         if (this.asynchronous) {
@@ -63,9 +68,10 @@ public class RestAuditTrailManager implements AuditTrailManager {
 
     @Override
     public Set<AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
+        HttpResponse response = null;
         try {
             LOGGER.debug("Sending query to audit REST endpoint to fetch records from [{}]", localDate);
-            final HttpResponse response = HttpUtils.executeGet(properties.getUrl(), properties.getBasicAuthUsername(),
+            response = HttpUtils.executeGet(properties.getUrl(), properties.getBasicAuthUsername(),
                 properties.getBasicAuthPassword(), CollectionUtils.wrap("date", String.valueOf(localDate.toEpochDay())));
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 final String result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
@@ -75,6 +81,8 @@ public class RestAuditTrailManager implements AuditTrailManager {
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return new HashSet<>(0);
     }

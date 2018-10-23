@@ -35,6 +35,7 @@ public class RestMultifactorAuthenticationProviderBypass implements MultifactorA
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
+        HttpResponse response = null;
         try {
             final Principal principal = authentication.getPrincipal();
             final MultifactorAuthenticationProviderBypassProperties.Rest rest = bypassProperties.getRest();
@@ -47,12 +48,14 @@ public class RestMultifactorAuthenticationProviderBypass implements MultifactorA
                 parameters.put("service", registeredService.getServiceId());
             }
 
-            final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
+            response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
                 rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters, new HashMap<>());
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return true;
+        } finally {
+            HttpUtils.close(response);
         }
     }
 }
