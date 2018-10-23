@@ -42,15 +42,18 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
 
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
+        HttpResponse response = null;
         try (StringWriter writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, attributes);
-            final HttpResponse response = HttpUtils.executePost(this.endpoint, writer.toString(), CollectionUtils.wrap("principal", principal.getId(), "service", service.getServiceId()));
+            response = HttpUtils.executePost(this.endpoint, writer.toString(), CollectionUtils.wrap("principal", principal.getId(), "service", service.getServiceId()));
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 return MAPPER.readValue(response.getEntity().getContent(), new TypeReference<Map<String, Object>>() {
                 });
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return new HashMap<>(0);
     }

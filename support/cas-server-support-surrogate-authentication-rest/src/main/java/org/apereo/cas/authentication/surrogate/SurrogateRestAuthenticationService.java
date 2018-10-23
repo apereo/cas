@@ -40,27 +40,33 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
     
     @Override
     public boolean canAuthenticateAsInternal(final String surrogate, final Principal principal, final Service service) {
+        HttpResponse response = null;
         try {
-            final HttpResponse response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
+            response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
                 CollectionUtils.wrap("surrogate", surrogate, "principal", principal.getId()), new HashMap<>());
             final int statusCode = response.getStatusLine().getStatusCode();
             return HttpStatus.valueOf(statusCode).is2xxSuccessful();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return false;
     }
 
     @Override
     public List<String> getEligibleAccountsForSurrogateToProxy(final String username) {
+        HttpResponse response = null;
         try {
-            final HttpResponse response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
+            response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                 properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
                 CollectionUtils.wrap("principal", username), new HashMap<>());
             return MAPPER.readValue(response.getEntity().getContent(), List.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return new ArrayList<>(0);
     }

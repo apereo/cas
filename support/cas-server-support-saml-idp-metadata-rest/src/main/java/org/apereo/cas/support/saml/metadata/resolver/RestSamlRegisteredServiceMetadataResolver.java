@@ -34,9 +34,10 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
 
     @Override
     public Collection<MetadataResolver> resolve(final SamlRegisteredService service) {
+        HttpResponse response = null;
         try {
             final RestSamlMetadataProperties rest = samlIdPProperties.getMetadata().getRest();
-            final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
+            response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
                 rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
                 CollectionUtils.wrap("entityId", service.getServiceId()),
                 CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_XML_VALUE));
@@ -47,6 +48,8 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return null;
     }
