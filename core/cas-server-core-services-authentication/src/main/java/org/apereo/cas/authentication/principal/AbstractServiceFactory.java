@@ -1,7 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
+import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Stream;
@@ -15,7 +18,11 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings("TypeParameterShadowing")
 @ToString
+@Getter
+@Setter
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
+
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     /**
      * Cleanup the url. Removes jsession ids and query strings.
@@ -48,11 +55,10 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
     protected static String getSourceParameter(final HttpServletRequest request, final String... paramNames) {
         if (request != null) {
             val parameterMap = request.getParameterMap();
-            val param = Stream.of(paramNames)
+            return Stream.of(paramNames)
                 .filter(p -> parameterMap.containsKey(p) || request.getAttribute(p) != null)
                 .findFirst()
                 .orElse(null);
-            return param;
         }
         return null;
     }
