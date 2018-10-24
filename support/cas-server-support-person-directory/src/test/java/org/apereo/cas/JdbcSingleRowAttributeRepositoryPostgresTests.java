@@ -1,8 +1,8 @@
 package org.apereo.cas;
 
 import org.apereo.cas.category.PostgresCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import lombok.SneakyThrows;
 import lombok.val;
@@ -33,7 +33,8 @@ import static org.junit.Assert.*;
     "cas.authn.attributeRepository.jdbc[0].url=jdbc:postgresql://localhost:5432/postgres",
     "cas.authn.attributeRepository.jdbc[0].dialect=org.hibernate.dialect.PostgreSQL95Dialect"
 })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 5432)
 @Category(PostgresCategory.class)
 public class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRowAttributeRepositoryTests {
 

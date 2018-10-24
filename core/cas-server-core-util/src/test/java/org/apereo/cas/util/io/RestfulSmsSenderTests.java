@@ -2,7 +2,7 @@ package org.apereo.cas.util.io;
 
 import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.test.MockWebServer;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.experimental.categories.Category;

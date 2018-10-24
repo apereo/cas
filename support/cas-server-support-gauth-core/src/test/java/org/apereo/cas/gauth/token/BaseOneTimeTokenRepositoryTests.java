@@ -3,11 +3,9 @@ package org.apereo.cas.gauth.token;
 import org.apereo.cas.authentication.OneTimeToken;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.util.SchedulingUtils;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.Getter;
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,9 +26,6 @@ import static org.junit.Assert.*;
 public abstract class BaseOneTimeTokenRepositoryTests {
 
     public static final String CASUSER = "casuser";
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("oneTimeTokenAuthenticatorTokenRepository")

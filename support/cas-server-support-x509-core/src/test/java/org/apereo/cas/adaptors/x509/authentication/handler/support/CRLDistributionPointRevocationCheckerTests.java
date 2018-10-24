@@ -6,7 +6,7 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistrib
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
-import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.test.MockWebServer;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

@@ -2,7 +2,7 @@ package org.apereo.cas.rest.audit;
 
 import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.test.MockWebServer;
 
 import lombok.val;
 import org.aspectj.lang.JoinPoint;

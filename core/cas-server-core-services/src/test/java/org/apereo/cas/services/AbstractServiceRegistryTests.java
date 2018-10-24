@@ -5,7 +5,6 @@ import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import com.google.common.collect.ArrayListMultimap;
 import lombok.Getter;
@@ -15,7 +14,6 @@ import lombok.val;
 import org.apache.commons.lang3.RandomUtils;
 import org.joda.time.DateTimeUtils;
 import org.jooq.lambda.Unchecked;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,9 +43,6 @@ import static org.junit.Assert.*;
 @RequiredArgsConstructor
 public abstract class AbstractServiceRegistryTests {
     public static final int LOAD_SIZE = 1;
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     private final Class<? extends RegisteredService> registeredServiceClass;
 

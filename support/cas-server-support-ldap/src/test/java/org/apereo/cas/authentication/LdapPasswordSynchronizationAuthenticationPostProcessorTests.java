@@ -3,9 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.junit.Rule;
@@ -38,11 +36,8 @@ import static org.junit.Assert.*;
     "cas.authn.passwordSync.ldap[0].bindCredential=password"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class LdapPasswordSynchronizationAuthenticationPostProcessorTests {
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 

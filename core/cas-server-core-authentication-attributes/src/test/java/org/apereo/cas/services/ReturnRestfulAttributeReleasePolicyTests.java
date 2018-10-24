@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.test.MockWebServer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;

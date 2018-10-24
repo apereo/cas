@@ -5,10 +5,9 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.category.PostgresCategory;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.apereo.cas.util.serialization.SerializationUtils;
+import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.junit.Rule;
@@ -45,7 +44,8 @@ import static org.junit.Assert.*;
     DatabaseAuthenticationTestConfiguration.class
 })
 @DirtiesContext
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 5432)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 5432)
 @Category(PostgresCategory.class)
 @TestPropertySource(properties = {
     "database.user=postgres",
@@ -58,9 +58,6 @@ import static org.junit.Assert.*;
 public class QueryDatabaseAuthenticationHandlerPostgresTests {
     private static final String SQL = "SELECT * FROM caspgusers where username=?";
     private static final String PASSWORD_FIELD = "password";
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

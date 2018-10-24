@@ -6,11 +6,9 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.Getter;
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -36,9 +34,6 @@ public abstract class BaseConsentRepositoryTests {
 
     protected static final Map<String, Object> ATTR = CollectionUtils.wrap("attribute", "value");
     protected static final String CASUSER_2 = "casuser2";
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     public abstract ConsentRepository getRepository();
 

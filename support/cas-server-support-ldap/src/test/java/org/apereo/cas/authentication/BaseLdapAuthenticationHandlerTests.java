@@ -18,7 +18,6 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.val;
 import org.jooq.lambda.Unchecked;
@@ -67,9 +66,6 @@ import static org.junit.Assert.*;
 public abstract class BaseLdapAuthenticationHandlerTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("ldapAuthenticationHandlers")

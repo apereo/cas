@@ -6,8 +6,8 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -30,7 +30,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 25000)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 25000)
 @Category(MailCategory.class)
 public class VerifyPasswordResetRequestActionTests extends BasePasswordManagementActionTests {
     @Test

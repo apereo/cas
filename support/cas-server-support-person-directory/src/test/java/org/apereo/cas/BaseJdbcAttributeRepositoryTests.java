@@ -3,13 +3,11 @@ package org.apereo.cas;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +28,6 @@ import java.sql.Statement;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class})
 public abstract class BaseJdbcAttributeRepositoryTests {
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
     @Autowired
     @Qualifier("attributeRepository")
     protected IPersonAttributeDao attributeRepository;

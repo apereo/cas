@@ -2,7 +2,7 @@ package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
-import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.test.MockWebServer;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;

@@ -4,8 +4,7 @@ import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.MongoDbEventsConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.Getter;
 import org.junit.experimental.categories.Category;
@@ -33,7 +32,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.events.mongo.dropCollection=true"
 })
 @Getter
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class MongoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @Autowired

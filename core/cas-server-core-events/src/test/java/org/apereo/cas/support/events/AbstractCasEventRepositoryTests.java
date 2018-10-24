@@ -4,10 +4,8 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
@@ -19,9 +17,6 @@ import static org.junit.Assert.*;
  * @since 5.0.0
  */
 public abstract class AbstractCasEventRepositoryTests {
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Test
     public void verifySave() {

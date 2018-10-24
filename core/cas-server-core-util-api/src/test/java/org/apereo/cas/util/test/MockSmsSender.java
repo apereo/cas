@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.test;
 
 import org.apereo.cas.util.io.SmsSender;
 

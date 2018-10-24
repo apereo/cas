@@ -2,7 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.test.MockWebServer;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;

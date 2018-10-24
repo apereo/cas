@@ -7,12 +7,10 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.config.MongoDbMultifactorAuthenticationTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration;
 import org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +46,9 @@ import static org.junit.Assert.*;
     "cas.authn.mfa.trusted.mongo.authenticationDatabaseName=admin",
     "cas.authn.mfa.trusted.mongo.dropCollection=true"
     })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 27017)
 public class MongoDbMultifactorAuthenticationTrustStorageTests {
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("mfaTrustEngine")

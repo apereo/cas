@@ -10,8 +10,6 @@ import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -38,7 +36,6 @@ import java.util.Collection;
 @TestPropertySource(properties = {"cas.serviceRegistry.redis.host=localhost", "cas.serviceRegistry.redis.port=6379"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Category(RedisCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 6379)
 public class RedisServerServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("redisServiceRegistry")

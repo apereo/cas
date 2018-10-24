@@ -4,16 +4,14 @@ import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.category.AmazonWebServicesS3Category;
 import org.apereo.cas.config.AmazonS3BucketsCloudConfigBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.val;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -39,8 +37,9 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     AmazonS3BucketsCloudConfigBootstrapConfiguration.class
 })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 4572)
 @Category(AmazonWebServicesS3Category.class)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 4572)
 @TestPropertySource(properties = {
     "cas.spring.cloud.aws.s3.bucketName=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.BUCKET_NAME,
     "cas.spring.cloud.aws.s3.endpoint=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.ENDPOINT,
@@ -55,9 +54,6 @@ public class AmazonS3BucketsCloudConfigBootstrapConfigurationTests {
     static final String CREDENTIAL_ACCESS_KEY = "test";
 
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     private CasConfigurationProperties casProperties;

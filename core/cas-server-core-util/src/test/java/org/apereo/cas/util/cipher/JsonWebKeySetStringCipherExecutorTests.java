@@ -1,6 +1,6 @@
 package org.apereo.cas.util.cipher;
 
-import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.test.MockWebServer;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;

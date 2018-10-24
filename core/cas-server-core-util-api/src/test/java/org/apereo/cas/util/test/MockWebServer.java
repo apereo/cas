@@ -1,4 +1,4 @@
-package org.apereo.cas.util;
+package org.apereo.cas.util.test;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;

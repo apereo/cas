@@ -2,7 +2,7 @@ package org.apereo.cas.web.view;
 
 import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.test.MockWebServer;
 
 import lombok.val;
 import org.junit.experimental.categories.Category;

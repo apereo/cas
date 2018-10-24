@@ -3,8 +3,8 @@ package org.apereo.cas.support.saml.metadata.resolver;
 import org.apereo.cas.support.saml.BaseMongoDbSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -35,7 +35,8 @@ import static org.junit.Assert.*;
     "cas.authn.samlIdp.metadata.mongo.idpMetadataCollection=saml-idp-metadata-resolver",
     "cas.authn.samlIdp.metadata.location=file:/tmp"
     })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 27017)
 public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
     @Test
     public void verifyResolver() throws IOException {

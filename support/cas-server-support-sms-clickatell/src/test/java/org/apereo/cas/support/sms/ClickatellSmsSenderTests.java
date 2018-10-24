@@ -1,8 +1,8 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.config.ClickatellSmsConfiguration;
-import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.io.SmsSender;
+import org.apereo.cas.util.test.MockWebServer;
 
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;

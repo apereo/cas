@@ -41,7 +41,6 @@ import java.util.Collections;
     "cas.serviceRegistry.git.repositoryUrl=file:/tmp/cas-sample-data.git"
 })
 @Category(FileSystemCategory.class)
-//@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class GitServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired

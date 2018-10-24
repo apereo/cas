@@ -2,8 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.category.CouchbaseCategory;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.SneakyThrows;
 import org.junit.experimental.categories.Category;
@@ -35,7 +34,7 @@ import java.util.Collections;
         "cas.serviceRegistry.couchbase.bucket=testbucket"
     })
 @Category(CouchbaseCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 @RunWith(Parameterized.class)
 public class CouchbaseServiceRegistryTests extends AbstractServiceRegistryTests {
 
