@@ -212,6 +212,8 @@ layout: null
     *   [SAML](#samlprotocol)
         *   [SAML1](/$version/protocol/SAML-Protocol.html)
         *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
+            *   [Attribute Release](/$version/installation/Configuring-SAML2-Attribute-Release.html)
+            *   [Metadata Management](/$version/installation/Configuring-SAML2-DynamicMetadata.html)
     *   [REST](/$version/protocol/REST-Protocol.html)
 
 * [Notifications](#casnotifications)

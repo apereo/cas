@@ -30,31 +30,6 @@ The following CAS endpoints respond to supported SAML2 profiles:
 - `/idp/profile/SAML2/SOAP/AttributeQuery`
 - `/idp/profile/SAML1/SOAP/ArtifactResolution`
 
-## Unsolicited SSO
-
-SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
-
-| Parameter                         | Description
-|-----------------------------------|-----------------------------------------------------------------
-| `providerId`                      | Required. Entity ID of the service provider.
-| `shire`                           | Optional. Response location (ACS URL) of the service provider.
-| `target`                          | Optional. Relay state.
-| `time`                            | Optional. Skew the authentication request.
-
-## Attribute Queries
-
-In order to allow CAS to support and respond to attribute queries, you need to make sure the generated metadata has
-the `AttributeAuthorityDescriptor` element enabled, with protocol support enabled for `urn:oasis:names:tc:SAML:2.0:protocol`
-and relevant binding that corresponds to the CAS endpoint(s). You also must ensure the `AttributeAuthorityDescriptor` tag lists all
-`KeyDescriptor` elements and certificates that are used for signing as well as authentication, specially if the SOAP client of the service provider 
-needs to cross-compare the certificate behind the CAS endpoint with what is defined for the `AttributeAuthorityDescriptor`. CAS by default 
-will always use its own signing certificate for signing of the responses generated as a result of an attribute query.
-
-Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on 
-CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
-
-To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-idp).
-
 ## IdP Metadata
 
 The following CAS endpoints handle the generation of SAML2 metadata:
@@ -104,18 +79,7 @@ Here is a generated metadata file as an example:
 </EntityDescriptor>
 ```
 
-### Server Configuration
-
-If you have deployed CAS in an external application server/servlet container (i.e. Apache Tomcat) you will 
-need to make sure that the server is adjusted to handle large-enough `HttpHeaderSize` and `HttpPostSize` values (i.e. `2097152`). 
-The embedded container that ships with CAS handles this automatically.
-
-### Mapping Endpoints
-
-Note that CAS metadata endpoints for various bindings are typically available under `/cas/idp/...`. If you
-mean you use an existing metadata file whose binding endpoints begin with `/idp/...`, you may need to deploy
-CAS at the root context path so it's able to respond to those requests. (i.e. `https://sso.example.org/cas/login` becomes
-`https://sso.example.org/login`). Alternatively, you may try to use URL-rewriting route requests from `/idp/` to `/cas/idp/`,etc.
+SAML2 identity provider metadata can be managed in dynamics ways as well. To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
 
 ## SP Metadata
 
@@ -292,6 +256,30 @@ decide to configure CAS to return a particular attribute as
 [the authenticated user name for this service](../integration/Attribute-Release-PrincipalId.html),
 that value will then be used to construct the Name ID along with the right format.
 
+## Unsolicited SSO
+
+SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
+
+| Parameter                         | Description
+|-----------------------------------|-----------------------------------------------------------------
+| `providerId`                      | Required. Entity ID of the service provider.
+| `shire`                           | Optional. Response location (ACS URL) of the service provider.
+| `target`                          | Optional. Relay state.
+| `time`                            | Optional. Skew the authentication request.
+
+## Attribute Queries
+
+In order to allow CAS to support and respond to attribute queries, you need to make sure the generated metadata has
+the `AttributeAuthorityDescriptor` element enabled, with protocol support enabled for `urn:oasis:names:tc:SAML:2.0:protocol`
+and relevant binding that corresponds to the CAS endpoint(s). You also must ensure the `AttributeAuthorityDescriptor` tag lists all
+`KeyDescriptor` elements and certificates that are used for signing as well as authentication, specially if the SOAP client of the service provider 
+needs to cross-compare the certificate behind the CAS endpoint with what is defined for the `AttributeAuthorityDescriptor`. CAS by default 
+will always use its own signing certificate for signing of the responses generated as a result of an attribute query.
+
+Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on 
+CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#saml-idp).
 
 ## SP Integrations
 
@@ -311,6 +299,10 @@ To enable additional logging, modify the logging configuration file to add the f
 
 ```xml
 <AsyncLogger name="org.opensaml" level="debug" additivity="false">
+    <AppenderRef ref="console"/>
+    <AppenderRef ref="file"/>
+</AsyncLogger>
+<AsyncLogger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
     <AppenderRef ref="console"/>
     <AppenderRef ref="file"/>
 </AsyncLogger>

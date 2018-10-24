@@ -25,9 +25,6 @@ It is often time helpful to externalize the `log4j2.xml` file to a system path t
 The location of `log4j2.xml` file by default is on the runtime classpath and can be controlled
 via the CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logging).
 
-<div class="alert alert-info"><strong>Monitoring Logs</strong><p>To review log settings and output,
- you may also use the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
-
 ### Log Levels
 
 While log levels can directly be massaged via the native `log4j2.xml` syntax, they may also be modified
