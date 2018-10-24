@@ -4,11 +4,8 @@ import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.webflow.test.MockRequestContext;
 
 import static org.junit.Assert.*;
@@ -20,13 +17,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@SpringBootTest
 public class InterruptSingleSignOnParticipationStrategyTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Test
     public void verifyStrategyWithoutInterrupt() {
         val s =

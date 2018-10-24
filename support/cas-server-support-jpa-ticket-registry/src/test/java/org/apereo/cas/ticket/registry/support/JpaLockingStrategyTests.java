@@ -24,8 +24,6 @@ import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +37,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -94,16 +90,10 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @Slf4j
 public class JpaLockingStrategyTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     /**
      * Number of clients contending for lock in concurrent test.
      */
     private static final int CONCURRENT_SIZE = 13;
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("ticketTransactionManager")

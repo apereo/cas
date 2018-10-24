@@ -11,7 +11,6 @@ import lombok.val;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,9 +43,6 @@ import static org.junit.Assert.*;
 })
 @DirtiesContext
 public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final String ALG_NAME = "SHA-512";
     private static final String SQL = "SELECT * FROM users where %s";
     private static final int NUM_ITERATIONS = 5;
@@ -57,9 +51,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     private static final String EXPIRED_FIELD_NAME = "expired";
     private static final String DISABLED_FIELD_NAME = "disabled";
     private static final String NUM_ITERATIONS_FIELD_NAME = "numIterations";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

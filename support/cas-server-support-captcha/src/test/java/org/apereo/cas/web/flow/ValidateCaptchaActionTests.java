@@ -28,8 +28,6 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +39,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
@@ -87,12 +83,6 @@ import static org.junit.Assert.*;
     properties = "cas.googleRecaptcha.verifyUrl=http://localhost:9294"
 )
 public class ValidateCaptchaActionTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("validateCaptchaAction")
     private ObjectProvider<Action> validateCaptchaAction;

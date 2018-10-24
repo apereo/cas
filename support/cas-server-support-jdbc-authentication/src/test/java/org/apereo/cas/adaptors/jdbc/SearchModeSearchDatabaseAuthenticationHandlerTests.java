@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,8 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,12 +35,6 @@ import static org.junit.Assert.*;
 })
 @DirtiesContext
 public class SearchModeSearchDatabaseAuthenticationHandlerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 

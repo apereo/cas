@@ -24,7 +24,6 @@ import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,8 +36,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Date;
 import java.util.Map;
@@ -84,12 +81,6 @@ import static org.junit.Assert.*;
     "cas.monitor.mongo.databaseName=monitor"
 })
 public class MongoDbHealthIndicatorTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Rule
     public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();

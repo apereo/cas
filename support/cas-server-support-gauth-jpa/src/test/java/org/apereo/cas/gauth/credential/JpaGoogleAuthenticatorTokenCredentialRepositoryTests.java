@@ -25,9 +25,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.Getter;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,9 +76,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Getter
 public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired(required = false)
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;

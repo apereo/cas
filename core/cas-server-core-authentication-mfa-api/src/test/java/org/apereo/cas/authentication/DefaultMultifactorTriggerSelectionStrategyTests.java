@@ -4,12 +4,9 @@ import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -23,13 +20,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@SpringBootTest
 public class DefaultMultifactorTriggerSelectionStrategyTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Test
     public void verifyOperation() {
         val trigger = mock(MultifactorAuthenticationTrigger.class);

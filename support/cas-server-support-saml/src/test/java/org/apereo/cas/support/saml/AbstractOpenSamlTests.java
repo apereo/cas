@@ -28,8 +28,6 @@ import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 
 import net.shibboleth.utilities.java.support.xml.ParserPool;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -44,8 +42,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import static org.junit.Assert.*;
@@ -86,18 +82,12 @@ import static org.junit.Assert.*;
     CasCoreConfiguration.class
 })
 public abstract class AbstractOpenSamlTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
         + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
         + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
         + "ProviderName=\"https://localhost:8443/myRutgers\" "
         + "AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     protected ApplicationContext applicationContext;

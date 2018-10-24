@@ -11,16 +11,12 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
@@ -37,13 +33,8 @@ import static org.mockito.Mockito.*;
  */
 @Getter
 public abstract class BaseOneTimeTokenCredentialRepositoryTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
     public static final String CASUSER = "casusergauth";
     public static final String PLAIN_SECRET = "plain_secret";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     private IGoogleAuthenticator google;
 

@@ -4,15 +4,12 @@ import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -24,13 +21,8 @@ import static org.junit.Assert.*;
  */
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@SpringBootTest
 public class CacheHealthIndicatorTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     private CasConfigurationProperties casProperties;

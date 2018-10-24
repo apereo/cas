@@ -3,8 +3,6 @@ package org.apereo.cas.adaptors.u2f.storage;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -12,8 +10,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * This is {@link U2FGroovyResourceDeviceRepositoryTests}.
@@ -29,12 +25,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = "cas.authn.mfa.u2f.groovy.location=classpath:U2FDeviceRepository.groovy")
 public class U2FGroovyResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository u2fDeviceRepository;

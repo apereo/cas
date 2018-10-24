@@ -36,16 +36,12 @@ import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.openid4java.server.ServerManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * Bootstrap context for openid tests.
@@ -90,12 +86,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     ThymeleafAutoConfiguration.class
 })
 public class AbstractOpenIdTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("serverManager")
     protected ServerManager serverManager;

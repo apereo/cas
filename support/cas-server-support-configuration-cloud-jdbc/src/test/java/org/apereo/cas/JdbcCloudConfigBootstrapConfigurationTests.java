@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.val;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -15,8 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -32,13 +29,7 @@ import static org.junit.Assert.*;
     JdbcCloudConfigBootstrapConfiguration.class
 })
 public class JdbcCloudConfigBootstrapConfigurationTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Rule
     public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();

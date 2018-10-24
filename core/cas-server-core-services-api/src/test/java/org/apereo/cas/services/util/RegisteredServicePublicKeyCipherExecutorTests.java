@@ -6,9 +6,7 @@ import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 
 import lombok.val;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import java.util.Optional;
 
@@ -21,9 +19,6 @@ import static org.junit.Assert.*;
  * @since 5.2.0
  */
 public class RegisteredServicePublicKeyCipherExecutorTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void verifyCipherUnableToEncodeForStringIsTooLong() {

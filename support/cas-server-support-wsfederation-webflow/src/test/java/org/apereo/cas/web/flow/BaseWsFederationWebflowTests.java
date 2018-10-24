@@ -19,15 +19,11 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.apereo.cas.web.flow.config.WsFederationAuthenticationWebflowConfiguration;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -59,12 +55,6 @@ import org.springframework.webflow.execution.Action;
 })
 @TestPropertySource(locations = "classpath:wsfedauthn.properties")
 public abstract class BaseWsFederationWebflowTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("wsFederationAction")
     protected Action wsFederationAction;

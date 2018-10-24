@@ -16,8 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,8 +29,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -57,13 +53,7 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @Slf4j
 public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     protected static final String IP_ADDRESS = "1.2.3.4";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("casAuthenticationManager")

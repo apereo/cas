@@ -11,10 +11,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
@@ -37,9 +35,6 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 public class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Autowired
     @Qualifier("oidcAuthenticationContextWebflowEventResolver")
     protected CasWebflowEventResolver resolver;

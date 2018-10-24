@@ -16,7 +16,9 @@ import org.apereo.cas.ticket.accesstoken.DefaultAccessTokenFactory;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 
 import lombok.val;
+import org.junit.Rule;
 import org.junit.jupiter.api.Test;
+import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpMethod;
@@ -39,6 +41,9 @@ import static org.junit.Assert.*;
  * @since 3.5.2
  */
 public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("defaultAccessTokenFactory")

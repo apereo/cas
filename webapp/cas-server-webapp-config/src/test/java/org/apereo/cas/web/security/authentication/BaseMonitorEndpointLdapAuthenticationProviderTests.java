@@ -3,14 +3,12 @@ package org.apereo.cas.web.security.authentication;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,12 +16,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -43,17 +40,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
     "cas.monitor.endpoints.ldap.bindCredential=password"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@SpringBootTest
 public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final int LDAP_PORT = 10389;
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

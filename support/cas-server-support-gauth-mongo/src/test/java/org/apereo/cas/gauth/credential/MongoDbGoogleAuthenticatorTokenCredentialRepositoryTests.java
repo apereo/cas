@@ -27,8 +27,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,8 +42,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import static org.junit.Assert.*;
@@ -96,12 +92,6 @@ import static org.junit.Assert.*;
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Category(MongoDbCategory.class)
 public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;

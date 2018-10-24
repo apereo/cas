@@ -9,7 +9,6 @@ import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
 
 import lombok.Getter;
-import org.junit.ClassRule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
 
 /**
  * This is {@link CouchDbCasEventRepositoryTests}.
@@ -38,9 +36,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
     })
 @Getter
 public class CouchDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
-
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 
     @Autowired
     @Qualifier("couchDbEventRepository")

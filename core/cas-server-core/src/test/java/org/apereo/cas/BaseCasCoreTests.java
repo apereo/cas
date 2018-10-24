@@ -27,8 +27,6 @@ import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -38,8 +36,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * This is {@link BaseCasCoreTests}.
@@ -84,12 +80,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public abstract class BaseCasCoreTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     protected CasConfigurationProperties casProperties;
 

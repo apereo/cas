@@ -16,8 +16,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,8 +26,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.web.client.RestTemplate;
 
 import java.nio.charset.StandardCharsets;
@@ -52,13 +48,7 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class})
 @TestPropertySource(properties = "cas.authn.mfa.trusted.rest.url=http://localhost:9297")
 public class RestMultifactorAuthenticationTrustStorageTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Autowired
     @Qualifier("mfaTrustEngine")

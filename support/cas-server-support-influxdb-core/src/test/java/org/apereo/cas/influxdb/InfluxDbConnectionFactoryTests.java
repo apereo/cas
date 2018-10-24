@@ -10,7 +10,6 @@ import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 import org.influxdb.dto.Point;
 import org.influxdb.impl.InfluxDBResultMapper;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
@@ -18,8 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
@@ -37,13 +34,7 @@ import static org.junit.Assert.*;
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class InfluxDbConnectionFactoryTests {
 
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     private static final String CAS_EVENTS_DATABASE = "casEventsDatabase";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Rule
     public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();

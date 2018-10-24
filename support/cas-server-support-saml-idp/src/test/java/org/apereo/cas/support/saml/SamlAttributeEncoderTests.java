@@ -5,11 +5,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.attribute.SamlAt
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.util.HashMap;
 
@@ -22,12 +18,6 @@ import static org.junit.Assert.*;
  * @since 5.1.0
  */
 public class SamlAttributeEncoderTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Test
     public void verifyAction() {
         val encoder = new SamlAttributeEncoder();
