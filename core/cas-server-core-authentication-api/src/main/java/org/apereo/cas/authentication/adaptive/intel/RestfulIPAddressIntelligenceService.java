@@ -6,6 +6,7 @@ import org.apereo.cas.util.HttpUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
@@ -27,12 +28,13 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
 
     @Override
     public IPAddressIntelligenceResponse examineInternal(final RequestContext context, final String clientIpAddress) {
+        HttpResponse response = null;
         try {
             val restProperties = adaptiveAuthenticationProperties.getIpIntel().getRest();
 
             val parameters = new HashMap<String, Object>();
             parameters.put("clientIpAddress", clientIpAddress);
-            val response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
+            response = HttpUtils.execute(restProperties.getUrl(), HttpMethod.GET.name(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
 
@@ -52,6 +54,8 @@ public class RestfulIPAddressIntelligenceService extends BaseIPAddressIntelligen
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return IPAddressIntelligenceResponse.banned();
     }
