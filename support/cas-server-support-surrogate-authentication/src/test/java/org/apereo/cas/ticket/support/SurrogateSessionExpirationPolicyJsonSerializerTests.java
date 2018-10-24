@@ -4,7 +4,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 

@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.services;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 

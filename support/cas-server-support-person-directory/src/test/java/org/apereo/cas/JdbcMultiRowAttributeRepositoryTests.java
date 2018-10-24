@@ -2,7 +2,7 @@ package org.apereo.cas;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import java.sql.Statement;

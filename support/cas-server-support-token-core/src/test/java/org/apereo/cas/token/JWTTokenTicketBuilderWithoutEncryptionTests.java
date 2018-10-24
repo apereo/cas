@@ -5,7 +5,7 @@ import org.apereo.cas.util.EncodingUtils;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import java.text.ParseException;

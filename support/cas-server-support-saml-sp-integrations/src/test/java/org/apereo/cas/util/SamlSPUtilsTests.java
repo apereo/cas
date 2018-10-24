@@ -9,10 +9,10 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.FileSystemResource;
@@ -30,12 +30,12 @@ import static org.mockito.Mockito.*;
 @Category(FileSystemCategory.class)
 @TestPropertySource(properties = {"cas.authn.samlIdp.metadata.location=file:/tmp"})
 public class SamlSPUtilsTests extends BaseSamlIdPConfigurationTests {
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         METADATA_DIRECTORY = new FileSystemResource(FileUtils.getTempDirectoryPath());
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdown() {
         val cols = FileUtils.listFiles(METADATA_DIRECTORY.getFile(), new String[]{"crt", "key", "xml"}, false);
         cols.forEach(FileUtils::deleteQuietly);

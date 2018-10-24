@@ -27,10 +27,10 @@ import org.apereo.cas.util.SchedulingUtils;
 import com.hazelcast.core.HazelcastInstance;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -106,7 +106,7 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertEquals(5, config.getMapConfigs().size());
     }
 
-    @After
+    @AfterEach
     public void shutdownHz() {
         LOGGER.info("Shutting down hazelcast instance [{}]", this.hzInstance.getConfig().getInstanceName());
         this.hzInstance.shutdown();

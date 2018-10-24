@@ -9,10 +9,10 @@ import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,7 +51,7 @@ public abstract class BaseJdbcAttributeRepositoryTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Before
+    @BeforeEach
     @SneakyThrows
     public void setupDatabase() {
         this.dataSource = JpaBeans.newDataSource(casProperties.getAuthn().getAttributeRepository().getJdbc().get(0));
@@ -64,7 +64,7 @@ public abstract class BaseJdbcAttributeRepositoryTests {
 
     public abstract void prepareDatabaseTable(Statement statement);
 
-    @After
+    @AfterEach
     @SneakyThrows
     public void cleanup() {
         @Cleanup

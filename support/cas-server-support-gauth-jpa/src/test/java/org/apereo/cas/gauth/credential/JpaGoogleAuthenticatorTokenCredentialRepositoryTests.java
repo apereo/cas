@@ -25,8 +25,8 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.util.SchedulingUtils;
 
 import lombok.Getter;
-import org.junit.Before;
 import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOn
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
 
-    @Before
+    @BeforeEach
     public void cleanUp() {
         this.getRegistry().deleteAll();
     }

@@ -8,8 +8,8 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 
 import java.util.Arrays;
@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 @Import(JpaServiceRegistryConfiguration.class)
 public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 
-    @Before
+    @BeforeEach
     public void before() {
         this.servicesManager.deleteAll();
     }

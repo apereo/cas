@@ -17,11 +17,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -73,7 +73,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Qualifier("casAuthenticationManager")
     protected AuthenticationManager authenticationManager;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr(IP_ADDRESS);
@@ -81,7 +81,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
     }
 
-    @After
+    @AfterEach
     public void afterEachTest() {
         ClientInfoHolder.setClientInfo(null);
     }

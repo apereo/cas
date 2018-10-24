@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTimeUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.io.File;
@@ -40,7 +40,7 @@ public class TicketGrantingTicketExpirationPolicyTests {
     private ExpirationPolicy expirationPolicy;
     private TicketGrantingTicket ticketGrantingTicket;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.expirationPolicy = new MovingTimeTicketExpirationPolicy();
         this.ticketGrantingTicket = new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), this.expirationPolicy);

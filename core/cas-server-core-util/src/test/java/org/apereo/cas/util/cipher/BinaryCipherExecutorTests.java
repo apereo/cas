@@ -5,7 +5,7 @@ import org.apereo.cas.CipherExecutor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 import java.nio.charset.StandardCharsets;

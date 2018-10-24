@@ -5,7 +5,7 @@ import org.apereo.cas.util.crypto.CertUtils;
 
 import lombok.val;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -13,7 +13,6 @@ import org.springframework.util.LinkedMultiValueMap;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 

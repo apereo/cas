@@ -25,12 +25,12 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.Getter;
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.pac4j.couch.profile.CouchProfile;
 import org.pac4j.couch.profile.service.CouchProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +115,7 @@ public class CouchDbAuthenticationHandlerTests {
     @Qualifier("couchDbAuthenticatorProfileService")
     private CouchProfileService profileService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
@@ -126,7 +126,7 @@ public class CouchDbAuthenticationHandlerTests {
         profileService.create(profile, "p1");
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }

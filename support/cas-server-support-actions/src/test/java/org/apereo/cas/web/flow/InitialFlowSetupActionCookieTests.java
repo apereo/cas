@@ -13,8 +13,8 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -51,7 +51,7 @@ public class InitialFlowSetupActionCookieTests extends AbstractWebflowActionsTes
     private CookieRetrievingCookieGenerator warnCookieGenerator;
     private CookieRetrievingCookieGenerator tgtCookieGenerator;
 
-    @Before
+    @BeforeEach
     public void initialize() throws Exception {
         this.warnCookieGenerator = new CookieRetrievingCookieGenerator("warn", "", 2,
             false, null, false);

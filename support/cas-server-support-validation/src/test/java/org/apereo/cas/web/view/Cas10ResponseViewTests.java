@@ -10,8 +10,8 @@ import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -33,7 +33,7 @@ public class Cas10ResponseViewTests {
 
     private Map<String, Object> model;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.model = new HashMap<>();
         val list = new ArrayList<Authentication>();

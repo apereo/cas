@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegist
 import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit4.rules.SpringClassRule;

@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguratio
 import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.AccountState;

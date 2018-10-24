@@ -11,12 +11,12 @@ import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.apereo.cas.util.serialization.SerializationUtils;
 
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,7 +78,7 @@ public class QueryDatabaseAuthenticationHandlerPostgresTests {
     @Qualifier("dataSource")
     private DataSource dataSource;
 
-    @Before
+    @BeforeEach
     public void initialize() throws Exception {
         val c = this.dataSource.getConnection();
         c.setAutoCommit(true);
@@ -91,7 +91,7 @@ public class QueryDatabaseAuthenticationHandlerPostgresTests {
         c.close();
     }
 
-    @After
+    @AfterEach
     public void afterEachTest() throws Exception {
         val c = this.dataSource.getConnection();
         val s = c.createStatement();

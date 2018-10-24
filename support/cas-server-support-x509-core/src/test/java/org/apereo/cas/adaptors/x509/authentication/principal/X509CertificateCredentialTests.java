@@ -5,7 +5,7 @@ import org.apereo.cas.adaptors.x509.authentication.CasX509Certificate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;

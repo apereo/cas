@@ -7,7 +7,7 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.nio.charset.StandardCharsets;

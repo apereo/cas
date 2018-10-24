@@ -7,8 +7,8 @@ import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
@@ -27,7 +27,7 @@ public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTe
     @Autowired
     private ApplicationContextProvider applicationContextProvider;
 
-    @Before
+    @BeforeEach
     public void init() {
         this.applicationContextProvider.setApplicationContext(this.applicationContext);
     }

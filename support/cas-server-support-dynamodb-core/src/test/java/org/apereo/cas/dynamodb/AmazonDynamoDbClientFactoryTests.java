@@ -5,8 +5,8 @@ import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbPrope
 
 import com.amazonaws.regions.Regions;
 import lombok.val;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 

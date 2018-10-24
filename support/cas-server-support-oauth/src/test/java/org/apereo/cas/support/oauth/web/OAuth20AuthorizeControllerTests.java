@@ -11,7 +11,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.context.Pac4jConstants;

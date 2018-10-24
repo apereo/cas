@@ -3,7 +3,7 @@ package org.apereo.cas.authentication.surrogate;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
@@ -22,7 +22,7 @@ public class JsonResourceSurrogateAuthenticationServiceTests extends BaseSurroga
 
     private SurrogateAuthenticationService service;
 
-    @Before
+    @BeforeEach
     @SneakyThrows
     public void initTests() {
         val resource = new ClassPathResource("surrogates.json");

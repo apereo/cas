@@ -5,9 +5,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -50,7 +50,7 @@ public class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
         return this.u2fDeviceRepository;
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void cleanUp() {
         FileUtils.deleteQuietly(new File("/tmp/u2f.json"));
     }

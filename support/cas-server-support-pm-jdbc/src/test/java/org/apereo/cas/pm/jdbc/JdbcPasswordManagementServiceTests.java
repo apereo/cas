@@ -23,10 +23,10 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 
 import lombok.val;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -82,7 +82,7 @@ public class JdbcPasswordManagementServiceTests {
     @Qualifier("jdbcPasswordManagementDataSource")
     private DataSource jdbcPasswordManagementDataSource;
 
-    @Before
+    @BeforeEach
     public void before() {
         val jdbcTemplate = new JdbcTemplate(this.jdbcPasswordManagementDataSource);
 

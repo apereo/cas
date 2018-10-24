@@ -28,8 +28,8 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.Getter;
-import org.junit.Before;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -93,7 +93,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class GoogleAuthenticatorMongoDbTokenRepositoryTests extends BaseOneTimeTokenRepositoryTests {
 
-    @Before
+    @BeforeEach
     public void initialize() {
         oneTimeTokenAuthenticatorTokenRepository.removeAll();
     }

@@ -39,6 +39,7 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.test.MockRequestContext;
+
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -95,7 +96,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     public boolean hasLiveUpdates() {
         return false;
     }
-    
+
     protected void verifyRepositoryAction(final String actualPrincipalId, final Map<String, Object> profileAttributes) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();

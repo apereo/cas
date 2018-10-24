@@ -5,7 +5,7 @@ import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

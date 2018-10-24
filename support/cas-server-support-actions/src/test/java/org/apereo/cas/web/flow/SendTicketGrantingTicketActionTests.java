@@ -7,8 +7,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -43,7 +43,7 @@ public class SendTicketGrantingTicketActionTests extends AbstractWebflowActionsT
 
     private MockRequestContext context;
 
-    @Before
+    @BeforeEach
     public void onSetUp() {
         this.context = new MockRequestContext();
     }

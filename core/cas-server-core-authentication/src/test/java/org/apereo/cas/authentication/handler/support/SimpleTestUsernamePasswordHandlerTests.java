@@ -4,9 +4,9 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
 
 import lombok.val;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.FailedLoginException;
@@ -26,7 +26,7 @@ public class SimpleTestUsernamePasswordHandlerTests {
 
     private SimpleTestUsernamePasswordAuthenticationHandler authenticationHandler;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
     }

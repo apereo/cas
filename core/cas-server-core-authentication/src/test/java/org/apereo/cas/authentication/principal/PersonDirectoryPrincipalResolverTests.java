@@ -10,7 +10,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 import java.util.Arrays;

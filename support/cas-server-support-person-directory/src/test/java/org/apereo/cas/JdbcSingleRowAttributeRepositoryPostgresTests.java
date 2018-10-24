@@ -6,8 +6,8 @@ import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import java.sql.Statement;

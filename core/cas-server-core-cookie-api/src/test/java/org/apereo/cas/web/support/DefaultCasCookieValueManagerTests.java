@@ -6,9 +6,9 @@ import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookiePro
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.OngoingStubbing;
@@ -38,14 +38,14 @@ public class DefaultCasCookieValueManagerTests {
     @Mock
     private Cookie cookie;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         MockitoAnnotations.initMocks(this);
         ClientInfoHolder.setClientInfo(clientInfo);
         cookieValueManager = new DefaultCasCookieValueManager(CipherExecutor.noOp(), new TicketGrantingCookieProperties());
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         ClientInfoHolder.clear();
     }

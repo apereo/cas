@@ -8,8 +8,8 @@ import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHand
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     private DefaultServicesManager defaultServicesManager;
     private Set<AuthenticationHandler> authenticationHandlers;
 
-    @Before
+    @BeforeEach
     public void initialize() {
 
         val list = new ArrayList<RegisteredService>();

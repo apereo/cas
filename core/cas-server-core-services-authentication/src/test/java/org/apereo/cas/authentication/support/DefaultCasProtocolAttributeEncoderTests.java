@@ -7,8 +7,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
@@ -26,7 +26,7 @@ public class DefaultCasProtocolAttributeEncoderTests {
     private final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(mock(ServicesManager.class), CipherExecutor.noOpOfStringToString());
     private RegisteredService registeredService;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.registeredService = mock(RegisteredService.class);
         when(registeredService.getId()).thenReturn(1L);

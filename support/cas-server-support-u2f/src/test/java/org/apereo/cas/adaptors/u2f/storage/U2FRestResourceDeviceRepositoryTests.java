@@ -9,10 +9,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.u2f.data.DeviceRegistration;
 import lombok.val;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -57,7 +57,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
     @Qualifier("u2fDeviceRepository")
     private U2FDeviceRepository u2fDeviceRepository;
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() throws Exception {
         val devices = new HashMap<String, List<U2FDeviceRegistration>>();
         val reg = new DeviceRegistration("123456", "bjsdghj3b", "njsdkhjdfjh45", 1, false);
@@ -69,7 +69,7 @@ public class U2FRestResourceDeviceRepositoryTests extends AbstractU2FDeviceRepos
         WEB_SERVER.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         WEB_SERVER.close();
     }

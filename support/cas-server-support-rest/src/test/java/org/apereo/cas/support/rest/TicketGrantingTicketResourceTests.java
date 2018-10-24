@@ -17,8 +17,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -63,7 +63,7 @@ public class TicketGrantingTicketResourceTests {
 
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val publisher = mock(ApplicationEventPublisher.class);
         val manager = mock(AuthenticationManager.class);

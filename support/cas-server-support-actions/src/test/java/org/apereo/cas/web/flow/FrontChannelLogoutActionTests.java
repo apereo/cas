@@ -13,8 +13,8 @@ import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -49,7 +49,7 @@ public class FrontChannelLogoutActionTests {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Before
+    @BeforeEach
     public void onSetUp() {
         val validator = new SimpleUrlValidatorFactoryBean(false).getObject();
 

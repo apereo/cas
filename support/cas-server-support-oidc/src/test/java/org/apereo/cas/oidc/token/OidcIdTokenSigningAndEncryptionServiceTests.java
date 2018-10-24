@@ -3,7 +3,7 @@ package org.apereo.cas.oidc.token;
 import org.apereo.cas.oidc.AbstractOidcTests;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 

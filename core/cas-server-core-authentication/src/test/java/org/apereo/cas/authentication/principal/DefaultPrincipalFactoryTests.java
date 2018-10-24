@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 

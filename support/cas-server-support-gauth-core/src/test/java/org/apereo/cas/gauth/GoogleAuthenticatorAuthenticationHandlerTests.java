@@ -17,10 +17,10 @@ import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.ICredentialRepository;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.val;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -60,7 +60,7 @@ public class GoogleAuthenticatorAuthenticationHandlerTests {
     private GoogleAuthenticatorAuthenticationHandler handler;
     private GoogleAuthenticatorKey googleAuthenticatorAccount;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val servicesManager = mock(ServicesManager.class);
         val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();

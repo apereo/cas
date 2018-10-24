@@ -11,9 +11,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 public class RestEndpointInterruptInquirerTests {
     private MockWebServer webServer;
 
-    @Before
+    @BeforeEach
     @SneakyThrows
     public void initialize() {
         val response = new InterruptResponse();

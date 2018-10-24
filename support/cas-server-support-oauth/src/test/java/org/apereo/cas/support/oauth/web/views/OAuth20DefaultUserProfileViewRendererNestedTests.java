@@ -6,7 +6,7 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.hjson.JsonValue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;

@@ -18,9 +18,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -67,7 +67,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
         this.ticketRegistry = new DefaultTicketRegistry();

@@ -12,8 +12,8 @@ import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -54,7 +54,7 @@ public class SessionHealthIndicatorTests {
         return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.defaultRegistry = new DefaultTicketRegistry();
     }

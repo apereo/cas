@@ -5,9 +5,9 @@ import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHand
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 
@@ -32,7 +32,7 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
 
     private JaasAuthenticationHandler handler;
 
-    @Before
+    @BeforeEach
     public void initialize() throws Exception {
         val resource = new ClassPathResource("jaas-system.conf");
         val fileName = new File(System.getProperty("java.io.tmpdir"), "jaas-system.conf");
