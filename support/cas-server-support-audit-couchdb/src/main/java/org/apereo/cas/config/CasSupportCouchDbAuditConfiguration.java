@@ -36,9 +36,9 @@ public class CasSupportCouchDbAuditConfiguration {
     @Qualifier("defaultObjectMapperFactory")
     private ObjectProvider<ObjectMapperFactory> defaultObjectMapperFactory;
 
-    @ConditionalOnMissingBean(name = "auditCouchDbFactory")
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "auditCouchDbFactory")
     public CouchDbConnectorFactory auditCouchDbFactory() {
         return new CouchDbConnectorFactory(casProperties.getAudit().getCouchDb(), defaultObjectMapperFactory.getIfAvailable());
     }
