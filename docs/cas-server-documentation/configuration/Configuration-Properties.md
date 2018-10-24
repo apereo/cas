@@ -2600,8 +2600,11 @@ under the configuration key `cas.authn.samlIdp.metadata.rest`.
 Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
 under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
 
+ The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
+ 
 ```properties
-# cas.authn.samlIdp.metadata.amazonS3.bucketName=
+# cas.authn.samlIdp.metadata.amazonS3.bucketName=saml-sp-bucket
+# cas.authn.samlIdp.metadata.mongo.idpMetadataBucketName=saml-idp-bucket
 ```
 
 ### SAML Logout
