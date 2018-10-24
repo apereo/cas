@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.SamlIdPAmazonS3MetadataConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.SamlIdPAmazonS3RegisteredServiceMetadataConfiguration

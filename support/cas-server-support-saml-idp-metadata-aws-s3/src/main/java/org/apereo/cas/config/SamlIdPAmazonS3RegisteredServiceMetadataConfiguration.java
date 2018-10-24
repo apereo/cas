@@ -22,14 +22,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 /**
- * This is {@link SamlIdPAmazonS3MetadataConfiguration}.
+ * This is {@link SamlIdPAmazonS3RegisteredServiceMetadataConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Configuration("samlIdPAmazonS3MetadataConfiguration")
+@Configuration("samlIdPAmazonS3RegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPAmazonS3MetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
+public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
 
     @Autowired
     private Environment environment;
