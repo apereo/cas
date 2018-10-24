@@ -645,31 +645,43 @@ To learn more about this topic, [please review this guide](../ux/User-Interface-
 # the cas web application.
 # spring.thymeleaf.prefix=classpath:/templates/
 
-# Ensure CAS protocol v2 can behave like v3 when
-# validating service tickets, etc.
-# cas.view.cas2.v3ForwardCompatible=false
-
-# Indicate where core CAS-protocol related views should be found
-# in the view directory hierarchy.
-# cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
-# cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
-# cas.view.cas2.proxy.success=protocol/2.0/casProxySuccessView
-# cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
-
-# cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
-# cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
-
-# Indicates how attributes should be rendered in the validation response
-# cas.view.cas3.attributeRendererType=DEFAULT|INLINE
-
-# Defines a default URL to which CAS may redirect if there is no service
-# provided in the authentication request.
+# Defines a default URL to which CAS may redirect if there is no service provided in the authentication request.
 # cas.view.defaultRedirectUrl=https://www.github.com
 
 # CAS views may be located at the following paths outside
 # the web application context, in addition to prefix specified
 # above which is handled via Thymeleaf.
 # cas.view.templatePrefixes[0]=file:///etc/cas/templates
+```
+
+### CAS v1
+
+```properties
+# Indicates how attributes should be rendered in the validation response
+# cas.view.cas1.attributeRendererType=DEFAULT|VALUES_PER_LINE
+```
+
+### CAS v2
+
+```properties
+# Ensure CAS protocol v2 can behave like v3 when validating service tickets, etc.
+# cas.view.cas2.v3ForwardCompatible=false
+
+# Indicate where core CAS-protocol related views should be found in the view directory hierarchy.
+# cas.view.cas2.success=protocol/2.0/casServiceValidationSuccess
+# cas.view.cas2.failure=protocol/2.0/casServiceValidationFailure
+# cas.view.cas2.proxy.success=protocol/2.0/casProxySuccessView
+# cas.view.cas2.proxy.failure=protocol/2.0/casProxyFailureView
+```
+
+### CAS v3
+
+```properties
+# cas.view.cas3.success=protocol/3.0/casServiceValidationSuccess
+# cas.view.cas3.failure=protocol/3.0/casServiceValidationFailure
+
+# Indicates how attributes should be rendered in the validation response
+# cas.view.cas3.attributeRendererType=DEFAULT|INLINE
 ```
 
 ### Restful Views
@@ -2588,8 +2600,11 @@ under the configuration key `cas.authn.samlIdp.metadata.rest`.
 Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
 under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
 
+ The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
+ 
 ```properties
-# cas.authn.samlIdp.metadata.amazonS3.bucketName=
+# cas.authn.samlIdp.metadata.amazonS3.bucketName=saml-sp-bucket
+# cas.authn.samlIdp.metadata.mongo.idpMetadataBucketName=saml-idp-bucket
 ```
 
 ### SAML Logout
@@ -4194,8 +4209,8 @@ To learn more about this topic, [please review this guide](../installation/Servi
 ```properties
 # eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
 # eureka.client.enabled=true
-# eureka.instance.statusPageUrl=${cas.server.prefix}/status/info
-# eureka.instance.healthCheckUrl=${cas.server.prefix}/status/health
+# eureka.instance.statusPageUrl=${cas.server.prefix}/actuator/info
+# eureka.instance.healthCheckUrl=${cas.server.prefix}/actuator/health
 # eureka.instance.homePageUrl=${cas.server.prefix}/
 # eureka.client.healthcheck.enabled=true
 
@@ -4211,7 +4226,7 @@ To learn more about this topic, [please review this guide](../installation/Servi
 # spring.cloud.consul.enabled=true
 # spring.cloud.consul.host=localhost
 
-# spring.cloud.consul.discovery.healthCheckPath=${management.context-path}/health
+# spring.cloud.consul.discovery.healthCheckPath=<health-endpoint-url>
 # spring.cloud.consul.discovery.healthCheckPath=15s
 # spring.cloud.consul.discovery.instanceId=${spring.application.name}:${random.value}
 
