@@ -4,12 +4,8 @@ import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.MongoDbCloudConfigBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -30,7 +26,6 @@ import static org.junit.Assert.*;
  * @since 6.0.0
  */
 @Category(MongoDbCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
@@ -41,9 +36,6 @@ public class MongoDbCloudConfigBootstrapConfigurationTests {
     static final String MONGODB_URI = "mongodb://root:secret@localhost:27017/admin";
 
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     private CasConfigurationProperties casProperties;

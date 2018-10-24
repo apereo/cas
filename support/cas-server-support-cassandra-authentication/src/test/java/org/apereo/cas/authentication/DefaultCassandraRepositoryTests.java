@@ -8,9 +8,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CassandraAuthenticationConfiguration;
 import org.apereo.cas.config.CassandraCoreConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.junit.Rule;
@@ -53,14 +51,11 @@ import static org.junit.Assert.*;
     "cas.authn.cassandra.keyspace=cas"
 })
 @Category(CassandraCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class DefaultCassandraRepositoryTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("cassandraAuthenticationHandler")

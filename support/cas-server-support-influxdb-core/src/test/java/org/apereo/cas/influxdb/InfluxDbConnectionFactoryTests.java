@@ -1,16 +1,13 @@
 package org.apereo.cas.influxdb;
 
 import org.apereo.cas.category.InfluxDbCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 import org.influxdb.dto.Point;
 import org.influxdb.impl.InfluxDBResultMapper;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,13 +28,10 @@ import static org.junit.Assert.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Category(InfluxDbCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class InfluxDbConnectionFactoryTests {
 
     private static final String CAS_EVENTS_DATABASE = "casEventsDatabase";
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     private InfluxDbConnectionFactory factory;
 

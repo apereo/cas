@@ -3,11 +3,8 @@ package org.apereo.cas.monitor;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.monitor.config.LdapMonitorConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,11 +33,8 @@ import static org.junit.Assert.*;
     "cas.monitor.ldap.useSsl=false"
 })
 @Category(LdapCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class PooledConnectionFactoryHealthIndicatorTests {
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-    
     @Autowired
     @Qualifier("pooledLdapConnectionFactoryHealthIndicator")
     private HealthIndicator monitor;

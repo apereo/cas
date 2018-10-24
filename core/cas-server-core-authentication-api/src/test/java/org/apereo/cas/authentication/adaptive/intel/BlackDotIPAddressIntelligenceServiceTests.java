@@ -1,12 +1,9 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningStandaloneCondition;
+import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.IfProfileValue;
@@ -20,13 +17,10 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@ConditionalIgnore(condition = RunningStandaloneCondition.class)
 @IfProfileValue(name = "blackDotEnabled", value = "true")
 @SpringBootTest
+@DisabledIfContinuousIntegration
 public class BlackDotIPAddressIntelligenceServiceTests {
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
     @Test
     public void verifyBannedOperation() {
         val props = new AdaptiveAuthenticationProperties();

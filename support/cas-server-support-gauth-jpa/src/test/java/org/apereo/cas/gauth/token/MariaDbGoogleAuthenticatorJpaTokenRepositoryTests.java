@@ -1,8 +1,8 @@
 package org.apereo.cas.gauth.token;
 
 import org.apereo.cas.category.MariaDbCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.experimental.categories.Category;
 import org.springframework.test.context.TestPropertySource;
@@ -20,7 +20,8 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.gauth.jpa.url=jdbc:mariadb://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.authn.mfa.gauth.jpa.dialect=org.hibernate.dialect.MariaDB103Dialect"
 })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 3306)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 3306)
 @Category(MariaDbCategory.class)
 public class MariaDbGoogleAuthenticatorJpaTokenRepositoryTests extends GoogleAuthenticatorJpaTokenRepositoryTests {
 }

@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,7 @@ import static org.junit.Assert.*;
     "cas.authn.ldap[0].bindCredential=password",
     "cas.authn.ldap[0].principalAttributeList=description,cn"
     })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class AuthenticatedLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticateNotFound() throws Throwable {

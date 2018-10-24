@@ -20,8 +20,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CouchbaseTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -42,7 +41,7 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @Category(CouchbaseCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 @SpringBootTest(classes = {
     CouchbaseTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,

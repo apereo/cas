@@ -1,8 +1,7 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningStandaloneCondition;
+import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
@@ -23,7 +22,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.consent.ldap.searchFilter=cn={0}",
     "cas.consent.ldap.consentAttributeName=description"
 })
-@ConditionalIgnore(condition = RunningStandaloneCondition.class)
+@DisabledIfContinuousIntegration
 public class LdapEmbeddedConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
     private static final int LDAP_PORT = 1387;
 

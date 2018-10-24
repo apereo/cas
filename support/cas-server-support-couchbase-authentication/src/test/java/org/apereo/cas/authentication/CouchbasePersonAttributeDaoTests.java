@@ -18,13 +18,10 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CouchbaseAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +38,7 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @Category(CouchbaseCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CouchbaseAuthenticationConfiguration.class,
@@ -64,9 +61,6 @@ import static org.junit.Assert.*;
 },
     properties = {"cas.authn.attributeRepository.couchbase.password=password", "cas.authn.attributeRepository.couchbase.bucket=testbucket"})
 public class CouchbasePersonAttributeDaoTests {
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("attributeRepository")

@@ -1,8 +1,8 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.category.MySQLCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.experimental.categories.Category;
 import org.springframework.test.context.TestPropertySource;
@@ -20,7 +20,8 @@ import org.springframework.test.context.TestPropertySource;
     "cas.audit.jdbc.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "cas.audit.jdbc.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
 })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 3306)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 3306)
 @Category(MySQLCategory.class)
 public class CasSupportMySQLJdbcAuditConfigurationTests extends CasSupportJdbcAuditConfigurationTests {
 }

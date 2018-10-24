@@ -12,10 +12,8 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,9 +39,6 @@ import static org.junit.Assert.*;
     CasCoreServicesAuthenticationConfiguration.class
 })
 public class TicketSerializersTests {
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
-
     @Autowired
     @Qualifier("defaultTicketFactory")
     protected TicketFactory defaultTicketFactory;

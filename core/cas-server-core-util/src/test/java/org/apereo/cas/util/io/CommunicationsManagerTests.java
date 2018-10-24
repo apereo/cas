@@ -4,12 +4,10 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.category.MailCategory;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +34,10 @@ import static org.mockito.Mockito.*;
     MailSenderValidatorAutoConfiguration.class
 })
 @Category(MailCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 25000)
+@EnabledIfPortOpen(port = 25000)
+@EnabledIfContinuousIntegration
 @TestPropertySource(properties = {"spring.mail.host=localhost", "spring.mail.port=25000", "spring.mail.testConnection=true"})
 public class CommunicationsManagerTests {
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     @Qualifier("communicationsManager")

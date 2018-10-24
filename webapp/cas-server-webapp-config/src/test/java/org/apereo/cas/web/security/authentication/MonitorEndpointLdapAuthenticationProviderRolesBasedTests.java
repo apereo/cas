@@ -1,7 +1,6 @@
 package org.apereo.cas.web.security.authentication;
 
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,7 @@ import static org.junit.Assert.*;
     "cas.monitor.endpoints.ldap.ldapAuthz.baseDn=ou=people,dc=example,dc=org",
     "cas.monitor.endpoints.ldap.ldapAuthz.rolePrefix=ROLE_"
 })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests extends BaseMonitorEndpointLdapAuthenticationProviderTests {
 
     @Test

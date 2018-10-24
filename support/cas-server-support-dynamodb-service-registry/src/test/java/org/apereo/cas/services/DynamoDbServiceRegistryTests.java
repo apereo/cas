@@ -5,8 +5,7 @@ import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -35,7 +34,7 @@ import java.util.Collection;
     RefreshAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:/dynamodb-serviceregistry.properties")
 @Category(DynamoDbCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class DynamoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     static {

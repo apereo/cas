@@ -6,8 +6,6 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -47,7 +45,6 @@ import java.util.Collection;
 })
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class RedisServerTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired

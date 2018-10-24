@@ -16,8 +16,7 @@ import org.apereo.cas.ticket.code.DefaultOAuthCodeFactory;
 import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.junit.experimental.categories.Category;
@@ -58,7 +57,7 @@ import static org.junit.Assert.*;
     "cas.ticket.registry.memcached.locatorType=ARRAY_MOD",
     "cas.ticket.registry.memcached.hashAlgorithm=FNV1A_64_HASH"
 })
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 @Category(MemcachedCategory.class)
 public class MemcachedTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
     @Autowired

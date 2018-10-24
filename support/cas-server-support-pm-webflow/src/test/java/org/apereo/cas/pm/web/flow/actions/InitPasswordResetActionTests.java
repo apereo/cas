@@ -2,8 +2,8 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.category.MailCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -25,7 +25,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 25000)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 25000)
 @Category(MailCategory.class)
 public class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
 

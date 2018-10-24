@@ -2,8 +2,7 @@ package org.apereo.cas.web.flow.client;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.category.LdapCategory;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
@@ -19,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(locations = {"classpath:/spnego.properties", "classpath:/spnego-ldap-ci.properties"})
 @Category(LdapCategory.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests
     extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {
 

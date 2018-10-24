@@ -2,9 +2,7 @@ package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
@@ -20,9 +18,6 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     public static final String CASUSER = "casuser";
     public static final String BANDERSON = "banderson";
-
-    @Rule
-    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Mock
     protected ServicesManager servicesManager;

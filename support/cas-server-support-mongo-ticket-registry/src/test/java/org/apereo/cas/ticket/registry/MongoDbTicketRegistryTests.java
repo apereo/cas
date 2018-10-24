@@ -21,8 +21,8 @@ import org.apereo.cas.config.MongoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.MongoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,7 +83,8 @@ import java.util.Collection;
     "cas.ticket.registry.mongo.password=secret"
 })
 @DirtiesContext
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 27017)
 public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired

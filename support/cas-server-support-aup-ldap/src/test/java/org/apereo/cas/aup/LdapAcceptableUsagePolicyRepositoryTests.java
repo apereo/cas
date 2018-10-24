@@ -3,8 +3,7 @@ package org.apereo.cas.aup;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.category.LdapCategory;
 import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
@@ -30,7 +29,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @Category(LdapCategory.class)
 @Import(CasAcceptableUsagePolicyLdapConfiguration.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@EnabledIfContinuousIntegration
 @TestPropertySource(properties = {
     "cas.acceptableUsagePolicy.ldap.ldapUrl=ldap://localhost:10389",
     "cas.acceptableUsagePolicy.ldap.useSsl=false",

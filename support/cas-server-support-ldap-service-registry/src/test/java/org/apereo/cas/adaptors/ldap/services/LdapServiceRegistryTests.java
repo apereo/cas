@@ -2,8 +2,7 @@ package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningStandaloneCondition;
+import org.apereo.cas.util.junit.DisabledIfContinuousIntegration;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ import static org.junit.Assert.*;
     "cas.serviceRegistry.ldap.useSsl=false",
     "cas.serviceRegistry.ldap.baseDn=dc=example,dc=org"
 })
-@ConditionalIgnore(condition = RunningStandaloneCondition.class)
+@DisabledIfContinuousIntegration
 public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
 
     public LdapServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {

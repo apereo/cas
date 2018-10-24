@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.util.junit.ConditionalIgnore;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 
 /**
@@ -10,7 +10,8 @@ import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 8000)
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 8000)
 public class DynamoDbTicketRegistryWithoutEncryptionTests extends AbstractDynamoDbTicketRegistryTests {
     public DynamoDbTicketRegistryWithoutEncryptionTests() {
         super(false);
