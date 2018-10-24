@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -43,9 +42,9 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -68,7 +67,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Category(CouchDbCategory.class)
+@Tag("couchdb")
 @SpringBootTest(classes = {
     CouchDbSamlIdPFactoryConfiguration.class,
     CouchDbSamlIdPMetadataConfiguration.class,

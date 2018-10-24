@@ -1,7 +1,6 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasConsentCouchDbConfiguration;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
@@ -9,9 +8,9 @@ import org.apereo.cas.couchdb.consent.ConsentDecisionCouchDbRepository;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
 import lombok.Getter;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +29,7 @@ import org.springframework.test.context.TestPropertySource;
     CasCouchDbCoreConfiguration.class,
     CasConsentCoreConfiguration.class,
     RefreshAutoConfiguration.class})
-@Category(CouchDbCategory.class)
+@Tag("couchdb")
 @Getter
 @TestPropertySource(properties = {
     "cas.consent.couchDb.username=cas",

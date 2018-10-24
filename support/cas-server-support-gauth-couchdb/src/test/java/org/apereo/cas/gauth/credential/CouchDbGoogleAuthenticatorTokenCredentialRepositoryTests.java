@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -28,9 +27,9 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 
 import lombok.Getter;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -46,7 +45,7 @@ import org.springframework.test.context.ContextConfiguration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Category(CouchDbCategory.class)
+@Tag("couchdb")
 @SpringBootTest(
     classes = {
         CasCouchDbCoreConfiguration.class,
