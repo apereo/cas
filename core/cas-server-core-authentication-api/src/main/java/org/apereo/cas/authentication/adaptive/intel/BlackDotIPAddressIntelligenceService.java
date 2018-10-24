@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
@@ -34,6 +35,7 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
     public IPAddressIntelligenceResponse examineInternal(final RequestContext context, final String clientIpAddress) {
         val bannedResponse = IPAddressIntelligenceResponse.banned();
 
+        HttpResponse response = null;
         try {
             val properties = adaptiveAuthenticationProperties.getIpIntel().getBlackDot();
             val builder = new StringBuilder(String.format(properties.getUrl(), clientIpAddress));
@@ -57,7 +59,7 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
             }
             val url = builder.toString();
             LOGGER.debug("Sending IP check request to [{}]", url);
-            val response = HttpUtils.execute(url, HttpMethod.GET.name());
+            response = HttpUtils.execute(url, HttpMethod.GET.name());
             if (response == null) {
                 return bannedResponse;
             }
@@ -89,6 +91,8 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
             return bannedResponse;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return bannedResponse;
     }
