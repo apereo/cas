@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.CouchDbSamlIdPFactoryConfiguration;
@@ -13,9 +12,9 @@ import org.apereo.cas.couchdb.saml.SamlIdPMetadataCouchDbRepository;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -50,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.samlIdp.metadata.couchDb.username=cas",
     "cas.authn.samlIdp.metadata.couchdb.password=password"
 })
-@Category(CouchDbCategory.class)
+@Tag("couchdb")
 public class CouchDbSamlIdPMetadataGeneratorTests {
     @Autowired
     @Qualifier("samlIdPMetadataGenerator")

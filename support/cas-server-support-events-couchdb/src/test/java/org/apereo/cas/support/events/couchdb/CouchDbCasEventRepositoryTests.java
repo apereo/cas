@@ -1,6 +1,5 @@
 package org.apereo.cas.support.events.couchdb;
 
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbEventsConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
@@ -9,9 +8,9 @@ import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
 
 import lombok.Getter;
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +22,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Category(CouchDbCategory.class)
+@Tag("couchdb")
 @SpringBootTest(classes = {
     CasCouchDbCoreConfiguration.class,
     CouchDbEventsConfiguration.class,

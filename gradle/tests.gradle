@@ -47,7 +47,7 @@ if (hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "CouchDb")) {
     task testCouchDb(type: Test) {
         enabled = shouldTest(project.sourceSets.test.java.srcDirs, "CouchDb")
         useJUnitPlatform {
-            includeTags "org.apereo.cas.category.CouchDbCategory"
+            includeTags "couchdb"
         }
     }
 }
@@ -193,7 +193,7 @@ test {
                 "org.apereo.cas.category.FileSystemCategory",
                 "org.apereo.cas.category.IgniteCategory",
                 "org.apereo.cas.category.InfluxDbCategory",
-                "org.apereo.cas.category.CouchDbCategory",
+                "couchdb",
                 "org.apereo.cas.category.LdapCategory",
                 "org.apereo.cas.category.MailCategory",
                 "org.apereo.cas.category.MariaDbCategory",
@@ -246,7 +246,11 @@ def hasTestsOfCategory(Set testSrc, String category) {
                 src.eachFileRecurse { file ->
                     if (file ==~ /.*Tests\.\w+/) {
                         file.readLines().parallelStream().forEach() { line ->
-                            def m = line =~ /^\s*@Category\((\w+)Category\.class\)\s*$/
+                            def m = line =~ /^\s*@Tag\("(\w+)"\)\s*$/
+                            if (m) {
+                                tags.addAll(m.collect { it[1] })
+                            }
+                            m = line =~ /^\s*@Category\((\w+)Category\.class\)\s*$/
                             if (m) {
                                 tags.addAll(m.collect { it[1] })
                             }

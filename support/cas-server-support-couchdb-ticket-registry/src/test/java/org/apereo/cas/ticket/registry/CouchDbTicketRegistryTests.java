@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -24,8 +23,8 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.tickets.TicketRepository;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
-import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +69,7 @@ import java.util.Collection;
         "cas.ticket.registry.couchDb.username=cas",
         "cas.ticket.registry.couchDb.password=password"
     })
-@Category(CouchDbCategory.class)
+@Tag("couchdb")
 public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
