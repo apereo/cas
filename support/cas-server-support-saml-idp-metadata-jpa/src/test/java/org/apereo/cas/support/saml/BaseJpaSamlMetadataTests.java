@@ -23,7 +23,7 @@ import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPJpaIdPMetadataConfiguration;
-import org.apereo.cas.config.SamlIdPJpaMetadataConfiguration;
+import org.apereo.cas.config.SamlIdPJpaRegisteredServiceMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -55,7 +55,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 6.0.0
  */
 @SpringBootTest(classes = {
-    SamlIdPJpaMetadataConfiguration.class,
+    SamlIdPJpaRegisteredServiceMetadataConfiguration.class,
     SamlIdPJpaIdPMetadataConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,

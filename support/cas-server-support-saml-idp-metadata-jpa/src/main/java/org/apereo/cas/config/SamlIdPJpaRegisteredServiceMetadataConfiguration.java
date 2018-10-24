@@ -30,15 +30,15 @@ import javax.sql.DataSource;
 import java.util.List;
 
 /**
- * This is {@link SamlIdPJpaMetadataConfiguration}.
+ * This is {@link SamlIdPJpaRegisteredServiceMetadataConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("SamlIdPJpaMetadataConfiguration")
+@Configuration("samlIdPJpaRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
+public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -52,12 +52,6 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
         val idp = casProperties.getAuthn().getSamlIdp();
         return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
     }
-
-    @Override
-    public void configureMetadataResolutionPlan(final SamlRegisteredServiceMetadataResolutionPlan plan) {
-        plan.registerMetadataResolver(jpaSamlRegisteredServiceMetadataResolver());
-    }
-
 
     @RefreshScope
     @Bean
@@ -95,6 +89,11 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
+    }
+
+    @Override
+    public void configureMetadataResolutionPlan(final SamlRegisteredServiceMetadataResolutionPlan plan) {
+        plan.registerMetadataResolver(jpaSamlRegisteredServiceMetadataResolver());
     }
 
 }

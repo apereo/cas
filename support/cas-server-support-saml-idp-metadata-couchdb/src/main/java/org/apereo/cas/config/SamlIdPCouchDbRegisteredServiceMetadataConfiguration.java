@@ -21,15 +21,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link SamlIdPCouchDbMetadataConfiguration}.
+ * This is {@link SamlIdPCouchDbRegisteredServiceMetadataConfiguration}.
  *
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("samlIdPCouchDbMetadataConfiguration")
+@Configuration("samlIdPCouchDbRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class SamlIdPCouchDbMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
+public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
 
     @Autowired
     private CasConfigurationProperties casProperties;
