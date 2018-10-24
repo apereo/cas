@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.category.AmazonS3Category;
-import org.apereo.cas.category.MsSqlServerCategory;
+import org.apereo.cas.category.AmazonWebServicesS3Category;
 import org.apereo.cas.config.AmazonS3SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.AmazonS3SamlMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -77,7 +76,7 @@ import static org.junit.Assert.*;
     "cas.authn.samlIdp.metadata.amazonS3.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
 })
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 4572)
-@Category(AmazonS3Category.class)
+@Category(AmazonWebServicesS3Category.class)
 public class AmazonS3SamlIdPMetadataGeneratorTests {
 
     @ClassRule
