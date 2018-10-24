@@ -35,9 +35,9 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import lombok.Getter;
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -102,7 +102,7 @@ public class SurrogateCouchDbProfileAuthenticationServiceTests extends BaseSurro
     @Qualifier("surrogateAuthorizationProfileCouchDbRepository")
     private ProfileCouchDbRepository repository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         couchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(couchDbFactory.getCouchDbConnector().getDatabaseName());
         repository.initStandardDesignDocument();
@@ -113,7 +113,7 @@ public class SurrogateCouchDbProfileAuthenticationServiceTests extends BaseSurro
         repository.add(profile);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         couchDbFactory.getCouchDbInstance().deleteDatabase(couchDbFactory.getCouchDbConnector().getDatabaseName());
     }

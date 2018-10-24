@@ -3,7 +3,7 @@ package org.apereo.cas.util.services;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 

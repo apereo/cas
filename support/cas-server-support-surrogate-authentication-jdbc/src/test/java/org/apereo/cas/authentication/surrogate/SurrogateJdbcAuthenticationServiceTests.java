@@ -19,9 +19,9 @@ import org.apereo.cas.config.SurrogateJdbcAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
 import lombok.Getter;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -79,7 +79,7 @@ public class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthen
 
     private JdbcTemplate jdbcTemplate;
 
-    @Before
+    @BeforeEach
     public void before() {
         jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
         jdbcTemplate.execute("drop table surrogate_accounts if exists;");
@@ -89,7 +89,7 @@ public class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthen
         jdbcTemplate.execute("insert into surrogate_accounts values (300, 'casuser', 'surrogate3');");
     }
 
-    @After
+    @AfterEach
     public void after() {
         jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
         jdbcTemplate.execute("drop table surrogate_accounts if exists;");

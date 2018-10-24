@@ -40,12 +40,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -125,7 +125,7 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
 
     private MockWebServer webServer;
 
-    @Before
+    @BeforeEach
     @SneakyThrows
     public void initialize() {
         val doc = new SamlMetadataDocument();
@@ -142,7 +142,7 @@ public class RestSamlRegisteredServiceMetadataResolverTests {
         this.webServer.start();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         this.webServer.stop();
     }

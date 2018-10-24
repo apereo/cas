@@ -6,8 +6,8 @@ import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import org.apereo.inspektr.common.spi.PrincipalResolver;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 
@@ -22,7 +22,7 @@ public class ThreadLocalPrincipalResolverTests {
     private final ThreadLocalPrincipalResolver theResolver =
         new ThreadLocalPrincipalResolver(new DefaultAuditPrincipalIdProvider());
 
-    @After
+    @AfterEach
     public void cleanup() {
         AuthenticationCredentialsThreadLocalBinder.clear();
     }

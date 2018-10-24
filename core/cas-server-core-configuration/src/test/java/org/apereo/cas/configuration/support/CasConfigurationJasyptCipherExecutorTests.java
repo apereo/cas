@@ -2,10 +2,10 @@ package org.apereo.cas.configuration.support;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
@@ -35,7 +35,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     private CasConfigurationJasyptCipherExecutor jasypt;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.jasypt = new CasConfigurationJasyptCipherExecutor(this.environment);
     }

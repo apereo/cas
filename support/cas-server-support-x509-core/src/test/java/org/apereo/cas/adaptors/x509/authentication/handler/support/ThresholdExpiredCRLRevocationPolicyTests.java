@@ -8,7 +8,7 @@ import org.apereo.cas.util.DateTimeUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;

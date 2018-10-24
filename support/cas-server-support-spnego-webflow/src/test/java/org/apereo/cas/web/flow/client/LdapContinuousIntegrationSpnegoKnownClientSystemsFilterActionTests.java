@@ -7,8 +7,8 @@ import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
-import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -23,7 +23,7 @@ import org.springframework.test.context.TestPropertySource;
 public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests
     extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {
 
-    @BeforeClass
+    @BeforeAll
     public static void bootstrap() throws Exception {
         val c = new LDAPConnection("localhost", 10389,
             "cn=Directory Manager", "password");

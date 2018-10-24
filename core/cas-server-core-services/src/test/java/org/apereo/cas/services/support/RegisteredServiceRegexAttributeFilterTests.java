@@ -10,8 +10,8 @@ import org.apereo.cas.util.serialization.SerializationUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -66,7 +66,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
         this.givenAttributesMap.put("mapAttribute", mapAttributes);
     }
 
-    @Before
+    @BeforeEach
     public void initialize() {
         MockitoAnnotations.initMocks(this);
 

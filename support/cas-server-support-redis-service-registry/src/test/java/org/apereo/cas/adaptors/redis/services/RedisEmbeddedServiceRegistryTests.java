@@ -8,9 +8,9 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +48,13 @@ public class RedisEmbeddedServiceRegistryTests extends AbstractServiceRegistryTe
         super(registeredServiceClass);
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void startRedis() throws Exception {
         REDIS_SERVER = new RedisServer(6380);
         REDIS_SERVER.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopRedis() {
         REDIS_SERVER.stop();
     }

@@ -36,8 +36,8 @@ import lombok.Cleanup;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -103,7 +103,7 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
     @Qualifier("surrogateAuthenticationService")
     private SurrogateAuthenticationService service;
 
-    @BeforeClass
+    @BeforeAll
     @SneakyThrows
     public static void bootstrap() {
         @Cleanup

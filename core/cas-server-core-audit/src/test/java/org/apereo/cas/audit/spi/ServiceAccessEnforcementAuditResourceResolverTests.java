@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
 import org.aspectj.lang.JoinPoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

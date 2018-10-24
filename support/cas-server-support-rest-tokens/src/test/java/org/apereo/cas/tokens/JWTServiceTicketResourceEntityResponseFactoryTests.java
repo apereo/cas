@@ -6,7 +6,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import static org.junit.Assert.*;

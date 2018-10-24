@@ -4,7 +4,7 @@ import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;

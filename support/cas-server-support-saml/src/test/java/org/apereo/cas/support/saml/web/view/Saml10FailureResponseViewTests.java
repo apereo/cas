@@ -8,8 +8,8 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -29,7 +29,7 @@ public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
     private Saml10FailureResponseView view;
 
-    @Before
+    @BeforeEach
     public void initialize() {
 
         val builder = new Saml10ObjectBuilder(this.configBean);

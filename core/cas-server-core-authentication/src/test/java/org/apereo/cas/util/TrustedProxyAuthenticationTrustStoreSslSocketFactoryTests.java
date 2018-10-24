@@ -7,8 +7,8 @@ import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.security.KeyStore;
@@ -25,7 +25,7 @@ public class TrustedProxyAuthenticationTrustStoreSslSocketFactoryTests {
 
     private HttpClient client;
 
-    @Before
+    @BeforeEach
     @SneakyThrows
     public void prepareHttpClient() {
         val clientFactory = new SimpleHttpClientFactoryBean();

@@ -24,11 +24,11 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -53,11 +53,9 @@ import javax.security.auth.login.FailedLoginException;
 import java.io.StringWriter;
 
 import static org.junit.Assert.*;
-import static org.springframework.test.web.client.ExpectedCount.manyTimes;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.ExpectedCount.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 /**
  * This is {@link RestAuthenticationHandlerTests}.
@@ -112,7 +110,7 @@ public class RestAuthenticationHandlerTests {
 
     private ResponseActions server;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build()
             .expect(manyTimes(), requestTo("http://localhost:8081/authn"))

@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openid4java.association.Association;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -37,7 +37,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
     private OpenIdService openIdService;
     private Association association;
 
-    @Before
+    @BeforeEach
     public void initialize() throws Exception {
         request.addParameter(OpenIdProtocolConstants.OPENID_IDENTITY, OPEN_ID_PREFIX_URL);
         request.addParameter(OpenIdProtocolConstants.OPENID_RETURNTO, RETURN_TO_URL);

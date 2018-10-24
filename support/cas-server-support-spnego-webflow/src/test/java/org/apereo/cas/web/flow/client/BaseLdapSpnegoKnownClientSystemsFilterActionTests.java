@@ -4,7 +4,7 @@ import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.flow.AbstractSpnegoTests;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;

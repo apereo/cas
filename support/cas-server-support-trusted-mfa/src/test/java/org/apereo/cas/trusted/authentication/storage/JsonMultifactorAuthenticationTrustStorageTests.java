@@ -8,9 +8,9 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
@@ -34,13 +34,13 @@ public class JsonMultifactorAuthenticationTrustStorageTests extends AbstractMult
     @Qualifier("mfaTrustEngine")
     protected MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
-    @BeforeClass
+    @BeforeAll
     @SneakyThrows
     public static void beforeClass() {
         deleteJsonFile();
     }
 
-    @AfterClass
+    @AfterAll
     @SneakyThrows
     public static void afterClass() {
         deleteJsonFile();

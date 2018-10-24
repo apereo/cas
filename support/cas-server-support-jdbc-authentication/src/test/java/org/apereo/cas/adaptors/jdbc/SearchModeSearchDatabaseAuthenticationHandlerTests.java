@@ -3,11 +3,11 @@ package org.apereo.cas.adaptors.jdbc;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,7 +57,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         return String.format("insert into cassearchusers (username, password) values('%s', '%s');", "user" + i, "psw" + i);
     }
 
-    @Before
+    @BeforeEach
     public void initialize() throws Exception {
         this.handler = new SearchModeSearchDatabaseAuthenticationHandler("", null, null, null, this.dataSource, "username", "password", "cassearchusers");
 
@@ -73,7 +73,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         c.close();
     }
 
-    @After
+    @AfterEach
     public void afterEachTest() throws Exception {
         val c = this.dataSource.getConnection();
         val s = c.createStatement();

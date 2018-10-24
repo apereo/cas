@@ -6,8 +6,8 @@ import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordA
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 public class PrincipalBearingCredentialsToPrincipalResolverTests {
     private PrincipalBearingPrincipalResolver resolver;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.resolver = new PrincipalBearingPrincipalResolver();
     }

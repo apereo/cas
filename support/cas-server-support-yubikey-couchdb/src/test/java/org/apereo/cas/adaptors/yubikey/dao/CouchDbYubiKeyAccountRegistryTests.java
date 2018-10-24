@@ -29,9 +29,9 @@ import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import org.ektorp.CouchDbConnector;
 import org.ektorp.CouchDbInstance;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -95,13 +95,13 @@ public class CouchDbYubiKeyAccountRegistryTests extends BaseYubiKeyAccountRegist
     @Qualifier("couchDbYubiKeyAccountRepository")
     private YubiKeyAccountCouchDbRepository couchDbRepository;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         couchDbInstance.createDatabaseIfNotExists(couchDbConnector.getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         couchDbInstance.deleteDatabase(couchDbConnector.getDatabaseName());
     }

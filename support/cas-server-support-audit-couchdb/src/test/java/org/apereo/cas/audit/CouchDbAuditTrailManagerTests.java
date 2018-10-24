@@ -13,9 +13,9 @@ import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,13 +58,13 @@ public class CouchDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
     @Qualifier("auditCouchDbFactory")
     private CouchDbConnectorFactory auditCouchDbFactory;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         auditCouchDbFactory.getCouchDbInstance().createDatabaseIfNotExists(auditCouchDbFactory.getCouchDbConnector().getDatabaseName());
         couchDbRepository.initStandardDesignDocument();
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         auditCouchDbFactory.getCouchDbInstance().deleteDatabase(auditCouchDbFactory.getCouchDbConnector().getDatabaseName());
     }

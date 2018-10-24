@@ -12,7 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.annotation.DirtiesContext;

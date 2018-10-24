@@ -6,8 +6,8 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.ClassPathResource;
 
@@ -37,7 +37,7 @@ public class OidcRegisteredServiceTests {
             new DefaultRegisteredServiceResourceNamingStrategy());
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void prepTests() throws Exception {
         FileUtils.cleanDirectory(RESOURCE.getFile());
     }

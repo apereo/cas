@@ -5,7 +5,7 @@ import org.apereo.cas.adaptors.radius.server.BlockingRadiusServer;
 import lombok.val;
 import net.jradius.exception.TimeoutException;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 /**

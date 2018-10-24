@@ -3,7 +3,7 @@ package org.apereo.cas.interrupt;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.webflow.test.MockRequestContext;
 

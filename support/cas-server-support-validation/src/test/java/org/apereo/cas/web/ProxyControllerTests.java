@@ -10,7 +10,7 @@ import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;

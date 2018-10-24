@@ -8,9 +8,9 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 
 import lombok.val;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 
@@ -32,7 +32,7 @@ public class FileAuthenticationHandlerTests {
 
     private FileAuthenticationHandler authenticationHandler;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication.txt"),
             FileAuthenticationHandler.DEFAULT_SEPARATOR);

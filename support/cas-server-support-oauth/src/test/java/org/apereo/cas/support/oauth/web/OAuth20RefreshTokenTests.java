@@ -5,8 +5,8 @@ import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 
@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
  */
 public class OAuth20RefreshTokenTests extends AbstractOAuth20Tests {
 
-    @Before
+    @BeforeEach
     public void initialize() {
         clearAllServices();
     }

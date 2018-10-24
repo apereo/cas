@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.radius;
 import lombok.val;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.security.Security;
 

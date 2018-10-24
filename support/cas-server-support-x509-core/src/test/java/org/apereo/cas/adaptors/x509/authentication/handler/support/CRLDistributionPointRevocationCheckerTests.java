@@ -13,9 +13,9 @@ import lombok.val;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -185,7 +185,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
         return params;
     }
 
-    @AfterClass
+    @AfterAll
     public static void destroy() {
         val file = new File("ca.crl");
         if (file.exists()) {
@@ -198,7 +198,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
      *
      * @throws Exception On setup errors.
      */
-    @Before
+    @BeforeEach
     public void initialize() throws Exception {
         this.webServer.start();
         Thread.sleep(500);
@@ -207,7 +207,7 @@ public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevoc
     /**
      * Called once before every test.
      */
-    @After
+    @AfterEach
     public void afterEachTest() {
         LOGGER.debug("Stopping web server...");
         this.webServer.stop();

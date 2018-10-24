@@ -4,7 +4,7 @@ import org.apereo.cas.config.CasAcceptableUsagePolicyJdbcConfiguration;
 
 import lombok.Getter;
 import lombok.val;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
@@ -38,7 +38,7 @@ public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
         return false;
     }
 
-    @Before
+    @BeforeEach
     public void initialize() throws Exception {
         try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
             try (val s = c.createStatement()) {

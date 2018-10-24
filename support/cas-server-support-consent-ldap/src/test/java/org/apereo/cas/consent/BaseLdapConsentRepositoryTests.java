@@ -18,10 +18,10 @@ import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.SearchScope;
 import lombok.Getter;
 import lombok.val;
-import org.junit.After;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -64,7 +64,7 @@ public abstract class BaseLdapConsentRepositoryTests extends BaseConsentReposito
     @Qualifier("consentRepository")
     protected ConsentRepository repository;
 
-    @After
+    @AfterEach
     public void cleanDecisions() {
         val conn = getConnection();
         try {

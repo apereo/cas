@@ -4,10 +4,10 @@ import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -47,7 +47,7 @@ public class JdbcDataSourceHealthIndicatorTests {
 
     private DataSource dataSource;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val ctx = new ClassPathXmlApplicationContext("classpath:/jpaTestApplicationContext.xml");
         this.dataSource = ctx.getBean("dataSource", DataSource.class);

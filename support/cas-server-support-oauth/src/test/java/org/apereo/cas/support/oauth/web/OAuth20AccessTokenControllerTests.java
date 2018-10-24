@@ -18,8 +18,8 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
  */
 public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
-    @Before
+    @BeforeEach
     public void initialize() {
         clearAllServices();
     }

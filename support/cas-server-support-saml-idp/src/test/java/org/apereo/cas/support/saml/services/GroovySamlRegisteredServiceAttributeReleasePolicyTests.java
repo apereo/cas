@@ -7,9 +7,9 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.BeforeClass;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 
 import static org.junit.Assert.*;
@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 @Category(FileSystemCategory.class)
 public class GroovySamlRegisteredServiceAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
 
-    @BeforeClass
+    @BeforeAll
     public static void beforeClass() {
         METADATA_DIRECTORY = new FileSystemResource(FileUtils.getTempDirectory());
     }

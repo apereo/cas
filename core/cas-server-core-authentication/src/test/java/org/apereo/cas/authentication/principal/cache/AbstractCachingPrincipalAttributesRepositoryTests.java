@@ -8,8 +8,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
     private Map<String, List<Object>> attributes;
     private Principal principal;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         attributes = new HashMap<>();
         attributes.put("a1", Arrays.asList("v1", "v2", "v3"));

@@ -6,7 +6,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;

@@ -2,7 +2,7 @@ package org.apereo.cas.support.pac4j.config;
 
 import com.github.scribejava.core.model.OAuth1RequestToken;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 

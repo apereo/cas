@@ -11,9 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
@@ -40,7 +40,7 @@ public class TicketGrantingTicketImplTests {
 
     private ObjectMapper mapper;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         // needed in order to serialize ZonedDateTime class
         mapper = Jackson2ObjectMapperBuilder.json()

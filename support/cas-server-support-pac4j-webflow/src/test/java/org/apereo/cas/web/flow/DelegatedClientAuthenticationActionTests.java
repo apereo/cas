@@ -43,7 +43,7 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 
 import lombok.val;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;

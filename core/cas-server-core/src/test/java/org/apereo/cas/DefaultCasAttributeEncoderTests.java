@@ -5,9 +5,9 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
-import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
@@ -40,7 +40,7 @@ public class DefaultCasAttributeEncoderTests extends BaseCasCoreTests {
         return Collections.singleton(attr);
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         this.attributes = new HashMap<>();
         IntStream.range(0, 3).forEach(i -> this.attributes.put("attr" + i, newSingleAttribute("value" + i)));

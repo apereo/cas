@@ -8,9 +8,9 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.criterion.BindingCriterion;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @Category(FileSystemCategory.class)
 public class SamlIdPUtilsTests extends BaseSamlIdPConfigurationTests {
 
-    @Before
+    @BeforeEach
     public void before() {
         servicesManager.deleteAll();
     }

@@ -3,7 +3,7 @@ package org.apereo.cas.metadata.rest;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 

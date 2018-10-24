@@ -10,11 +10,11 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -61,7 +61,7 @@ public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
 
-    @BeforeClass
+    @BeforeAll
     @SneakyThrows
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
@@ -72,7 +72,7 @@ public abstract class BaseMonitorEndpointLdapAuthenticationProviderTests {
             new ClassPathResource("ldif/ldap-authz.ldif").getInputStream(), "ou=people,dc=example,dc=org");
     }
 
-    @Before
+    @BeforeEach
     public void init() {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));

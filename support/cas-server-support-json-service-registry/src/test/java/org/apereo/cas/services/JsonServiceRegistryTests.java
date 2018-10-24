@@ -6,7 +6,7 @@ import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 
 import lombok.SneakyThrows;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.context.ApplicationEventPublisher;

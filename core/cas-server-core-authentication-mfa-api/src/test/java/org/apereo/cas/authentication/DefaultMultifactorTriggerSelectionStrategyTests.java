@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import lombok.val;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;

@@ -6,12 +6,12 @@ import org.apereo.cas.util.MockWebServer;
 
 import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -53,7 +53,7 @@ public class RestfulPersonAttributeDaoTests {
 
     private MockWebServer webServer;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val data = '{'
             + "   \"name\" :\"casuser\","
@@ -66,7 +66,7 @@ public class RestfulPersonAttributeDaoTests {
         this.webServer.start();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         this.webServer.stop();
     }

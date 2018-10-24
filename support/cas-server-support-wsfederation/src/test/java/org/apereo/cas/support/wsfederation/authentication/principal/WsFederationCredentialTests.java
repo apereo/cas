@@ -3,8 +3,8 @@ package org.apereo.cas.support.wsfederation.authentication.principal;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -24,7 +24,7 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
     private static final String AUDIENCE = "urn:federation:cas";
     private WsFederationCredential standardCred;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         standardCred = new WsFederationCredential();
         standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC));

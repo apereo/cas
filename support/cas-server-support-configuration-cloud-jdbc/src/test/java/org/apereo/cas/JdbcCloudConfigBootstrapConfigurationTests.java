@@ -7,10 +7,10 @@ import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 
 import lombok.val;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,7 +46,7 @@ public class JdbcCloudConfigBootstrapConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @BeforeClass
+    @BeforeAll
     public static void initialize() throws Exception {
         val jpa = new Jpa();
         val ds = JpaBeans.newDataSource(jpa);

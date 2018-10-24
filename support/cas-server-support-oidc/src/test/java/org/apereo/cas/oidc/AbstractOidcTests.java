@@ -50,10 +50,10 @@ import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -161,7 +161,7 @@ public abstract class AbstractOidcTests {
     @Qualifier("oidcIdTokenGenerator")
     protected IdTokenGeneratorService oidcIdTokenGenerator;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         servicesManager.save(getOidcRegisteredService());
     }

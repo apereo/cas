@@ -9,11 +9,11 @@ import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import lombok.val;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,7 +57,7 @@ public class MongoDbCloudConfigBootstrapConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @BeforeClass
+    @BeforeAll
     public static void initialize() {
         val factory = new MongoDbConnectionFactory();
         val template = factory.buildMongoTemplate(MONGODB_URI);

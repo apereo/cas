@@ -7,8 +7,8 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.FileSystemResource;
 
 import static org.junit.Assert.*;

@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 
 import lombok.val;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.AccountNotFoundException;

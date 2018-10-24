@@ -1,7 +1,7 @@
 task testCassandra(type: Test) {
     enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Cassandra")
     useJUnitPlatform {
-        includeTags "org.apereo.cas.category.CassandraCategory"
+        includeTags "cassandra"
     }
 }
 

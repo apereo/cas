@@ -5,7 +5,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.LinkedHashMap;

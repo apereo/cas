@@ -4,7 +4,7 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningStandaloneCondition;
 
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -17,7 +17,7 @@ import org.springframework.test.context.TestPropertySource;
 @ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends BaseLdapSpnegoKnownClientSystemsFilterActionTests {
 
-    @BeforeClass
+    @BeforeAll
     public static void bootstrap() throws Exception {
         LdapIntegrationTestsOperations.initDirectoryServer(1381);
     }

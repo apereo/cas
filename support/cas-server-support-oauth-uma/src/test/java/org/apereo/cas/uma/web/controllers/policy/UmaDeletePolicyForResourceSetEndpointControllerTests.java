@@ -4,7 +4,7 @@ import org.apereo.cas.uma.ticket.resource.ResourceSet;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 

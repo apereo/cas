@@ -4,7 +4,7 @@ import org.apereo.cas.support.wsfederation.authentication.principal.WsFederation
 
 import lombok.Setter;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opensaml.security.credential.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

@@ -16,10 +16,10 @@ import org.apereo.cas.util.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,7 +62,7 @@ public class DefaultCasEventListenerTests {
     @Qualifier("casEventRepository")
     private CasEventRepository casEventRepository;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("123.456.789.000");

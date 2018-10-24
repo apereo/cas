@@ -2,7 +2,7 @@ package org.apereo.cas.support.openid.web.support;
 
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 

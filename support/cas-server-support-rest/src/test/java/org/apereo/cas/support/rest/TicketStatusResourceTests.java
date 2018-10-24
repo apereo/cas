@@ -6,8 +6,8 @@ import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.ticket.InvalidTicketException;
 
 import lombok.val;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -38,7 +38,7 @@ public class TicketStatusResourceTests {
 
     private MockMvc mockMvc;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.ticketStatusResource = new TicketStatusResource(casMock);
 

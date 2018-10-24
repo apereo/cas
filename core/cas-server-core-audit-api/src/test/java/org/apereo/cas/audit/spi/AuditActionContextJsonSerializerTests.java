@@ -2,7 +2,7 @@ package org.apereo.cas.audit.spi;
 
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 

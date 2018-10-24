@@ -7,7 +7,7 @@ import com.unboundid.scim.data.Name;
 import com.unboundid.scim.data.UserResource;
 import com.unboundid.scim.schema.CoreSchema;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.net.URI;
 import java.util.Date;

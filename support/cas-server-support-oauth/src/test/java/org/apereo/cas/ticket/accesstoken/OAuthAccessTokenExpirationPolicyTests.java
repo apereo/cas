@@ -3,7 +3,7 @@ package org.apereo.cas.ticket.accesstoken;
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.Assert.*;

@@ -3,7 +3,7 @@ package org.apereo.cas.web;
 import org.apereo.cas.token.TokenConstants;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.Assert.*;

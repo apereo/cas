@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
 import static org.junit.Assert.*;

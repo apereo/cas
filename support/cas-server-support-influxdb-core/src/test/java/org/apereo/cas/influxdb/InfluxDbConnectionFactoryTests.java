@@ -10,12 +10,12 @@ import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 import org.influxdb.dto.Point;
 import org.influxdb.impl.InfluxDBResultMapper;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
@@ -50,13 +50,13 @@ public class InfluxDbConnectionFactoryTests {
 
     private InfluxDbConnectionFactory factory;
 
-    @Before
+    @BeforeEach
     public void init() {
         this.factory = new InfluxDbConnectionFactory("http://localhost:8086", "root",
             "root", CAS_EVENTS_DATABASE, true);
     }
 
-    @After
+    @AfterEach
     public void shutdown() {
         this.factory.close();
     }

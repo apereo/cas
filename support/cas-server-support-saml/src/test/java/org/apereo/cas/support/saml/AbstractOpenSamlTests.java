@@ -30,7 +30,7 @@ import org.apereo.cas.web.config.CasValidationConfiguration;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;

@@ -26,10 +26,10 @@ import org.apereo.cas.util.crypto.CertUtils;
 import lombok.val;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -85,7 +85,7 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests imple
     @Autowired
     private ApplicationContext applicationContext;
 
-    @BeforeClass
+    @BeforeAll
     public static void bootstrapTests() throws Exception {
         initDirectoryServer(LDAP_PORT);
         AbstractX509LdapTests.bootstrap(LDAP_PORT);

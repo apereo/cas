@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.Assert.*;

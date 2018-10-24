@@ -1,7 +1,7 @@
 package org.apereo.cas.gauth.rest;
 
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.LinkedMultiValueMap;
 
 import static org.junit.Assert.*;

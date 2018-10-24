@@ -8,8 +8,8 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class TimeoutExpirationPolicyTests {
 
     private Ticket ticket;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
 

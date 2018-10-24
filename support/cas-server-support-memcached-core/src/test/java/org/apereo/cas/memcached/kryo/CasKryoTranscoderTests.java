@@ -18,7 +18,7 @@ import com.esotericsoftware.kryo.KryoException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.time.ZonedDateTime;

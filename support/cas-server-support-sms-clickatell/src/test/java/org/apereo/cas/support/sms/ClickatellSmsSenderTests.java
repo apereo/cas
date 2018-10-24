@@ -5,11 +5,11 @@ import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.io.SmsSender;
 
 import lombok.val;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,7 +51,7 @@ public class ClickatellSmsSenderTests {
 
     private MockWebServer webServer;
 
-    @Before
+    @BeforeEach
     public void initialize() {
         val data = "{\n"
             + "\"messages\": [\n"
@@ -76,7 +76,7 @@ public class ClickatellSmsSenderTests {
         this.webServer.start();
     }
 
-    @After
+    @AfterEach
     public void cleanup() {
         this.webServer.stop();
     }

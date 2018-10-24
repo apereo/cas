@@ -2,7 +2,7 @@ package org.apereo.cas.oidc.discovery;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.*;
 
