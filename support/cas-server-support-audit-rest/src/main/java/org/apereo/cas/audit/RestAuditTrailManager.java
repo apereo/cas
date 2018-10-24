@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apereo.inspektr.audit.AuditActionContext;
 
@@ -49,9 +50,10 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
 
     @Override
     public Set<? extends AuditActionContext> getAuditRecordsSince(final LocalDate localDate) {
+        HttpResponse response = null;
         try {
             LOGGER.debug("Sending query to audit REST endpoint to fetch records from [{}]", localDate);
-            val response = HttpUtils.executeGet(properties.getUrl(), properties.getBasicAuthUsername(),
+            response = HttpUtils.executeGet(properties.getUrl(), properties.getBasicAuthUsername(),
                 properties.getBasicAuthPassword(), CollectionUtils.wrap("date", String.valueOf(localDate.toEpochDay())));
             if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
@@ -61,6 +63,8 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return new HashSet<>(0);
     }

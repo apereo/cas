@@ -12,6 +12,7 @@ import org.apereo.cas.util.HttpUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.http.MediaType;
@@ -35,9 +36,10 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
 
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
+        HttpResponse response = null;
         try {
             val rest = samlIdPProperties.getMetadata().getRest();
-            val response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
+            response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
                 rest.getBasicAuthUsername(), rest.getBasicAuthPassword(),
                 CollectionUtils.wrap("entityId", service.getServiceId()),
                 CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_XML_VALUE));
@@ -48,6 +50,8 @@ public class RestSamlRegisteredServiceMetadataResolver extends BaseSamlRegistere
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return null;
     }
