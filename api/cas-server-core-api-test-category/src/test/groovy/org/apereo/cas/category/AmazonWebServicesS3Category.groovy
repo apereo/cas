@@ -6,5 +6,5 @@ package org.apereo.cas.category
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-interface AmazonS3Category {
+interface AmazonWebServicesS3Category {
 }
