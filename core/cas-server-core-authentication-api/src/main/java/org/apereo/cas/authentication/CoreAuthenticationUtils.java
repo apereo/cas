@@ -100,7 +100,7 @@ public class CoreAuthenticationUtils {
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
 
-        LOGGER.debug("Merging current attributes [{}] with [{}]", currentAttributes, attributesToMerge);
+        LOGGER.trace("Merging current attributes [{}] with [{}]", toModify, toMerge);
         val results = merger.mergeAttributes((Map) toModify, (Map) toMerge);
         LOGGER.debug("Merged attributes with the final result as [{}]", results);
         return results;
