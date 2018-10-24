@@ -5,7 +5,9 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.HttpUtils;
 
 import lombok.val;
+import org.junit.Rule;
 import org.junit.jupiter.api.Test;
+import org.junit.rules.ExpectedException;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.exception.CredentialsException;
@@ -21,6 +23,9 @@ import static org.junit.Assert.*;
  * @since 6.0.0
  */
 public class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     protected OAuth20UsernamePasswordAuthenticator authenticator;
 
     @Override

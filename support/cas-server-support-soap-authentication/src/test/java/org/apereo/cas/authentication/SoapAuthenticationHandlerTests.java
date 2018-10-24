@@ -8,8 +8,6 @@ import org.apereo.cas.config.SoapAuthenticationServerTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,8 +16,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -42,12 +38,6 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = {"server.port=8080", "cas.authn.soap.url=http://localhost:8080/ws/users"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SoapAuthenticationHandlerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("soapAuthenticationAuthenticationHandler")
     private AuthenticationHandler soapAuthenticationAuthenticationHandler;

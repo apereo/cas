@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class
 })
-public class DefaultTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
     public DefaultTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);

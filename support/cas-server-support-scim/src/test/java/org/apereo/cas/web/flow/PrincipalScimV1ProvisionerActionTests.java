@@ -19,8 +19,6 @@ import com.unboundid.scim.marshal.json.JsonMarshaller;
 import com.unboundid.scim.schema.CoreSchema;
 import com.unboundid.scim.sdk.Resources;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,8 +30,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
@@ -67,12 +63,6 @@ import static org.junit.Assert.*;
     "cas.scim.username=casuser",
     "cas.scim.password=Mellon"})
 public class PrincipalScimV1ProvisionerActionTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("principalScimProvisionerAction")
     private Action principalScimProvisionerAction;

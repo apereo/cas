@@ -65,7 +65,7 @@ import java.util.Collection;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class},
     properties = {"cas.ticket.registry.couchbase.password=password", "cas.ticket.registry.couchbase.bucket=testbucket"})
-public class CouchbaseTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

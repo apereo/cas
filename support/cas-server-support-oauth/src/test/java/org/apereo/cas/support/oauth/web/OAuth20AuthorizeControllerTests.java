@@ -10,9 +10,7 @@ import org.apereo.cas.ticket.code.OAuthCode;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.pac4j.cas.profile.CasProfile;
 import org.pac4j.core.context.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +49,6 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
     private static final String AUTHORIZE_URL = CAS_SCHEME + "://" + CAS_SERVER + CONTEXT + "authorize";
     private static final String SERVICE_NAME = "serviceName";
     private static final String STATE = "state";
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("authorizeController")

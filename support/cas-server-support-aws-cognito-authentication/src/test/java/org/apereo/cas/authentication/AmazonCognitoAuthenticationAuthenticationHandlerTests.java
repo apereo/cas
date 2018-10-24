@@ -7,8 +7,6 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,8 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 /**
  * This is {@link AmazonCognitoAuthenticationAuthenticationHandlerTests}.
@@ -44,12 +40,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @IfProfileValue(name = "cognitoEnabled", value = "true")
 public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("amazonCognitoAuthenticationHandler")
     private AuthenticationHandler amazonCognitoAuthenticationHandler;

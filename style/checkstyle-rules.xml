@@ -685,10 +685,10 @@
         <property name="message" value="Use @Rule ExpectedException instead of expecting an exception"/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use @Rule instead of expect an exception"/>
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use @SpringBootTest instead of @ExtendWith(SpringExtension.class)"/>
         <property name="severity" value="error"/>
-        <property name="format" value="@RunWith\((Conditional)?SpringRunner\.class\)"/>
-        <property name="message" value="Use Spring @Rule and @ClassRule instead of the Spring test runner."/>
+        <property name="format" value="@ExtendWith\(SpringExtension\.class\)"/>
+        <property name="message" value="Use @SpringBootTest instead of @ExtendWith(SpringExtension.class)"/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use Collections.singleton instead"/>

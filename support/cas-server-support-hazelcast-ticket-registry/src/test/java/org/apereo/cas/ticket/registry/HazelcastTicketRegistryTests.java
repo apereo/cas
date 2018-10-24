@@ -66,7 +66,7 @@ import java.util.Collection;
     CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(properties = {"cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance"})
-public class HazelcastTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

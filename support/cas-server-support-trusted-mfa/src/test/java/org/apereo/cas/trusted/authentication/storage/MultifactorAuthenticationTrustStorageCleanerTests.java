@@ -5,9 +5,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 
 import lombok.Getter;
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -21,9 +19,6 @@ import java.time.LocalDateTime;
  */
 @Getter
 public class MultifactorAuthenticationTrustStorageCleanerTests extends AbstractMultifactorAuthenticationTrustStorageTests {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
     @Qualifier("mfaTrustEngine")

@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class
 })
-public class CachingTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class CachingTicketRegistryTests extends BaseTicketRegistryTests {
 
     public CachingTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);

@@ -48,7 +48,7 @@ import java.util.Collection;
 })
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-public class RedisEmbeddedTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class RedisEmbeddedTicketRegistryTests extends BaseTicketRegistryTests {
 
     private static RedisServer REDIS_SERVER;
 

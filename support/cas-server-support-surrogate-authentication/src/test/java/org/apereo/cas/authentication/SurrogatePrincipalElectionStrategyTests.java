@@ -4,9 +4,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -20,9 +18,6 @@ import static org.junit.Assert.*;
  * @since 6.0.0
  */
 public class SurrogatePrincipalElectionStrategyTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void verifyOperation() {
         val strategy = new SurrogatePrincipalElectionStrategy();

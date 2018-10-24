@@ -26,7 +26,7 @@ import java.util.Collection;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class
 })
-public class InfinispanTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class InfinispanTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

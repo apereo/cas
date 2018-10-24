@@ -232,6 +232,9 @@ tasks.withType(Test) {
         showExceptions = true
         showCauses = true
     }
+    useJUnitPlatform {
+        includeEngines 'junit-jupiter'
+    }
 }
 
 def shouldTest(Set testSrc, String category) {

@@ -34,8 +34,6 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -46,8 +44,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 
@@ -90,12 +86,6 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @TestPropertySource(locations = "classpath:tokentests.properties")
 public class TokenWebApplicationServiceResponseBuilderTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")
     private ResponseBuilder responseBuilder;

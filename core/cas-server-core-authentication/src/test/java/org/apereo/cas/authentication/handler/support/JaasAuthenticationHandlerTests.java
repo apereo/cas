@@ -7,10 +7,8 @@ import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
@@ -26,9 +24,6 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 public class JaasAuthenticationHandlerTests {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     private File fileName;
 
     @BeforeEach

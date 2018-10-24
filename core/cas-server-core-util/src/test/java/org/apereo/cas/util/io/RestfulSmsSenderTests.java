@@ -5,8 +5,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.util.MockWebServer;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +18,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import java.nio.charset.StandardCharsets;
 
@@ -42,12 +38,6 @@ import static org.junit.Assert.*;
 @Category(RestfulApiCategory.class)
 @TestPropertySource(properties = {"cas.smsProvider.rest.url=http://localhost:8132"})
 public class RestfulSmsSenderTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
     @Autowired
     @Qualifier("communicationsManager")
     private CommunicationsManager communicationsManager;

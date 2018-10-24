@@ -69,7 +69,7 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
-public class EhCacheTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")

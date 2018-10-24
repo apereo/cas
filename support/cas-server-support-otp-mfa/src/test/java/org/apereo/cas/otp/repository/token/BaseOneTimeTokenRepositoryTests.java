@@ -3,11 +3,7 @@ package org.apereo.cas.otp.repository.token;
 import org.apereo.cas.authentication.OneTimeToken;
 
 import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import static org.junit.Assert.*;
 
@@ -19,13 +15,7 @@ import static org.junit.Assert.*;
  */
 public abstract class BaseOneTimeTokenRepositoryTests {
 
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
     public static final String CASUSER = "casuser";
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     @Test
     public void verifyTokenSave() {

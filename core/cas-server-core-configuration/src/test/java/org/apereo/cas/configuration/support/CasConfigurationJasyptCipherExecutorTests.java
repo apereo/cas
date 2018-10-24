@@ -1,15 +1,16 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
+
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
-import org.springframework.test.context.junit4.rules.SpringClassRule;
-import org.springframework.test.context.junit4.rules.SpringMethodRule;
+import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.Assert.*;
 
@@ -19,17 +20,9 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+@SpringBootTest(classes = {AopAutoConfiguration.class}, properties = {"cas.standalone.configurationSecurity.psw=P@$$w0rd"})
 public class CasConfigurationJasyptCipherExecutorTests {
-    @ClassRule
-    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
-
-    @Rule
-    public final SpringMethodRule springMethodRule = new SpringMethodRule();
-
-    static {
-        System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
-    }
-
     @Autowired
     private Environment environment;
 

@@ -34,7 +34,6 @@ import java.util.UUID;
 @Slf4j
 public class FortressAuthenticationHandlerTests {
 
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 

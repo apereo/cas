@@ -64,7 +64,7 @@ import java.util.Collections;
     RefreshAutoConfiguration.class
 },
     properties = {"spring.activemq.pool.enabled=false", "spring.activemq.packages.trust-all=true"})
-public class JmsTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class JmsTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
