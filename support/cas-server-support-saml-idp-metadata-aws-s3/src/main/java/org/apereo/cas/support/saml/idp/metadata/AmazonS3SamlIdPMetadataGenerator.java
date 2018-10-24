@@ -10,11 +10,14 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.MediaType;
 
-import java.io.StringWriter;
-import java.math.BigInteger;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link AmazonS3SamlIdPMetadataGenerator}.
@@ -22,10 +25,8 @@ import java.math.BigInteger;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@Slf4j
 public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
-
-    private final CipherExecutor<String, String> metadataCipherExecutor;
-
     private final transient AmazonS3 s3Client;
 
     private final String bucketName;
@@ -33,68 +34,47 @@ public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerat
     public AmazonS3SamlIdPMetadataGenerator(final SamlIdPMetadataLocator samlIdPMetadataLocator,
                                             final SamlIdPCertificateAndKeyWriter samlIdPCertificateAndKeyWriter,
                                             final String entityId,
-                                            final ResourceLoader resourceLoader, final String casServerPrefix,
+                                            final ResourceLoader resourceLoader,
+                                            final String casServerPrefix,
                                             final String scope,
                                             final CipherExecutor metadataCipherExecutor,
                                             final AmazonS3 s3Client,
                                             final String bucketName) {
-        super(samlIdPMetadataLocator, samlIdPCertificateAndKeyWriter, entityId, resourceLoader, casServerPrefix, scope);
-        this.metadataCipherExecutor = metadataCipherExecutor;
+        super(samlIdPMetadataLocator, samlIdPCertificateAndKeyWriter, metadataCipherExecutor,
+            entityId, resourceLoader, casServerPrefix, scope);
         this.s3Client = s3Client;
         this.bucketName = bucketName;
     }
 
     @Override
     @SneakyThrows
-    public void buildSelfSignedEncryptionCert() {
-        try (val certWriter = new StringWriter(); val keyWriter = new StringWriter()) {
-            this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
-            val encryptionKey = metadataCipherExecutor.encode(keyWriter.toString());
-            val doc = getSamlIdPMetadataDocument();
-            doc.setEncryptionCertificate(certWriter.toString());
-            doc.setEncryptionKey(encryptionKey);
-            saveSamlIdPMetadataDocument(doc);
-        }
-    }
-
-    private SamlIdPMetadataDocument getSamlIdPMetadataDocument() {
-        val doc = new SamlIdPMetadataDocument();
-        doc.setId(BigInteger.valueOf(System.nanoTime()));
-        return doc;
+    public Pair<String, String> buildSelfSignedEncryptionCert() {
+        return generateCertificateAndKey();
     }
 
     @Override
     @SneakyThrows
-    public void buildSelfSignedSigningCert() {
-        try (val certWriter = new StringWriter(); val keyWriter = new StringWriter()) {
-            this.samlIdPCertificateAndKeyWriter.writeCertificateAndKey(keyWriter, certWriter);
-            val signingKey = metadataCipherExecutor.encode(keyWriter.toString());
-            val doc = getSamlIdPMetadataDocument();
-            doc.setSigningCertificate(certWriter.toString());
-            doc.setSigningKey(signingKey);
-            saveSamlIdPMetadataDocument(doc);
-        }
+    public Pair<String, String> buildSelfSignedSigningCert() {
+        return generateCertificateAndKey();
     }
 
     @Override
-    protected void writeMetadata(final String metadata) {
-        val doc = getSamlIdPMetadataDocument();
-        doc.setMetadata(metadata);
-        saveSamlIdPMetadataDocument(doc);
-    }
-
-    private void saveSamlIdPMetadataDocument(final SamlIdPMetadataDocument doc) {
-        val request = new PutObjectRequest(bucketName, doc.getId().toString(), doc.getMetadata());
+    protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc) {
+        if (!s3Client.doesBucketExistV2(bucketName)) {
+            LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketName);
+            val bucket = s3Client.createBucket(bucketName);
+            LOGGER.debug("Created bucket [{}]", bucket.getName());
+        }
         val metadata = new ObjectMetadata();
-
-        metadata.setContentType("plain/text");
-        metadata.addUserMetadata("encryptionCertificate", doc.getEncryptionCertificate());
+        metadata.setContentType(MediaType.TEXT_PLAIN_VALUE);
         metadata.addUserMetadata("signingCertificate", doc.getSigningCertificate());
-        metadata.addUserMetadata("encryptionKey", doc.getEncryptionKey());
         metadata.addUserMetadata("signingKey", doc.getSigningKey());
-        request.setMetadata(metadata);
+        metadata.addUserMetadata("encryptionCertificate", doc.getEncryptionCertificate());
+        metadata.addUserMetadata("encryptionKey", doc.getEncryptionKey());
+        val request = new PutObjectRequest(bucketName, String.valueOf(doc.getId()),
+            new ByteArrayInputStream(doc.getMetadata().getBytes(StandardCharsets.UTF_8)), metadata);
         s3Client.putObject(request);
+        return doc;
     }
-
 }
 

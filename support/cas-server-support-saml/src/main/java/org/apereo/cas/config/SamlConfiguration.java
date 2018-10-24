@@ -69,7 +69,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
-    private OpenSamlConfigBean configBean;
+    private ObjectProvider<OpenSamlConfigBean> configBean;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -144,7 +144,7 @@ public class SamlConfiguration {
     @ConditionalOnMissingBean(name = "saml10ObjectBuilder")
     @Bean
     public Saml10ObjectBuilder saml10ObjectBuilder() {
-        return new Saml10ObjectBuilder(this.configBean);
+        return new Saml10ObjectBuilder(this.configBean.getIfAvailable());
     }
 
     @Bean

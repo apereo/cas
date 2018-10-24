@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 
@@ -37,55 +36,60 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
 
     @Override
     public Resource getSigningCertificate() {
-        fetchMetadataDocument();
-        val cert = metadataDocument.getSigningCertificate();
-        return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+        if (exists()) {
+            val cert = metadataDocument.getSigningCertificate();
+            return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+        }
+        return null;
     }
 
     @Override
     public Resource getSigningKey() {
-        fetchMetadataDocument();
-        val data = metadataDocument.getSigningKey();
-        val cert = metadataCipherExecutor.decode(data);
-        return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+        if (exists()) {
+            val data = metadataDocument.getSigningKey();
+            val cert = metadataCipherExecutor.decode(data);
+            return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+        }
+        return null;
     }
 
     @Override
     public Resource getMetadata() {
-        fetchMetadataDocument();
-        val data = metadataDocument.getMetadata();
-        return new InputStreamResource(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
+        if (exists()) {
+            val data = metadataDocument.getMetadata();
+            return new InputStreamResource(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
+        }
+        return null;
     }
 
     @Override
     public Resource getEncryptionCertificate() {
-        fetchMetadataDocument();
-        val cert = metadataDocument.getEncryptionCertificate();
-        return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+        if (exists()) {
+            val cert = metadataDocument.getEncryptionCertificate();
+            return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+        }
+        return null;
     }
 
     @Override
     public Resource getEncryptionKey() {
-        fetchMetadataDocument();
-        val data = metadataDocument.getEncryptionKey();
-        val cert = metadataCipherExecutor.decode(data);
-        return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+        if (exists()) {
+            val data = metadataDocument.getEncryptionKey();
+            val cert = metadataCipherExecutor.decode(data);
+            return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
+        }
+        return null;
     }
 
     @Override
     public void initialize() {
-        fetchMetadataDocument();
+        fetch();
     }
 
 
     @Override
     public boolean exists() {
-        fetchMetadataDocument();
-        return metadataDocument != null && StringUtils.isNotBlank(metadataDocument.getMetadata());
+        fetch();
+        return metadataDocument != null && metadataDocument.isValid();
     }
-
-    /**
-     * Fetch metadata document.
-     */
-    protected abstract void fetchMetadataDocument();
 }

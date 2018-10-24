@@ -1,12 +1,17 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
+
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This is {@link FileSystemSamlIdPMetadataLocator}.
@@ -63,5 +68,17 @@ public class FileSystemSamlIdPMetadataLocator implements SamlIdPMetadataLocator 
     @Override
     public boolean exists() {
         return getMetadata().exists();
+    }
+
+    @SneakyThrows
+    @Override
+    public SamlIdPMetadataDocument fetch() {
+        val doc = new SamlIdPMetadataDocument();
+        doc.setMetadata(IOUtils.toString(getMetadata().getInputStream(), StandardCharsets.UTF_8));
+        doc.setEncryptionCertificate(IOUtils.toString(getEncryptionCertificate().getInputStream(), StandardCharsets.UTF_8));
+        doc.setEncryptionKey(IOUtils.toString(getEncryptionKey().getInputStream(), StandardCharsets.UTF_8));
+        doc.setSigningCertificate(IOUtils.toString(getSigningCertificate().getInputStream(), StandardCharsets.UTF_8));
+        doc.setSigningKey(IOUtils.toString(getSigningKey().getInputStream(), StandardCharsets.UTF_8));
+        return doc;
     }
 }

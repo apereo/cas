@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServ
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -45,12 +46,12 @@ public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlReg
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
-    private OpenSamlConfigBean openSamlConfigBean;
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Bean
     public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
+        return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getIfAvailable());
     }
 
     @RefreshScope
