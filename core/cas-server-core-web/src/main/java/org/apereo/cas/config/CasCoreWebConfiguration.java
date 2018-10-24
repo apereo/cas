@@ -21,6 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.HierarchicalMessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
@@ -89,6 +90,7 @@ public class CasCoreWebConfiguration {
     public ArgumentExtractor argumentExtractor(final List<ServiceFactoryConfigurer> configurers) {
         final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList = new ArrayList<>();
         configurers.forEach(c -> serviceFactoryList.addAll(c.buildServiceFactories()));
+        AnnotationAwareOrderComparator.sortIfNecessary(serviceFactoryList);
         return new DefaultArgumentExtractor(serviceFactoryList);
     }
 

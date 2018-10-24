@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
+import org.springframework.core.Ordered;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -9,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
  * @param <T> the type parameter
  * @since 4.2
  */
-public interface ServiceFactory<T extends Service> {
+public interface ServiceFactory<T extends Service> extends Ordered {
 
     /**
      * Create service object based on the parameters of the request.

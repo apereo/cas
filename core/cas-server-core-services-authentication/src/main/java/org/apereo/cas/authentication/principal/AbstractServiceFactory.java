@@ -1,7 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -17,7 +20,11 @@ import java.util.stream.Stream;
 @SuppressWarnings("TypeParameterShadowing")
 @Slf4j
 @ToString
+@Getter
+@Setter
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
+
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public <T extends Service> T createService(final String id, final Class<T> clazz) {
