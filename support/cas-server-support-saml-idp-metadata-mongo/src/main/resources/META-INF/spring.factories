@@ -1,2 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.SamlIdPMongoDbMetadataConfiguration,\
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.SamlIdPMongoDbRegisteredServiceMetadataConfiguration,\
   org.apereo.cas.config.SamlIdPMongoDbIdPMetadataConfiguration

@@ -25,7 +25,7 @@ import org.apereo.cas.config.CouchDbSamlIdPFactoryConfiguration;
 import org.apereo.cas.config.CouchDbSamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPAuthenticationServiceSelectionStrategyConfiguration;
 import org.apereo.cas.config.SamlIdPConfiguration;
-import org.apereo.cas.config.SamlIdPCouchDbMetadataConfiguration;
+import org.apereo.cas.config.SamlIdPCouchDbRegisteredServiceMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -76,7 +76,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
     CouchDbSamlIdPFactoryConfiguration.class,
     CouchDbSamlIdPMetadataConfiguration.class,
-    SamlIdPCouchDbMetadataConfiguration.class,
+    SamlIdPCouchDbRegisteredServiceMetadataConfiguration.class,
     CasCouchDbCoreConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
