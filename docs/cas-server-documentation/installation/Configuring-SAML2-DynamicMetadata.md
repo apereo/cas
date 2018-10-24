@@ -319,9 +319,32 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 }
 ```
 
+The following parameters are expected for the Amazon S3 object metadata:
+
+| Parameter             | Description
+|-----------------------|-------------------------------------------------------
+| `signature`           | The metadata signing certificate, if any.
+
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
 The metadata location in the registration record above simply needs to be specified as <code>awss3://</code> to signal to CAS that 
 SAML metadata for registered service provider must be fetched from Amazon S3 defined in CAS configuration. 
 </p></div>
+
+To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-amazon-s3).
+
+### Identity Provider Metadata
+
+Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored via Amazon S3 buckets. Artifacts such as the metadata, signing and encryption keys, etc are kept
+inside a bucket with metadata that would have the following structure:
+
+| Field                     | Description
+|---------------------------|---------------------------------------------------
+| `id`                      | The identifier of the record.
+| `signingCertificate`      | The signing certificate.
+| `signingKey`              | The signing key.
+| `encryptionCertificate`   | The encryption certificate.
+| `encryptionKey`           | The encryption key.
+
+The actual object's content/body is expected to contain the SAML2 identity provider metadata.
 
 To see the relevant CAS properties, please [see this guide](../configuration/Configuration-Properties.html#saml-metadata-amazon-s3).

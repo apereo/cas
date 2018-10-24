@@ -2,14 +2,14 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataCipherExecutor;
-import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.MongoDbSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataCipherExecutor;
+import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.AmazonS3SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 
+import com.amazonaws.services.s3.AmazonS3;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -22,20 +22,18 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
- * This is {@link SamlIdPMongoDbIdPMetadataConfiguration}.
+ * This is {@link AmazonS3SamlIdPMetadataConfiguration}.
  *
  * @author Misagh Moayyed
- * @since 5.2.0
+ * @since 6.0.0
  */
-@Configuration("samlIdPMongoDbIdPMetadataConfiguration")
+@Configuration("amazonS3SamlIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnProperty(prefix = "cas.authn.samlIdp.metadata.mongo", name = "idpMetadataCollection")
+@ConditionalOnProperty(prefix = "cas.authn.samlIdp.metadata.amazonS3", name = "idpMetadataBucketName")
 @Slf4j
-public class SamlIdPMongoDbIdPMetadataConfiguration {
-
+public class AmazonS3SamlIdPMetadataConfiguration {
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -46,59 +44,52 @@ public class SamlIdPMongoDbIdPMetadataConfiguration {
     @Qualifier("samlSelfSignedCertificateWriter")
     private ObjectProvider<SamlIdPCertificateAndKeyWriter> samlSelfSignedCertificateWriter;
 
+    @Autowired
+    @Qualifier("amazonS3Client")
+    private ObjectProvider<AmazonS3> amazonS3Client;
+
     @Bean
-    @ConditionalOnMissingBean(name = "mongoDbSamlIdPMetadataCipherExecutor")
-    public CipherExecutor mongoDbSamlIdPMetadataCipherExecutor() {
+    @ConditionalOnMissingBean(name = "amazonS3SamlIdPMetadataCipherExecutor")
+    public CipherExecutor amazonS3SamlIdPMetadataCipherExecutor() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        val crypto = idp.getMetadata().getMongo().getCrypto();
+        val crypto = idp.getMetadata().getAmazonS3().getCrypto();
 
         if (crypto.isEnabled()) {
-            return new MongoDbSamlIdPMetadataCipherExecutor(
+            return new AmazonS3SamlIdPMetadataCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
                 crypto.getAlg());
         }
-        LOGGER.info("MongoDb SAML IdP metadata encryption/signing is turned off and "
+        LOGGER.info("Amazon S3 SAML IdP metadata encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "
             + "Consider using other choices to handle encryption, signing and verification of "
             + "metadata artifacts");
         return CipherExecutor.noOp();
     }
 
-    @ConditionalOnMissingBean(name = "mongoDbSamlIdPMetadataTemplate")
-    @Bean
-    public MongoTemplate mongoDbSamlIdPMetadataTemplate() {
-        val idp = casProperties.getAuthn().getSamlIdp();
-        val mongo = idp.getMetadata().getMongo();
-        val factory = new MongoDbConnectionFactory();
-        val mongoTemplate = factory.buildMongoTemplate(mongo);
-        factory.createCollection(mongoTemplate, mongo.getIdpMetadataCollection(), mongo.isDropCollection());
-        return mongoTemplate;
-    }
-
     @Bean(initMethod = "generate")
     @SneakyThrows
-    public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
+    public SamlIdPMetadataGenerator amazonS3SamlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new MongoDbSamlIdPMetadataGenerator(
+        return new AmazonS3SamlIdPMetadataGenerator(
             samlIdPMetadataLocator(),
             samlSelfSignedCertificateWriter.getIfAvailable(),
             idp.getEntityId(),
             resourceLoader,
             casProperties.getServer().getPrefix(),
             idp.getScope(),
-            mongoDbSamlIdPMetadataTemplate(),
-            idp.getMetadata().getMongo().getIdpMetadataCollection(),
-            mongoDbSamlIdPMetadataCipherExecutor());
+            amazonS3SamlIdPMetadataCipherExecutor(),
+            amazonS3Client.getIfAvailable(),
+            idp.getMetadata().getAmazonS3().getIdpMetadataBucketName());
     }
 
     @Bean
     @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new MongoDbSamlIdPMetadataLocator(
-            mongoDbSamlIdPMetadataCipherExecutor(),
-            mongoDbSamlIdPMetadataTemplate(),
-            idp.getMetadata().getMongo().getIdpMetadataCollection());
+        return new AmazonS3SamlIdPMetadataLocator(amazonS3SamlIdPMetadataCipherExecutor(),
+            idp.getMetadata().getAmazonS3().getIdpMetadataBucketName(),
+            amazonS3Client.getIfAvailable());
     }
+
 }
