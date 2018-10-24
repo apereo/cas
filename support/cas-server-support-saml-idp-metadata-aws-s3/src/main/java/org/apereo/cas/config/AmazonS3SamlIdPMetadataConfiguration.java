@@ -69,7 +69,7 @@ public class AmazonS3SamlIdPMetadataConfiguration {
 
     @Bean(initMethod = "generate")
     @SneakyThrows
-    public SamlIdPMetadataGenerator amazonS3SamlIdPMetadataGenerator() {
+    public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         val idp = casProperties.getAuthn().getSamlIdp();
         return new AmazonS3SamlIdPMetadataGenerator(
             samlIdPMetadataLocator(),

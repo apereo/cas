@@ -2,13 +2,12 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.util.IOUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.math.BigInteger;
 
 /**
  * This is {@link AmazonS3SamlIdPMetadataLocator}.
@@ -29,9 +28,14 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
     }
 
     @Override
-    protected void fetchMetadataDocument() {
+    public SamlIdPMetadataDocument fetch() {
         try {
             LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketName);
+            if (!s3Client.doesBucketExistV2(bucketName)) {
+                LOGGER.debug("S3 bucket [{}] does not exist", bucketName);
+                return getMetadataDocument();
+            }
+
             val result = s3Client.listObjectsV2(bucketName);
             val objects = result.getObjectSummaries();
             LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketName);
@@ -43,16 +47,16 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
             val objectKey = obj.getKey();
             LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketName);
             val object = s3Client.getObject(obj.getBucketName(), objectKey);
-            try (val is = object.getObjectContent()) {
-                metadataDocument.setId(BigInteger.valueOf(System.nanoTime()));
 
-                val objectMetadata = object.getObjectMetadata();
-                if (objectMetadata != null) {
-                    metadataDocument.setEncryptionCertificate(objectMetadata.getUserMetaDataOf("encryptionCertificate"));
-                    metadataDocument.setSigningCertificate(objectMetadata.getUserMetaDataOf("signingCertificate"));
-                    metadataDocument.setEncryptionKey(objectMetadata.getUserMetaDataOf("encryptionKey"));
-                    metadataDocument.setSigningKey(objectMetadata.getUserMetaDataOf("signingKey"));
-                }
+            val objectMetadata = object.getObjectMetadata();
+            if (objectMetadata != null) {
+                metadataDocument.setEncryptionCertificate(objectMetadata.getUserMetaDataOf("encryptionCertificate"));
+                metadataDocument.setSigningCertificate(objectMetadata.getUserMetaDataOf("signingCertificate"));
+                metadataDocument.setEncryptionKey(objectMetadata.getUserMetaDataOf("encryptionKey"));
+                metadataDocument.setSigningKey(objectMetadata.getUserMetaDataOf("signingKey"));
+            }
+
+            try (val is = object.getObjectContent()) {
                 metadataDocument.setMetadata(IOUtils.toString(is));
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
@@ -60,6 +64,7 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+        return getMetadataDocument();
     }
 }
 

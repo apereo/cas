@@ -41,7 +41,7 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
-    private OpenSamlConfigBean openSamlConfigBean;
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -61,7 +61,7 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
     @ConditionalOnMissingBean(name = "googleSaml20ObjectBuilder")
     @Bean
     public GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder() {
-        return new GoogleSaml20ObjectBuilder(openSamlConfigBean);
+        return new GoogleSaml20ObjectBuilder(openSamlConfigBean.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "googleAccountsServiceResponseBuilder")
