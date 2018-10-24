@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link AmazonS3SamlMetadataProperties}.
@@ -19,7 +21,19 @@ public class AmazonS3SamlMetadataProperties extends BaseAmazonWebServicesPropert
     private static final long serialVersionUID = 352435146313504995L;
 
     /**
+     * The collection name that is responsible to hold
+     * the identity provider metadata.
+     */
+    private String idpMetadataBucketName;
+
+    /**
      * S3 bucket that contains metadata files.
      */
     private String bucketName;
+
+    /**
+     * Crypto settings that sign/encrypt the metadata records.
+     */
+    @NestedConfigurationProperty
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 }
