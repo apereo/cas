@@ -32,9 +32,6 @@ import org.springframework.core.env.Environment;
 public class SamlIdPAmazonS3RegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
 
     @Autowired
-    private Environment environment;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
