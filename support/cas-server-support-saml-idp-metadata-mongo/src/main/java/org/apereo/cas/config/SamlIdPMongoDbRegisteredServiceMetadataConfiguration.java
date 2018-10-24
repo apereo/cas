@@ -23,9 +23,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("samlIdPMongoDbMetadataConfiguration")
+@Configuration("samlIdPMongoDbRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPMongoDbMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
+public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
 
     @Autowired
     private CasConfigurationProperties casProperties;
