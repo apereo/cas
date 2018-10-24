@@ -27,7 +27,7 @@ echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
 echo -e "***********************************************"
 
-./ci/tests/cassandra/run-awss3-server.sh
+./ci/tests/amazons3/run-awss3-server.sh
 
 gradleBuild="$gradleBuild testAWSS3 jacocoRootReport -x test -x javadoc -x check \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true --parallel \
