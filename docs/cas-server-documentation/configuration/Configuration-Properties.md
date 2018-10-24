@@ -2600,8 +2600,11 @@ under the configuration key `cas.authn.samlIdp.metadata.rest`.
 Common AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings)
 under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
 
+ The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.amazonS3`.
+ 
 ```properties
-# cas.authn.samlIdp.metadata.amazonS3.bucketName=
+# cas.authn.samlIdp.metadata.amazonS3.bucketName=saml-sp-bucket
+# cas.authn.samlIdp.metadata.mongo.idpMetadataBucketName=saml-idp-bucket
 ```
 
 ### SAML Logout
@@ -4206,8 +4209,8 @@ To learn more about this topic, [please review this guide](../installation/Servi
 ```properties
 # eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
 # eureka.client.enabled=true
-# eureka.instance.statusPageUrl=${cas.server.prefix}/status/info
-# eureka.instance.healthCheckUrl=${cas.server.prefix}/status/health
+# eureka.instance.statusPageUrl=${cas.server.prefix}/actuator/info
+# eureka.instance.healthCheckUrl=${cas.server.prefix}/actuator/health
 # eureka.instance.homePageUrl=${cas.server.prefix}/
 # eureka.client.healthcheck.enabled=true
 

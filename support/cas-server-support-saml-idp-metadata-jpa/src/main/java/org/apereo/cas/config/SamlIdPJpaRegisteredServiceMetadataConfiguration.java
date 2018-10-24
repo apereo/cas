@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServ
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -30,34 +31,28 @@ import javax.sql.DataSource;
 import java.util.List;
 
 /**
- * This is {@link SamlIdPJpaMetadataConfiguration}.
+ * This is {@link SamlIdPJpaRegisteredServiceMetadataConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration("SamlIdPJpaMetadataConfiguration")
+@Configuration("samlIdPJpaRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
-public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
+public class SamlIdPJpaRegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
-    private OpenSamlConfigBean openSamlConfigBean;
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Bean
     public SamlRegisteredServiceMetadataResolver jpaSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean);
+        return new JpaSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getIfAvailable());
     }
-
-    @Override
-    public void configureMetadataResolutionPlan(final SamlRegisteredServiceMetadataResolutionPlan plan) {
-        plan.registerMetadataResolver(jpaSamlRegisteredServiceMetadataResolver());
-    }
-
 
     @RefreshScope
     @Bean
@@ -95,6 +90,11 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
         val mgmr = new JpaTransactionManager();
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
+    }
+
+    @Override
+    public void configureMetadataResolutionPlan(final SamlRegisteredServiceMetadataResolutionPlan plan) {
+        plan.registerMetadataResolver(jpaSamlRegisteredServiceMetadataResolver());
     }
 
 }

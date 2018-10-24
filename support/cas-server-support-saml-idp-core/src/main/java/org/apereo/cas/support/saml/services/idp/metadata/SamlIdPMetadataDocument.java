@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.services.idp.metadata;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.Id;
@@ -14,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import java.math.BigInteger;
 
 /**
  * This is {@link SamlIdPMetadataDocument}.
@@ -35,7 +35,7 @@ public class SamlIdPMetadataDocument {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "id", columnDefinition = "BIGINT")
-    private BigInteger id = BigInteger.valueOf(-1);
+    private long id = -1;
 
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
@@ -54,15 +54,28 @@ public class SamlIdPMetadataDocument {
 
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
-    @Column(name = "encryptionCertificate", length = 3_000)
+    @Column(name = "encryptionCertificate", length = 5_000)
     private String encryptionCertificate;
 
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
-    @Column(name = "encryptionKey", length = 3_000)
+    @Column(name = "encryptionKey", length = 5_000)
     private String encryptionKey;
 
     public SamlIdPMetadataDocument() {
-        setId(BigInteger.valueOf(System.currentTimeMillis()));
+        setId(System.nanoTime());
+    }
+
+    /**
+     * Is valid?
+     *
+     * @return true/false
+     */
+    public boolean isValid() {
+        return StringUtils.isNotBlank(getMetadata())
+            && StringUtils.isNotBlank(getSigningCertificate())
+            && StringUtils.isNotBlank(getSigningKey())
+            && StringUtils.isNotBlank(getEncryptionCertificate())
+            && StringUtils.isNotBlank(getEncryptionKey());
     }
 }

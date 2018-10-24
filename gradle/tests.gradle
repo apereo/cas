@@ -12,6 +12,13 @@ task testCosmosDb(type: Test) {
     }
 }
 
+task testAWSS3(type: Test) {
+    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "AmazonWebServicesS3Category") && "AWSS3".equalsIgnoreCase(rootProject.testCategoryType)
+    useJUnitPlatform {
+        includeTags "org.apereo.cas.category.AmazonWebServicesS3Category"
+    }
+}
+
 task testRadius(type: Test) {
     enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Radius") && "RADIUS".equalsIgnoreCase(rootProject.testCategoryType)
     useJUnitPlatform {
@@ -159,6 +166,7 @@ test {
                 "org.apereo.cas.category.PostgresCategory",
                 "org.apereo.cas.category.RedisCategory",
                 "org.apereo.cas.category.RadiusCategory",
+                "org.apereo.cas.category.AmazonWebServicesS3Category",
                 "org.apereo.cas.category.RestfulApiCategory")
     }
     onlyIf {

@@ -7,8 +7,10 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresource.ITemplateResource;
@@ -52,8 +54,9 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
             headers.put("locale", request.getLocale().getCountry());
             headers.putAll(HttpRequestUtils.getRequestHeaders(request));
         }
+        HttpResponse response = null;
         try {
-            val response = HttpUtils.execute(rest.getUrl(), rest.getMethod(), rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), headers);
+            response = HttpUtils.execute(rest.getUrl(), rest.getMethod(), rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), headers);
             val statusCode = response.getStatusLine().getStatusCode();
             if (response != null && HttpStatus.valueOf(statusCode).is2xxSuccessful()) {
                 val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
@@ -61,6 +64,8 @@ public class RestfulUrlTemplateResolver extends ThemeFileTemplateResolver {
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
 
         return super.computeTemplateResource(configuration, ownerTemplate, template, resourceName,
