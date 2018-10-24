@@ -79,7 +79,7 @@ or the build is signaled to skip the plugin explicitly.
 int findAvailableTcpPort(List<Integer> portRange) {
     for (int port : portRange) {
         try {
-            println "Checking port ${port}"
+            logger.debug "Checking port ${port}"
             def serverSocket = new ServerSocket(port)
             serverSocket.close()
             return port
