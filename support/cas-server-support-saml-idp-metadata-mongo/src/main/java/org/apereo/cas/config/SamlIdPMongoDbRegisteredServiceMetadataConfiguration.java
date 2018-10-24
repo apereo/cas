@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServ
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurator;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,13 +33,12 @@ public class SamlIdPMongoDbRegisteredServiceMetadataConfiguration implements Sam
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
-    private OpenSamlConfigBean openSamlConfigBean;
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Bean
     public SamlRegisteredServiceMetadataResolver mongoDbSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new MongoDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean,
-            mongoDbSamlMetadataResolverTemplate());
+        return new MongoDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getIfAvailable(), mongoDbSamlMetadataResolverTemplate());
     }
 
     @ConditionalOnMissingBean(name = "mongoDbSamlMetadataResolverTemplate")

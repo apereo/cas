@@ -27,7 +27,8 @@ public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
 
 
     @Override
-    protected void fetchMetadataDocument() {
+    public SamlIdPMetadataDocument fetch() {
         setMetadataDocument(mongoTemplate.findOne(new Query(), SamlIdPMetadataDocument.class, this.collectionName));
+        return getMetadataDocument();
     }
 }

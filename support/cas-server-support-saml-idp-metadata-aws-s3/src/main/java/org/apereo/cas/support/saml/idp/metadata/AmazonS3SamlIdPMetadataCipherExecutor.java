@@ -24,12 +24,12 @@ public class AmazonS3SamlIdPMetadataCipherExecutor extends BaseStringCipherExecu
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.samlIdp.metadata.couchDb.crypto.encryption.key";
+        return "cas.authn.samlIdp.metadata.amazonS3.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.authn.samlIdp.metadata.couchDb.crypto.signing.key";
+        return "cas.authn.samlIdp.metadata.amazonS3.crypto.signing.key";
     }
 }
 
