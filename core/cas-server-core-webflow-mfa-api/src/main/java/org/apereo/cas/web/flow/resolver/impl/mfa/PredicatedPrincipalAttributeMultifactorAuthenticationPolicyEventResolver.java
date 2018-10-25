@@ -23,6 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -56,12 +57,12 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
 
     @Override
     @SneakyThrows
-    protected Set<Event> resolveMultifactorProviderViaPredicate(final RequestContext context,
+    protected Set<Event> resolveMultifactorProviderViaPredicate(final Optional<RequestContext> context,
                                                                 final RegisteredService service,
                                                                 final Principal principal,
                                                                 final Collection<MultifactorAuthenticationProvider> providers) {
 
-        if (predicateResource == null || !ResourceUtils.doesResourceExist(predicateResource)) {
+        if (!ResourceUtils.doesResourceExist(predicateResource)) {
             LOGGER.debug("No groovy script predicate is defined to decide which multifactor authentication provider should be chosen");
             return null;
         }
@@ -73,8 +74,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
 
         final Object[] args = {service, principal, providers, LOGGER};
         final Predicate<MultifactorAuthenticationProvider> predicate =
-            ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS,
-                args, Predicate.class);
+            ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS, args, Predicate.class);
 
         LOGGER.debug("Created predicate instance [{}] from [{}] to filter multifactor authentication providers [{}]",
             predicate.getClass().getSimpleName(), predicateResource, providers);
