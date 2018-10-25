@@ -657,9 +657,12 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 ```properties
 # ${configurationKey}.dynamoDb.dropTablesOnStartup=false
 # ${configurationKey}.dynamoDb.preventTableCreationOnStartup=false
-# ${configurationKey}.dynamoDb.timeOffset=0
 
 # ${configurationKey}.dynamoDb.localInstance=false
+# ${configurationKey}.dynamoDb.maxErrorRetry=-1
+# ${configurationKey}.dynamoDb.proxyHost=
+# ${configurationKey}.dynamoDb.proxyPassword=
+# ${configurationKey}.dynamoDb.proxyPort=-1
 
 # ${configurationKey}.dynamoDb.readCapacity=10
 # ${configurationKey}.dynamoDb.writeCapacity=10
@@ -676,7 +679,7 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 # ${configurationKey}.dynamoDb.localAddress=
 # ${configurationKey}.dynamoDb.maxConnections=10
 ```
-
+    
 AWS settings for this feature are available [here](#amazon-integration-settings).
 
 ## RESTful Integrations
@@ -853,8 +856,6 @@ Amazon Web Service features, given the provider's *configuration key*:
 # ${configurationKey}.endpoint=http://localhost:8000
 # ${configurationKey}.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
 # ${configurationKey}.regionOverride=
-# ${configurationKey}.serviceNameIntern=
-
 # ${configurationKey}.localAddress=
 ```
 
