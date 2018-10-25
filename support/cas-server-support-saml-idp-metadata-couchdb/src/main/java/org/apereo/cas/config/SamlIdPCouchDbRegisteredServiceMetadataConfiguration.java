@@ -21,22 +21,22 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link SamlIdPCouchDbMetadataConfiguration}.
+ * This is {@link SamlIdPCouchDbRegisteredServiceMetadataConfiguration}.
  *
  * @author Timur Duehr
  * @since 6.0.0
  */
-@Configuration("samlIdPCouchDbMetadataConfiguration")
+@Configuration("samlIdPCouchDbRegisteredServiceMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class SamlIdPCouchDbMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
+public class SamlIdPCouchDbRegisteredServiceMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
-    private OpenSamlConfigBean openSamlConfigBean;
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
     @Qualifier("samlMetadataCouchDbFactory")
@@ -57,7 +57,7 @@ public class SamlIdPCouchDbMetadataConfiguration implements SamlRegisteredServic
     @RefreshScope
     public SamlRegisteredServiceMetadataResolver couchDbSamlRegisteredServiceMetadataResolver() {
         val idp = casProperties.getAuthn().getSamlIdp();
-        return new CouchDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean, samlMetadataDocumentCouchDbRepository());
+        return new CouchDbSamlRegisteredServiceMetadataResolver(idp, openSamlConfigBean.getIfAvailable(), samlMetadataDocumentCouchDbRepository());
     }
 
     @Override
