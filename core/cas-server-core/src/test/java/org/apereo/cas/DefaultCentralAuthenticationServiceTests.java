@@ -241,12 +241,12 @@ public class DefaultCentralAuthenticationServiceTests extends AbstractCentralAut
     public void verifyValidateServiceTicketWithInvalidService() {
         val service = getService("badtestservice");
 
-        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
-        val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
-
-        val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
         assertThrows(UnauthorizedServiceException.class, () -> {
-            getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service);
+            val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
+            val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
+
+            val serviceTicket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
+                getCentralAuthenticationService().validateServiceTicket(serviceTicket.getId(), service);
         });
     }
 
