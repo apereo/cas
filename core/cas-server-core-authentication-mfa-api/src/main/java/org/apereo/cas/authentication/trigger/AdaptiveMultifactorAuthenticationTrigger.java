@@ -3,15 +3,14 @@ package org.apereo.cas.authentication.trigger;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +37,6 @@ import java.util.Optional;
 public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final GeoLocationService geoLocationService;
     private final CasConfigurationProperties casProperties;
-    private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -70,14 +68,14 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
         val clientIp = clientInfo.getClientIpAddress();
         LOGGER.debug("Located client IP address as [{}]", clientIp);
 
-        val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(httpServletRequest);
+        val agent = HttpRequestUtils.getHttpServletRequestUserAgent(httpServletRequest);
 
         val entries = multifactorMap.entrySet();
         for (final Map.Entry entry : entries) {
             val mfaMethod = entry.getKey().toString();
             val pattern = entry.getValue().toString();
 
-            val providerFound = multifactorAuthenticationProviderResolver.resolveProvider(providerMap, mfaMethod);
+            val providerFound = MultifactorAuthenticationUtils.resolveProvider(providerMap, mfaMethod);
 
             if (providerFound.isEmpty()) {
                 LOGGER.error("Adaptive authentication is configured to require [{}] for [{}], yet [{}] is absent in the configuration.",
@@ -108,7 +106,7 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
 
     private boolean checkRequestGeoLocation(final HttpServletRequest httpServletRequest, final String clientIp, final String mfaMethod, final String pattern) {
         if (this.geoLocationService != null) {
-            val location = WebUtils.getHttpServletRequestGeoLocation(httpServletRequest);
+            val location = HttpRequestUtils.getHttpServletRequestGeoLocation(httpServletRequest);
             val loc = this.geoLocationService.locate(clientIp, location);
             if (loc != null) {
                 val address = loc.build();

@@ -4,11 +4,9 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import org.springframework.core.Ordered;
-import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * This is {@link MultifactorAuthenticationTrigger}.
