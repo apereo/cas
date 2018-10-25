@@ -108,4 +108,31 @@ public abstract class AbstractDynamoDbProperties extends BaseAmazonWebServicesPr
      * and testing.
      */
     private boolean localInstance;
+
+    /**
+     * The maximum number of times that a retryable failed request (ex: a 5xx response from a
+     * service) will be retried. Or -1 if the user has not explicitly set this value, in which case
+     * the configured RetryPolicy will be used to control the retry count.
+     */
+    private int maxErrorRetry = -1;
+
+    /**
+     *  Optionally specifies the proxy host to connect through.
+     */
+    private String proxyHost;
+
+    /**
+     *  Optionally specifies the proxy password to connect through.
+     */
+    private String proxyPassword;
+
+    /**
+     *  Optionally specifies the proxy username to connect through.
+     */
+    private String proxyUsername;
+
+    /**
+     *  Optionally specifies the proxy port to connect through.
+     */
+    private int proxyPort = -1;
 }
