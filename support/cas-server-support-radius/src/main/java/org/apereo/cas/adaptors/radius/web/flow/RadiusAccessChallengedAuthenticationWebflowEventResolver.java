@@ -1,28 +1,35 @@
 package org.apereo.cas.adaptors.radius.web.flow;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.jradius.dictionary.Attr_ReplyMessage;
 import net.jradius.dictionary.Attr_State;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.core.Ordered;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import java.util.Set;
 
@@ -33,8 +40,12 @@ import java.util.Set;
  * @since 5.3.0
  */
 @Slf4j
-public class RadiusAccessChallengedAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+@Getter
+@Setter
+public class RadiusAccessChallengedAuthenticationWebflowEventResolver extends BaseMultifactorAuthenticationProviderEventResolver
+    implements MultifactorAuthenticationTrigger {
     private final String radiusMultifactorAuthenticationProviderId;
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     public RadiusAccessChallengedAuthenticationWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                     final CentralAuthenticationService centralAuthenticationService,
@@ -51,16 +62,14 @@ public class RadiusAccessChallengedAuthenticationWebflowEventResolver extends Ba
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
-        val authentication = WebUtils.getAuthentication(context);
-
+    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication, final RegisteredService registeredService,
+                                                                   final HttpServletRequest request, final Service service) {
         if (authentication == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
-            return null;
+            return Optional.empty();
         }
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        if (providerMap == null || providerMap.isEmpty()) {
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
@@ -70,17 +79,25 @@ public class RadiusAccessChallengedAuthenticationWebflowEventResolver extends Ba
         LOGGER.debug("Evaluating principal attributes [{}] for multifactor authentication", attributes.keySet());
         if (attributes.containsKey(Attr_ReplyMessage.NAME) && attributes.containsKey(Attr_State.NAME)) {
             LOGGER.debug("Authentication requires multifactor authentication via provider [{}]", this.radiusMultifactorAuthenticationProviderId);
-            val providerFound = resolveProvider(providerMap, this.radiusMultifactorAuthenticationProviderId);
-            if (providerFound.isPresent()) {
-                val multifactorAuthenticationProvider = providerFound.get();
-                final Event event = validateEventIdForMatchingTransitionInContext(multifactorAuthenticationProvider.getId(), context,
-                    buildEventAttributeMap(authentication.getPrincipal(), Optional.empty(), multifactorAuthenticationProvider));
-                return CollectionUtils.wrapSet(event);
-            }
-            LOGGER.warn("No multifactor provider could be found for [{}]", this.radiusMultifactorAuthenticationProviderId);
-            throw new AuthenticationException();
+            return resolveProvider(providerMap, this.radiusMultifactorAuthenticationProviderId);
         }
-        return null;
+        return Optional.empty();
+    }
+
+    @Override
+    public Set<Event> resolveInternal(final RequestContext context) {
+        val registeredService = resolveRegisteredServiceInRequestContext(context);
+        val service = resolveServiceFromAuthenticationRequest(context);
+        val authentication = WebUtils.getAuthentication(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+
+        val result = isActivated(authentication, registeredService, request, service);
+        return result.map(provider -> {
+            LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, registeredService.getName());
+            val event = validateEventIdForMatchingTransitionInContext(provider.getId(), Optional.of(context),
+                buildEventAttributeMap(authentication.getPrincipal(), Optional.of(registeredService), provider));
+            return CollectionUtils.wrapSet(event);
+        }).orElse(null);
     }
 
     @Audit(action = "AUTHENTICATION_EVENT",

@@ -71,10 +71,10 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventEventResolver
     protected Set<Event> resolveEventsInternal(final Set<Event> resolveEvents, final Authentication authentication, final RegisteredService registeredService,
                                                final HttpServletRequest request, final RequestContext context) {
         if (!resolveEvents.isEmpty()) {
-            LOGGER.debug("Collection of resolved events for this authentication sequence are:");
-            resolveEvents.forEach(e -> LOGGER.debug("Event id [{}] resolved from [{}]", e.getId(), e.getSource().getClass().getName()));
+            LOGGER.trace("Collection of resolved events for this authentication sequence are:");
+            resolveEvents.forEach(e -> LOGGER.trace("Event id [{}] resolved from [{}]", e.getId(), e.getSource().getClass().getName()));
         } else {
-            LOGGER.debug("No events could be resolved for this authentication transaction [{}] and service [{}]", authentication, registeredService);
+            LOGGER.trace("No events could be resolved for this authentication transaction [{}] and service [{}]", authentication, registeredService);
         }
         val pair = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
         WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
