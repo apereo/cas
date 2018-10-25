@@ -23,7 +23,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.annotation.PostConstruct;
-import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -100,7 +99,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(acct2.getValidationCode(), acct3.getValidationCode());
         assertEquals(acct2.getSecretKey(), acct3.getSecretKey());
         assertEquals(acct2.getScratchCodes(), acct3.getScratchCodes());
-        assertEquals(acct2.getRegistrationDate().truncatedTo(ChronoUnit.SECONDS), acct3.getRegistrationDate().withFixedOffsetZone().truncatedTo(ChronoUnit.SECONDS));
+        assertEquals(acct2.getRegistrationDate().toLocalDate(), acct3.getRegistrationDate().toLocalDate());
     }
 
     @Test

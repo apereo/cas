@@ -5,16 +5,8 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-protocol")
     
-    implementation project(":core:cas-server-core-web-api")
-    implementation project(":core:cas-server-core-util-api")
+
     implementation project(":support:cas-server-support-throttle")
-    implementation project(":core:cas-server-core-authentication-attributes")
-    implementation project(":core:cas-server-core-authentication-api")
-    implementation project(":core:cas-server-core-authentication-mfa-api")
-    implementation project(":core:cas-server-core-services-api")
-    implementation project(":core:cas-server-core-util-api")
-    implementation project(":core:cas-server-core-services-registry")
-    implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-oauth-webflow")
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-oauth-core")
@@ -22,34 +14,45 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth")
     implementation project(":support:cas-server-support-oauth-services")
+
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-services-registry")
+    implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa-api")
+    implementation project(":core:cas-server-core-cookie-api")
 
     implementation libraries.pac4j
     implementation libraries.jose4j
     implementation libraries.caffein
 
-    implementation project(":core:cas-server-core-cookie-api")
-    compileOnly project(":core:cas-server-core-webflow")
-    
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
-    testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-api")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-services")
+    
+    testImplementation project(":support:cas-server-support-themes")
+
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
-    testImplementation project(":core:cas-server-core-tickets")
-    testImplementation project(":core:cas-server-core-web")
-    testImplementation project(":core:cas-server-core-webflow")
-    testImplementation project(":core:cas-server-core-services")
 }
