@@ -46,8 +46,7 @@ public class OAuth20RefreshTokenGrantTypeTokenRequestValidator extends BaseOAuth
                                        final ProfileManager manager, final UserProfile uProfile) {
         val request = context.getRequest();
         if (!HttpRequestUtils.doesParameterExist(request, OAuth20Constants.REFRESH_TOKEN)
-            || !HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)
-            || !HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_SECRET)) {
+            || !HttpRequestUtils.doesParameterExist(request, OAuth20Constants.CLIENT_ID)) {
             return false;
         }
 

@@ -236,6 +236,10 @@ public abstract class AbstractOAuth20Tests {
         return addRegisteredService(false, grantTypes);
     }
 
+    protected OAuthRegisteredService addRegisteredService(final Set<OAuth20GrantTypes> grantTypes, final String clientSecret) {
+        return addRegisteredService(false, grantTypes, clientSecret);
+    }
+
     protected OAuthRegisteredService addRegisteredService() {
         return addRegisteredService(false, new HashSet<>());
     }
@@ -243,16 +247,17 @@ public abstract class AbstractOAuth20Tests {
 
     protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken,
                                                           final Set<OAuth20GrantTypes> grantTypes) {
-        val registeredService = getRegisteredService(REDIRECT_URI, CLIENT_SECRET, grantTypes);
+        return addRegisteredService(generateRefreshToken, grantTypes, CLIENT_SECRET);
+    }
+
+    protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken,
+                                                          final Set<OAuth20GrantTypes> grantTypes, final String clientSecret) {
+        val registeredService = getRegisteredService(REDIRECT_URI, clientSecret, grantTypes);
         registeredService.setGenerateRefreshToken(generateRefreshToken);
         servicesManager.save(registeredService);
         return registeredService;
     }
 
-
-    protected OAuthRegisteredService addRegisteredService(final boolean generateRefreshToken) {
-        return addRegisteredService(generateRefreshToken, new HashSet<>());
-    }
 
     protected static Authentication getAuthentication(final Principal principal) {
         val metadata = new BasicCredentialMetaData(
