@@ -59,12 +59,7 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         val ctxAttr = attributes.get(this.authenticationContextAttribute);
         val contexts = CollectionUtils.toCollection(ctxAttr);
         LOGGER.debug("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
-        val providerMap =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        if (providerMap == null) {
-            LOGGER.debug("No multifactor authentication providers are configured");
-            return Pair.of(Boolean.FALSE, Optional.empty());
-        }
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         LOGGER.debug("Available MFA Providers are [{}]", providerMap.values());
         val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
         if (requestedProvider.isEmpty()) {

@@ -236,7 +236,7 @@ public abstract class AbstractCasView extends AbstractView {
         val principalAttributes = getCasPrincipalAttributes(model, registeredService);
         val attributes = new HashMap<String, Object>(principalAttributes);
 
-        LOGGER.debug("Processed principal attributes from the output model to be [{}]", principalAttributes.keySet());
+        LOGGER.trace("Processed principal attributes from the output model to be [{}]", principalAttributes.keySet());
         val protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
         attributes.putAll(protocolAttributes);
 
@@ -268,7 +268,7 @@ public abstract class AbstractCasView extends AbstractView {
                                                      final RegisteredService registeredService,
                                                      final CasProtocolAttributesRenderer attributesRenderer) {
 
-        LOGGER.debug("Beginning to encode attributes for the response");
+        LOGGER.trace("Beginning to encode attributes for the response");
         val encodedAttributes = this.protocolAttributeEncoder.encodeAttributes(attributes, registeredService);
 
         LOGGER.debug("Encoded attributes for the response are [{}]", encodedAttributes);

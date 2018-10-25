@@ -1,8 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
-import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultWebApplicationResponseBuilderLocator;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
@@ -82,12 +80,7 @@ public class CasCoreServicesConfiguration {
 
     @RefreshScope
     @Bean
-    public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
-        return new DefaultMultifactorTriggerSelectionStrategy(casProperties.getAuthn().getMfa());
-    }
-
-    @RefreshScope
-    @Bean
+    @ConditionalOnMissingBean(name = "shibbolethCompatiblePersistentIdGenerator")
     public PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator() {
         return new ShibbolethCompatiblePersistentIdGenerator();
     }
@@ -101,8 +94,8 @@ public class CasCoreServicesConfiguration {
         return new DefaultWebApplicationResponseBuilderLocator(builders);
     }
 
-    @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
     @Bean
+    @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
     public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder() {
         return new WebApplicationServiceResponseBuilder(servicesManager());
     }

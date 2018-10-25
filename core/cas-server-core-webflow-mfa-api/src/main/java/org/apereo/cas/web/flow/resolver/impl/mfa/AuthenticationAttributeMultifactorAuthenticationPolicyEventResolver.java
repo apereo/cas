@@ -4,24 +4,22 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
 import java.util.Set;
-
-import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
 /**
  * This is {@link AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver}
@@ -34,11 +32,9 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
  * @since 5.1.0
  */
 @Slf4j
+
 public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
-
-    private final String globalAuthenticationAttributeValueRegex;
-    private final Set<String> attributeNames;
+    private final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger;
 
     public AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                                final CentralAuthenticationService centralAuthenticationService,
@@ -47,48 +43,30 @@ public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver
                                                                                final CookieGenerator warnCookieGenerator,
                                                                                final AuthenticationServiceSelectionPlan selectionStrategies,
                                                                                final MultifactorAuthenticationProviderSelector selector,
-                                                                               final CasConfigurationProperties casProperties) {
+                                                                               final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-            ticketRegistrySupport, warnCookieGenerator, selectionStrategies,
-            selector);
-        globalAuthenticationAttributeValueRegex = casProperties.getAuthn().getMfa().getGlobalAuthenticationAttributeValueRegex();
-        attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalAuthenticationAttributeNameTriggers());
+            ticketRegistrySupport, warnCookieGenerator, selectionStrategies, selector);
+        this.multifactorAuthenticationTrigger = multifactorAuthenticationTrigger;
     }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        val service = resolveRegisteredServiceInRequestContext(context);
+        val registeredService = resolveRegisteredServiceInRequestContext(context);
+        val service = resolveServiceFromAuthenticationRequest(context);
         val authentication = WebUtils.getAuthentication(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
-        if (authentication == null) {
-            LOGGER.debug("No authentication is available to determine event for principal");
-            return null;
-        }
-
-        if (attributeNames.isEmpty()) {
-            LOGGER.debug("Authentication attribute name to determine event is not configured");
-            return null;
-        }
-
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        if (providerMap == null || providerMap.isEmpty()) {
-            LOGGER.error("No multifactor authentication providers are available in the application context");
-            return null;
-        }
-
-        val providers = providerMap.values();
-        if (providers.size() == 1 && StringUtils.isNotBlank(globalAuthenticationAttributeValueRegex)) {
-            val provider = providers.iterator().next();
-            LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
-            return resolveEventViaAuthenticationAttribute(authentication, attributeNames, service, context, providers,
-                input -> input != null && input.matches(globalAuthenticationAttributeValueRegex));
-        }
-
-        return resolveEventViaAuthenticationAttribute(authentication, attributeNames, service, context, providers,
-            input -> providers.stream().anyMatch(provider -> input != null && provider.matches(input)));
+        val result = multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, service);
+        return result.map(provider -> {
+            LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, registeredService.getName());
+            val event = validateEventIdForMatchingTransitionInContext(provider.getId(), Optional.of(context),
+                buildEventAttributeMap(authentication.getPrincipal(), Optional.of(registeredService), provider));
+            return CollectionUtils.wrapSet(event);
+        }).orElse(null);
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+    @Audit(action = "AUTHENTICATION_EVENT",
+        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
         resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
