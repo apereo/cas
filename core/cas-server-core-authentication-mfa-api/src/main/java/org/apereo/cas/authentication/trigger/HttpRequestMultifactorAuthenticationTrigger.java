@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.trigger;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -38,7 +37,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
-    private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
@@ -61,7 +59,7 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
                 throw new AuthenticationException();
             }
 
-            val providerFound = multifactorAuthenticationProviderResolver.resolveProvider(providerMap, values.get(0));
+            val providerFound = MultifactorAuthenticationUtils.resolveProvider(providerMap, values.get(0));
             if (providerFound.isPresent()) {
                 return providerFound;
             }
