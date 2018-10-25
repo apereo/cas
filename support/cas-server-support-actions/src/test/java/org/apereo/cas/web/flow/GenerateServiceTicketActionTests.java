@@ -20,7 +20,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.Cookie;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

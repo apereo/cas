@@ -11,7 +11,7 @@ import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.FailedLoginException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test of the simple username/password handler.

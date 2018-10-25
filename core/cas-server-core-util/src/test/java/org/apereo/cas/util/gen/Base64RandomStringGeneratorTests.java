@@ -3,7 +3,7 @@ package org.apereo.cas.util.gen;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for {@link Base64RandomStringGenerator}.

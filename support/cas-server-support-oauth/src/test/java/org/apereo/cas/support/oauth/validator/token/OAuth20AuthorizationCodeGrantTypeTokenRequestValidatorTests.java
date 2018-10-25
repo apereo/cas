@@ -30,7 +30,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

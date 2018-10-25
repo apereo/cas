@@ -33,7 +33,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for MemcachedTicketRegistry class.

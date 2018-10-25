@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import lombok.val;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -13,6 +12,8 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link X509SubjectPrincipalResolver}.
@@ -44,7 +45,7 @@ public class X509SubjectPrincipalResolverTests {
             this.certificate = (X509Certificate) CertificateFactory.getInstance("X509").generateCertificate(
                 new FileInputStream(certPath));
         } catch (final Exception e) {
-            Assert.fail(String.format("Error parsing certificate %s: %s", certPath, e.getMessage()));
+            fail(String.format("Error parsing certificate %s: %s", certPath, e.getMessage()));
         }
         this.expected = expectedResult;
     }
@@ -103,7 +104,7 @@ public class X509SubjectPrincipalResolverTests {
 
     @Test
     public void verifyResolvePrincipalInternal() {
-        Assert.assertEquals(this.expected, this.resolver.resolvePrincipalInternal(this.certificate));
+        assertEquals(this.expected, this.resolver.resolvePrincipalInternal(this.certificate));
     }
 
 }

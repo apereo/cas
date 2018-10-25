@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.cert.X509Certificate;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia

@@ -18,7 +18,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

@@ -134,7 +134,7 @@
                       value="java.io,
                       java.net,
                       java.lang.Math,
-                      org.junit.Assert,
+                      org.junit.jupiter.api.Assertions,
                       org.mockito.Mockito,
                       org.mockito.Matchers,
                       org.springframework.test.web.servlet.request.MockMvcRequestBuilders,

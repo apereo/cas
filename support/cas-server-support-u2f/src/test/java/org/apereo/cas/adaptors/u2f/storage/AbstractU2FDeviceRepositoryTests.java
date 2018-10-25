@@ -11,7 +11,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AbstractU2FDeviceRepositoryTests}.

@@ -33,7 +33,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Collection;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.

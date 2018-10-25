@@ -23,7 +23,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.util.LinkedHashMap;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

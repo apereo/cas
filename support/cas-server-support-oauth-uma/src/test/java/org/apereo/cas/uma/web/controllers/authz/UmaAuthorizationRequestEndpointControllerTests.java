@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link UmaAuthorizationRequestEndpointControllerTests}.

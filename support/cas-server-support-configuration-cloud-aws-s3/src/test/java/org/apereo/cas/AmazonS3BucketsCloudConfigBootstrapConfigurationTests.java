@@ -4,6 +4,8 @@ import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.category.AmazonWebServicesS3Category;
 import org.apereo.cas.config.AmazonS3BucketsCloudConfigBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -23,7 +25,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AmazonS3BucketsCloudConfigBootstrapConfigurationTests}.
@@ -35,6 +37,8 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     AmazonS3BucketsCloudConfigBootstrapConfiguration.class
 })
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 4572)
 @Category(AmazonWebServicesS3Category.class)
 @TestPropertySource(properties = {
     "cas.spring.cloud.aws.s3.bucketName=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.BUCKET_NAME,

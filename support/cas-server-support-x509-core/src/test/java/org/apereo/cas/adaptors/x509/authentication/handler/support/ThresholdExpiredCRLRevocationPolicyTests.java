@@ -7,7 +7,6 @@ import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -20,6 +19,8 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link ThresholdExpiredCRLRevocationPolicy} class.
@@ -98,18 +99,18 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
         try {
             this.policy.apply(this.crl);
             if (this.expected != null) {
-                Assert.fail("Expected exception of type " + this.expected.getClass());
+                fail("Expected exception of type " + this.expected.getClass());
             }
         } catch (final GeneralSecurityException e) {
             if (this.expected == null) {
                 e.printStackTrace();
-                Assert.fail("Revocation check failed unexpectedly with exception: " + e);
+                fail("Revocation check failed unexpectedly with exception: " + e);
             } else {
                 val expectedClass = this.expected.getClass();
                 val actualClass = e.getClass();
-                Assert.assertTrue(
-                    String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
-                    expectedClass.isAssignableFrom(actualClass));
+                assertTrue(
+                    expectedClass.isAssignableFrom(actualClass),
+                    String.format("Expected exception of type %s but got %s", expectedClass, actualClass));
             }
         }
     }

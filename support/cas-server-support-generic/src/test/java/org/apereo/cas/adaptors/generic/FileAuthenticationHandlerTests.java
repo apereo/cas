@@ -19,7 +19,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia

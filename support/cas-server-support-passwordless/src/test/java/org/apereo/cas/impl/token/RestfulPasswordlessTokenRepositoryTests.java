@@ -43,7 +43,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RestfulPasswordlessTokenRepositoryTests}.

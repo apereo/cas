@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -39,21 +39,21 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
     @Test
     public void verifyIsValidAllGood() {
         val result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
-        assertTrue("testIsValidAllGood() - True", result);
+        assertTrue(result, "testIsValidAllGood() - True");
     }
 
     @Test
     public void verifyIsValidBadAudience() {
         standardCred.setAudience("urn:NotUs");
         val result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
-        assertFalse("testIsValidBadAudeience() - False", result);
+        assertFalse(result, "testIsValidBadAudeience() - False");
     }
 
     @Test
     public void verifyIsValidBadIssuer() {
         standardCred.setIssuer("urn:NotThem");
         val result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
-        assertFalse("testIsValidBadIssuer() - False", result);
+        assertFalse(result, "testIsValidBadIssuer() - False");
     }
 
     @Test
@@ -63,7 +63,7 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1));
 
         val result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
-        assertFalse("testIsValidEarlyToken() - False", result);
+        assertFalse(result, "testIsValidEarlyToken() - False");
     }
 
     @Test
@@ -73,7 +73,7 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
 
         val result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
-        assertFalse("testIsValidOldToken() - False", result);
+        assertFalse(result, "testIsValidOldToken() - False");
     }
 
     @Test
@@ -81,6 +81,6 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
         standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(3));
 
         val result = standardCred.isValid(AUDIENCE, ISSUER, 2000);
-        assertFalse("testIsValidOldToken() - False", result);
+        assertFalse(result, "testIsValidOldToken() - False");
     }
 }

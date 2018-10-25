@@ -6,7 +6,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link OpenIdServiceFactory}.

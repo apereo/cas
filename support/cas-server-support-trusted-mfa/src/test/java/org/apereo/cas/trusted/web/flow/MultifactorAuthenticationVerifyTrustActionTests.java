@@ -24,7 +24,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link MultifactorAuthenticationVerifyTrustActionTests}.

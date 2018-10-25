@@ -28,7 +28,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseLdapConsentRepositoryTests}.

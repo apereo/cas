@@ -20,7 +20,7 @@ import org.springframework.webflow.execution.Action;
 import java.time.LocalDateTime;
 
 import static org.apereo.cas.trusted.BeanNames.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**

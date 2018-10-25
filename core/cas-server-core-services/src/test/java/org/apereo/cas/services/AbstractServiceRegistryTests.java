@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Abstracted service registry tests for all implementations.

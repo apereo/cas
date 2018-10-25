@@ -8,7 +8,7 @@ import lombok.val;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AmazonDynamoDbClientFactoryTests}.

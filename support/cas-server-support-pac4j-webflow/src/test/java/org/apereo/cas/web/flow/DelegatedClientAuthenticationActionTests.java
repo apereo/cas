@@ -66,8 +66,8 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.util.Locale;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

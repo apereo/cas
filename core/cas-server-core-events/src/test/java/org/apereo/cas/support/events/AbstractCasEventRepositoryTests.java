@@ -8,7 +8,7 @@ import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AbstractCasEventRepositoryTests}.
@@ -31,7 +31,7 @@ public abstract class AbstractCasEventRepositoryTests {
 
         assertNotEquals("Created Event IDs are equal", dto2.getEventId(), dto1.getEventId());
 
-        assertEquals("Stored event IDs are equal", 2, col.stream().map(CasEvent::getEventId).distinct().count());
+        assertEquals(2, col.stream().map(CasEvent::getEventId).distinct().count(), "Stored event IDs are equal");
         col.forEach(event -> {
             assertFalse(event.getProperties().isEmpty());
             if (event.getEventId().equals(dto1.getEventId())) {

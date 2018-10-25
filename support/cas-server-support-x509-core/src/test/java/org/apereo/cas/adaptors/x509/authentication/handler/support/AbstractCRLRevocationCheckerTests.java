@@ -5,13 +5,14 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.checker.Revocation
 import org.apereo.cas.util.crypto.CertUtils;
 
 import lombok.val;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Base class for {@link RevocationChecker} unit tests.
@@ -56,17 +57,17 @@ public abstract class AbstractCRLRevocationCheckerTests {
                 getChecker().check(cert);
             }
             if (this.expected != null) {
-                Assert.fail("Expected exception of type " + this.expected.getClass());
+                fail("Expected exception of type " + this.expected.getClass());
             }
         } catch (final GeneralSecurityException e) {
             if (this.expected == null) {
-                Assert.fail("Revocation check failed unexpectedly with exception: " + e);
+                fail("Revocation check failed unexpectedly with exception: " + e);
             } else {
                 val expectedClass = this.expected.getClass();
                 val actualClass = e.getClass();
-                Assert.assertTrue(
-                    String.format("Expected exception of type %s but got %s", expectedClass, actualClass),
-                    expectedClass.isAssignableFrom(actualClass));
+                assertTrue(
+                    expectedClass.isAssignableFrom(actualClass),
+                    String.format("Expected exception of type %s but got %s", expectedClass, actualClass));
             }
         }
     }

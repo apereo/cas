@@ -15,7 +15,7 @@ import org.springframework.core.io.Resource;
 import java.io.IOException;
 import java.security.KeyStore;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for the {@code FileTrustStoreSslSocketFactory} class, checking for self-signed

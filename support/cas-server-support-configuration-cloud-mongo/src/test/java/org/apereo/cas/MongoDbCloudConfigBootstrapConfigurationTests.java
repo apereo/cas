@@ -4,6 +4,7 @@ import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.MongoDbCloudConfigBootstrapConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.junit.experimental.categories.Category;
@@ -17,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link MongoDbCloudConfigBootstrapConfigurationTests}.
@@ -31,6 +32,7 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     MongoDbCloudConfigBootstrapConfiguration.class
 })
+@EnabledIfContinuousIntegration
 @TestPropertySource(properties = "cas.spring.cloud.mongo.uri=" + MongoDbCloudConfigBootstrapConfigurationTests.MONGODB_URI)
 public class MongoDbCloudConfigBootstrapConfigurationTests {
     static final String MONGODB_URI = "mongodb://root:secret@localhost:27017/admin";

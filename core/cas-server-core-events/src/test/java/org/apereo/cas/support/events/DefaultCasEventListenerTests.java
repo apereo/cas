@@ -31,7 +31,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link DefaultCasEventListenerTests}.

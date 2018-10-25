@@ -4,7 +4,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.actuate.health.Status;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link MemoryMonitor} class.

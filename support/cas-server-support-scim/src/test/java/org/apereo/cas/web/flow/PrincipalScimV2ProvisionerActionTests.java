@@ -35,7 +35,7 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link PrincipalScimV2ProvisionerActionTests}.

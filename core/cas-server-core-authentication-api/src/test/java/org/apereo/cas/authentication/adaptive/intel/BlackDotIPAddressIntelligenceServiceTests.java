@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.webflow.test.MockRequestContext;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BlackDotIPAddressIntelligenceServiceTests}.

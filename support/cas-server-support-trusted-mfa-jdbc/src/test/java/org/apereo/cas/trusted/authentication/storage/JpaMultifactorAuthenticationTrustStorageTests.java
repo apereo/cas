@@ -24,8 +24,9 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link JpaMultifactorAuthenticationTrustStorage}.

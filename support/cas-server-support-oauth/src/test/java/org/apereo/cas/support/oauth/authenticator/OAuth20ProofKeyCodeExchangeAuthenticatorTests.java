@@ -22,7 +22,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link OAuth20ProofKeyCodeExchangeAuthenticatorTests}.

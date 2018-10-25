@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.util;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests the {@link AbstractSaml20ObjectBuilder}.

@@ -9,7 +9,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JWTServiceTicketResourceEntityResponseFactoryTests}.

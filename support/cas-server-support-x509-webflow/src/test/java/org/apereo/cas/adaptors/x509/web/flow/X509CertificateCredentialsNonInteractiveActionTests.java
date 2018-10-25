@@ -13,7 +13,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.security.cert.X509Certificate;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Marvin S. Addison

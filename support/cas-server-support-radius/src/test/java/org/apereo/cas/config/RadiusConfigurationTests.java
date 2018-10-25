@@ -33,7 +33,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Jozef Kotlar
