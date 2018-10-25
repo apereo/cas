@@ -54,12 +54,12 @@ public class SamlIdPMetadataDocument {
 
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
-    @Column(name = "encryptionCertificate", length = 5_000)
+    @Column(name = "encryptionCertificate", length = 3_000)
     private String encryptionCertificate;
 
     @Lob
     @Type(type = "org.hibernate.type.StringNVarcharType")
-    @Column(name = "encryptionKey", length = 5_000)
+    @Column(name = "encryptionKey", length = 3_000)
     private String encryptionKey;
 
     public SamlIdPMetadataDocument() {
