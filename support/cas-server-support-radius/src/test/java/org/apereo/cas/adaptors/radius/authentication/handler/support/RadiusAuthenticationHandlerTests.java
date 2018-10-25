@@ -7,6 +7,7 @@ import org.apereo.cas.config.RadiusConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 
 import lombok.val;
 import org.junit.ClassRule;
@@ -29,7 +30,11 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = {RadiusConfiguration.class, RefreshAutoConfiguration.class})
+@SpringBootTest(classes = {
+    RadiusConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class
+})
 @TestPropertySource(properties = {
     "cas.authn.radius.server.protocol=PAP",
     "cas.authn.radius.client.sharedSecret=testing123",
