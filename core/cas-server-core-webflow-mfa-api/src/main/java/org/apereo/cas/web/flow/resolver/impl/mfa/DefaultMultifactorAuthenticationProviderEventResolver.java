@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -22,25 +23,25 @@ import java.util.Optional;
 import java.util.Set;
 
 /**
- * This is {@link GlobalMultifactorAuthenticationPolicyEventResolver}.
+ * This is {@link DefaultMultifactorAuthenticationProviderEventResolver}.
  *
  * @author Misagh Moayyed
- * @since 5.0.0
+ * @since 6.0.0
  */
 @Slf4j
-public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+public class DefaultMultifactorAuthenticationProviderEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     private final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger;
 
-    public GlobalMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                              final CentralAuthenticationService centralAuthenticationService,
-                                                              final ServicesManager servicesManager,
-                                                              final TicketRegistrySupport ticketRegistrySupport,
-                                                              final CookieGenerator warnCookieGenerator,
-                                                              final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                              final MultifactorAuthenticationProviderSelector selector,
-                                                              final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-            ticketRegistrySupport, warnCookieGenerator,
+    public DefaultMultifactorAuthenticationProviderEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
+                                                                 final CentralAuthenticationService centralAuthenticationService,
+                                                                 final ServicesManager servicesManager,
+                                                                 final TicketRegistrySupport ticketRegistrySupport,
+                                                                 final CookieGenerator warnCookieGenerator,
+                                                                 final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
+                                                                 final MultifactorAuthenticationProviderSelector selector,
+                                                                 final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger) {
+        super(authenticationSystemSupport, centralAuthenticationService,
+            servicesManager, ticketRegistrySupport, warnCookieGenerator,
             authenticationSelectionStrategies, selector);
         this.multifactorAuthenticationTrigger = multifactorAuthenticationTrigger;
     }
@@ -55,12 +56,11 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         val result = multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, service);
         return result.map(provider -> {
             LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, registeredService.getName());
-            val event = validateEventIdForMatchingTransitionInContext(provider.getId(), Optional.of(context),
-                buildEventAttributeMap(authentication.getPrincipal(), Optional.of(registeredService), provider));
+            val event = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(provider.getId(), Optional.of(context),
+                MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(), Optional.of(registeredService), provider));
             return CollectionUtils.wrapSet(event);
         }).orElse(null);
     }
-
 
     @Audit(action = "AUTHENTICATION_EVENT",
         actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
