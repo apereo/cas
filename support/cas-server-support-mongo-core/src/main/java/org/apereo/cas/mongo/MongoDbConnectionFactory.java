@@ -81,6 +81,8 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.CaffeinCacheConverter());
         converters.add(new BaseConverters.CaffeinCacheLoaderConverter());
         converters.add(new BaseConverters.CacheConverter());
+        converters.add(new BaseConverters.PatternToStringConverter());
+        converters.add(new BaseConverters.StringToPatternConverter());
         converters.add(new BaseConverters.CacheBuilderConverter());
         converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());
@@ -88,6 +90,8 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.ZonedDateTimeToDateConverter());
         converters.add(new BaseConverters.DateToZonedDateTimeConverter());
         converters.add(new BaseConverters.BsonTimestampToDateConverter());
+        converters.add(new BaseConverters.ZonedDateTimeToStringConverter());
+        converters.add(new BaseConverters.StringToZonedDateTimeConverter());
 
         this.customConversions = new CustomConversions(converters);
     }
