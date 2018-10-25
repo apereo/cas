@@ -71,6 +71,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
                 .withRetryPolicy(new LoggingRetryPolicy(retryPolicy))
                 .withCompression(ProtocolOptions.Compression.valueOf(cassandra.getCompression()))
                 .withPort(cassandra.getPort())
+                .withoutJMXReporting()
                 .withQueryOptions(queryOptions);
 
         Arrays.stream(StringUtils.split(cassandra.getContactPoints(), ','))
