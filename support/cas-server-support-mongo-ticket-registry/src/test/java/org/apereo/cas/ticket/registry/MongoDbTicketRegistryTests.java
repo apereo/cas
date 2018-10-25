@@ -83,7 +83,7 @@ import java.util.Collection;
     "cas.ticket.registry.mongo.password=secret"
 })
 @DirtiesContext
-r@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
 public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired
