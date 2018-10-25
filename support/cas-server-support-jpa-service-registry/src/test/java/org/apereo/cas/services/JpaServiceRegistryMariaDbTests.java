@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.category.MySQLCategory;
+import org.apereo.cas.category.MariaDbCategory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
@@ -15,7 +15,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(locations = "classpath:svcregmariadb.properties")
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 3306)
-@Category(MySQLCategory.class)
+@Category(MariaDbCategory.class)
 public class JpaServiceRegistryMariaDbTests extends JpaServiceRegistryTests {
     public JpaServiceRegistryMariaDbTests(final Class<? extends RegisteredService> registeredServiceClass) {
         super(registeredServiceClass);
