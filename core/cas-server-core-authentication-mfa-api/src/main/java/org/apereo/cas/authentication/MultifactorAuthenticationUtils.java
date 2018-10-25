@@ -5,14 +5,11 @@ import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationP
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import org.springframework.context.ApplicationContext;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link MultifactorAuthenticationUtils}.
@@ -55,7 +52,7 @@ public class MultifactorAuthenticationUtils {
         try {
             return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         } catch (final Exception e) {
-            LOGGER.debug("No beans of type [{}] are available in the application context. "
+            LOGGER.trace("No beans of type [{}] are available in the application context. "
                     + "CAS may not be configured to handle multifactor authentication requests in absence of a provider",
                 MultifactorAuthenticationProvider.class);
         }
@@ -67,28 +64,14 @@ public class MultifactorAuthenticationUtils {
      * same id as the passed providerId parameter.
      *
      * @param providerId - the id to match
-     * @param context - ApplicationContext
+     * @param context    - ApplicationContext
      * @return - Optional
      */
     public static Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderById(final String providerId,
                                                                                                        final ApplicationContext context) {
-        return getAvailableMultifactorAuthenticationProviders(context).values().stream()
-                .filter(p -> p.getId().equalsIgnoreCase(providerId)).findFirst();
-    }
-
-    /**
-     * Gets multifactor authentication providers by ids.
-     *
-     * @param ids                the ids
-     * @param applicationContext the application context
-     * @return the multifactor authentication providers by ids
-     */
-    public static Collection<MultifactorAuthenticationProvider> getMultifactorAuthenticationProvidersByIds(final Collection<String> ids,
-                                                                                                           final ApplicationContext applicationContext) {
-        val available = getAvailableMultifactorAuthenticationProviders(applicationContext);
-        val values = available.values();
-        return values.stream()
-            .filter(p -> ids.contains(p.getId()))
-            .collect(Collectors.toSet());
+        return getAvailableMultifactorAuthenticationProviders(context).values()
+            .stream()
+            .filter(p -> p.matches(providerId))
+            .findFirst();
     }
 }

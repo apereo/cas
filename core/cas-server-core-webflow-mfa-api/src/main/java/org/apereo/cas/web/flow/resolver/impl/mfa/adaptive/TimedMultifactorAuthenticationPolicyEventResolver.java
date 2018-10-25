@@ -7,7 +7,9 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.TimeBasedAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -24,6 +26,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
@@ -41,7 +44,8 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
-public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver
+    implements MultifactorAuthenticationTrigger {
     private final List<TimeBasedAuthenticationProperties> timedMultifactor;
 
     public TimedMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
@@ -59,39 +63,46 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
-        val service = resolveRegisteredServiceInRequestContext(context);
-        val authentication = WebUtils.getAuthentication(context);
+    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication, final RegisteredService registeredService,
+                                                                   final HttpServletRequest httpServletRequest, final Service service) {
 
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
-            return null;
+            return Optional.empty();
         }
 
         if (timedMultifactor == null || timedMultifactor.isEmpty()) {
             LOGGER.debug("Adaptive authentication is not configured to require multifactor authentication by time");
-            return null;
+            return Optional.empty();
         }
 
-        val providerMap =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        if (providerMap == null || providerMap.isEmpty()) {
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
-        val providerFound = checkTimedMultifactorProvidersForRequest(context, service, authentication);
-        if (providerFound != null && !providerFound.isEmpty()) {
-            LOGGER.warn("Found multifactor authentication providers [{}] required for this authentication event", providerFound);
-            return providerFound;
-        }
+        return checkTimedMultifactorProvidersForRequest(registeredService, authentication);
+    }
 
-        return null;
+    @Override
+    public Set<Event> resolveInternal(final RequestContext context) {
+        val registeredService = resolveRegisteredServiceInRequestContext(context);
+        val service = resolveServiceFromAuthenticationRequest(context);
+        val authentication = WebUtils.getAuthentication(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+
+        val result = isActivated(authentication, registeredService, request, service);
+        return result.map(provider -> {
+            LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, registeredService.getName());
+            val event = validateEventIdForMatchingTransitionInContext(provider.getId(), Optional.of(context),
+                buildEventAttributeMap(authentication.getPrincipal(), Optional.of(registeredService), provider));
+            return CollectionUtils.wrapSet(event);
+        }).orElse(null);
     }
 
 
-    private Set<Event> checkTimedMultifactorProvidersForRequest(final RequestContext context, final RegisteredService service,
-                                                                final Authentication authentication) {
+    private Optional<MultifactorAuthenticationProvider> checkTimedMultifactorProvidersForRequest(final RegisteredService service, final Authentication authentication) {
 
         val now = LocalDateTime.now();
         val dow = DayOfWeek.from(now);
@@ -99,8 +110,7 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
             .map(style -> dow.getDisplayName(style, Locale.getDefault()))
             .collect(Collectors.toList());
 
-        val providerMap =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         val timed = this.timedMultifactor.stream()
             .filter(t -> {
                 var providerEvent = false;
@@ -125,20 +135,11 @@ public class TimedMultifactorAuthenticationPolicyEventResolver extends BaseMulti
                     timed.getProviderId(), service, timed.getProviderId());
                 throw new AuthenticationException();
             }
-            return buildEvent(context, service, authentication, providerFound.get());
+            return providerFound;
         }
-        return null;
+        return Optional.empty();
     }
 
-    private Set<Event> buildEvent(final RequestContext context, final RegisteredService service,
-                                  final Authentication authentication,
-                                  final MultifactorAuthenticationProvider provider) {
-        LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-            provider, service.getName());
-        val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
-            buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider));
-        return CollectionUtils.wrapSet(event);
-    }
 
     @Audit(action = "AUTHENTICATION_EVENT",
         actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",

@@ -1,29 +1,37 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.core.Ordered;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;
@@ -37,7 +45,10 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
  * @since 5.0.0
  */
 @Slf4j
-public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+@Getter
+@Setter
+public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver
+    implements MultifactorAuthenticationTrigger {
     /**
      * Principal attribute value regex.
      */
@@ -47,6 +58,8 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
      * Principal attribute names.
      */
     protected final Set<String> attributeNames;
+
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     public PrincipalAttributeMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                           final CentralAuthenticationService centralAuthenticationService,
@@ -63,18 +76,36 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
-        val service = resolveRegisteredServiceInRequestContext(context);
-        val authentication = WebUtils.getAuthentication(context);
-
+    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
+                                                                   final RegisteredService registeredService, final HttpServletRequest httpServletRequest, final Service service) {
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
-            return null;
+            return Optional.empty();
         }
 
+        val result = resolveMultifactorAuthenticationProvider(Optional.empty(), registeredService, authentication.getPrincipal());
+        if (result != null && !result.isEmpty()) {
+            val id = CollectionUtils.firstElement(result);
+            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.toString(), applicationContext);
+        }
 
-        val principal = authentication.getPrincipal();
-        return resolveMultifactorAuthenticationProvider(context, service, principal);
+        return Optional.empty();
+    }
+
+    @Override
+    public Set<Event> resolveInternal(final RequestContext context) {
+        val registeredService = resolveRegisteredServiceInRequestContext(context);
+        val service = resolveServiceFromAuthenticationRequest(context);
+        val authentication = WebUtils.getAuthentication(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+
+        val result = isActivated(authentication, registeredService, request, service);
+        return result.map(provider -> {
+            LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, registeredService.getName());
+            val event = validateEventIdForMatchingTransitionInContext(provider.getId(), Optional.of(context),
+                buildEventAttributeMap(authentication.getPrincipal(), Optional.of(registeredService), provider));
+            return CollectionUtils.wrapSet(event);
+        }).orElse(null);
     }
 
     /**
@@ -85,10 +116,9 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
      * @param principal the principal
      * @return the set
      */
-    protected Set<Event> resolveMultifactorAuthenticationProvider(final RequestContext context, final RegisteredService service,
+    protected Set<Event> resolveMultifactorAuthenticationProvider(final Optional<RequestContext> context, final RegisteredService service,
                                                                   final Principal principal) {
-        val providerMap =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         val providers = providerMap.values();
         if (providers.size() == 1 && StringUtils.isNotBlank(globalPrincipalAttributeValueRegex)) {
             return resolveSingleMultifactorProvider(context, service, principal, providers);
@@ -106,13 +136,12 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
      * @param providers the providers
      * @return the set
      */
-    protected Set<Event> resolveMultifactorProviderViaPredicate(final RequestContext context,
+    protected Set<Event> resolveMultifactorProviderViaPredicate(final Optional<RequestContext> context,
                                                                 final RegisteredService service,
                                                                 final Principal principal,
                                                                 final Collection<MultifactorAuthenticationProvider> providers) {
         return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
-            input -> providers.stream()
-                .anyMatch(provider -> input != null && provider.matches(input)));
+            input -> providers.stream().anyMatch(provider -> input != null && provider.matches(input)));
     }
 
     /**
@@ -124,7 +153,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
      * @param providers the providers
      * @return the set
      */
-    protected Set<Event> resolveSingleMultifactorProvider(final RequestContext context, final RegisteredService service,
+    protected Set<Event> resolveSingleMultifactorProvider(final Optional<RequestContext> context, final RegisteredService service,
                                                           final Principal principal,
                                                           final Collection<MultifactorAuthenticationProvider> providers) {
         val provider = providers.iterator().next();

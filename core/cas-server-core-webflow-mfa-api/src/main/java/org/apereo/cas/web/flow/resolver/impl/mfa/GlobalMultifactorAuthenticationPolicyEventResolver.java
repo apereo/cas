@@ -1,12 +1,10 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -15,7 +13,6 @@ import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
@@ -32,8 +29,7 @@ import java.util.Set;
  */
 @Slf4j
 public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
-    private final String globalProviderId;
+    private final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger;
 
     public GlobalMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                               final CentralAuthenticationService centralAuthenticationService,
@@ -42,44 +38,27 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
                                                               final CookieGenerator warnCookieGenerator,
                                                               final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                               final MultifactorAuthenticationProviderSelector selector,
-                                                              final CasConfigurationProperties casProperties) {
+                                                              final MultifactorAuthenticationTrigger multifactorAuthenticationTrigger) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
             ticketRegistrySupport, warnCookieGenerator,
             authenticationSelectionStrategies, selector);
-        globalProviderId = casProperties.getAuthn().getMfa().getGlobalProviderId();
+        this.multifactorAuthenticationTrigger = multifactorAuthenticationTrigger;
     }
 
     @Override
     public Set<Event> resolveInternal(final RequestContext context) {
-        val service = resolveRegisteredServiceInRequestContext(context);
+        val registeredService = resolveRegisteredServiceInRequestContext(context);
+        val service = resolveServiceFromAuthenticationRequest(context);
         val authentication = WebUtils.getAuthentication(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
-        if (authentication == null) {
-            LOGGER.debug("No authentication is available to determine event for principal");
-            return null;
-        }
-        if (StringUtils.isBlank(globalProviderId)) {
-            LOGGER.debug("No value could be found for request parameter [{}]", globalProviderId);
-            return null;
-        }
-        LOGGER.debug("Attempting to globally activate [{}]", globalProviderId);
-
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        if (providerMap == null || providerMap.isEmpty()) {
-            LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", globalProviderId);
-            throw new AuthenticationException();
-        }
-
-        val providerFound = resolveProvider(providerMap, globalProviderId);
-        if (providerFound.isPresent()) {
-            val provider = providerFound.get();
-            LOGGER.trace("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service);
-            val attributes = buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), provider);
-            val event = validateEventIdForMatchingTransitionInContext(provider.getId(), context, attributes);
+        val result = multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, service);
+        return result.map(provider -> {
+            LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, registeredService.getName());
+            val event = validateEventIdForMatchingTransitionInContext(provider.getId(), Optional.of(context),
+                buildEventAttributeMap(authentication.getPrincipal(), Optional.of(registeredService), provider));
             return CollectionUtils.wrapSet(event);
-        }
-        LOGGER.warn("No multifactor provider could be found for [{}]", globalProviderId);
-        throw new AuthenticationException();
+        }).orElse(null);
     }
 
 

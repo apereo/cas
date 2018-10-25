@@ -32,7 +32,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
-public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends AbstractCasMultifactorAuthenticationWebflowEventResolver implements CasDelegatingWebflowEventResolver {
+public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends AbstractCasMultifactorAuthenticationWebflowEventResolver
+    implements CasDelegatingWebflowEventResolver {
 
     private final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver;
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;
@@ -107,7 +108,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
         val value = result.getValue();
         if (value.isPresent()) {
             val attributeMap = buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), value.get());
-            return CollectionUtils.wrapSet(validateEventIdForMatchingTransitionInContext(id, context, attributeMap));
+            return CollectionUtils.wrapSet(validateEventIdForMatchingTransitionInContext(id, Optional.of(context), attributeMap));
         }
         LOGGER.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);
         return CollectionUtils.wrapSet(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));

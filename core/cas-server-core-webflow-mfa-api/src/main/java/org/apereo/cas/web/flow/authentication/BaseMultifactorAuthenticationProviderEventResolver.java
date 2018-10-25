@@ -30,9 +30,7 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
-public abstract class BaseMultifactorAuthenticationProviderEventResolver extends AbstractCasMultifactorAuthenticationWebflowEventResolver
-    implements MultifactorAuthenticationProviderResolver {
-
+public abstract class BaseMultifactorAuthenticationProviderEventResolver extends AbstractCasMultifactorAuthenticationWebflowEventResolver {
 
     public BaseMultifactorAuthenticationProviderEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                               final CentralAuthenticationService centralAuthenticationService,
@@ -46,27 +44,6 @@ public abstract class BaseMultifactorAuthenticationProviderEventResolver extends
             authenticationSelectionStrategies, selector);
     }
 
-    @Override
-    public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
-                                                                       final Collection<String> requestMfaMethod) {
-        return providers.values()
-            .stream()
-            .filter(p -> requestMfaMethod.stream().filter(Objects::nonNull).anyMatch(p::matches))
-            .findFirst();
-    }
-
-    /**
-     * Locate the provider in the collection, and have it match the requested mfa.
-     * If the provider is multi-instance, resolve based on inner-registered providers.
-     *
-     * @param providers        the providers
-     * @param requestMfaMethod the request mfa method
-     * @return the optional
-     */
-    public Optional<MultifactorAuthenticationProvider> resolveProvider(final Map<String, MultifactorAuthenticationProvider> providers,
-                                                                       final String requestMfaMethod) {
-        return resolveProvider(providers, CollectionUtils.wrap(requestMfaMethod));
-    }
 
     /**
      * Resolve registered service in request context.

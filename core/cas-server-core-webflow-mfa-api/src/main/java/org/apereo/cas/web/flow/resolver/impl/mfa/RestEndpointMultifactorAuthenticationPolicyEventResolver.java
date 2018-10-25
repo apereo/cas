@@ -1,13 +1,17 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -23,14 +27,15 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Collection;
-import java.util.HashSet;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -42,9 +47,11 @@ import java.util.Set;
 @Slf4j
 @Getter
 @Setter
-public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
+public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver
+    implements MultifactorAuthenticationTrigger {
 
     private final String restEndpoint;
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     public RestEndpointMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                     final CentralAuthenticationService centralAuthenticationService,
@@ -59,69 +66,69 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
-        val service = resolveRegisteredServiceInRequestContext(context);
-        val authentication = WebUtils.getAuthentication(context);
+    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication, final RegisteredService registeredService,
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final Service service) {
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
-            return null;
+            return Optional.empty();
         }
         val principal = authentication.getPrincipal();
         if (StringUtils.isBlank(restEndpoint)) {
             LOGGER.debug("Rest endpoint to determine event is not configured for [{}]", principal.getId());
-            return null;
+            return Optional.empty();
         }
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        if (providerMap == null || providerMap.isEmpty()) {
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
-            return null;
+            return Optional.empty();
         }
+
         LOGGER.debug("Contacting [{}] to inquire about [{}]", restEndpoint, principal.getId());
-        val results = callRestEndpointForMultifactor(principal, context);
+        val results = callRestEndpointForMultifactor(principal, service);
         if (StringUtils.isNotBlank(results)) {
-            return resolveMultifactorEventViaRestResult(results, providerMap.values());
+            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(results, applicationContext);
         }
-        LOGGER.debug("No providers are available to match rest endpoint results");
-        return new HashSet<>(0);
+
+        return Optional.empty();
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER", resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+    @Override
+    public Set<Event> resolveInternal(final RequestContext context) {
+        val registeredService = resolveRegisteredServiceInRequestContext(context);
+        val service = resolveServiceFromAuthenticationRequest(context);
+        val authentication = WebUtils.getAuthentication(context);
+        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+
+        val result = isActivated(authentication, registeredService, request, service);
+        return result.map(provider -> {
+            LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, registeredService.getName());
+            val event = validateEventIdForMatchingTransitionInContext(provider.getId(), Optional.of(context),
+                buildEventAttributeMap(authentication.getPrincipal(), Optional.of(registeredService), provider));
+            return CollectionUtils.wrapSet(event);
+        }).orElse(null);
+    }
+
+    @Audit(action = "AUTHENTICATION_EVENT",
+        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+        resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);
     }
 
     /**
-     * Resolve multifactor event via rest result collection.
-     *
-     * @param results   the results
-     * @param providers the flattened providers
-     * @return the events
-     */
-    protected Set<Event> resolveMultifactorEventViaRestResult(final String results, final Collection<MultifactorAuthenticationProvider> providers) {
-        LOGGER.debug("Result returned from the rest endpoint is [{}]", results);
-        val restProvider = providers.stream().filter(p -> p.matches(results)).findFirst().orElse(null);
-        if (restProvider != null) {
-            LOGGER.debug("Found multifactor authentication provider [{}]", restProvider.getId());
-            return CollectionUtils.wrapSet(new Event(this, restProvider.getId()));
-        }
-        LOGGER.debug("No multifactor authentication provider could be matched against [{}]", results);
-        return new HashSet<>(0);
-    }
-
-    /**
      * Call rest endpoint for multifactor.
      *
-     * @param principal the principal
-     * @param context   the context
+     * @param principal       the principal
+     * @param resolvedService the resolved service
      * @return return the rest response, typically the mfa id.
      */
-    protected String callRestEndpointForMultifactor(final Principal principal, final RequestContext context) {
+    protected String callRestEndpointForMultifactor(final Principal principal, final Service resolvedService) {
         val restTemplate = new RestTemplate();
-        val resolvedService = resolveServiceFromAuthenticationRequest(context);
         val entity = new RestEndpointEntity(principal.getId(), resolvedService.getId());
         val responseEntity = restTemplate.postForEntity(restEndpoint, entity, String.class);
-        if (responseEntity != null && responseEntity.getStatusCode() == HttpStatus.OK) {
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
             return responseEntity.getBody();
         }
         return null;
