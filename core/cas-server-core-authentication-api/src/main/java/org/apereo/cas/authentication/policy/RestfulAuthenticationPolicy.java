@@ -17,6 +17,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -53,7 +54,7 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
                 throw new GeneralSecurityException(ex);
             }
             return true;
-        } catch (final HttpClientErrorException e) {
+        } catch (final HttpClientErrorException | HttpServerErrorException.InternalServerError e) {
             val ex = handleResponseStatusCode(e.getStatusCode(), authentication.getPrincipal());
             throw new GeneralSecurityException(ex);
         }
