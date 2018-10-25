@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia

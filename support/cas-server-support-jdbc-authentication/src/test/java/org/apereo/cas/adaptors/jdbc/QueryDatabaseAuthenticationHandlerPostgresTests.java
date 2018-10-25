@@ -31,7 +31,8 @@ import javax.persistence.Id;
 import javax.sql.DataSource;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 
 /**
  * This is postgres tests for {@link QueryDatabaseAuthenticationHandler}.

@@ -16,7 +16,7 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 
 import java.net.URL;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SamlProfileSingleLogoutMessageCreatorTests}.

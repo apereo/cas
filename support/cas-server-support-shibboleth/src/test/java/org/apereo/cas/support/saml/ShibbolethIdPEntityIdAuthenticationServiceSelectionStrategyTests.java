@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Bean;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests}.

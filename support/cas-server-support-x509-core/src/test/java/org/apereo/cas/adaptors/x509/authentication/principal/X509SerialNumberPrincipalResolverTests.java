@@ -11,7 +11,7 @@ import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

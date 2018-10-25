@@ -12,7 +12,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia

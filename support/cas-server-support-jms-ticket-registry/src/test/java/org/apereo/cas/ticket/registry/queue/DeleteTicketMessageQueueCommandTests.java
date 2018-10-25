@@ -8,7 +8,7 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link DeleteTicketMessageQueueCommandTests}.

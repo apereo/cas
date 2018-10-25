@@ -21,8 +21,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDateTime;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link MongoDbMultifactorAuthenticationTrustStorageTests}.
@@ -69,7 +68,7 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests {
         r.setRecordDate(LocalDateTime.now().minusDays(2));
         mfaTrustEngine.set(r);
 
-        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusDays(30)), hasSize(1));
-        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusDays(2)), hasSize(0));
+        assertEquals(1, mfaTrustEngine.get(LocalDateTime.now().minusDays(30)).size());
+        assertEquals(0, mfaTrustEngine.get(LocalDateTime.now().minusDays(2)).size());
     }
 }

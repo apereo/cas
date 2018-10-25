@@ -55,7 +55,7 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link JpaLockingStrategy}.
@@ -119,7 +119,7 @@ public class JpaLockingStrategyTests {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
-        assertTrue("Lock count should be <= 1 but was " + lockCount, lockCount <= 1);
+        assertTrue(lockCount <= 1, "Lock count should be <= 1 but was " + lockCount);
         
         val releaseCount = executor.invokeAll(lockers).stream().filter(result -> {
             try {
@@ -128,7 +128,7 @@ public class JpaLockingStrategyTests {
                 throw new RuntimeException(e.getMessage(), e);
             }
         }).count();
-        assertTrue("Release count should be <= 1 but was " + releaseCount, releaseCount <= 1);
+        assertTrue(releaseCount <= 1, "Release count should be <= 1 but was " + releaseCount);
     }
 
     /**

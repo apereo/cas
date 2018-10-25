@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link DefaultPasswordEncoderTests}.

@@ -9,7 +9,7 @@ import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link ThreadLocalPrincipalResolver}.

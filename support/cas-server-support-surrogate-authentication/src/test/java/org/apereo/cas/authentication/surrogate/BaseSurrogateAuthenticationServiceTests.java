@@ -6,7 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseSurrogateAuthenticationServiceTests}.

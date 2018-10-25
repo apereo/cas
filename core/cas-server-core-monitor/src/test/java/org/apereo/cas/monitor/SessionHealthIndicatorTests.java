@@ -19,7 +19,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for {@link SessionMonitor} class.

@@ -8,7 +8,7 @@ import org.junit.rules.ExpectedException;
 import javax.security.auth.login.AccountNotFoundException;
 import java.util.Collections;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author David Rodriguez

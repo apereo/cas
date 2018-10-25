@@ -24,8 +24,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test cases for {@link JpaMultifactorAuthenticationTrustStorage}.
@@ -80,13 +79,13 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
                 mfaTrustEngine.set(record);
             }
         });
-        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusDays(30)), hasSize(6));
-        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)), hasSize(2));
+        assertEquals(6, mfaTrustEngine.get(LocalDateTime.now().minusDays(30)).size());
+        assertEquals(2, mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)).size());
 
         // expire records older than today
         mfaTrustEngine.expire(LocalDateTime.now().minusDays(1));
-        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusDays(30)), hasSize(2));
-        assertThat(mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)), hasSize(2));
+        assertEquals(2, mfaTrustEngine.get(LocalDateTime.now().minusDays(30)).size());
+        assertEquals(2, mfaTrustEngine.get(LocalDateTime.now().minusSeconds(1)).size());
 
         emptyTrustEngine();
     }
@@ -112,7 +111,7 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
             .flatMap(Set::stream)
             .forEach(r -> mfaTrustEngine.expire(r.getRecordKey()));
 
-        assertThat(mfaTrustEngine.get(PRINCIPAL), empty());
-        assertThat(mfaTrustEngine.get(PRINCIPAL2), empty());
+        assertTrue(mfaTrustEngine.get(PRINCIPAL).isEmpty());
+        assertTrue(mfaTrustEngine.get(PRINCIPAL2).isEmpty());
     }
 }

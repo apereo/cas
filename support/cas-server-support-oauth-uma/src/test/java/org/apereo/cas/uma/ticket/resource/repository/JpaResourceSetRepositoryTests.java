@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.LinkedHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JpaResourceSetRepositoryTests}.

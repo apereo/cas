@@ -22,7 +22,7 @@ import javax.annotation.PostConstruct;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -65,7 +65,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val repo = getRegistry("verifySaveAndUpdate");
         repo.save(acct.getUsername(), acct.getSecretKey(), acct.getValidationCode(), acct.getScratchCodes());
         var s = repo.get(acct.getUsername());
-        assertNotNull("Account not found", s);
+        assertNotNull(s, "Account not found");
         assertNotNull(s.getRegistrationDate());
         assertEquals(acct.getValidationCode(), s.getValidationCode());
         assertEquals(acct.getSecretKey(), s.getSecretKey());
@@ -85,7 +85,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         val acct2 = getAccount("verifyGet", CASUSER);
         repo.save(acct2.getUsername(), acct2.getSecretKey(), acct2.getValidationCode(), acct2.getScratchCodes());
         val acct3 = repo.get(CASUSER);
-        assertNotNull("Account not found", acct3);
+        assertNotNull(acct3, "Account not found");
         assertEquals(acct2.getUsername(), acct3.getUsername());
         assertEquals(acct2.getValidationCode(), acct3.getValidationCode());
         assertEquals(acct2.getSecretKey(), acct3.getSecretKey());

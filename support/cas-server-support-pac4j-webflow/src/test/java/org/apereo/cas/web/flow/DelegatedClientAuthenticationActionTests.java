@@ -63,11 +63,11 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.test.MockRequestContext;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -159,16 +159,28 @@ public class DelegatedClientAuthenticationActionTests {
         urls.stream()
             .map(url -> UriComponentsBuilder.fromUriString(url.getRedirectUrl()).build())
             .forEach(uriComponents -> {
-                assertThat(uriComponents.getPath()).isEqualTo(DelegatedClientNavigationController.ENDPOINT_REDIRECT);
-                assertThat(uriComponents.getQueryParams().get(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER)).hasSize(1).isSubsetOf("FacebookClient", "TwitterClient");
+                assertEquals(DelegatedClientNavigationController.ENDPOINT_REDIRECT, uriComponents.getPath());
+                val params = uriComponents.getQueryParams().get(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
+                assertEquals(1, params.size());
+                assertTrue(Arrays.asList("FacebookClient", "TwitterClient").containsAll(params));
                 if (service != null) {
-                    assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE)).hasSize(1).contains(MY_SERVICE);
+                    val queryParams = uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE);
+                    assertEquals(1, queryParams.size());
+                    assertTrue(queryParams.contains(MY_SERVICE));
                 } else {
-                    assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE)).isNull();
+                    assertNull(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_SERVICE));
                 }
-                assertThat(uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_METHOD)).hasSize(1).contains(HttpMethod.POST.toString());
-                assertThat(uriComponents.getQueryParams().get(ThemeChangeInterceptor.DEFAULT_PARAM_NAME)).hasSize(1).contains(MY_THEME);
-                assertThat(uriComponents.getQueryParams().get(LocaleChangeInterceptor.DEFAULT_PARAM_NAME)).hasSize(1).contains(locale);
+                val method = uriComponents.getQueryParams().get(CasProtocolConstants.PARAMETER_METHOD);
+                assertEquals(1, method.size());
+                assertTrue(method.contains(HttpMethod.POST.toString()));
+
+                val theme = uriComponents.getQueryParams().get(ThemeChangeInterceptor.DEFAULT_PARAM_NAME);
+                assertEquals(1, theme.size());
+                assertTrue(theme.contains(MY_THEME));
+
+                val localeParam = uriComponents.getQueryParams().get(LocaleChangeInterceptor.DEFAULT_PARAM_NAME);
+                assertEquals(1, localeParam.size());
+                assertTrue(localeParam.contains(locale));
             });
     }
 

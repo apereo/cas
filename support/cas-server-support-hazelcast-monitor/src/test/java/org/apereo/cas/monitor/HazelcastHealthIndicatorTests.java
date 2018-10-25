@@ -33,10 +33,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.Arrays;
 import java.util.Map;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link HazelcastHealthIndicatorTests}.
@@ -79,7 +79,7 @@ public class HazelcastHealthIndicatorTests {
     @Test
     public void verifyMonitor() {
         val health = hazelcastHealthIndicator.health();
-        assertThat(health.getStatus(), isOneOf(Status.UP, Status.OUT_OF_SERVICE));
+        assertTrue(Arrays.asList(Status.UP, Status.OUT_OF_SERVICE).contains(health.getStatus()));
 
         val details = health.getDetails();
         details.values().stream()

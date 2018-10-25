@@ -20,7 +20,7 @@ import org.springframework.core.io.ResourceLoader;
 import java.io.IOException;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test additional metadata validity.

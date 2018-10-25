@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -27,13 +27,13 @@ public class ServiceRegistryInitializerTests {
         val serviceRegistry = new InMemoryServiceRegistry(mock(ApplicationEventPublisher.class));
         val serviceRegistryInitializer = new ServiceRegistryInitializer(jsonServiceRegistry, serviceRegistry, servicesManager);
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
-        assertThat(serviceRegistry.size()).isEqualTo(1);
+        assertEquals(1, serviceRegistry.size());
 
         val initialService2 = newService();
         when(jsonServiceRegistry.load()).thenReturn((Collection) Collections.singletonList(initialService2));
 
         serviceRegistryInitializer.initServiceRegistryIfNecessary();
-        assertThat(serviceRegistry.size()).isEqualTo(1);
+        assertEquals(1, serviceRegistry.size());
     }
 
     private static RegisteredService newService() {

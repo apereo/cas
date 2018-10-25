@@ -10,7 +10,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.LinkedHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

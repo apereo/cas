@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.security.auth.login.FailedLoginException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia

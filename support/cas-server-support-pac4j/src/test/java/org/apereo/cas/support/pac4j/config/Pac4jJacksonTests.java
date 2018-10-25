@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is Pac4jJacksonTests.
@@ -28,10 +28,10 @@ public class Pac4jJacksonTests {
         session.put(key, requestToken);
         val serialisedSession = sessionStoreCookieSerializer.toString(session);
 
-        assertThat(session).isNotEmpty();
+        assertFalse(session.isEmpty());
 
         val deserialisedSession = sessionStoreCookieSerializer.from(serialisedSession);
 
-        assertThat(deserialisedSession).isEqualTo(session);
+        assertEquals(session, deserialisedSession);
     }
 }

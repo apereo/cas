@@ -6,7 +6,7 @@ import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Misagh Moayyed
@@ -19,9 +19,9 @@ public class OAuthAccessTokenExpirationPolicyTests extends BaseOAuthExpirationPo
         val tgt = newTicketGrantingTicket();
         val at = newAccessToken(tgt);
 
-        assertFalse("Access token should not be expired", at.isExpired());
+        assertFalse(at.isExpired(), "Access token should not be expired");
         tgt.markTicketExpired();
-        assertTrue("Access token should not be expired when TGT is expired", at.isExpired());
+        assertTrue(at.isExpired(), "Access token should not be expired when TGT is expired");
     }
 
     @Test

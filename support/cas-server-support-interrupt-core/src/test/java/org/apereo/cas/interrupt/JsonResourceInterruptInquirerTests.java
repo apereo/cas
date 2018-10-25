@@ -12,7 +12,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import java.io.File;
 import java.util.LinkedHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JsonResourceInterruptInquirerTests}.

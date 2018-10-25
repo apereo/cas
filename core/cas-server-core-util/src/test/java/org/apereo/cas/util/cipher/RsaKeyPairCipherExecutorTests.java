@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.security.KeyPair;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link RsaKeyPairCipherExecutorTests}.

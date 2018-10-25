@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Abstracted service registry tests for all implementations.
@@ -71,8 +71,8 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void verifyEmptyRegistry() {
-        assertEquals("Loaded too many", 0, serviceRegistry.load().size());
-        assertEquals("Counted too many", 0, serviceRegistry.size());
+        assertEquals(0, serviceRegistry.load().size(), "Loaded too many");
+        assertEquals(0, serviceRegistry.size(), "Counted too many");
     }
 
     @Test

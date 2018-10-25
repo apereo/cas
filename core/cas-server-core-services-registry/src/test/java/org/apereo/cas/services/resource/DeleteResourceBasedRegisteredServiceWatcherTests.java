@@ -12,7 +12,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link DeleteResourceBasedRegisteredServiceWatcherTests}.

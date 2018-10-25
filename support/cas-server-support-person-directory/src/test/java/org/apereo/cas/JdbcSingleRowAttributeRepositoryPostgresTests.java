@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.sql.Statement;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link JdbcSingleRowAttributeRepositoryPostgresTests}.
@@ -45,7 +45,7 @@ public class JdbcSingleRowAttributeRepositoryPostgresTests extends JdbcSingleRow
         assertNotNull(person);
         assertNotNull(person.getAttributes());
         assertFalse(person.getAttributes().isEmpty());
-        assertTrue(person.getAttributeValue("uid").equals("casuser"));
+        assertEquals("casuser", person.getAttributeValue("uid"));
         assertFalse(person.getAttributeValues("locations").isEmpty());
     }
 

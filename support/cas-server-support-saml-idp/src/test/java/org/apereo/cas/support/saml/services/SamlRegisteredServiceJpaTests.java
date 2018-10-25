@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Import;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The {@link SamlRegisteredServiceJpaTests} handles test cases for {@link SamlRegisteredService}.

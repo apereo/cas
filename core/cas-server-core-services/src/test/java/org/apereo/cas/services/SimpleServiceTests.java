@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Scott Battaglia
@@ -12,21 +12,21 @@ public class SimpleServiceTests {
 
     @Test
     public void verifyProperId() {
-        assertEquals("Ids are not equal.", RegisteredServiceTestUtils.CONST_TEST_URL, RegisteredServiceTestUtils.getService().getId());
+        assertEquals(RegisteredServiceTestUtils.CONST_TEST_URL, RegisteredServiceTestUtils.getService().getId(), "Ids are not equal.");
     }
 
     @Test
     public void verifyEqualsWithNull() {
-        assertNotEquals("Service matches null.", RegisteredServiceTestUtils.getService(), null);
+        assertNotEquals(RegisteredServiceTestUtils.getService(), null, "Service matches null.");
     }
 
     @Test
     public void verifyEqualsWithBadClass() {
-        assertFalse("Services matches String class.", RegisteredServiceTestUtils.getService().equals(new Object()));
+        assertFalse(RegisteredServiceTestUtils.getService().equals(new Object()), "Services matches String class.");
     }
 
     @Test
     public void verifyEquals() {
-        assertTrue("Services are not equal.", RegisteredServiceTestUtils.getService().equals(RegisteredServiceTestUtils.getService()));
+        assertTrue(RegisteredServiceTestUtils.getService().equals(RegisteredServiceTestUtils.getService()), "Services are not equal.");
     }
 }

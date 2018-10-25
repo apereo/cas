@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The {@link TimeBasedRegisteredServiceAccessStrategyTests} is responsible for

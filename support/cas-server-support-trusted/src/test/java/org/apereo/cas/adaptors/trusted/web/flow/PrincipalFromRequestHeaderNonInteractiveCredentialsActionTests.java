@@ -13,7 +13,7 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import java.security.Principal;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

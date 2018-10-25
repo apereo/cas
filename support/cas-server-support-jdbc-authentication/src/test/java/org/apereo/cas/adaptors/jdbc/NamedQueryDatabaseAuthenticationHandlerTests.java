@@ -27,7 +27,7 @@ import javax.sql.DataSource;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is tests for {@link QueryDatabaseAuthenticationHandler}.

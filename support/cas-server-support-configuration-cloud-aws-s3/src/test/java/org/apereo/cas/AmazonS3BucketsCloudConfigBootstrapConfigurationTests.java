@@ -25,7 +25,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link AmazonS3BucketsCloudConfigBootstrapConfigurationTests}.
@@ -37,9 +37,9 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     AmazonS3BucketsCloudConfigBootstrapConfiguration.class
 })
-@Category(AmazonWebServicesS3Category.class)
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 4572)
+@Category(AmazonWebServicesS3Category.class)
 @TestPropertySource(properties = {
     "cas.spring.cloud.aws.s3.bucketName=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.BUCKET_NAME,
     "cas.spring.cloud.aws.s3.endpoint=" + AmazonS3BucketsCloudConfigBootstrapConfigurationTests.ENDPOINT,

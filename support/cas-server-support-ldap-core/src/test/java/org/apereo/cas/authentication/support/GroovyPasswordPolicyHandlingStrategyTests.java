@@ -16,7 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.AccountExpiredException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

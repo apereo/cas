@@ -13,7 +13,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import java.security.KeyStore;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Misagh Moayyed

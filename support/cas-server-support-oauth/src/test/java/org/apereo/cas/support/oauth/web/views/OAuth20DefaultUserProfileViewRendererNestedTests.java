@@ -13,7 +13,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

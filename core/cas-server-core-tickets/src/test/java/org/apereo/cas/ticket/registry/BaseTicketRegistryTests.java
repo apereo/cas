@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.IntStream;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseTicketRegistryTests}.
@@ -251,7 +251,7 @@ public abstract class BaseTicketRegistryTests {
             ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
                 CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy()));
-            assertFalse("Ticket was deleted.", ticketRegistry.deleteTicket(StringUtils.EMPTY) == 1);
+            assertNotEquals(1, ticketRegistry.deleteTicket(StringUtils.EMPTY), "Ticket was deleted.");
         } catch (final Exception e) {
             throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED + e.getMessage(), e);
         }
@@ -261,7 +261,7 @@ public abstract class BaseTicketRegistryTests {
     public void verifyGetTicketsIsZero() {
         try {
             ticketRegistry.deleteAll();
-            assertEquals("The size of the empty registry is not zero.", 0, ticketRegistry.getTickets().size());
+            assertEquals(0, ticketRegistry.getTickets().size(), "The size of the empty registry is not zero.");
         } catch (final Exception e) {
             throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED + e.getMessage(), e);
         }
@@ -286,8 +286,7 @@ public abstract class BaseTicketRegistryTests {
 
         try {
             val ticketRegistryTickets = ticketRegistry.getTickets();
-            assertEquals("The size of the registry is not the same as the collection.",
-                tickets.size(), ticketRegistryTickets.size());
+            assertEquals(tickets.size(), ticketRegistryTickets.size(), "The size of the registry is not the same as the collection.");
 
 
             tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
@@ -358,12 +357,12 @@ public abstract class BaseTicketRegistryTests {
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, authn, new NeverExpiresExpirationPolicy()));
         LOGGER.trace("Getting ticket {}", ticketGrantingTicketId);
         val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-        assertNotNull("Ticket-granting ticket " + ticketGrantingTicketId + " cannot be fetched", tgt);
+        assertNotNull(tgt, "Ticket-granting ticket " + ticketGrantingTicketId + " cannot be fetched");
         val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
         LOGGER.trace("Granting service ticket {}", serviceTicketId);
         val ticket = (AbstractTicket) tgt.grantServiceTicket(serviceTicketId, service,
             new NeverExpiresExpirationPolicy(), false, true);
-        assertNotNull("Service ticket cannot be null", ticket);
+        assertNotNull(ticket, "Service ticket cannot be null");
         ticket.setExpirationPolicy(new AlwaysExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);
         ticketRegistry.updateTicket(tgt);
@@ -417,7 +416,7 @@ public abstract class BaseTicketRegistryTests {
         val a = CoreAuthenticationTestUtils.getAuthentication();
         ticketRegistry.addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId, a, new NeverExpiresExpirationPolicy()));
         val tgt = ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
-        assertNotNull("Ticket-granting ticket must not be null", tgt);
+        assertNotNull(tgt, "Ticket-granting ticket must not be null");
         val service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
         IntStream.range(1, 5).forEach(i -> {
             val st = tgt.grantServiceTicket(serviceTicketId + '-' + i, service,

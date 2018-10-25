@@ -18,7 +18,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link InfluxDbConnectionFactoryTests}.

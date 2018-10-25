@@ -24,7 +24,7 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.util.Collections;
 import java.util.HashMap;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This class tests the {@link OAuth20AuthorizeEndpointController} class.

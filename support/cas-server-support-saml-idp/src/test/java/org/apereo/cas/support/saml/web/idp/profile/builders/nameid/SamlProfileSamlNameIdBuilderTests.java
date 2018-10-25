@@ -26,7 +26,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.util.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

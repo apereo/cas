@@ -25,11 +25,9 @@ import org.springframework.web.client.RestTemplate;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 /**
  * This is {@link RestGoogleAuthenticatorTokenCredentialRepositoryTests}.
@@ -72,7 +70,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     @Override
     public void verifyGet() throws Exception {
         val repository = (RestGoogleAuthenticatorTokenCredentialRepository) getRegistry("verifyGet");
-        assertNotNull("Repository is null", repository);
+        assertNotNull(repository, "Repository is null");
 
         val mockServer = MockRestServiceServer.createServer(repository.getRestTemplate());
         mockServer.expect(requestTo("http://example.com"))
@@ -91,7 +89,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     @Override
     public void verifyGetWithDecodedSecret() throws Exception {
         val repository = (RestGoogleAuthenticatorTokenCredentialRepository) getRegistry("verifyGetWithDecodedSecret");
-        assertNotNull("Repository is null", repository);
+        assertNotNull(repository, "Repository is null");
 
         val acct = getAccount("verifyGetWithDecodedSecret", CASUSER).clone();
         acct.setSecretKey(PLAIN_SECRET);
@@ -110,7 +108,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseO
     @Override
     public void verifySaveAndUpdate() throws Exception {
         val repository = (RestGoogleAuthenticatorTokenCredentialRepository) getRegistry("verifySaveAndUpdate");
-        assertNotNull("Repository is null", repository);
+        assertNotNull(repository, "Repository is null");
         val acct = getAccount("verifySaveAndUpdate", CASUSER).clone();
 
         val mockServer = MockRestServiceServer.createServer(repository.getRestTemplate());

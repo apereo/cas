@@ -9,7 +9,7 @@ import org.junit.rules.ExpectedException;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link SurrogatePrincipalResolverTests}.

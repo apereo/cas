@@ -9,7 +9,6 @@ import org.apache.directory.fortress.core.GlobalErrIds;
 import org.apache.directory.fortress.core.PasswordException;
 import org.apache.directory.fortress.core.model.Session;
 import org.apache.directory.fortress.core.model.User;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +23,8 @@ import javax.security.auth.login.FailedLoginException;
 import javax.xml.bind.JAXBContext;
 import java.io.StringWriter;
 import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link FortressAuthenticationHandler}.
@@ -67,13 +68,13 @@ public class FortressAuthenticationHandlerTests {
         try {
             val handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
-            Assert.assertEquals(CoreAuthenticationTestUtils.CONST_USERNAME,
+            assertEquals(CoreAuthenticationTestUtils.CONST_USERNAME,
                 handlerResult.getPrincipal().getId());
             val jaxbContext = JAXBContext.newInstance(Session.class);
             val marshaller = jaxbContext.createMarshaller();
             val writer = new StringWriter();
             marshaller.marshal(session, writer);
-            Assert.assertEquals(writer.toString(), handlerResult.getPrincipal()
+            assertEquals(writer.toString(), handlerResult.getPrincipal()
                 .getAttributes().get(FortressAuthenticationHandler.FORTRESS_SESSION_KEY));
         } catch (final Exception e) {
             LOGGER.error("test failed", e);
