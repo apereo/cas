@@ -210,6 +210,7 @@ public abstract class BaseConverters {
         }
     }
 
+    @ReadingConverter
     static class StringToPatternConverter implements Converter<String, Pattern> {
         @Override
         public Pattern convert(final String source) {
@@ -223,6 +224,7 @@ public abstract class BaseConverters {
     /**
      * The type Pattern to string converter.
      */
+    @WritingConverter
     public static class PatternToStringConverter implements Converter<Pattern, String> {
         @Override
         public String convert(final Pattern source) {
