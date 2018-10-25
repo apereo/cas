@@ -350,6 +350,15 @@ public abstract class BaseTicketRegistryTests {
     }
 
     @Test
+    public void verifyExpiredTicket() {
+        val authn = CoreAuthenticationTestUtils.getAuthentication();
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, authn, new AlwaysExpiresExpirationPolicy()));
+        var tgt = this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class);
+        assertNull(tgt);
+    }
+
+
+    @Test
     @Transactional
     public void verifyDeleteTicketWithPGT() {
         val a = CoreAuthenticationTestUtils.getAuthentication();

@@ -1,9 +1,10 @@
 package org.apereo.cas.ticket.registry;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import java.util.Date;
 @AllArgsConstructor
 @ToString
 @Document
+@Setter
 public class TicketHolder implements Serializable {
 
     /**
@@ -38,12 +40,14 @@ public class TicketHolder implements Serializable {
 
     private static final long serialVersionUID = -4843440028617071224L;
 
+    @JsonProperty
     private final String json;
 
+    @JsonProperty
     private final String ticketId;
 
+    @JsonProperty
     private final String type;
 
-    @Indexed
     private final Date expireAt;
 }
