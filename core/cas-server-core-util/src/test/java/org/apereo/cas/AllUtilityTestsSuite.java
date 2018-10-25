@@ -23,7 +23,6 @@ import org.apereo.cas.util.gen.HexRandomStringGeneratorTests;
 import org.apereo.cas.util.http.HttpMessageTests;
 import org.apereo.cas.util.http.SimpleHttpClientTests;
 import org.apereo.cas.util.io.CommunicationsManagerTests;
-import org.apereo.cas.util.io.CopyServletOutputStreamTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -44,7 +43,6 @@ import org.junit.runners.Suite;
     HttpMessageTests.class,
     SimpleHttpClientTests.class,
     CommunicationsManagerTests.class,
-    CopyServletOutputStreamTests.class,
     Base64RandomStringGeneratorTests.class,
     ChainingPrincipalNameTransformerTests.class,
     CollectionUtilsTests.class,
@@ -59,8 +57,7 @@ import org.junit.runners.Suite;
     BinaryCipherExecutorTests.class,
     ResourceUtilsTests.class,
     ScriptingUtilsTests.class,
-    RandomUtilsTests.class,
-    CopyServletOutputStreamTests.class
+    RandomUtilsTests.class
 })
 public class AllUtilityTestsSuite {
 }
