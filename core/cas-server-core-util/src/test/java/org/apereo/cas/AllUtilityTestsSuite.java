@@ -20,7 +20,6 @@ import org.apereo.cas.util.gen.ChainingPrincipalNameTransformerTests;
 import org.apereo.cas.util.gen.DefaultLongNumericGeneratorTests;
 import org.apereo.cas.util.gen.DefaultRandomStringGeneratorTests;
 import org.apereo.cas.util.gen.HexRandomStringGeneratorTests;
-import org.apereo.cas.util.http.HttpClientMultiThreadedDownloaderTests;
 import org.apereo.cas.util.http.HttpMessageTests;
 import org.apereo.cas.util.http.SimpleHttpClientTests;
 import org.apereo.cas.util.io.CommunicationsManagerTests;
@@ -41,7 +40,6 @@ import org.junit.runners.Suite;
     ProtocolTicketCipherExecutorTests.class,
     TicketGrantingCookieCipherExecutorTests.class,
     WebflowConversationStateCipherExecutorTests.class,
-    HttpClientMultiThreadedDownloaderTests.class,
     RsaKeyPairCipherExecutorTests.class,
     HttpMessageTests.class,
     SimpleHttpClientTests.class,
