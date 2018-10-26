@@ -413,7 +413,7 @@ public class EncodingUtils {
         final JsonWebEncryption jwe = new JsonWebEncryption();
         jwe.setKey(secretKeyEncryptionKey);
         jwe.setCompactSerialization(value);
-        LOGGER.debug("Decrypting value...");
+        LOGGER.trace("Decrypting value...");
         return jwe.getPayload();
     }
 
