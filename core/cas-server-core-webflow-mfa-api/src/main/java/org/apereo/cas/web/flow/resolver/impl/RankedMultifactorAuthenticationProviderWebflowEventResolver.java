@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
@@ -32,7 +33,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
-public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends AbstractCasMultifactorAuthenticationWebflowEventResolver implements CasDelegatingWebflowEventResolver {
+public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends AbstractCasMultifactorAuthenticationWebflowEventResolver
+    implements CasDelegatingWebflowEventResolver {
 
     private final CasDelegatingWebflowEventResolver casDelegatingWebflowEventResolver;
     private final MultifactorAuthenticationContextValidator authenticationContextValidator;
@@ -106,8 +108,8 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
 
         val value = result.getValue();
         if (value.isPresent()) {
-            val attributeMap = buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), value.get());
-            return CollectionUtils.wrapSet(validateEventIdForMatchingTransitionInContext(id, context, attributeMap));
+            val attributeMap = MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(), Optional.of(service), value.get());
+            return CollectionUtils.wrapSet(MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(id, Optional.of(context), attributeMap));
         }
         LOGGER.warn("The authentication context cannot be satisfied and the requested event [{}] is unrecognized", id);
         return CollectionUtils.wrapSet(new Event(this, CasWebflowConstants.TRANSITION_ID_ERROR));

@@ -1,6 +1,7 @@
 package org.apereo.cas.mongo;
 
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.RegexUtils;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -22,14 +23,15 @@ import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.data.convert.ReadingConverter; 
-import org.springframework.data.convert.WritingConverter; 
+import org.springframework.data.convert.ReadingConverter;
+import org.springframework.data.convert.WritingConverter;
 
 import java.lang.ref.ReferenceQueue;
 import java.security.cert.CertPath;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * Collection of mongo converters that map objects to
@@ -205,6 +207,28 @@ public abstract class BaseConverters {
         @Override
         public Date convert(final BsonTimestamp source) {
             return new Date(source.getTime());
+        }
+    }
+
+    @ReadingConverter
+    static class StringToPatternConverter implements Converter<String, Pattern> {
+        @Override
+        public Pattern convert(final String source) {
+            if (StringUtils.isBlank(source)) {
+                return null;
+            }
+            return RegexUtils.createPattern(source);
+        }
+    }
+
+    /**
+     * The type Pattern to string converter.
+     */
+    @WritingConverter
+    public static class PatternToStringConverter implements Converter<Pattern, String> {
+        @Override
+        public String convert(final Pattern source) {
+            return source.pattern();
         }
     }
 

@@ -542,6 +542,16 @@ public class WebUtils {
      */
     public static String getHttpServletRequestUserAgentFromRequestContext(final RequestContext context) {
         val request = getHttpServletRequestFromExternalWebflowContext(context);
+        return getHttpServletRequestUserAgentFromRequestContext(request);
+    }
+
+    /**
+     * Gets http servlet request user agent from request context.
+     *
+     * @param request the request
+     * @return the http servlet request user agent from request context
+     */
+    public static String getHttpServletRequestUserAgentFromRequestContext(final HttpServletRequest request) {
         return HttpRequestUtils.getHttpServletRequestUserAgent(request);
     }
 
@@ -565,6 +575,7 @@ public class WebUtils {
         val servletRequest = getHttpServletRequestFromExternalWebflowContext(context);
         return getHttpServletRequestGeoLocation(servletRequest);
     }
+
 
     /**
      * Gets http servlet request geo location.
