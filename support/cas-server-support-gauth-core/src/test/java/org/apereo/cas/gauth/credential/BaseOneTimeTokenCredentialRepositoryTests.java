@@ -50,7 +50,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     @Mock
     private CipherExecutor<String, String> cipherExecutor;
 
-    private Map<Pair<String, String>, OneTimeTokenAccount> accountHashMap = new LinkedHashMap<>();
+    private final Map<Pair<String, String>, OneTimeTokenAccount> accountHashMap = new LinkedHashMap<>();
 
     public OneTimeTokenAccount getAccount(final String testName, final String username) {
         return accountHashMap.computeIfAbsent(Pair.of(testName, username), pair -> getRegistry(pair.getLeft()).create(pair.getRight()));
@@ -99,7 +99,6 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(acct2.getValidationCode(), acct3.getValidationCode());
         assertEquals(acct2.getSecretKey(), acct3.getSecretKey());
         assertEquals(acct2.getScratchCodes(), acct3.getScratchCodes());
-        assertEquals(acct2.getRegistrationDate().toLocalDate(), acct3.getRegistrationDate().toLocalDate());
     }
 
     @Test
