@@ -5,8 +5,8 @@ import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.util.LinkedMultiValueMap;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith(MockitoExtension.class)
 public class X509RestHttpRequestHeaderCredentialFactoryTests {
     private static final String HEADER = "ssl_client_cert";
 

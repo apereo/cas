@@ -16,6 +16,8 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationEventPublisher;
@@ -36,6 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(MockitoExtension.class)
 public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     @Test
