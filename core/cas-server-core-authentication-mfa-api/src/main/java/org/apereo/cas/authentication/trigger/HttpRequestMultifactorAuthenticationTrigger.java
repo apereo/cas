@@ -79,7 +79,7 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
     protected List<String> resolveEventFromHttpRequest(final HttpServletRequest request) {
         val mfaRequestHeader = casProperties.getAuthn().getMfa().getRequestHeader();
         val headers = request.getHeaders(mfaRequestHeader);
-        if (headers != null) {
+        if (headers != null && headers.hasMoreElements()) {
             LOGGER.debug("Received request header [{}] as [{}]", mfaRequestHeader, headers);
             return Collections.list(headers);
         }
