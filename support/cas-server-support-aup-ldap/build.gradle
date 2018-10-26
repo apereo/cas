@@ -3,12 +3,12 @@ dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-ticket")
     
-    implementation project(":core:cas-server-core-web-api")
-    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
     implementation project(":support:cas-server-support-ldap-core")
     implementation project(":support:cas-server-support-aup-core")
-    implementation project(":core:cas-server-core-authentication-api")
 
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
@@ -18,6 +18,11 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-configuration")
+
+    testImplementation project(":support:cas-server-support-aup-webflow")
+    
+    testImplementation project(path: ":support:cas-server-support-aup-webflow", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")

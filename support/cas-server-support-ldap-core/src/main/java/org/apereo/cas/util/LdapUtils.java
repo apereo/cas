@@ -172,7 +172,7 @@ public class LdapUtils {
      */
     public static Long getLong(final LdapEntry entry, final String attribute, final Long nullValue) {
         val v = getString(entry, attribute, nullValue.toString());
-        if (v != null && NumberUtils.isCreatable(v)) {
+        if (NumberUtils.isCreatable(v)) {
             return Long.valueOf(v);
         }
         return nullValue;
@@ -324,15 +324,14 @@ public class LdapUtils {
                 LOGGER.debug("Executing password modification op for active directory based on "
                     + "[https://support.microsoft.com/en-us/kb/269190]");
                 val operation = new ModifyOperation(modifyConnection);
-                final Response response = operation.execute(new ModifyRequest(currentDn,
-                    new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
+                val response = operation.execute(new ModifyRequest(currentDn, new AttributeModification(AttributeModificationType.REPLACE, new UnicodePwdAttribute(newPassword))));
                 LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
                 return response.getResultCode() == ResultCode.SUCCESS;
             }
 
             LOGGER.debug("Executing password modification op for generic LDAP");
             val operation = new PasswordModifyOperation(modifyConnection);
-            final Response response = operation.execute(new PasswordModifyRequest(currentDn,
+            val response = operation.execute(new PasswordModifyRequest(currentDn,
                 StringUtils.isNotBlank(oldPassword) ? new Credential(oldPassword) : null,
                 new Credential(newPassword)));
             LOGGER.debug("Result code [{}], message: [{}]", response.getResult(), response.getMessage());
@@ -490,7 +489,7 @@ public class LdapUtils {
     }
 
     /**
-     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * Constructs a new search filter using {@link SearchExecutor#getSearchFilter()} as a template and
      * the username as a parameter.
      *
      * @param filterQuery the query filter
@@ -501,7 +500,7 @@ public class LdapUtils {
     }
 
     /**
-     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * Constructs a new search filter using {@link SearchExecutor#getSearchFilter()} as a template and
      * the username as a parameter.
      *
      * @param filterQuery the query filter
@@ -513,7 +512,7 @@ public class LdapUtils {
     }
 
     /**
-     * Constructs a new search filter using {@link SearchExecutor#searchFilter} as a template and
+     * Constructs a new search filter using {@link SearchExecutor#getSearchFilter()} as a template and
      * the username as a parameter.
      *
      * @param filterQuery the query filter
@@ -742,7 +741,7 @@ public class LdapUtils {
 
         val urls = l.getLdapUrl().contains(" ")
             ? l.getLdapUrl()
-            : Arrays.stream(l.getLdapUrl().split(",")).collect(Collectors.joining(" "));
+            : String.join(" ", l.getLdapUrl().split(","));
         LOGGER.debug("Transformed LDAP urls from [{}] to [{}]", l.getLdapUrl(), urls);
         cc.setLdapUrl(urls);
 
@@ -820,18 +819,16 @@ public class LdapUtils {
     }
 
     private static SaslConfig getSaslConfigFrom(final AbstractLdapProperties l) {
-        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.DIGEST_MD5) {
+        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.DIGEST_MD5) {
             val sc = new DigestMd5Config();
-            ((DigestMd5Config) sc).setRealm(l.getSaslRealm());
+            sc.setRealm(l.getSaslRealm());
             return sc;
         }
-        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.CRAM_MD5) {
-            val sc = new CramMd5Config();
-            return sc;
+        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.CRAM_MD5) {
+            return new CramMd5Config();
         }
-        if ((Mechanism.valueOf(l.getSaslMechanism())) == Mechanism.EXTERNAL) {
-            val sc = new ExternalConfig();
-            return sc;
+        if (Mechanism.valueOf(l.getSaslMechanism()) == Mechanism.EXTERNAL) {
+            return new ExternalConfig();
         }
         val sc = new GssApiConfig();
         sc.setRealm(l.getSaslRealm());
@@ -940,7 +937,7 @@ public class LdapUtils {
                         cp.setPassivator(new BindPassivator(bindRequest));
                         LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     } else {
-                        final List values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
+                        val values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
                             .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
                             .collect(Collectors.toList());
                         LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "

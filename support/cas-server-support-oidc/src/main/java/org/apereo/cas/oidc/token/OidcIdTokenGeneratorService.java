@@ -9,8 +9,11 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
+import org.apereo.cas.ticket.IdTokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -18,7 +21,6 @@ import org.apereo.cas.util.Pac4jUtils;
 
 import com.google.common.base.Preconditions;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
@@ -26,7 +28,6 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.UserProfile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -45,27 +45,19 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor
-public class OidcIdTokenGeneratorService {
+public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
-    private final CasConfigurationProperties casProperties;
-    private final OidcIdTokenSigningAndEncryptionService signingService;
-    private final ServicesManager servicesManager;
+    public OidcIdTokenGeneratorService(final CasConfigurationProperties casProperties,
+                                       final IdTokenSigningAndEncryptionService signingService,
+                                       final ServicesManager servicesManager,
+                                       final TicketRegistry ticketRegistry) {
+        super(casProperties, signingService, servicesManager, ticketRegistry);
+    }
 
-    /**
-     * Generate string.
-     *
-     * @param request           the request
-     * @param response          the response
-     * @param accessTokenId     the access token id
-     * @param timeoutInSeconds  the timeoutInSeconds
-     * @param responseType      the response type
-     * @param registeredService the registered service
-     * @return the string
-     */
+    @Override
     public String generate(final HttpServletRequest request,
                            final HttpServletResponse response,
-                           final AccessToken accessTokenId,
+                           final AccessToken accessToken,
                            final long timeoutInSeconds,
                            final OAuth20ResponseTypes responseType,
                            final OAuthRegisteredService registeredService) {
@@ -76,23 +68,17 @@ public class OidcIdTokenGeneratorService {
 
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         val context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        val manager = Pac4jUtils.getPac4jProfileManager(request, response);
-        val profile = (Optional<CommonProfile>) manager.get(true);
+        LOGGER.debug("Attempting to produce claims for the id token [{}]", accessToken);
+        val authenticatedProfile = getAuthenticatedProfile(request, response);
+        val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
+            oidcRegisteredService, authenticatedProfile, context, responseType);
 
-        if (!profile.isPresent()) {
-            throw new IllegalArgumentException("Unable to determine the user profile from the context");
-        }
-
-        LOGGER.debug("Attempting to produce claims for the id token [{}]", accessTokenId);
-        val claims = produceIdTokenClaims(request, accessTokenId, timeoutInSeconds,
-            oidcRegisteredService, profile.get(), context, responseType);
-        LOGGER.debug("Produce claims for the id token [{}] as [{}]", accessTokenId, claims);
-
-        return this.signingService.encode(oidcRegisteredService, claims);
+        return encodeAndFinalizeToken(claims, oidcRegisteredService, accessToken);
     }
 
+
     /**
-     * Produce id token claims jwt claims.
+     * Produce claims as jwt.
      *
      * @param request          the request
      * @param accessTokenId    the access token id
@@ -103,13 +89,13 @@ public class OidcIdTokenGeneratorService {
      * @param responseType     the response type
      * @return the jwt claims
      */
-    protected JwtClaims produceIdTokenClaims(final HttpServletRequest request,
-                                             final AccessToken accessTokenId,
-                                             final long timeoutInSeconds,
-                                             final OidcRegisteredService service,
-                                             final UserProfile profile,
-                                             final J2EContext context,
-                                             final OAuth20ResponseTypes responseType) {
+    protected JwtClaims buildJwtClaims(final HttpServletRequest request,
+                                       final AccessToken accessTokenId,
+                                       final long timeoutInSeconds,
+                                       final OidcRegisteredService service,
+                                       final UserProfile profile,
+                                       final J2EContext context,
+                                       final OAuth20ResponseTypes responseType) {
         val authentication = accessTokenId.getAuthentication();
         val principal = authentication.getPrincipal();
         val oidc = casProperties.getAuthn().getOidc();
@@ -138,6 +124,7 @@ public class OidcIdTokenGeneratorService {
             claims.setStringListClaim(OidcConstants.AMR, val.toArray(new String[]{}));
         }
 
+        claims.setStringClaim(OAuth20Constants.CLIENT_ID, service.getClientId());
         claims.setClaim(OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE));
         claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE));
         claims.setClaim(OidcConstants.CLAIM_AT_HASH, generateAccessTokenHash(accessTokenId, service));
@@ -153,30 +140,30 @@ public class OidcIdTokenGeneratorService {
         return claims;
     }
 
-    private Entry<String, Service> getOAuthServiceTicket(final TicketGrantingTicket tgt) {
-        val oAuthCallbackUrl = getOAuthCallbackUrl();
+    /**
+     * Gets oauth service ticket.
+     *
+     * @param tgt the tgt
+     * @return the o auth service ticket
+     */
+    protected Entry<String, Service> getOAuthServiceTicket(final TicketGrantingTicket tgt) {
+        val oAuthCallbackUrl = casProperties.getServer().getPrefix()
+            + OAuth20Constants.BASE_OAUTH20_URL + '/'
+            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 
         val oAuthServiceTicket = Stream.concat(
             tgt.getServices().entrySet().stream(),
             tgt.getProxyGrantingTickets().entrySet().stream())
-            .filter(e -> servicesManager.findServiceBy(e.getValue()).getServiceId().equals(oAuthCallbackUrl))
+            .filter(e -> {
+                val service = servicesManager.findServiceBy(e.getValue());
+                return service != null && service.getServiceId().equals(oAuthCallbackUrl);
+            })
             .findFirst();
         Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issued to "
             + oAuthCallbackUrl + " as part of the authentication context");
         return oAuthServiceTicket.get();
     }
-
-    /**
-     * Gets OAuth callback url.
-     *
-     * @return the OAuth callback url
-     */
-    public String getOAuthCallbackUrl() {
-        return casProperties.getServer().getPrefix()
-            + OAuth20Constants.BASE_OAUTH20_URL + '/'
-            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-    }
-
+    
     /**
      * Generate access token hash string.
      *

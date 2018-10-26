@@ -57,13 +57,10 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
                 LOGGER.warn("Could not locate the application context to process attributes");
                 return super.getAttributesInternal(principal, attributes, service);
             }
-            val resolver =
-                ctx.getBean("defaultSamlRegisteredServiceCachingMetadataResolver", SamlRegisteredServiceCachingMetadataResolver.class);
+            val resolver = ctx.getBean("defaultSamlRegisteredServiceCachingMetadataResolver", SamlRegisteredServiceCachingMetadataResolver.class);
+            val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, saml, entityId);
 
-            val facade =
-                SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, saml, entityId);
-
-            if (facade == null || !facade.isPresent()) {
+            if (facade == null || facade.isEmpty()) {
                 LOGGER.warn("Could not locate metadata for [{}] to process attributes", entityId);
                 return super.getAttributesInternal(principal, attributes, service);
             }

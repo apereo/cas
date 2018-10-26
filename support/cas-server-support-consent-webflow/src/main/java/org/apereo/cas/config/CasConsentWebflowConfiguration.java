@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.CheckConsentRequiredAction;
 import org.apereo.cas.web.flow.ConfirmConsentAction;
 import org.apereo.cas.web.flow.ConsentWebflowConfigurer;
 
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -37,25 +38,25 @@ public class CasConsentWebflowConfiguration implements CasWebflowExecutionPlanCo
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
-    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private ObjectProvider<AuthenticationServiceSelectionPlan> authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("consentEngine")
-    private ConsentEngine consentEngine;
+    private ObjectProvider<ConsentEngine> consentEngine;
 
     @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -63,22 +64,22 @@ public class CasConsentWebflowConfiguration implements CasWebflowExecutionPlanCo
     @ConditionalOnMissingBean(name = "checkConsentRequiredAction")
     @Bean
     public Action checkConsentRequiredAction() {
-        return new CheckConsentRequiredAction(servicesManager,
-            authenticationRequestServiceSelectionStrategies, consentEngine, casProperties);
+        return new CheckConsentRequiredAction(servicesManager.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(), consentEngine.getIfAvailable(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "confirmConsentAction")
     @Bean
     public Action confirmConsentAction() {
-        return new ConfirmConsentAction(servicesManager,
-            authenticationRequestServiceSelectionStrategies, consentEngine, casProperties);
+        return new ConfirmConsentAction(servicesManager.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(), consentEngine.getIfAvailable(), casProperties);
     }
 
     @ConditionalOnMissingBean(name = "consentWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer consentWebflowConfigurer() {
-        return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new ConsentWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
             applicationContext, casProperties);
     }
 

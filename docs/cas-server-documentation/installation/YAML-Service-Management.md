@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - YAML Service Registry
+category: Services
 ---
 
 # YAML Service Registry
@@ -19,7 +20,7 @@ Support is enabled by adding the following module into the overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#yaml-service-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#yaml-service-registry).
 
 
 A sample YAML file follows:
@@ -72,4 +73,4 @@ if duplicate data is found.
 
 ## Replication
 
-If CAS is to deployed in a cluster, the service definition files must be kept in sync for all CAS nodes. Please [review this guide](Configuring-Service-Replication.html) to learn more about available options.
+If CAS is deployed in a cluster, the service definition files must be kept in sync for all CAS nodes. Please [review this guide](Configuring-Service-Replication.html) to learn more about available options.

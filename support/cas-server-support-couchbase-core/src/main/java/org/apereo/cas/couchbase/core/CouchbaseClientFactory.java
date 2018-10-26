@@ -8,7 +8,6 @@ import com.couchbase.client.java.error.DesignDocumentDoesNotExistException;
 import com.couchbase.client.java.query.N1qlQuery;
 import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.Select;
-import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.query.dsl.Expression;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
@@ -133,15 +132,15 @@ public class CouchbaseClientFactory {
      * @throws GeneralSecurityException the general security exception
      */
     public N1qlQueryResult query(final String usernameAttribute, final String usernameValue) throws GeneralSecurityException {
-        val bucket = getBucket();
-        final Statement statement = Select.select("*")
-            .from(Expression.i(bucket.name()))
+        val theBucket = getBucket();
+        val statement = Select.select("*")
+            .from(Expression.i(theBucket.name()))
             .where(Expression.x(usernameAttribute).eq('\'' + usernameValue + '\''));
 
-        LOGGER.debug("Running query [{}] on bucket [{}]", statement.toString(), bucket.name());
+        LOGGER.debug("Running query [{}] on bucket [{}]", statement.toString(), theBucket.name());
 
         val query = N1qlQuery.simple(statement);
-        val result = bucket.query(query, timeout, TimeUnit.MILLISECONDS);
+        val result = theBucket.query(query, timeout, TimeUnit.MILLISECONDS);
         if (!result.finalSuccess()) {
             LOGGER.error("Couchbase query failed with [{}]", result.errors()
                 .stream()

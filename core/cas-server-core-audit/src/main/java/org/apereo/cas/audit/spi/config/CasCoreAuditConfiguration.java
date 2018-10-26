@@ -6,28 +6,30 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
-import org.apereo.cas.audit.spi.ChainingAuditPrincipalIdProvider;
-import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
-import org.apereo.cas.audit.spi.DefaultAuditTrailExecutionPlan;
-import org.apereo.cas.audit.spi.DefaultAuditTrailRecordResolutionPlan;
-import org.apereo.cas.audit.spi.MessageBundleAwareResourceResolver;
-import org.apereo.cas.audit.spi.NullableReturnValueAuditResourceResolver;
-import org.apereo.cas.audit.spi.ServiceAccessEnforcementAuditResourceResolver;
-import org.apereo.cas.audit.spi.ServiceResourceResolver;
-import org.apereo.cas.audit.spi.ShortenedReturnValueAsStringResourceResolver;
-import org.apereo.cas.audit.spi.ThreadLocalPrincipalResolver;
-import org.apereo.cas.audit.spi.TicketAsFirstParameterResourceResolver;
-import org.apereo.cas.audit.spi.TicketValidationResourceResolver;
+import org.apereo.cas.audit.spi.plan.DefaultAuditTrailExecutionPlan;
+import org.apereo.cas.audit.spi.plan.DefaultAuditTrailRecordResolutionPlan;
+import org.apereo.cas.audit.spi.principal.ChainingAuditPrincipalIdProvider;
+import org.apereo.cas.audit.spi.principal.ThreadLocalPrincipalResolver;
+import org.apereo.cas.audit.spi.resource.CredentialsAsFirstParameterResourceResolver;
+import org.apereo.cas.audit.spi.resource.MessageBundleAwareResourceResolver;
+import org.apereo.cas.audit.spi.resource.NullableReturnValueAuditResourceResolver;
+import org.apereo.cas.audit.spi.resource.ServiceAccessEnforcementAuditResourceResolver;
+import org.apereo.cas.audit.spi.resource.ServiceResourceResolver;
+import org.apereo.cas.audit.spi.resource.ShortenedReturnValueAsStringResourceResolver;
+import org.apereo.cas.audit.spi.resource.TicketAsFirstParameterResourceResolver;
+import org.apereo.cas.audit.spi.resource.TicketValidationResourceResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
+import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
@@ -84,8 +86,8 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     public AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan(final List<AuditTrailRecordResolutionPlanConfigurer> configurers) {
         val plan = new DefaultAuditTrailRecordResolutionPlan();
         configurers.forEach(c -> {
-            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Registering audit trail manager [{}]", name);
+            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            LOGGER.trace("Registering audit trail manager [{}]", name);
             c.configureAuditTrailRecordResolutionPlan(plan);
         });
         return plan;
@@ -97,8 +99,8 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     public AuditTrailExecutionPlan auditTrailExecutionPlan(final List<AuditTrailExecutionPlanConfigurer> configurers) {
         val plan = new DefaultAuditTrailExecutionPlan();
         configurers.forEach(c -> {
-            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Registering audit trail manager [{}]", name);
+            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            LOGGER.trace("Configuring audit trail execution plan via [{}]", name);
             c.configureAuditTrailExecutionPlan(plan);
         });
         return plan;
@@ -231,7 +233,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
         val slf4j = new Slf4jLoggingAuditTrailManager();
         slf4j.setUseSingleLine(audit.isUseSingleLine());
         slf4j.setEntrySeparator(audit.getSinglelineSeparator());
-        slf4j.setAuditFormat(audit.getAuditFormat());
+        slf4j.setAuditFormat(AbstractStringAuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().toUpperCase()));
         plan.registerAuditTrailManager(slf4j);
     }
 

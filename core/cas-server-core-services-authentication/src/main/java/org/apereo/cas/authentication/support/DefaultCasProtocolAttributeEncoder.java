@@ -62,7 +62,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
     private static void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
                                                            final RegisteredService registeredService) {
-        LOGGER.debug("Sanitizing attribute names in preparation of the final validation response");
+        LOGGER.trace("Sanitizing attribute names in preparation of the final validation response");
 
         val attrs = attributes.keySet().stream()
             .filter(getSanitizingAttributeNamePredicate())
@@ -74,7 +74,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
             attributes.keySet().removeIf(getSanitizingAttributeNamePredicate());
             attrs.forEach(p -> {
                 val key = p.getKey();
-                LOGGER.debug("Sanitized attribute name to be [{}]", key);
+                LOGGER.trace("Sanitized attribute name to be [{}]", key);
                 attributes.put(key, transformAttributeValueIfNecessary(p.getValue()));
             });
         }
@@ -82,15 +82,13 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
     private static void sanitizeAndTransformAttributeValues(final Map<String, Object> attributes,
                                                             final RegisteredService registeredService) {
-        LOGGER.debug("Sanitizing attribute values in preparation of the final validation response");
-        attributes.entrySet()
-            .stream()
-            .forEach(entry -> {
-                val values = CollectionUtils.toCollection(entry.getValue());
-                values.stream()
-                    .filter(v -> getBinaryAttributeValuePredicate().test(v))
-                    .forEach(v -> attributes.put(entry.getKey(), transformAttributeValueIfNecessary(v)));
-            });
+        LOGGER.trace("Sanitizing attribute values in preparation of the final validation response");
+        attributes.forEach((key, value) -> {
+            val values = CollectionUtils.toCollection(value);
+            values.stream()
+                .filter(v -> getBinaryAttributeValuePredicate().test(v))
+                .forEach(v -> attributes.put(key, transformAttributeValueIfNecessary(v)));
+        });
     }
 
     private static Object transformAttributeValueIfNecessary(final Object attributeValue) {
@@ -170,16 +168,16 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
                                                            final RegisteredService registeredService) {
         val cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
         if (StringUtils.isNotBlank(cachedAttribute)) {
-            LOGGER.debug("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
+            LOGGER.trace("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
             val encodedValue = cipher.encode(cachedAttribute, Optional.of(registeredService));
             if (StringUtils.isNotBlank(encodedValue)) {
                 attributes.put(cachedAttributeName, encodedValue);
-                LOGGER.debug("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
+                LOGGER.trace("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
             } else {
                 LOGGER.warn("Attribute [{}] cannot be encoded and is removed from the collection of attributes", cachedAttributeName);
             }
         } else {
-            LOGGER.debug("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);
+            LOGGER.trace("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);
         }
     }
 

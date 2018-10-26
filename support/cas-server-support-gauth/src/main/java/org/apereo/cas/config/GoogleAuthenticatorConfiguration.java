@@ -1,14 +1,15 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorTrustWebflowConfigurer;
-import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorTrustWebflowConfigurer;
+import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -43,7 +44,7 @@ public class GoogleAuthenticatorConfiguration implements CasWebflowExecutionPlan
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -60,7 +61,7 @@ public class GoogleAuthenticatorConfiguration implements CasWebflowExecutionPlan
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
-        return new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
             googleAuthenticatorFlowRegistry(), applicationContext, casProperties);
     }
 
@@ -81,7 +82,7 @@ public class GoogleAuthenticatorConfiguration implements CasWebflowExecutionPlan
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer() {
-            return new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+            return new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
                 casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), googleAuthenticatorFlowRegistry(),
                 applicationContext, casProperties);
         }

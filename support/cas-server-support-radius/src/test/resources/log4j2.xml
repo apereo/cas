@@ -2,11 +2,11 @@
 <Configuration shutdownHook="disable">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
         <RollingFile name="file" fileName="build/radius.log" append="true"
                      filePattern="openid-%d{yyyy-MM-dd-HH}-%i.log.gz">
-            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -15,7 +15,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="net.jradius" level="off">
+        <Logger name="net.jradius" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.apereo.cas" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

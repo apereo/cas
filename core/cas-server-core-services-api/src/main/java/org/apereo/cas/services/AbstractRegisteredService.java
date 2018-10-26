@@ -27,7 +27,6 @@ import javax.persistence.Lob;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -102,7 +101,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
 
     @Column(name = "logout_type")
-    private LogoutType logoutType = LogoutType.BACK_CHANNEL;
+    private RegisteredServiceLogoutType logoutType = RegisteredServiceLogoutType.BACK_CHANNEL;
 
     @Lob
     @Column(name = "required_handlers", length = Integer.MAX_VALUE)
@@ -120,7 +119,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private String logo;
 
     @Column(name = "logout_url")
-    private URL logoutUrl;
+    private String logoutUrl;
 
     @Lob
     @Column(name = "access_strategy", length = Integer.MAX_VALUE)
@@ -143,17 +142,11 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @OrderColumn
     private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>();
 
-    /**
-     * Initializes the registered service with default values
-     * for fields that are unspecified. Only triggered by JPA.
-     *
-     * @since 4.1
-     */
     @Override
     public void initialize() {
         this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
         this.usernameAttributeProvider = ObjectUtils.defaultIfNull(this.usernameAttributeProvider, new DefaultRegisteredServiceUsernameProvider());
-        this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, LogoutType.BACK_CHANNEL);
+        this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, RegisteredServiceLogoutType.BACK_CHANNEL);
         this.requiredHandlers = ObjectUtils.defaultIfNull(this.requiredHandlers, new HashSet<>());
         this.accessStrategy = ObjectUtils.defaultIfNull(this.accessStrategy, new DefaultRegisteredServiceAccessStrategy());
         this.multifactorPolicy = ObjectUtils.defaultIfNull(this.multifactorPolicy, new DefaultRegisteredServiceMultifactorPolicy());
@@ -170,19 +163,13 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     public abstract void setServiceId(String id);
 
-    /**
-     * {@inheritDoc}
-     * Compares this instance with the {@code other} registered service based on
-     * evaluation order, name. The name comparison is case insensitive.
-     *
-     * @see #getEvaluationOrder()
-     */
     @Override
     public int compareTo(final RegisteredService other) {
-        return new CompareToBuilder().append(getEvaluationOrder(),
-            other.getEvaluationOrder()).append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
-            StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
-            .append(getServiceId(), other.getServiceId()).append(getId(), other.getId()).toComparison();
+        return new CompareToBuilder()
+            .append(getEvaluationOrder(), other.getEvaluationOrder())
+            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(), StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
+            .append(getServiceId(), other.getServiceId()).append(getId(), other.getId())
+            .toComparison();
     }
 
     /**

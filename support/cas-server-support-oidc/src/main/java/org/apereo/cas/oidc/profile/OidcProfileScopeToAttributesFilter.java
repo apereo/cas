@@ -77,7 +77,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         subTypes.forEach(Unchecked.consumer(t -> {
             val ex = t.getDeclaredConstructor().newInstance();
             if (oidc.getScopes().contains(ex.getScopeName())) {
-                LOGGER.debug("Found OpenID Connect scope [{}] to filter attributes", ex.getScopeName());
+                LOGGER.trace("Found OpenID Connect scope [{}] to filter attributes", ex.getScopeName());
                 filters.put(ex.getScopeName(), ex);
             } else {
                 LOGGER.debug("OpenID Connect scope [{}] is not configured for use and will be ignored", ex.getScopeName());
@@ -115,13 +115,13 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         return principal;
     }
 
-    private Map<String, Object> filterAttributesByScope(final Collection<String> stream,
+    private Map<String, Object> filterAttributesByScope(final Collection<String> scopes,
                                                         final Principal principal,
                                                         final Service service,
                                                         final RegisteredService registeredService,
                                                         final AccessToken accessToken) {
         val attributes = new HashMap<String, Object>();
-        stream.stream()
+        scopes.stream()
             .distinct()
             .filter(this.filters::containsKey)
             .forEach(s -> {
@@ -138,14 +138,14 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             return;
         }
 
-        LOGGER.debug("Reconciling OpenId Connect scopes and claims for [{}]", service.getServiceId());
+        LOGGER.trace("Reconciling OpenId Connect scopes and claims for [{}]", service.getServiceId());
 
         val otherScopes = new ArrayList<String>();
         val policy = new ChainingAttributeReleasePolicy();
         val oidc = OidcRegisteredService.class.cast(service);
 
         oidc.getScopes().forEach(s -> {
-            LOGGER.debug("Reviewing scope [{}] for [{}]", s, service.getServiceId());
+            LOGGER.trace("Reviewing scope [{}] for [{}]", s, service.getServiceId());
 
             try {
                 val scope = OidcConstants.StandardScopes.valueOf(s.trim().toLowerCase().toUpperCase());
@@ -203,22 +203,22 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         }
 
         if (policy.getPolicies().isEmpty()) {
-            LOGGER.debug("No attribute release policy could be determined based on given scopes. "
+            LOGGER.trace("No attribute release policy could be determined based on given scopes. "
                 + "No claims/attributes will be released to [{}]", service.getServiceId());
             oidc.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
         } else {
             oidc.setAttributeReleasePolicy(policy);
         }
 
-        LOGGER.debug("Scope/claim reconciliation for service [{}] resulted in the following attribute release policy [{}]",
+        LOGGER.trace("Scope/claim reconciliation for service [{}] resulted in the following attribute release policy [{}]",
             service.getServiceId(), oidc.getAttributeReleasePolicy());
 
         if (!oidc.equals(service)) {
-            LOGGER.debug("Saving scope/claim reconciliation results for service [{}] into registry", service.getServiceId());
+            LOGGER.trace("Saving scope/claim reconciliation results for service [{}] into registry", service.getServiceId());
             this.servicesManager.save(oidc);
             LOGGER.debug("Saved service [{}] into registry", service.getServiceId());
         } else {
-            LOGGER.debug("No changes detected in service [{}] after scope/claim reconciliation", service.getId());
+            LOGGER.trace("No changes detected in service [{}] after scope/claim reconciliation", service.getId());
         }
     }
 }

@@ -161,7 +161,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     public List<IPersonAttributeDao> stubAttributeRepositories() {
         val list = new ArrayList<IPersonAttributeDao>();
         val attrs = casProperties.getAuthn().getAttributeRepository().getStub().getAttributes();
-        if (!attrs.isEmpty() && list.isEmpty()) {
+        if (!attrs.isEmpty()) {
             LOGGER.info("Found and added static attributes [{}] to the list of candidate attribute repositories", attrs.keySet());
             list.add(Beans.newStubAttributeRepository(casProperties.getAuthn().getAttributeRepository()));
         }
@@ -266,9 +266,11 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         val list = new ArrayList<IPersonAttributeDao>();
         casProperties.getAuthn().getAttributeRepository().getScript()
             .forEach(Unchecked.consumer(script -> {
-                val dao = new ScriptEnginePersonAttributeDao();
-                val scriptFile = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
-                dao.setScriptFile(scriptFile);
+                val scriptContents = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
+                val engineName = script.getEngineName() == null
+                    ? ScriptEnginePersonAttributeDao.getScriptEngineName(script.getLocation().getFilename())
+                    : script.getEngineName();
+                val dao = new ScriptEnginePersonAttributeDao(scriptContents, engineName);
                 dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
                 dao.setOrder(script.getOrder());
                 LOGGER.debug("Configured scripted attribute sources from [{}]", script.getLocation());
@@ -324,8 +326,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
             .build();
         impl.setUserInfoCache(graphs.asMap());
         impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
-
-        LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)", props.getExpirationTime());
+        LOGGER.trace("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)", props.getExpirationTime());
         return impl;
     }
 
@@ -334,7 +335,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
     public IPersonAttributeDao aggregatingAttributeRepository() {
         val mergingDao = new MergingPersonAttributeDaoImpl();
         val merger = StringUtils.defaultIfBlank(casProperties.getAuthn().getAttributeRepository().getMerger(), "replace".trim());
-        LOGGER.debug("Configured merging strategy for attribute sources is [{}]", merger);
+        LOGGER.trace("Configured merging strategy for attribute sources is [{}]", merger);
         mergingDao.setMerger(getAttributeMerger(merger));
 
         val list = attributeRepositories();

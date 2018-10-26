@@ -3,7 +3,7 @@
 prepCommand="echo 'Running command...'; "
 gradle="./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --no-daemon --scan "
 
 echo -e "***********************************************"
 echo -e "Gradle build started at `date`"
@@ -17,6 +17,14 @@ gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true \
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
     gradleBuild="$gradleBuild -DshowStandardStreams=true "
+fi
+
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[rerun tasks]"* ]]; then
+    gradleBuild="$gradleBuild --rerun-tasks "
+fi
+
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[refresh dependencies]"* ]]; then
+    gradleBuild="$gradleBuild --refresh-dependencies "
 fi
 
 if [ -z "$gradleBuild" ]; then

@@ -34,13 +34,15 @@ import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInf
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.rules.SpringClassRule;
+import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
@@ -54,7 +56,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CasCoreServicesConfiguration.class,
@@ -85,6 +86,12 @@ import static org.junit.Assert.*;
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
     CasOAuthWebflowConfiguration.class})
 public class OAuth20RegisteredServiceUIActionTests {
+    @ClassRule
+    public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    @Rule
+    public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
     @Autowired
     @Qualifier("oauth20RegisteredServiceUIAction")
     private Action oauth20RegisteredServiceUIAction;

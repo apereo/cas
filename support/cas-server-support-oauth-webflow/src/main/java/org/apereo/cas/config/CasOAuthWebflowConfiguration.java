@@ -10,6 +10,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,19 +35,19 @@ public class CasOAuthWebflowConfiguration implements CasWebflowExecutionPlanConf
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     @Qualifier("logoutFlowRegistry")
-    private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> logoutFlowDefinitionRegistry;
 
     @Autowired
     @Qualifier("oauth20AuthenticationRequestServiceSelectionStrategy")
-    private AuthenticationServiceSelectionStrategy oauth20AuthenticationServiceSelectionStrategy;
+    private ObjectProvider<AuthenticationServiceSelectionStrategy> oauth20AuthenticationServiceSelectionStrategy;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -61,16 +62,16 @@ public class CasOAuthWebflowConfiguration implements CasWebflowExecutionPlanConf
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
-        val c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        val c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(),
             oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
-        c.setLogoutFlowDefinitionRegistry(this.logoutFlowDefinitionRegistry);
+        c.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry.getIfAvailable());
         return c;
     }
 
     @ConditionalOnMissingBean(name = "oauth20RegisteredServiceUIAction")
     @Bean
     public Action oauth20RegisteredServiceUIAction() {
-        return new OAuth20RegisteredServiceUIAction(this.servicesManager, oauth20AuthenticationServiceSelectionStrategy);
+        return new OAuth20RegisteredServiceUIAction(servicesManager.getIfAvailable(), oauth20AuthenticationServiceSelectionStrategy.getIfAvailable());
     }
 
     @Override

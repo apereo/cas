@@ -261,13 +261,12 @@ public class EncodingUtils {
     /**
      * Verify jws signature byte [ ].
      *
-     * @param value      the value
      * @param signingKey the signing key
+     * @param asString   the as string
      * @return the byte [ ]
      */
     @SneakyThrows
-    public static byte[] verifyJwsSignature(final Key signingKey, final byte[] value) {
-        val asString = new String(value, StandardCharsets.UTF_8);
+    public static byte[] verifyJwsSignature(final Key signingKey, final String asString) {
         val jws = new JsonWebSignature();
         jws.setCompactSerialization(asString);
         jws.setKey(signingKey);
@@ -279,6 +278,19 @@ public class EncodingUtils {
             return EncodingUtils.decodeBase64(payload);
         }
         return null;
+    }
+
+    /**
+     * Verify jws signature byte [ ].
+     *
+     * @param value      the value
+     * @param signingKey the signing key
+     * @return the byte [ ]
+     */
+    @SneakyThrows
+    public static byte[] verifyJwsSignature(final Key signingKey, final byte[] value) {
+        val asString = new String(value, StandardCharsets.UTF_8);
+        return verifyJwsSignature(signingKey, asString);
     }
 
 
@@ -396,7 +408,7 @@ public class EncodingUtils {
             jwe.setEncryptionMethodHeaderParameter(contentEncryptionAlgorithmIdentifier);
             jwe.setKey(secretKeyEncryptionKey);
             jwe.setHeader("typ", "JWT");
-            LOGGER.debug("Encrypting via [{}]", contentEncryptionAlgorithmIdentifier);
+            LOGGER.trace("Encrypting via [{}]", contentEncryptionAlgorithmIdentifier);
             return jwe.getCompactSerialization();
         } catch (final Exception e) {
             throw new IllegalArgumentException("Is JCE Unlimited Strength Jurisdiction Policy installed? " + e.getMessage(), e);
@@ -415,7 +427,7 @@ public class EncodingUtils {
         val jwe = new JsonWebEncryption();
         jwe.setKey(secretKeyEncryptionKey);
         jwe.setCompactSerialization(value);
-        LOGGER.debug("Decrypting value...");
+        LOGGER.trace("Decrypting value...");
         return jwe.getPayload();
     }
 

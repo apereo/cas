@@ -7,8 +7,8 @@ import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 
 import lombok.val;
 import org.apache.velocity.app.VelocityEngine;
@@ -42,7 +42,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
                                                      final VelocityEngine velocityEngineFactory,
                                                      final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                                      final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
-                                                     final SamlObjectEncrypter samlObjectEncrypter) {
+                                                     final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory,
             samlProfileSamlAssertionBuilder, saml2ResponseBuilder, samlObjectEncrypter);
     }
@@ -66,7 +66,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
         fault.setCode(faultCode);
 
         val faultActor = newSoapObject(FaultActor.class);
-        faultActor.setValue(SamlIdPUtils.getIssuerFromSamlRequest(authnRequest));
+        faultActor.setValue(SamlIdPUtils.getIssuerFromSamlObject(authnRequest));
         fault.setActor(faultActor);
 
         val faultString = newSoapObject(FaultString.class);

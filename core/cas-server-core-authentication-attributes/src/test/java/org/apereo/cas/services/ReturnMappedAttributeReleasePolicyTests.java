@@ -8,12 +8,11 @@ import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -26,7 +25,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(JUnit4.class)
 public class ReturnMappedAttributeReleasePolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "returnMappedAttributeReleasePolicy.json");
@@ -83,6 +81,23 @@ public class ReturnMappedAttributeReleasePolicyTests {
             CoreAttributesTestUtils.getService(), registeredService);
         assertTrue(result.containsKey("attr1"));
         assertTrue(result.containsValue("DOMAIN\\" + CoreAttributesTestUtils.CONST_USERNAME));
+    }
+
+    @Test
+    public void verifyInlinedGroovyMultipleAttributes() {
+        val allowedAttributes = ArrayListMultimap.<String, Object>create();
+        allowedAttributes.put("attr1", "groovy { logger.debug('Running script...'); return ['one', 'two'] }");
+        val wrap = CollectionUtils.<String, Object>wrap(allowedAttributes);
+        val policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
+        val registeredService = CoreAttributesTestUtils.getRegisteredService();
+        when(registeredService.getAttributeReleasePolicy()).thenReturn(policyWritten);
+        val principalAttributes = new HashMap<String, Object>();
+        principalAttributes.put("uid", CoreAttributesTestUtils.CONST_USERNAME);
+        val result = policyWritten.getAttributes(
+            CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
+            CoreAttributesTestUtils.getService(), registeredService);
+        assertTrue(result.containsKey("attr1"));
+        assertEquals(2, Collection.class.cast(result.get("attr1")).size());
     }
 
     @Test

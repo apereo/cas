@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -22,7 +23,6 @@ import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
@@ -53,7 +53,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
             WebUtils.putRequestSurrogateAuthentication(context, true);
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
-            assertEquals(SurrogateWebflowConfigurer.VIEW_ID_SURROGATE_VIEW, loadSurrogatesListAction.execute(context).getId());
+            assertEquals(SurrogateWebflowConfigurer.TRANSITION_ID_SURROGATE_VIEW, loadSurrogatesListAction.execute(context).getId());
             assertNotNull(WebUtils.getSurrogateAuthenticationAccounts(context));
         } catch (final Exception e) {
             throw new AssertionError(e);
@@ -69,7 +69,7 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true);
         attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
 
-        val p = CoreAuthenticationTestUtils.getPrincipal("casuser", (Map) attributes);
+        val p = CoreAuthenticationTestUtils.getPrincipal("casuser", attributes);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(p), context);
 
         val request = new MockHttpServletRequest();
@@ -86,6 +86,36 @@ public class LoadSurrogatesListActionTests extends BaseSurrogateInitialAuthentic
         when(builder.collect(any(Authentication.class))).thenReturn(builder);
 
         WebUtils.putAuthenticationResultBuilder(builder, context);
-        assertEquals("success", loadSurrogatesListAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, loadSurrogatesListAction.execute(context).getId());
+    }
+
+    @Test
+    public void verifySkipAuthenticate() throws Exception {
+        val context = new MockRequestContext();
+        WebUtils.putService(context, CoreAuthenticationTestUtils.getWebApplicationService());
+        WebUtils.putRequestSurrogateAuthentication(context, Boolean.TRUE);
+
+        val attributes = new LinkedHashMap<String, Object>();
+        attributes.put(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, true);
+        attributes.putAll(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
+
+        val p = CoreAuthenticationTestUtils.getPrincipal("someuser", attributes);
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(p), context);
+
+        val request = new MockHttpServletRequest();
+        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+
+        val creds = new SurrogateUsernamePasswordCredential();
+        creds.setPassword("Mellon");
+        creds.setUsername("someuser");
+        creds.setSurrogateUsername("others");
+        WebUtils.putCredential(context, creds);
+
+        val builder = mock(AuthenticationResultBuilder.class);
+        when(builder.getInitialAuthentication()).thenReturn(Optional.of(CoreAuthenticationTestUtils.getAuthentication()));
+        when(builder.collect(any(Authentication.class))).thenReturn(builder);
+
+        WebUtils.putAuthenticationResultBuilder(builder, context);
+        assertEquals(SurrogateWebflowConfigurer.TRANSITION_ID_SKIP_SURROGATE, loadSurrogatesListAction.execute(context).getId());
     }
 }

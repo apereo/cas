@@ -3,14 +3,8 @@ package org.apereo.cas.configuration;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.configuration2.FileBasedConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
-import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
@@ -28,6 +22,8 @@ import java.io.File;
 @RequiredArgsConstructor
 @Getter
 public class CasConfigurationPropertiesEnvironmentManager {
+    private static final File DEFAULT_CAS_CONFIG_DIRECTORY = new File("/etc/cas/config");
+
     @NonNull
     private final ConfigurationPropertiesBindingPostProcessor binder;
 
@@ -44,7 +40,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
 
         val map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
         val name = map.keySet().iterator().next();
-        LOGGER.debug("Reloading CAS configuration via [{}]", name);
+        LOGGER.trace("Reloading CAS configuration via [{}]", name);
         val e = applicationContext.getBean(name);
         binder.postProcessBeforeInitialization(e, name);
         val bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
@@ -67,7 +63,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
      * @return the standalone profile configuration directory
      */
     public File getStandaloneProfileConfigurationDirectory() {
-        return environment.getProperty("cas.standalone.configurationDirectory", File.class, new File("/etc/cas/config"));
+        return environment.getProperty("cas.standalone.configurationDirectory", File.class, DEFAULT_CAS_CONFIG_DIRECTORY);
     }
 
     /**
@@ -82,24 +78,4 @@ public class CasConfigurationPropertiesEnvironmentManager {
     public String getApplicationName() {
         return environment.getRequiredProperty("spring.application.name");
     }
-
-    /**
-     * Save property for standalone profile.
-     *
-     * @param pair the pair
-     */
-    @SneakyThrows
-    public void savePropertyForStandaloneProfile(final Pair<String, String> pair) {
-        val file = getStandaloneProfileConfigurationDirectory();
-        val params = new Parameters();
-
-        val builder =
-            new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-                .configure(params.properties().setFile(new File(file, getApplicationName() + ".properties")));
-
-        val config = builder.getConfiguration();
-        config.setProperty(pair.getKey(), pair.getValue());
-        builder.save();
-    }
-
 }

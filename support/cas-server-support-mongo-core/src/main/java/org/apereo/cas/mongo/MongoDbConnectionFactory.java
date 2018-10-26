@@ -24,7 +24,6 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.data.annotation.Persistent;
 import org.springframework.data.convert.JodaTimeConverters;
 import org.springframework.data.convert.Jsr310Converters;
-import org.springframework.data.mapping.model.CamelCaseAbbreviatingFieldNamingStrategy;
 import org.springframework.data.mapping.model.FieldNamingStrategy;
 import org.springframework.data.mapping.model.PropertyNameFieldNamingStrategy;
 import org.springframework.data.mongodb.MongoDbFactory;
@@ -82,6 +81,8 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.CaffeinCacheConverter());
         converters.add(new BaseConverters.CaffeinCacheLoaderConverter());
         converters.add(new BaseConverters.CacheConverter());
+        converters.add(new BaseConverters.PatternToStringConverter());
+        converters.add(new BaseConverters.StringToPatternConverter());
         converters.add(new BaseConverters.CacheBuilderConverter());
         converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());
@@ -89,6 +90,8 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.ZonedDateTimeToDateConverter());
         converters.add(new BaseConverters.DateToZonedDateTimeConverter());
         converters.add(new BaseConverters.BsonTimestampToDateConverter());
+        converters.add(new BaseConverters.ZonedDateTimeToStringConverter());
+        converters.add(new BaseConverters.StringToZonedDateTimeConverter());
 
         this.customConversions = new CustomConversions(converters);
     }
@@ -195,13 +198,8 @@ public class MongoDbConnectionFactory {
         return initialEntitySet;
     }
 
-    private boolean abbreviateFieldNames() {
-        return false;
-    }
-
     private FieldNamingStrategy fieldNamingStrategy() {
-        return abbreviateFieldNames() ? new CamelCaseAbbreviatingFieldNamingStrategy()
-            : PropertyNameFieldNamingStrategy.INSTANCE;
+        return PropertyNameFieldNamingStrategy.INSTANCE;
     }
 
     /**
@@ -269,7 +267,13 @@ public class MongoDbConnectionFactory {
         return clientOptions.build();
     }
 
-    private MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
+    /**
+     * Build mongo db client.
+     *
+     * @param mongo the mongo
+     * @return the mongo client
+     */
+    public MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {
             LOGGER.debug("Using MongoDb client URI [{}] to connect to MongoDb instance", mongo.getClientUri());
@@ -277,7 +281,7 @@ public class MongoDbConnectionFactory {
         }
 
         val serverAddresses = mongo.getHost().split(",");
-        if (serverAddresses == null || serverAddresses.length == 0) {
+        if (serverAddresses.length == 0) {
             throw new BeanCreationException("Unable to build a MongoDb client without any hosts/servers defined");
         }
 

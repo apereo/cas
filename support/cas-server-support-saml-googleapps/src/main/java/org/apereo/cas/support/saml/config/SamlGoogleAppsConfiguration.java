@@ -13,6 +13,7 @@ import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -36,11 +37,11 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
-    private OpenSamlConfigBean openSamlConfigBean;
+    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -60,7 +61,7 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
     @ConditionalOnMissingBean(name = "googleSaml20ObjectBuilder")
     @Bean
     public GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder() {
-        return new GoogleSaml20ObjectBuilder(openSamlConfigBean);
+        return new GoogleSaml20ObjectBuilder(openSamlConfigBean.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "googleAccountsServiceResponseBuilder")
@@ -72,7 +73,7 @@ public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
             gApps.getPrivateKeyLocation(),
             gApps.getPublicKeyLocation(),
             gApps.getKeyAlgorithm(),
-            servicesManager,
+            servicesManager.getIfAvailable(),
             googleSaml20ObjectBuilder(),
             casProperties.getSamlCore().getSkewAllowance(),
             casProperties.getServer().getPrefix());

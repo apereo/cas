@@ -25,13 +25,14 @@ import org.apereo.cas.config.SamlIdPConfiguration;
 import org.apereo.cas.config.SamlIdPEndpointsConfiguration;
 import org.apereo.cas.config.SamlIdPMetadataConfiguration;
 import org.apereo.cas.config.SamlIdPMongoDbIdPMetadataConfiguration;
-import org.apereo.cas.config.SamlIdPMongoDbMetadataConfiguration;
+import org.apereo.cas.config.SamlIdPMongoDbRegisteredServiceMetadataConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.util.junit.ConditionalIgnoreRule;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
@@ -57,7 +58,7 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
  */
 @Category(MongoDbCategory.class)
 @SpringBootTest(classes = {
-    SamlIdPMongoDbMetadataConfiguration.class,
+    SamlIdPMongoDbRegisteredServiceMetadataConfiguration.class,
     SamlIdPMongoDbIdPMetadataConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreTicketIdGeneratorsConfiguration.class,
@@ -98,6 +99,9 @@ public abstract class BaseMongoDbSamlMetadataTests {
 
     @Rule
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
+
+    @Rule
+    public final ConditionalIgnoreRule conditionalIgnoreRule = new ConditionalIgnoreRule();
 
     @Autowired
     protected CasConfigurationProperties casProperties;

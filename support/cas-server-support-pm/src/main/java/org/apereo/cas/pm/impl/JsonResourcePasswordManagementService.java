@@ -2,7 +2,7 @@ package org.apereo.cas.pm.impl;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
@@ -10,7 +10,6 @@ import org.apereo.cas.pm.PasswordChangeBean;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +32,6 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-@Getter
 public class JsonResourcePasswordManagementService extends BasePasswordManagementService {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
@@ -92,6 +90,15 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     public String findEmail(final String username) {
         val account = this.jsonBackedAccounts.getOrDefault(username, null);
         return account == null ? null : account.getEmail();
+    }
+
+    @Override
+    public String findUsername(final String email) {
+        val result = this.jsonBackedAccounts.entrySet()
+            .stream()
+            .filter(entry -> entry.getValue().getEmail().equalsIgnoreCase(email))
+            .findFirst();
+        return result.map(Map.Entry::getKey).orElse(null);
     }
 
     @Override

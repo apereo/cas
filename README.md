@@ -35,7 +35,7 @@ There is no need for special ceremony to create separate issues. The pull reques
 |------------|-----------------------------------
 | ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=flat) | [Link](https://apereo.github.io/cas/development)
 | ![](https://img.shields.io/badge/5.3.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/5.3.x)
-| ![](https://img.shields.io/badge/5.2.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/5.2.x)
+| ![](https://img.shields.io/badge/5.2.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.2.x)
 | ![](https://img.shields.io/badge/5.1.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.1.x)
 | ![](https://img.shields.io/badge/5.0.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/5.0.x)
 | ![](https://img.shields.io/badge/4.2.x-EOL-lightgrey.svg?style=flat) | [Link](https://apereo.github.io/cas/4.2.x)
@@ -54,7 +54,7 @@ Additional resources are available as follows:
 
 [![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=flat)][contribute]
 [![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=flat)][contribute]
-
+[![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)
 [![Build Status](https://api.travis-ci.org/apereo/cas.png?branch=master)](http://travis-ci.org/apereo/cas)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-webapp/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server)
 [![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
@@ -89,7 +89,6 @@ The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/cc934b4c7d5d42d28e63757ff9e56d47)](http://bit.ly/1Uf6rwC)
 [![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas)](https://cla-assistant.io/apereo/cas)
 [![Dependency Status](https://dependencyci.com/github/apereo/cas/badge)](https://dependencyci.com/github/apereo/cas)
-[![Coverage Status](https://coveralls.io/repos/github/apereo/cas/badge.svg?branch=master)](https://coveralls.io/github/apereo/cas?branch=master)
 [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=alert_status)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)
 [![Sonarqube Quality](https://sonarcloud.io/api/project_badges/measure?project=org.apereo.cas%3Acas-server&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=org.apereo.cas%3Acas-server)
 

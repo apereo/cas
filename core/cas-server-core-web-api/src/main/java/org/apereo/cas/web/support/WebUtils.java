@@ -5,13 +5,13 @@ import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.LogoutRequest;
-import org.apereo.cas.services.MultifactorAuthenticationProvider;
+import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -43,6 +43,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -51,16 +52,9 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
-
 @Slf4j
 @UtilityClass
 public class WebUtils {
-
-    /**
-     * Request attribute that contains message key describing details of authorization failure.
-     */
-    public static final String CAS_ACCESS_DENIED_REASON = "CAS_ACCESS_DENIED_REASON";
-
     /**
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
@@ -271,8 +265,18 @@ public class WebUtils {
      * @param context  the context
      * @param requests the requests
      */
-    public static void putLogoutRequests(final RequestContext context, final List<LogoutRequest> requests) {
+    public static void putLogoutRequests(final RequestContext context, final List<SingleLogoutRequest> requests) {
         context.getFlowScope().put(PARAMETER_LOGOUT_REQUESTS, requests);
+    }
+
+    /**
+     * Put logout urls into flow scope.
+     *
+     * @param context the context
+     * @param urls    the requests
+     */
+    public static void putLogoutUrls(final RequestContext context, final Map urls) {
+        context.getFlowScope().put("logoutUrls", urls);
     }
 
     /**
@@ -281,8 +285,8 @@ public class WebUtils {
      * @param context the context
      * @return the logout requests
      */
-    public static List<LogoutRequest> getLogoutRequests(final RequestContext context) {
-        return (List<LogoutRequest>) context.getFlowScope().get(PARAMETER_LOGOUT_REQUESTS);
+    public static List<SingleLogoutRequest> getLogoutRequests(final RequestContext context) {
+        return (List<SingleLogoutRequest>) context.getFlowScope().get(PARAMETER_LOGOUT_REQUESTS);
     }
 
     /**
@@ -538,6 +542,16 @@ public class WebUtils {
      */
     public static String getHttpServletRequestUserAgentFromRequestContext(final RequestContext context) {
         val request = getHttpServletRequestFromExternalWebflowContext(context);
+        return getHttpServletRequestUserAgentFromRequestContext(request);
+    }
+
+    /**
+     * Gets http servlet request user agent from request context.
+     *
+     * @param request the request
+     * @return the http servlet request user agent from request context
+     */
+    public static String getHttpServletRequestUserAgentFromRequestContext(final HttpServletRequest request) {
         return HttpRequestUtils.getHttpServletRequestUserAgent(request);
     }
 
@@ -561,6 +575,7 @@ public class WebUtils {
         val servletRequest = getHttpServletRequestFromExternalWebflowContext(context);
         return getHttpServletRequestGeoLocation(servletRequest);
     }
+
 
     /**
      * Gets http servlet request geo location.
@@ -969,5 +984,15 @@ public class WebUtils {
      */
     public static void putDelegatedAuthenticationProviderDominant(final RequestContext context, final Object client) {
         context.getFlowScope().put("delegatedAuthenticationProviderDominant", client);
+    }
+
+    /**
+     * Put available authentication handle names.
+     *
+     * @param context           the context
+     * @param availableHandlers the available handlers
+     */
+    public static void putAvailableAuthenticationHandleNames(final RequestContext context, final Collection<String> availableHandlers) {
+        context.getFlowScope().put("availableAuthenticationHandlerNames", availableHandlers);
     }
 }

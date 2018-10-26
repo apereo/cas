@@ -15,12 +15,11 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
@@ -43,7 +42,7 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSamlProfileHandlerController {
     private final SSOSamlHttpRequestExtractor samlHttpRequestExtractor;
 
-    public AbstractSamlSLOProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner, final ParserPool parserPool,
+    public AbstractSamlSLOProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
                                                    final AuthenticationSystemSupport authenticationSystemSupport,
                                                    final ServicesManager servicesManager,
                                                    final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -54,7 +53,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
                                                    final SamlObjectSignatureValidator samlObjectSignatureValidator,
                                                    final SSOSamlHttpRequestExtractor samlHttpRequestExtractor,
                                                    final Service callbackService) {
-        super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager, webApplicationServiceFactory,
+        super(samlObjectSigner, authenticationSystemSupport, servicesManager, webApplicationServiceFactory,
             samlRegisteredServiceCachingMetadataResolver, configBean, responseBuilder,
             casProperties, samlObjectSignatureValidator, callbackService);
         this.samlHttpRequestExtractor = samlHttpRequestExtractor;
@@ -87,7 +86,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         }
 
         if (SAMLBindingSupport.isMessageSigned(ctx)) {
-            val entityId = SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest);
+            val entityId = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
             val registeredService = this.servicesManager.findServiceBy(entityId, SamlRegisteredService.class);
             val facade = SamlRegisteredServiceServiceProviderMetadataFacade
                 .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId).get();

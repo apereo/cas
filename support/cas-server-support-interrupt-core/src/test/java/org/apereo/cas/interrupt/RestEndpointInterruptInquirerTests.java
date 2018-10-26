@@ -1,6 +1,7 @@
 package org.apereo.cas.interrupt;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.category.RestfulApiCategory;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -12,8 +13,10 @@ import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
+import org.springframework.webflow.test.MockRequestContext;
 
 import java.nio.charset.StandardCharsets;
 
@@ -25,6 +28,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Category(RestfulApiCategory.class)
 public class RestEndpointInterruptInquirerTests {
     private MockWebServer webServer;
 
@@ -59,7 +63,8 @@ public class RestEndpointInterruptInquirerTests {
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
             CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
+            new MockRequestContext());
         assertNotNull(response);
         assertTrue(response.isBlock());
         assertTrue(response.isSsoEnabled());

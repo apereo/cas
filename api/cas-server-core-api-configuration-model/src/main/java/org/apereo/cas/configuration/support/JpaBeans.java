@@ -17,6 +17,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.sql.DataSource;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
@@ -138,6 +139,9 @@ public class JpaBeans {
         }
         properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
         properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
+        properties.put("hibernate.connection.useUnicode", Boolean.TRUE);
+        properties.put("hibernate.connection.characterEncoding", StandardCharsets.UTF_8.name());
+        properties.put("hibernate.connection.charSet", StandardCharsets.UTF_8.name());
         properties.putAll(jpaProperties.getProperties());
         bean.setJpaProperties(properties);
 

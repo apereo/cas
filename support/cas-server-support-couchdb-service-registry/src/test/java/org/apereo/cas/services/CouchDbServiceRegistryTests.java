@@ -3,7 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.category.CouchDbCategory;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
-import org.apereo.cas.couchdb.services.RegisteredServiceRepository;
+import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
 
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -35,7 +35,6 @@ import java.util.Collection;
 @Category(CouchDbCategory.class)
 public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
-
     @Autowired
     @Qualifier("couchDbServiceRegistry")
     private ServiceRegistry serviceRegistry;
@@ -46,7 +45,7 @@ public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("serviceRegistryCouchDbRepository")
-    private RegisteredServiceRepository registeredServiceRepository;
+    private RegisteredServiceCouchDbRepository registeredServiceRepository;
 
     public CouchDbServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
         super(registeredServiceClass);

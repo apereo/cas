@@ -74,7 +74,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                final MessageContext messageContext) throws SamlException {
         val assertion = Assertion.class.cast(casAssertion);
         val authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
-        val id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
         val statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
         if (assertion.getValidUntilDate() != null) {
             val dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
@@ -101,7 +101,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                                    final String binding) throws SamlException {
         val subjectLocality = newSamlObject(SubjectLocality.class);
         val hostAddress = InetAddressUtils.getCasServerHostAddress(casProperties.getServer().getName());
-        val issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
+        val issuer = SamlIdPUtils.getIssuerFromSamlObject(authnRequest);
         LOGGER.debug("Built subject locality address [{}] for the saml authentication statement prepped for [{}]", hostAddress, issuer);
         subjectLocality.setAddress(hostAddress);
         return subjectLocality;

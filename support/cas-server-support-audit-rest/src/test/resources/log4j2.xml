@@ -2,11 +2,11 @@
 <Configuration shutdownHook="disable">
     <Appenders>
         <Console name="console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
         <RollingFile name="file" fileName="build/restaudit.log" append="true"
                      filePattern="events-%d{yyyy-MM-dd-HH}-%i.log.gz">
-            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -16,6 +16,12 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.apereo.cas.util.MockWebServer" level="trace">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="org.apereo.cas.audit" level="debug">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

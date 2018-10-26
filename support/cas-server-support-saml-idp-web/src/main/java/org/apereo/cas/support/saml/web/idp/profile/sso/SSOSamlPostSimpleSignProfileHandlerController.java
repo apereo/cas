@@ -12,10 +12,9 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
@@ -41,7 +40,6 @@ public class SSOSamlPostSimpleSignProfileHandlerController extends AbstractSamlP
     private final SSOSamlHttpRequestExtractor samlHttpRequestExtractor;
 
     public SSOSamlPostSimpleSignProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                                         final ParserPool parserPool,
                                                          final AuthenticationSystemSupport authenticationSystemSupport,
                                                          final ServicesManager servicesManager,
                                                          final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -53,7 +51,6 @@ public class SSOSamlPostSimpleSignProfileHandlerController extends AbstractSamlP
                                                          final SSOSamlHttpRequestExtractor samlHttpRequestExtractor,
                                                          final Service callbackService) {
         super(samlObjectSigner,
-            parserPool,
             authenticationSystemSupport,
             servicesManager,
             webApplicationServiceFactory,

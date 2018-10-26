@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -58,10 +59,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
             .stream()
             .map(entry -> entry.getValue().getWarnings())
             .flatMap(Collection::stream)
-            .map(message -> {
-                addMessageDescriptorToMessageContext(messageContext, message);
-                return message;
-            })
+            .peek(message -> addMessageDescriptorToMessageContext(messageContext, message))
             .collect(Collectors.toSet());
     }
 
@@ -83,18 +81,25 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
     @Override
     public Event doExecute(final RequestContext context) {
         val service = WebUtils.getService(context);
+        val registeredService = WebUtils.getRegisteredService(context);
         val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
 
         LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
         val authenticationResult = this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
+        LOGGER.debug("Finalizing authentication event...");
         val authentication = buildFinalAuthentication(authenticationResult);
         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
+        LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicket);
         val tgt = createOrUpdateTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
 
+        if (registeredService != null && registeredService.getAccessStrategy() != null) {
+            WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+        }
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         WebUtils.putAuthenticationResult(authenticationResult, context);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
 
+        LOGGER.debug("Calculating authentication warning messages...");
         val warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
         if (!warnings.isEmpty()) {
             val attributes = new LocalAttributeMap(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);
@@ -125,12 +130,17 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
                                                                       final Authentication authentication, final String ticketGrantingTicket) {
         try {
             if (shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)) {
+                LOGGER.debug("Attempting to issue a new ticket-granting ticket...");
                 return this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
             }
+            LOGGER.debug("Updating the existing ticket-granting ticket [{}]...", ticketGrantingTicket);
             val tgt = this.centralAuthenticationService.getTicket(ticketGrantingTicket, TicketGrantingTicket.class);
             tgt.getAuthentication().update(authentication);
             this.centralAuthenticationService.updateTicket(tgt);
             return tgt;
+        } catch (final PrincipalException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw e;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new InvalidTicketException(ticketGrantingTicket);
@@ -159,6 +169,9 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
     }
 
     private boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
+        if (auth1 == null && auth2 == null) {
+            return false;
+        }
         if ((auth1 == null && auth2 != null) || (auth1 != null && auth2 == null)) {
             return false;
         }

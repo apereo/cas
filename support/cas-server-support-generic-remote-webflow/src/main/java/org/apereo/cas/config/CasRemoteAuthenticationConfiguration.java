@@ -18,6 +18,7 @@ import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -44,26 +45,26 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
 
     @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
@@ -72,14 +73,14 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
     private ApplicationContext applicationContext;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "remoteAddressWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer remoteAddressWebflowConfigurer() {
-        return new RemoteAddressWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        return new RemoteAddressWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry.getIfAvailable(), applicationContext, casProperties);
     }
 
     @Bean
@@ -87,7 +88,7 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
     public AuthenticationHandler remoteAddressAuthenticationHandler() {
         val remoteAddress = casProperties.getAuthn().getRemoteAddress();
         val bean = new RemoteAddressAuthenticationHandler(remoteAddress.getName(),
-            servicesManager,
+            servicesManager.getIfAvailable(),
             remoteAddressPrincipalFactory());
         bean.configureIpNetworkRange(remoteAddress.getIpAddressRange());
         return bean;
@@ -95,9 +96,9 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
 
     @Bean
     public Action remoteAddressCheck() {
-        return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver,
-            adaptiveAuthenticationPolicy);
+        return new RemoteAddressNonInteractiveCredentialsAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
+            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
+            adaptiveAuthenticationPolicy.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "remoteAddressPrincipalFactory")
@@ -109,7 +110,7 @@ public class CasRemoteAuthenticationConfiguration implements CasWebflowExecution
     @ConditionalOnMissingBean(name = "remoteAddressAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer remoteAddressAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(), personDirectoryPrincipalResolver);
+        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
     }
 
     @Override

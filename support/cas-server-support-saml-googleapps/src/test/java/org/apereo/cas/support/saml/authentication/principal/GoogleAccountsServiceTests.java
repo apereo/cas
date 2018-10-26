@@ -19,14 +19,12 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
 import java.time.ZoneOffset;
@@ -40,12 +38,10 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.1
  */
-@RunWith(SpringRunner.class)
 @Import(SamlGoogleAppsConfiguration.class)
 @TestPropertySource(locations = "classpath:/gapps.properties")
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
-
     private static final File FILE = new File(FileUtils.getTempDirectoryPath(), "service.json");
     private static final ObjectMapper MAPPER = new ObjectMapper();
 

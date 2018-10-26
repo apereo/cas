@@ -53,6 +53,5 @@ public class ChainingThemeResolver extends AbstractThemeResolver {
     public void setThemeName(final HttpServletRequest httpServletRequest,
                              final HttpServletResponse httpServletResponse,
                              final String s) {
-        // nothing to do here
     }
 }

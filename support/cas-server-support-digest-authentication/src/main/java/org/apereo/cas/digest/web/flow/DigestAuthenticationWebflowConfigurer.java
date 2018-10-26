@@ -35,7 +35,6 @@ public class DigestAuthenticationWebflowConfigurer extends AbstractCasWebflowCon
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
                 CasWebflowConstants.TRANSITION_ID_WARN));
             actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
-            registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
             createStateDefaultTransition(actionState, getStartState(flow).getId());
             setStartState(flow, actionState);
         }

@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,14 +42,14 @@ public class CouchbaseAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("personDirectoryPrincipalResolver")
-    private PrincipalResolver personDirectoryPrincipalResolver;
+    @Qualifier("defaultPrincipalResolver")
+    private ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 
     @ConditionalOnMissingBean(name = "couchbasePrincipalFactory")
     @Bean
@@ -71,7 +72,7 @@ public class CouchbaseAuthenticationConfiguration {
     public AuthenticationHandler couchbaseAuthenticationHandler() {
         val couchbase = casProperties.getAuthn().getCouchbase();
         val handler = new CouchbaseAuthenticationHandler(
-            servicesManager, couchbasePrincipalFactory(),
+            servicesManager.getIfAvailable(), couchbasePrincipalFactory(),
             authenticationCouchbaseClientFactory(),
             couchbase);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(couchbase.getPrincipalTransformation()));
@@ -85,7 +86,7 @@ public class CouchbaseAuthenticationConfiguration {
         return plan -> {
             val couchbase = casProperties.getAuthn().getCouchbase();
             if (StringUtils.isNotBlank(couchbase.getPasswordAttribute()) && StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
-                plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), personDirectoryPrincipalResolver);
+                plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), defaultPrincipalResolver.getIfAvailable());
             } else {
                 LOGGER.debug("No couchbase username/password is defined, so couchbase authentication will not be registered in the execution plan");
             }

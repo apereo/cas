@@ -11,7 +11,7 @@
 
         <RollingFile name="file" fileName="${baseDir}/cas.log" append="true"
                      filePattern="${baseDir}/cas-%d{yyyy-MM-dd-HH}-%i.log">
-            <PatternLayout pattern="%d %p [%c] - &lt;%m&gt;%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -26,7 +26,7 @@
         </RollingFile>
         <RollingFile name="auditlogfile" fileName="${baseDir}/cas_audit.log" append="true"
                      filePattern="${baseDir}/cas_audit-%d{yyyy-MM-dd-HH}-%i.log">
-            <PatternLayout pattern="%d %p [%c] - %m%n"/>
+            <PatternLayout pattern="%highlight{%d %p [%c] - %m%n}" />
             <Policies>
                 <OnStartupTriggeringPolicy />
                 <SizeBasedTriggeringPolicy size="10 MB"/>
@@ -51,176 +51,54 @@
         </CasAppender>
     </Appenders>
     <Loggers>
-        <AsyncLogger name="com.couchbase" level="warn" additivity="false" includeLocation="true">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apereo.cas.web.CasWebApplication" level="info" additivity="false" includeLocation="true">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration" level="info" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.security" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot.autoconfigure.security" level="info" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apereo.cas" level="info" additivity="false" includeLocation="true">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apereo.cas.services" level="info" additivity="false" includeLocation="true">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apereo.spring" level="info" additivity="false" includeLocation="true">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apereo.services.persondir" level="warn" additivity="false" includeLocation="true">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apache" level="off" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="com.netflix" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot.context.embedded" level="info" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.aop" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.webflow" level="info" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.web" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.session" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.scheduling" level="info" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.quartz" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.amqp" level="off" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.integration" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.messaging" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.web" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.orm.jpa" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.scheduling" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.thymeleaf" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.pac4j" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.opensaml" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="net.sf.ehcache" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="com.ryantenney.metrics" level="warn" additivity="false">
-            <AppenderRef ref="console"/>
-            <AppenderRef ref="file"/>
-        </AsyncLogger>
-        <AsyncLogger name="net.jradius" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.openid4java" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.ldaptive" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="com.hazelcast" level="info" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.context.annotation" level="off" additivity="false" />
-        <AsyncLogger name="org.springframework.boot.devtools" level="off" additivity="false" />
-        <AsyncLogger name="org.jasig.spring" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.springframework.web.socket" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apache.cxf" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apache.http" level="warn" additivity="false">
-            <AppenderRef ref="casConsole"/>
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apereo.cas.web.flow" level="info" additivity="true" includeLocation="true">
-            <AppenderRef ref="casFile"/>
-        </AsyncLogger>
-        <AsyncLogger name="org.apereo.inspektr.audit.support" level="info" includeLocation="true">
+        <AsyncLogger name="com.couchbase" level="warn" includeLocation="true" />
+        <AsyncLogger name="org.apereo.cas.web.CasWebApplication" level="info" includeLocation="true"/>
+        <AsyncLogger name="org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration" level="info" additivity="false" />
+        <AsyncLogger name="org.springframework.security" level="warn" />
+        <AsyncLogger name="org.springframework.boot.autoconfigure.security" level="info" />
+        <AsyncLogger name="org.apereo.cas" level="info" includeLocation="true" />
+        <AsyncLogger name="org.apereo.cas.services" level="info" includeLocation="true" />
+        <AsyncLogger name="org.apereo.spring" level="info" includeLocation="true" />
+        <AsyncLogger name="org.apereo.services.persondir" level="warn" includeLocation="true" />
+        <AsyncLogger name="org.apache" level="error" />
+        <AsyncLogger name="org.springframework.cloud" level="warn" />
+        <AsyncLogger name="com.netflix" level="warn" />
+        <AsyncLogger name="org.springframework.boot" level="warn" />
+        <AsyncLogger name="org.springframework.boot.context.embedded" level="info" />
+        <AsyncLogger name="org.springframework" level="warn" />
+        <AsyncLogger name="org.springframework.aop" level="warn" />
+        <AsyncLogger name="org.springframework.webflow" level="info" />
+        <AsyncLogger name="org.springframework.web" level="warn" />
+        <AsyncLogger name="org.springframework.session" level="warn" />
+        <AsyncLogger name="org.springframework.scheduling" level="info" />
+        <AsyncLogger name="org.quartz" level="warn" />
+        <AsyncLogger name="org.springframework.amqp" level="off" />
+        <AsyncLogger name="org.springframework.integration" level="warn" />
+        <AsyncLogger name="org.springframework.messaging" level="warn" />
+        <AsyncLogger name="org.springframework.web" level="warn" />
+        <AsyncLogger name="org.springframework.orm.jpa" level="warn" />
+        <AsyncLogger name="org.springframework.scheduling" level="warn" />
+        <AsyncLogger name="org.thymeleaf" level="warn" />
+        <AsyncLogger name="org.pac4j" level="warn" />
+        <AsyncLogger name="org.opensaml" level="warn" />
+        <AsyncLogger name="net.sf.ehcache" level="warn" />
+        <AsyncLogger name="com.ryantenney.metrics" level="warn" />
+        <AsyncLogger name="net.jradius" level="warn" />
+        <AsyncLogger name="org.openid4java" level="warn" />
+        <AsyncLogger name="org.ldaptive" level="warn" />
+        <AsyncLogger name="com.hazelcast" level="info" />
+        <AsyncLogger name="org.springframework.context.annotation" level="off" />
+        <AsyncLogger name="org.springframework.boot.devtools" level="off" />
+        <AsyncLogger name="org.jasig.spring" level="warn" />
+        <AsyncLogger name="org.springframework.web.socket" level="warn" />
+        <AsyncLogger name="org.apache.cxf" level="warn" />
+        <AsyncLogger name="org.apache.http" level="warn" />
+        <AsyncLogger name="org.apereo.cas.web.flow" level="info" includeLocation="true" />
+        <AsyncLogger name="org.apereo.inspektr.audit.support" additivity="true" level="info" includeLocation="true">
             <AppenderRef ref="casAudit"/>
-            <AppenderRef ref="casFile"/>
         </AsyncLogger>
         <AsyncRoot level="error">
+            <AppenderRef ref="casFile"/>
             <AppenderRef ref="casConsole"/>
         </AsyncRoot>
     </Loggers>

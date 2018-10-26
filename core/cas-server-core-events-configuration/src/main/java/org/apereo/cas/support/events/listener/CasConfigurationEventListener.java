@@ -27,10 +27,13 @@ import java.util.Collection;
 public class CasConfigurationEventListener {
 
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
+
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
+
     @Autowired
     private ObjectProvider<ContextRefresher> contextRefresher;
+
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -45,7 +48,7 @@ public class CasConfigurationEventListener {
      */
     @EventListener
     public void handleRefreshEvent(final EnvironmentChangeEvent event) {
-        LOGGER.debug("Received event [{}]", event);
+        LOGGER.trace("Received event [{}]", event);
         rebind();
     }
 

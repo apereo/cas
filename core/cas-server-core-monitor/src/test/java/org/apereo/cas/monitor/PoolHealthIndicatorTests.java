@@ -2,8 +2,6 @@ package org.apereo.cas.monitor;
 
 import lombok.val;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 
@@ -18,13 +16,12 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-@RunWith(JUnit4.class)
 public class PoolHealthIndicatorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Test
     public void verifyObserveOK() {
-        final AbstractPoolHealthIndicator monitor = new AbstractPoolHealthIndicator(1000, executor) {
+        val monitor = new AbstractPoolHealthIndicator(1000, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {
                 return builder.up();
@@ -46,7 +43,7 @@ public class PoolHealthIndicatorTests {
 
     @Test
     public void verifyObserveDown() {
-        final AbstractPoolHealthIndicator monitor = new AbstractPoolHealthIndicator(200, executor) {
+        val monitor = new AbstractPoolHealthIndicator(200, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) throws Exception {
                 Thread.sleep(300);
@@ -69,7 +66,7 @@ public class PoolHealthIndicatorTests {
 
     @Test
     public void verifyObserveError() {
-        final AbstractPoolHealthIndicator monitor = new AbstractPoolHealthIndicator(500, executor) {
+        val monitor = new AbstractPoolHealthIndicator(500, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {
                 throw new IllegalArgumentException("Pool check failed.");

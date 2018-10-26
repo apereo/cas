@@ -2,8 +2,8 @@ package org.apereo.cas.web.flow.action;
 
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.SurrogateUsernamePasswordCredential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -36,7 +36,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
     @Override
     protected Event doPreExecute(final RequestContext context) {
         val up = WebUtils.getCredential(context, UsernamePasswordCredential.class);
-        if (up == null || up instanceof SurrogateUsernamePasswordCredential) {
+        if (up == null) {
             LOGGER.debug("Provided credentials cannot be found, or are already of type [{}]", SurrogateUsernamePasswordCredential.class.getName());
             return null;
         }

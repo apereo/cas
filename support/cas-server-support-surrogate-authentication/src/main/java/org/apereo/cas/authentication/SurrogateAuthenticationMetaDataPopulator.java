@@ -17,7 +17,7 @@ public class SurrogateAuthenticationMetaDataPopulator extends BaseAuthentication
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         val credential = transaction.getPrimaryCredential();
-        if (!credential.isPresent()) {
+        if (credential.isEmpty()) {
             throw new SurrogateAuthenticationException("The authentication transaction does not have a primary principal associated with it");
         }
 

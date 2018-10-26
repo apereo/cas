@@ -13,7 +13,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -21,7 +21,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AttributeQuery;
@@ -47,7 +46,6 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
 
 
     public Saml2AttributeQueryProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
-                                                       final ParserPool parserPool,
                                                        final AuthenticationSystemSupport authenticationSystemSupport,
                                                        final ServicesManager servicesManager,
                                                        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -61,7 +59,7 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
                                                        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                        final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
                                                        final Service callbackService) {
-        super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager,
+        super(samlObjectSigner, authenticationSystemSupport, servicesManager,
             webApplicationServiceFactory, metadataResolver, configBean,
             responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
         this.ticketRegistry = ticketRegistry;
@@ -86,7 +84,7 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
             val issuer = query.getIssuer().getValue();
             val service = verifySamlRegisteredService(issuer);
             val adaptor = getSamlMetadataFacadeFor(service, query);
-            if (!adaptor.isPresent()) {
+            if (adaptor.isEmpty()) {
                 throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Cannot find metadata linked to " + issuer);
             }
 

@@ -10,7 +10,7 @@ import lombok.val;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -75,7 +75,7 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public List<RegisteredService> load() {
+    public Collection<RegisteredService> load() {
         try {
             return this.template.keys(getPatternRegisteredServiceRedisKey())
                 .stream()

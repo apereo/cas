@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPo
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.validation.Assertion;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
@@ -17,16 +18,23 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.core.io.DefaultResourceLoader;
 
 import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CoreAuthenticationUtils}.
@@ -38,6 +46,65 @@ import java.util.regex.Pattern;
 @Slf4j
 @UtilityClass
 public class CoreAuthenticationUtils {
+
+    /**
+     * Is remember me authentication?
+     * looks at the authentication object to find {@link RememberMeCredential#AUTHENTICATION_ATTRIBUTE_REMEMBER_ME}
+     * and expects the assertion to also note a new login session.
+     *
+     * @param model     the model
+     * @param assertion the assertion
+     * @return true if remember-me, false if otherwise.
+     */
+    public static boolean isRememberMeAuthentication(final Authentication model, final Assertion assertion) {
+        val authnAttributes = convertAttributeValuesToMultiValuedObjects(model.getAttributes());
+        val authnMethod = (Collection) authnAttributes.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+        return authnMethod != null && authnMethod.contains(Boolean.TRUE) && assertion.isFromNewLogin();
+    }
+
+    /**
+     * Convert attribute values to multi valued objects.
+     *
+     * @param attributes the attributes
+     * @return the map of attributes to return
+     */
+    public static Map<String, Object> convertAttributeValuesToMultiValuedObjects(final Map<String, Object> attributes) {
+        val entries = attributes.entrySet();
+        return entries.stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                val value = entry.getValue();
+                if (value instanceof Collection || value instanceof Map || value instanceof Object[] || value instanceof Iterator || value instanceof Enumeration) {
+                    return value;
+                }
+                return CollectionUtils.wrap(value);
+            }));
+    }
+
+    /**
+     * Merge attributes map.
+     *
+     * @param currentAttributes the current attributes
+     * @param attributesToMerge the attributes to merge
+     * @return the map
+     */
+    public static Map<String, Object> mergeAttributes(final Map<String, Object> currentAttributes, final Map<String, Object> attributesToMerge) {
+        val merger = new MultivaluedAttributeMerger();
+
+        val toModify = currentAttributes.entrySet()
+            .stream()
+            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        val toMerge = attributesToMerge.entrySet()
+            .stream()
+            .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+
+        LOGGER.trace("Merging current attributes [{}] with [{}]", toModify, toMerge);
+        val results = merger.mergeAttributes((Map) toModify, (Map) toMerge);
+        LOGGER.debug("Merged attributes with the final result as [{}]", results);
+        return results;
+    }
 
     /**
      * Transform principal attributes list into map map.
@@ -133,7 +200,7 @@ public class CoreAuthenticationUtils {
             return new GroovyPasswordPolicyHandlingStrategy(location);
         }
 
-        LOGGER.debug("Created default password policy handling strategy");
+        LOGGER.trace("Created default password policy handling strategy");
         return new DefaultPasswordPolicyHandlingStrategy();
     }
 }

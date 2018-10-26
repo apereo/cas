@@ -2,6 +2,7 @@ description = "Apereo CAS CouchDB Support Core"
 
 dependencies {
     api libraries.ektorp
-    implementation project(":core:cas-server-core-util-api")
     api project(":api:cas-server-core-api-configuration-model")
+
+    implementation project(":core:cas-server-core-util-api")
 }

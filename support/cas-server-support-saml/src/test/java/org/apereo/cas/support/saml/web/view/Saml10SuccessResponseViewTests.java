@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
@@ -17,6 +18,7 @@ import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
+import org.apereo.cas.web.view.attributes.NoOpProtocolAttributesRenderer;
 
 import lombok.val;
 import org.junit.Before;
@@ -60,13 +62,15 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         mgmr.load();
 
         this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString()),
-            mgmr, "attribute",
+            mgmr,
             new Saml10ObjectBuilder(configBean),
             new DefaultArgumentExtractor(new SamlServiceFactory(new Saml10ObjectBuilder(configBean))),
             StandardCharsets.UTF_8.name(), 1000, 30,
             "testIssuer",
             "whatever",
-            new DefaultAuthenticationAttributeReleasePolicy());
+            new DefaultAuthenticationAttributeReleasePolicy("attribute"),
+            new DefaultAuthenticationServiceSelectionPlan(),
+            new NoOpProtocolAttributesRenderer());
     }
 
     @Test

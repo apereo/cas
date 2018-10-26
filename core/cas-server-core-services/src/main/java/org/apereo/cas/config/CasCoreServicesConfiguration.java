@@ -1,8 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
-import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
-import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultWebApplicationResponseBuilderLocator;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
@@ -29,6 +27,7 @@ import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServicePublicKeyCipherExecutor;
+import org.apereo.cas.services.util.RegisteredServiceYamlHttpMessageConverter;
 import org.apereo.cas.util.io.CommunicationsManager;
 
 import com.google.common.base.Predicate;
@@ -36,7 +35,7 @@ import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,10 +47,10 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.http.converter.AbstractHttpMessageConverter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link CasCoreServicesConfiguration}.
@@ -65,7 +64,7 @@ import java.util.stream.Collectors;
 public class CasCoreServicesConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
-    private CommunicationsManager communicationsManager;
+    private ObjectProvider<CommunicationsManager> communicationsManager;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -81,12 +80,7 @@ public class CasCoreServicesConfiguration {
 
     @RefreshScope
     @Bean
-    public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
-        return new DefaultMultifactorTriggerSelectionStrategy(casProperties.getAuthn().getMfa());
-    }
-
-    @RefreshScope
-    @Bean
+    @ConditionalOnMissingBean(name = "shibbolethCompatiblePersistentIdGenerator")
     public PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator() {
         return new ShibbolethCompatiblePersistentIdGenerator();
     }
@@ -95,13 +89,13 @@ public class CasCoreServicesConfiguration {
     @Bean
     public ResponseBuilderLocator webApplicationResponseBuilderLocator() {
         val beans = applicationContext.getBeansOfType(ResponseBuilder.class, false, true);
-        val builders = beans.values().stream().collect(Collectors.toList());
+        val builders = new ArrayList<ResponseBuilder>(beans.values());
         AnnotationAwareOrderComparator.sortIfNecessary(builders);
         return new DefaultWebApplicationResponseBuilderLocator(builders);
     }
 
-    @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
     @Bean
+    @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
     public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder() {
         return new WebApplicationServiceResponseBuilder(servicesManager());
     }
@@ -136,9 +130,13 @@ public class CasCoreServicesConfiguration {
     }
 
     @Bean
-    @RefreshScope
+    public AbstractHttpMessageConverter yamlHttpMessageConverter() {
+        return new RegisteredServiceYamlHttpMessageConverter();
+    }
+
+    @Bean
     public RegisteredServicesEventListener registeredServicesEventListener() {
-        return new RegisteredServicesEventListener(servicesManager(), casProperties, communicationsManager);
+        return new RegisteredServicesEventListener(servicesManager(), casProperties, communicationsManager.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "registeredServiceReplicationStrategy")
@@ -163,7 +161,7 @@ public class CasCoreServicesConfiguration {
             new ArrayList<ServiceRegistryExecutionPlanConfigurer>(0));
         val plan = new DefaultServiceRegistryExecutionPlan();
         configurers.forEach(c -> {
-            val name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring service registry [{}]", name);
             c.configureServiceRegistry(plan);
         });

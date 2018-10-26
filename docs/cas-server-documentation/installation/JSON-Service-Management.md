@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - JSON Service Registry
+category: Services
 ---
 
 # JSON Service Registry
@@ -30,7 +31,7 @@ A sample JSON file follows:
 }
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#json-service-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#json-service-registry).
 
 <div class="alert alert-warning"><strong>Clustering Services</strong><p>
 You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have
@@ -168,7 +169,7 @@ An example legacy JSON file is listed below for reference:
 
 ## Replication
 
-If CAS is to deployed in a cluster, the service definition files must be kept in sync for all CAS nodes. Please [review this guide](Configuring-Service-Replication.html) to learn more about available options.
+If CAS is deployed in a cluster, the service definition files must be kept in sync for all CAS nodes. Please [review this guide](Configuring-Service-Replication.html) to learn more about available options.
 
 ## Auto Initialization
 

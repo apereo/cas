@@ -12,9 +12,11 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -65,7 +67,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         val encTicketId = encodeTicketId(ticketId);
         if (StringUtils.isBlank(encTicketId)) {
             return null;
@@ -75,12 +77,10 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             val map = getTicketMapInstanceByMetadata(metadata);
             val ticket = map.get(encTicketId);
             val result = decodeTicket(ticket);
-            if (result != null && result.isExpired()) {
-                LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
-                map.remove(encTicketId);
-                return null;
+            if (predicate.test(result)) {
+                return result;
             }
-            return result;
+            return null;
         }
         LOGGER.warn("No ticket definition could be found in the catalog to match [{}]", ticketId);
         return null;
@@ -109,7 +109,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return this.ticketCatalog.findAll()
             .stream()
             .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
@@ -117,7 +117,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
                 if (pageSize > 0) {
                     return tickets.stream().limit(pageSize).collect(Collectors.toList()).stream();
                 }
-                return tickets.stream().collect(Collectors.toList()).stream();
+                return new ArrayList<>(tickets).stream();
             })
             .map(this::decodeTicket)
             .collect(Collectors.toSet());

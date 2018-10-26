@@ -2,6 +2,8 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.category.MongoDbCategory;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -25,9 +27,18 @@ import java.util.Collection;
     MongoDbServiceRegistryConfiguration.class,
     RefreshAutoConfiguration.class
 })
-@TestPropertySource(locations = {"classpath:/mongoservices.properties"})
 @RunWith(Parameterized.class)
 @Category(MongoDbCategory.class)
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
+@TestPropertySource(properties = {
+    "cas.serviceRegistry.mongo.databaseName=service-registry",
+    "cas.serviceRegistry.mongo.host=localhost",
+    "cas.serviceRegistry.mongo.port=27017",
+    "cas.serviceRegistry.mongo.userId=root",
+    "cas.serviceRegistry.mongo.password=secret",
+    "cas.serviceRegistry.mongo.authenticationDatabaseName=admin",
+    "cas.serviceRegistry.mongo.dropCollection=true"
+})
 public class MongoDbServiceRegistryCloudTests extends AbstractServiceRegistryTests {
 
     @Autowired

@@ -63,8 +63,7 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
      */
     protected <T extends TicketGrantingTicket> T produceTicket(final Authentication authentication,
                                                                final String tgtId, final Class<T> clazz) {
-        final TicketGrantingTicket result = new TicketGrantingTicketImpl(
-            tgtId, authentication, this.ticketGrantingTicketExpirationPolicy);
+        val result = new TicketGrantingTicketImpl(tgtId, authentication, this.ticketGrantingTicketExpirationPolicy);
         if (!clazz.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Result [" + result
                 + " is of type " + result.getClass()
@@ -82,9 +81,9 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     protected String produceTicketIdentifier(final Authentication authentication) {
         var tgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
         if (this.cipherExecutor != null) {
-            LOGGER.debug("Attempting to encode ticket-granting ticket [{}]", tgtId);
+            LOGGER.trace("Attempting to encode ticket-granting ticket [{}]", tgtId);
             tgtId = this.cipherExecutor.encode(tgtId);
-            LOGGER.debug("Encoded ticket-granting ticket id [{}]", tgtId);
+            LOGGER.trace("Encoded ticket-granting ticket id [{}]", tgtId);
         }
         return tgtId;
     }

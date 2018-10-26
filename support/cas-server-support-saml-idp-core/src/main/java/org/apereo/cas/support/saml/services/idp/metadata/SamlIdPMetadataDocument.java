@@ -1,8 +1,11 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
-import java.math.BigInteger;
 
 /**
  * This is {@link SamlIdPMetadataDocument}.
@@ -25,6 +27,7 @@ import java.math.BigInteger;
 @Document
 @Getter
 @Setter
+@AllArgsConstructor
 public class SamlIdPMetadataDocument {
 
     @javax.persistence.Id
@@ -32,29 +35,47 @@ public class SamlIdPMetadataDocument {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     @Column(name = "id", columnDefinition = "BIGINT")
-    private BigInteger id = BigInteger.valueOf(-1);
+    private long id = -1;
 
     @Lob
-    @Column(name = "metadata", length = Integer.MAX_VALUE)
+    @Type(type = "org.hibernate.type.StringNVarcharType")
+    @Column(name = "metadata", length = 8_000)
     private String metadata;
 
     @Lob
-    @Column(name = "signingCertificate", length = Integer.MAX_VALUE)
+    @Type(type = "org.hibernate.type.StringNVarcharType")
+    @Column(name = "signingCertificate", length = 3_000)
     private String signingCertificate;
 
     @Lob
-    @Column(name = "signingKey", length = Integer.MAX_VALUE)
+    @Type(type = "org.hibernate.type.StringNVarcharType")
+    @Column(name = "signingKey", length = 3_000)
     private String signingKey;
 
     @Lob
-    @Column(name = "encryptionCertificate", length = Integer.MAX_VALUE)
+    @Type(type = "org.hibernate.type.StringNVarcharType")
+    @Column(name = "encryptionCertificate", length = 3_000)
     private String encryptionCertificate;
 
     @Lob
-    @Column(name = "encryptionKey", length = Integer.MAX_VALUE)
+    @Type(type = "org.hibernate.type.StringNVarcharType")
+    @Column(name = "encryptionKey", length = 3_000)
     private String encryptionKey;
 
     public SamlIdPMetadataDocument() {
-        setId(BigInteger.valueOf(System.currentTimeMillis()));
+        setId(System.nanoTime());
+    }
+
+    /**
+     * Is valid?
+     *
+     * @return true/false
+     */
+    public boolean isValid() {
+        return StringUtils.isNotBlank(getMetadata())
+            && StringUtils.isNotBlank(getSigningCertificate())
+            && StringUtils.isNotBlank(getSigningKey())
+            && StringUtils.isNotBlank(getEncryptionCertificate())
+            && StringUtils.isNotBlank(getEncryptionKey());
     }
 }

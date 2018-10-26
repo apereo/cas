@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.*;
 
 /**
  * This is {@link JpaYubiKeyAccountRegistry}.
@@ -51,15 +51,12 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Collection<YubiKeyAccount> getAccounts() {
+    public Collection<? extends YubiKeyAccount> getAccounts() {
         try {
             return this.entityManager.createQuery(SELECT_QUERY, YubiKeyAccount.class)
                 .getResultList()
                 .stream()
-                .map(it -> {
-                    it.setPublicId(getCipherExecutor().decode(it.getPublicId()));
-                    return it;
-                })
+                .peek(it -> it.setPublicId(getCipherExecutor().decode(it.getPublicId())))
                 .collect(toList());
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found");
@@ -70,7 +67,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    public Optional<YubiKeyAccount> getAccount(final String uid) {
+    public Optional<? extends YubiKeyAccount> getAccount(final String uid) {
         try {
             val account = this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username"),
                 YubiKeyAccount.class)

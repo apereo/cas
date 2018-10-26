@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.configurer;
 
-import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -29,6 +28,7 @@ import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.action.ExternalRedirectAction;
+import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.action.ViewFactoryActionAdapter;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.StateDefinition;
@@ -139,7 +139,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.error("Login flow registry is not configured and/or initialized correctly.");
             return null;
         }
-        val found = Arrays.stream(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).anyMatch(f -> f.equals(FLOW_ID_LOGIN));
+        val found = Arrays.asList(this.loginFlowDefinitionRegistry.getFlowDefinitionIds()).contains(FLOW_ID_LOGIN);
         if (found) {
             return (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGIN);
         }
@@ -153,7 +153,11 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.warn("Logout flow registry is not configured correctly.");
             return null;
         }
-        return (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGOUT);
+        if (logoutFlowDefinitionRegistry.containsFlowDefinition(FLOW_ID_LOGOUT)) {
+            return (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(FLOW_ID_LOGOUT);
+        }
+        LOGGER.warn("Logout flow registry does not contain a logout flow definition.");
+        return null;
     }
 
     @Override
@@ -234,6 +238,11 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     @Override
     public void setStartState(final Flow flow, final TransitionableState state) {
         setStartState(flow, state.getId());
+    }
+
+    @Override
+    public SetAction createSetAction(final String name, final String value) {
+        return new SetAction(createExpression(name), createExpression(value));
     }
 
     @Override
@@ -672,16 +681,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         val field = ReflectionUtils.findField(act.getClass(), "expression");
         ReflectionUtils.makeAccessible(field);
         return (Expression) ReflectionUtils.getField(field, act);
-    }
-
-    /**
-     * Register multifactor providers state transitions into webflow.
-     *
-     * @param state the state
-     */
-    public void registerMultifactorProvidersStateTransitionsIntoWebflow(final TransitionableState state) {
-        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        providerMap.forEach((k, v) -> createTransitionForState(state, v.getId(), v.getId()));
     }
 
     /**

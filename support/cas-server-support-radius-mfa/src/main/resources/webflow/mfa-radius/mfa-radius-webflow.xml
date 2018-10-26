@@ -22,7 +22,7 @@
             <set name="viewScope.commandName" value="'credential'" />
             <set name="viewScope.principal" value="conversationScope.authentication.principal" />
         </on-entry>
-        <transition on="submit" bind="true" validate="false" to="realSubmitRadius"/>
+        <transition on="submit" bind="true" validate="true" to="realSubmitRadius"/>
 
     </view-state>
 

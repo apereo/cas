@@ -1,18 +1,18 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
-import org.apereo.cas.logout.DefaultLogoutRequest;
+import org.apereo.cas.logout.DefaultSingleLogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests {
+public class LogoutActionTests extends AbstractWebflowActionsTests {
 
     private static final String COOKIE_TGC_ID = "CASTGC";
     private static final String TEST_SERVICE_ID = "TestService";
@@ -120,7 +120,10 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
     public void verifyLogoutRequestBack() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        val logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
+        val logoutRequest = DefaultSingleLogoutRequest.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .build();
         logoutRequest.setStatus(LogoutRequestStatus.SUCCESS);
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         val properties = new LogoutProperties();
@@ -129,12 +132,14 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 
-    @SuppressWarnings("unchecked")
     @Test
     public void verifyLogoutRequestFront() {
         val cookie = new Cookie(COOKIE_TGC_ID, "test");
         this.request.setCookies(cookie);
-        val logoutRequest = new DefaultLogoutRequest(StringUtils.EMPTY, null, null);
+        val logoutRequest = DefaultSingleLogoutRequest.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .build();
         WebUtils.putLogoutRequests(this.requestContext, Arrays.asList(logoutRequest));
         val properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);

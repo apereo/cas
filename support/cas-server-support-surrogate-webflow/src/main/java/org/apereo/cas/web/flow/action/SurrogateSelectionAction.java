@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.action;
 
 import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -39,9 +39,7 @@ public class SurrogateSelectionAction extends AbstractAction {
                 val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
                 val result =
                     surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(authenticationResultBuilder, credential, target);
-                if (result.isPresent()) {
-                    WebUtils.putAuthenticationResultBuilder(result.get(), requestContext);
-                }
+                result.ifPresent(authenticationResultBuilder1 -> WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder1, requestContext));
             } else {
                 LOGGER.warn("No surrogate identifier was selected or provided");
             }

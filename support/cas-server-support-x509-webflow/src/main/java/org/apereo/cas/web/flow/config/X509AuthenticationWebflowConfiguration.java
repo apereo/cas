@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.config;
 
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
 import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -40,15 +39,15 @@ public class X509AuthenticationWebflowConfiguration implements CasWebflowExecuti
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
-    private AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
+    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
 
     @Autowired
     @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
+    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
+    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -81,21 +80,14 @@ public class X509AuthenticationWebflowConfiguration implements CasWebflowExecuti
     public Action x509Check() {
         val extractCertFromRequestHeader = casProperties.getAuthn().getX509().isExtractCert();
         if (extractCertFromRequestHeader) {
-            return new X509CertificateCredentialsRequestHeaderAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy,
+            return new X509CertificateCredentialsRequestHeaderAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
+                serviceTicketRequestWebflowEventResolver.getIfAvailable(),
+                adaptiveAuthenticationPolicy.getIfAvailable(),
                 x509CertificateExtractor.getIfAvailable());
         }
-        return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver,
-            serviceTicketRequestWebflowEventResolver,
-            adaptiveAuthenticationPolicy);
-    }
-
-    @ConditionalOnMissingBean(name = "x509CertificateExtractor")
-    @Bean
-    public X509CertificateExtractor x509CertificateExtractor() {
-        val sslHeaderName = casProperties.getAuthn().getX509().getSslHeaderName();
-        return new RequestHeaderX509CertificateExtractor(sslHeaderName);
+        return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
+            serviceTicketRequestWebflowEventResolver.getIfAvailable(),
+            adaptiveAuthenticationPolicy.getIfAvailable());
     }
 
     @Override

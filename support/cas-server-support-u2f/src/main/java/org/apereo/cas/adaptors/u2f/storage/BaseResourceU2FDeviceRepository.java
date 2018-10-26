@@ -56,7 +56,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
     }
 
     @Override
-    public Collection<DeviceRegistration> getRegisteredDevices(final String username) {
+    public Collection<? extends DeviceRegistration> getRegisteredDevices(final String username) {
         try {
             val devices = readDevicesFromResource();
 
@@ -66,7 +66,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
                 LOGGER.debug("Filtering devices for [{}] based on device expiration date [{}]", username, expirationDate);
                 val list = devs
                     .stream()
-                    .filter(d -> d.getUsername().equals(username) && (d.getCreatedDate().isAfter(expirationDate)))
+                    .filter(d -> d.getUsername().equals(username) && d.getCreatedDate().isAfter(expirationDate))
                     .collect(Collectors.toList());
 
                 LOGGER.debug("There are [{}] device(s) remaining in repository for [{}]", list.size(), username);
@@ -113,7 +113,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             if (!devices.isEmpty()) {
                 val devs = devices.get(MAP_KEY_DEVICES);
                 LOGGER.debug("Located [{}] devices in repository", devs.size());
-                list.addAll(devs.stream().collect(Collectors.toList()));
+                list.addAll(new ArrayList<>(devs));
             }
             list.add(device);
             LOGGER.debug("There are [{}] device(s) remaining in repository. Storing...", list.size());

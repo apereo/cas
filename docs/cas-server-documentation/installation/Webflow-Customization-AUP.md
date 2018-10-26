@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Web Flow Acceptable Usage Policy
+category: Webflow Management
 ---
 
 # Acceptable Usage Policy
@@ -21,7 +22,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-Customize the policy by modifying the `src/main/resources/templates/casAcceptableUsagePolicyView.html`. See [this guide](User-Interface-Customization.html)
+Customize the policy by modifying the `src/main/resources/templates/casAcceptableUsagePolicyView.html`. See [this guide](../ux/User-Interface-Customization.html)
 to learn more about user interface customizations. Note that the view here should have full access to the resolved principal and attributes,
 if you wish to dynamically alter the page to present different text, etc.
 
@@ -31,7 +32,7 @@ policy record is strongly tied to the identified user record. Implement this fea
 would require heavy modifications to the CAS webflow as well as alternative means of storing and remembering decisions
 such as cookies or browser storage, etc.</p></div>
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
 ## Storage Mechanism
 
@@ -63,7 +64,7 @@ remembered via the same attribute. Support is enabled by including the following
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ldap-1).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ldap-1).
 
 ### MongoDb
 
@@ -80,7 +81,24 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
+
+### CouchDb
+
+CAS can be configured to use a CouchDb instance as the storage mechanism. Upon accepting the policy, the adopter is expected to provide a collection name where the
+decision is kept and the document is assumed to contain a `username` column as well as one that matches the AUP attribute name defined.
+
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-aup-couchdb</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
 ### JDBC
 
@@ -97,7 +115,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
 ### REST
 
@@ -114,7 +132,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#acceptable-usage-policy).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#acceptable-usage-policy).
 
 ### Custom
 
@@ -135,4 +153,4 @@ public class MyUsagePolicyConfiguration {
 }
 ```
 
-[See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.

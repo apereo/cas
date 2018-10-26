@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.http.HttpResponse;
+import org.springframework.webflow.execution.RequestContext;
 
 import java.util.HashMap;
 
@@ -35,7 +37,9 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
 
     @Override
     public InterruptResponse inquireInternal(final Authentication authentication, final RegisteredService registeredService,
-                                             final Service service, final Credential credential) {
+                                             final Service service, final Credential credential,
+                                             final RequestContext requestContext) {
+        HttpResponse response = null;
         try {
             val parameters = new HashMap<String, Object>();
             parameters.put("username", authentication.getPrincipal().getId());
@@ -46,7 +50,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             if (registeredService != null) {
                 parameters.put("registeredService", registeredService.getServiceId());
             }
-            val response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
+            response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
             if (response != null && response.getEntity() != null) {
@@ -54,6 +58,8 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
         }
         return InterruptResponse.none();
     }

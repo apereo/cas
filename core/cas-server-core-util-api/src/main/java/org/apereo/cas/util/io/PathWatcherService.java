@@ -12,7 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
+import java.util.Arrays;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
@@ -55,7 +57,7 @@ public class PathWatcherService implements Runnable, Closeable {
         this.onModify = onModify;
         this.onDelete = onDelete;
         this.watcher = watchablePath.getFileSystem().newWatchService();
-        LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) KINDS);
+        LOGGER.trace("Created service registry watcher for events of type [{}]", Arrays.stream(KINDS).map(WatchEvent.Kind::name).collect(Collectors.joining(",")));
         watchablePath.register(this.watcher, KINDS);
     }
 
@@ -65,17 +67,13 @@ public class PathWatcherService implements Runnable, Closeable {
             var key = (WatchKey) null;
             while ((key = watcher.take()) != null) {
                 handleEvent(key);
-                val valid = key != null && key.reset();
+                val valid = key.reset();
                 if (!valid) {
                     LOGGER.info("Directory key is no longer valid. Quitting watcher service");
                 }
             }
-        } catch (final InterruptedException e) {
+        } catch (final InterruptedException | ClosedWatchServiceException e) {
             LOGGER.trace(e.getMessage(), e);
-            return;
-        } catch (final ClosedWatchServiceException e) {
-            LOGGER.trace(e.getMessage(), e);
-            return;
         }
     }
 
@@ -89,7 +87,6 @@ public class PathWatcherService implements Runnable, Closeable {
             key.pollEvents().forEach(event -> {
                 val eventName = event.kind().name();
 
-                // The filename is the context of the event.
                 val ev = (WatchEvent<Path>) event;
                 val filename = ev.context();
 

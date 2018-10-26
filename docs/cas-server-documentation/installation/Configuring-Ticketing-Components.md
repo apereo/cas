@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Configuring Ticketing Components
+category: Ticketing
 ---
 
 # Ticketing
@@ -14,7 +15,7 @@ There are two core configurable ticketing components:
 
 The deployment environment and technology expertise generally determine the particular `TicketRegistry` component. A cache-backed implementation is recommended for HA deployments, while the default in-memory registry may be suitable for small deployments.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#ticket-registry).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#ticket-registry).
 
 ### How Do I Choose?
 
@@ -59,6 +60,7 @@ Cassandra, for ticket storage and persistence:
 * [Infinispan](Infinispan-Ticket-Registry.html)
 * [Couchbase](Couchbase-Ticket-Registry.html)
 * [Redis](Redis-Ticket-Registry.html)
+* [CouchDb](CouchDb-Ticket-Registry.html)
 * [MongoDb](MongoDb-Ticket-Registry.html)
 * [DynamoDb](DynamoDb-Ticket-Registry.html)
 

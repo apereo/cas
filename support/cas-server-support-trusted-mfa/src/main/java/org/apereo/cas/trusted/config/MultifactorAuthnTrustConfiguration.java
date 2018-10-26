@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
@@ -30,7 +31,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -49,11 +49,11 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
 
     @Autowired
     @Qualifier("ticketCreationActionResolver")
-    private AuditActionResolver ticketCreationActionResolver;
+    private ObjectProvider<AuditActionResolver> ticketCreationActionResolver;
 
     @Autowired
     @Qualifier("returnValueResourceResolver")
-    private AuditResourceResolver returnValueResourceResolver;
+    private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -112,7 +112,6 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
 
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
-    @Lazy
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner() {
         return new MultifactorAuthenticationTrustStorageCleaner(
             casProperties.getAuthn().getMfa().getTrusted(),
@@ -121,8 +120,8 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
 
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", this.returnValueResourceResolver);
-        plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", this.ticketCreationActionResolver);
+        plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver.getIfAvailable());
+        plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", ticketCreationActionResolver.getIfAvailable());
     }
 
     @Bean

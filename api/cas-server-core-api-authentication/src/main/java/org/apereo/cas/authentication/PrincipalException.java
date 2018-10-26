@@ -11,10 +11,9 @@ import java.util.Map;
  */
 public class PrincipalException extends AuthenticationException {
 
-    /**
-     * Serialization metadata.
-     */
     private static final long serialVersionUID = -6590363469748313596L;
+
+    private static final String CODE = "service.principal.resolution.error";
 
     /**
      * Creates a new instance.
@@ -28,5 +27,9 @@ public class PrincipalException extends AuthenticationException {
         final Map<String, Throwable> handlerErrors,
         final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
         super(message, handlerErrors, handlerSuccesses);
+    }
+
+    public String getCode() {
+        return CODE;
     }
 }

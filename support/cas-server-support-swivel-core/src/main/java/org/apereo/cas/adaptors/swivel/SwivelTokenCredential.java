@@ -1,8 +1,7 @@
 package org.apereo.cas.adaptors.swivel;
 
-import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,16 +18,11 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
-public class SwivelTokenCredential implements Credential {
-
+@EqualsAndHashCode(callSuper = true)
+public class SwivelTokenCredential extends OneTimeTokenCredential {
     private static final long serialVersionUID = 361318678073819595L;
 
-    private String token;
-
-    @Override
-    public String getId() {
-        return this.token;
+    public SwivelTokenCredential(final String token) {
+        super(token);
     }
 }

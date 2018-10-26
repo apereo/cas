@@ -5,8 +5,6 @@ import lombok.NoArgsConstructor;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static java.util.stream.Collectors.joining;
-
 /**
  * ThreadLocal based holder for current set of credentials and/or authentication object for any current
  * CAS authentication transaction. Useful for making this information available to all the interested CAS
@@ -94,7 +92,7 @@ public class AuthenticationCredentialsThreadLocalBinder {
      * @return credential ids String representation
      */
     public static String getCurrentCredentialIdsAsString() {
-        return getCurrentCredentialIds() != null ? Arrays.stream(getCurrentCredentialIds()).collect(joining(", ")) : null;
+        return getCurrentCredentialIds() != null ? String.join(", ", getCurrentCredentialIds()) : null;
     }
 
     /**

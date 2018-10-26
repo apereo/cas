@@ -1,6 +1,7 @@
 ---
 layout: default
 title: CAS - Logging Configuration
+category: Logs & Audits
 ---
 
 # Logging
@@ -22,15 +23,12 @@ turn up <code>DEBUG</code> or <code>INFO</code> if you need to research a partic
 
 It is often time helpful to externalize the `log4j2.xml` file to a system path to preserve settings between upgrades.
 The location of `log4j2.xml` file by default is on the runtime classpath and can be controlled
-via the CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logging).
-
-<div class="alert alert-info"><strong>Monitoring Logs</strong><p>To review log settings and output,
- you may also use the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+via the CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logging).
 
 ### Log Levels
 
 While log levels can directly be massaged via the native `log4j2.xml` syntax, they may also be modified
-using the usual CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logging).
+using the usual CAS properties. To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logging).
 
 ### Refresh Interval
 
@@ -132,4 +130,4 @@ SERVER IP ADDRESS: ...
 Certain number of characters are left at the trailing end of the ticket id to assist with
 troubleshooting and diagnostics.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#logging).
+To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#logging).

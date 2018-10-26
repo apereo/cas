@@ -2,12 +2,12 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.HttpBasedServiceCredential;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -15,7 +15,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-import org.apereo.cas.services.RegisteredService.LogoutType;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.RandomUtils;
 
@@ -45,6 +44,7 @@ public class RegisteredServiceTestUtils {
     public static final String CONST_USERNAME = "test";
     public static final String CONST_TEST_URL = "https://google.com";
     public static final String CONST_TEST_URL2 = "https://example.com";
+    public static final String CONST_TEST_URL3 = "https://another.example.com";
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_TEST_URL);
@@ -74,7 +74,7 @@ public class RegisteredServiceTestUtils {
         return usernamePasswordCredentials;
     }
 
-    public static Service getService() {
+    public static AbstractWebApplicationService getService() {
         return getService(CONST_TEST_URL);
     }
 
@@ -121,7 +121,7 @@ public class RegisteredServiceTestUtils {
         s.setName("TestService" + UUID.randomUUID().toString());
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
+        s.setId(RandomUtils.getNativeInstance().nextInt());
         s.setTheme("exampleTheme");
         s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
         val accessStrategy =
@@ -130,8 +130,8 @@ public class RegisteredServiceTestUtils {
         accessStrategy.setRequiredAttributes(getTestAttributes());
         s.setAccessStrategy(accessStrategy);
         s.setLogo("https://logo.example.org/logo.png");
-        s.setLogoutType(LogoutType.BACK_CHANNEL);
-        s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
+        s.setLogoutType(RegisteredServiceLogoutType.BACK_CHANNEL);
+        s.setLogoutUrl("https://sys.example.org/logout.png");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
 
         s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));

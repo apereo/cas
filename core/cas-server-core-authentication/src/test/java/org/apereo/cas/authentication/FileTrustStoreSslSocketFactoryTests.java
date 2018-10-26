@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 
+import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.junit.Rule;
@@ -11,7 +12,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.KeyStore;
 
@@ -31,6 +31,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    @SneakyThrows
     private static SSLConnectionSocketFactory sslFactory(final Resource resource, final String password) {
         return new SSLConnectionSocketFactory(new DefaultCasSslContext(resource,
             password,
@@ -59,7 +60,7 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifyTrustStoreNotFound() {
-        this.thrown.expect(FileNotFoundException.class);
+        this.thrown.expect(IOException.class);
         sslFactory(new FileSystemResource("test.jks"), "changeit");
     }
 

@@ -2,7 +2,6 @@ package org.apereo.cas.support.wsfederation.config.support.authentication;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
-import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -23,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,11 +49,11 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
     @Qualifier("attributeRepository")
-    private IPersonAttributeDao attributeRepository;
+    private ObjectProvider<IPersonAttributeDao> attributeRepository;
 
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    private ObjectProvider<ServicesManager> servicesManager;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -143,8 +143,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
                 && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
             .forEach(wsfed -> {
-                final AuthenticationHandler handler =
-                    new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, wsfedPrincipalFactory());
+                val handler = new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager.getIfAvailable(), wsfedPrincipalFactory());
                 if (!wsfed.isAttributeResolverEnabled()) {
                     plan.registerAuthenticationHandler(handler);
                 } else {
@@ -154,7 +153,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Unable to find configuration for identity provider " + wsfed.getIdentityProviderUrl()));
 
-                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository, wsfedPrincipalFactory(),
+                    val r = new WsFederationCredentialsToPrincipalResolver(attributeRepository.getIfAvailable(), wsfedPrincipalFactory(),
                         wsfed.getPrincipal().isReturnNull(),
                         wsfed.getPrincipal().getPrincipalAttribute(),
                         cfg);

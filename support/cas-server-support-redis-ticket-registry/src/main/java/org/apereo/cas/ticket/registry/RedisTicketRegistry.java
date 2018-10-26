@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -81,18 +82,18 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Ticket getTicket(final String ticketId) {
+    public Ticket getTicket(final String ticketId, final Predicate<Ticket> predicate) {
         try {
             val redisKey = getTicketRedisKey(ticketId);
             val t = this.client.boundValueOps(redisKey).get();
             if (t != null) {
                 val result = decodeTicket(t);
-                if (result != null && result.isExpired()) {
-                    LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
-                    deleteSingleTicket(ticketId);
-                    return null;
+                if (predicate.test(result)) {
+                    return result;
                 }
-                return result;
+                LOGGER.debug("The condition enforced by the predicate [{}] cannot successfully accept/test the ticket id [{}]", ticketId,
+                    predicate.getClass().getSimpleName());
+                return null;
             }
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}] ", ticketId, e);
@@ -101,7 +102,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Collection<Ticket> getTickets() {
+    public Collection<? extends Ticket> getTickets() {
         return this.client.keys(getPatternTicketRedisKey()).stream()
             .map(redisKey -> {
                 val ticket = this.client.boundValueOps(redisKey).get();
@@ -122,6 +123,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Updating ticket [{}]", ticket);
             val encodeTicket = this.encodeTicket(ticket);
             val redisKey = getTicketRedisKey(ticket.getId());
+            LOGGER.debug("Fetched redis key [{}] for ticket [{}]", redisKey, ticket);
+
             val timeout = getTimeout(ticket);
             this.client.boundValueOps(redisKey).set(encodeTicket, timeout.longValue(), TimeUnit.SECONDS);
             return encodeTicket;

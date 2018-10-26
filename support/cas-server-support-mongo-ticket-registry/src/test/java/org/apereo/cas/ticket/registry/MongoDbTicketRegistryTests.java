@@ -21,6 +21,8 @@ import org.apereo.cas.config.MongoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.MongoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import org.junit.Before;
 import org.junit.experimental.categories.Category;
@@ -50,6 +52,8 @@ import java.util.Collection;
     RefreshAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     AopAutoConfiguration.class,
+    MongoDbTicketRegistryTicketCatalogConfiguration.class,
+    MongoDbTicketRegistryConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
@@ -65,13 +69,21 @@ import java.util.Collection;
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
-    MongoDbTicketRegistryTicketCatalogConfiguration.class,
-    MongoDbTicketRegistryConfiguration.class,
     CasCoreWebConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class})
+    CasWebApplicationServiceFactoryConfiguration.class
+})
 @EnableScheduling
-@TestPropertySource(locations = {"classpath:/mongoregistry.properties"})
-@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+@TestPropertySource(properties = {
+    "cas.ticket.registry.mongo.databaseName=ticket-registry",
+    "cas.ticket.registry.mongo.authenticationDatabaseName=admin",
+    "cas.ticket.registry.mongo.host=localhost",
+    "cas.ticket.registry.mongo.port=27017",
+    "cas.ticket.registry.mongo.dropCollection=true",
+    "cas.ticket.registry.mongo.userId=root",
+    "cas.ticket.registry.mongo.password=secret"
+})
+@DirtiesContext
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class, port = 27017)
 public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired
@@ -96,5 +108,4 @@ public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistry
     public TicketRegistry getNewTicketRegistry() {
         return this.ticketRegistry;
     }
-
 }
