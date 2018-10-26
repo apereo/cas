@@ -84,6 +84,7 @@ public class MongoDbConnectionFactory {
         converters.add(new BaseConverters.PatternToStringConverter());
         converters.add(new BaseConverters.StringToPatternConverter());
         converters.add(new BaseConverters.CacheBuilderConverter());
+        converters.add(new BaseConverters.ObjectIdToLongConverter());
         converters.addAll(JodaTimeConverters.getConvertersToRegister());
         converters.addAll(Jsr310Converters.getConvertersToRegister());
         converters.add(new BaseConverters.BsonTimestampToStringConverter());

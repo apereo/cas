@@ -57,7 +57,9 @@ public class AmazonDynamoDbClientFactory {
         cfg.setUseTcpKeepAlive(props.isUseTcpKeepAlive());
         cfg.setProtocol(Protocol.valueOf(props.getProtocol().toUpperCase()));
         cfg.setClientExecutionTimeout(props.getClientExecutionTimeout());
-        cfg.setMaxErrorRetry(props.getMaxErrorRetry());
+        if (props.getMaxErrorRetry() > 0) {
+            cfg.setMaxErrorRetry(props.getMaxErrorRetry());
+        }
         cfg.setProxyHost(props.getProxyHost());
         cfg.setProxyPassword(props.getProxyPassword());
         if (props.getProxyPort() > 0) {
