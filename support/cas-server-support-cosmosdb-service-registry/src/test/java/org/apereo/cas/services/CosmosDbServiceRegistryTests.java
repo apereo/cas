@@ -6,11 +6,11 @@ import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
 import lombok.val;
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Category(CosmosDbCategory.class)
 @SpringBootTest(
     classes = {RefreshAutoConfiguration.class, CosmosDbServiceRegistryConfiguration.class})
-@IfProfileValue(name = "cosmosDbEnabled", value = "true")
+@EnabledIfSystemProperty(named = "cosmosDbEnabled", matches = "true")
 @TestPropertySource(properties = {
     "cas.serviceRegistry.cosmosDb.uri=https://localhost:8081",
     "cas.serviceRegistry.cosmosDb.key=C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",

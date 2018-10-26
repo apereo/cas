@@ -8,12 +8,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -38,7 +38,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.cognito.clientId=4o5qr8egumc72iv6qibm8foeh6"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@IfProfileValue(name = "cognitoEnabled", value = "true")
+@EnabledIfSystemProperty(named = "cognitoEnabled", matches = "true")
 public class AmazonCognitoAuthenticationAuthenticationHandlerTests {
     @Autowired
     @Qualifier("amazonCognitoAuthenticationHandler")
