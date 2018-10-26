@@ -2,8 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.web.support.JdbcThrottledSubmissionHandlerInterceptorAdapterTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -11,8 +10,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses(
+@SelectClasses(
     JdbcThrottledSubmissionHandlerInterceptorAdapterTests.class
 )
 public class AllTestsSuite {

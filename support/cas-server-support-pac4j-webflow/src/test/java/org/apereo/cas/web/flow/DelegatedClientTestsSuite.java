@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link DelegatedClientTestsSuite}.
@@ -9,7 +8,6 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses(DelegatedClientAuthenticationActionTests.class)
+@SelectClasses(DelegatedClientAuthenticationActionTests.class)
 public class DelegatedClientTestsSuite {
 }

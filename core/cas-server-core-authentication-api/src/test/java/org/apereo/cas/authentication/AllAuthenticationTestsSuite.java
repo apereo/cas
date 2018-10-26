@@ -8,8 +8,7 @@ import org.apereo.cas.authentication.policy.GroovyScriptAuthenticationPolicyTest
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtilsTests;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDaoTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllAuthenticationTestsSuite}.
@@ -17,8 +16,8 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+
+@SelectClasses({
     DefaultAdaptiveAuthenticationPolicyTests.class,
     GroovyIPAddressIntelligenceServiceTests.class,
     RestfulIPAddressIntelligenceServiceTests.class,

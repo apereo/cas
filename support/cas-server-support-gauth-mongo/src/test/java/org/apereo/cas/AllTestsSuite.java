@@ -3,8 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.gauth.credential.MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorMongoDbTokenRepositoryTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -12,8 +11,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.class,
+@SelectClasses({MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.class,
     GoogleAuthenticatorMongoDbTokenRepositoryTests.class})
 public class AllTestsSuite {
 }
