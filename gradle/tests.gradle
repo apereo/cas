@@ -117,9 +117,9 @@ task testMail(type: Test) {
 }
 
 task testRestful(type: Test) {
-    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "RestfulApi")
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "restful") || shouldTest(project.sourceSets.test.java.srcDirs, "RestfulApi")
     useJUnitPlatform {
-        includeTags "org.apereo.cas.category.RestfulApiCategory"
+        includeTags "org.apereo.cas.category.RestfulApiCategory", "restful"
     }
 }
 
@@ -145,7 +145,6 @@ task testRedis(type: Test) {
 }
 
 test {
-    include "**/*Tests.*"
     useJUnitPlatform {
         excludeTags "org.apereo.cas.category.CassandraCategory",
                 "org.apereo.cas.category.CosmosDbCategory",
@@ -172,8 +171,6 @@ test {
 }
 
 tasks.withType(Test) {
-    exclude "**/Abstract*.*", "**/Base*.*", "**/*Suite.*"
-    include "**/*Tests.*"
     scanForTestClasses = false
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
 
@@ -210,6 +207,10 @@ def hasTestsOfCategory(Set testSrc, String category) {
                     if (file ==~ /.*Tests\.\w+/) {
                         file.readLines().parallelStream().forEach() { line ->
                             def m = line =~ /^\s*@Category\((\w+)Category\.class\)\s*$/
+                            if (m) {
+                                tags.addAll(m.collect { it[1] })
+                            }
+                            m = line =~ /^\s*@Category\((\w+)Category\.class\)\s*$/
                             if (m) {
                                 tags.addAll(m.collect { it[1] })
                             }

@@ -85,7 +85,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     OpenIdAuthenticationEventExecutionPlanConfiguration.class,
     ThymeleafAutoConfiguration.class
 })
-public class AbstractOpenIdTests {
+public abstract class AbstractOpenIdTests {
     @Autowired
     @Qualifier("serverManager")
     protected ServerManager serverManager;
