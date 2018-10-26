@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.flow;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
@@ -50,7 +51,13 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
 
         var acr = request.getParameter(OAuth20Constants.ACR_VALUES);
         if (StringUtils.isBlank(acr)) {
-            val builderContext = new URIBuilder(request.getRequestURI());
+            val url = request.getRequestURL() + "?" + request.getQueryString();
+            var builderContext = new URIBuilder(url);
+            val idx = builderContext.getQueryParams().stream().filter(p -> p.getName().equals(CasProtocolConstants.PARAMETER_SERVICE)).findFirst();
+            if (idx.isPresent()) {
+                builderContext = new URIBuilder(idx.get().getValue());
+            }
+
             val parameter = builderContext.getQueryParams()
                 .stream()
                 .filter(p -> p.getName().equals(OAuth20Constants.ACR_VALUES))
@@ -65,7 +72,7 @@ public class OidcMultifactorAuthenticationTrigger implements MultifactorAuthenti
         }
         val values = org.springframework.util.StringUtils.commaDelimitedListToSet(acr);
         if (values.isEmpty()) {
-            LOGGER.debug("No ACR provided in the authentication request");
+            LOGGER.trace("No ACR values are provided in the authentication request");
             return Optional.empty();
         }
 
