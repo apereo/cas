@@ -3,9 +3,11 @@ package org.apereo.cas.support.x509.rest;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 
 import lombok.val;
+import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.rules.ExpectedException;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.LinkedMultiValueMap;
 
@@ -21,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
-@RunWith(MockitoJUnitRunner.Silent.class)
+@ExtendWith(MockitoExtension.class)
 public class X509RestMultipartBodyCredentialFactoryTests {
 
     private final X509RestMultipartBodyCredentialFactory factory = new X509RestMultipartBodyCredentialFactory();

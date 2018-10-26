@@ -10,8 +10,8 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockFilterChain;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class RegisteredServiceResponseHeadersEnforcementFilterTests {
 
     @Test
