@@ -21,6 +21,7 @@ import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
@@ -176,6 +177,14 @@ public abstract class BaseConverters {
                 return null;
             }
             return DateTimeUtils.zonedDateTimeOf(source);
+        }
+    }
+
+    @ReadingConverter
+    static class ObjectIdToLongConverter implements Converter<ObjectId, Long> {
+        @Override
+        public Long convert(final ObjectId source) {
+            return Long.valueOf(source.getMachineIdentifier());
         }
     }
 

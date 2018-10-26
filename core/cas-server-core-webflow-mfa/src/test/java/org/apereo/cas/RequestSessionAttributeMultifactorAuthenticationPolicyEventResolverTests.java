@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  */
 public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
-    @Qualifier("requestSessionAttributeAuthenticationPolicyWebflowEventResolver")
+    @Qualifier("httpRequestAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver requestSessionAttributeAuthenticationPolicyWebflowEventResolver;
 
     @Test
