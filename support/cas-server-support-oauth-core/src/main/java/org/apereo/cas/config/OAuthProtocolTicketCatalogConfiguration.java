@@ -35,7 +35,7 @@ public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogCo
 
     @Override
     public void configureTicketCatalog(final TicketCatalog plan) {
-        LOGGER.debug("Registering core OAuth protocol ticket definitions...");
+        LOGGER.trace("Registering core OAuth protocol ticket definitions...");
 
         buildAndRegisterOAuthCodeDefinition(plan, buildTicketDefinition(plan, OAuthCode.PREFIX, OAuthCodeImpl.class));
         buildAndRegisterAccessTokenDefinition(plan, buildTicketDefinition(plan, AccessToken.PREFIX, AccessTokenImpl.class));
