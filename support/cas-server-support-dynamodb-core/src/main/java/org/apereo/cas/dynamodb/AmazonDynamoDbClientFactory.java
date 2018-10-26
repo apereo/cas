@@ -45,7 +45,7 @@ public class AmazonDynamoDbClientFactory {
         val provider = ChainingAWSCredentialsProvider.getInstance(props.getCredentialAccessKey(),
                 props.getCredentialSecretKey(), props.getCredentialsPropertiesFile());
 
-        LOGGER.debug("Creating DynamoDb client configuration...");
+        LOGGER.trace("Creating DynamoDb client configuration...");
         val cfg = new ClientConfiguration();
         cfg.setConnectionTimeout(props.getConnectionTimeout());
         cfg.setMaxConnections(props.getMaxConnections());
@@ -69,7 +69,7 @@ public class AmazonDynamoDbClientFactory {
         cfg.setCacheResponseMetadata(props.isCacheResponseMetadata());
 
         if (StringUtils.isNotBlank(props.getLocalAddress())) {
-            LOGGER.debug("Creating DynamoDb client local address [{}]", props.getLocalAddress());
+            LOGGER.trace("Creating DynamoDb client local address [{}]", props.getLocalAddress());
             cfg.setLocalAddress(InetAddress.getByName(props.getLocalAddress()));
         }
 
@@ -82,12 +82,12 @@ public class AmazonDynamoDbClientFactory {
         val region = StringUtils.defaultIfBlank(props.getRegionOverride(), props.getRegion());
 
         if (StringUtils.isNotBlank(props.getEndpoint())) {
-            LOGGER.debug("Setting DynamoDb client endpoint [{}]", props.getEndpoint());
+            LOGGER.trace("Setting DynamoDb client endpoint [{}]", props.getEndpoint());
             clientBuilder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(props.getEndpoint(), region));
         }
 
         if (StringUtils.isNotBlank(region)) {
-            LOGGER.debug("Setting DynamoDb client region [{}]", props.getRegion());
+            LOGGER.trace("Setting DynamoDb client region [{}]", props.getRegion());
             clientBuilder.withRegion(region);
         }
         return clientBuilder.build();

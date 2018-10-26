@@ -122,15 +122,17 @@ public abstract class BaseTicketRegistryTests {
 
     @Test
     public void verifyGetExistingTicketWithImproperClass() {
+        var ticket = (Ticket) null;
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
                 CoreAuthenticationTestUtils.getAuthentication(),
                 new NeverExpiresExpirationPolicy()));
-            assertNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, ServiceTicket.class));
+            ticket = this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, ServiceTicket.class);
+            assertNull(ticket);
         } catch (final ClassCastException e) {
             return;
         }
-        throw new AssertionError("ClassCastException expected");
+        throw new AssertionError("ClassCastException expected but received " + ticket);
     }
 
     @Test
