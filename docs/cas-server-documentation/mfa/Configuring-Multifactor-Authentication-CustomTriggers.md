@@ -38,34 +38,19 @@ The below example demonstrates a reasonable outline of a custom event resolver:
 ```java
 package org.apereo.cas.custom.mfa;
 
-public class CustomWebflowEventResolver extends AbstractCasWebflowEventResolver {
-    
+public class ExampleMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Override
-    protected Set<Event> resolveInternal(final RequestContext context) {
-        final RegisteredService service = WebUtils.getRegisteredService(context);
-        final Authentication authentication = WebUtils.getAuthentication(context);
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+   @Override
+   public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
+                                                                  final RegisteredService registeredService,
+                                                                  final HttpServletRequest httpServletRequest,
+                                                                  final Service service) {
 
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
-            WebUtils.getAllMultifactorAuthenticationProviders(this.applicationContext);
-
-        /*
-         * Choose the provider you need from the above map (i.e. 'mfa-duo`)
-         */
-        final MultifactorAuthenticationProvider provider = ...
-
-        if (yesWeDoingMfaBasedOnClientIpAddress()) {
-            final Map eventAttributes = buildEventAttributeMap(authentication.getPrincipal(), service, provider));
-            final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context, eventAttributes);
-            return ImmutableSet.of(event);
-        }
-        LOGGER.warn("Not doing MFA, sorry.");
-        return null;
-    }
+       return Optional.empty();
+   }
 }
 ```
 
@@ -80,20 +65,31 @@ package org.apereo.cas.custom.config;
 
 @Configuration("SomethingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SomethingConfiguration implements InitializingBean {
+public class SomethingConfiguration {
 
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialEventResolver;
-
+    
     @Bean
-    public CasWebflowEventResolver customWebflowEventResolver() {
-        return new CustomWebflowEventResolver();
+    public MultifactorAuthenticationTrigger exampleMultifactorAuthenticationTrigger() {
+        return new ExampleMultifactorAuthenticationTrigger();
     }
-
-    @Override
-    public void afterPropertiesSet() {
-        initialEventResolver.addDelegate(customWebflowEventResolver());
+    
+    @Bean
+    @RefreshScope
+    public CasWebflowEventResolver exampleMultifactorAuthenticationWebflowEventResolver() {
+        val r = new DefaultMultifactorAuthenticationProviderEventResolver(
+            authenticationSystemSupport.getIfAvailable(),
+            centralAuthenticationService.getIfAvailable(),
+            servicesManager.getIfAvailable(),
+            ticketRegistrySupport.getIfAvailable(),
+            warnCookieGenerator.getIfAvailable(),
+            authenticationRequestServiceSelectionStrategies.getIfAvailable(),
+            multifactorAuthenticationProviderSelector.getIfAvailable(),
+            exampleMultifactorAuthenticationTrigger());
+        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
+        return r;
     }
 }
 ```
