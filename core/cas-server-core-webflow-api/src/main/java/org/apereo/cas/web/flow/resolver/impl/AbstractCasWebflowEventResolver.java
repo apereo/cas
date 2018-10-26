@@ -1,12 +1,10 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -16,7 +14,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +28,6 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -47,6 +43,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     private static final String RESOLVED_AUTHENTICATION_EVENTS = "resolvedAuthenticationEvents";
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
+
     /**
      * The Authentication system support.
      */
@@ -141,34 +138,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return newEvent(CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 
-    /**
-     * Validate event for transition.
-     *
-     * @param eventId    the event id
-     * @param context    the context
-     * @param attributes the attributes
-     * @return the event
-     */
-    @SneakyThrows
-    protected Event validateEventIdForMatchingTransitionInContext(final String eventId, final RequestContext context,
-                                                                  final Map<String, Object> attributes) {
-
-        val attributesMap = new LocalAttributeMap<Object>(attributes);
-        val event = new Event(this, eventId, attributesMap);
-
-        LOGGER.debug("Resulting event id is [{}] by provider [{}]. Locating transitions in the context for that event id...",
-            event.getId(), getName());
-
-        val def = context.getMatchingTransition(event.getId());
-        if (def == null) {
-            LOGGER.warn("Transition definition cannot be found for event [{}]", event.getId());
-            throw new AuthenticationException();
-        }
-        LOGGER.debug("Found matching transition [{}] with target [{}] for event [{}] with attributes [{}].",
-            def.getId(), def.getTargetStateId(), event.getId(), event.getAttributes());
-        return event;
-
-    }
 
     @Override
     public Set<Event> resolve(final RequestContext context) {
@@ -258,15 +227,5 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return CollectionUtils.wrapSet(new EventFactorySupport().error(this));
         }
-    }
-
-    /**
-     * Gets principal attributes for multifactor authentication.
-     *
-     * @param principal the principal
-     * @return the principal attributes for multifactor authentication
-     */
-    protected Map<String, Object> getPrincipalAttributesForMultifactorAuthentication(final Principal principal) {
-        return principal.getAttributes();
     }
 }
