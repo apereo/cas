@@ -106,7 +106,6 @@ public class SomethingConfiguration implements CasWebflowExecutionPlanConfigurer
     public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
         plan.registerWebflowConfigurer(somethingWebflowConfigurer());
     }
-
 }
 ```
 
@@ -171,8 +170,8 @@ def Object run(final Object... args) {
 
 The parameters passed are as follows:
 
-| Parameter             | Description
-|-----------------------|---------------------------------------------------------------------------------------------------
-| `webflow`             | The object representing a facade on top of Spring Webflow APIs, typically an extension of `AbstractCasWebflowConfigurer`.
+| Parameter               | Description
+|-------------------------|------------------------------------------------------------------------------
+| `webflow`                    | The object representing a facade on top of Spring Webflow APIs.
 | `springApplicationContext`   | The Spring application context.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+| `logger`                     | Logger object for issuing log messages such as `logger.info(...)`.
