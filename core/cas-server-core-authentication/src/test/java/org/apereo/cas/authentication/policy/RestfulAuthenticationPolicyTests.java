@@ -34,7 +34,7 @@ import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import java.util.LinkedHashSet;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.apereo.cas.util.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
@@ -89,19 +89,21 @@ public class RestfulAuthenticationPolicyTests {
     }
 
     @Test
-    public void verifyPolicyFailsWithStatusCodes() throws Exception {
-        verifyPolicyFails(FailedLoginException.class, HttpStatus.UNAUTHORIZED);
-        verifyPolicyFails(AccountLockedException.class, HttpStatus.LOCKED);
-        verifyPolicyFails(AccountDisabledException.class, HttpStatus.METHOD_NOT_ALLOWED);
-        verifyPolicyFails(AccountDisabledException.class, HttpStatus.FORBIDDEN);
-        verifyPolicyFails(AccountNotFoundException.class, HttpStatus.NOT_FOUND);
-        verifyPolicyFails(AccountExpiredException.class, HttpStatus.PRECONDITION_FAILED);
-        verifyPolicyFails(AccountPasswordMustChangeException.class, HttpStatus.PRECONDITION_REQUIRED);
-        verifyPolicyFails(FailedLoginException.class, HttpStatus.INTERNAL_SERVER_ERROR);
+    public void verifyPolicyFailsWithStatusCodes() {
+        assertAll(() -> {
+            verifyPolicyFails(FailedLoginException.class, HttpStatus.UNAUTHORIZED);
+            verifyPolicyFails(AccountLockedException.class, HttpStatus.LOCKED);
+            verifyPolicyFails(AccountDisabledException.class, HttpStatus.METHOD_NOT_ALLOWED);
+            verifyPolicyFails(AccountDisabledException.class, HttpStatus.FORBIDDEN);
+            verifyPolicyFails(AccountNotFoundException.class, HttpStatus.NOT_FOUND);
+            verifyPolicyFails(AccountExpiredException.class, HttpStatus.PRECONDITION_FAILED);
+            verifyPolicyFails(AccountPasswordMustChangeException.class, HttpStatus.PRECONDITION_REQUIRED);
+            verifyPolicyFails(FailedLoginException.class, HttpStatus.INTERNAL_SERVER_ERROR);
+        });
     }
 
 
-    private void verifyPolicyFails(final Class<? extends Throwable> exceptionClass, final HttpStatus status) throws Exception {
+    private void verifyPolicyFails(final Class<? extends Throwable> exceptionClass, final HttpStatus status) {
         val restTemplate = new RestTemplate();
         val mockServer = newServer(restTemplate);
         val policy = newPolicy(restTemplate);
@@ -111,10 +113,8 @@ public class RestfulAuthenticationPolicyTests {
             .andExpect(method(HttpMethod.POST))
             .andRespond(withStatus(status));
 
-        val exception = assertThrows(GeneralSecurityException.class,
+        assertThrowsWithRootCause(GeneralSecurityException.class, exceptionClass,
             () -> assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), new LinkedHashSet<>())));
-        assertThat(exception).hasRootCauseInstanceOf(exceptionClass);
         mockServer.verify();
-
     }
 }
