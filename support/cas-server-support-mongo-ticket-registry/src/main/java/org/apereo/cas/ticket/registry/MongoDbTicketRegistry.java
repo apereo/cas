@@ -26,6 +26,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -37,8 +38,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
-    private static final Query SELECT_ALL_NAMES_QUERY = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
-
     private static final ImmutableSet<String> MONGO_INDEX_KEYS = ImmutableSet.of("v", "key", "name", "ns");
 
     private final TicketCatalog ticketCatalog;
@@ -70,7 +69,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             return null;
         }
 
-        return new Date(System.currentTimeMillis() + (ttl * 1000));
+        return new Date(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(ttl));
     }
 
     private static String serializeTicketForMongoDocument(final Ticket ticket) {
@@ -88,14 +87,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     private MongoCollection createTicketCollection(final TicketDefinition ticket, final MongoDbConnectionFactory factory) {
         val collectionName = ticket.getProperties().getStorageName();
-        LOGGER.debug("Setting up MongoDb Ticket Registry instance [{}]", collectionName);
+        LOGGER.trace("Setting up MongoDb Ticket Registry instance [{}]", collectionName);
         factory.createCollection(mongoTemplate, collectionName, this.dropCollection);
 
-        LOGGER.debug("Creating indices on collection [{}] to auto-expire documents...", collectionName);
+        LOGGER.trace("Creating indices on collection [{}] to auto-expire documents...", collectionName);
         val collection = mongoTemplate.getCollection(collectionName);
         val index = new Index().on(TicketHolder.FIELD_NAME_EXPIRE_AT, Sort.Direction.ASC).expire(ticket.getProperties().getStorageTimeout());
         removeDifferingIndexIfAny(collection, index);
-        mongoTemplate.indexOps(TicketHolder.class).ensureIndex(index);
+        mongoTemplate.indexOps(collectionName).ensureIndex(index);
         return collection;
     }
 
@@ -105,7 +104,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      * @param collection The collection to check the indexes of
      * @param index      The index to find
      */
-    private void removeDifferingIndexIfAny(final MongoCollection collection, final Index index) {
+    private static void removeDifferingIndexIfAny(final MongoCollection collection, final Index index) {
         val indexes = (ListIndexesIterable<Document>) collection.listIndexes();
         var indexExistsWithDifferentOptions = false;
 
@@ -167,17 +166,17 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 LOGGER.error("Could not locate ticket definition in the catalog for ticket [{}]", ticket.getId());
                 return;
             }
-            LOGGER.debug("Located ticket definition [{}] in the ticket catalog", metadata);
+            LOGGER.trace("Located ticket definition [{}] in the ticket catalog", metadata);
             val collectionName = getTicketCollectionInstanceByMetadata(metadata);
             if (StringUtils.isBlank(collectionName)) {
                 LOGGER.error("Could not locate collection linked to ticket definition for ticket [{}]", ticket.getId());
                 return;
             }
-            LOGGER.debug("Found collection [{}] linked to ticket [{}]", collectionName, metadata);
+            LOGGER.trace("Found collection [{}] linked to ticket [{}]", collectionName, metadata);
             this.mongoTemplate.insert(holder, collectionName);
             LOGGER.debug("Added ticket [{}]", ticket.getId());
         } catch (final Exception e) {
-            LOGGER.error("Failed adding [{}]: [{}]", ticket, e);
+            LOGGER.error(String.format("Failed adding %s", ticket), e);
         }
     }
 
@@ -187,7 +186,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Locating ticket ticketId [{}]", ticketId);
             val encTicketId = encodeTicketId(ticketId);
             if (encTicketId == null) {
-                LOGGER.debug("Ticket ticketId [{}] could not be found", ticketId);
+                LOGGER.debug("Ticket id [{}] could not be found", ticketId);
                 return null;
             }
             val metadata = this.ticketCatalog.find(ticketId);
@@ -208,7 +207,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
                 return null;
             }
         } catch (final Exception e) {
-            LOGGER.error("Failed fetching [{}]: [{}]", ticketId, e);
+            LOGGER.error(String.format("Failed fetching %s", ticketId), e);
         }
         return null;
     }
@@ -242,12 +241,13 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
+        val query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).exists(true));
         return this.ticketCatalog.findAll().stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .filter(StringUtils::isNotBlank)
             .mapToLong(collectionName -> {
-                val countTickets = this.mongoTemplate.count(SELECT_ALL_NAMES_QUERY, collectionName);
-                mongoTemplate.remove(SELECT_ALL_NAMES_QUERY, collectionName);
+                val countTickets = this.mongoTemplate.count(query, collectionName);
+                mongoTemplate.remove(query, collectionName);
                 return countTickets;
             })
             .sum();
