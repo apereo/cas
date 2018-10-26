@@ -35,7 +35,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements CasP
 
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
-        LOGGER.debug("Is validation specification set to enforce [{}] protocol behavior? [{}]. Is assertion issued from a new login? [{}]",
+        LOGGER.trace("Is validation specification set to enforce [{}] protocol behavior? [{}]. Is assertion issued from a new login? [{}]",
             CasProtocolConstants.PARAMETER_RENEW, BooleanUtils.toStringYesNo(this.renew),
             BooleanUtils.toStringYesNo(assertion.isFromNewLogin()));
         var satisfied = isSatisfiedByInternal(assertion);
@@ -49,7 +49,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements CasP
                 CasProtocolConstants.PARAMETER_RENEW);
             return false;
         }
-        LOGGER.debug("Validation specification is satisfied by the produced assertion");
+        LOGGER.trace("Validation specification is satisfied by the produced assertion");
         return true;
     }
 

@@ -408,8 +408,7 @@ public abstract class AbstractServiceRegistryTests {
     @Test
     public void checkForAuthorizationStrategy() {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
-        val authz =
-            new DefaultRegisteredServiceAccessStrategy(false, false);
+        val authz = new DefaultRegisteredServiceAccessStrategy(false, false);
 
         val attrs = new HashMap<String, Set<String>>();
         attrs.put("cn", Collections.singleton("v1, v2, v3"));

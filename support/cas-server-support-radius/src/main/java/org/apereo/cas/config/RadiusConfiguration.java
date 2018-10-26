@@ -7,12 +7,14 @@ import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthenticationHandler;
 import org.apereo.cas.adaptors.radius.server.AbstractRadiusServer;
 import org.apereo.cas.adaptors.radius.server.NonBlockingRadiusServer;
-import org.apereo.cas.adaptors.radius.web.flow.RadiusAccessChallengedAuthenticationWebflowEventResolver;
+import org.apereo.cas.adaptors.radius.web.flow.RadiusAccessChallengedMultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
@@ -25,6 +27,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.mfa.DefaultMultifactorAuthenticationProviderEventResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -54,6 +57,11 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class RadiusConfiguration {
+
+
+    @Autowired
+    @Qualifier("multifactorAuthenticationProviderResolver")
+    private ObjectProvider<MultifactorAuthenticationProviderResolver> multifactorAuthenticationProviderResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -155,10 +163,16 @@ public class RadiusConfiguration {
         return new PasswordPolicyConfiguration();
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "radiusAccessChallengedMultifactorAuthenticationTrigger")
+    public MultifactorAuthenticationTrigger radiusAccessChallengedMultifactorAuthenticationTrigger() {
+        return new RadiusAccessChallengedMultifactorAuthenticationTrigger(casProperties, multifactorAuthenticationProviderResolver.getIfAvailable());
+    }
+
     @RefreshScope
     @Bean
     public CasWebflowEventResolver radiusAccessChallengedAuthenticationWebflowEventResolver() {
-        final CasWebflowEventResolver r = new RadiusAccessChallengedAuthenticationWebflowEventResolver(
+        final CasWebflowEventResolver r = new DefaultMultifactorAuthenticationProviderEventResolver(
             authenticationSystemSupport.getIfAvailable(),
             centralAuthenticationService.getIfAvailable(),
             servicesManager.getIfAvailable(),
@@ -166,14 +180,14 @@ public class RadiusConfiguration {
             warnCookieGenerator.getIfAvailable(),
             authenticationRequestServiceSelectionStrategies.getIfAvailable(),
             multifactorAuthenticationProviderSelector.getIfAvailable(),
-            casProperties.getAuthn().getMfa().getRadius().getId());
+            radiusAccessChallengedMultifactorAuthenticationTrigger());
 
         LOGGER.debug("Activating MFA event resolver based on RADIUS...");
         this.initialAuthenticationAttemptWebflowEventResolver.getIfAvailable().addDelegate(r);
         return r;
     }
 
-    private AbstractRadiusServer getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
+    private static AbstractRadiusServer getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
         val factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(),
             client.getSocketTimeout(), clientInetAddress, client.getSharedSecret());
 

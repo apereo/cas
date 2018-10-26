@@ -7,6 +7,8 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.context.J2EContext;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -30,13 +32,13 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
 
     @Override
     public ModelAndView resolve(final J2EContext context, final OAuthRegisteredService service) {
-        val bypassApprovalParameter = context.getSessionStore().get(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT);
-        LOGGER.debug("Bypassing approval prompt for service [{}]: [{}]", service, bypassApprovalParameter);
-
-        /*
-         * Inbound request; approval handled already.
-         */
-        if (bypassApprovalParameter != null || isConsentApprovalBypassed(context, service)) {
+        var bypassApprovalParameter = context.getRequestParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT);
+        if (StringUtils.isBlank(bypassApprovalParameter)) {
+            bypassApprovalParameter = (String) context.getSessionStore().get(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT);
+        }
+        LOGGER.trace("Bypassing approval prompt for service [{}]: [{}]", service, bypassApprovalParameter);
+        if (Boolean.TRUE.toString().equalsIgnoreCase(bypassApprovalParameter) || isConsentApprovalBypassed(context, service)) {
+            context.getSessionStore().set(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
             return new ModelAndView();
         }
         return redirectToApproveView(context, service);
@@ -62,12 +64,13 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      */
     protected ModelAndView redirectToApproveView(final J2EContext ctx, final OAuthRegisteredService svc) {
         val callbackUrl = ctx.getFullRequestURL();
-        ctx.getSessionStore().set(ctx, OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE);
-        LOGGER.debug("callbackUrl: [{}]", callbackUrl);
+        LOGGER.trace("callbackUrl: [{}]", callbackUrl);
 
+        val url = new URIBuilder(callbackUrl);
+        url.addParameter(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE.toString());
         val model = new HashMap<String, Object>();
         model.put("service", svc);
-        model.put("callbackUrl", callbackUrl);
+        model.put("callbackUrl", url.toString());
         model.put("serviceName", svc.getName());
         model.put("deniedApprovalUrl", svc.getAccessStrategy().getUnauthorizedRedirectUrl());
 
