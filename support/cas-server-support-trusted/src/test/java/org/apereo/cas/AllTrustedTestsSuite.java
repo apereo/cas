@@ -8,8 +8,7 @@ import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestHeaderNonInt
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests;
 import org.apereo.cas.adaptors.trusted.web.flow.PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllTrustedTestsSuite}.
@@ -17,8 +16,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     PrincipalBearingCredentialsAuthenticationHandlerTests.class,
     PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests.class,
     PrincipalBearingCredentialsTests.class,

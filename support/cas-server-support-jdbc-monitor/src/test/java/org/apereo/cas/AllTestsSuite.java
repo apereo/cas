@@ -2,8 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.monitor.JdbcDataSourceHealthIndicatorTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * The {@link AllTestsSuite} is responsible for
@@ -13,7 +12,6 @@ import org.junit.runners.Suite;
  * @since 4.2.0
  */
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses(JdbcDataSourceHealthIndicatorTests.class)
+@SelectClasses(JdbcDataSourceHealthIndicatorTests.class)
 public class AllTestsSuite {
 }

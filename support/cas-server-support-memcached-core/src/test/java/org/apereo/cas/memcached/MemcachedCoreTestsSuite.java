@@ -3,8 +3,7 @@ package org.apereo.cas.memcached;
 import org.apereo.cas.memcached.kryo.CasKryoTranscoderTests;
 import org.apereo.cas.memcached.kryo.ZonedDateTimeSerializerTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link MemcachedCoreTestsSuite}.
@@ -12,8 +11,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     CasKryoTranscoderTests.class,
     ZonedDateTimeSerializerTests.class
 })

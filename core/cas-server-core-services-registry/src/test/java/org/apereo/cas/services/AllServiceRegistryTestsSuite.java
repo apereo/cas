@@ -4,8 +4,7 @@ import org.apereo.cas.services.resource.CreateResourceBasedRegisteredServiceWatc
 import org.apereo.cas.services.resource.DeleteResourceBasedRegisteredServiceWatcherTests;
 import org.apereo.cas.services.resource.ModifyResourceBasedRegisteredServiceWatcherTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllServiceRegistryTestsSuite}.
@@ -13,8 +12,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     ServiceRegistryInitializerTests.class,
     DeleteResourceBasedRegisteredServiceWatcherTests.class,
     CreateResourceBasedRegisteredServiceWatcherTests.class,

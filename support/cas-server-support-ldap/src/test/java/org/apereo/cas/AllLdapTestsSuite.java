@@ -4,8 +4,7 @@ import org.apereo.cas.authentication.AuthenticatedLdapAuthenticationHandlerTests
 import org.apereo.cas.authentication.DirectLdapAuthenticationHandlerTests;
 import org.apereo.cas.authentication.principal.PersonDirectoryPrincipalResolverLdaptiveTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * Test suite to run all LDAP tests.
@@ -13,8 +12,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     AuthenticatedLdapAuthenticationHandlerTests.class,
     PersonDirectoryPrincipalResolverLdaptiveTests.class,
     DirectLdapAuthenticationHandlerTests.class

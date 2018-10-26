@@ -3,8 +3,7 @@ package org.apereo.cas.trusted.authentication.storage;
 import org.apereo.cas.trusted.authentication.storage.fingerprint.ClientIpDeviceFingerprintComponentExtractorTests;
 import org.apereo.cas.trusted.authentication.storage.fingerprint.UserAgentDeviceFingerprintComponentExtractorTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link MultifactorAuthenticationTrustedSuite}.
@@ -12,8 +11,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     InMemoryMultifactorAuthenticationTrustStorageTests.class,
     UserAgentDeviceFingerprintComponentExtractorTests.class,
     JsonMultifactorAuthenticationTrustStorageTests.class,

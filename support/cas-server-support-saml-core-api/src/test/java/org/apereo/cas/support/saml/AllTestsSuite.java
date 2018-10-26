@@ -1,8 +1,7 @@
 package org.apereo.cas.support.saml;
 
 import org.apereo.cas.support.saml.util.Saml20ObjectBuilderTests;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * Tests the module.
@@ -10,7 +9,6 @@ import org.junit.runners.Suite;
  * @author Jerome Leleu
  * @since 6.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses(Saml20ObjectBuilderTests.class)
+@SelectClasses(Saml20ObjectBuilderTests.class)
 public class AllTestsSuite {
 }

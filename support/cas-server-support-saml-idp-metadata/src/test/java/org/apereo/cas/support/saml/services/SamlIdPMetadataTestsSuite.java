@@ -5,8 +5,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.DynamicR
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.GroovyResourceMetadataResolverTests;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.UrlResourceMetadataResolverTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link SamlIdPMetadataTestsSuite}.
@@ -14,8 +13,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests.class,
     ClasspathResourceMetadataResolverTests.class,
     DynamicResourceMetadataResolverTests.class,

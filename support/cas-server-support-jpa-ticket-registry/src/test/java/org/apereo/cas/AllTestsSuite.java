@@ -5,8 +5,7 @@ import org.apereo.cas.ticket.registry.JpaTicketRegistryCleanerTests;
 import org.apereo.cas.ticket.registry.JpaTicketRegistryTests;
 import org.apereo.cas.ticket.registry.support.JpaLockingStrategyTests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.platform.suite.api.SelectClasses;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -14,8 +13,7 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
+@SelectClasses({
     SessionHealthIndicatorJpaTests.class,
     JpaTicketRegistryTests.class,
     JpaLockingStrategyTests.class,
