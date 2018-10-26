@@ -46,6 +46,8 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
     CasMultifactorAuthenticationWebflowConfiguration.class,
     RadiusConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class
 })
 @TestPropertySource(properties = {

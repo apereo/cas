@@ -55,9 +55,9 @@ public class DefaultMultifactorAuthenticationProviderEventResolver extends BaseM
 
         val result = multifactorAuthenticationTrigger.isActivated(authentication, registeredService, request, service);
         return result.map(provider -> {
-            LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, registeredService.getName());
+            LOGGER.trace("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, registeredService);
             val event = MultifactorAuthenticationUtils.validateEventIdForMatchingTransitionInContext(provider.getId(), Optional.of(context),
-                MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(), Optional.of(registeredService), provider));
+                MultifactorAuthenticationUtils.buildEventAttributeMap(authentication.getPrincipal(), Optional.ofNullable(registeredService), provider));
             return CollectionUtils.wrapSet(event);
         }).orElse(null);
     }
