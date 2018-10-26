@@ -43,21 +43,21 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         if (authentication == null) {
             throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
         }
-        val p = authentication.getPrincipal();
+        val p = authentication.getPrincipal().getId();
 
         val authenticateResponse = SignResponse.fromJson(tokenCredential.getToken());
-        val authJson = u2FDeviceRepository.getDeviceAuthenticationRequest(authenticateResponse.getRequestId(), p.getId());
+        val authJson = u2FDeviceRepository.getDeviceAuthenticationRequest(authenticateResponse.getRequestId(), p);
         val authenticateRequest = SignRequestData.fromJson(authJson);
 
         var registration = (DeviceRegistration) null;
         try {
-            registration = u2f.finishSignature(authenticateRequest, authenticateResponse, u2FDeviceRepository.getRegisteredDevices(p.getId()));
-            return createHandlerResult(tokenCredential, p);
+            registration = u2f.finishSignature(authenticateRequest, authenticateResponse, u2FDeviceRepository.getRegisteredDevices(p));
+            return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(p));
         } catch (final DeviceCompromisedException e) {
             registration = e.getDeviceRegistration();
             throw new PreventedException("Device possibly compromised and therefore blocked: " + e.getMessage(), e);
         } finally {
-            u2FDeviceRepository.authenticateDevice(p.getId(), registration);
+            u2FDeviceRepository.authenticateDevice(p, registration);
         }
     }
 
