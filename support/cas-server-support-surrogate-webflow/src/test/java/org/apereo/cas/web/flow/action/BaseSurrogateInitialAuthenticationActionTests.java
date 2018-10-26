@@ -21,7 +21,6 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationAuditConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationConfiguration;
 import org.apereo.cas.config.SurrogateAuthenticationWebflowConfiguration;
-import org.apereo.cas.config.SurrogateWebflowEventResolutionConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
@@ -51,7 +50,6 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     RefreshAutoConfiguration.class,
     SurrogateAuthenticationConfiguration.class,
     SurrogateAuthenticationWebflowConfiguration.class,
-    SurrogateWebflowEventResolutionConfiguration.class,
     CasCoreServicesConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreHttpConfiguration.class,

@@ -58,14 +58,9 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
         val attributes = authentication.getAttributes();
         val ctxAttr = attributes.get(this.authenticationContextAttribute);
         val contexts = CollectionUtils.toCollection(ctxAttr);
-        LOGGER.debug("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
-        val providerMap =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
-        if (providerMap == null) {
-            LOGGER.debug("No multifactor authentication providers are configured");
-            return Pair.of(Boolean.FALSE, Optional.empty());
-        }
-        LOGGER.debug("Available MFA Providers are [{}]", providerMap.values());
+        LOGGER.trace("Attempting to match requested authentication context [{}] against [{}]", requestedContext, contexts);
+        val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        LOGGER.trace("Available MFA providers are [{}]", providerMap.values());
         val requestedProvider = locateRequestedProvider(providerMap.values(), requestedContext);
         if (requestedProvider.isEmpty()) {
             LOGGER.debug("Requested authentication provider cannot be recognized.");
@@ -84,9 +79,9 @@ public class DefaultMultifactorAuthenticationContextValidator implements Multifa
             && attributes.containsKey(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)) {
             val isBypass = Boolean.class.cast(CollectionUtils.firstElement(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA)).get());
             val bypassedId = CollectionUtils.firstElement(attributes.get(MultifactorAuthenticationProviderBypass.AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER)).get().toString();
-            LOGGER.debug("Found multifactor authentication bypass attributes for provider [{}]", bypassedId);
+            LOGGER.trace("Found multifactor authentication bypass attributes for provider [{}]", bypassedId);
             if (isBypass && StringUtils.equals(bypassedId, requestedContext)) {
-                LOGGER.debug("Requested authentication context [{}] is satisfied given mfa was bypassed for the authentication attempt", requestedContext);
+                LOGGER.debug("Requested authentication context [{}] is satisfied given mfa was bypassed for the authentication attempt [{}]", requestedContext, bypassedId);
                 return Pair.of(Boolean.TRUE, requestedProvider);
             }
             LOGGER.debug("Either multifactor authentication was not bypassed or the requested context [{}] does not match the bypassed provider [{}]",
