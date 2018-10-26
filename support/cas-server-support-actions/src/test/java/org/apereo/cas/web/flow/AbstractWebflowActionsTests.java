@@ -17,5 +17,5 @@ import org.springframework.test.context.TestPropertySource;
 @Import({CasMultifactorAuthenticationWebflowConfiguration.class, CasSupportActionsConfiguration.class})
 @DirtiesContext
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
-public class AbstractWebflowActionsTests extends AbstractCentralAuthenticationServiceTests {
+public abstract class AbstractWebflowActionsTests extends AbstractCentralAuthenticationServiceTests {
 }
