@@ -1,0 +1,8 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "https://mmoayyed.unicon.net:9443.*",
+  "name": "OIDC",
+  "id": 1000
+}
