@@ -408,7 +408,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockResponse = new MockHttpServletResponse();
         oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
-        String response = mockResponse.getContentAsString();
+        response = mockResponse.getContentAsString();
         assertTrue(response.contains(OAuth20Constants.ACCESS_TOKEN));
     }
 
