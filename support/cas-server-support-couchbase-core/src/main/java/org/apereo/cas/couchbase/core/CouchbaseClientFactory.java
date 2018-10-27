@@ -11,6 +11,7 @@ import com.couchbase.client.java.query.Select;
 import com.couchbase.client.java.query.dsl.Expression;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  * @since 4.2
  */
 @Slf4j
+@Getter
 public class CouchbaseClientFactory {
     private static final long DEFAULT_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(15);
 
@@ -51,11 +53,13 @@ public class CouchbaseClientFactory {
     private final String designDocument;
     private Cluster cluster;
     private Bucket bucket;
+
     /* The name of the bucket, will use the default getBucket unless otherwise specified. */
-    private String bucketName = "default";
+    private final String bucketName;
+
     /* Password for the bucket if any. */
-    private String bucketPassword = StringUtils.EMPTY;
-    private long timeout = DEFAULT_TIMEOUT_MILLIS;
+    private final String bucketPassword;
+    private final long timeout;
 
     /**
      * Instantiates a new Couchbase client factory.
@@ -77,6 +81,11 @@ public class CouchbaseClientFactory {
         this.designDocument = documentName;
         this.views = views;
         initializeCluster();
+    }
+
+    public CouchbaseClientFactory(final Set<String> nodes, final String bucketName,
+                                  final String bucketPassword, final long timeout) {
+        this(nodes, bucketName, bucketPassword, timeout, null, null);
     }
 
     /**
@@ -192,7 +201,7 @@ public class CouchbaseClientFactory {
 
     private void openBucket() {
         try {
-            LOGGER.debug("Trying to connect to couchbase bucket [{}]", this.bucketName);
+            LOGGER.trace("Trying to connect to couchbase bucket [{}]", this.bucketName);
             if (StringUtils.isBlank(this.bucketPassword)) {
                 this.bucket = this.cluster.openBucket(this.bucketName, this.timeout, TimeUnit.MILLISECONDS);
             } else {
