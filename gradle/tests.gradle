@@ -182,9 +182,9 @@ tasks.withType(Test) {
         maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 4)
         println "Maximum number of parallel forks is set to ${maxParallelForks}"
     }
-
+    
     failFast = true
-    jvmArgs "-Xmx2g"
+    jvmArgs.addAll(["-Xmx2g"])
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
         events = ["FAILED", "STANDARD_OUT"]
