@@ -19,7 +19,7 @@
         <Logger name="org.apereo" level="error" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.apache.ignite" level="warn" additivity="false">
+        <Logger name="org.apache.ignite" level="error" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">
