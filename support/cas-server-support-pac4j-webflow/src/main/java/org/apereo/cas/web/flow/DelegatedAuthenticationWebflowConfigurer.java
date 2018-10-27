@@ -2,8 +2,11 @@ package org.apereo.cas.web.flow;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
@@ -20,6 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
 import java.util.Optional;
 
 /**
@@ -66,6 +70,7 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CREATE_TICKET_GRANTING_TICKET));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_STOP_WEBFLOW));
+
         transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_STOP, CasWebflowConstants.STATE_ID_STOP_WEBFLOW));
         setStartState(flow, actionState);
         registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
@@ -73,6 +78,20 @@ public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflow
 
     private void createStopWebflowViewState(final Flow flow) {
         final ViewState state = createViewState(flow, CasWebflowConstants.STATE_ID_STOP_WEBFLOW, CasWebflowConstants.VIEW_ID_PAC4J_STOP_WEBFLOW);
+
+        state.getEntryActionList().add(new AbstractAction() {
+            @Override
+            protected Event doExecute(final RequestContext requestContext) throws Exception {
+                final RegisteredService service = WebUtils.getRegisteredService(requestContext);
+                final URI unauthorizedRedirectUrl = service != null ? service.getAccessStrategy().getUnauthorizedRedirectUrl() : null;
+                if (unauthorizedRedirectUrl != null) {
+                    final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+                    response.sendRedirect(unauthorizedRedirectUrl.toString());
+                }
+                return null;
+            }
+        });
+
         state.getEntryActionList().add(new AbstractAction() {
             @Override
             protected Event doExecute(final RequestContext requestContext) {
