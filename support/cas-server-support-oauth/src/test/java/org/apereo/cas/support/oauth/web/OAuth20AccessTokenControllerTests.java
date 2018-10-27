@@ -262,6 +262,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
         final String response = mockResponse.getContentAsString();
         assertTrue(response.contains(OAuth20Constants.ACCESS_TOKEN));
@@ -603,6 +604,7 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
         mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
         final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
         requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
         assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
         final String response = mockResponse.getContentAsString();
         assertTrue(response.contains(OAuth20Constants.ACCESS_TOKEN));
