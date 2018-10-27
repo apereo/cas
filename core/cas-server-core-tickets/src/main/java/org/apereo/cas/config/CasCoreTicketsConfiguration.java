@@ -46,7 +46,9 @@ import org.apereo.cas.ticket.support.ThrottledUseAndTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
-import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
+import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
+import org.apereo.cas.util.ProxyTicketIdGenerator;
+import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 
@@ -164,7 +166,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
         return new DefaultProxyGrantingTicketFactory(
-            ticketGrantingTicketUniqueIdGenerator(),
+            proxyGrantingTicketUniqueIdGenerator(),
             grantingTicketExpirationPolicy(),
             protocolTicketCipherExecutor());
     }
@@ -181,11 +183,20 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
             onlyTrackMostRecentSession);
     }
 
+    @ConditionalOnMissingBean(name = "proxyGrantingTicketUniqueIdGenerator")
+    @Bean
+    @RefreshScope
+    public UniqueTicketIdGenerator proxyGrantingTicketUniqueIdGenerator() {
+        return new ProxyGrantingTicketIdGenerator(
+            casProperties.getTicket().getTgt().getMaxLength(),
+            casProperties.getHost().getName());
+    }
+
     @ConditionalOnMissingBean(name = "ticketGrantingTicketUniqueIdGenerator")
     @Bean
     @RefreshScope
     public UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator() {
-        return new HostNameBasedUniqueTicketIdGenerator.TicketGrantingTicketIdGenerator(
+        return new TicketGrantingTicketIdGenerator(
             casProperties.getTicket().getTgt().getMaxLength(),
             casProperties.getHost().getName());
     }
@@ -193,7 +204,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "proxy20TicketUniqueIdGenerator")
     @Bean
     public UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator() {
-        return new HostNameBasedUniqueTicketIdGenerator.ProxyTicketIdGenerator(
+        return new ProxyTicketIdGenerator(
             casProperties.getTicket().getPgt().getMaxLength(),
             casProperties.getHost().getName());
     }
@@ -302,17 +313,19 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "serviceTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy serviceTicketExpirationPolicy() {
+        val st = casProperties.getTicket().getSt();
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
-            casProperties.getTicket().getSt().getNumberOfUses(),
-            casProperties.getTicket().getSt().getTimeToKillInSeconds());
+            st.getNumberOfUses(),
+            st.getTimeToKillInSeconds());
     }
 
     @ConditionalOnMissingBean(name = "proxyTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy proxyTicketExpirationPolicy() {
+        val pt = casProperties.getTicket().getPt();
         return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(
-            casProperties.getTicket().getPt().getNumberOfUses(),
-            casProperties.getTicket().getPt().getTimeToKillInSeconds());
+            pt.getNumberOfUses(),
+            pt.getTimeToKillInSeconds());
     }
 
     @ConditionalOnMissingBean(name = "lockingStrategy")

@@ -1,4 +1,9 @@
 description = "Apereo CAS Ignite Integration"
+
+ext {
+    maxParallelForksForTests = 1
+}
+
 dependencies {
     implementation libraries.ignite
     

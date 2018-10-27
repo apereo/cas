@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is
@@ -20,6 +21,7 @@ import lombok.NoArgsConstructor;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**

@@ -57,7 +57,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public <T extends Ticket> T getTicket(final String ticketId, @NonNull final Class<T> clazz) {
-        val ticket = this.getTicket(ticketId);
+        val ticket = getTicket(ticketId);
         if (ticket == null) {
             return null;
         }
@@ -101,7 +101,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return count.intValue();
         }
         if (ticket instanceof TicketGrantingTicket) {
-            LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
+            LOGGER.trace("Removing children of ticket [{}] from the registry.", ticket.getId());
             val tgt = (TicketGrantingTicket) ticket;
             count.addAndGet(deleteChildren(tgt));
             if (ticket instanceof ProxyGrantingTicket) {

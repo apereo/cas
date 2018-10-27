@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,7 @@ import java.util.Optional;
 @Setter
 @NoArgsConstructor(force = true)
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
 
     private static final long serialVersionUID = 5927936344949518688L;

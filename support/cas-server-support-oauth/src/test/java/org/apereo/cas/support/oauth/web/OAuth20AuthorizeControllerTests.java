@@ -468,7 +468,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         val modelAndView = oAuth20AuthorizeEndpointController.handleRequest(mockRequest, mockResponse);
         assertEquals(OAuth20Constants.CONFIRM_VIEW, modelAndView.getViewName());
         val model = modelAndView.getModel();
-        assertEquals(AUTHORIZE_URL, model.get("callbackUrl"));
+        assertEquals(AUTHORIZE_URL + '?' + OAuth20Constants.BYPASS_APPROVAL_PROMPT + "=true", model.get("callbackUrl"));
         assertEquals(SERVICE_NAME, model.get("serviceName"));
     }
 
