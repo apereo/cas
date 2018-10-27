@@ -16,11 +16,11 @@ import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
-import org.apereo.cas.util.RandomUtils;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.net.MalformedURLException;
@@ -121,11 +121,10 @@ public class RegisteredServiceTestUtils {
         s.setName("TestService" + UUID.randomUUID().toString());
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(RandomUtils.getNativeInstance().nextInt());
+        s.setId(RandomUtils.nextLong());
         s.setTheme("exampleTheme");
         s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
-        val accessStrategy =
-            new DefaultRegisteredServiceAccessStrategy(true, true);
+        val accessStrategy = new DefaultRegisteredServiceAccessStrategy(true, true);
         accessStrategy.setRequireAllAttributes(true);
         accessStrategy.setRequiredAttributes(getTestAttributes());
         s.setAccessStrategy(accessStrategy);
@@ -140,8 +139,7 @@ public class RegisteredServiceTestUtils {
         policy.setAuthorizedToReleaseCredentialPassword(true);
         policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
-        val repo =
-            new CachingPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 10);
+        val repo = new CachingPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 10);
         repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
         policy.setPrincipalAttributesRepository(repo);
         policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));

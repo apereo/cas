@@ -15,10 +15,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
+        <Logger name="org.apereo" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="com.couchbase" level="off" additivity="false">
+        <Logger name="com.couchbase" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off">

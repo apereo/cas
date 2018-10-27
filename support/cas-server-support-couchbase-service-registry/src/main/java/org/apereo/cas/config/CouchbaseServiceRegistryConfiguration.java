@@ -29,12 +29,7 @@ public class CouchbaseServiceRegistryConfiguration implements ServiceRegistryExe
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    /**
-     * Service registry couchbase client factory couchbase client factory.
-     *
-     * @return the couchbase client factory
-     */
+    
     @RefreshScope
     @Bean
     public CouchbaseClientFactory serviceRegistryCouchbaseClientFactory() {
@@ -42,9 +37,7 @@ public class CouchbaseServiceRegistryConfiguration implements ServiceRegistryExe
         val nodes = StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
         return new CouchbaseClientFactory(nodes, couchbase.getBucket(),
             couchbase.getPassword(),
-            Beans.newDuration(couchbase.getTimeout()).toMillis(),
-            CouchbaseServiceRegistry.UTIL_DOCUMENT,
-            CouchbaseServiceRegistry.ALL_VIEWS);
+            Beans.newDuration(couchbase.getTimeout()).toMillis());
     }
 
     @Bean
