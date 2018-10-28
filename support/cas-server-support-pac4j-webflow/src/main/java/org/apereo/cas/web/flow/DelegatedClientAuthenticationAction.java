@@ -195,6 +195,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             val clientCredential = new ClientCredential(credentials, client.getName());
             WebUtils.putCredential(context, clientCredential);
             WebUtils.putService(context, service);
+            WebUtils.putRegisteredService(context, servicesManager.findServiceBy(service));
             return super.doExecute(context);
         }
 

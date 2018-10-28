@@ -1,5 +1,9 @@
 description = "Apereo CAS DynamoDb Service Registry"
 
+ext {
+    maxParallelForksForTests = 1
+}
+
 dependencies {
     api project(":api:cas-server-core-api-services")
     

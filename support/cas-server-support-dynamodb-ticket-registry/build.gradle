@@ -1,5 +1,9 @@
 description = "Apereo CAS DynamoDb Ticket Registry"
 
+ext {
+    maxParallelForksForTests = 1
+}
+
 dependencies {
     implementation libraries.awsjavadynamodb
     
