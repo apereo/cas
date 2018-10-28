@@ -7,6 +7,7 @@ import com.nexmo.client.auth.AuthMethod;
 import com.nexmo.client.auth.TokenAuthMethod;
 import com.nexmo.client.sms.SmsSubmissionResult;
 import com.nexmo.client.sms.messages.TextMessage;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 @Slf4j
+@Getter
 public class NexmoSmsSender implements SmsSender {
     private final AuthMethod authMethod;
     private final NexmoClient nexmoClient;
