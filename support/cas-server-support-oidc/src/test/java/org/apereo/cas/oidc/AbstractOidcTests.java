@@ -39,6 +39,7 @@ import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.IdTokenSigningAndEncryptionService;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -102,8 +103,10 @@ import java.util.Optional;
     CasOAuthConfiguration.class,
     CasThrottlingConfiguration.class,
     CasOAuthThrottleConfiguration.class,
+    CasMultifactorAuthenticationWebflowConfiguration.class,
     CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class})
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
+})
 @DirtiesContext
 @Category(FileSystemCategory.class)
 @TestPropertySource(properties = {

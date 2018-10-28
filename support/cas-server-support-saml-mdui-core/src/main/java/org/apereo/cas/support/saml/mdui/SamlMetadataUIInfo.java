@@ -232,18 +232,17 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
         return null;
     }
 
-    private Optional<String> findLocale(final String locale, final List<?> items) {
+    private static Optional<String> findLocale(final String locale, final List<?> items) {
         LOGGER.trace("Looking for locale [{}]", locale);
-        for (var i = 0; i < items.size(); i++) {
-            if (items.get(i) instanceof LocalizedName) {
-                val p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
-                val value = (LocalizedName) items.get(i);
-                if (p.matcher(value.getXMLLang()).matches()) {
-                    LOGGER.trace("Found locale [{}]", value);
-                    return Optional.of(value.getValue());
-                }
-            }
-        }
-        return Optional.empty();
+        val p = Pattern.compile(locale, Pattern.CASE_INSENSITIVE);
+        return items.stream()
+            .filter(item -> item instanceof LocalizedName)
+            .map(item -> (LocalizedName) item)
+            .filter(item -> {
+                val xmlLang = item.getXMLLang();
+                return StringUtils.isNotBlank(xmlLang) && p.matcher(xmlLang).matches() && StringUtils.isNotBlank(item.getValue());
+            })
+            .map(XSString::getValue)
+            .findFirst();
     }
 }

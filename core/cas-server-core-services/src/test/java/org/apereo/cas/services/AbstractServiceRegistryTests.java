@@ -101,13 +101,13 @@ public abstract class AbstractServiceRegistryTests {
 
     @Test
     public void verifySaveAndLoad() {
-        IntStream.range(0, getLoadSize()).forEach(i -> {
+        for (int i = 0; i < getLoadSize(); i++) {
             val svc = buildRegisteredServiceInstance(i);
             this.serviceRegistry.save(svc);
             val svc2 = this.serviceRegistry.findServiceByExactServiceName(svc.getName());
             assertNotNull(svc2);
             this.serviceRegistry.delete(svc2);
-        });
+        }
         assertTrue(this.serviceRegistry.load().isEmpty());
     }
 
@@ -198,13 +198,6 @@ public abstract class AbstractServiceRegistryTests {
         DateTimeUtils.setCurrentMillisFixed(System.currentTimeMillis() + 2000);
         val svc2 = this.serviceRegistry.findServiceByExactServiceName(r2.getName());
         assertNotNull(svc2);
-    }
-
-    @Test
-    public void checkLoadingOfServiceFiles() {
-        verifySaveAttributeReleasePolicyMappingRules();
-        verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter();
-        assertEquals(2, this.serviceRegistry.load().size());
     }
 
     @Test
@@ -408,8 +401,7 @@ public abstract class AbstractServiceRegistryTests {
     @Test
     public void checkForAuthorizationStrategy() {
         val r = buildRegisteredServiceInstance(RandomUtils.nextInt());
-        val authz =
-            new DefaultRegisteredServiceAccessStrategy(false, false);
+        val authz = new DefaultRegisteredServiceAccessStrategy(false, false);
 
         val attrs = new HashMap<String, Set<String>>();
         attrs.put("cn", Collections.singleton("v1, v2, v3"));

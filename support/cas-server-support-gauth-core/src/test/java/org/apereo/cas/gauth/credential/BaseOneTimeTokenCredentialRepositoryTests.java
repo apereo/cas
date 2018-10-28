@@ -23,7 +23,6 @@ import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 
 import javax.annotation.PostConstruct;
-import java.time.temporal.ChronoUnit;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -51,7 +50,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     @Mock
     private CipherExecutor<String, String> cipherExecutor;
 
-    private Map<Pair<String, String>, OneTimeTokenAccount> accountHashMap = new LinkedHashMap<>();
+    private final Map<Pair<String, String>, OneTimeTokenAccount> accountHashMap = new LinkedHashMap<>();
 
     public OneTimeTokenAccount getAccount(final String testName, final String username) {
         return accountHashMap.computeIfAbsent(Pair.of(testName, username), pair -> getRegistry(pair.getLeft()).create(pair.getRight()));
@@ -100,7 +99,6 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         assertEquals(acct2.getValidationCode(), acct3.getValidationCode());
         assertEquals(acct2.getSecretKey(), acct3.getSecretKey());
         assertEquals(acct2.getScratchCodes(), acct3.getScratchCodes());
-        assertEquals(acct2.getRegistrationDate().truncatedTo(ChronoUnit.SECONDS), acct3.getRegistrationDate().withFixedOffsetZone().truncatedTo(ChronoUnit.SECONDS));
     }
 
     @Test

@@ -1,82 +1,89 @@
 task testCassandra(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Cassandra") && "CASSANDRA".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Cassandra")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.CassandraCategory"
     }
 }
 
 task testCosmosDb(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "CosmosDb") && "COSMOSDB".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "CosmosDb")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.CosmosDbCategory"
     }
 }
 
+task testAWSS3(type: Test) {
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "AmazonWebServicesS3Category")
+    useJUnitPlatform {
+        includeTags "org.apereo.cas.category.AmazonWebServicesS3Category"
+    }
+}
+
 task testRadius(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Radius") && "RADIUS".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Radius")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.RadiusCategory"
     }
 }
 
 task testCouchbase(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Couchbase") && "COUCHBASE".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Couchbase")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.CouchbaseCategory"
     }
 }
 
 task testCouchDb(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "CouchDb") && "COUCHDB".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "CouchDb")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.CouchDbCategory"
     }
 }
 
 task testMySQL(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "MySQL") && "MYSQL".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "MySQL")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.MySQLCategory"
     }
 }
 
 task testPostgres(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Postgres") && "POSTGRES".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Postgres")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.PostgresCategory"
     }
 }
 
 task testMsSqlServer(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "MsSqlServer") && "MSSQLSERVER".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "MsSqlServer")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.MsSqlServerCategory"
     }
 }
 
 task testMariaDb(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "MariaDb") && "MARIADB".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "MariaDb")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.MariaDbCategory"
     }
 }
 
 task testDynamoDb(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "DynamoDb") && "DYNAMODB".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "DynamoDb")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.DynamoDbCategory"
     }
 }
 
 task testFileSystem(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "FileSystem") && "FILESYSTEM".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "FileSystem")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.FileSystemCategory"
     }
 }
 
 task testIgnite(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Ignite") && "IGNITE".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Ignite")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.IgniteCategory"
     }
@@ -89,49 +96,49 @@ task testIgnite(type: Test) {
 }
 
 task testInfluxDb(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "InfluxDb") && "INFLUXDB".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "InfluxDb")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.InfluxDbCategory"
     }
 }
 
 task testLdap(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Ldap") && "LDAP".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Ldap")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.LdapCategory"
     }
 }
 
 task testMail(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Mail") && "MAIL".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Mail")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.MailCategory"
     }
 }
 
 task testRestful(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "RestfulApi") && "RESTFUL".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "RestfulApi")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.RestfulApiCategory"
     }
 }
 
 task testMemcached(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Memcached") && "MEMCACHED".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Memcached")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.MemcachedCategory"
     }
 }
 
 task testMongoDb(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "MongoDb") && "MONGODB".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "MongoDb")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.MongoDbCategory"
     }
 }
 
 task testRedis(type: Test) {
-    enabled = hasTestsOfCategory(project.sourceSets.test.java.srcDirs, "Redis") && "REDIS".equalsIgnoreCase(rootProject.testCategoryType)
+    enabled = shouldTest(project.sourceSets.test.java.srcDirs, "Redis")
     useJUnitPlatform {
         includeTags "org.apereo.cas.category.RedisCategory"
     }
@@ -159,21 +166,25 @@ test {
                 "org.apereo.cas.category.PostgresCategory",
                 "org.apereo.cas.category.RedisCategory",
                 "org.apereo.cas.category.RadiusCategory",
+                "org.apereo.cas.category.AmazonWebServicesS3Category",
                 "org.apereo.cas.category.RestfulApiCategory")
     }
-    onlyIf {
-        "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType)
-    }
+    enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }
 
 tasks.withType(Test) {
     exclude "**/Abstract*.*", "**/Base*.*", "**/*Suite.*"
-    enabled = enabled && !Boolean.getBoolean("skipTests")
+    include "**/*Tests.*"
     scanForTestClasses = false
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-    maxParallelForks = 4
+
+    doFirst {
+        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 4)
+        println "Maximum number of parallel forks is set to ${maxParallelForks}"
+    }
+    
     failFast = true
-    jvmArgs "-Xmx1024m"
+    jvmArgs.addAll(["-Xmx2g"])
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
         events = ["FAILED", "STANDARD_OUT"]
@@ -184,8 +195,29 @@ tasks.withType(Test) {
     }
 }
 
+def shouldTest(Set testSrc, String category) {
+    !Boolean.getBoolean("skipTests") && category.equalsIgnoreCase(rootProject.testCategoryType) && hasTestsOfCategory(testSrc, category)
+}
+
 def hasTestsOfCategory(Set testSrc, String category) {
-    def grep = "grep -Rls '@Category(${category}Category.class)' ${testSrc.join(' ')}".execute()
-    grep.waitFor()
-    grep.exitValue() == 0
+    def res = srcTagMap.computeIfAbsent(testSrc) {
+        def tags = new HashSet()
+        testSrc.each { src ->
+            try {
+                src.eachFileRecurse { file ->
+                    if (file ==~ /.*Tests\.\w+/) {
+                        file.readLines().parallelStream().forEach() { line ->
+                            def m = line =~ /^\s*@Category\((\w+)Category\.class\)\s*$/
+                            if (m) {
+                                tags.addAll(m.collect { it[1] })
+                            }
+                        }
+                    }
+                }
+            } catch (ignored) {
+            }
+        }
+        tags
+    }
+    res.contains(category)
 }

@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketState;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
@@ -19,16 +20,11 @@ import lombok.val;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
+@ToString(callSuper = true)
 public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirationPolicy {
-
 
     private static final long serialVersionUID = -2735975347698196127L;
 
-    /**
-     * Instantiates a new Remember me delegating expiration policy.
-     *
-     * @param policy the policy
-     */
     @JsonCreator
     public RememberMeDelegatingExpirationPolicy(@JsonProperty("policy") final ExpirationPolicy policy) {
         super(policy);

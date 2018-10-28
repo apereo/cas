@@ -1,7 +1,10 @@
+import java.util.concurrent.ConcurrentHashMap
+
 description = "Apereo Central Authentication Service $version"
 defaultTasks "clean", "build"
 
 ext {
+    srcTagMap = new ConcurrentHashMap<File, Set<String>>()
     publishSnapshots = Boolean.getBoolean("publishSnapshots")
     publishReleases = Boolean.getBoolean("publishReleases")
     sonatypeUsername = System.getProperty("sonatypeUsername")
@@ -199,6 +202,7 @@ subprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://repo.spring.io/plugins-release/" }
         maven { url "https://repo.spring.io/milestone/" }
+        maven { url "https://repo.spring.io/snapshot/" }
         maven { url "https://repo.spring.io/libs-milestone" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
         maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }

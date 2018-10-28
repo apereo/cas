@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.UniqueTicketIdGeneratorConfigurer;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
+import org.apereo.cas.util.ServiceTicketIdGenerator;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class CasDefaultServiceTicketIdGeneratorsConfiguration implements UniqueT
 
     @Bean
     public UniqueTicketIdGenerator serviceTicketUniqueIdGenerator() {
-        return new HostNameBasedUniqueTicketIdGenerator.ServiceTicketIdGenerator(
+        return new ServiceTicketIdGenerator(
             casProperties.getTicket().getSt().getMaxLength(),
             casProperties.getHost().getName());
     }

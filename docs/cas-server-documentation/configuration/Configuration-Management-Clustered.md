@@ -24,6 +24,13 @@ synchronizing changes across disks and CAS nodes.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#configuration-storage).
 
+The following endpoints are secured and exposed by the Spring Cloud Config Bus:
+
+| Parameter                         | Description
+|-----------------------------------|------------------------------------------
+| `/actuator/bus-refresh`                    | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.
+| `/actuator/bus-env`                        | Sends key/values pairs to update each CAS node if the cloud bus is turned on.
+
 The transport mechanism for the bus to broadcast events is handled via one of the following components.
 
 ## Troubleshooting

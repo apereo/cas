@@ -121,6 +121,9 @@ jobs:
     script: ./ci/tests/restful/run-tests-restful.sh
     name: "RESTful Tests"
   - stage: test
+    script: ./ci/tests/amazons3/run-tests-awss3.sh
+    name: "AWS S3 Tests"
+  - stage: test
     script: ./ci/tests/cassandra/run-tests-cassandra.sh
     name: "Cassandra Tests"
   - stage: test
