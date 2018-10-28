@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.profile.UserProfile;
 
 import java.util.UUID;
@@ -41,7 +42,7 @@ public class ClientCredential implements Credential {
     /**
      * The internal credentials provided by the authentication at the provider.
      */
-    private final transient org.pac4j.core.credentials.Credentials credentials;
+    private final transient Credentials credentials;
 
     /**
      * Name of the client that established the credential.
