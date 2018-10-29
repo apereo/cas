@@ -34,9 +34,19 @@ public class SpringCloudConfigurationProperties implements Serializable {
          * MongoDb config settings.
          */
         private MongoDb mongo = new MongoDb();
+
+        /**
+         * Jdbc config settings.
+         */
+        private Jdbc jdbc = new Jdbc();
+
+        /**
+         * AWS config settings.
+         */
+        private AmazonConfiguration aws = new AmazonConfiguration();
     }
 
-    @RequiresModule(name = "cas-server-support-configuration-cloud-mongo", automated = true)
+    @RequiresModule(name = "cas-server-support-configuration-cloud-mongo")
     @Getter
     @Setter
     public static class MongoDb implements Serializable {
@@ -46,4 +56,124 @@ public class SpringCloudConfigurationProperties implements Serializable {
         @RequiredProperty
         private String uri;
     }
+
+    @RequiresModule(name = "cas-server-support-configuration-cloud-jdbc")
+    @Getter
+    @Setter
+    public static class Jdbc implements Serializable {
+        /**
+         * SQL statement.
+         */
+        private String sql;
+
+        /**
+         * Database url.
+         */
+        private String url;
+
+        /**
+         * Database user.
+         */
+        private String user;
+
+        /**
+         * Database password.
+         */
+        private String password;
+
+        /**
+         * Driver class name.
+         */
+        private String driverClass;
+    }
+
+    @RequiresModule(name = "cas-server-support-aws")
+    @Getter
+    @Setter
+    public static class AmazonConfiguration implements Serializable {
+        private static final long serialVersionUID = -124404249388429120L;
+
+        /**
+         * Local address.
+         */
+        @RequiredProperty
+        private String localAddress;
+
+        /**
+         * Credential secret key.
+         */
+        @RequiredProperty
+        private String credentialSecretKey;
+
+        /**
+         * Credential access key.
+         */
+        @RequiredProperty
+        private String credentialAccessKey;
+
+        /**
+         * Region.
+         */
+        @RequiredProperty
+        private String region;
+
+        /**
+         * region override.
+         */
+        @RequiredProperty
+        private String regionOverride;
+
+        /**
+         * Endpoint.
+         */
+        @RequiredProperty
+        private String endpoint;
+
+        /**
+         * AWS secrets manager settings.
+         */
+        private AmazonSecretsManager secretsManager = new AmazonSecretsManager();
+
+        /**
+         * AWS dynamo db settings.
+         */
+        private AmazonDynamoDb dynamoDb = new AmazonDynamoDb();
+
+        /**
+         * AWS S3 settings.
+         */
+        private AmazonS3 s3 = new AmazonS3();
+    }
+
+    @RequiresModule(name = "cas-server-support-configuration-cloud-aws-secretsmanager")
+    @Getter
+    @Setter
+    public static class AmazonSecretsManager extends AmazonConfiguration {
+        private static final long serialVersionUID = -124404249387429120L;
+    }
+
+    @RequiresModule(name = "cas-server-support-configuration-cloud-aws-s3")
+    @Getter
+    @Setter
+    public static class AmazonS3 extends AmazonConfiguration {
+        private static final long serialVersionUID = -124404249387429120L;
+        /**
+         * Bucket name that holds the settings.
+         */
+        private String bucketName;
+    }
+
+    @RequiresModule(name = "cas-server-support-configuration-cloud-dynamodb")
+    @Getter
+    @Setter
+    public static class AmazonDynamoDb extends AmazonConfiguration {
+        private static final long serialVersionUID = -123404249388429120L;
+
+        /**
+         * Does not create tables on startup, if true.
+         */
+        private boolean preventTableCreationOnStartup;
+    }
+
+
 }
