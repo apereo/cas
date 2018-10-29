@@ -127,12 +127,12 @@ public class MongoDbConnectionFactory {
      */
     public void createCollection(final MongoOperations mongoTemplate, final String collectionName, final boolean dropCollection) {
         if (dropCollection) {
-            LOGGER.debug("Dropping database collection: [{}]", collectionName);
+            LOGGER.trace("Dropping database collection: [{}]", collectionName);
             mongoTemplate.dropCollection(collectionName);
         }
 
         if (!mongoTemplate.collectionExists(collectionName)) {
-            LOGGER.debug("Creating database collection: [{}]", collectionName);
+            LOGGER.trace("Creating database collection: [{}]", collectionName);
             mongoTemplate.createCollection(collectionName);
         }
     }
@@ -156,8 +156,7 @@ public class MongoDbConnectionFactory {
     private static MongoDbFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
         if (StringUtils.isNotBlank(props.getClientUri())) {
             val uri = buildMongoClientURI(props.getClientUri(), buildMongoDbClientOptions(props));
-            LOGGER.debug("Using database [{}] from the connection client URI with authentication database [{}]",
-                uri.getDatabase(), uri.getCredentials().getSource());
+            LOGGER.trace("Using database [{}] from the connection client URI", uri.getDatabase());
             return new SimpleMongoDbFactory(uri);
         }
         return new SimpleMongoDbFactory(mongo, props.getDatabaseName());

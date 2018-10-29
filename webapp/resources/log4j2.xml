@@ -3,7 +3,7 @@
 <Configuration monitorInterval="5" packages="org.apereo.cas.logging">
     <Properties>
         <Property name="baseDir">/tmp/logs</Property>
-        <Property name="cas.log.level">warn</Property>
+        <Property name="cas.log.level">info</Property>
         <Property name="spring.webflow.log.level">warn</Property>
         <Property name="spring.security.log.level">info</Property>
         <Property name="spring.cloud.log.level">warn</Property>

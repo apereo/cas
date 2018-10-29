@@ -23,7 +23,7 @@ import org.apereo.cas.util.gen.HexRandomStringGeneratorTests;
 import org.apereo.cas.util.http.HttpMessageTests;
 import org.apereo.cas.util.http.SimpleHttpClientTests;
 import org.apereo.cas.util.io.CommunicationsManagerTests;
-import org.apereo.cas.util.io.GroovySmsSender;
+import org.apereo.cas.util.io.GroovySmsSenderTests;
 import org.apereo.cas.util.io.RestfulSmsSenderTests;
 
 import org.junit.runner.RunWith;
@@ -59,7 +59,7 @@ import org.junit.runners.Suite;
     BinaryCipherExecutorTests.class,
     ResourceUtilsTests.class,
     ScriptingUtilsTests.class,
-    GroovySmsSender.class,
+    GroovySmsSenderTests.class,
     RestfulSmsSenderTests.class,
     RandomUtilsTests.class
 })
