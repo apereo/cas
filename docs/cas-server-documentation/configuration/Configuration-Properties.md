@@ -909,7 +909,7 @@ function run(uid, logger) {
     // If you want to call back into Java, this is one way to do so
     var javaObj = new JavaImporter(org.yourorgname.yourpackagename);
     with (javaObj) {
-    	var objFromJava = JavaClassInPackage.someStaticMethod(uid);
+        var objFromJava = JavaClassInPackage.someStaticMethod(uid);
     }
 
     var map = {};
@@ -1338,6 +1338,19 @@ Email notifications settings are available [here](Configuration-Properties-Commo
 ## SMS Messaging
 
 To learn more about this topic, [please review this guide](../installation/SMS-Messaging-Configuration.html).
+
+### Groovy
+
+Send text messages using a Groovy script.
+
+```properties
+# cas.smsProvider.groovy.location=file:/etc/cas/config/SmsSender.groovy
+```
+
+### REST
+
+Send text messages using a RESTful API. RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.smsProvider.rest`.
 
 ### Twilio
 
@@ -4119,9 +4132,9 @@ Here is an example `scrape_config` to add to `prometheus.yml`:
 ```yaml
 scrape_configs:
   - job_name: 'spring'
-	metrics_path: '/actuator/prometheus'
-	static_configs:
-	  - targets: ['HOST:PORT']
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['HOST:PORT']
 ``` 
 
 ### SignalFx

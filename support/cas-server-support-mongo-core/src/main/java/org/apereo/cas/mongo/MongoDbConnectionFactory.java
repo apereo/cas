@@ -141,7 +141,7 @@ public class MongoDbConnectionFactory {
         val mappingContext = new MongoMappingContext();
         mappingContext.setInitialEntitySet(getInitialEntitySet());
         mappingContext.setSimpleTypeHolder(this.customConversions.getSimpleTypeHolder());
-        mappingContext.setFieldNamingStrategy(this.fieldNamingStrategy());
+        mappingContext.setFieldNamingStrategy(MongoDbConnectionFactory.fieldNamingStrategy());
         return mappingContext;
     }
 
@@ -153,7 +153,7 @@ public class MongoDbConnectionFactory {
         return converter;
     }
 
-    private MongoDbFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
+    private static MongoDbFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
         if (StringUtils.isNotBlank(props.getClientUri())) {
             val uri = buildMongoClientURI(props.getClientUri(), buildMongoDbClientOptions(props));
             LOGGER.debug("Using database [{}] from the connection client URI with authentication database [{}]",
@@ -199,7 +199,7 @@ public class MongoDbConnectionFactory {
         return initialEntitySet;
     }
 
-    private FieldNamingStrategy fieldNamingStrategy() {
+    private static FieldNamingStrategy fieldNamingStrategy() {
         return PropertyNameFieldNamingStrategy.INSTANCE;
     }
 
@@ -232,7 +232,7 @@ public class MongoDbConnectionFactory {
      * @return a bean containing the MongoClientOptions object
      */
     @SneakyThrows
-    private MongoClientOptions buildMongoDbClientOptions(final BaseMongoDbProperties mongo) {
+    private static MongoClientOptions buildMongoDbClientOptions(final BaseMongoDbProperties mongo) {
 
         var clientOptions = (MongoClientOptions.Builder) null;
 
@@ -274,7 +274,7 @@ public class MongoDbConnectionFactory {
      * @param mongo the mongo
      * @return the mongo client
      */
-    public MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
+    public static MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {
             LOGGER.debug("Using MongoDb client URI [{}] to connect to MongoDb instance", mongo.getClientUri());
@@ -305,22 +305,22 @@ public class MongoDbConnectionFactory {
         return new MongoClient(servers, CollectionUtils.wrap(credential), buildMongoDbClientOptions(mongo));
     }
 
-    private MongoClient buildMongoDbClient(final String clientUri, final MongoClientOptions clientOptions) {
+    private static MongoClient buildMongoDbClient(final String clientUri, final MongoClientOptions clientOptions) {
         val uri = buildMongoClientURI(clientUri, clientOptions);
         return new MongoClient(uri);
     }
 
-    private MongoCredential buildMongoCredential(final BaseMongoDbProperties mongo) {
+    private static MongoCredential buildMongoCredential(final BaseMongoDbProperties mongo) {
         val dbName = StringUtils.defaultIfBlank(mongo.getAuthenticationDatabaseName(), mongo.getDatabaseName());
         return MongoCredential.createCredential(mongo.getUserId(), dbName, mongo.getPassword().toCharArray());
     }
 
-    private MongoClientURI buildMongoClientURI(final String clientUri, final MongoClientOptions clientOptions) {
+    private static MongoClientURI buildMongoClientURI(final String clientUri, final MongoClientOptions clientOptions) {
         val builder = clientOptions != null ? MongoClientOptions.builder(clientOptions) : MongoClientOptions.builder();
         return new MongoClientURI(clientUri, builder);
     }
 
-    private MongoClientURI buildMongoClientURI(final String clientUri) {
+    private static MongoClientURI buildMongoClientURI(final String clientUri) {
         return buildMongoClientURI(clientUri, null);
     }
 

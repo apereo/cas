@@ -69,7 +69,7 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         return id;
     }
 
-    private String getSectorIdentifier(final OidcRegisteredService client) {
+    private static String getSectorIdentifier(final OidcRegisteredService client) {
         if (!StringUtils.isBlank(client.getSectorIdentifierUri())) {
             val uri = UriComponentsBuilder.fromUriString(client.getSectorIdentifierUri()).build();
             return uri.getHost();

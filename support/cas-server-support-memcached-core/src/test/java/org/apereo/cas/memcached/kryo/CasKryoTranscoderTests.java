@@ -15,6 +15,7 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 
 import com.esotericsoftware.kryo.KryoException;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.Test;
@@ -235,6 +236,7 @@ public class CasKryoTranscoderTests {
     /**
      * Class for testing Kryo unregistered class handling.
      */
+    @ToString(callSuper = true)
     private static class UnregisteredServiceTicketExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
         private static final long serialVersionUID = -1704993954986738308L;
 

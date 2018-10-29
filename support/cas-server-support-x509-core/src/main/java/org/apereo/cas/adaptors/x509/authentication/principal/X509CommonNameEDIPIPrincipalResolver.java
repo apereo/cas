@@ -60,7 +60,7 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
         return result;
     }
 
-    private String retrieveTheCommonName(final String inSubjectDN) {
+    private static String retrieveTheCommonName(final String inSubjectDN) {
         var commonNameFound = false;
         var tempCommonName = StringUtils.EMPTY;
         val st = new StringTokenizer(inSubjectDN, ",");
@@ -74,7 +74,7 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
         return StringUtils.remove(tempCommonName, COMMON_NAME_VAR + '=');
     }
 
-    private String retrieveTheEDIPI(final String commonName) {
+    private static String retrieveTheEDIPI(final String commonName) {
         var found = false;
         var tempEDIPI = StringUtils.EMPTY;
         val st = new StringTokenizer(commonName, ".");
@@ -94,12 +94,12 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
      * @param inToken The input token to be tested
      * @return Returns boolean value indicating whether or not the token string is the Common Name (CN) number
      */
-    private boolean isTokenCommonName(final String inToken) {
+    private static boolean isTokenCommonName(final String inToken) {
         val st = new StringTokenizer(inToken, "=");
         return st.nextToken().equals(COMMON_NAME_VAR);
     }
 
-    private boolean isTokenEDIPI(final String inToken) {
+    private static boolean isTokenEDIPI(final String inToken) {
         return inToken.length() == EDIPI_LENGTH && NumberUtils.isCreatable(inToken);
     }
 }

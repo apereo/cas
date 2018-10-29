@@ -346,7 +346,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return t;
     }
 
-    private TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
+    private static TransitionCriteria getTransitionCriteriaForExpression(final Expression criteriaOutcomeExpression) {
         if (criteriaOutcomeExpression.toString().equals(WildcardTransitionCriteria.WILDCARD_EVENT_ID)) {
             return WildcardTransitionCriteria.INSTANCE;
         }

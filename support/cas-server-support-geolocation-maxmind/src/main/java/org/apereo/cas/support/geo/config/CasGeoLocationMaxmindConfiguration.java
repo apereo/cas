@@ -46,7 +46,7 @@ public class CasGeoLocationMaxmindConfiguration {
         return svc;
     }
 
-    private DatabaseReader readDatabase(final Resource maxmindDatabase) throws IOException {
+    private static DatabaseReader readDatabase(final Resource maxmindDatabase) throws IOException {
         if (maxmindDatabase != null && maxmindDatabase.exists()) {
             return new DatabaseReader.Builder(maxmindDatabase.getFile()).withCache(new CHMCache()).build();
         }

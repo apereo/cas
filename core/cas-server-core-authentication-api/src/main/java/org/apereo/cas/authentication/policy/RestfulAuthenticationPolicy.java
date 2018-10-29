@@ -63,7 +63,7 @@ public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
         }
     }
 
-    private Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
+    private static Exception handleResponseStatusCode(final HttpStatus statusCode, final Principal p) {
         if (statusCode == HttpStatus.FORBIDDEN || statusCode == HttpStatus.METHOD_NOT_ALLOWED) {
             return new AccountDisabledException("Could not authenticate forbidden account for " + p.getId());
         }

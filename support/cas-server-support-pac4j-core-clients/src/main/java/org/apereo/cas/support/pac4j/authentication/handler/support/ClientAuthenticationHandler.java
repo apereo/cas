@@ -25,7 +25,6 @@ import java.security.GeneralSecurityException;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-@SuppressWarnings("unchecked")
 @Slf4j
 public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
 
@@ -58,7 +57,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
             if (client == null) {
                 throw new IllegalArgumentException("Unable to determine client based on client name " + clientCredentials.getClientName());
             }
-            
+
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext();
             val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);

@@ -87,7 +87,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilterTests {
         assertNotNull(response.getHeader("X-XSS-Protection"));
     }
 
-    private RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final RegisteredServiceProperties p) {
+    private static RegisteredServiceResponseHeadersEnforcementFilter getFilterForProperty(final RegisteredServiceProperties p) {
         val servicesManager = mock(ServicesManager.class);
         val argumentExtractor = mock(ArgumentExtractor.class);
         val webApplicationService = mock(WebApplicationService.class);

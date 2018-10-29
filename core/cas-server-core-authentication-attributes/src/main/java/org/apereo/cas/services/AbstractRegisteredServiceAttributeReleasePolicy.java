@@ -149,7 +149,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         return principal.getAttributes();
     }
 
-    private PrincipalAttributesRepository getPrincipalAttributesRepositoryFromApplicationContext() {
+    private static PrincipalAttributesRepository getPrincipalAttributesRepositoryFromApplicationContext() {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         if (applicationContext != null) {
             if (applicationContext.containsBean("globalPrincipalAttributeRepository")) {
