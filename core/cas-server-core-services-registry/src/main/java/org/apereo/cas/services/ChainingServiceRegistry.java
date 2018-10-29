@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.CollectionUtils;
+
 import com.google.common.base.Predicates;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,10 @@ import java.util.stream.Collectors;
 @Getter
 public class ChainingServiceRegistry extends AbstractServiceRegistry {
     private final Collection<ServiceRegistry> serviceRegistries;
+
+    public ChainingServiceRegistry(final ServiceRegistry registry) {
+        this(CollectionUtils.wrap(registry));
+    }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
