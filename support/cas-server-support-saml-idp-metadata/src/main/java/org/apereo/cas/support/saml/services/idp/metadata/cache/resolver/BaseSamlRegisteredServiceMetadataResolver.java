@@ -205,7 +205,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * @param metadataFilterList the metadata filter list
      * @throws Exception the exception
      */
-    protected void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) throws Exception {
+    protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) throws Exception {
         if (StringUtils.isBlank(service.getMetadataSignatureLocation())) {
             LOGGER.warn("No metadata signature location is defined for [{}], so SignatureValidationFilter will not be invoked", service.getMetadataLocation());
             return;
@@ -221,9 +221,9 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * @param metadataSignatureResource the metadata signature resource
      * @throws Exception the exception
      */
-    protected void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
-                                                          final List<MetadataFilter> metadataFilterList,
-                                                          final String metadataSignatureResource) throws Exception {
+    protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
+                                                                 final List<MetadataFilter> metadataFilterList,
+                                                                 final String metadataSignatureResource) throws Exception {
         val signatureValidationFilter = SamlUtils.buildSignatureValidationFilter(metadataSignatureResource);
         addSignatureValidationFilterIfNeeded(service, signatureValidationFilter, metadataFilterList);
     }
@@ -236,16 +236,16 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * @param metadataSignatureResource the metadata signature resource
      * @throws Exception the exception
      */
-    protected void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
-                                                          final List<MetadataFilter> metadataFilterList,
-                                                          final Resource metadataSignatureResource) throws Exception {
+    protected static void buildSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
+                                                                 final List<MetadataFilter> metadataFilterList,
+                                                                 final Resource metadataSignatureResource) throws Exception {
         val signatureValidationFilter = SamlUtils.buildSignatureValidationFilter(metadataSignatureResource);
         addSignatureValidationFilterIfNeeded(service, signatureValidationFilter, metadataFilterList);
     }
 
-    private void addSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
-                                                      final SignatureValidationFilter signatureValidationFilter,
-                                                      final List<MetadataFilter> metadataFilterList) {
+    private static void addSignatureValidationFilterIfNeeded(final SamlRegisteredService service,
+                                                             final SignatureValidationFilter signatureValidationFilter,
+                                                             final List<MetadataFilter> metadataFilterList) {
         if (signatureValidationFilter != null) {
             signatureValidationFilter.setRequireSignedRoot(false);
             metadataFilterList.add(signatureValidationFilter);

@@ -33,7 +33,7 @@ public class ValidateRegisteredServiceCommand {
      * @param directory the directory
      */
     @ShellMethod(key = "validate-service", value = "Validate a given JSON/YAML service definition by path or directory")
-    public void validateService(
+    public static void validateService(
         @ShellOption(value = {"file"},
             help = "Path to the JSON/YAML service definition file") final String file,
         @ShellOption(value = {"directory"},
@@ -53,14 +53,14 @@ public class ValidateRegisteredServiceCommand {
         if (StringUtils.isNotBlank(directory)) {
             val directoryPath = new File(directory);
             if (directoryPath.isDirectory()) {
-                FileUtils.listFiles(directoryPath, new String[]{"json", "yml"}, false).forEach(this::validate);
+                FileUtils.listFiles(directoryPath, new String[]{"json", "yml"}, false).forEach(ValidateRegisteredServiceCommand::validate);
             }
             return;
         }
 
     }
 
-    private void validate(final File filePath) {
+    private static void validate(final File filePath) {
         try {
             val validator = new DefaultRegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {

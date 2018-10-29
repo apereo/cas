@@ -36,7 +36,7 @@ public class ServiceRegistryInitializerTests {
         assertThat(serviceRegistry.size()).isEqualTo(1);
     }
 
-    private RegisteredService newService() {
+    private static RegisteredService newService() {
         val service = mock(RegisteredService.class);
         when(service.getServiceId()).thenReturn("^https?://.*");
         when(service.getName()).thenReturn("Test");

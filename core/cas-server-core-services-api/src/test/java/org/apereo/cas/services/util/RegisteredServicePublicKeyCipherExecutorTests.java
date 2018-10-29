@@ -42,7 +42,7 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
         assertNotNull(e.encode(ticketId, Optional.of(svc)));
     }
 
-    private AbstractRegisteredService getService(final String keyLocation) {
+    private static AbstractRegisteredService getService(final String keyLocation) {
         val svc = new RegexRegisteredService();
         svc.setServiceId("Testing");
         svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));
