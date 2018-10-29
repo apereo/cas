@@ -34,7 +34,7 @@ public class GenerateYamlRegisteredServiceCommand {
      * @param destination the destination
      */
     @ShellMethod(key = "generate-yaml", value = "Generate a YAML registered service definition")
-    public void generateYaml(
+    public static void generateYaml(
         @ShellOption(value = {"file"},
             help = "Path to the JSON service definition file") final String file,
         @ShellOption(value = {"destination"},
@@ -49,7 +49,7 @@ public class GenerateYamlRegisteredServiceCommand {
         generate(filePath, result);
     }
 
-    private void generate(final File filePath, final File result) {
+    private static void generate(final File filePath, final File result) {
         try {
             val validator = new DefaultRegisteredServiceJsonSerializer();
             if (filePath.isFile() && filePath.exists() && filePath.canRead() && filePath.length() > 0) {

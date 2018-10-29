@@ -38,7 +38,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         return generateResponseForAccessToken(request, response, result);
     }
 
-    private boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
+    private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
         val generatedToken = result.getGeneratedToken();
         return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
             && generatedToken.getDeviceCode().isPresent()

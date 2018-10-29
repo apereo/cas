@@ -43,7 +43,7 @@ public class AddPropertiesToConfigurationCommand {
      * @throws Exception the exception
      */
     @ShellMethod(key = "add-properties", value = "Add properties associated with a CAS group/module to a Properties/Yaml configuration file.")
-    public void add(
+    public static void add(
         @ShellOption(value = {"file"},
             help = "Path to the CAS configuration file",
             defaultValue = "/etc/cas/config/cas.properties") final String file,
@@ -81,8 +81,8 @@ public class AddPropertiesToConfigurationCommand {
 
     }
 
-    private void writeYamlConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results,
-                                                        final Properties yamlProps) throws Exception {
+    private static void writeYamlConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results,
+                                                               final Properties yamlProps) throws Exception {
         val options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.AUTO);
         options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
@@ -95,7 +95,7 @@ public class AddPropertiesToConfigurationCommand {
         }
     }
 
-    private Properties loadYamlPropertiesFromConfigurationFile(final File filePath) {
+    private static Properties loadYamlPropertiesFromConfigurationFile(final File filePath) {
         val factory = new YamlPropertiesFactoryBean();
         factory.setResolutionMethod(YamlProcessor.ResolutionMethod.OVERRIDE);
         factory.setResources(new FileSystemResource(filePath));
@@ -104,8 +104,8 @@ public class AddPropertiesToConfigurationCommand {
         return factory.getObject();
     }
 
-    private void writeConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results,
-                                                    final Properties p) throws Exception {
+    private static void writeConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results,
+                                                           final Properties p) throws Exception {
         LOGGER.info("Located [{}] properties in configuration file [{}]", results.size(), filePath.getCanonicalPath());
         putResultsIntoProperties(results, p);
         val lines = p.stringPropertyNames().stream().map(s -> s + '=' + p.get(s)).collect(Collectors.toList());
@@ -113,7 +113,7 @@ public class AddPropertiesToConfigurationCommand {
         FileUtils.writeLines(filePath, lines);
     }
 
-    private void putResultsIntoProperties(final Map<String, ConfigurationMetadataProperty> results, final Properties p) {
+    private static void putResultsIntoProperties(final Map<String, ConfigurationMetadataProperty> results, final Properties p) {
         val lines = results.values().stream()
             .sorted(Comparator.comparing(ConfigurationMetadataProperty::getName))
             .collect(Collectors.toList());
@@ -124,14 +124,14 @@ public class AddPropertiesToConfigurationCommand {
         });
     }
 
-    private String getDefaultValueForProperty(final ConfigurationMetadataProperty v) {
+    private static String getDefaultValueForProperty(final ConfigurationMetadataProperty v) {
         if (v.getDefaultValue() == null) {
             return StringUtils.EMPTY;
         }
         return v.getDefaultValue().toString();
     }
 
-    private Properties loadPropertiesFromConfigurationFile(final File filePath) throws IOException {
+    private static Properties loadPropertiesFromConfigurationFile(final File filePath) throws IOException {
         val p = new Properties();
         try (val f = Files.newBufferedReader(filePath.toPath(), StandardCharsets.UTF_8)) {
             p.load(f);
@@ -139,13 +139,13 @@ public class AddPropertiesToConfigurationCommand {
         return p;
     }
 
-    private Map<String, ConfigurationMetadataProperty> findProperties(final String group) {
+    private static Map<String, ConfigurationMetadataProperty> findProperties(final String group) {
         val find = new FindPropertiesCommand();
         val results = find.findByProperty(group);
         return results;
     }
 
-    private void createConfigurationFileIfNeeded(final File filePath) throws IOException {
+    private static void createConfigurationFileIfNeeded(final File filePath) throws IOException {
         if (!filePath.exists()) {
             LOGGER.debug("Creating configuration file [{}]", filePath.getCanonicalPath());
             val created = filePath.createNewFile();

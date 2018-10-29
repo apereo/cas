@@ -66,7 +66,7 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
         return super.withAfterClasses(statement);
     }
 
-    private boolean isIgnoreConditionSatisfied(final ConditionalIgnore ignore) throws Exception {
+    private static boolean isIgnoreConditionSatisfied(final ConditionalIgnore ignore) throws Exception {
         if (ignore.condition() == null) {
             return !SocketUtils.isTcpPortAvailable(ignore.port());
         }

@@ -164,7 +164,7 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
         );
     }
 
-    private MockRequestContext getMockRequestContext() {
+    private static MockRequestContext getMockRequestContext() {
         val ctx = new MockRequestContext();
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();

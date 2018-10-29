@@ -59,7 +59,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
             .collect(Collectors.toMap(MultifactorAuthenticationProvider::getId, MultifactorAuthenticationProvider::getFriendlyName));
     }
 
-    private Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
+    private static Map<String, String> locateMultifactorAuthenticationProviderTypesSupported() {
         final Function<Class, Object> mapper = c -> {
             try {
                 val p = MultifactorAuthenticationProvider.class.cast(c.getDeclaredConstructor().newInstance());
@@ -84,7 +84,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
             .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
-    private Map<String, Class> locateRegisteredServiceTypesSupported() {
+    private static Map<String, Class> locateRegisteredServiceTypesSupported() {
         final Function<Class, Object> mapper = c -> {
             try {
                 return (RegisteredService) c.getDeclaredConstructor().newInstance();
@@ -97,8 +97,8 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
             AbstractRegisteredService.class, Predicates.alwaysTrue(), CentralAuthenticationService.NAMESPACE);
     }
 
-    private Object locateSubtypesByReflection(final Function<Class, Object> mapper, final Collector collector,
-                                              final Class parentType, final Predicate filter, final String packageNamespace) {
+    private static Object locateSubtypesByReflection(final Function<Class, Object> mapper, final Collector collector,
+                                                     final Class parentType, final Predicate filter, final String packageNamespace) {
         val reflections = new Reflections(new ConfigurationBuilder()
             .setUrls(ClasspathHelper.forPackage(packageNamespace))
             .setScanners(new SubTypesScanner(false)));
@@ -110,7 +110,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
             .collect(collector);
     }
 
-    private Set<String> locateDelegatedClientTypesSupported() {
+    private static Set<String> locateDelegatedClientTypesSupported() {
         final Function<Class, Object> mapper = c -> {
             try {
                 return IndirectClient.class.cast(c.getDeclaredConstructor().newInstance()).getName();

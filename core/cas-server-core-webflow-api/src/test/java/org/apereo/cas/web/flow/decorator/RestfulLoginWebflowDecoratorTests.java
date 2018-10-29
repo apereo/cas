@@ -48,7 +48,7 @@ public class RestfulLoginWebflowDecoratorTests {
     }
 
     @SneakyThrows
-    private String getJsonData() {
+    private static String getJsonData() {
         return new ObjectMapper().writeValueAsString(CollectionUtils.wrap("key", "value"));
     }
 }

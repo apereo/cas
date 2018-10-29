@@ -81,7 +81,7 @@ public class CasDiscoveryProfileConfiguration {
         return attributes;
     }
 
-    private Set<String> transformAttributes(final List<String> attributes) {
+    private static Set<String> transformAttributes(final List<String> attributes) {
         val attributeSet = new LinkedHashSet<String>();
         CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
             .values()

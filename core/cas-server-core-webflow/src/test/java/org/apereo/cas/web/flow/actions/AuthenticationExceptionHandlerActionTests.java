@@ -44,7 +44,7 @@ public class AuthenticationExceptionHandlerActionTests {
         assertEquals(AccountNotFoundException.class.getSimpleName(), id);
     }
 
-    private RequestContext getMockRequestContext() {
+    private static RequestContext getMockRequestContext() {
         val ctx = mock(RequestContext.class);
         when(ctx.getMessageContext()).thenReturn(mock(MessageContext.class));
         return ctx;

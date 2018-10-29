@@ -62,7 +62,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
      * @throws Exception the exception
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.DEVICE_AUTHZ_URL)
-    public ModelAndView handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public static ModelAndView handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val model = getApprovalModel(StringUtils.EMPTY);
         return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVAL_VIEW, model);
     }
@@ -97,11 +97,11 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
         return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVED_VIEW, HttpStatus.OK);
     }
 
-    private ModelAndView getModelAndViewForFailure(final String code) {
+    private static ModelAndView getModelAndViewForFailure(final String code) {
         return new ModelAndView(OAuth20Constants.DEVICE_CODE_APPROVAL_VIEW, getApprovalModel(code));
     }
 
-    private Map getApprovalModel(final String errorCode) {
+    private static Map getApprovalModel(final String errorCode) {
         val map = new LinkedHashMap<>();
         map.put("prefix", DeviceUserCode.PREFIX);
         if (StringUtils.isNotBlank(errorCode)) {

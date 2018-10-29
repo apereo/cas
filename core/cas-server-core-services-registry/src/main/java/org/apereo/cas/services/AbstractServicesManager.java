@@ -225,7 +225,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
             .forEach(this::processExpiredRegisteredService);
     }
 
-    private Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
+    private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
 
         val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
         return predicates.stream().reduce(x -> true, Predicate::and);

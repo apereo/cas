@@ -101,7 +101,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         return null;
     }
 
-    private String getRequestIdFromRequest(final Element requestChild) {
+    private static String getRequestIdFromRequest(final Element requestChild) {
         if (requestChild == null) {
             return null;
         }
@@ -112,7 +112,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         return requestIdAttribute.getValue();
     }
 
-    private String getArtifactIdFromRequest(final Element requestChild) {
+    private static String getArtifactIdFromRequest(final Element requestChild) {
         if (requestChild == null) {
             return null;
         }

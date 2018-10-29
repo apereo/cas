@@ -69,7 +69,7 @@ public class RegisteredServiceResourceTests {
         runTest(null, null, "test:test", status().isForbidden());
     }
 
-    private MockMvc configureMockMvcFor(final RegisteredServiceResource registeredServiceResource) {
+    private static MockMvc configureMockMvcFor(final RegisteredServiceResource registeredServiceResource) {
         val sz = new DefaultRegisteredServiceJsonSerializer();
         val converter = new MappingJackson2HttpMessageConverter(sz.getObjectMapper());
         return MockMvcBuilders.standaloneSetup(registeredServiceResource)

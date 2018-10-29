@@ -51,7 +51,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
         return StringUtils.equalsIgnoreCase(responseType, OAuth20ResponseTypes.CODE.getType());
     }
 
-    private View buildCallbackViewViaRedirectUri(final J2EContext context, final String clientId, final Authentication authentication, final OAuthCode code) {
+    private static View buildCallbackViewViaRedirectUri(final J2EContext context, final String clientId, final Authentication authentication, final OAuthCode code) {
         val attributes = authentication.getAttributes();
         val state = attributes.get(OAuth20Constants.STATE).toString();
         val nonce = attributes.get(OAuth20Constants.NONCE).toString();

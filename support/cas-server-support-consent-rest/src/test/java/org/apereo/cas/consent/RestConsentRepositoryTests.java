@@ -49,7 +49,7 @@ public class RestConsentRepositoryTests extends BaseConsentRepositoryTests {
         return repos.computeIfAbsent(testName, n -> new RestConsentRepository(new RestTemplate(), CONSENT));
     }
 
-    private MockRestServiceServer getNewServer(final RestConsentRepository repository) {
+    private static MockRestServiceServer getNewServer(final RestConsentRepository repository) {
         return MockRestServiceServer.bindTo(repository.getRestTemplate()).build();
     }
 

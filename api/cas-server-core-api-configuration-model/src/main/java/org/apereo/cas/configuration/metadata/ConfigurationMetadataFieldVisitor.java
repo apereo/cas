@@ -70,7 +70,7 @@ public class ConfigurationMetadataFieldVisitor extends VoidVisitorAdapter<Config
         }
     }
 
-    private boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
+    private static boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
         return type.getNameAsString().matches(
             String.class.getSimpleName() + '|'
                 + Integer.class.getSimpleName() + '|'

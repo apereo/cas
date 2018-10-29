@@ -55,7 +55,7 @@ public class OAuth20ProofKeyCodeExchangeAuthenticator extends OAuth20ClientIdCli
         LOGGER.debug("Validated code verifier using verification method [{}]", method);
     }
 
-    private String calculateCodeVerifierHash(final String method, final String codeVerifier) {
+    private static String calculateCodeVerifierHash(final String method, final String codeVerifier) {
         if ("plain".equalsIgnoreCase(method)) {
             return codeVerifier;
         }

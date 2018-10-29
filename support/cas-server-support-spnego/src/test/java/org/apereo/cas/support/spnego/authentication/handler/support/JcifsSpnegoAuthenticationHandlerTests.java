@@ -57,7 +57,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
         authenticate(credentials, authenticationHandler);
     }
 
-    private void authenticate(final SpnegoCredential credentials, final JcifsSpnegoAuthenticationHandler authenticationHandler) throws PreventedException {
+    private static void authenticate(final SpnegoCredential credentials, final JcifsSpnegoAuthenticationHandler authenticationHandler) throws PreventedException {
         try {
             authenticationHandler.authenticate(credentials);
             throw new AssertionError("An AbstractAuthenticationException should have been thrown");

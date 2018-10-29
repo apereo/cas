@@ -270,7 +270,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         return refreshToken;
     }
 
-    private OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder, final Pair<AccessToken, RefreshToken> pair) {
+    private static OAuth20TokenGeneratedResult generateAccessTokenResult(final AccessTokenRequestDataHolder holder, final Pair<AccessToken, RefreshToken> pair) {
         return OAuth20TokenGeneratedResult.builder()
             .registeredService(holder.getRegisteredService())
             .accessToken(pair.getKey())

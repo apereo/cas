@@ -190,7 +190,7 @@ public class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCore
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
-    private TicketFactory getTicketFactory() {
+    private static TicketFactory getTicketFactory() {
         val factory = new DefaultTicketFactory();
         factory.addTicketFactory(ProxyGrantingTicket.class,
             new DefaultProxyGrantingTicketFactory(null, null, null));

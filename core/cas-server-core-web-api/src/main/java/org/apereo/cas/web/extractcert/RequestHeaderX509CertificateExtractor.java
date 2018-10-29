@@ -109,7 +109,7 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
         return null;
     }
 
-    private String sanitizeCertificateBody(final String certHeaderValue) {
+    private static String sanitizeCertificateBody(final String certHeaderValue) {
         var body = certHeaderValue.substring(X509_HEADER.length(), certHeaderValue.length() - X509_FOOTER.length());
         body = body.replace(' ', '\n');
         body = body.replace('\t', '\n');

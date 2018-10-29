@@ -46,7 +46,7 @@ public class GenerateJwtCommand {
      *
      * @param subject the subject
      */
-    public void generate(final String subject) {
+    public static void generate(final String subject) {
         generate(DEFAULT_SIGNING_SECRET_SIZE, DEFAULT_ENCRYPTION_SECRET_SIZE,
             DEFAULT_SIGNING_ALGORITHM, DEFAULT_ENCRYPTION_ALGORITHM,
             DEFAULT_ENCRYPTION_METHOD, subject);
@@ -63,7 +63,7 @@ public class GenerateJwtCommand {
      * @param subject              the subject
      */
     @ShellMethod(key = "generate-jwt", value = "Generate a JWT with given size and algorithm for signing and encryption.")
-    public void generate(
+    public static void generate(
         @ShellOption(value = {"signingSecretSize"},
             help = "Size of the signing secret",
             defaultValue = "" + DEFAULT_SIGNING_SECRET_SIZE) final int signingSecretSize,
@@ -101,8 +101,8 @@ public class GenerateJwtCommand {
         LOGGER.info("==== JWT ====\n[{}]", token);
     }
 
-    private void configureJwtEncryption(final int encryptionSecretSize, final String encryptionAlgorithm,
-                                        final String encryptionMethod, final JwtGenerator<CommonProfile> g) {
+    private static void configureJwtEncryption(final int encryptionSecretSize, final String encryptionAlgorithm,
+                                               final String encryptionMethod, final JwtGenerator<CommonProfile> g) {
         if (encryptionSecretSize <= 0 || StringUtils.isBlank(encryptionMethod) || StringUtils.isBlank(encryptionAlgorithm)) {
             LOGGER.info("No encryption algorithm or size specified, so the generated JWT will not be encrypted");
             return;
@@ -151,7 +151,7 @@ public class GenerateJwtCommand {
 
     }
 
-    private void configureJwtSigning(final int signingSecretSize, final String signingAlgorithm, final JwtGenerator<CommonProfile> g) {
+    private static void configureJwtSigning(final int signingSecretSize, final String signingAlgorithm, final JwtGenerator<CommonProfile> g) {
         if (signingSecretSize <= 0 || StringUtils.isBlank(signingAlgorithm)) {
             LOGGER.info("No signing algorithm or size specified, so the generated JWT will not be encrypted");
             return;

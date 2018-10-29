@@ -57,7 +57,7 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
     }
 
     @SuppressFBWarnings("PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS")
-    private UsernamePasswordCredential getCredential(final AuthenticationTransaction transaction) {
+    private static UsernamePasswordCredential getCredential(final AuthenticationTransaction transaction) {
         return transaction.getCredentials()
             .stream().filter(UsernamePasswordCredential.class::isInstance)
             .map(UsernamePasswordCredential.class::cast)

@@ -80,7 +80,7 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
         throw new FailedLoginException("Could not authenticate account for " + c.getUsername());
     }
 
-    private Map<String, Object> buildSyncopeUserAttributes(final UserTO user) {
+    private static Map<String, Object> buildSyncopeUserAttributes(final UserTO user) {
         val attributes = new HashMap<String, Object>();
 
         if (user.getRoles() != null) {

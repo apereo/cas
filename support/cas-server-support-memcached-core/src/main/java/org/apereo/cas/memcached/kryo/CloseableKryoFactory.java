@@ -168,7 +168,7 @@ public class CloseableKryoFactory implements KryoFactory {
         return kryo;
     }
 
-    private void registerImmutableOrEmptyCollectionsWithKryo(final Kryo kryo) {
+    private static void registerImmutableOrEmptyCollectionsWithKryo(final Kryo kryo) {
         LOGGER.debug("Registering immutable/empty collections with Kryo");
 
         UnmodifiableCollectionsSerializer.registerSerializers(kryo);
@@ -192,7 +192,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(list.getClass(), new ArraysAsListSerializer());
     }
 
-    private void registerCasServicesWithKryo(final Kryo kryo) {
+    private static void registerCasServicesWithKryo(final Kryo kryo) {
         kryo.register(RegexRegisteredService.class, new RegisteredServiceSerializer());
         kryo.register(RegisteredServiceLogoutType.class);
         kryo.register(RegisteredServicePublicKeyImpl.class);
@@ -206,7 +206,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(RegisteredServiceMultifactorPolicy.FailureModes.class);
     }
 
-    private void registerCasAuthenticationWithKryo(final Kryo kryo) {
+    private static void registerCasAuthenticationWithKryo(final Kryo kryo) {
         kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer());
         kryo.register(BasicCredentialMetaData.class);
         kryo.register(BasicIdentifiableCredential.class);
@@ -244,7 +244,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(UnauthorizedSsoServiceException.class);
     }
 
-    private void registerCasTicketsWithKryo(final Kryo kryo) {
+    private static void registerCasTicketsWithKryo(final Kryo kryo) {
         kryo.register(TicketGrantingTicketImpl.class);
         kryo.register(ServiceTicketImpl.class);
         kryo.register(ProxyGrantingTicketImpl.class);
@@ -253,7 +253,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(TransientSessionTicketImpl.class);
     }
 
-    private void registerNativeJdkComponentsWithKryo(final Kryo kryo) {
+    private static void registerNativeJdkComponentsWithKryo(final Kryo kryo) {
         kryo.register(Class.class, new DefaultSerializers.ClassSerializer());
         kryo.register(ArrayList.class);
         kryo.register(LinkedList.class);
@@ -284,7 +284,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(EnumSet.class, new EnumSetSerializer());
     }
 
-    private void registerExpirationPoliciesWithKryo(final Kryo kryo) {
+    private static void registerExpirationPoliciesWithKryo(final Kryo kryo) {
         kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
         kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy.class);
         kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy.class);

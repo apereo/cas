@@ -106,7 +106,7 @@ public abstract class AbstractSaml10ResponseView extends AbstractCasView {
      */
     protected abstract void prepareResponse(Response response, Map<String, Object> model);
 
-    private String getServiceIdFromRequest(final Service service) {
+    private static String getServiceIdFromRequest(final Service service) {
         if (service == null || StringUtils.isBlank(service.getId())) {
             return "UNKNOWN";
         }

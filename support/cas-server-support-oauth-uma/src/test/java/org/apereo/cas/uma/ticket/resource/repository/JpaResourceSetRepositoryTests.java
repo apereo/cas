@@ -60,7 +60,7 @@ public class JpaResourceSetRepositoryTests extends BaseUmaEndpointControllerTest
     }
 
 
-    private ResourceSet buildTestResource() {
+    private static ResourceSet buildTestResource() {
         val r = new ResourceSet();
         r.setClientId("clientid");
         r.setIconUri("https://www.example.com/icon");

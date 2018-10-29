@@ -56,7 +56,7 @@ public class RedisObjectFactory {
      * @param redis the redis
      * @return the redis connection factory
      */
-    public RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
+    public static RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
         val poolConfig = redis.getPool() != null
             ? redisPoolConfig(redis)
             : LettucePoolingClientConfiguration.defaultConfiguration();
@@ -89,7 +89,7 @@ public class RedisObjectFactory {
         return factory;
     }
 
-    private LettucePoolingClientConfiguration redisPoolConfig(final BaseRedisProperties redis) {
+    private static LettucePoolingClientConfiguration redisPoolConfig(final BaseRedisProperties redis) {
         val config = new GenericObjectPoolConfig();
         val props = redis.getPool();
         config.setMaxTotal(props.getMaxActive());
@@ -117,14 +117,14 @@ public class RedisObjectFactory {
             .build();
     }
 
-    private RedisSentinelConfiguration potentiallyGetSentinelConfig(final BaseRedisProperties redis) {
+    private static RedisSentinelConfiguration potentiallyGetSentinelConfig(final BaseRedisProperties redis) {
         val sentinelConfig = new RedisSentinelConfiguration().master(redis.getSentinel().getMaster());
         sentinelConfig.setSentinels(createRedisNodesForProperties(redis));
 
         return sentinelConfig;
     }
 
-    private List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
+    private static List<RedisNode> createRedisNodesForProperties(final BaseRedisProperties redis) {
         val redisNodes = new ArrayList<RedisNode>();
         if (redis.getSentinel().getNode() != null) {
             val nodes = redis.getSentinel().getNode();

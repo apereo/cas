@@ -111,7 +111,7 @@ public class ValidateEndpointCommand {
         }
     }
 
-    private URLConnection createConnection(final String url, final String proxy) throws Exception {
+    private static URLConnection createConnection(final String url, final String proxy) throws Exception {
         val constructedUrl = new URL(url);
         val conn = FunctionUtils.doIf(StringUtils.isNotBlank(proxy),
             Unchecked.supplier(() -> {
@@ -125,7 +125,7 @@ public class ValidateEndpointCommand {
         return conn;
     }
 
-    private String consolidateExceptionMessages(final Throwable throwable) {
+    private static String consolidateExceptionMessages(final Throwable throwable) {
         val stringBuilder = new StringBuilder();
 
         var pointer = throwable;
@@ -140,7 +140,7 @@ public class ValidateEndpointCommand {
         return stringBuilder.toString();
     }
 
-    private void testBadTlsConnection(final String url, final String proxy) {
+    private static void testBadTlsConnection(final String url, final String proxy) {
         try {
             val urlConnection = createConnection(url, proxy);
             if (!(urlConnection instanceof HttpsURLConnection)) {
@@ -160,7 +160,7 @@ public class ValidateEndpointCommand {
         }
     }
 
-    private void tlsConnectionReport(final HttpsURLConnection httpsConnection) {
+    private static void tlsConnectionReport(final HttpsURLConnection httpsConnection) {
         val systemTrustManagers = getSystemTrustManagers();
 
         final Certificate[] certificates;
@@ -192,7 +192,7 @@ public class ValidateEndpointCommand {
         }
     }
 
-    private String checkTrustedCertStatus(final X509Certificate certificate, final X509TrustManager[] trustManagers) {
+    private static String checkTrustedCertStatus(final X509Certificate certificate, final X509TrustManager[] trustManagers) {
 
         for (val trustManager : trustManagers) {
             for (val trustedCert : trustManager.getAcceptedIssuers()) {
@@ -210,7 +210,7 @@ public class ValidateEndpointCommand {
     }
 
     @SneakyThrows
-    private SSLContext getTheAllTrustingSSLContext() {
+    private static SSLContext getTheAllTrustingSSLContext() {
         val sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, new TrustManager[]{new X509TrustManager() {
 

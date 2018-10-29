@@ -114,7 +114,7 @@ public class DelegatedClientFactoryTests {
         assertEquals(4, clients.size());
     }
 
-    private void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
+    private static void configureIdentifiableClient(final Pac4jIdentifiableClientProperties props) {
         props.setId("TestId");
         props.setSecret("TestSecret");
     }

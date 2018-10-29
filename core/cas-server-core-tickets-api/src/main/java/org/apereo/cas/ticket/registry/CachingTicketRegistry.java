@@ -57,7 +57,7 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
      */
     public static class CachedTicketExpirationPolicy implements Expiry<String, Ticket> {
 
-        private long getExpiration(final Ticket value, final long currentTime) {
+        private static long getExpiration(final Ticket value, final long currentTime) {
             if (value.isExpired()) {
                 LOGGER.debug("Ticket [{}] has expired and shall be evicted from the cache", value.getId());
                 return 0;

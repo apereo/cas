@@ -155,7 +155,7 @@ public class CommunicationsManager {
         return this.smsSender.send(from, to, text);
     }
 
-    private Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
+    private static Optional<Object> getFirstAttributeByName(final Principal principal, final String attribute) {
         val value = principal.getAttributes().get(attribute);
         return CollectionUtils.firstElement(value);
     }

@@ -26,7 +26,7 @@ public class GroovyMultifactorAuthenticationProviderBypassTests {
         assertFalse(runGroovyBypassFor("anotheruser"));
     }
 
-    private boolean runGroovyBypassFor(final String username) {
+    private static boolean runGroovyBypassFor(final String username) {
         val request = new MockHttpServletRequest();
         val properties = new MultifactorAuthenticationProviderBypassProperties();
         properties.getGroovy().setLocation(new ClassPathResource("GroovyBypass.groovy"));

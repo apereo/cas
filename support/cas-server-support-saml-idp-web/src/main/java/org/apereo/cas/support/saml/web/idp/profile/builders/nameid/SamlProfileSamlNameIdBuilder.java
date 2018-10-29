@@ -205,14 +205,14 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @param authnRequest the authn request
      * @return the required name id format if any
      */
-    protected String getRequiredNameIdFormatIfAny(final RequestAbstractType authnRequest) {
+    protected static String getRequiredNameIdFormatIfAny(final RequestAbstractType authnRequest) {
         val nameIDPolicy = getNameIDPolicy(authnRequest);
         val requiredNameFormat = nameIDPolicy != null ? nameIDPolicy.getFormat() : null;
         LOGGER.debug("AuthN request indicates [{}] is the required NameID format", requiredNameFormat);
         return requiredNameFormat;
     }
 
-    private NameIDPolicy getNameIDPolicy(final RequestAbstractType authnRequest) {
+    private static NameIDPolicy getNameIDPolicy(final RequestAbstractType authnRequest) {
         if (authnRequest instanceof AuthnRequest) {
             return AuthnRequest.class.cast(authnRequest).getNameIDPolicy();
         }
@@ -327,11 +327,11 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      * @param adaptor      the adaptor
      * @return the saml 2 string name id encoder
      */
-    protected SAML2StringNameIDEncoder prepareNameIdEncoder(final RequestAbstractType authnRequest,
-                                                            final String nameFormat,
-                                                            final IdPAttribute attribute,
-                                                            final SamlRegisteredService service,
-                                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+    protected static SAML2StringNameIDEncoder prepareNameIdEncoder(final RequestAbstractType authnRequest,
+                                                                   final String nameFormat,
+                                                                   final IdPAttribute attribute,
+                                                                   final SamlRegisteredService service,
+                                                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
         val encoder = new SAML2StringNameIDEncoder();
         encoder.setNameFormat(nameFormat);
         if (getNameIDPolicy(authnRequest) != null) {

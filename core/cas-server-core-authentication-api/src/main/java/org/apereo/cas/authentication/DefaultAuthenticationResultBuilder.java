@@ -130,9 +130,9 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * Based on that restriction, it's safe to simply grab the first principal id in the chain
      * when composing the authentication chain for the caller.
      */
-    private Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
-                                          final Set<Authentication> authentications,
-                                          final Map<String, Object> principalAttributes) {
+    private static Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
+                                                 final Set<Authentication> authentications,
+                                                 final Map<String, Object> principalAttributes) {
         return principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
     }
 }

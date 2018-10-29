@@ -105,7 +105,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         super.addCookie(response, theCookieValue);
     }
 
-    private Boolean isRememberMeAuthentication(final RequestContext requestContext) {
+    private static Boolean isRememberMeAuthentication(final RequestContext requestContext) {
         if (isRememberMeProvidedInRequest(requestContext)) {
             LOGGER.debug("This request is from a remember-me authentication event");
             return Boolean.TRUE;
@@ -117,7 +117,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         return Boolean.FALSE;
     }
 
-    private Boolean isRememberMeRecordedInAuthentication(final RequestContext requestContext) {
+    private static Boolean isRememberMeRecordedInAuthentication(final RequestContext requestContext) {
         LOGGER.debug("Request does not indicate a remember-me authentication event. Locating authentication object from the request context...");
         val auth = WebUtils.getAuthentication(requestContext);
         if (auth == null) {
@@ -133,7 +133,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
         return Boolean.FALSE;
     }
 
-    private boolean isRememberMeProvidedInRequest(final RequestContext requestContext) {
+    private static boolean isRememberMeProvidedInRequest(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
         LOGGER.trace("Locating request parameter [{}] with value [{}]", RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, value);

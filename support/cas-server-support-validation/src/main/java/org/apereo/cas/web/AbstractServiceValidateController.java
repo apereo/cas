@@ -317,7 +317,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         return new ModelAndView(isSuccess ? this.successView : this.failureView);
     }
 
-    private ValidationResponseType getValidationResponseType(final HttpServletRequest request, final WebApplicationService service) {
+    private static ValidationResponseType getValidationResponseType(final HttpServletRequest request, final WebApplicationService service) {
         val format = request.getParameter(CasProtocolConstants.PARAMETER_FORMAT);
         final Function<String, ValidationResponseType> func = FunctionUtils.doIf(StringUtils::isNotBlank,
             t -> ValidationResponseType.valueOf(t.toUpperCase()),

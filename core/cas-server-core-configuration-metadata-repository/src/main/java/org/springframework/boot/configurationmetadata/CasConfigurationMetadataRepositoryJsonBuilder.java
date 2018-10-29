@@ -86,17 +86,17 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
         }
     }
 
-    private void addValueHints(final ConfigurationMetadataProperty property, final ConfigurationMetadataHint hint) {
+    private static void addValueHints(final ConfigurationMetadataProperty property, final ConfigurationMetadataHint hint) {
         property.getHints().getValueHints().addAll(hint.getValueHints());
         property.getHints().getValueProviders().addAll(hint.getValueProviders());
     }
 
-    private void addMapHints(final ConfigurationMetadataProperty property, final ConfigurationMetadataHint hint) {
+    private static void addMapHints(final ConfigurationMetadataProperty property, final ConfigurationMetadataHint hint) {
         property.getHints().getKeyHints().addAll(hint.getValueHints());
         property.getHints().getKeyProviders().addAll(hint.getValueProviders());
     }
 
-    private ConfigurationMetadataSource getSource(final RawConfigurationMetadata metadata, final ConfigurationMetadataItem item) {
+    private static ConfigurationMetadataSource getSource(final RawConfigurationMetadata metadata, final ConfigurationMetadataItem item) {
         if (item.getSourceType() == null) {
             return null;
         }
@@ -111,7 +111,7 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
 
     }
 
-    private SimpleConfigurationMetadataRepository create(final RawConfigurationMetadata metadata) {
+    private static SimpleConfigurationMetadataRepository create(final RawConfigurationMetadata metadata) {
         val repository = new SimpleConfigurationMetadataRepository();
         repository.add(metadata.getSources());
         for (val item : metadata.getItems()) {

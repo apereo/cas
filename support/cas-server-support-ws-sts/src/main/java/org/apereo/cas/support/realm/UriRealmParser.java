@@ -42,7 +42,7 @@ public class UriRealmParser implements RealmParser {
         return realm.trim();
     }
 
-    private String getRealm(final StringTokenizer st, final int count) {
+    private static String getRealm(final StringTokenizer st, final int count) {
         var realm = StringUtils.EMPTY;
         for (var i = 0; i < count; i++) {
             realm = st.nextToken();

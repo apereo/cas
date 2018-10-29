@@ -197,8 +197,8 @@ public class ConfigurationMetadataGenerator {
         });
     }
 
-    private Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
-                                                        final Collection<ConfigurationMetadataProperty> groups) {
+    private static Set<ConfigurationMetadataHint> processHints(final Collection<ConfigurationMetadataProperty> props,
+                                                               final Collection<ConfigurationMetadataProperty> groups) {
 
         final Set<ConfigurationMetadataHint> hints = new LinkedHashSet<>();
 
