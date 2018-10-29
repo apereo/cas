@@ -1,4 +1,6 @@
-package org.apereo.cas.configuration.model.core.standalone;
+package org.apereo.cas.configuration.model.core.config.standalone;
+
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +19,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@RequiresModule(name = "cas-server-core-configuration", automated = true)
 public class StandaloneConfigurationProperties implements Serializable {
     private static final long serialVersionUID = -7749293768878152908L;
     /**
