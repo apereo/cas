@@ -149,7 +149,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
         return new AnonymousAWSCredentials();
     }
 
-    private AWSCredentials getCredentialsFromProvider(final AWSCredentialsProvider p) {
+    private static AWSCredentials getCredentialsFromProvider(final AWSCredentialsProvider p) {
         try {
             LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
             return p.getCredentials();

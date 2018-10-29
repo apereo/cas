@@ -515,7 +515,7 @@ public class DelegatedClientFactory {
     }
 
     @SneakyThrows
-    private <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
+    private static <T extends OidcConfiguration> T getOidcConfigurationForClient(final BasePac4jOidcClientProperties oidc, final Class<T> clazz) {
         val cfg = clazz.getDeclaredConstructor().newInstance();
         if (StringUtils.isNotBlank(oidc.getScope())) {
             cfg.setScope(oidc.getScope());

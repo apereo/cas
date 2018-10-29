@@ -64,7 +64,7 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
         return null;
     }
 
-    private Map<String, List<String>> getAllRequestHeaderValues(final HttpServletRequest request) {
+    private static Map<String, List<String>> getAllRequestHeaderValues(final HttpServletRequest request) {
         val headers = new HashMap<String, List<String>>(DEFAULT_SIZE);
         val names = request.getHeaderNames();
         while (names.hasMoreElements()) {

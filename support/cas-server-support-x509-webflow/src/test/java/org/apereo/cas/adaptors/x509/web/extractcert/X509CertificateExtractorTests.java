@@ -66,7 +66,7 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
         return certificateSingleLine(CERTIFICATE_LINES, separator);
     }
 
-    private void assertCertificateParsed(final X509Certificate[] certificates) {
+    private static void assertCertificateParsed(final X509Certificate[] certificates) {
         Assert.assertNotNull(certificates);
         Assert.assertEquals(1, certificates.length);
         Assert.assertNotNull(certificates[0]);

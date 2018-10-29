@@ -184,11 +184,11 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         return backupFile;
     }
 
-    private String getBackupMetadataFilenameSuffix(final AbstractResource metadataResource, final RegisteredService service) {
+    private static String getBackupMetadataFilenameSuffix(final AbstractResource metadataResource, final RegisteredService service) {
         return UUID.randomUUID().toString() + ".xml";
     }
 
-    private String getBackupMetadataFilenamePrefix(final AbstractResource metadataResource, final RegisteredService service) {
+    private static String getBackupMetadataFilenamePrefix(final AbstractResource metadataResource, final RegisteredService service) {
         return service.getName()
             .concat("-")
             .concat(String.valueOf(service.getId()))

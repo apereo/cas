@@ -105,7 +105,7 @@ public class TicketSerializersTests {
         verifySerialization(pt);
     }
 
-    private void verifySerialization(final Ticket ticket) {
+    private static void verifySerialization(final Ticket ticket) {
         val serialized = BaseTicketSerializers.serializeTicket(ticket);
         assertNotNull(serialized);
         val deserialized = BaseTicketSerializers.deserializeTicket(serialized, ticket.getClass());

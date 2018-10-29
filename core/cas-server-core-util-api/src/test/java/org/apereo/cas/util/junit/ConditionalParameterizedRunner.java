@@ -31,7 +31,7 @@ public class ConditionalParameterizedRunner extends Parameterized {
     }
 
     @SneakyThrows
-    private boolean shouldRunTestsWithCondition(final ConditionalIgnore ignore) {
+    private static boolean shouldRunTestsWithCondition(final ConditionalIgnore ignore) {
         if (ignore == null) {
             return true;
         }
