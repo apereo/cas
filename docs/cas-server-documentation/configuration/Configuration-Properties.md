@@ -44,7 +44,11 @@ The following settings could be used to extend CAS with arbitrary configuration 
 ### Standalone
 
 CAS by default will attempt to locate settings and properties inside a given directory indicated
-under the setting name `cas.standalone.configurationDirectory` and otherwise falls back to using `/etc/cas/config`.
+under the setting name `cas.standalone.configurationDirectory` and otherwise falls back to using:
+
+- `/etc/cas/config`
+- `/opt/cas/config`
+- `/var/cas/config`
 
 There also exists a `cas.standalone.configurationFile` which can be used to directly feed a collection of properties
 to CAS in form of a file or classpath resource. This is specially useful in cases where a bare CAS server is deployed in the cloud without the extra ceremony of a configuration server or an external directory for that matter and the deployer wishes to avoid overriding embedded configuration files.

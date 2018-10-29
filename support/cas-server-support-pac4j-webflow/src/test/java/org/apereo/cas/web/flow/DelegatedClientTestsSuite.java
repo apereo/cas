@@ -10,8 +10,6 @@ import org.junit.runners.Suite;
  * @since 6.0.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-    DelegatedClientAuthenticationActionTests.class
-})
+@Suite.SuiteClasses(DelegatedClientAuthenticationActionTests.class)
 public class DelegatedClientTestsSuite {
 }
