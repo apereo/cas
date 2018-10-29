@@ -23,7 +23,7 @@ public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
 
     @Override
     public void registerWebflowConfigurer(final CasWebflowConfigurer cfg) {
-        LOGGER.debug("Registering webflow configurer [{}]", cfg.getName());
+        LOGGER.trace("Registering webflow configurer [{}]", cfg.getName());
         this.webflowConfigurers.add(cfg);
     }
 
@@ -33,7 +33,7 @@ public class DefaultCasWebflowExecutionPlan implements CasWebflowExecutionPlan {
     public void execute() {
         OrderComparator.sortIfNecessary(webflowConfigurers);
         webflowConfigurers.forEach(c -> {
-            LOGGER.debug("Registering webflow configurer [{}]", c.getName());
+            LOGGER.trace("Registering webflow configurer [{}]", c.getName());
             c.initialize();
         });
     }

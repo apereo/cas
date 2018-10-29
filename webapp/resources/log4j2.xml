@@ -74,7 +74,7 @@
 
         <AsyncLogger name="org.springframework.boot" level="${sys:spring.boot.log.level}" />
         <AsyncLogger name="org.springframework.boot.context.embedded" level="info" />
-        <AsyncLogger name="org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration" level="${sys:spring.security.log.level}" additivity="false" />
+        <AsyncLogger name="org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration" level="${sys:spring.security.log.level}" />
         <AsyncLogger name="org.springframework.boot.autoconfigure.security" level="${sys:spring.security.log.level}" />
         <AsyncLogger name="org.springframework.boot.devtools" level="off" />
 
