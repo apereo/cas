@@ -31,6 +31,6 @@ public interface ServiceRegistryExecutionPlan {
      * @param typeFilter the type filter
      * @return the collection
      */
-    Collection<ServiceRegistry> getServiceRegistries(Predicate<ServiceRegistry> typeFilter);
+    Collection<ServiceRegistry> find(Predicate<ServiceRegistry> typeFilter);
 
 }

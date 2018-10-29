@@ -27,9 +27,9 @@ public class DefaultServiceRegistryExecutionPlan implements ServiceRegistryExecu
     }
 
     @Override
-    public Collection<ServiceRegistry> getServiceRegistries(final Predicate<ServiceRegistry> typeFilter) {
-        return getServiceRegistries().stream()
-            .filter(typeFilter::test)
+    public Collection<ServiceRegistry> find(final Predicate<ServiceRegistry> typeFilter) {
+        return serviceRegistries.stream()
+            .filter(typeFilter)
             .collect(Collectors.toList());
     }
 }
