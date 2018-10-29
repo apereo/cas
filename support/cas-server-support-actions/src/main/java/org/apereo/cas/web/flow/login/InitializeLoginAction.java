@@ -24,7 +24,7 @@ public class InitializeLoginAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        LOGGER.debug("Initialized login sequence");
+        LOGGER.trace("Initialized login sequence");
         return success();
     }
 }

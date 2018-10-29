@@ -85,11 +85,11 @@ public class TerminateSessionAction extends AbstractAction {
 
         val tgtId = getTicketGrantingTicket(context);
         if (StringUtils.isNotBlank(tgtId)) {
-            LOGGER.debug("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
+            LOGGER.trace("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
             val logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
             WebUtils.putLogoutRequests(context, logoutRequests);
         }
-        LOGGER.debug("Removing CAS cookies");
+        LOGGER.trace("Removing CAS cookies");
         this.ticketGrantingTicketCookieGenerator.removeCookie(response);
         this.warnCookieGenerator.removeCookie(response);
 

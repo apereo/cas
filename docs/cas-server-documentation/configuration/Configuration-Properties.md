@@ -112,14 +112,73 @@ Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp
 ```properties
 # spring.cloud.vault.host=127.0.0.1
 # spring.cloud.vault.port=8200
-# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
 # spring.cloud.vault.connectionTimeout=3000
 # spring.cloud.vault.readTimeout=5000
 # spring.cloud.vault.enabled=true
 # spring.cloud.vault.fail-fast=true
 # spring.cloud.vault.scheme=http
+```
+
+#### Token Authentication
+
+Tokens are the core method for authentication within Vault. Token authentication requires a static token to be provided.
+
+```properties
+# spring.cloud.vault.authentication=TOKEN
+# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
+```
+
+#### AppID Authentication
+
+Vault supports AppId authentication that consists of two hard to guess tokens. The AppId defaults to `spring.application.name` that is statically configured. The second token is the 
+UserId which is a part determined by the application, usually related to the runtime environment. Spring Cloud Vault Config supports IP address, Mac address and static 
+UserId’s (e.g. supplied via System properties). The IP and Mac address are represented as Hex-encoded SHA256 hash.
+
+Using IP addresses:
+
+```bash
+export IP_ADDRESS=`echo -n 192.168.99.1 | sha256sum`
+```
+
+```properties
+# spring.cloud.vault.authentication=APPID
+# spring.cloud.vault.app-id.user-id=$IP_ADDRESS
+```
+
+Using MAC address:
+
+```bash
+export $MAC_ADDRESS=`echo -n ABCDEFGH | sha256sum`
+```
+
+```properties
+# spring.cloud.vault.authentication=APPID
+# spring.cloud.vault.app-id.user-id=$MAC_ADDRESS
+# spring.cloud.vault.app-id.network-interface=eth0
+```
+
+#### Kubernetes Authentication
+
+Kubernetes authentication mechanism allows to authenticate with Vault using a Kubernetes Service Account Token. The authentication is role based and the role is bound to a service account name and a namespace.
+
+```properties
+# spring.cloud.vault.authentication=KUBERNETES
+# spring.cloud.vault.kubernetes.role=my-dev-role
+# spring.cloud.vault.kubernetes.service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+```
+
+#### Generic Backend v1
+
+```properties
 # spring.cloud.vault.generic.enabled=true
 # spring.cloud.vault.generic.backend=secret
+```
+
+#### KV Backend v2
+
+```properties
+# spring.cloud.vault.kv.enabled=true
+# spring.cloud.vault.kv.backend=secret
 ```
 
 ### MongoDb
