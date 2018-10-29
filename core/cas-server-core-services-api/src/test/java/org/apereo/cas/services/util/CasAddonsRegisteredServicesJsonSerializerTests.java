@@ -32,7 +32,7 @@ public class CasAddonsRegisteredServicesJsonSerializerTests {
     }
 
     @SneakyThrows
-    private InputStream getServiceRegistryResource() {
+    private static InputStream getServiceRegistryResource() {
         val file = new File("servicesRegistry.conf");
         return new ClassPathResource(file.getPath()).getInputStream();
     }

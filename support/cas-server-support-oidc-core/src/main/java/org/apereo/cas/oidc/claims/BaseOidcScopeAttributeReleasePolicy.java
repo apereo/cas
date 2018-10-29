@@ -72,7 +72,7 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         return attributesToRelease;
     }
 
-    private Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, Object> resolvedAttributes) {
+    private static Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, Object> resolvedAttributes) {
         val applicationContext = ApplicationContextProvider.getApplicationContext();
         val attributeToScopeClaimMapper =
             applicationContext.getBean("oidcAttributeToScopeClaimMapper", OidcAttributeToScopeClaimMapper.class);

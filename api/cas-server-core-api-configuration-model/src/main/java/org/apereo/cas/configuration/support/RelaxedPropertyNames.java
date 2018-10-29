@@ -49,7 +49,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
         return this.values.iterator();
     }
 
-    private void initialize(final String name, final Set<String> values) {
+    private static void initialize(final String name, final Set<String> values) {
         if (values.contains(name)) {
             return;
         }
