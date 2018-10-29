@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  * This is {@link CasConfigurationPropertiesEnvironmentManager}.
@@ -22,7 +23,14 @@ import java.io.File;
 @RequiredArgsConstructor
 @Getter
 public class CasConfigurationPropertiesEnvironmentManager {
-    private static final File DEFAULT_CAS_CONFIG_DIRECTORY = new File("/etc/cas/config");
+    /**
+     * Configuration directories for CAS, listed in order.
+     */
+    private static final File[] DEFAULT_CAS_CONFIG_DIRECTORIES = {
+        new File("/etc/cas/config"),
+        new File("/opt/cas/config"),
+        new File("/var/cas/config")
+    };
 
     @NonNull
     private final ConfigurationPropertiesBindingPostProcessor binder;
@@ -63,7 +71,16 @@ public class CasConfigurationPropertiesEnvironmentManager {
      * @return the standalone profile configuration directory
      */
     public File getStandaloneProfileConfigurationDirectory() {
-        return environment.getProperty("cas.standalone.configurationDirectory", File.class, DEFAULT_CAS_CONFIG_DIRECTORY);
+        val file = environment.getProperty("cas.standalone.configurationDirectory", File.class);
+        if (file != null && file.exists()) {
+            LOGGER.trace("Received standalone configuration directory [{}]", file);
+            return file;
+        }
+
+        return Arrays.stream(DEFAULT_CAS_CONFIG_DIRECTORIES)
+            .filter(File::exists)
+            .findFirst()
+            .orElse(null);
     }
 
     /**
