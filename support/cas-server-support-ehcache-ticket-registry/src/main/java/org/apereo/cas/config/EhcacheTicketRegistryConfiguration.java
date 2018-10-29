@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cache.ehcache.EhCacheCacheManager;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -162,5 +163,16 @@ public class EhcacheTicketRegistryConfiguration {
             LOGGER.debug("The following caches are available: [{}]", (Object[]) manager.getCacheNames());
         }
         return new EhCacheTicketRegistry(ticketCatalog, manager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
+    }
+
+    /**
+     * This bean is used by the spring boot cache actuator which spring boot admin can use to clear caches.
+     * Actuator needs to be exposed in order for this bean to be used.
+     * @param ehcacheTicketCacheManager EhCache cache manager to be wrapped by spring cache manager.
+     * @return Spring EhCacheCacheManager that wraps EhCache CacheManager
+     */
+    @Bean
+    public EhCacheCacheManager ehCacheCacheManager(@Autowired final CacheManager ehcacheTicketCacheManager) {
+        return new EhCacheCacheManager(ehcacheTicketCacheManager);
     }
 }
