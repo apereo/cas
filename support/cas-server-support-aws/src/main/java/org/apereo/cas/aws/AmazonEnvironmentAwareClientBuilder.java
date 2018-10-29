@@ -88,7 +88,7 @@ public class AmazonEnvironmentAwareClientBuilder {
             region = currentRegion.getName();
         }
         var regionOverride = getSetting("regionOverride");
-        if (StringUtils.isNotBlank(regionOverride)) {
+        if (StringUtils.isNotBlank(regionOverride) && currentRegion != null) {
             regionOverride = currentRegion.getName();
         }
         val finalRegion = StringUtils.defaultIfBlank(regionOverride, region);
