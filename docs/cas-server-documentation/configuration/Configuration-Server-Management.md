@@ -44,7 +44,7 @@ to the list of active profiles (i.e. `spring.profiles.active=standalone,testldap
 
 Configuration files are loaded in the following order where `spring.profiles.active=standalone,profile1,profile2`. Note that the last configuration file loaded will override any duplicate properties from configuration files loaded earlier:
 
-1.`application.(properties|yml|yaml) `
+1. `application.(properties|yml|yaml) `
 2. (lower case) `spring.application.name.(properties|yml|yaml)`  
 3. `spring.application.name.(properties|yml|yaml)`
 4. `application-standalone.(properties|yml|yaml)`
@@ -240,8 +240,7 @@ Support is provided via the following dependency in the WAR overlay:
 ```
 
 Note that to access and review the collection of CAS properties,
-you will need to use [the CAS administrative interfaces](../installation/Monitoring-Statistics.html), or you may
-also use your own native tooling for MongoDB to configure and inject settings.
+you will need to use your own native tooling for MongoDB to configure and inject settings.
 
 MongoDb documents are required to be found in the collection `MongoDbProperty`, as the following document:
 
