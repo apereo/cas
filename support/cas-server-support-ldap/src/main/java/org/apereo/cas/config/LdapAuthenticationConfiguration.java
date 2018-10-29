@@ -161,7 +161,7 @@ public class LdapAuthenticationConfiguration {
         return handlers;
     }
 
-    private AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyConfiguration>
+    private static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyConfiguration>
         createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created LDAP password policy handling strategy based on blacklisted authentication result codes");
@@ -178,9 +178,9 @@ public class LdapAuthenticationConfiguration {
         return new DefaultPasswordPolicyHandlingStrategy();
     }
 
-    private PasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
-                                                                              final Authenticator authenticator,
-                                                                              final Multimap<String, Object> attributes) {
+    private static PasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapPasswordPolicyProperties passwordPolicy,
+                                                                                     final Authenticator authenticator,
+                                                                                     final Multimap<String, Object> attributes) {
         val cfg = new PasswordPolicyConfiguration(passwordPolicy);
         val handlers = new HashSet<>();
 

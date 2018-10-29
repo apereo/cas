@@ -89,7 +89,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         return config;
     }
 
-    private WsFederationAttributeMutator getAttributeMutatorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
+    private static WsFederationAttributeMutator getAttributeMutatorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
         val location = wsfed.getAttributeMutatorScript().getLocation();
         if (location != null) {
             return new GroovyWsFederationAttributeMutator(location);
@@ -97,13 +97,13 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         return WsFederationAttributeMutator.noOp();
     }
 
-    private WsFederationCookieGenerator getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
+    private static WsFederationCookieGenerator getCookieGeneratorForWsFederationConfig(final WsFederationDelegationProperties wsfed) {
         val cookie = wsfed.getCookie();
         val cipher = getCipherExecutorForWsFederationConfig(cookie);
         return new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher, cookie), cookie);
     }
 
-    private CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {
+    private static CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {
         val crypto = cookie.getCrypto();
         if (crypto.isEnabled()) {
             return new WsFederationCookieCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());

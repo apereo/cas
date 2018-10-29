@@ -95,7 +95,7 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
         return null;
     }
 
-    private SingleLogoutUrl finalizeSingleLogoutUrl(final SingleLogoutService sloService, final RegisteredServiceLogoutType type) {
+    private static SingleLogoutUrl finalizeSingleLogoutUrl(final SingleLogoutService sloService, final RegisteredServiceLogoutType type) {
         val location = StringUtils.isBlank(sloService.getResponseLocation()) ? sloService.getLocation() : sloService.getResponseLocation();
         val url = new SingleLogoutUrl(location, type);
         url.getProperties().put(PROPERTY_NAME_SINGLE_LOGOUT_BINDING, sloService.getBinding());

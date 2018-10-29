@@ -194,7 +194,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         return list;
     }
 
-    private AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
+    private static AbstractJdbcPersonAttributeDao createJdbcPersonAttributeDao(final JdbcPrincipalAttributesProperties jdbc) {
         if (jdbc.isSingleRow()) {
             LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
             return new SingleRowJdbcPersonAttributeDao(
@@ -350,7 +350,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         return mergingDao;
     }
 
-    private IAttributeMerger getAttributeMerger(final String merger) {
+    private static IAttributeMerger getAttributeMerger(final String merger) {
         switch (merger.toLowerCase()) {
             case "merge":
                 return new MultivaluedAttributeMerger();

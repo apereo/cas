@@ -79,7 +79,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
         this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }
 
-    private TicketGrantingTicket getTicketGrantingTicket() {
+    private static TicketGrantingTicket getTicketGrantingTicket() {
         return new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new HardTimeoutExpirationPolicy(10));
     }
 }

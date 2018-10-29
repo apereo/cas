@@ -169,7 +169,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     }
 
     @SneakyThrows
-    private String decryptCredential(final String cred) {
+    private static String decryptCredential(final String cred) {
         val factory = new PrivateKeyFactoryBean();
         factory.setAlgorithm("RSA");
         factory.setLocation(new ClassPathResource("keys/RSA4096Private.p8"));

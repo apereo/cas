@@ -67,7 +67,7 @@ public class HazelcastConfigurationFactory {
      * @param mapConfigs the map configs
      * @return the config
      */
-    public Config build(final BaseHazelcastProperties hz, final Map<String, MapConfig> mapConfigs) {
+    public static Config build(final BaseHazelcastProperties hz, final Map<String, MapConfig> mapConfigs) {
         val cfg = build(hz);
         cfg.setMapConfigs(mapConfigs);
         return finalizeConfig(cfg, hz);
@@ -80,7 +80,7 @@ public class HazelcastConfigurationFactory {
      * @param mapConfig the map config
      * @return the config
      */
-    public Config build(final BaseHazelcastProperties hz, final MapConfig mapConfig) {
+    public static Config build(final BaseHazelcastProperties hz, final MapConfig mapConfig) {
         val cfg = new HashMap<String, MapConfig>();
         cfg.put(mapConfig.getName(), mapConfig);
         return build(hz, cfg);
@@ -92,7 +92,7 @@ public class HazelcastConfigurationFactory {
      * @param hz the hz
      * @return the config
      */
-    public Config build(final BaseHazelcastProperties hz) {
+    public static Config build(final BaseHazelcastProperties hz) {
         val cluster = hz.getCluster();
         val config = new Config();
 
@@ -116,7 +116,7 @@ public class HazelcastConfigurationFactory {
             .setProperty(BaseHazelcastProperties.MAX_HEARTBEAT_SECONDS_PROP, String.valueOf(cluster.getMaxNoHeartbeatSeconds()));
     }
 
-    private JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster, final NetworkConfig networkConfig) {
+    private static JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster, final NetworkConfig networkConfig) {
         val joinConfig = new JoinConfig();
 
         LOGGER.debug("Disabling multicast and TCP/IP configuration for discovery");
@@ -131,10 +131,10 @@ public class HazelcastConfigurationFactory {
         return joinConfig;
     }
 
-    private DiscoveryStrategyConfig locateDiscoveryStrategyConfig(final HazelcastClusterProperties cluster,
-                                                                  final JoinConfig joinConfig,
-                                                                  final Config config,
-                                                                  final NetworkConfig networkConfig) {
+    private static DiscoveryStrategyConfig locateDiscoveryStrategyConfig(final HazelcastClusterProperties cluster,
+                                                                         final JoinConfig joinConfig,
+                                                                         final Config config,
+                                                                         final NetworkConfig networkConfig) {
         val serviceLoader = ServiceLoader.load(HazelcastDiscoveryStrategy.class);
         val it = serviceLoader.iterator();
         if (it.hasNext()) {
@@ -144,7 +144,7 @@ public class HazelcastConfigurationFactory {
         throw new IllegalArgumentException("Could not create discovery strategy configuration. No discovery provider is defined in the settings");
     }
 
-    private JoinConfig createDefaultJoinConfig(final Config config, final HazelcastClusterProperties cluster) {
+    private static JoinConfig createDefaultJoinConfig(final Config config, final HazelcastClusterProperties cluster) {
         val tcpIpConfig = new TcpIpConfig()
             .setEnabled(cluster.isTcpipEnabled())
             .setMembers(cluster.getMembers())
@@ -172,7 +172,7 @@ public class HazelcastConfigurationFactory {
             .setTcpIpConfig(tcpIpConfig);
     }
 
-    private Config finalizeConfig(final Config config, final BaseHazelcastProperties hz) {
+    private static Config finalizeConfig(final Config config, final BaseHazelcastProperties hz) {
         if (StringUtils.hasText(hz.getCluster().getPartitionMemberGroupType())) {
             val partitionGroupConfig = config.getPartitionGroupConfig();
             val type = PartitionGroupConfig.MemberGroupType.valueOf(
