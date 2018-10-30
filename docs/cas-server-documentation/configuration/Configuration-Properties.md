@@ -3444,7 +3444,7 @@ The default options are available for hostname verification:
 
 ## Service Registry
 
-See [this guide](../installation/Service-Management.html) to learn more.
+See [this guide](../services/Service-Management.html) to learn more.
 
 ```properties
 # cas.serviceRegistry.watcherEnabled=true
@@ -3473,7 +3473,7 @@ to locate JSON service definitions, decide how those resources should be found.
 # cas.serviceRegistry.json.location=classpath:/services
 ```
 
-To learn more about this topic, [please review this guide](../installation/JSON-Service-Management.html).
+To learn more about this topic, [please review this guide](../services/JSON-Service-Management.html).
 
 ### YAML Service Registry
 
@@ -3484,11 +3484,11 @@ to locate YAML service definitions, decide how those resources should be found.
 # cas.serviceRegistry.yaml.location=classpath:/services
 ```
 
-To learn more about this topic, [please review this guide](../installation/YAML-Service-Management.html).
+To learn more about this topic, [please review this guide](../services/YAML-Service-Management.html).
 
 ### RESTful Service Registry
 
-To learn more about this topic, [please review this guide](../installation/REST-Service-Management.html).
+To learn more about this topic, [please review this guide](../services/REST-Service-Management.html).
 
 ```properties
 # cas.serviceRegistry.rest.url=https://example.api.org
@@ -3498,7 +3498,7 @@ To learn more about this topic, [please review this guide](../installation/REST-
 
 ### CouchDb Service Registry
 
-To learn more about this topic, [please review this guide](../installation/CouchDb-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.serviceRegistry`.
+To learn more about this topic, [please review this guide](../services/CouchDb-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.serviceRegistry`.
 
 ### Redis Service Registry
 
@@ -3506,7 +3506,7 @@ To learn more about this topic, [please review this guide](../installation/Redis
 
 ### CosmosDb Service Registry
 
-To learn more about this topic, [please review this guide](../installation/CosmosDb-Service-Management.html).
+To learn more about this topic, [please review this guide](../services/CosmosDb-Service-Management.html).
 
 ```properties
 # cas.serviceRegistry.cosmosDb.uri=
@@ -3520,7 +3520,7 @@ To learn more about this topic, [please review this guide](../installation/Cosmo
 
 ### DynamoDb Service Registry
 
-To learn more about this topic, [please review this guide](../installation/DynamoDb-Service-Management.html).
+To learn more about this topic, [please review this guide](../services/DynamoDb-Service-Management.html).
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
 under the configuration key `cas.serviceRegistry`.
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
@@ -3532,13 +3532,13 @@ under the configuration key `cas.serviceRegistry.dynamoDb`.
 
 ### MongoDb Service Registry
 
-Store CAS service definitions inside a MongoDb instance. To learn more about this topic, [please review this guide](../installation/Mongo-Service-Management.html).
+Store CAS service definitions inside a MongoDb instance. To learn more about this topic, [please review this guide](../services/MongoDb-Service-Management.html).
  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.serviceRegistry`.
 
 ### LDAP Service Registry
 
 Control how CAS services should be found inside an LDAP instance.
-To learn more about this topic, [please review this guide](../installation/LDAP-Service-Management.html).  LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.serviceRegistry.ldap`.
+To learn more about this topic, [please review this guide](../services/LDAP-Service-Management.html).  LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.serviceRegistry.ldap`.
 
 ```properties
 # cas.serviceRegistry.ldap.serviceDefinitionAttribute=description
@@ -3551,21 +3551,21 @@ To learn more about this topic, [please review this guide](../installation/LDAP-
 ### Couchbase Service Registry
 
 Control how CAS services should be found inside a Couchbase instance.
-To learn more about this topic, [please review this guide](../installation/Couchbase-Service-Management.html). 
+To learn more about this topic, [please review this guide](../services/Couchbase-Service-Management.html). 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) 
 under the configuration key `cas.serviceRegistry.couchbase`.
 
 ### Database Service Registry
 
 Control how CAS services should be found inside a database instance.
-To learn more about this topic, [please review this guide](../installation/JPA-Service-Management.html). 
+To learn more about this topic, [please review this guide](../services/JPA-Service-Management.html). 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
 under the configuration key `cas.serviceRegistry.jpa`.
 
 ## Service Registry Replication
 
 Control how CAS services definition files should be replicated across a CAS cluster.
-To learn more about this topic, [please review this guide](../installation/Configuring-Service-Replication.html)
+To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html)
 
 Replication modes may be configured per the following options:
 
@@ -3582,7 +3582,7 @@ Replication modes may be configured per the following options:
 ## Service Registry Replication Hazelcast
 
 Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
-To learn more about this topic, [please review this guide](../installation/Configuring-Service-Replication.html).
+To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html).
 
 Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.serviceRegistry.stream.hazelcast.config`.
 

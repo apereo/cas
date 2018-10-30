@@ -88,7 +88,7 @@ The following options may be used to store services in CAS.
 | Memory           | [See this guide](InMemory-Service-Management.html).   | Store service definitions XML stored in memory. Changes require CAS repackaging and server restarts
 | JSON             | [See this guide](JSON-Service-Management.html).       | Store service definitions in flat JSON files. HA deployments require replication of service definitions.
 | YAML             | [See this guide](YAML-Service-Management.html).       | Same as `JSON`.
-| MongoDb          | [See this guide](Mongo-Service-Management.html).      | Store service definitions in MongoDb. Candidate for HA deployments.
+| MongoDb          | [See this guide](MongoDb-Service-Management.html).      | Store service definitions in MongoDb. Candidate for HA deployments.
 | Redis            | [See this guide](Redis-Service-Management.html).      | Store service definitions in Redis. Candidate for HA deployments.
 | LDAP             | [See this guide](LDAP-Service-Management.html).       | Store service definitions in a directory server. Candidate for HA deployments.
 | JPA              | [See this guide](JPA-Service-Management.html).        | Store service definitions in a relational database (Oracle, MySQL, etc). Candidate for HA deployments.

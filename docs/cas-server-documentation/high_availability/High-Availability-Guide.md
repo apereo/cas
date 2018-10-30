@@ -226,7 +226,7 @@ so that tickets are encrypted and signed on replication attempts to prevent snif
 ### Distributing Service Definitions
 
 In an HA environment, service definitions must be replicated and accessible by all nodes in 
-the CAS cluster. Typically, this may be achieved by leveraging centralized [registry implementations](../installation/Service-Management.html) that are backed 
+the CAS cluster. Typically, this may be achieved by leveraging centralized [registry implementations](../services/Service-Management.html) that are backed 
 by JPA, LDAP, MongoDb, etc. Registries that are backed by the file system need to devise a process of ensuring proper file 
 replication, either manually or via a background daemon.
 

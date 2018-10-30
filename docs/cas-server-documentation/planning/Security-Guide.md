@@ -134,7 +134,7 @@ decentralized security policy model.) Some highlights of service management cont
 
 The service management facility is comprised of a service registry containing one or more registered services, each
 of which specifies the management controls above. The service registry can be controlled via static configuration files,
-a Web user interface, or both. See the [Service Management](../installation/Service-Management.html) section for more
+a Web user interface, or both. See the [Service Management](../services/Service-Management.html) section for more
 information.
 
 <div class="alert alert-warning"><strong>Authorized Services</strong><p>
