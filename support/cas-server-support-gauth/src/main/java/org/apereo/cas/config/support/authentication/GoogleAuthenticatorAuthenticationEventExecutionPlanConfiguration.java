@@ -114,7 +114,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider googleAuthenticatorAuthenticationProvider() {
+    public MultifactorAuthenticationProvider googleAuthenticatorMultifactorAuthenticationProvider() {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
         p.setBypassEvaluator(googleBypassEvaluator());
@@ -130,7 +130,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             googleAuthenticatorAuthenticationHandler(),
-            googleAuthenticatorAuthenticationProvider().getId()
+            googleAuthenticatorMultifactorAuthenticationProvider().getId()
         );
     }
 

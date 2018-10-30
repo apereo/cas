@@ -39,8 +39,6 @@ import java.util.Map;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class U2FConfiguration {
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
