@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Slf4j
 @ToString
 @Getter
-@Endpoint(id = "sso-sessions", enableByDefault = false)
+@Endpoint(id = "ssoSessions", enableByDefault = false)
 public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
 
     private static final String STATUS = "status";

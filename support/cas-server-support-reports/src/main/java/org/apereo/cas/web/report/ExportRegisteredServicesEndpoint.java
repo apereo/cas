@@ -29,7 +29,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Endpoint(id = "export-registered-services", enableByDefault = false)
+@Endpoint(id = "exportRegisteredServices", enableByDefault = false)
 public class ExportRegisteredServicesEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
 

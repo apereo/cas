@@ -18,7 +18,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Endpoint(id = "audit-log", enableByDefault = false)
+@Endpoint(id = "auditLog", enableByDefault = false)
 public class AuditLogEndpoint extends BaseCasMvcEndpoint {
 
     private final AuditTrailExecutionPlan auditTrailManager;

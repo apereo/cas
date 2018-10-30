@@ -25,7 +25,7 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Endpoint(id = "configuration-metadata", enableByDefault = false)
+@Endpoint(id = "configurationMetadata", enableByDefault = false)
 @RequiredArgsConstructor
 public class CasConfigurationMetadataServerEndpoint {
     private final CasConfigurationMetadataRepository repository;

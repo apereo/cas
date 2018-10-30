@@ -23,7 +23,7 @@ import java.util.Set;
  * @since 5.3.0
  */
 @RequiredArgsConstructor
-@Endpoint(id = "multifactor-trusted-devices", enableByDefault = false)
+@Endpoint(id = "multifactorTrustedDevices", enableByDefault = false)
 public class MultifactorTrustedDevicesReportEndpoint {
     private final MultifactorAuthenticationTrustStorage mfaTrustEngine;
 

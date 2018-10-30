@@ -18,7 +18,7 @@ import java.util.Collection;
  * @since 6.0.0
  */
 @RequiredArgsConstructor
-@Endpoint(id = "gauth-credential-repository", enableByDefault = false)
+@Endpoint(id = "gauthCredentialRepository", enableByDefault = false)
 public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint {
     private final OneTimeTokenCredentialRepository repository;
 

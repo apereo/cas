@@ -26,7 +26,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Endpoint(id = "release-attributes", enableByDefault = false)
+@Endpoint(id = "releaseAttributes", enableByDefault = false)
 public class CasReleaseAttributesReportEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
     private final AuthenticationSystemSupport authenticationSystemSupport;
