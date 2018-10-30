@@ -86,17 +86,20 @@ public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecu
 
     @Bean
     @ConditionalOnMissingBean(name = "acceptUserGraphicsForAuthenticationAction")
+    @RefreshScope
     public Action acceptUserGraphicsForAuthenticationAction() {
         return new AcceptUserGraphicsForAuthenticationAction();
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "displayUserGraphicsBeforeAuthenticationAction")
     public Action displayUserGraphicsBeforeAuthenticationAction() {
         return new DisplayUserGraphicsBeforeAuthenticationAction(userGraphicalAuthenticationRepository());
     }
 
     @Bean
+    @RefreshScope
     public Action initializeLoginAction() {
         return new PrepareForGraphicalAuthenticationAction(servicesManager.getIfAvailable());
     }
