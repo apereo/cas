@@ -379,6 +379,15 @@
             <property name="message" value="Test suite class names should end with TestSuite (i.e. AllAuthenticationTestsSuite)"/>
         </module>
 
+
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="zero-length-array"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using a zero-length array is not recommended."/>
+            <property name="severity" value="error"/>
+            <property name="format" value="new\s+(String|Object)\[\]\s*\{\}"/>
+            <property name="message" value="Use constants in org.apache.commons.lang3.ArrayUtils instead of declaring zero-length arrays"/>
+        </module>
+
         <module name="RegexpSinglelineJava">
             <property name="id" value="streamed-foreach-loop"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using stream().forEach() is unnecessary where forEach() can be used directly."/>
