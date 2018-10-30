@@ -79,7 +79,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider authyAuthenticatorAuthenticationProvider() {
+    public MultifactorAuthenticationProvider authyAuthenticatorMultifactorAuthenticationProvider() {
         val p = new AuthyMultifactorAuthenticationProvider();
         p.setBypassEvaluator(authyBypassEvaluator());
         p.setFailureMode(casProperties.getAuthn().getMfa().getAuthy().getFailureMode());
@@ -100,7 +100,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
             authyAuthenticationHandler(),
-            authyAuthenticatorAuthenticationProvider().getId()
+            authyAuthenticatorMultifactorAuthenticationProvider().getId()
         );
     }
 

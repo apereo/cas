@@ -28,7 +28,8 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     private final U2F u2f = new U2F();
     private final U2FDeviceRepository u2FDeviceRepository;
 
-    public U2FAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public U2FAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                    final PrincipalFactory principalFactory,
                                     final U2FDeviceRepository u2FDeviceRepository) {
         super(name, servicesManager, principalFactory, null);
         this.u2FDeviceRepository = u2FDeviceRepository;
@@ -44,7 +45,7 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
             throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
         }
         val p = authentication.getPrincipal();
-
+        
         val authenticateResponse = SignResponse.fromJson(tokenCredential.getToken());
         val authJson = u2FDeviceRepository.getDeviceAuthenticationRequest(authenticateResponse.getRequestId(), p.getId());
         val authenticateRequest = SignRequestData.fromJson(authJson);
