@@ -19,7 +19,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Endpoint(id = "resolve-attributes", enableByDefault = false)
+@Endpoint(id = "resolveAttributes", enableByDefault = false)
 public class CasResolveAttributesReportEndpoint extends BaseCasMvcEndpoint {
     private final PrincipalResolver defaultPrincipalResolver;
 

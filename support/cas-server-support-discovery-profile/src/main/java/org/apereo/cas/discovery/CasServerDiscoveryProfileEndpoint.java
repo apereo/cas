@@ -21,7 +21,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Endpoint(id = "discovery-profile")
+@Endpoint(id = "discoveryProfile")
 public class CasServerDiscoveryProfileEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
 

@@ -6,7 +6,7 @@ category: Webflow Management
 
 # Webflow Customization
 
-CAS uses [Spring Webflow](http://projects.spring.io/spring-webflow) to do "script" processing of login and logout protocols.
+CAS uses [Spring Webflow](http://projects.spring.io/spring-webflow) to do *script* processing of login and logout protocols.
 Spring Web Flow builds on Spring MVC and allows implementing the "flows" of a web application. A flow encapsulates a sequence
 of steps that guide a user through the execution of some business task. It spans multiple HTTP requests, has state, deals with
  transactional data, is reusable, and may be dynamic and long-running in nature. Each flow may contain among many other settings the following major elements:

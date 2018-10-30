@@ -20,7 +20,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Endpoint(id = "registered-services", enableByDefault = false)
+@Endpoint(id = "registeredServices", enableByDefault = false)
 public class RegisteredServicesEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
 
