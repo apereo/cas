@@ -3,6 +3,8 @@ description = "Apereo CAS Configuration - JDBC"
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-jpa-util")
-    provided project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-configuration-api")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

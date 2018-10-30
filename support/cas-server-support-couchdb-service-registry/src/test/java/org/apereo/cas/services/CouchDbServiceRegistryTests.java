@@ -1,9 +1,12 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.category.CouchDbCategory;
+import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CouchDbServiceRegistryConfiguration;
 import org.apereo.cas.couchdb.core.CouchDbConnectorFactory;
 import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -13,8 +16,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This is {@link CouchDbServiceRegistryTests}.
@@ -25,6 +28,7 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    CasCouchDbCoreConfiguration.class,
     CouchDbServiceRegistryConfiguration.class
 },
     properties = {
@@ -32,6 +36,7 @@ import java.util.Collection;
         "cas.serviceRegistry.couchDb.username=",
         "cas.serviceRegistry.couchDb.password="
     })
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @Category(CouchDbCategory.class)
 public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
@@ -53,7 +58,7 @@ public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
-        return Arrays.asList(RegexRegisteredService.class);
+        return Collections.singletonList(RegexRegisteredService.class);
     }
 
     @Override

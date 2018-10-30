@@ -115,13 +115,13 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         assertTrue(url.isEmpty());
     }
 
-    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) {
+    private static DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) {
         return createDefaultSingleLogoutServiceLogoutUrlBuilder(allowLocalLogoutUrls, null, true);
     }
 
-    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls,
-                                                                                                        final String authorityValidationRegEx,
-                                                                                                        final boolean authorityValidationRegExCaseSensitive) {
+    private static DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls,
+                                                                                                               final String authorityValidationRegEx,
+                                                                                                               final boolean authorityValidationRegExCaseSensitive) {
         val validator = new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx,
             authorityValidationRegExCaseSensitive).getObject();
         return new DefaultSingleLogoutServiceLogoutUrlBuilder(validator);

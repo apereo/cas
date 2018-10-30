@@ -1,13 +1,12 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.MongoDbPropertySource;
 import org.apereo.cas.MongoDbPropertySourceLocator;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -19,28 +18,37 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 @Configuration("mongoDbCloudConfigBootstrapConfiguration")
-@ConditionalOnProperty(name = "cas.spring.cloud.mongo.uri")
 public class MongoDbCloudConfigBootstrapConfiguration {
-
+    /**
+     * MongoDb CAS configuration key prefix.
+     */
+    public static final String CAS_CONFIGURATION_MONGODB_URI = "cas.spring.cloud.mongo.uri";
 
     @Autowired
     private ConfigurableEnvironment environment;
 
     @Bean
-    @SneakyThrows
     public MongoDbPropertySourceLocator mongoDbPropertySourceLocator() {
-        val mongoTemplate = mongoDbCloudConfigurationTemplate();
-        if (!mongoTemplate.collectionExists(MongoDbPropertySource.class.getSimpleName())) {
-            mongoTemplate.createCollection(MongoDbPropertySource.class.getSimpleName());
+        try {
+            val mongoTemplate = mongoDbCloudConfigurationTemplate();
+            return new MongoDbPropertySourceLocator(mongoTemplate);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new BeanCreationException("mongoDbPropertySourceLocator", e.getMessage(), e);
         }
-        return new MongoDbPropertySourceLocator(mongoTemplate);
     }
 
     @Bean
     public MongoTemplate mongoDbCloudConfigurationTemplate() {
-        val factory = new MongoDbConnectionFactory();
-        val uri = environment.getProperty("cas.spring.cloud.mongo.uri");
-        return factory.buildMongoTemplate(uri);
+        try {
+            val factory = new MongoDbConnectionFactory();
+            val uri = environment.getProperty(CAS_CONFIGURATION_MONGODB_URI);
+            return factory.buildMongoTemplate(uri);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new BeanCreationException("mongoDbCloudConfigurationTemplate", e.getMessage(), e);
+        }
     }
 }

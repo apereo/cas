@@ -186,7 +186,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         return this.configurationCipherExecutor.decode(properties, new Object[]{});
     }
 
-    private List<String> getApplicationProfiles(final Environment environment) {
+    private static List<String> getApplicationProfiles(final Environment environment) {
         return Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toList());
     }
 }

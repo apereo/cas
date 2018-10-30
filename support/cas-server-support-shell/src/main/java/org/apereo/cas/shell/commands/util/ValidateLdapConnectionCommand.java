@@ -40,7 +40,7 @@ public class ValidateLdapConnectionCommand {
      * @param userAttributes the user attributes
      */
     @ShellMethod(key = "validate-ldap", value = "Test connections to an LDAP server to verify connectivity, SSL, etc")
-    public void validateLdap(
+    public static void validateLdap(
         @ShellOption(value = {"url"},
             help = "LDAP URL to test, comma-separated.") final String url,
         @ShellOption(value = {"bindDn"},
@@ -62,11 +62,11 @@ public class ValidateLdapConnectionCommand {
         }
     }
 
-    private void connect(final String ldapUrl, final String bindDn,
-                         final String bindCredential,
-                         final String baseDn, final String searchFilter,
-                         final String userAttributes,
-                         final String userPassword) throws Exception {
+    private static void connect(final String ldapUrl, final String bindDn,
+                                final String bindCredential,
+                                final String baseDn, final String searchFilter,
+                                final String userAttributes,
+                                final String userPassword) throws Exception {
         val pair = getContext(ldapUrl, bindDn, bindCredential);
         if (pair == null) {
             LOGGER.error("Could not connect to any of the provided LDAP urls based on the given credentials.");
@@ -124,7 +124,7 @@ public class ValidateLdapConnectionCommand {
         }
     }
 
-    private SearchControls getSearchControls(final String[] attrIDs) {
+    private static SearchControls getSearchControls(final String[] attrIDs) {
         val ctls = new SearchControls();
         ctls.setDerefLinkFlag(true);
         ctls.setTimeLimit(TIMEOUT);
@@ -133,7 +133,7 @@ public class ValidateLdapConnectionCommand {
         return ctls;
     }
 
-    private Pair<String, DirContext> getContext(final String ldapUrl, final String bindDn, final String bindCredential) {
+    private static Pair<String, DirContext> getContext(final String ldapUrl, final String bindDn, final String bindCredential) {
         val urls = StringUtils.commaDelimitedListToSet(ldapUrl);
         for (val url : urls) {
             if (ldapUrl != null && !ldapUrl.isEmpty()) {
@@ -152,7 +152,7 @@ public class ValidateLdapConnectionCommand {
     }
 
     @SuppressWarnings("JdkObsolete")
-    private Hashtable<String, String> getLdapDirectoryContextSettings(final String bindDn, final String bindCredential, final String url) {
+    private static Hashtable<String, String> getLdapDirectoryContextSettings(final String bindDn, final String bindCredential, final String url) {
         val env = new Hashtable<String, String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(Context.PROVIDER_URL, url.trim());

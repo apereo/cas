@@ -75,7 +75,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         return super.getAttributesInternal(principal, attributes, service);
     }
 
-    private String getEntityIdFromRequest(final HttpServletRequest request) {
+    private static String getEntityIdFromRequest(final HttpServletRequest request) {
         val entityId = request.getParameter(SamlProtocolConstants.PARAMETER_ENTITY_ID);
         if (StringUtils.isNotBlank(entityId)) {
             return entityId;

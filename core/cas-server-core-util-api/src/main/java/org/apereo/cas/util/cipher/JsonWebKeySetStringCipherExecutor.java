@@ -183,7 +183,7 @@ public class JsonWebKeySetStringCipherExecutor extends BaseStringCipherExecutor 
         return findRsaJsonWebKey(keys, predicate);
     }
 
-    private Optional<RsaJsonWebKey> findRsaJsonWebKey(final List<JsonWebKey> keys, final Predicate<JsonWebKey> filter) {
+    private static Optional<RsaJsonWebKey> findRsaJsonWebKey(final List<JsonWebKey> keys, final Predicate<JsonWebKey> filter) {
         return keys
             .stream()
             .filter(key -> key instanceof RsaJsonWebKey && filter.test(key))

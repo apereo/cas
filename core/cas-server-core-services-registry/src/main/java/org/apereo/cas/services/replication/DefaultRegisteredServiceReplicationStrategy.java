@@ -158,7 +158,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
         services.add(cachedService);
     }
 
-    private boolean isRegisteredServiceMarkedAsDeletedInCache(final DistributedCacheObject<RegisteredService> item) {
+    private static boolean isRegisteredServiceMarkedAsDeletedInCache(final DistributedCacheObject<RegisteredService> item) {
         if (item.containsProperty("event")) {
             val event = item.getProperty("event", BaseCasRegisteredServiceEvent.class);
             return event instanceof CasRegisteredServiceDeletedEvent;

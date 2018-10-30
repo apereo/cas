@@ -44,7 +44,11 @@ The following settings could be used to extend CAS with arbitrary configuration 
 ### Standalone
 
 CAS by default will attempt to locate settings and properties inside a given directory indicated
-under the setting name `cas.standalone.configurationDirectory` and otherwise falls back to using `/etc/cas/config`.
+under the setting name `cas.standalone.configurationDirectory` and otherwise falls back to using:
+
+- `/etc/cas/config`
+- `/opt/cas/config`
+- `/var/cas/config`
 
 There also exists a `cas.standalone.configurationFile` which can be used to directly feed a collection of properties
 to CAS in form of a file or classpath resource. This is specially useful in cases where a bare CAS server is deployed in the cloud without the extra ceremony of a configuration server or an external directory for that matter and the deployer wishes to avoid overriding embedded configuration files.
@@ -112,14 +116,73 @@ Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp
 ```properties
 # spring.cloud.vault.host=127.0.0.1
 # spring.cloud.vault.port=8200
-# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
 # spring.cloud.vault.connectionTimeout=3000
 # spring.cloud.vault.readTimeout=5000
 # spring.cloud.vault.enabled=true
 # spring.cloud.vault.fail-fast=true
 # spring.cloud.vault.scheme=http
+```
+
+#### Token Authentication
+
+Tokens are the core method for authentication within Vault. Token authentication requires a static token to be provided.
+
+```properties
+# spring.cloud.vault.authentication=TOKEN
+# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
+```
+
+#### AppID Authentication
+
+Vault supports AppId authentication that consists of two hard to guess tokens. The AppId defaults to `spring.application.name` that is statically configured. The second token is the 
+UserId which is a part determined by the application, usually related to the runtime environment. Spring Cloud Vault Config supports IP address, Mac address and static 
+UserId’s (e.g. supplied via System properties). The IP and Mac address are represented as Hex-encoded SHA256 hash.
+
+Using IP addresses:
+
+```bash
+export IP_ADDRESS=`echo -n 192.168.99.1 | sha256sum`
+```
+
+```properties
+# spring.cloud.vault.authentication=APPID
+# spring.cloud.vault.app-id.user-id=$IP_ADDRESS
+```
+
+Using MAC address:
+
+```bash
+export $MAC_ADDRESS=`echo -n ABCDEFGH | sha256sum`
+```
+
+```properties
+# spring.cloud.vault.authentication=APPID
+# spring.cloud.vault.app-id.user-id=$MAC_ADDRESS
+# spring.cloud.vault.app-id.network-interface=eth0
+```
+
+#### Kubernetes Authentication
+
+Kubernetes authentication mechanism allows to authenticate with Vault using a Kubernetes Service Account Token. The authentication is role based and the role is bound to a service account name and a namespace.
+
+```properties
+# spring.cloud.vault.authentication=KUBERNETES
+# spring.cloud.vault.kubernetes.role=my-dev-role
+# spring.cloud.vault.kubernetes.service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+```
+
+#### Generic Backend v1
+
+```properties
 # spring.cloud.vault.generic.enabled=true
 # spring.cloud.vault.generic.backend=secret
+```
+
+#### KV Backend v2
+
+```properties
+# spring.cloud.vault.kv.enabled=true
+# spring.cloud.vault.kv.backend=secret
 ```
 
 ### MongoDb
@@ -909,7 +972,7 @@ function run(uid, logger) {
     // If you want to call back into Java, this is one way to do so
     var javaObj = new JavaImporter(org.yourorgname.yourpackagename);
     with (javaObj) {
-    	var objFromJava = JavaClassInPackage.someStaticMethod(uid);
+        var objFromJava = JavaClassInPackage.someStaticMethod(uid);
     }
 
     var map = {};
@@ -1338,6 +1401,19 @@ Email notifications settings are available [here](Configuration-Properties-Commo
 ## SMS Messaging
 
 To learn more about this topic, [please review this guide](../installation/SMS-Messaging-Configuration.html).
+
+### Groovy
+
+Send text messages using a Groovy script.
+
+```properties
+# cas.smsProvider.groovy.location=file:/etc/cas/config/SmsSender.groovy
+```
+
+### REST
+
+Send text messages using a RESTful API. RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.smsProvider.rest`.
 
 ### Twilio
 
@@ -4119,9 +4195,9 @@ Here is an example `scrape_config` to add to `prometheus.yml`:
 ```yaml
 scrape_configs:
   - job_name: 'spring'
-	metrics_path: '/actuator/prometheus'
-	static_configs:
-	  - targets: ['HOST:PORT']
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['HOST:PORT']
 ``` 
 
 ### SignalFx

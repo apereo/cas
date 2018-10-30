@@ -28,7 +28,7 @@ public class CouchDbCasEventRepository extends AbstractCasEventRepository {
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    private Collection<CasEvent> castEvents(final Collection<CouchDbCasEvent> events) {
+    private static Collection<CasEvent> castEvents(final Collection<CouchDbCasEvent> events) {
         return events.stream().map(event -> (CasEvent) event).collect(Collectors.toSet());
     }
 

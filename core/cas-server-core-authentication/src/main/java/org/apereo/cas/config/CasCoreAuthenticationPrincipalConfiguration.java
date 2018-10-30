@@ -119,7 +119,7 @@ public class CasCoreAuthenticationPrincipalConfiguration implements PrincipalRes
     @Override
     public void configurePrincipalResolutionExecutionPlan(final PrincipalResolutionExecutionPlan plan) {
         if (!Objects.requireNonNull(attributeRepositories.getIfAvailable()).isEmpty()) {
-            LOGGER.debug("Attribute repository sources are defined and available for person-directory principal resolution chain. ");
+            LOGGER.trace("Attribute repository sources are defined and available for person-directory principal resolution chain. ");
             plan.registerPrincipalResolver(personDirectoryAttributeRepositoryPrincipalResolver());
         } else {
             LOGGER.debug("Attribute repository sources are not available for person-directory principal resolution");

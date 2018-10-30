@@ -7,6 +7,8 @@ import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.config.cloud.SpringCloudConfigurationProperties;
+import org.apereo.cas.configuration.model.core.config.standalone.StandaloneConfigurationProperties;
 import org.apereo.cas.configuration.model.core.events.EventsProperties;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
@@ -14,7 +16,6 @@ import org.apereo.cas.configuration.model.core.rest.RestProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.core.slo.SloProperties;
 import org.apereo.cas.configuration.model.core.sso.SsoProperties;
-import org.apereo.cas.configuration.model.core.standalone.StandaloneConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpRequestProperties;
@@ -306,4 +307,10 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private StandaloneConfigurationProperties standalone = new StandaloneConfigurationProperties();
+
+    /**
+     * Spring cloud configuration settings.
+     */
+    @NestedConfigurationProperty
+    private SpringCloudConfigurationProperties spring = new SpringCloudConfigurationProperties();
 }

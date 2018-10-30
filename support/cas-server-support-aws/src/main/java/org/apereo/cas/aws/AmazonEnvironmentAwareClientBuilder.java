@@ -88,7 +88,7 @@ public class AmazonEnvironmentAwareClientBuilder {
             region = currentRegion.getName();
         }
         var regionOverride = getSetting("regionOverride");
-        if (StringUtils.isNotBlank(regionOverride)) {
+        if (StringUtils.isNotBlank(regionOverride) && currentRegion != null) {
             regionOverride = currentRegion.getName();
         }
         val finalRegion = StringUtils.defaultIfBlank(regionOverride, region);
@@ -97,7 +97,7 @@ public class AmazonEnvironmentAwareClientBuilder {
         }
 
         val endpoint = getSetting("endpoint");
-        if (StringUtils.isNotBlank(endpoint) && StringUtils.isNotBlank(finalRegion)) {
+        if (StringUtils.isNotBlank(endpoint)) {
             builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, finalRegion));
         }
 
