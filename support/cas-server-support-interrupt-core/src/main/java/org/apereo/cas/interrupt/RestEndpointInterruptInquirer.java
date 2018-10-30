@@ -13,9 +13,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 /**
@@ -54,7 +56,9 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
                 restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
                 parameters, new HashMap<>());
             if (response != null && response.getEntity() != null) {
-                return MAPPER.readValue(response.getEntity().getContent(), InterruptResponse.class);
+                val content = response.getEntity().getContent();
+                val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                return MAPPER.readValue(result, InterruptResponse.class);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

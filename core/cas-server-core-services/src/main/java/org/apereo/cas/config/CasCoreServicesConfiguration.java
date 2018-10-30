@@ -191,18 +191,17 @@ public class CasCoreServicesConfiguration {
         val plan = serviceRegistryExecutionPlan();
         val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
 
+        val chainingRegistry = new ChainingServiceRegistry();
         if (plan.find(filter).isEmpty()) {
             LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-                + "Changes that are made to service definitions during runtime WILL be LOST when the web server is restarted. "
-                + "Ideally for production, you need to choose a storage option (JSON, JDBC, MongoDb, etc) to store and track service definitions.");
-
-            return getInMemoryRegisteredServices().map(list -> {
-                val services = new ArrayList<RegisteredService>(list);
-                LOGGER.debug("Found a list of registered services in the application context. Registering services [{}]", services);
-                return new ChainingServiceRegistry(new InMemoryServiceRegistry(services));
-            }).orElse(new ChainingServiceRegistry(new ArrayList<>()));
+                + "Changes that are made to service definitions during runtime WILL be LOST when the CAS server is restarted. "
+                + "Ideally for production, you should choose a storage option (JSON, JDBC, MongoDb, etc) to track service definitions.");
+            val services = getInMemoryRegisteredServices().orElse(new ArrayList<>());
+            chainingRegistry.addServiceRegistry(new InMemoryServiceRegistry(services));
         }
-        return new ChainingServiceRegistry(plan.getServiceRegistries());
+
+        chainingRegistry.addServiceRegistries(plan.getServiceRegistries());
+        return chainingRegistry;
     }
 
     private Optional<List<RegisteredService>> getInMemoryRegisteredServices() {

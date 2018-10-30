@@ -43,7 +43,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
         /**
          * AWS config settings.
          */
-        private AmazonConfiguration aws = new AmazonConfiguration();
+        private AmazonWebServicesConfiguration aws = new AmazonWebServicesConfiguration();
     }
 
     @RequiresModule(name = "cas-server-support-configuration-cloud-mongo")
@@ -90,13 +90,12 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-aws")
     @Getter
     @Setter
-    public static class AmazonConfiguration implements Serializable {
-        private static final long serialVersionUID = -124404249388429120L;
+    public static class BaseAmazonConfiguration implements Serializable {
+        private static final long serialVersionUID = -103104249388429120L;
 
         /**
          * Local address.
          */
-        @RequiredProperty
         private String localAddress;
 
         /**
@@ -120,7 +119,6 @@ public class SpringCloudConfigurationProperties implements Serializable {
         /**
          * region override.
          */
-        @RequiredProperty
         private String regionOverride;
 
         /**
@@ -128,6 +126,13 @@ public class SpringCloudConfigurationProperties implements Serializable {
          */
         @RequiredProperty
         private String endpoint;
+    }
+
+    @RequiresModule(name = "cas-server-support-aws")
+    @Getter
+    @Setter
+    public static class AmazonWebServicesConfiguration implements Serializable {
+        private static final long serialVersionUID = -124404249388429120L;
 
         /**
          * AWS secrets manager settings.
@@ -148,14 +153,14 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-configuration-cloud-aws-secretsmanager")
     @Getter
     @Setter
-    public static class AmazonSecretsManager extends AmazonConfiguration {
+    public static class AmazonSecretsManager extends BaseAmazonConfiguration {
         private static final long serialVersionUID = -124404249387429120L;
     }
 
     @RequiresModule(name = "cas-server-support-configuration-cloud-aws-s3")
     @Getter
     @Setter
-    public static class AmazonS3 extends AmazonConfiguration {
+    public static class AmazonS3 extends BaseAmazonConfiguration {
         private static final long serialVersionUID = -124404249387429120L;
         /**
          * Bucket name that holds the settings.
@@ -166,7 +171,7 @@ public class SpringCloudConfigurationProperties implements Serializable {
     @RequiresModule(name = "cas-server-support-configuration-cloud-dynamodb")
     @Getter
     @Setter
-    public static class AmazonDynamoDb extends AmazonConfiguration {
+    public static class AmazonDynamoDb extends BaseAmazonConfiguration {
         private static final long serialVersionUID = -123404249388429120L;
 
         /**
