@@ -27,8 +27,9 @@
                 <div>
                     <p/>
                 </div>
-                <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
-                       th:value="#{screen.welcome.button.login}" tabindex="4" type="submit" value="LOGIN"/>
+                <input class="btn btn-submit" accesskey="l"
+                       th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
+                <input type="hidden" name="_eventId_submit" value="LOGIN" />
             </div>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
