@@ -34,8 +34,7 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
 
     private String registrationUrl;
 
-    @NonNull
-    private DuoSecurityAuthenticationService duoAuthenticationService;
+    private @NonNull DuoSecurityAuthenticationService duoAuthenticationService;
 
     @Override
     public boolean isAvailable(final RegisteredService service) {

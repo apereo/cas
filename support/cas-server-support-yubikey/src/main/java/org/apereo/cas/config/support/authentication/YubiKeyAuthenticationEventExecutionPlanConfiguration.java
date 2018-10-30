@@ -76,7 +76,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             authenticationContextAttribute,
             yubikeyAuthenticationHandler(),
-            yubikeyAuthenticationProvider().getId()
+            yubikeyMultifactorAuthenticationProvider().getId()
         );
     }
 
@@ -179,7 +179,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider yubikeyAuthenticationProvider() {
+    public MultifactorAuthenticationProvider yubikeyMultifactorAuthenticationProvider() {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
         val p = new YubiKeyMultifactorAuthenticationProvider(yubicoClient(), httpClient.getIfAvailable());
         p.setBypassEvaluator(yubikeyBypassEvaluator());

@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.u2f.U2FMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.u2f.U2FTokenCredential;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
@@ -25,7 +26,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * This is {@link U2FAuthenticationEventExecutionPlanConfiguration}.
@@ -44,24 +44,25 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("servicesManager")
     private ObjectProvider<ServicesManager> servicesManager;
 
-    @Lazy
     @Autowired
     @Qualifier("u2fDeviceRepository")
     private ObjectProvider<U2FDeviceRepository> u2fDeviceRepository;
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "u2fAuthenticationMetaDataPopulator")
     public AuthenticationMetaDataPopulator u2fAuthenticationMetaDataPopulator() {
         val authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(
             authenticationContextAttribute,
             u2fAuthenticationHandler(),
-            u2fAuthenticationProvider().getId()
+            u2fMultifactorAuthenticationProvider().getId()
         );
     }
 
     @Bean
     @RefreshScope
+    @ConditionalOnMissingBean(name = "u2fBypassEvaluator")
     public MultifactorAuthenticationProviderBypass u2fBypassEvaluator() {
         return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getU2f().getBypass());
     }
@@ -72,16 +73,18 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
         return PrincipalFactoryUtils.newPrincipalFactory();
     }
 
+    @ConditionalOnMissingBean(name = "u2fAuthenticationHandler")
     @Bean
     @RefreshScope
-    public U2FAuthenticationHandler u2fAuthenticationHandler() {
+    public AuthenticationHandler u2fAuthenticationHandler() {
         val u2f = this.casProperties.getAuthn().getMfa().getU2f();
         return new U2FAuthenticationHandler(u2f.getName(), servicesManager.getIfAvailable(), u2fPrincipalFactory(), u2fDeviceRepository.getIfAvailable());
     }
 
+    @ConditionalOnMissingBean(name = "u2fMultifactorAuthenticationProvider")
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider u2fAuthenticationProvider() {
+    public MultifactorAuthenticationProvider u2fMultifactorAuthenticationProvider() {
         val u2f = casProperties.getAuthn().getMfa().getU2f();
         val p = new U2FMultifactorAuthenticationProvider();
         p.setBypassEvaluator(u2fBypassEvaluator());
