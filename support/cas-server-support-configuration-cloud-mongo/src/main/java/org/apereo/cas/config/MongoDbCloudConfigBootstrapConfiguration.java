@@ -21,6 +21,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Slf4j
 @Configuration("mongoDbCloudConfigBootstrapConfiguration")
 public class MongoDbCloudConfigBootstrapConfiguration {
+    /**
+     * MongoDb CAS configuration key prefix.
+     */
+    public static final String CAS_CONFIGURATION_MONGODB_URI = "cas.spring.cloud.mongo.uri";
 
     @Autowired
     private ConfigurableEnvironment environment;
@@ -40,7 +44,7 @@ public class MongoDbCloudConfigBootstrapConfiguration {
     public MongoTemplate mongoDbCloudConfigurationTemplate() {
         try {
             val factory = new MongoDbConnectionFactory();
-            val uri = environment.getProperty("cas.spring.cloud.mongo.uri");
+            val uri = environment.getProperty(CAS_CONFIGURATION_MONGODB_URI);
             return factory.buildMongoTemplate(uri);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
