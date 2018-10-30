@@ -3,5 +3,5 @@ description = "Apereo CAS Configuration - AWS S3 Objects"
 dependencies {
     implementation libraries.awss3
     implementation project(":support:cas-server-support-aws")
-    compileOnly project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-configuration-api")
 }
