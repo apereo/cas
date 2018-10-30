@@ -546,7 +546,7 @@ To learn more about this topic, [please review this guide](../installation/Monit
 # management.endpoints.enabled-by-default=true
 # management.endpoints.web.base-path=/actuator
 
-# management.endpoints.web.exposure.include=info,health,status,configuration-metadata
+# management.endpoints.web.exposure.include=info,health,status,configurationMetadata
 # management.server.add-application-context-header=false
 ```
 

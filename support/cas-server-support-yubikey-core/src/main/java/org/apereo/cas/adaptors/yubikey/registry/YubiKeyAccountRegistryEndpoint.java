@@ -19,7 +19,7 @@ import java.util.Collection;
  * @since 6.0.0
  */
 @RequiredArgsConstructor
-@Endpoint(id = "yubikey-account-repository", enableByDefault = false)
+@Endpoint(id = "yubikeyAccountRepository", enableByDefault = false)
 public class YubiKeyAccountRegistryEndpoint {
     /**
      * The Registry.

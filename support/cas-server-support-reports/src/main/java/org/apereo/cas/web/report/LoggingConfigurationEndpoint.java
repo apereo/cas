@@ -42,7 +42,7 @@ import java.util.Set;
  * @since 4.2
  */
 @Slf4j
-@Endpoint(id = "logging-config", enableByDefault = false)
+@Endpoint(id = "loggingConfig", enableByDefault = false)
 public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint implements InitializingBean {
 
     private static final String LOGGER_NAME_ROOT = "root";
