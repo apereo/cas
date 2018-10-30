@@ -20,7 +20,7 @@ import java.util.Map;
  * @since 5.3.0
  */
 @Slf4j
-@Endpoint(id = "attribute-consent", enableByDefault = false)
+@Endpoint(id = "attributeConsent", enableByDefault = false)
 @RequiredArgsConstructor
 public class AttributeConsentReportEndpoint {
     private final ConsentRepository consentRepository;

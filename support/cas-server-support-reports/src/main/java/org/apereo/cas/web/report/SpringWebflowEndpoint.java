@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.expression.Expression;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.context.ApplicationContext;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
@@ -37,7 +36,7 @@ import java.util.stream.StreamSupport;
  * @since 5.1.0
  */
 @Slf4j
-@Endpoint(id = "spring-webflow", enableByDefault = false)
+@Endpoint(id = "springWebflow", enableByDefault = false)
 public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
 
     private final ApplicationContext applicationContext;
@@ -60,7 +59,7 @@ public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
      * @return JSON representing the current state of SWF.
      */
     @ReadOperation
-    public Map<?, ?> getReport(@Nullable @Selector final String flowId) {
+    public Map<?, ?> getReport(@Nullable final String flowId) {
         val jsonMap = new LinkedHashMap<String, Object>();
         val map = this.applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);
 
