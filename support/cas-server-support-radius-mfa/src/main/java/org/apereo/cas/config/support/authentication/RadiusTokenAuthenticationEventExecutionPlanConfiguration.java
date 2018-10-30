@@ -52,7 +52,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @RefreshScope
     @Bean
-    public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
+    public MultifactorAuthenticationProvider radiusMultifactorAuthenticationProvider() {
         val radius = casProperties.getAuthn().getMfa().getRadius();
         val p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
         p.setBypassEvaluator(radiusBypassEvaluator());
@@ -110,7 +110,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         val attribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(attribute,
                 radiusTokenAuthenticationHandler(),
-                radiusAuthenticationProvider().getId()
+                radiusMultifactorAuthenticationProvider().getId()
         );
     }
 

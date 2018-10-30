@@ -49,7 +49,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
         return new AuthenticationContextAttributeMetaDataPopulator(
             authenticationContextAttribute,
             swivelAuthenticationHandler(),
-            swivelAuthenticationProvider().getId()
+            swivelMultifactorAuthenticationProvider().getId()
         );
     }
 
@@ -75,7 +75,7 @@ public class SwivelAuthenticationEventExecutionPlanConfiguration {
 
     @Bean
     @RefreshScope
-    public MultifactorAuthenticationProvider swivelAuthenticationProvider() {
+    public MultifactorAuthenticationProvider swivelMultifactorAuthenticationProvider() {
         val swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         val p = new SwivelMultifactorAuthenticationProvider(swivel.getSwivelUrl());
         p.setBypassEvaluator(swivelBypassEvaluator());
