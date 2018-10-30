@@ -43,7 +43,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ## Register Google Apps
 
-Ensure that Google Apps is registered in your [service registry](../installation/Service-Management.html).
+Ensure that Google Apps is registered in your [service registry](../services/Service-Management.html).
 
 ```json
 {
@@ -58,7 +58,7 @@ Ensure that Google Apps is registered in your [service registry](../installation
 ## Configure Username Attribute
 
 As an optional step, you can configure an alternate username to be send to Google in the SAML reply. This alternate user name
-can be specified in the CAS service registry via [username attribute providers](../installation/Service-Management.html)
+can be specified in the CAS service registry via [username attribute providers](../services/Service-Management.html)
 for the registered Google Apps service.
 
 ## Configure Google
