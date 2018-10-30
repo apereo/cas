@@ -6,7 +6,7 @@ category: User Interface
 
 # Dynamic Themes
 
-With the introduction of [Service Management application](../installation/Service-Management.html), deployers are now able to switch the themes based on different services. For example, you may want to have different login screens (different styles) for staff applications and student applications. Or, you want to show two layouts for day time and night time. This document could help you go through the basic settings to achieve this.
+With the introduction of [Service Management application](../services/Service-Management.html), deployers are now able to switch the themes based on different services. For example, you may want to have different login screens (different styles) for staff applications and student applications. Or, you want to show two layouts for day time and night time. This document could help you go through the basic settings to achieve this.
 
 ## Static Themes
 
