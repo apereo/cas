@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.val;
 
 import java.time.ZoneOffset;
@@ -24,6 +25,7 @@ import java.time.temporal.ChronoUnit;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**

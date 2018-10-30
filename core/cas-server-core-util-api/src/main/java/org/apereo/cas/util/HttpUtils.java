@@ -296,14 +296,14 @@ public class HttpUtils {
      * Execute post http response.
      *
      * @param url        the url
-     * @param jsonEntity the json entity
+     * @param entity the json entity
      * @param parameters the parameters
      * @return the http response
      */
     public static HttpResponse executePost(final String url,
-                                           final String jsonEntity,
+                                           final String entity,
                                            final Map<String, Object> parameters) {
-        return executePost(url, null, null, jsonEntity, parameters);
+        return executePost(url, null, null, entity, parameters);
     }
 
     /**
@@ -312,17 +312,17 @@ public class HttpUtils {
      * @param url               the url
      * @param basicAuthUsername the basic auth username
      * @param basicAuthPassword the basic auth password
-     * @param jsonEntity        the json entity
+     * @param entity        the json entity
      * @param parameters        the parameters
      * @return the http response
      */
     public static HttpResponse executePost(final String url,
                                            final String basicAuthUsername,
                                            final String basicAuthPassword,
-                                           final String jsonEntity,
+                                           final String entity,
                                            final Map<String, Object> parameters) {
         try {
-            return execute(url, HttpMethod.POST.name(), basicAuthUsername, basicAuthPassword, parameters, new HashMap<>(), jsonEntity);
+            return execute(url, HttpMethod.POST.name(), basicAuthUsername, basicAuthPassword, parameters, new HashMap<>(), entity);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

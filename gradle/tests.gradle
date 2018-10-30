@@ -177,9 +177,14 @@ tasks.withType(Test) {
     include "**/*Tests.*"
     scanForTestClasses = false
     ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-    maxParallelForks = 4
+
+    doFirst {
+        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
+        println "Maximum number of parallel forks is set to ${maxParallelForks}"
+    }
+    
     failFast = true
-    jvmArgs "-Xmx1024m"
+    jvmArgs.addAll(["-Xms512m", "-Xmx1g", "-XX:+UseG1GC"])
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
         events = ["FAILED", "STANDARD_OUT"]
@@ -209,7 +214,7 @@ def hasTestsOfCategory(Set testSrc, String category) {
                         }
                     }
                 }
-            } catch ( ignored ) {
+            } catch (ignored) {
             }
         }
         tags

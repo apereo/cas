@@ -56,7 +56,7 @@ public class CasSupportJdbcAuditConfiguration {
         return t;
     }
 
-    private String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
+    private static String getAuditTableNameFrom(final AuditJdbcProperties jdbc) {
         var tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
         if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
             tableName = jdbc.getDefaultSchema().concat(".").concat(tableName);

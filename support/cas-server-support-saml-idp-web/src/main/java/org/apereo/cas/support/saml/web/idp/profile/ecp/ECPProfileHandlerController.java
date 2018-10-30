@@ -184,8 +184,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
     }
 
 
-    private Credential extractBasicAuthenticationCredential(final HttpServletRequest request,
-                                                            final HttpServletResponse response) {
+    private static Credential extractBasicAuthenticationCredential(final HttpServletRequest request,
+                                                                   final HttpServletResponse response) {
         try {
             val extractor = new BasicAuthExtractor();
             val webContext = Pac4jUtils.getPac4jJ2EContext(request, response);

@@ -43,8 +43,8 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
     }
 
     @SneakyThrows
-    private DiscoveryStrategyConfig getDiscoveryStrategyConfigViaDnsProvider(final Config configuration, final NetworkConfig networkConfig,
-                                                                             final HazelcastDockerSwarmDiscoveryProperties.DnsRProvider dnsProvider) {
+    private static DiscoveryStrategyConfig getDiscoveryStrategyConfigViaDnsProvider(final Config configuration, final NetworkConfig networkConfig,
+                                                                                    final HazelcastDockerSwarmDiscoveryProperties.DnsRProvider dnsProvider) {
         networkConfig.setPortAutoIncrement(false);
         val memberAddressProviderConfig = networkConfig.getMemberAddressProviderConfig();
         memberAddressProviderConfig.setEnabled(true);
@@ -62,8 +62,8 @@ public class HazelcastDockerSwarmDiscoveryStrategy implements HazelcastDiscovery
 
     }
 
-    private DiscoveryStrategyConfig getDiscoveryStrategyConfigViaMemberAddressProvider(final Config configuration, final NetworkConfig networkConfig,
-                                                                                       final HazelcastDockerSwarmDiscoveryProperties.MemberAddressProvider memberProvider) {
+    private static DiscoveryStrategyConfig getDiscoveryStrategyConfigViaMemberAddressProvider(final Config configuration, final NetworkConfig networkConfig,
+                                                                                              final HazelcastDockerSwarmDiscoveryProperties.MemberAddressProvider memberProvider) {
         configuration.setProperty(BaseHazelcastProperties.SHUT_DOWN_HOOK_ENABLED_PROP, Boolean.TRUE.toString());
         configuration.setProperty(BaseHazelcastProperties.SOCKET_BIND_ANY_PROP, Boolean.FALSE.toString());
 

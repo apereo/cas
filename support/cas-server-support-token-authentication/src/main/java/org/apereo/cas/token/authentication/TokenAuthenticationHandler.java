@@ -185,7 +185,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
      * @param secretIsBase64Encoded - is this a base64 encoded #secret?
      * @return byte[] representation of #secret
      */
-    private byte[] getSecretBytes(final String secret, final boolean secretIsBase64Encoded) {
+    private static byte[] getSecretBytes(final String secret, final boolean secretIsBase64Encoded) {
         return secretIsBase64Encoded ? new Base64(secret).decode() : secret.getBytes(UTF_8);
     }
 }

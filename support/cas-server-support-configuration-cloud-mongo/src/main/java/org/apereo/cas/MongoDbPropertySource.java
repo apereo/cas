@@ -29,8 +29,10 @@ public class MongoDbPropertySource extends EnumerablePropertySource<MongoOperati
 
     @Override
     public Object getProperty(final String s) {
-        return list.stream().filter(prop -> prop.getName().equals(s))
-            .findFirst().map(MongoDbProperty::getValue)
+        return list.stream()
+            .filter(prop -> prop.getName().equals(s))
+            .findFirst()
+            .map(MongoDbProperty::getValue)
             .orElse(null);
     }
 }

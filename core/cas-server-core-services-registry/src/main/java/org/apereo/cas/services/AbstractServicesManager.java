@@ -16,7 +16,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -192,8 +191,6 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
     /**
      * Load services that are provided by the DAO.
      */
-    @Scheduled(initialDelayString = "${cas.serviceRegistry.schedule.startDelay:20000}",
-        fixedDelayString = "${cas.serviceRegistry.schedule.repeatInterval:60000}")
     @Override
     public Collection<RegisteredService> load() {
         LOGGER.trace("Loading services from [{}]", this.serviceRegistry);
@@ -225,7 +222,7 @@ public abstract class AbstractServicesManager implements ServicesManager, Initia
             .forEach(this::processExpiredRegisteredService);
     }
 
-    private Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
+    private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(final Predicate<RegisteredService>... p) {
 
         val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
         return predicates.stream().reduce(x -> true, Predicate::and);

@@ -20,8 +20,10 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.ServicesManagerScheduledLoader;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
@@ -40,6 +42,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -51,6 +54,7 @@ import org.springframework.http.converter.AbstractHttpMessageConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * This is {@link CasCoreServicesConfiguration}.
@@ -153,32 +157,57 @@ public class CasCoreServicesConfiguration {
         return new DefaultRegisteredServiceResourceNamingStrategy();
     }
 
-    @ConditionalOnMissingBean(name = "serviceRegistry")
     @Bean
-    @RefreshScope
-    public ServiceRegistry serviceRegistry() {
+    public ServiceRegistryExecutionPlan serviceRegistryExecutionPlan() {
         val configurers = ObjectUtils.defaultIfNull(serviceRegistryDaoConfigurers.getIfAvailable(),
             new ArrayList<ServiceRegistryExecutionPlanConfigurer>(0));
         val plan = new DefaultServiceRegistryExecutionPlan();
         configurers.forEach(c -> {
             val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Configuring service registry [{}]", name);
+            LOGGER.trace("Configuring service registry [{}]", name);
             c.configureServiceRegistry(plan);
         });
+        return plan;
+    }
 
+    @ConditionalOnProperty(prefix = "cas.serviceRegistry.schedule", name = "enabled", havingValue = "true", matchIfMissing = true)
+    @Bean
+    public Runnable servicesManagerScheduledLoader() {
+        val plan = serviceRegistryExecutionPlan();
         val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
-        if (plan.getServiceRegistries(filter).isEmpty()) {
-            val services = new ArrayList<RegisteredService>();
+        if (!plan.find(filter).isEmpty()) {
+            LOGGER.trace("Background task to load services is enabled to run every [{}]",
+                casProperties.getServiceRegistry().getSchedule().getRepeatInterval());
+            return new ServicesManagerScheduledLoader(servicesManager());
+        }
+        LOGGER.trace("Background task to load services is disabled");
+        return ServicesManagerScheduledLoader.noOp();
+    }
+
+    @ConditionalOnMissingBean(name = "serviceRegistry")
+    @Bean
+    @RefreshScope
+    public ServiceRegistry serviceRegistry() {
+        val plan = serviceRegistryExecutionPlan();
+        val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
+
+        val chainingRegistry = new ChainingServiceRegistry();
+        if (plan.find(filter).isEmpty()) {
             LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-                + "Changes that are made to service definitions during runtime WILL be LOST when the web server is restarted. "
-                + "Ideally for production, you need to choose a storage option (JDBC, etc) to store and track service definitions.");
-            if (applicationContext.containsBean("inMemoryRegisteredServices")) {
-                services.addAll(applicationContext.getBean("inMemoryRegisteredServices", List.class));
-                LOGGER.debug("Found a list of registered services in the application context. Registering services [{}]", services);
-            }
-            plan.registerServiceRegistry(new InMemoryServiceRegistry(services));
+                + "Changes that are made to service definitions during runtime WILL be LOST when the CAS server is restarted. "
+                + "Ideally for production, you should choose a storage option (JSON, JDBC, MongoDb, etc) to track service definitions.");
+            val services = getInMemoryRegisteredServices().orElse(new ArrayList<>());
+            chainingRegistry.addServiceRegistry(new InMemoryServiceRegistry(services));
         }
 
-        return new ChainingServiceRegistry(plan.getServiceRegistries());
+        chainingRegistry.addServiceRegistries(plan.getServiceRegistries());
+        return chainingRegistry;
+    }
+
+    private Optional<List<RegisteredService>> getInMemoryRegisteredServices() {
+        if (applicationContext.containsBean("inMemoryRegisteredServices")) {
+            return Optional.of(applicationContext.getBean("inMemoryRegisteredServices", List.class));
+        }
+        return Optional.empty();
     }
 }
