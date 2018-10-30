@@ -2180,8 +2180,8 @@ strategies when collecting principal attributes:
 
 | Type                 | Description
 |----------------------|------------------------------------------------------------------------------------------------
-| `CAS`                | Use attributes provided by the delegated WS-Fed instance.
-| `WSFED`              | Use attributes provided by CAS' own attribute resolution mechanics and repository.
+| `CAS`                | Use attributes provided by CAS' own attribute resolution mechanics and repository.
+| `WSFED`              | Use attributes provided by the delegated WS-Fed instance.
 | `BOTH`               | Combine both the above options, where CAS attribute repositories take precedence over WS-Fed.
 
 ```properties
