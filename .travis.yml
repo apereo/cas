@@ -79,16 +79,17 @@ jobs:
     if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/publish-snapshots-release.sh
     name: "Publish Artifacts"
+    ############################################
   - stage: build
     script: ./ci/build.sh
     name: "Build CAS"
   - stage: build
+    script: ./ci/analyze-sonarqube.sh
+    if: type != pull_request
+    name: "SonarCloud Analysis"
+  - stage: build
     script: ./ci/analyze-style.sh
     name: "Checkstyle Analysis"
- - stage: build
-    if: type != pull_request
-    script: ./ci/analyze-sonarqube.sh
-    name: "SonarCloud Analysis"
   - stage: build
     script: ./ci/push-docs-ghpages.sh
     if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
