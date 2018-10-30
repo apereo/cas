@@ -168,6 +168,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
 
     @Bean
     @ConditionalOnMissingBean(name = "acceptPasswordlessAuthenticationAction")
+    @RefreshScope
     public Action acceptPasswordlessAuthenticationAction() {
         return new AcceptPasswordlessAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getIfAvailable(),
             serviceTicketRequestWebflowEventResolver.getIfAvailable(),
@@ -179,6 +180,7 @@ public class PasswordlessAuthenticationConfiguration implements CasWebflowExecut
 
     @Bean
     @ConditionalOnMissingBean(name = "displayBeforePasswordlessAuthenticationAction")
+    @RefreshScope
     public Action displayBeforePasswordlessAuthenticationAction() {
         return new DisplayBeforePasswordlessAuthenticationAction(passwordlessTokenRepository(),
             passwordlessUserAccountStore(), communicationsManager.getIfAvailable(), casProperties.getAuthn().getPasswordless());
