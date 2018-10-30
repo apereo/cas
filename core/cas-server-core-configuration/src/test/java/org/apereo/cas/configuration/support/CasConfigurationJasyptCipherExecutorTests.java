@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.support;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -58,14 +59,14 @@ public class CasConfigurationJasyptCipherExecutorTests {
     @Test
     public void verifyDecryptionEncryptionPairFails() {
         val encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
-        val result = jasypt.decode(encVal, new Object[]{});
+        val result = jasypt.decode(encVal, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNull(result);
     }
 
     @Test
     public void verifyDecryptionEncryptionPairSuccess() {
         val value = jasypt.encryptValue("Testing");
-        val result = jasypt.decode(value, new Object[]{});
+        val result = jasypt.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNotNull(result);
         assertEquals("Testing", result);
     }

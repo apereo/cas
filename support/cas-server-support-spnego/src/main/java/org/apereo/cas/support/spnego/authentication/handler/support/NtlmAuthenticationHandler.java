@@ -21,6 +21,7 @@ import jcifs.smb.SmbSession;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.security.auth.login.FailedLoginException;
@@ -86,8 +87,8 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
                 case NTLM_TOKEN_TYPE_THREE:
                     LOGGER.debug("Type 3 received");
                     val type3 = new Type3Message(src);
-                    val lmResponse = type3.getLMResponse() == null ? new byte[0] : type3.getLMResponse();
-                    val ntResponse = type3.getNTResponse() == null ? new byte[0] : type3.getNTResponse();
+                    val lmResponse = type3.getLMResponse() == null ? ArrayUtils.EMPTY_BYTE_ARRAY : type3.getLMResponse();
+                    val ntResponse = type3.getNTResponse() == null ? ArrayUtils.EMPTY_BYTE_ARRAY : type3.getNTResponse();
                     val ntlm = new NtlmPasswordAuthentication(
                         type3.getDomain(), type3.getUser(), challenge,
                         lmResponse, ntResponse);

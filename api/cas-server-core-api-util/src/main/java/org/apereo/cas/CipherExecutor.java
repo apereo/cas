@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +72,7 @@ public interface CipherExecutor<I, O> {
      * @return the encrypted value or null
      */
     default O encode(final I value) {
-        return encode(value, new Object[]{});
+        return encode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
     }
 
     /**
@@ -90,7 +91,7 @@ public interface CipherExecutor<I, O> {
      * @return the decoded value or null
      */
     default O decode(final I value) {
-        return decode(value, new Object[]{});
+        return decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
     }
 
     /**
@@ -100,7 +101,7 @@ public interface CipherExecutor<I, O> {
      * @param parameters the parameters
      * @return the map
      */
-    default Map<String, Object> decode(Map<String, Object> properties, final Object[] parameters) {
+    default Map<String, Object> decode(final Map<String, Object> properties, final Object[] parameters) {
         val decrypted = new HashMap<String, Object>();
         properties.forEach((key, value) -> {
             try {
