@@ -25,6 +25,7 @@ import java.util.Properties;
 @Slf4j
 public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLocator {
 
+    static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.jdbc";
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
@@ -55,7 +56,7 @@ public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLoca
         }
 
         private static String getSetting(final Environment environment, final String key) {
-            return environment.getProperty("cas.spring.cloud.jdbc." + key);
+            return environment.getProperty(CAS_CONFIGURATION_PREFIX + '.' + key);
         }
 
         public String getSql() {
