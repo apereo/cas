@@ -16,6 +16,7 @@ import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCouchDbCoreConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CouchDbTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -46,6 +47,7 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @SpringBootTest(classes = {
+    CasCouchDbCoreConfiguration.class,
     CouchDbTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -65,8 +67,11 @@ import java.util.Collection;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class},
-    properties = {"org.ektorp.support.AutoUpdateViewOnChange=true", "cas.ticket.registry.couchDb.username=", "cas.ticket.registry.couchDb.password="})
+    RefreshAutoConfiguration.class
+},
+    properties = {
+    "org.ektorp.support.AutoUpdateViewOnChange=true", "cas.ticket.registry.couchDb.username=", "cas.ticket.registry.couchDb.password="
+})
 @Category(CouchDbCategory.class)
 public class CouchDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
