@@ -12,6 +12,7 @@ import org.apereo.cas.util.EncodingUtils;
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -124,7 +125,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
 
         if (cachedAttributesToEncode.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL)) {
             val value = cachedAttributesToEncode.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
-            val decodedValue = this.cacheCredentialCipherExecutor.decode(value, new Object[]{});
+            val decodedValue = this.cacheCredentialCipherExecutor.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
             cachedAttributesToEncode.remove(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL);
             if (StringUtils.isNotBlank(decodedValue)) {
                 cachedAttributesToEncode.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, decodedValue);

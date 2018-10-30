@@ -7,6 +7,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.Environment;
@@ -183,7 +184,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     }
 
     private Map<String, Object> decryptProperties(final Map properties) {
-        return this.configurationCipherExecutor.decode(properties, new Object[]{});
+        return this.configurationCipherExecutor.decode(properties, ArrayUtils.EMPTY_OBJECT_ARRAY);
     }
 
     private static List<String> getApplicationProfiles(final Environment environment) {

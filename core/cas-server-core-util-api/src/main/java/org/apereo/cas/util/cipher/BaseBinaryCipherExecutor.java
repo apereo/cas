@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
@@ -111,7 +112,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             genEncryptionKey = EncodingUtils.decodeBase64(key);
         } else {
             val base64 = EncodingUtils.isBase64(encryptionSecretKey);
-            val key = base64 ? EncodingUtils.decodeBase64(encryptionSecretKey) : new byte[0];
+            val key = base64 ? EncodingUtils.decodeBase64(encryptionSecretKey) : ArrayUtils.EMPTY_BYTE_ARRAY;
             if (base64 && key.length == encryptionKeySize) {
                 LOGGER.trace("Secret key for encryption defined under [{}] is Base64 encoded.", getEncryptionKeySetting());
                 genEncryptionKey = key;
