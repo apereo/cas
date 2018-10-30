@@ -5,6 +5,7 @@ import org.apereo.cas.CipherExecutor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.Cookie;
@@ -30,12 +31,12 @@ public class EncryptedCookieValueManager implements CookieValueManager {
     public final String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
         val res = buildCompoundCookieValue(givenCookieValue, request);
         LOGGER.trace("Encoding cookie value [{}]", res);
-        return cipherExecutor.encode(res, new Object[]{}).toString();
+        return cipherExecutor.encode(res, ArrayUtils.EMPTY_OBJECT_ARRAY).toString();
     }
 
     @Override
     public final String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
-        val decoded = cipherExecutor.decode(cookie.getValue(), new Object[]{});
+        val decoded = cipherExecutor.decode(cookie.getValue(), ArrayUtils.EMPTY_OBJECT_ARRAY);
         if (decoded == null) {
             LOGGER.trace("Could not decode cookie value [{}] for cookie [{}]", cookie.getValue(), cookie.getName());
             return null;

@@ -5,6 +5,7 @@ import org.apereo.cas.CipherExecutor;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -114,7 +115,7 @@ public class SerializationUtils {
      */
     public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
                                                   final Serializable object) {
-        return serializeAndEncodeObject(cipher, object, new Object[]{});
+        return serializeAndEncodeObject(cipher, object, ArrayUtils.EMPTY_OBJECT_ARRAY);
     }
 
     /**
@@ -150,7 +151,7 @@ public class SerializationUtils {
     public static <T extends Serializable> T decodeAndDeserializeObject(final byte[] object,
                                                                         final CipherExecutor cipher,
                                                                         final Class<T> type) {
-        return decodeAndDeserializeObject(object, cipher, type, new Object[]{});
+        return decodeAndDeserializeObject(object, cipher, type, ArrayUtils.EMPTY_OBJECT_ARRAY);
     }
 
     /**

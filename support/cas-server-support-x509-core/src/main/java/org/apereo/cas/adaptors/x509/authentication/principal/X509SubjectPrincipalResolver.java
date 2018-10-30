@@ -104,7 +104,7 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
                 }
             }
         }
-        return values.toArray(new String[0]);
+        return values.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
     @Override

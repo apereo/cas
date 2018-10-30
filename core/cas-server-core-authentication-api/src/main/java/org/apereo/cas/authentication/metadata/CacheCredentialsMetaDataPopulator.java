@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 
 /**
  * We utilize the {@link AuthenticationMetaDataPopulator} to retrieve and store
@@ -37,7 +38,7 @@ public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDat
         transaction.getPrimaryCredential().ifPresent(credential -> {
             LOGGER.debug("Processing request to capture the credential for [{}]", credential.getId());
             val c = (UsernamePasswordCredential) credential;
-            val psw = this.cipherExecutor == null ? c.getPassword() : this.cipherExecutor.encode(c.getPassword(), new Object[]{});
+            val psw = this.cipherExecutor == null ? c.getPassword() : this.cipherExecutor.encode(c.getPassword(), ArrayUtils.EMPTY_OBJECT_ARRAY);
             builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, psw);
             LOGGER.debug("Credential is added as the authentication attribute [{}] to the authentication",
                 UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
