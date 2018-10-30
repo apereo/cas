@@ -145,7 +145,6 @@ public class CasReportsConfiguration {
         return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator.getIfAvailable(), ticketRegistrySupport.getIfAvailable());
     }
 
-
     @Bean
     @ConditionalOnEnabledEndpoint
     public StatisticsEndpoint statisticsReportEndpoint() {
