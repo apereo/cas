@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.cfg.Environment;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
@@ -121,7 +122,7 @@ public class JpaBeans {
         if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
             bean.setPersistenceUnitName(config.getPersistenceUnitName());
         }
-        bean.setPackagesToScan(config.getPackagesToScan().toArray(new String[]{}));
+        bean.setPackagesToScan(config.getPackagesToScan().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
 
         if (config.getDataSource() != null) {
             bean.setDataSource(config.getDataSource());

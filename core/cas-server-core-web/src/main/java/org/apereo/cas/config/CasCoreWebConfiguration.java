@@ -11,6 +11,7 @@ import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.view.CasReloadableMessageBundle;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -78,7 +79,7 @@ public class CasCoreWebConfiguration {
         bean.setCacheSeconds(mb.getCacheSeconds());
         bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
         bean.setUseCodeAsDefaultMessage(mb.isUseCodeMessage());
-        bean.setBasenames(mb.getBaseNames().toArray(new String[]{}));
+        bean.setBasenames(mb.getBaseNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         bean.setCommonMessages(casCommonMessages);
         return bean;
     }

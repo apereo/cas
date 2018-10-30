@@ -5,6 +5,7 @@ import org.apereo.cas.util.CollectionUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.ssl.SSLContexts;
 import org.springframework.core.io.Resource;
 
@@ -156,14 +157,14 @@ public class DefaultCasSslContext {
         public String[] getClientAliases(final String keyType, final Principal[] issuers) {
             val aliases = new ArrayList<String>();
             this.keyManagers.forEach(keyManager -> aliases.addAll(CollectionUtils.wrapList(keyManager.getClientAliases(keyType, issuers))));
-            return aliases.toArray(new String[]{});
+            return aliases.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
         }
 
         @Override
         public String[] getServerAliases(final String keyType, final Principal[] issuers) {
             val aliases = new ArrayList<String>();
             this.keyManagers.forEach(keyManager -> aliases.addAll(CollectionUtils.wrapList(keyManager.getServerAliases(keyType, issuers))));
-            return aliases.toArray(new String[]{});
+            return aliases.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
         }
     }
 

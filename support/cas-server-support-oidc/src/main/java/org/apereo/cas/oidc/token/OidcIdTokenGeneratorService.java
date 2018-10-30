@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
@@ -121,7 +122,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
         }
         if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
             val val = CollectionUtils.toCollection(attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
-            claims.setStringListClaim(OidcConstants.AMR, val.toArray(new String[]{}));
+            claims.setStringListClaim(OidcConstants.AMR, val.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         }
 
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, service.getClientId());
