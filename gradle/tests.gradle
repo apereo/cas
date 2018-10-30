@@ -184,7 +184,7 @@ tasks.withType(Test) {
     }
     
     failFast = true
-    jvmArgs.addAll(["-Xms512m", "-Xmx1g", "-XX:+UseG1GC"])
+    jvmArgs.addAll(["-Xms512m", "-Xmx4g"])
     classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
         events = ["FAILED", "STANDARD_OUT"]

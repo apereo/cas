@@ -42,8 +42,8 @@ matrix:
   fast_finish: true
 env:
   global:
-  - GRADLE_VERSION=4.10
-  - JAVA_OPTS="-Xms512m -Xmx2048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
+  - GRADLE_VERSION=4.10.2
+  - JAVA_OPTS="-Xms512m -Xmx4048m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
   - GRADLE_OPTS="-Xms512m -Xmx1024m -Xss128m -XX:ReservedCodeCacheSize=512m -XX:+UseG1GC -Xverify:none -server"
   - SPRING_MAIN_BANNER-MODE="off"
   - secure: "ScUSTo0if5m7ddnwUA7EaYucc6yzEUrKLk0DzCvkMfjn2h5taUFSKHx+S0hd2EzJofv+Em4eI5qncSK5LTxgD7HhHR1e3iZp+SqJenhhOnbuciZfg4QA+tUGw3XUdmREac5cz2l0qhi1q4vsnnZARj2d4vvf2HWuNtEOBu/ZAKI="

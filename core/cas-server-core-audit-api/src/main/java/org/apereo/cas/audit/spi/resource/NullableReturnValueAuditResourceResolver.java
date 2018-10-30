@@ -2,6 +2,7 @@ package org.apereo.cas.audit.spi.resource;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -23,7 +24,7 @@ public class NullableReturnValueAuditResourceResolver implements AuditResourceRe
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object o) {
         if (o == null) {
-            return new String[0];
+            return ArrayUtils.EMPTY_STRING_ARRAY;
         }
         if (o instanceof Event) {
             val event = Event.class.cast(o);

@@ -9,6 +9,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.runtime.InvokerInvocationException;
@@ -169,7 +170,7 @@ public class ScriptingUtils {
     public static <T> T executeGroovyScript(final Resource groovyScript,
                                             final String methodName,
                                             final Class<T> clazz) {
-        return executeGroovyScript(groovyScript, methodName, new Object[]{}, clazz, false);
+        return executeGroovyScript(groovyScript, methodName, ArrayUtils.EMPTY_OBJECT_ARRAY, clazz, false);
     }
 
     /**
@@ -340,7 +341,7 @@ public class ScriptingUtils {
      */
     public static <T> T getObjectInstanceFromGroovyResource(final Resource resource,
                                                             final Class<T> expectedType) {
-        return getObjectInstanceFromGroovyResource(resource, new Class[]{}, new Object[]{}, expectedType);
+        return getObjectInstanceFromGroovyResource(resource, ArrayUtils.EMPTY_CLASS_ARRAY, ArrayUtils.EMPTY_OBJECT_ARRAY, expectedType);
     }
 
     /**

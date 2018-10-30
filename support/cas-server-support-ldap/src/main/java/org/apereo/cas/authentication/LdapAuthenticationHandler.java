@@ -11,6 +11,7 @@ import com.google.common.collect.Maps;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -252,7 +253,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 attributes.removeIf(authenticatorAttributes::contains);
             }
         }
-        this.authenticatedEntryAttributes = attributes.toArray(new String[0]);
+        this.authenticatedEntryAttributes = attributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
         LOGGER.debug("LDAP authentication entry attributes for the authentication request are [{}]", (Object[]) this.authenticatedEntryAttributes);
     }
 }

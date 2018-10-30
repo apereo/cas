@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.validation.Assertion;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.aspectj.lang.JoinPoint;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class TicketValidationResourceResolverTests {
     @Test
     public void verifyActionPassed() {
         val jp = mock(JoinPoint.class);
-        when(jp.getArgs()).thenReturn(new Object[]{});
+        when(jp.getArgs()).thenReturn(ArrayUtils.EMPTY_OBJECT_ARRAY);
         val assertion = mock(Assertion.class);
         when(assertion.getPrimaryAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
         assertTrue(r.resolveFrom(jp, assertion).length > 0);

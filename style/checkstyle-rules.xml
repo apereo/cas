@@ -384,7 +384,7 @@
             <property name="id" value="zero-length-array"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using a zero-length array is not recommended."/>
             <property name="severity" value="error"/>
-            <property name="format" value="new\s+(String|Object)\[\]\s*\{\}"/>
+            <property name="format" value="new\s+(String|Object|byte|int|long|double|float|Class|char|boolean)\[(\d*)*\]\s*\{\}"/>
             <property name="message" value="Use constants in org.apache.commons.lang3.ArrayUtils instead of declaring zero-length arrays"/>
         </module>
 

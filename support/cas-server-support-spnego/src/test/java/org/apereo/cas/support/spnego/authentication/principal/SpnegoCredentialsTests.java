@@ -3,6 +3,7 @@ package org.apereo.cas.support.spnego.authentication.principal;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -16,13 +17,13 @@ public class SpnegoCredentialsTests {
 
     @Test
     public void verifyToStringWithNoPrincipal() {
-        val credentials = new SpnegoCredential(new byte[]{});
+        val credentials = new SpnegoCredential(ArrayUtils.EMPTY_BYTE_ARRAY);
         assertTrue(credentials.getId().contains("unknown"));
     }
 
     @Test
     public void verifyToStringWithPrincipal() {
-        val credentials = new SpnegoCredential(new byte[]{});
+        val credentials = new SpnegoCredential(ArrayUtils.EMPTY_BYTE_ARRAY);
         val principal = new DefaultPrincipalFactory().createPrincipal("test");
         credentials.setPrincipal(principal);
         assertEquals("test", credentials.getId());
@@ -33,7 +34,7 @@ public class SpnegoCredentialsTests {
      */
     @Test
     public void verifyPrincipalAffectsHash() {
-        val credential = new SpnegoCredential(new byte[]{});
+        val credential = new SpnegoCredential(ArrayUtils.EMPTY_BYTE_ARRAY);
         val hash1 = credential.hashCode();
         val principal = new DefaultPrincipalFactory().createPrincipal("test");
         credential.setPrincipal(principal);
