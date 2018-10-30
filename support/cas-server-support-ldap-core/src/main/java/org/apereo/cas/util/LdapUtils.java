@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.support.Beans;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -357,7 +358,7 @@ public class LdapUtils {
             val mods = attributes.entrySet()
                 .stream()
                 .map(entry -> {
-                    val values = entry.getValue().toArray(new String[]{});
+                    val values = entry.getValue().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                     val attr = new LdapAttribute(entry.getKey(), values);
                     return new AttributeModification(AttributeModificationType.REPLACE, attr);
                 })
@@ -587,7 +588,7 @@ public class LdapUtils {
     public static SearchExecutor newLdaptiveSearchExecutor(final String baseDn, final String filterQuery,
                                                            final List<String> params,
                                                            final List<String> returnAttributes) {
-        return newLdaptiveSearchExecutor(baseDn, filterQuery, params, returnAttributes.toArray(new String[]{}));
+        return newLdaptiveSearchExecutor(baseDn, filterQuery, params, returnAttributes.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
     }
 
     /**
@@ -899,7 +900,7 @@ public class LdapUtils {
                 val compareRequest = new CompareRequest();
                 compareRequest.setDn(l.getValidator().getDn());
                 compareRequest.setAttribute(new LdapAttribute(l.getValidator().getAttributeName(),
-                    l.getValidator().getAttributeValues().toArray(new String[]{})));
+                    l.getValidator().getAttributeValues().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
                 compareRequest.setReferralHandler(new SearchReferralHandler());
                 cp.setValidator(new CompareValidator(compareRequest));
                 break;
@@ -988,7 +989,7 @@ public class LdapUtils {
                 case CASE_CHANGE:
                     val eh = new CaseChangeEntryHandler();
                     eh.setAttributeNameCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeNameCaseChange()));
-                    eh.setAttributeNames(h.getCasChange().getAttributeNames().toArray(new String[]{}));
+                    eh.setAttributeNames(h.getCasChange().getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
                     eh.setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getAttributeValueCaseChange()));
                     eh.setDnCaseChange(CaseChangeEntryHandler.CaseChange.valueOf(h.getCasChange().getDnCaseChange()));
                     handlers.add(eh);
@@ -1001,7 +1002,7 @@ public class LdapUtils {
                     break;
                 case MERGE:
                     val ehm = new MergeAttributeEntryHandler();
-                    ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames().toArray(new String[]{}));
+                    ehm.setAttributeNames(h.getMergeAttribute().getAttributeNames().toArray(ArrayUtils.EMPTY_STRING_ARRAY));
                     ehm.setMergeAttributeName(h.getMergeAttribute().getMergeAttributeName());
                     handlers.add(ehm);
                     break;
@@ -1022,7 +1023,7 @@ public class LdapUtils {
                     break;
                 case RECURSIVE_ENTRY:
                     handlers.add(new RecursiveEntryHandler(h.getRecursive().getSearchAttribute(),
-                        h.getRecursive().getMergeAttributes().toArray(new String[]{})));
+                        h.getRecursive().getMergeAttributes().toArray(ArrayUtils.EMPTY_STRING_ARRAY)));
                     break;
                 default:
                     break;

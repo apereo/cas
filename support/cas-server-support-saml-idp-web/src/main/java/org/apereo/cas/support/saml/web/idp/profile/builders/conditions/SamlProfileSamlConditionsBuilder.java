@@ -9,6 +9,7 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.Conditions;
@@ -76,7 +77,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
         }
         val conditions = newConditions(currentDateTime,
             currentDateTime.plusSeconds(skewAllowance),
-            audienceUrls.toArray(new String[]{}));
+            audienceUrls.toArray(ArrayUtils.EMPTY_STRING_ARRAY));
         return conditions;
     }
 }
