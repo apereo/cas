@@ -97,7 +97,7 @@ public class AmazonEnvironmentAwareClientBuilder {
         }
 
         val endpoint = getSetting("endpoint");
-        if (StringUtils.isNotBlank(endpoint) && StringUtils.isNotBlank(finalRegion)) {
+        if (StringUtils.isNotBlank(endpoint)) {
             builder.withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(endpoint, finalRegion));
         }
 
