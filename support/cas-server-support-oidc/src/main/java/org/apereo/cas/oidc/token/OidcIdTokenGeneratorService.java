@@ -68,7 +68,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService {
 
         val oidcRegisteredService = (OidcRegisteredService) registeredService;
         val context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        LOGGER.debug("Attempting to produce claims for the id token [{}]", accessToken);
+        LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
         val authenticatedProfile = getAuthenticatedProfile(request, response);
         val claims = buildJwtClaims(request, accessToken, timeoutInSeconds,
             oidcRegisteredService, authenticatedProfile, context, responseType);
