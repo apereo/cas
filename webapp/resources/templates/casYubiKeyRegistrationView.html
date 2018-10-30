@@ -23,9 +23,9 @@
                        size="25" tabindex="1"
                        autocomplete="off"/>
             </div>
-            <input class="btn btn-submit" name="_eventId_submit" accesskey="s"
-                   th:value="#{screen.welcome.button.register}" tabindex="2" type="submit" value="Register"/>
-
+            <input class="btn btn-submit" accesskey="s"
+                   th:value="#{screen.welcome.button.register}" tabindex="2" type="submit"/>
+            <input type="hidden" name="_eventId_submit" value="Register" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
     </div>
