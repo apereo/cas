@@ -13,7 +13,8 @@ Our premier support channel is community discussion mediated primarily via
 
 A number of [consulting firms offer paid support](https://www.apereo.org/content/commercial-affiliates) for CAS.
 
-<a href="https://unicon.net/"><img valign="middle" src="https://user-images.githubusercontent.com/1205228/45105314-384b7b80-b149-11e8-9cae-085ab33a9e97.png"></a> <a href="https://www.casinthecloud.com/"><img valign="middle" src="https://user-images.githubusercontent.com/1205228/45105463-8a8c9c80-b149-11e8-8309-ae4da87038d6.png"></a> <a href="https://www.cirrusidentity.com/"><img valign="middle" width="350" src="https://user-images.githubusercontent.com/1205228/45105678-0686e480-b14a-11e8-9468-0a97b816ce91.png"></a>
+<a href="https://unicon.net/"><img valign="middle" src="https://user-images.githubusercontent.com/1205228/45105314-384b7b80-b149-11e8-9cae-085ab33a9e97.png"></a> <a href="https://www.casinthecloud.com/"><img valign="middle" src="https://user-images.githubusercontent.com/1205228/47741421-7f5c7580-dc8f-11e8-95cc-d16f41ab52c0.png"></a> <a href="https://www.cirrusidentity.com/"><img valign="middle" width="350" src="https://user-images.githubusercontent.com/1205228/45105678-0686e480-b14a-11e8-9468-0a97b816ce91.png"></a>
+
 
 ## Free/Community Support
 
