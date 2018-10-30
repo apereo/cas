@@ -16,8 +16,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This is {@link CouchDbServiceRegistryTests}.
@@ -58,7 +58,7 @@ public class CouchDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
-        return Arrays.asList(RegexRegisteredService.class);
+        return Collections.singletonList(RegexRegisteredService.class);
     }
 
     @Override
