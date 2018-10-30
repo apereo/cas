@@ -35,13 +35,12 @@
             </div>
 
             <input class="btn btn-submit"
-                   name="_eventId_submit"
                    accesskey="l"
                    tabindex="1"
                    th:value="#{screen.welcome.button.login}"
                    id="submitBtn"
-                   type="submit"
-                   value="LOGIN"/>
+                   type="submit"/>
+            <input type="hidden" name="_eventId_submit" value="LOGIN"/>
 
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="geolocation"/>
