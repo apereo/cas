@@ -30,6 +30,7 @@ import org.apereo.cas.util.http.HttpClient;
 import com.yubico.client.v2.YubicoClient;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,7 +107,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
         val client = YubicoClient.getClient(yubi.getClientId(), yubi.getSecretKey());
         if (!yubi.getApiUrls().isEmpty()) {
-            val urls = yubi.getApiUrls().toArray(new String[]{});
+            val urls = yubi.getApiUrls().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
             client.setWsapiUrls(urls);
         }
         return client;

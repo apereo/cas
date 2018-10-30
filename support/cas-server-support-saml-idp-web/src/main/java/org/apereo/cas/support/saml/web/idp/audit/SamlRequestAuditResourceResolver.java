@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.audit;
 
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,7 +23,7 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
         if (returnValue instanceof Pair) {
             return getAuditResourceFromSamlRequest((Pair) returnValue);
         }
-        return new String[]{};
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
     private String[] getAuditResourceFromSamlRequest(final Pair result) {
@@ -33,7 +34,7 @@ public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourc
         if (returnValue instanceof LogoutRequest) {
             return getAuditResourceFromSamlLogoutRequest((LogoutRequest) returnValue);
         }
-        return new String[]{};
+        return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
     private String[] getAuditResourceFromSamlLogoutRequest(final LogoutRequest returnValue) {

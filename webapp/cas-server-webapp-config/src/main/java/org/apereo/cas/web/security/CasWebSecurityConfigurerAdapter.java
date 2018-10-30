@@ -9,6 +9,7 @@ import org.apereo.cas.web.security.authentication.LdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
@@ -136,7 +137,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
     protected void configureEndpointAccessToDenyUndefined(final HttpSecurity http,
                                                           final ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry requests) {
         val endpoints = casProperties.getMonitor().getEndpoints().getEndpoint().keySet();
-        val configuredEndpoints = endpoints.toArray(new String[]{});
+        val configuredEndpoints = endpoints.toArray(ArrayUtils.EMPTY_STRING_ARRAY);
 
         val endpointDefaults = casProperties.getMonitor().getEndpoints().getDefaultEndpointProperties();
         endpointDefaults.getAccess().forEach(Unchecked.consumer(access ->
@@ -257,7 +258,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                                                final ActuatorEndpointProperties properties,
                                                final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         requests.requestMatchers(endpoint)
-            .hasAnyRole(properties.getRequiredRoles().toArray(new String[]{}))
+            .hasAnyRole(properties.getRequiredRoles().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
             .and()
             .httpBasic();
     }
@@ -266,7 +267,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
                                                     final ActuatorEndpointProperties properties,
                                                     final EndpointRequest.EndpointRequestMatcher endpoint) throws Exception {
         requests.requestMatchers(endpoint)
-            .hasAnyAuthority(properties.getRequiredAuthorities().toArray(new String[]{}))
+            .hasAnyAuthority(properties.getRequiredAuthorities().toArray(ArrayUtils.EMPTY_STRING_ARRAY))
             .and()
             .httpBasic();
     }
