@@ -1,4 +1,4 @@
-package org.apereo.cas.audit.entity;
+package org.apereo.cas.audit.spi.entity;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -3,15 +3,10 @@ dependencies {
     api libraries.googleauth
     api libraries.zxingbarcode
 
-    api project(":api:cas-server-core-api-util")
-    api project(":support:cas-server-support-otp-mfa")
-    
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-rest")
-
-    implementation project(":support:cas-server-support-otp-mfa")
-
+    compileOnly project(":support:cas-server-support-otp-mfa")
 }
