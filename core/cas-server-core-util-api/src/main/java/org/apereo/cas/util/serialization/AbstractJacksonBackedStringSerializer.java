@@ -48,7 +48,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     private static final long serialVersionUID = -8415599777321259365L;
 
     private final ObjectMapper objectMapper;
-    private final PrettyPrinter prettyPrinter;
+    private final transient PrettyPrinter prettyPrinter;
 
     /**
      * Instantiates a new Registered service json serializer.
@@ -230,6 +230,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      */
     protected T readObjectFromJson(final String jsonString) {
         try {
+            LOGGER.trace("Attempting to consume [{}]", jsonString);
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "

@@ -258,13 +258,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         return results;
     }
 
-    /**
-     * Load registered service from file.
-     *
-     * @param file the file
-     * @return the registered service, or null if file cannot be read, is not found, is empty or parsing error occurs.
-     */
     @Override
+    @SneakyThrows
     public Collection<RegisteredService> load(final File file) {
         val fileName = file.getName();
         if (!file.canRead()) {
@@ -286,6 +281,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
                     + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
                 fileName, this.serviceFileNamePattern.pattern());
         }
+
+        LOGGER.trace("Attempting to read and parse [{}]", file.getCanonicalFile());
         try (val in = Files.newBufferedReader(file.toPath())) {
             return this.registeredServiceSerializers
                 .stream()
