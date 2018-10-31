@@ -9,7 +9,7 @@ currentChangeSetContains() {
 
     for i in "$results"
         do
-            :
+            echo "Processing changed file: $i"
             if [[ ("$i" =~ $1) || "${TRAVIS_COMMIT_MESSAGE}" =~ "[force build]" ]]; then
                 echo "Found a match against pattern $1. Commit message: ${TRAVIS_COMMIT_MESSAGE}"
                 return 0
