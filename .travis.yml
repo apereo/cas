@@ -64,8 +64,9 @@ after_script:
 - ./ci/stop.sh
 stages:
 - initialize
-- publish
 - build
+- publish
+- postbuild
 - test
 - dependencies
 - spotbugs
@@ -75,32 +76,33 @@ jobs:
     script: ./ci/download-dependencies.sh
     name: "Initialize Build System"
     ############################################
+  - stage: build
+    script: ./ci/build.sh
+    name: "Build CAS"
+    ############################################
   - stage: publish
     if: NOT commit_message =~ ^\[skip\s+snapshots\] and type != "pull_request" and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     script: ./ci/publish-snapshots-release.sh
     name: "Publish Artifacts"
     ############################################
-  - stage: build
-    script: ./ci/build.sh
-    name: "Build CAS"
-  - stage: build
+  - stage: postbuild
     script: ./ci/analyze-sonarqube.sh
     if: type != pull_request
     name: "SonarCloud Analysis"
-  - stage: build
+  - stage: postbuild
     script: ./ci/analyze-style.sh
     name: "Checkstyle Analysis"
-  - stage: build
+  - stage: postbuild
     script: ./ci/push-docs-ghpages.sh
     if: type != pull_request and (branch =~ /^\d+\.\d+\.x$/ or branch = master)
     name: "Publish Documentation"
-  - stage: build
+  - stage: postbuild
     script: ./ci/build-javadocs.sh
     name: "Build Javadocs"
-  - stage: build
+  - stage: postbuild
     script: ./ci/build-config-metadata.sh
     name: "Build Configuration Metadata"
-  - stage: build
+  - stage: postbuild
     script: ./ci/check-config-factories.sh
     name: "Configuration Factory Analysis"
     ############################################
