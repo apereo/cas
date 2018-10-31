@@ -1,7 +1,6 @@
 package org.apereo.cas.consent;
 
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasConsentApiConfiguration;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -28,7 +27,6 @@ import static org.junit.Assert.*;
  * @since 5.2.0
  */
 @SpringBootTest(classes = {
-    CasConsentApiConfiguration.class,
     CasConsentCoreConfiguration.class,
     CasCoreAuditConfiguration.class,
     RefreshAutoConfiguration.class,
