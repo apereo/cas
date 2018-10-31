@@ -55,7 +55,7 @@ The following failure modes are supported:
 | `PHANTOM`            | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
 | `NONE`               | Do not contact the provider at all to check for availability. Assume the provider is available.
 
-## Determining Failure Mode
+### Failure Mode Selection
 
 CAS will consult the current configuration in the event that the provider being requested is unreachable to determine how to proceed.  
 The failure mode can be configured at these locations and CAS will use the first defined failure mode in this order:
