@@ -64,7 +64,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
             def port = findAvailableTcpPort(5000..5010)
             if (port > 0) {
                 println "Listening on port ${port} for remote debugging requests"
-                list.add("-Xrunjdwp:transport=dt_socket,address=${port},server=y,suspend=n")
+                list.add("-Xrunjdwp:transport=dt_socket,address=${port},server=y,suspend=${rootProject.remoteDebuggingSuspend}")
             }
         }
         jvmArgs = list
