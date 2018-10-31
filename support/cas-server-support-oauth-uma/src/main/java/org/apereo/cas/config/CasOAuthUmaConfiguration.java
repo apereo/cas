@@ -95,11 +95,13 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Bean
     @ConditionalOnMissingBean(name = "umaResourceSetClaimPermissionExaminer")
+    @RefreshScope
     public UmaResourceSetClaimPermissionExaminer umaResourceSetClaimPermissionExaminer() {
         return new DefaultUmaResourceSetClaimPermissionExaminer();
     }
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "umaRequestingPartyTokenGenerator")
     public IdTokenGeneratorService umaRequestingPartyTokenGenerator() {
         val uma = casProperties.getAuthn().getUma();
@@ -250,14 +252,16 @@ public class CasOAuthUmaConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(umaRequestingPartyTokenSecurityInterceptor())
+        registry
+            .addInterceptor(umaRequestingPartyTokenSecurityInterceptor())
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_PERMISSION_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/*/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_POLICY_URL).concat("*"))
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL).concat("*"));
 
-        registry.addInterceptor(umaAuthorizationApiTokenSecurityInterceptor())
+        registry
+            .addInterceptor(umaAuthorizationApiTokenSecurityInterceptor())
             .addPathPatterns(BASE_OAUTH20_URL.concat("/").concat(OAuth20Constants.UMA_AUTHORIZATION_REQUEST_URL).concat("*"));
     }
 }

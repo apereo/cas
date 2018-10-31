@@ -1,17 +1,13 @@
-description = "Apereo CAS OAuth UMA Server Core Support"
+description = "Apereo CAS OAuth UMA Server Support"
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")
 
-    implementation libraries.pac4j
-    
     implementation project(":support:cas-server-support-oauth-core")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth")
-    implementation project(":support:cas-server-support-jpa-util")
-    implementation project(":support:cas-server-support-oauth-uma-core")
-
+    
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-services-api")
@@ -22,6 +18,11 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":support:cas-server-support-jpa-util")
+    
+    implementation libraries.pac4j
+
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-util")
@@ -30,6 +31,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
@@ -43,6 +45,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+
     testImplementation project(path: ":support:cas-server-support-oauth", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-oauth-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-oauth-services", configuration: "tests")
