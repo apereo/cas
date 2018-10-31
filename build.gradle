@@ -213,6 +213,11 @@ subprojects {
 
     configurations {
         tests
+        developmentOnly
+        
+        runtimeClasspath {
+            extendsFrom developmentOnly
+        }
     }
 
     configurations.all {

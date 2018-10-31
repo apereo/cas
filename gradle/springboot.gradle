@@ -56,7 +56,7 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishReleases && !rootP
 
         sourceResources sourceSets.bootRun
         systemProperties = System.properties
-
+        
         def list = []
         list.add("-XX:TieredStopAtLevel=1")
         list.add("-Xverify:none")

@@ -34,7 +34,7 @@ currentChangeSetAffectsJavadocs() {
 }
 
 currentChangeSetAffectsDocumentation() {
-    currentChangeSetContains "\.md"
+    currentChangeSetContains "\.(md|properties|java)"
     return `(expr "$?" + 0)`
 }
 
@@ -44,6 +44,6 @@ currentChangeSetAffectsDependencies() {
 }
 
 currentChangeSetAffectsSnapshots() {
-    currentChangeSetContains "\.(java|groovy|yml|properties)"
+    currentChangeSetContains "\.(java|groovy|yml|properties|xml|json)"
     return `(expr "$?" + 0)`
 }

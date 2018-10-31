@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is {@link CasConfigurationMetadataRepositoryJsonBuilder}.
+ * This is {@link CasConfigurationMetadataRepositoryJsonBuilder}
+ * which is similar to {@link ConfigurationMetadataRepositoryJsonBuilder}
+ * with a different implementation for the {@link #getSource(RawConfigurationMetadata, ConfigurationMetadataItem)}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0

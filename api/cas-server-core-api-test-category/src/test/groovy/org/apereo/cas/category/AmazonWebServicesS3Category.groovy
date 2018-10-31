@@ -1,7 +1,7 @@
 package org.apereo.cas.category
 
 /**
- * Category marking tests that need a amazon s3 buckets.
+ * Category marking tests that need an amazon s3 buckets.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
