@@ -51,8 +51,9 @@ When done, you may build the codebase via the following command:
 The following commandline boolean flags are supported by the build:
 
 | Flag                              | Description
-|-----------------------------------+----------------------------------------------------------------------+
+|-----------------------------------+---------------------------------------------------------------------------+
 | `enableRemoteDebugging`           | Allows for remote debugging via a pre-defined port (i.e. `5000`).
+| `remoteDebuggingSuspend`          | Set to `true` to suspend JVM remote debugging until the debugger attaches to the running session.
 | `enableIncremental`               | Enable Gradle's incremental compilation feature.
 | `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
 | `skipCheckstyle`                  | Skip running checkstyle checks.
@@ -63,7 +64,7 @@ The following commandline boolean flags are supported by the build:
 | `skipNodeModulesCleanUp`          | Skip cleaning and removing the `node_modules` directory. Mostly useful when running tests.
 | `skipSonarqube`                   | Ignore reporting results to Sonarqube.
 | `skipErrorProneCompiler`          | Skip running the `error-prone` static-analysis compiler.
-| `skipBootifulArtifact`            | Do not apply the Spring Boot plugin to web application artifacts.
+| `skipBootifulArtifact`            | Do not apply the Spring Boot plugin to bootify application artifacts.
 | `skipNpmLint`                     | Skip running the linter for resources managed by NPM, such as Javascript files.
 | `forceBom`                        | Force the generation of the CAS Maven BOM.
 | `ignoreJavadocFailures`           | Ignore javadoc failures and let the build resume.
