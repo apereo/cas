@@ -43,6 +43,7 @@ public class DefaultRegisteredServiceJsonSerializer extends AbstractJacksonBacke
     protected ObjectMapper initializeObjectMapper() {
         val mapper = super.initializeObjectMapper();
         mapper.addHandler(new JasigRegisteredServiceDeserializationProblemHandler());
+        mapper.addHandler(new RegisteredServiceMultifactorPolicyDeserializationProblemHandler());
         return mapper;
     }
 
