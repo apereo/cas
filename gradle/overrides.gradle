@@ -13,11 +13,11 @@ ext["infinispanVersion"] = "9.4.0.Final"
 
 ext["springVersion"] = "5.1.2.RELEASE"
 ext["springBootTomcatVersion"] = "9.0.12"
-ext["springSessionVersion"] = "2.1.0.RELEASE"
+ext["springSessionVersion"] = "2.1.1.RELEASE"
 ext["springSessionMongoVersion"] = "2.1.0.RELEASE"
 
 ext["jacksonDatabindVersion"] = "2.9.7"
-ext["thymeleafVersion"] = "3.0.10.RELEASE"
+ext["thymeleafVersion"] = "3.0.11.RELEASE"
 ext["thymeleafDialectVersion"] = "2.3.0"
 ext["hsqlVersion"] = "2.4.1"
 ext["httpCoreVersion"] = "4.4.10"
