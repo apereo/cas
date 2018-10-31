@@ -6,29 +6,31 @@ apply from: rootProject.file("gradle/springboot.gradle")
 description = "Apereo CAS Shell Support via Spring Shell"
 
 dependencies {
-    /**
-     * Marking all dependencies as compile so they can be included in the final
-     * executable jar by the build packaging process.
-     */
-    compile project(":api:cas-server-core-api-services")
+    implementation project(":api:cas-server-core-api-services")
+
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-audit-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-logging-config")
+    implementation project(":core:cas-server-core-configuration-metadata-repository")
+
+    implementation project(":support:cas-server-support-oauth-services")
+    implementation project(":support:cas-server-support-oidc-services")
+    implementation project(":support:cas-server-support-saml-idp-core")
+    implementation project(":support:cas-server-support-ws-idp-api")
+    implementation project(":support:cas-server-support-saml-idp-core")
+    implementation project(":support:cas-server-support-gauth-core-mfa")
+    implementation project(":support:cas-server-support-consent-api")
     
-    compile project(":core:cas-server-core-configuration-api")
-    compile project(":core:cas-server-core-util-api")
-    compile project(":core:cas-server-core-services-api")
-    compile project(":core:cas-server-core-logging-config")
-    compile project(":core:cas-server-core-configuration-metadata-repository")
-    
-    compile project(":support:cas-server-support-oauth-services")
-    compile project(":support:cas-server-support-oidc-services")
-    compile project(":support:cas-server-support-saml-idp-core")
-    compile project(":support:cas-server-support-ws-idp-api")
-    compile project(":support:cas-server-support-saml-idp-core")
-    
-    compile libraries.springbootconfigmetadata
-    compile libraries.springshell
-    compile libraries.metrics
-    compile libraries.pac4j
-    compile libraries.jasypt
-    compile libraries.bouncycastle
-    compile libraries.opensaml
+    implementation libraries.springbootconfigmetadata
+    implementation libraries.springshell
+    implementation libraries.metrics
+    implementation libraries.pac4j
+    implementation libraries.jasypt
+    implementation libraries.bouncycastle
+    implementation libraries.opensaml
+
+    runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 }
