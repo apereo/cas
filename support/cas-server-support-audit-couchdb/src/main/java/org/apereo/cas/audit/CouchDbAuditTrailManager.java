@@ -26,8 +26,7 @@ import java.util.concurrent.Executors;
 @Getter
 @Setter
 public class CouchDbAuditTrailManager implements AuditTrailManager {
-    @NonNull
-    private AuditActionContextCouchDbRepository couchDb;
+    private @NonNull AuditActionContextCouchDbRepository couchDb;
 
     private boolean asynchronous;
 

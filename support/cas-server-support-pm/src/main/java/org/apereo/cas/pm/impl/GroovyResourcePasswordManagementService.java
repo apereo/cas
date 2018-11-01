@@ -36,7 +36,7 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
     }
 
     @Override
-    public boolean changeInternal(@NonNull final Credential credential, @NonNull final PasswordChangeBean bean) {
+    public boolean changeInternal(final @NonNull Credential credential, final @NonNull PasswordChangeBean bean) {
         return ScriptingUtils.executeGroovyScript(this.groovyResource, "change", new Object[]{credential, bean, LOGGER}, Boolean.class, true);
     }
 

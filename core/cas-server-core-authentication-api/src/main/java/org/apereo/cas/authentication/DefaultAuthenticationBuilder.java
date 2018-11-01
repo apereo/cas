@@ -121,7 +121,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @param credentials Non-null list of credential metadata.
      * @return This builder instance.
      */
-    public AuthenticationBuilder setCredentials(@NonNull final List<CredentialMetaData> credentials) {
+    public AuthenticationBuilder setCredentials(final @NonNull List<CredentialMetaData> credentials) {
         this.credentials.clear();
         this.credentials.addAll(credentials);
         return this;
@@ -168,7 +168,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     @Override
-    public AuthenticationBuilder setSuccesses(@NonNull final Map<String, AuthenticationHandlerExecutionResult> successes) {
+    public AuthenticationBuilder setSuccesses(final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
         this.successes.clear();
         return addSuccesses(successes);
     }
@@ -191,7 +191,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
 
     @Override
-    public AuthenticationBuilder setFailures(@NonNull final Map<String, Throwable> failures) {
+    public AuthenticationBuilder setFailures(final @NonNull Map<String, Throwable> failures) {
         this.failures.clear();
         return addFailures(failures);
     }

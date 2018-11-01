@@ -32,10 +32,10 @@ public class CouchDbMultifactorAuthenticationTrustRecord extends MultifactorAuth
     public CouchDbMultifactorAuthenticationTrustRecord(@JsonProperty("_id") final String cid, //NOPMD
                                                        @JsonProperty("_rev") final String rev,
                                                        @JsonProperty("id") final long id,
-                                                       @JsonProperty("principal") @NonNull final String principal,
-                                                       @JsonProperty("deviceFingerprint") @NonNull final String deviceFingerprint,
-                                                       @JsonProperty("recordDate") @NonNull final LocalDateTime recordDate,
-                                                       @JsonProperty("recordKey") @NonNull final String recordKey,
+                                                       @JsonProperty("principal") final @NonNull String principal,
+                                                       @JsonProperty("deviceFingerprint") final @NonNull String deviceFingerprint,
+                                                       @JsonProperty("recordDate") final @NonNull LocalDateTime recordDate,
+                                                       @JsonProperty("recordKey") final @NonNull String recordKey,
                                                        @JsonProperty("name") final String name) {
         this.cid = cid;
         this.rev = rev;
