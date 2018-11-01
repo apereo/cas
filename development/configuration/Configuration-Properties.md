@@ -13,9 +13,7 @@ references to the underlying modules that consume them.
 <div class="alert alert-warning"><strong>Be Selective</strong><p>
 This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as <i>reference</i>. All these ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p></div>
 
-Note that property names can be specified
-in very relaxed terms. For instance `cas.someProperty`, `cas.some-property`, `cas.some_property`
-and `CAS_SOME_PROPERTY` are all valid names.
+Note that property names can be specified in very relaxed terms. For instance `cas.someProperty`, `cas.some-property`, `cas.some_property` are all valid names.
 
 The following list of properties are controlled by and provided to CAS. Each block, for most use cases, corresponds
 to a specific CAS module that is expected to be included in the final CAS distribution prepared during the build
@@ -43,11 +41,36 @@ The following settings could be used to extend CAS with arbitrary configuration 
 
 ### Standalone
 
+#### By Directory
+
 CAS by default will attempt to locate settings and properties inside a given directory indicated
-under the setting name `cas.standalone.configurationDirectory` and otherwise falls back to using `/etc/cas/config`.
+under the setting name `cas.standalone.configurationDirectory` and otherwise falls back to using:
+
+1. `/etc/cas/config`
+2. `/opt/cas/config`
+3. `/var/cas/config`
+
+CAS has the ability to also load a Groovy file for loading settings. The file is expected to be found at the above matching 
+directory and should be named `${cas-application-name}.groovy`, such as `cas.groovy`. The script is able to combine conditional settings for active profiles and common settings that are applicable to all environments and profiles into one location with a structure that is similar to the below example:
+
+```groovy
+// Settings may be filtered by individual profiles
+profiles {
+    standalone {
+        cas.some.setting="value"
+    }
+}
+
+// This applies to all profiles and environments
+cas.common.setting="value"
+``` 
+
+#### By File
 
 There also exists a `cas.standalone.configurationFile` which can be used to directly feed a collection of properties
-to CAS in form of a file or classpath resource. This is specially useful in cases where a bare CAS server is deployed in the cloud without the extra ceremony of a configuration server or an external directory for that matter and the deployer wishes to avoid overriding embedded configuration files.
+to CAS in form of a file or classpath resource. This is specially useful in cases where a bare CAS server is deployed in the cloud without 
+the extra ceremony of a configuration server or an external directory for that matter and the deployer wishes to avoid overriding embedded configuration files.
+
 
 ### Spring Cloud
 
@@ -112,14 +135,73 @@ Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp
 ```properties
 # spring.cloud.vault.host=127.0.0.1
 # spring.cloud.vault.port=8200
-# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
 # spring.cloud.vault.connectionTimeout=3000
 # spring.cloud.vault.readTimeout=5000
 # spring.cloud.vault.enabled=true
 # spring.cloud.vault.fail-fast=true
 # spring.cloud.vault.scheme=http
+```
+
+#### Token Authentication
+
+Tokens are the core method for authentication within Vault. Token authentication requires a static token to be provided.
+
+```properties
+# spring.cloud.vault.authentication=TOKEN
+# spring.cloud.vault.token=1305dd6a-a754-f145-3563-2fa90b0773b7
+```
+
+#### AppID Authentication
+
+Vault supports AppId authentication that consists of two hard to guess tokens. The AppId defaults to `spring.application.name` that is statically configured. The second token is the 
+UserId which is a part determined by the application, usually related to the runtime environment. Spring Cloud Vault Config supports IP address, Mac address and static 
+UserId’s (e.g. supplied via System properties). The IP and Mac address are represented as Hex-encoded SHA256 hash.
+
+Using IP addresses:
+
+```bash
+export IP_ADDRESS=`echo -n 192.168.99.1 | sha256sum`
+```
+
+```properties
+# spring.cloud.vault.authentication=APPID
+# spring.cloud.vault.app-id.user-id=$IP_ADDRESS
+```
+
+Using MAC address:
+
+```bash
+export $MAC_ADDRESS=`echo -n ABCDEFGH | sha256sum`
+```
+
+```properties
+# spring.cloud.vault.authentication=APPID
+# spring.cloud.vault.app-id.user-id=$MAC_ADDRESS
+# spring.cloud.vault.app-id.network-interface=eth0
+```
+
+#### Kubernetes Authentication
+
+Kubernetes authentication mechanism allows to authenticate with Vault using a Kubernetes Service Account Token. The authentication is role based and the role is bound to a service account name and a namespace.
+
+```properties
+# spring.cloud.vault.authentication=KUBERNETES
+# spring.cloud.vault.kubernetes.role=my-dev-role
+# spring.cloud.vault.kubernetes.service-account-token-file: /var/run/secrets/kubernetes.io/serviceaccount/token
+```
+
+#### Generic Backend v1
+
+```properties
 # spring.cloud.vault.generic.enabled=true
 # spring.cloud.vault.generic.backend=secret
+```
+
+#### KV Backend v2
+
+```properties
+# spring.cloud.vault.kv.enabled=true
+# spring.cloud.vault.kv.backend=secret
 ```
 
 ### MongoDb
@@ -483,7 +565,7 @@ To learn more about this topic, [please review this guide](../installation/Monit
 # management.endpoints.enabled-by-default=true
 # management.endpoints.web.base-path=/actuator
 
-# management.endpoints.web.exposure.include=info,health,status,configuration-metadata
+# management.endpoints.web.exposure.include=info,health,status,configurationMetadata
 # management.server.add-application-context-header=false
 ```
 
@@ -909,7 +991,7 @@ function run(uid, logger) {
     // If you want to call back into Java, this is one way to do so
     var javaObj = new JavaImporter(org.yourorgname.yourpackagename);
     with (javaObj) {
-    	var objFromJava = JavaClassInPackage.someStaticMethod(uid);
+        var objFromJava = JavaClassInPackage.someStaticMethod(uid);
     }
 
     var map = {};
@@ -1338,6 +1420,19 @@ Email notifications settings are available [here](Configuration-Properties-Commo
 ## SMS Messaging
 
 To learn more about this topic, [please review this guide](../installation/SMS-Messaging-Configuration.html).
+
+### Groovy
+
+Send text messages using a Groovy script.
+
+```properties
+# cas.smsProvider.groovy.location=file:/etc/cas/config/SmsSender.groovy
+```
+
+### REST
+
+Send text messages using a RESTful API. RESTful settings for this feature are 
+available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.smsProvider.rest`.
 
 ### Twilio
 
@@ -2104,8 +2199,8 @@ strategies when collecting principal attributes:
 
 | Type                 | Description
 |----------------------|------------------------------------------------------------------------------------------------
-| `CAS`                | Use attributes provided by the delegated WS-Fed instance.
-| `WSFED`              | Use attributes provided by CAS' own attribute resolution mechanics and repository.
+| `CAS`                | Use attributes provided by CAS' own attribute resolution mechanics and repository.
+| `WSFED`              | Use attributes provided by the delegated WS-Fed instance.
 | `BOTH`               | Combine both the above options, where CAS attribute repositories take precedence over WS-Fed.
 
 ```properties
@@ -2382,6 +2477,7 @@ To learn more about this topic, [please review this guide](../mfa/RADIUS-Authent
 ```properties
 # cas.authn.mfa.radius.rank=0
 # cas.authn.mfa.radius.trustedDeviceEnabled=false
+# cas.authn.mfa.radius.allowedAuthenticationAttempts=-1
 # cas.authn.mfa.radius.name=
 ```
 
@@ -3368,7 +3464,7 @@ The default options are available for hostname verification:
 
 ## Service Registry
 
-See [this guide](../installation/Service-Management.html) to learn more.
+See [this guide](../services/Service-Management.html) to learn more.
 
 ```properties
 # cas.serviceRegistry.watcherEnabled=true
@@ -3397,7 +3493,7 @@ to locate JSON service definitions, decide how those resources should be found.
 # cas.serviceRegistry.json.location=classpath:/services
 ```
 
-To learn more about this topic, [please review this guide](../installation/JSON-Service-Management.html).
+To learn more about this topic, [please review this guide](../services/JSON-Service-Management.html).
 
 ### YAML Service Registry
 
@@ -3408,11 +3504,11 @@ to locate YAML service definitions, decide how those resources should be found.
 # cas.serviceRegistry.yaml.location=classpath:/services
 ```
 
-To learn more about this topic, [please review this guide](../installation/YAML-Service-Management.html).
+To learn more about this topic, [please review this guide](../services/YAML-Service-Management.html).
 
 ### RESTful Service Registry
 
-To learn more about this topic, [please review this guide](../installation/REST-Service-Management.html).
+To learn more about this topic, [please review this guide](../services/REST-Service-Management.html).
 
 ```properties
 # cas.serviceRegistry.rest.url=https://example.api.org
@@ -3422,7 +3518,7 @@ To learn more about this topic, [please review this guide](../installation/REST-
 
 ### CouchDb Service Registry
 
-To learn more about this topic, [please review this guide](../installation/CouchDb-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.serviceRegistry`.
+To learn more about this topic, [please review this guide](../services/CouchDb-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#couchdb-configuration) under the configuration key `cas.serviceRegistry`.
 
 ### Redis Service Registry
 
@@ -3430,7 +3526,7 @@ To learn more about this topic, [please review this guide](../installation/Redis
 
 ### CosmosDb Service Registry
 
-To learn more about this topic, [please review this guide](../installation/CosmosDb-Service-Management.html).
+To learn more about this topic, [please review this guide](../services/CosmosDb-Service-Management.html).
 
 ```properties
 # cas.serviceRegistry.cosmosDb.uri=
@@ -3444,7 +3540,7 @@ To learn more about this topic, [please review this guide](../installation/Cosmo
 
 ### DynamoDb Service Registry
 
-To learn more about this topic, [please review this guide](../installation/DynamoDb-Service-Management.html).
+To learn more about this topic, [please review this guide](../services/DynamoDb-Service-Management.html).
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration)
 under the configuration key `cas.serviceRegistry`.
 AWS settings for this feature are available [here](Configuration-Properties-Common.html#amazon-integration-settings) 
@@ -3456,13 +3552,13 @@ under the configuration key `cas.serviceRegistry.dynamoDb`.
 
 ### MongoDb Service Registry
 
-Store CAS service definitions inside a MongoDb instance. To learn more about this topic, [please review this guide](../installation/Mongo-Service-Management.html).
+Store CAS service definitions inside a MongoDb instance. To learn more about this topic, [please review this guide](../services/MongoDb-Service-Management.html).
  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.serviceRegistry`.
 
 ### LDAP Service Registry
 
 Control how CAS services should be found inside an LDAP instance.
-To learn more about this topic, [please review this guide](../installation/LDAP-Service-Management.html).  LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.serviceRegistry.ldap`.
+To learn more about this topic, [please review this guide](../services/LDAP-Service-Management.html).  LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.serviceRegistry.ldap`.
 
 ```properties
 # cas.serviceRegistry.ldap.serviceDefinitionAttribute=description
@@ -3475,21 +3571,21 @@ To learn more about this topic, [please review this guide](../installation/LDAP-
 ### Couchbase Service Registry
 
 Control how CAS services should be found inside a Couchbase instance.
-To learn more about this topic, [please review this guide](../installation/Couchbase-Service-Management.html). 
+To learn more about this topic, [please review this guide](../services/Couchbase-Service-Management.html). 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) 
 under the configuration key `cas.serviceRegistry.couchbase`.
 
 ### Database Service Registry
 
 Control how CAS services should be found inside a database instance.
-To learn more about this topic, [please review this guide](../installation/JPA-Service-Management.html). 
+To learn more about this topic, [please review this guide](../services/JPA-Service-Management.html). 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
 under the configuration key `cas.serviceRegistry.jpa`.
 
 ## Service Registry Replication
 
 Control how CAS services definition files should be replicated across a CAS cluster.
-To learn more about this topic, [please review this guide](../installation/Configuring-Service-Replication.html)
+To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html)
 
 Replication modes may be configured per the following options:
 
@@ -3506,7 +3602,7 @@ Replication modes may be configured per the following options:
 ## Service Registry Replication Hazelcast
 
 Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
-To learn more about this topic, [please review this guide](../installation/Configuring-Service-Replication.html).
+To learn more about this topic, [please review this guide](../services/Configuring-Service-Replication.html).
 
 Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.serviceRegistry.stream.hazelcast.config`.
 
@@ -4119,9 +4215,9 @@ Here is an example `scrape_config` to add to `prometheus.yml`:
 ```yaml
 scrape_configs:
   - job_name: 'spring'
-	metrics_path: '/actuator/prometheus'
-	static_configs:
-	  - targets: ['HOST:PORT']
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['HOST:PORT']
 ``` 
 
 ### SignalFx
