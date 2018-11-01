@@ -3,9 +3,10 @@ package org.apereo.cas.configuration.model.support.mfa;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * This is {@link RadiusMultifactorProperties}.
@@ -58,7 +59,7 @@ public class RadiusMultifactorProperties extends BaseMultifactorProviderProperti
     /**
      * Total number of allowed authentication attempts
      * with the radius mfa server before the authentication event
-     * is considered cancelled. A negative value indicates
+     * is considered cancelled. A negative/zero value indicates
      * that no limit is enforced.
      */
     private long allowedAuthenticationAttempts = -1;
