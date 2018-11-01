@@ -17,7 +17,7 @@ To see the relevant list of CAS properties, please [review this guide](../config
 
 ## File-based Audits
 
-File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](Logging.html) configuration.
+File-based audit logs appear in a `cas_audit.log` file defined in the [Logging](../logging/Logging.html) configuration.
 To see the relevant list of CAS properties, please [review this guide](../configuration/Configuration-Properties.html#audits).
 
 ### Sample Log Output

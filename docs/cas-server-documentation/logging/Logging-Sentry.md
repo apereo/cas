@@ -20,7 +20,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-The [Logging](../installation/Logging.html) configuration file must be adjusted to match the following:
+The [Logging](../logging/Logging.html) configuration file must be adjusted to match the following:
 
 ```xml
 <Configuration packages="...,org.apache.logging.log4j.core,com.getsentry.raven.log4j2">
