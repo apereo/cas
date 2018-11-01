@@ -43,15 +43,35 @@ The following settings could be used to extend CAS with arbitrary configuration 
 
 ### Standalone
 
+#### By Directory
+
 CAS by default will attempt to locate settings and properties inside a given directory indicated
 under the setting name `cas.standalone.configurationDirectory` and otherwise falls back to using:
 
-- `/etc/cas/config`
-- `/opt/cas/config`
-- `/var/cas/config`
+1. `/etc/cas/config`
+2. `/opt/cas/config`
+3. `/var/cas/config`
+
+CAS has the ability to also load a Groovy file for loading settings. The file is expected to be found at the above matching directory and should be named `cas-application-name.groovy`, such as `cas.groovy`. The script is able to combine conditional settings for active profiles and common settings applicable
+to all environments and profiles into one location with a structure that is similar to the below example:
+
+```groovy
+// Settings may be filtered by individual profiles
+profiles {
+    standalone {
+        cas.some.setting="value"
+    }
+}
+
+// This applies to all profiles and environments
+cas.common.setting="value"
+``` 
+
+#### By File
 
 There also exists a `cas.standalone.configurationFile` which can be used to directly feed a collection of properties
 to CAS in form of a file or classpath resource. This is specially useful in cases where a bare CAS server is deployed in the cloud without the extra ceremony of a configuration server or an external directory for that matter and the deployer wishes to avoid overriding embedded configuration files.
+
 
 ### Spring Cloud
 

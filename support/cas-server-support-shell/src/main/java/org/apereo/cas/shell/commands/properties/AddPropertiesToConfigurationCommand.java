@@ -1,12 +1,12 @@
 package org.apereo.cas.shell.commands.properties;
 
+import org.apereo.cas.configuration.CasCoreConfigurationUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.config.YamlProcessor;
-import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -72,7 +72,7 @@ public class AddPropertiesToConfigurationCommand {
                 break;
             case "yml":
                 createConfigurationFileIfNeeded(filePath);
-                val yamlProps = loadYamlPropertiesFromConfigurationFile(filePath);
+                val yamlProps = CasCoreConfigurationUtils.loadYamlProperties(new FileSystemResource(filePath));
                 writeYamlConfigurationPropertiesToFile(filePath, results, yamlProps);
                 break;
             default:
@@ -81,8 +81,9 @@ public class AddPropertiesToConfigurationCommand {
 
     }
 
-    private static void writeYamlConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results,
-                                                               final Properties yamlProps) throws Exception {
+    private static void writeYamlConfigurationPropertiesToFile(final File filePath,
+                                                               final Map<String, ConfigurationMetadataProperty> results,
+                                                               final Map yamlProps) throws Exception {
         val options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.AUTO);
         options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
@@ -95,25 +96,17 @@ public class AddPropertiesToConfigurationCommand {
         }
     }
 
-    private static Properties loadYamlPropertiesFromConfigurationFile(final File filePath) {
-        val factory = new YamlPropertiesFactoryBean();
-        factory.setResolutionMethod(YamlProcessor.ResolutionMethod.OVERRIDE);
-        factory.setResources(new FileSystemResource(filePath));
-        factory.setSingleton(true);
-        factory.afterPropertiesSet();
-        return factory.getObject();
-    }
-
     private static void writeConfigurationPropertiesToFile(final File filePath, final Map<String, ConfigurationMetadataProperty> results,
-                                                           final Properties p) throws Exception {
+                                                           final Map<String, String> p) throws Exception {
         LOGGER.info("Located [{}] properties in configuration file [{}]", results.size(), filePath.getCanonicalPath());
         putResultsIntoProperties(results, p);
-        val lines = p.stringPropertyNames().stream().map(s -> s + '=' + p.get(s)).collect(Collectors.toList());
-        lines.sort(Comparator.naturalOrder());
+        val lines = p.keySet().stream().map(s -> s + '=' + p.get(s))
+            .sorted(Comparator.naturalOrder())
+            .collect(Collectors.toList());
         FileUtils.writeLines(filePath, lines);
     }
 
-    private static void putResultsIntoProperties(final Map<String, ConfigurationMetadataProperty> results, final Properties p) {
+    private static void putResultsIntoProperties(final Map<String, ConfigurationMetadataProperty> results, final Map<String, String> p) {
         val lines = results.values().stream()
             .sorted(Comparator.comparing(ConfigurationMetadataProperty::getName))
             .collect(Collectors.toList());
@@ -131,7 +124,7 @@ public class AddPropertiesToConfigurationCommand {
         return v.getDefaultValue().toString();
     }
 
-    private static Properties loadPropertiesFromConfigurationFile(final File filePath) throws IOException {
+    private static Map loadPropertiesFromConfigurationFile(final File filePath) throws IOException {
         val p = new Properties();
         try (val f = Files.newBufferedReader(filePath.toPath(), StandardCharsets.UTF_8)) {
             p.load(f);

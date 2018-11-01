@@ -4,6 +4,7 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.configuration.DefaultCasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
+import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 
 import org.springframework.beans.factory.ObjectProvider;
@@ -37,13 +38,21 @@ public class CasCoreBootstrapStandaloneLocatorConfiguration {
     @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
     @Bean
     public CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator() {
-        return new DefaultCasConfigurationPropertiesSourceLocator(casConfigurationCipherExecutor(), configurationPropertiesEnvironmentManager.getIfAvailable());
+        return new DefaultCasConfigurationPropertiesSourceLocator(
+            configurationPropertiesEnvironmentManager.getIfAvailable(),
+            configurationPropertiesLoaderFactory());
     }
 
     @ConditionalOnMissingBean(name = "casConfigurationCipherExecutor")
     @Bean
     public CipherExecutor<String, String> casConfigurationCipherExecutor() {
         return new CasConfigurationJasyptCipherExecutor(environment);
+    }
+
+    @ConditionalOnMissingBean(name = "configurationPropertiesLoaderFactory")
+    @Bean
+    public ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory() {
+        return new ConfigurationPropertiesLoaderFactory(casConfigurationCipherExecutor(), environment);
     }
 
 }
