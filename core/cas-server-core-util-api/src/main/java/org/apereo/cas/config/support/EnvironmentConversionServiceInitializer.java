@@ -19,6 +19,5 @@ public class EnvironmentConversionServiceInitializer implements ApplicationConte
         val conversionService = new DefaultFormattingConversionService(true);
         conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
         ctx.getEnvironment().setConversionService(conversionService);
-
     }
 }

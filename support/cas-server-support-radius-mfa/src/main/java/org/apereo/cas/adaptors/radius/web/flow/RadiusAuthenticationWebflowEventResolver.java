@@ -58,10 +58,10 @@ public class RadiusAuthenticationWebflowEventResolver extends BaseMultifactorAut
 
     @Override
     protected Event getAuthenticationFailureErrorEvent(final RequestContext context) {
-        if (allowedAuthenticationAttempts < 0) {
+        if (allowedAuthenticationAttempts <= 0) {
             return super.getAuthenticationFailureErrorEvent(context);
         }
-        val attempts = context.getFlowScope().getLong(FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS, 0L);
+        val attempts = context.getFlowScope().getLong(FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS, 0L) + 1;
         if (attempts >= allowedAuthenticationAttempts) {
             context.getFlowScope().remove(FLOW_SCOPE_ATTR_TOTAL_AUTHENTICATION_ATTEMPTS);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_CANCEL);
