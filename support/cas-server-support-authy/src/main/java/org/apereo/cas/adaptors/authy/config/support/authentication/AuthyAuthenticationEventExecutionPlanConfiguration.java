@@ -61,6 +61,7 @@ public class AuthyAuthenticationEventExecutionPlanConfiguration {
             authy.getCountryCode());
     }
 
+    @ConditionalOnMissingBean(name = "authyAuthenticationHandler")
     @RefreshScope
     @Bean
     @SneakyThrows
