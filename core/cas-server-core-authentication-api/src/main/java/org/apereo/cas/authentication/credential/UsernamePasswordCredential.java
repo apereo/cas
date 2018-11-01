@@ -37,11 +37,9 @@ public class UsernamePasswordCredential implements Credential {
 
     private static final long serialVersionUID = -700605081472810939L;
 
-    @Size(min = 1, message = "username.required")
-    private String username;
+    private @Size(min = 1, message = "username.required") String username;
 
-    @Size(min = 1, message = "password.required")
-    private String password;
+    private @Size(min = 1, message = "password.required") String password;
 
     private String source;
 

@@ -338,7 +338,7 @@ public class WebUtils {
      * @param clazz   the clazz
      * @return the credential
      */
-    public static <T extends Credential> T getCredential(final RequestContext context, @NonNull final Class<T> clazz) {
+    public static <T extends Credential> T getCredential(final RequestContext context, final @NonNull Class<T> clazz) {
         val credential = getCredential(context);
         if (credential == null) {
             return null;

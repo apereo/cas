@@ -104,7 +104,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     public X509CredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                                 final Pattern regExTrustedIssuerDnPattern, final int maxPathLength,
                                                 final boolean maxPathLengthAllowUnspecified, final boolean checkKeyUsage, final boolean requireKeyUsage,
-                                                final Pattern regExSubjectDnPattern, @NonNull final RevocationChecker revocationChecker) {
+                                                final Pattern regExSubjectDnPattern, final @NonNull RevocationChecker revocationChecker) {
         super(name, servicesManager, principalFactory, null);
         this.regExTrustedIssuerDnPattern = regExTrustedIssuerDnPattern;
         this.maxPathLength = maxPathLength;

@@ -117,7 +117,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
 
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Override
-    public Ticket getTicket(@NonNull final String ticketId) throws InvalidTicketException {
+    public Ticket getTicket(final @NonNull String ticketId) throws InvalidTicketException {
         val ticket = this.ticketRegistry.getTicket(ticketId);
         verifyTicketState(ticket, ticketId, null);
         return ticket;
@@ -133,7 +133,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
     @Override
-    public <T extends Ticket> T getTicket(@NonNull final String ticketId, final Class<T> clazz) throws InvalidTicketException {
+    public <T extends Ticket> T getTicket(final @NonNull String ticketId, final Class<T> clazz) throws InvalidTicketException {
         val ticket = this.ticketRegistry.getTicket(ticketId, clazz);
         verifyTicketState(ticket, ticketId, clazz);
         return (T) ticket;

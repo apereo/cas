@@ -30,11 +30,11 @@ public class CouchDbOneTimeToken extends OneTimeToken {
 
     @JsonCreator
     public CouchDbOneTimeToken(@JsonProperty("_id") final String cid, //NOPMD
-        @JsonProperty("_rev") final String rev,
-        @JsonProperty("id") final long id,
-        @JsonProperty("token") @NonNull final Integer token,
-        @JsonProperty("userId") @NonNull final String userId,
-        @JsonProperty("issuedDateTime") final LocalDateTime issuedDateTime
+                               @JsonProperty("_rev") final String rev,
+                               @JsonProperty("id") final long id,
+                               @JsonProperty("token") final @NonNull Integer token,
+                               @JsonProperty("userId") final @NonNull String userId,
+                               @JsonProperty("issuedDateTime") final LocalDateTime issuedDateTime
     ) {
         super(token, userId);
         this.cid = cid;

@@ -32,8 +32,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
         new File("/var/cas/config")
     };
 
-    @NonNull
-    private final ConfigurationPropertiesBindingPostProcessor binder;
+    private final @NonNull ConfigurationPropertiesBindingPostProcessor binder;
 
     private final Environment environment;
 
