@@ -2248,6 +2248,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 ```properties
 # cas.authn.mfa.radius.rank=0
 # cas.authn.mfa.radius.trustedDeviceEnabled=false
+# cas.authn.mfa.radius.allowedAuthenticationAttempts=-1
 # cas.authn.mfa.radius.name=
 ```
 
