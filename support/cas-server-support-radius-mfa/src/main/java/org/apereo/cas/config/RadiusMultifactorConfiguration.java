@@ -99,6 +99,7 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
     }
 
     @Bean
+    @RefreshScope
     public Action radiusAuthenticationWebflowAction() {
         return new RadiusAuthenticationWebflowAction(radiusAuthenticationWebflowEventResolver());
     }
@@ -106,8 +107,11 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
     @RefreshScope
     @Bean
     public CasWebflowEventResolver radiusAuthenticationWebflowEventResolver() {
-        return new RadiusAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-            warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
+        return new RadiusAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
+            servicesManager, ticketRegistrySupport,
+            warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
+            multifactorAuthenticationProviderSelector,
+            casProperties.getAuthn().getMfa().getRadius().getAllowedAuthenticationAttempts());
     }
 
     @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")

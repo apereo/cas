@@ -1,9 +1,10 @@
 package org.apereo.cas.web.flow.configurer;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ApplicationContext;
@@ -113,8 +114,8 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
         // Set providerId into flowScope.
         mfaFlow.getStartActionList().add(
-                new SetAction(createExpression("flowScope.".concat(CasWebflowConstants.VAR_ID_PROVIDER_ID)),
-                              createExpression(StringUtils.quote(providerId)))
+            new SetAction(createExpression("flowScope.".concat(CasWebflowConstants.VAR_ID_PROVIDER_ID)),
+                createExpression(StringUtils.quote(providerId)))
         );
 
         // Insert bypass, available and failure actions into the flow.
@@ -124,16 +125,12 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_CHECK_BYPASS));
 
         // Set the bypass action
-        final ActionState bypassAction = createActionState(mfaFlow,
-                CasWebflowConstants.STATE_ID_CHECK_BYPASS,
-                createEvaluateAction(MFA_CHECK_BYPASS_BEAN_ID));
+        final ActionState bypassAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_CHECK_BYPASS, createEvaluateAction(MFA_CHECK_BYPASS_BEAN_ID));
         createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.STATE_ID_CHECK_AVAILABLE);
         createTransitionForState(bypassAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.TRANSITION_ID_SUCCESS);
 
         // Set the available action
-        final ActionState availableAction = createActionState(mfaFlow,
-                CasWebflowConstants.STATE_ID_CHECK_AVAILABLE,
-                createEvaluateAction(MFA_CHECK_AVAILABLE_BEAN_ID));
+        final ActionState availableAction = createActionState(mfaFlow, CasWebflowConstants.STATE_ID_CHECK_AVAILABLE, createEvaluateAction(MFA_CHECK_AVAILABLE_BEAN_ID));
         if (mfaFlow.containsState(CasWebflowConstants.STATE_ID_MFA_PRE_AUTH)) {
             createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_YES, CasWebflowConstants.STATE_ID_MFA_PRE_AUTH);
         } else {
@@ -142,9 +139,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
         createTransitionForState(availableAction, CasWebflowConstants.TRANSITION_ID_NO, CasWebflowConstants.TRANSITION_ID_FAILURE);
 
         // set the failure action
-        final ActionState failureAction = createActionState(mfaFlow,
-                CasWebflowConstants.TRANSITION_ID_FAILURE,
-                createEvaluateAction(MFA_CHECK_FAILURE_BEAN_ID));
+        final ActionState failureAction = createActionState(mfaFlow, CasWebflowConstants.TRANSITION_ID_FAILURE, createEvaluateAction(MFA_CHECK_FAILURE_BEAN_ID));
         createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, CasWebflowConstants.TRANSITION_ID_UNAVAILABLE);
         createTransitionForState(failureAction, CasWebflowConstants.TRANSITION_ID_BYPASS, CasWebflowConstants.TRANSITION_ID_SUCCESS);
 
@@ -175,10 +170,10 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             final String targetWarningsId = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS).getTargetStateId();
 
             LOGGER.debug("Locating transition id [{}] to process multifactor authentication for state [{}]", CasWebflowConstants.TRANSITION_ID_DENY, s);
-            final String targetDeniedByDuo = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_DENY).getTargetStateId();
+            final String targetDenied = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_DENY).getTargetStateId();
 
             LOGGER.debug("Location transition id [{}] to process multifactor authentication for stat [{}]", CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, s);
-            final String targetDuoUnavailable = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE).getTargetStateId();
+            final String targetUnavailable = actionState.getTransition(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE).getTargetStateId();
 
             final List<DefaultMapping> mappings = new ArrayList<>();
             final Mapper inputMapper = createMapperToSubflowState(mappings);
@@ -189,8 +184,9 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             final TransitionSet transitionSet = subflowState.getTransitionSet();
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, targetSuccessId));
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, targetWarningsId));
-            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_DENY, targetDeniedByDuo));
-            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, targetDuoUnavailable));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_DENY, targetDenied));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, targetUnavailable));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_CANCEL, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
             LOGGER.debug("Creating transition [{}] for state [{}]", subflowId, actionState.getId());
             createTransitionForState(actionState, subflowId, subflowId);
 
