@@ -1,16 +1,21 @@
 #!/bin/bash
 
 currentChangeSetContains() {
-    results=`git diff --name-only HEAD~1`
-    contains=false
-
     # Turn on for case-insensitive matching
     # shopt -s nocasematch
+
+    if [[ "${TRAVIS_COMMIT_MESSAGE}" =~ "[force build]" ]]; then
+        echo "Build is forced. Commit message: ${TRAVIS_COMMIT_MESSAGE}"
+        return 0
+    fi
+
+    results=`git diff --name-only HEAD~1`
+    contains=false
 
     for i in "$results"
         do
             echo "Processing changed file: $i"
-            if [[ ("$i" =~ $1) || "${TRAVIS_COMMIT_MESSAGE}" =~ "[force build]" ]]; then
+            if [[ ("$i" =~ $1) ]]; then
                 echo "Found a match against pattern $1. Commit message: ${TRAVIS_COMMIT_MESSAGE}"
                 return 0
             fi
