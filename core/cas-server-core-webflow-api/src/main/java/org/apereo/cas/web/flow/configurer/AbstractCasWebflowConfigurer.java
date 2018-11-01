@@ -101,6 +101,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * The logout flow definition registry.
      */
     protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
+
     private int order;
 
     private String name = getClass().getSimpleName();
