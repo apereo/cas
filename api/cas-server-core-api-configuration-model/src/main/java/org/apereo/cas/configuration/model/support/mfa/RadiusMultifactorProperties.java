@@ -53,7 +53,7 @@ public class RadiusMultifactorProperties extends BaseMultifactorProviderProperti
     /**
      * Total number of allowed authentication attempts
      * with the radius mfa server before the authentication event
-     * is considered cancelled. A negative value indicates
+     * is considered cancelled. A negative/zero value indicates
      * that no limit is enforced.
      */
     private long allowedAuthenticationAttempts = -1;
