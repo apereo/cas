@@ -79,7 +79,7 @@ For example, the following XML fragment defines policies that rollover the log w
     <Policies>
         <OnStartupTriggeringPolicy />
         <SizeBasedTriggeringPolicy size="10 MB"/>
-        <TimeBasedTriggeringPolicy />
+        <TimeBasedTriggeringPolicy interval="24" />
     </Policies>
     ...
 </RollingFile>
