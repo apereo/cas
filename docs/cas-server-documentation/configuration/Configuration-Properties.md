@@ -774,7 +774,7 @@ available [here](Configuration-Properties-Common.html#restful-integrations) unde
 ## Logging
 
 Control the location and other settings of the CAS logging configuration.
-To learn more about this topic, [please review this guide](../installation/Logging.html).
+To learn more about this topic, [please review this guide](../logging/Logging.html).
 
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
