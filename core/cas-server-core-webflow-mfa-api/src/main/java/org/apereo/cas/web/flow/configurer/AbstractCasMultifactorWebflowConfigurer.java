@@ -172,6 +172,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS_WITH_WARNINGS, targetWarningsId));
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_DENY, targetDenied));
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_UNAVAILABLE, targetUnavailable));
+            transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_CANCEL, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM));
 
             LOGGER.trace("Creating transition [{}] for state [{}]", subflowId, actionState.getId());
             createTransitionForState(actionState, subflowId, subflowId);

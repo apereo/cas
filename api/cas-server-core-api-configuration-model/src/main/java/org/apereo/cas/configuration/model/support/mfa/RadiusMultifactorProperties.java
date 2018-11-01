@@ -51,6 +51,14 @@ public class RadiusMultifactorProperties extends BaseMultifactorProviderProperti
     private RadiusClientProperties client = new RadiusClientProperties();
 
     /**
+     * Total number of allowed authentication attempts
+     * with the radius mfa server before the authentication event
+     * is considered cancelled. A negative value indicates
+     * that no limit is enforced.
+     */
+    private long allowedAuthenticationAttempts = -1;
+    
+    /**
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
