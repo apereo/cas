@@ -56,7 +56,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     @Override
-    public <T extends Ticket> T getTicket(final String ticketId, @NonNull final Class<T> clazz) {
+    public <T extends Ticket> T getTicket(final String ticketId, final @NonNull Class<T> clazz) {
         val ticket = getTicket(ticketId);
         if (ticket == null) {
             return null;

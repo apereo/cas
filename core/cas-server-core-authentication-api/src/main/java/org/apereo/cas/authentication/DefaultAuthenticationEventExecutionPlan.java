@@ -91,9 +91,8 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         return list;
     }
 
-    @NonNull
     @Override
-    public Set<AuthenticationHandler> getAuthenticationHandlersForTransaction(final AuthenticationTransaction transaction) {
+    public @NonNull Set<AuthenticationHandler> getAuthenticationHandlersForTransaction(final AuthenticationTransaction transaction) {
         val handlers = getAuthenticationHandlers();
         LOGGER.debug("Candidate/Registered authentication handlers for this transaction are [{}]", handlers);
         val handlerResolvers = getAuthenticationHandlerResolvers(transaction);

@@ -25,8 +25,7 @@ import org.opensaml.core.xml.io.UnmarshallerFactory;
 @Getter
 public class OpenSamlConfigBean {
 
-    @NonNull
-    private final ParserPool parserPool;
+    private final @NonNull ParserPool parserPool;
 
     private final XMLObjectBuilderFactory builderFactory;
     private final MarshallerFactory marshallerFactory;

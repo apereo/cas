@@ -42,7 +42,7 @@ public class OidcAuthorizationRequestSupport {
      * @param url the url
      * @return the oidc prompt from authorization request
      */
-    public static Set<String> getOidcPromptFromAuthorizationRequest(@NonNull final String url) {
+    public static Set<String> getOidcPromptFromAuthorizationRequest(final @NonNull String url) {
         return new URIBuilder(url).getQueryParams().stream()
             .filter(p -> OidcConstants.PROMPT.equals(p.getName()))
             .map(param -> param.getValue().split(" "))

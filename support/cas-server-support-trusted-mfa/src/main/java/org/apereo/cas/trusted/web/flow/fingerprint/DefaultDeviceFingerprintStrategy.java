@@ -18,10 +18,8 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class DefaultDeviceFingerprintStrategy implements DeviceFingerprintStrategy {
-    @NonNull
-    private final List<DeviceFingerprintComponentExtractor> componentExtractors;
-    @NonNull
-    private final String componentSeparator;
+    private final @NonNull List<DeviceFingerprintComponentExtractor> componentExtractors;
+    private final @NonNull String componentSeparator;
 
     @Override
     public String determineFingerprint(final String principal, final RequestContext context, final boolean isNew) {

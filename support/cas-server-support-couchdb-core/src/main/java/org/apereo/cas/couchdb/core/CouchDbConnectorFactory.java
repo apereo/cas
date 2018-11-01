@@ -28,11 +28,9 @@ import org.ektorp.impl.StdCouchDbInstance;
 @Slf4j
 public class CouchDbConnectorFactory {
 
-    @NonNull
-    private final BaseCouchDbProperties couchDbProperties;
+    private final @NonNull BaseCouchDbProperties couchDbProperties;
 
-    @NonNull
-    private final ObjectMapperFactory objectMapperFactory;
+    private final @NonNull ObjectMapperFactory objectMapperFactory;
 
     @Getter(lazy = true)
     private final CouchDbConnector couchDbConnector = createConnector();

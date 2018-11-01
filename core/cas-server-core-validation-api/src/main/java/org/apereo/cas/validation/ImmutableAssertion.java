@@ -33,14 +33,12 @@ public class ImmutableAssertion implements Assertion, Serializable {
     /**
      * Primary authentication.
      */
-    @NonNull
-    private final Authentication primaryAuthentication;
+    private final @NonNull Authentication primaryAuthentication;
 
     /**
      * Chained authentications.
      */
-    @NonNull
-    private final List<Authentication> chainedAuthentications;
+    private final @NonNull List<Authentication> chainedAuthentications;
 
     /**
      * Was this the result of a new login.
@@ -50,6 +48,5 @@ public class ImmutableAssertion implements Assertion, Serializable {
     /**
      * The service we are asserting this ticket for.
      */
-    @NonNull
-    private final Service service;
+    private final @NonNull Service service;
 }

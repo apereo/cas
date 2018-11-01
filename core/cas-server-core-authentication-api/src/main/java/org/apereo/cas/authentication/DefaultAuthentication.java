@@ -70,10 +70,10 @@ public class DefaultAuthentication implements Authentication {
      * @param successes  Non-null map of authentication successes containing at least one entry.
      */
     public DefaultAuthentication(
-        @NonNull final ZonedDateTime date,
-        @NonNull final Principal principal,
-        @NonNull final Map<String, Object> attributes,
-        @NonNull final Map<String, AuthenticationHandlerExecutionResult> successes) {
+        final @NonNull ZonedDateTime date,
+        final @NonNull Principal principal,
+        final @NonNull Map<String, Object> attributes,
+        final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes) {
 
         this.authenticationDate = date;
         this.principal = principal;
@@ -94,12 +94,12 @@ public class DefaultAuthentication implements Authentication {
      * @param failures    Nullable map of authentication failures.
      */
     public DefaultAuthentication(
-        @NonNull final ZonedDateTime date,
-        @NonNull final List<CredentialMetaData> credentials,
-        @NonNull final Principal principal,
-        @NonNull final Map<String, Object> attributes,
-        @NonNull final Map<String, AuthenticationHandlerExecutionResult> successes,
-        @NonNull final Map<String, Throwable> failures) {
+        final @NonNull ZonedDateTime date,
+        final @NonNull List<CredentialMetaData> credentials,
+        final @NonNull Principal principal,
+        final @NonNull Map<String, Object> attributes,
+        final @NonNull Map<String, AuthenticationHandlerExecutionResult> successes,
+        final @NonNull Map<String, Throwable> failures) {
 
         this(date, principal, attributes, successes);
         this.credentials = credentials;

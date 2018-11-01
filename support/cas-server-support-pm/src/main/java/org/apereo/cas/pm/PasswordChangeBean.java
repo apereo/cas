@@ -23,9 +23,7 @@ import java.io.Serializable;
 public class PasswordChangeBean implements Serializable {
     private static final long serialVersionUID = 8885460875620586503L;
 
-    @Size(min = 1, message = "required.password")
-    private String password;
+    private @Size(min = 1, message = "required.password") String password;
 
-    @Size(min = 1, message = "required.confirmedPassword")
-    private String confirmedPassword;
+    private @Size(min = 1, message = "required.confirmedPassword") String confirmedPassword;
 }

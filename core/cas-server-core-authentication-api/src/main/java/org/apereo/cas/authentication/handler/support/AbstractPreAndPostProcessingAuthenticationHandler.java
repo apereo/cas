@@ -65,8 +65,8 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param warnings   the warnings
      * @return the constructed handler result
      */
-    protected AuthenticationHandlerExecutionResult createHandlerResult(@NonNull final Credential credential,
-                                                                       @NonNull final Principal principal,
+    protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
+                                                                       final @NonNull Principal principal,
                                                                        final List<MessageDescriptor> warnings) {
         return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential), principal, warnings);
     }
@@ -81,8 +81,8 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param principal  the resolved principal
      * @return the constructed handler result
      */
-    protected AuthenticationHandlerExecutionResult createHandlerResult(@NonNull final Credential credential,
-                                                                       @NonNull final Principal principal) {
+    protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
+                                                                       final @NonNull Principal principal) {
         return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
             principal, new ArrayList<>(0));
     }

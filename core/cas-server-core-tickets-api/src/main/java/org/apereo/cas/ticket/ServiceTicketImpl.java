@@ -79,8 +79,8 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * @throws IllegalArgumentException if the TicketGrantingTicket or the Service are null.
      */
     @JsonCreator
-    public ServiceTicketImpl(@JsonProperty("id") final String id, @NonNull @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticket,
-                             @NonNull @JsonProperty("service") final Service service, @JsonProperty("credentialProvided") final boolean credentialProvided,
+    public ServiceTicketImpl(@JsonProperty("id") final String id, @JsonProperty("ticketGrantingTicket") final @NonNull TicketGrantingTicket ticket,
+                             @JsonProperty("service") final @NonNull Service service, @JsonProperty("credentialProvided") final boolean credentialProvided,
                              @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         this.ticketGrantingTicket = ticket;
