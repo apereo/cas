@@ -37,8 +37,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
     /**
      * The pac4j profile creator used for authentication.
      */
-    @NonNull
-    protected ProfileCreator profileCreator = AuthenticatorProfileCreator.INSTANCE;
+    protected @NonNull ProfileCreator profileCreator = AuthenticatorProfileCreator.INSTANCE;
 
     public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);

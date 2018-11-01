@@ -59,7 +59,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     @Override
-    public boolean changeInternal(@NonNull final Credential credential, @NonNull final PasswordChangeBean bean) {
+    public boolean changeInternal(final @NonNull Credential credential, final @NonNull PasswordChangeBean bean) {
         val c = (UsernamePasswordCredential) credential;
         if (StringUtils.isBlank(bean.getPassword())) {
             LOGGER.error("Password cannot be blank");

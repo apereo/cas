@@ -98,7 +98,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param warnings the warnings
      */
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
-                                                       final Principal p, @NonNull final List<MessageDescriptor> warnings) {
+                                                       final Principal p, final @NonNull List<MessageDescriptor> warnings) {
         this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), metaData, p, warnings);
     }
 
