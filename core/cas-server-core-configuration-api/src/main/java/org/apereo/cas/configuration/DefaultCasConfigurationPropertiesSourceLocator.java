@@ -44,7 +44,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
     /**
      * Make a list of files that will be processed in order where the last one processed wins.
      * Profiles are added after base property names like application.properties, cas.properties, CAS.properties so that
-     * the profiles will override the base properites.
+     * the profiles will override the base properties.
      * Profiles are processed in order so that the last profile list (e.g. in spring.active.profiles) will override the
      * the first profile.
      * Where multiple filenames with same base name and different extensions exist, the priority is yaml, yml, properties.
