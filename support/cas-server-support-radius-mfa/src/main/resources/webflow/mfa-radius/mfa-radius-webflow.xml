@@ -30,8 +30,10 @@
         <evaluate expression="radiusAuthenticationWebflowAction" />
         <transition on="success" to="success" />
         <transition on="error" to="initializeLoginForm" />
+        <transition on="cancel" to="cancel" />
     </action-state>
 
     <end-state id="success" />
+    <end-state id="cancel" />
 
 </flow>

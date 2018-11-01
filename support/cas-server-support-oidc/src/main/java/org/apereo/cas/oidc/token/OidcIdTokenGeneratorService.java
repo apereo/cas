@@ -175,7 +175,7 @@ public class OidcIdTokenGeneratorService {
             tgt.getProxyGrantingTickets().entrySet().stream())
             .filter(e -> servicesManager.findServiceBy(e.getValue()).getServiceId().equals(oAuthCallbackUrl))
             .findFirst();
-        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issues to " + oAuthCallbackUrl + " as part of the authentication context");
+        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find service ticket issued to " + oAuthCallbackUrl + " as part of the authentication context");
         return oAuthServiceTicket.get();
     }
 
