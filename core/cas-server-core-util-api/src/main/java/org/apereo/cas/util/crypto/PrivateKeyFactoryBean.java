@@ -50,7 +50,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     }
 
     private PrivateKey readPemPrivateKey() {
-        LOGGER.debug("Attempting to read as PEM [{}]", this.location);
+        LOGGER.trace("Attempting to read as PEM [{}]", this.location);
         try (Reader in = new InputStreamReader(this.location.getInputStream(), StandardCharsets.UTF_8);
              val br = new BufferedReader(in);
              val pp = new PEMParser(br)) {

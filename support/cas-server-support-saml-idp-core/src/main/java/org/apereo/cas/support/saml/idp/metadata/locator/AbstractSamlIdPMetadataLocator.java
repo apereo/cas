@@ -3,6 +3,8 @@ package org.apereo.cas.support.saml.idp.metadata.locator;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -13,6 +15,7 @@ import org.springframework.core.io.Resource;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link AbstractSamlIdPMetadataLocator}.
@@ -25,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 @Getter
 @Setter
 public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
+
     /**
      * Cipher executor to encrypt/sign metadata.
      */
@@ -34,10 +38,16 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
      */
     protected SamlIdPMetadataDocument metadataDocument = new SamlIdPMetadataDocument();
 
+    private Cache<String, SamlIdPMetadataDocument> metadataCache = Caffeine.newBuilder()
+        .initialCapacity(1)
+        .maximumSize(1)
+        .expireAfterAccess(1, TimeUnit.HOURS)
+        .build();
+
     @Override
     public Resource getSigningCertificate() {
         if (exists()) {
-            val cert = metadataDocument.getSigningCertificate();
+            val cert = metadataDocument.getSigningCertificateDecoded();
             return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
         }
         return null;
@@ -56,7 +66,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     @Override
     public Resource getMetadata() {
         if (exists()) {
-            val data = metadataDocument.getMetadata();
+            val data = metadataDocument.getMetadataDecoded();
             return new InputStreamResource(new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8)));
         }
         return null;
@@ -65,7 +75,7 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
     @Override
     public Resource getEncryptionCertificate() {
         if (exists()) {
-            val cert = metadataDocument.getEncryptionCertificate();
+            val cert = metadataDocument.getEncryptionCertificateDecoded();
             return new InputStreamResource(new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8)));
         }
         return null;
@@ -86,10 +96,31 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
         fetch();
     }
 
-
     @Override
     public boolean exists() {
         fetch();
+        return isMetadataDocumentValid();
+    }
+
+    @Override
+    public final SamlIdPMetadataDocument fetch() {
+        val map = metadataCache.asMap();
+        if (map.containsKey("CasSamlIdentityProviderMetadata")) {
+            return map.get("CasSamlIdentityProviderMetadata");
+        }
+        val document = fetchInternal();
+        map.put("CasSamlIdentityProviderMetadata", document);
+        return document;
+    }
+
+    /**
+     * Fetch saml idp metadata document.
+     *
+     * @return the saml id p metadata document
+     */
+    protected abstract SamlIdPMetadataDocument fetchInternal();
+
+    private boolean isMetadataDocumentValid() {
         return metadataDocument != null && metadataDocument.isValid();
     }
 }

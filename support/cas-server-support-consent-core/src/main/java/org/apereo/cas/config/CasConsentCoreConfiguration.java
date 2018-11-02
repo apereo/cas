@@ -65,7 +65,11 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
         val consent = casProperties.getConsent();
         val crypto = consent.getCrypto();
         if (crypto.isEnabled()) {
-            return new AttributeReleaseConsentCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
+            return new AttributeReleaseConsentCipherExecutor(crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.debug("Consent attributes stored by CAS are not signed/encrypted.");
         return CipherExecutor.noOp();

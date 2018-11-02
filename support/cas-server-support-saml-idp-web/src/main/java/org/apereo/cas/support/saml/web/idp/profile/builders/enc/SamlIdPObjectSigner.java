@@ -45,7 +45,6 @@ import org.opensaml.xmlsec.SignatureSigningParameters;
 import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
-import org.springframework.core.io.FileSystemResource;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -90,7 +89,7 @@ public class SamlIdPObjectSigner {
                                            final String binding,
                                            final RequestAbstractType authnRequest) throws SamlException {
 
-        LOGGER.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
+        LOGGER.trace("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
         val outboundContext = new MessageContext<T>();
         prepareOutboundContext(samlObject, adaptor, outboundContext, binding, authnRequest);
         prepareSecurityParametersContext(adaptor, outboundContext, service);
@@ -109,7 +108,7 @@ public class SamlIdPObjectSigner {
      * @throws Exception the exception
      */
     protected <T extends SAMLObject> void prepareSamlOutboundProtocolMessageSigningHandler(final MessageContext<T> outboundContext) throws Exception {
-        LOGGER.debug("Attempting to sign the outbound SAML message...");
+        LOGGER.trace("Attempting to sign the outbound SAML message...");
         val handler = new SAMLOutboundProtocolMessageSigningHandler();
         handler.setSignErrorResponses(casProperties.getAuthn().getSamlIdp().getResponse().isSignError());
         handler.invoke(outboundContext);
@@ -178,7 +177,7 @@ public class SamlIdPObjectSigner {
                                                                  final String binding,
                                                                  final RequestAbstractType authnRequest) throws SamlException {
 
-        LOGGER.debug("Outbound saml object to use is [{}]", samlObject.getClass().getName());
+        LOGGER.trace("Outbound saml object to use is [{}]", samlObject.getClass().getName());
         outboundContext.setMessage(samlObject);
         SamlIdPUtils.preparePeerEntitySamlEndpointContext(authnRequest, outboundContext, adaptor, binding);
     }
@@ -198,7 +197,7 @@ public class SamlIdPObjectSigner {
         criteria.add(new SignatureSigningConfigurationCriterion(signatureSigningConfiguration));
         criteria.add(new RoleDescriptorCriterion(descriptor));
         val resolver = new SAMLMetadataSignatureSigningParametersResolver();
-        LOGGER.debug("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
+        LOGGER.trace("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
         @NonNull
         val params = resolver.resolveSingle(criteria);
         LOGGER.debug("Created signature signing parameters."
@@ -250,11 +249,11 @@ public class SamlIdPObjectSigner {
         if (StringUtils.isNotBlank(algs.getOverrideSignatureCanonicalizationAlgorithm())) {
             config.setSignatureCanonicalizationAlgorithm(algs.getOverrideSignatureCanonicalizationAlgorithm());
         }
-        LOGGER.debug("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
-        LOGGER.debug("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
-        LOGGER.debug("Signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
-        LOGGER.debug("Signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
-        LOGGER.debug("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
+        LOGGER.trace("Signature signing blacklisted algorithms: [{}]", config.getBlacklistedAlgorithms());
+        LOGGER.trace("Signature signing signature algorithms: [{}]", config.getSignatureAlgorithms());
+        LOGGER.trace("Signature signing signature canonicalization algorithm: [{}]", config.getSignatureCanonicalizationAlgorithm());
+        LOGGER.trace("Signature signing whitelisted algorithms: [{}]", config.getWhitelistedAlgorithms());
+        LOGGER.trace("Signature signing reference digest methods: [{}]", config.getSignatureReferenceDigestMethods());
 
         val privateKey = getSigningPrivateKey();
         val idp = casProperties.getAuthn().getSamlIdp();
@@ -327,10 +326,10 @@ public class SamlIdPObjectSigner {
         val samlIdp = casProperties.getAuthn().getSamlIdp();
         val signingKey = samlIdPMetadataLocator.getSigningKey();
         val privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(signingKey.getFile()));
+        privateKeyFactoryBean.setLocation(signingKey);
         privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        LOGGER.debug("Locating signature signing key file from [{}]", signingKey);
+        LOGGER.debug("Locating signature signing key from [{}]", signingKey);
         return privateKeyFactoryBean.getObject();
     }
 }

@@ -128,8 +128,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
     @Bean(BEAN_DEVICE_FINGERPRINT_COOKIE_CIPHER_EXECUTOR)
     @RefreshScope
     public CipherExecutor deviceFingerprintCookieCipherExecutor() {
-        val crypto =
-            casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie().getCrypto();
+        val crypto = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie().getCrypto();
 
         var enabled = crypto.isEnabled();
         if (!enabled && StringUtils.isNotBlank(crypto.getEncryption().getKey()) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
@@ -143,7 +142,9 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
             return new CookieDeviceFingerprintComponentCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
-                crypto.getAlg());
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
 
         return CipherExecutor.noOp();

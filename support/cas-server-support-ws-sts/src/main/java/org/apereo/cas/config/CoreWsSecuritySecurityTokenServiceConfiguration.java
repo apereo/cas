@@ -297,7 +297,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator securityTokenServiceAuthenticationMetaDataPopulator() {
         return new SecurityTokenServiceAuthenticationMetaDataPopulator(servicesManager.getIfAvailable(),
-            wsFederationAuthenticationServiceSelectionStrategy.getIfAvailable(), securityTokenServiceCredentialCipherExecutor(),
+            wsFederationAuthenticationServiceSelectionStrategy.getIfAvailable(),
+            securityTokenServiceCredentialCipherExecutor(),
             securityTokenServiceClientBuilder());
     }
 
@@ -307,7 +308,9 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
         val wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
         return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getCrypto().getEncryption().getKey(),
             wsfed.getCrypto().getSigning().getKey(),
-            wsfed.getCrypto().getAlg());
+            wsfed.getCrypto().getAlg(),
+            wsfed.getCrypto().getSigning().getKeySize(),
+            wsfed.getCrypto().getEncryption().getKeySize());
     }
 
     @Bean
