@@ -140,7 +140,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         resources.forEach(Unchecked.consumer(f -> {
             LOGGER.debug("Loading configuration file [{}]", f);
             val loader = configurationPropertiesLoaderFactory.getLoader(f, "applicationProfilesProperties-" + f.getFilename());
-            composite.addPropertySource(loader.load());
+            composite.addFirstPropertySource(loader.load());
         }));
 
         return composite;
