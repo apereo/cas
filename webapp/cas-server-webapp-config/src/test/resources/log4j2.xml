@@ -18,6 +18,9 @@
         <Logger name="org.apereo" level="off" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
+        <Logger name="org.ldaptive" level="warn" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

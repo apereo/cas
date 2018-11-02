@@ -32,6 +32,7 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.Cleanup;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -105,6 +106,7 @@ public class SurrogateLdapAuthenticationServiceTests extends BaseSurrogateAuthen
     @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
+        @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         localhost.connect("localhost", LDAP_PORT);
