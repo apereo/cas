@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import org.apereo.cas.util.EncodingUtils;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -54,5 +56,17 @@ public class SamlMetadataDocument {
 
     public SamlMetadataDocument() {
         setId(System.currentTimeMillis());
+    }
+
+    /**
+     * Gets base-64 decoded value if needed, or the value itself.
+     *
+     * @return the decoded value
+     */
+    public String getDecodedValue() {
+        if (EncodingUtils.isBase64(value)) {
+            return EncodingUtils.decodeBase64ToString(value);
+        }
+        return value;
     }
 }
