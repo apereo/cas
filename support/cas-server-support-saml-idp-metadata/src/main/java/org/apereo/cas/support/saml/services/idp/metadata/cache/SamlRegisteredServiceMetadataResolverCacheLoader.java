@@ -57,11 +57,11 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
             .stream()
             .filter(Objects::nonNull)
             .filter(r -> {
-                LOGGER.debug("Evaluating whether metadata resolver [{}] can support service [{}]", r.getName(), service.getName());
+                LOGGER.trace("Evaluating whether metadata resolver [{}] can support service [{}]", r.getName(), service.getName());
                 return r.supports(service);
             })
             .map(r -> {
-                LOGGER.debug("Metadata resolver [{}] has started to process metadata for [{}]", r.getName(), service.getName());
+                LOGGER.trace("Metadata resolver [{}] has started to process metadata for [{}]", r.getName(), service.getName());
                 return r.resolve(service);
             })
             .forEach(metadataResolvers::addAll);
@@ -71,7 +71,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
                 + " with metadata location " + service.getMetadataLocation());
         }
         metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-        LOGGER.debug("There are [{}] eligible metadata resolver(s) for this request", availableResolvers.size());
+        LOGGER.trace("There are [{}] eligible metadata resolver(s) for this request", availableResolvers.size());
         metadataResolver.setResolvers(metadataResolvers);
         metadataResolver.initialize();
 

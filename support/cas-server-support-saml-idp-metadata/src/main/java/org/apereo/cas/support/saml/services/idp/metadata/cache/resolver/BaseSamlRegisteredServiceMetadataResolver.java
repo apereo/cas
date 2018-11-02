@@ -100,8 +100,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
                                                                  final SamlMetadataDocument metadataDocument) {
         try {
             val desc = StringUtils.defaultString(service.getDescription(), service.getName());
-
-            val metadataResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getValue(), desc);
+            val metadataResource = ResourceUtils.buildInputStreamResourceFrom(metadataDocument.getDecodedValue(), desc);
             val metadataResolver = new InMemoryResourceMetadataResolver(metadataResource, configBean);
 
             val metadataFilterList = new ArrayList<MetadataFilter>();

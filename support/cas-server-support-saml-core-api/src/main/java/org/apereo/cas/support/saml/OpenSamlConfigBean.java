@@ -35,13 +35,13 @@ public class OpenSamlConfigBean {
     public OpenSamlConfigBean(final ParserPool parserPool) {
         this.parserPool = parserPool;
 
-        LOGGER.debug("Initializing OpenSaml configuration...");
+        LOGGER.trace("Initializing OpenSaml configuration...");
         InitializationService.initialize();
 
         val currentProvider = ConfigurationService.get(XMLObjectProviderRegistry.class);
         val registry = FunctionUtils.doIfNull(currentProvider,
             () -> {
-                LOGGER.debug("XMLObjectProviderRegistry did not exist in ConfigurationService and it will be created");
+                LOGGER.trace("XMLObjectProviderRegistry did not exist in ConfigurationService and it will be created");
                 var provider = new XMLObjectProviderRegistry();
                 ConfigurationService.register(XMLObjectProviderRegistry.class, provider);
                 return provider;

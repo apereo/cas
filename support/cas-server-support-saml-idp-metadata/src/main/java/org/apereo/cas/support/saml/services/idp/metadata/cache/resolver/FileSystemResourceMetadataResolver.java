@@ -66,7 +66,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof FileSystemResource;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
         }
         return false;
     }

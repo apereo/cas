@@ -53,7 +53,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
             val metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
             return metadataResource instanceof ClassPathResource;
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
         }
         return false;
     }

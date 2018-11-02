@@ -1532,8 +1532,8 @@ To learn more about this topic, [please review this guide](../installation/Cassa
 # cas.authn.cassandra.maxConnections=10
 # cas.authn.cassandra.coreConnections=1
 # cas.authn.cassandra.maxRequestsPerConnection=1024
-# # cas.authn.cassandra.connectTimeoutMillis=5000
-cas.authn.cassandra.readTimeoutMillis=5000
+# cas.authn.cassandra.connectTimeoutMillis=5000
+# cas.authn.cassandra.readTimeoutMillis=5000
 # cas.authn.cassandra.port=9042
 # cas.authn.cassandra.name=
 # cas.authn.cassandra.order=
@@ -2662,9 +2662,9 @@ A given attribute that is to be encoded in the final SAML response may contain a
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
 under the configuration key `cas.authn.samlIdp.metadata.jpa`.
 
- ```properties
- # cas.authn.samlIdp.metadata.jpa.idpMetadataEnabled=true
- ```
+```properties
+# cas.authn.samlIdp.metadata.jpa.idpMetadataEnabled=true
+```
  
  The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.jpa`.
  
@@ -2680,13 +2680,13 @@ under the configuration key `cas.authn.samlIdp.metadata.jpa`.
  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) 
  under the configuration key `cas.authn.samlIdp.metadata`.
  
- ```properties
- # cas.authn.samlIdp.metadata.mongo.idpMetadataCollection=saml-idp-metadata
- ```
+```properties
+# cas.authn.samlIdp.metadata.mongo.idpMetadataCollection=saml-idp-metadata
+```
  
  The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.samlIdp.metadata.mongo`.
-
- #### SAML Metadata REST
+ 
+#### SAML Metadata REST
  
 RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) 
 under the configuration key `cas.authn.samlIdp.metadata.rest`.

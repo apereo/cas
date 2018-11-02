@@ -203,7 +203,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             val metadataLocation = getMetadataLocationForService(service);
             return StringUtils.isNotBlank(metadataLocation) && StringUtils.startsWith(metadataLocation, "http");
         } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
+            LOGGER.trace(e.getMessage(), e);
         }
         return false;
     }
