@@ -106,7 +106,10 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     private static CipherExecutor getCipherExecutorForWsFederationConfig(final WsFederationDelegatedCookieProperties cookie) {
         val crypto = cookie.getCrypto();
         if (crypto.isEnabled()) {
-            return new WsFederationCookieCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
+            return new WsFederationCookieCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(),
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "

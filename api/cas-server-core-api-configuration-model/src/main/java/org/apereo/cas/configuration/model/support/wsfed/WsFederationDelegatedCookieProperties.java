@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -26,5 +27,7 @@ public class WsFederationDelegatedCookieProperties extends CookieProperties {
 
     public WsFederationDelegatedCookieProperties() {
         super.setName("WSFEDDELSESSION");
+        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 }

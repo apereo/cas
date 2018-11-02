@@ -108,7 +108,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject> ex
                                     final RequestAbstractType authnRequest,
                                     final Object assertion) {
         val relayState = request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE);
-        LOGGER.debug("RelayState is [{}]", relayState);
+        LOGGER.trace("RelayState is [{}]", relayState);
         return encode(service, finalResponse, response, request, adaptor, relayState, binding, authnRequest, assertion);
     }
 

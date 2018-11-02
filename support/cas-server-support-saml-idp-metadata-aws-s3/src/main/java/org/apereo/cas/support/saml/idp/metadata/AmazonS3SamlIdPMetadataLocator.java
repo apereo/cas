@@ -28,7 +28,7 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
     }
 
     @Override
-    public SamlIdPMetadataDocument fetch() {
+    public SamlIdPMetadataDocument fetchInternal() {
         try {
             LOGGER.debug("Locating S3 object(s) from bucket [{}]...", bucketName);
             if (!s3Client.doesBucketExistV2(bucketName)) {

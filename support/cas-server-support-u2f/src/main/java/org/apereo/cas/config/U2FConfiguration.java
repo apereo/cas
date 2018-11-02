@@ -99,7 +99,9 @@ public class U2FConfiguration {
             return new U2FAuthenticationRegistrationRecordCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
-                crypto.getAlg());
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.info("U2F registration record encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "
