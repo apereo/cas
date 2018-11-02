@@ -109,7 +109,7 @@ public class TokenWebApplicationServiceResponseBuilderTests {
         val signingSecret = "EihBwA3OuDQMm4gdWzkqRJ87596G7o7a_naJAJipxFoRJbXK7APRcnCA91Y30rJdh4q-C2dmpfV6eNhQT0bR5A";
         val encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
-        val cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true);
+        val cipher = new TokenTicketCipherExecutor(encryptionSecret, signingSecret, true, 0, 0);
         val result = cipher.decode(cipher.encode("ThisIsValue"));
         assertEquals("ThisIsValue", result);
     }

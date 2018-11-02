@@ -15,8 +15,10 @@ public class OneTimeTokenAccountCipherExecutor extends BaseStringCipherExecutor 
     private final String name;
 
     public OneTimeTokenAccountCipherExecutor(final String secretKeyEncryption,
-                                             final String secretKeySigning, final String alg, final String name) {
-        super(secretKeyEncryption, secretKeySigning, alg);
+                                             final String secretKeySigning, final String alg, final String name,
+                                             final int signingKeySize,
+                                             final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
         this.name = name;
     }
 

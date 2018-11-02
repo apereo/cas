@@ -18,10 +18,10 @@ public class RsaKeyPairCipherExecutorTests {
     public void verifyActionOneWay() {
         val secretKeyEncryption = "classpath:keys/RSA2048Public.key";
         val secretKeySigning = "classpath:keys/RSA2048Private.key";
-        val cipher1 = new TicketGrantingCookieCipherExecutor(secretKeyEncryption, secretKeySigning);
+        val cipher1 = new TicketGrantingCookieCipherExecutor(secretKeyEncryption, secretKeySigning, 0, 0);
         assertNotNull(cipher1.encode("TestValue"));
 
-        val cipher = new ProtocolTicketCipherExecutor(secretKeyEncryption, secretKeySigning);
+        val cipher = new ProtocolTicketCipherExecutor(secretKeyEncryption, secretKeySigning, 0, 0);
         assertNotNull(cipher.encode("TestValue"));
     }
 

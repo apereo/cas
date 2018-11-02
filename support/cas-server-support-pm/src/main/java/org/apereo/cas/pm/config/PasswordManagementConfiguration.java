@@ -55,7 +55,9 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
             return new PasswordResetTokenCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
-                crypto.getAlg());
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         return CipherExecutor.noOp();
     }

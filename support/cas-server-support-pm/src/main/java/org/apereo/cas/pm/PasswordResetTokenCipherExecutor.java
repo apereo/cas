@@ -18,8 +18,10 @@ public class PasswordResetTokenCipherExecutor extends BaseStringCipherExecutor {
      * @param contentEncryptionAlgorithmIdentifier the content encryption algorithm identifier
      */
     public PasswordResetTokenCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
-                                            final String contentEncryptionAlgorithmIdentifier) {
-        super(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier);
+                                            final String contentEncryptionAlgorithmIdentifier,
+                                            final int signingKeySize,
+                                            final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier, signingKeySize, encryptionKeySize);
     }
 
     @Override

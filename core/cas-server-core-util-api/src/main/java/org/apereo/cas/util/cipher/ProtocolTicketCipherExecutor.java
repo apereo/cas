@@ -10,16 +10,22 @@ package org.apereo.cas.util.cipher;
 public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
 
     public ProtocolTicketCipherExecutor() {
-        super(null, null, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+        super(null, null, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, 0, 0);
+    }
+
+    public ProtocolTicketCipherExecutor(final String secretKeyEncryption,
+                                        final String secretKeySigning,
+                                        final String contentEncryptionAlgorithmIdentifier,
+                                        final int signingKeySize,
+                                        final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier,
+            signingKeySize, encryptionKeySize);
     }
 
     public ProtocolTicketCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
-                                        final String contentEncryptionAlgorithmIdentifier) {
-        super(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier);
-    }
-
-    public ProtocolTicketCipherExecutor(final String secretKeyEncryption, final String secretKeySigning) {
-        super(secretKeyEncryption, secretKeySigning, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+                                        final int signingKeySize,
+                                        final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, signingKeySize, encryptionKeySize);
     }
 
     @Override
