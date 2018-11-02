@@ -158,7 +158,7 @@ public class SamlIdPMetadataConfiguration {
 
         configurers.values().forEach(c -> {
             val name = RegExUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
-            LOGGER.debug("Configuring saml metadata resolution plan [{}]", name);
+            LOGGER.trace("Configuring saml metadata resolution plan [{}]", name);
             c.configureMetadataResolutionPlan(plan);
         });
         return plan;

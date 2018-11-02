@@ -37,6 +37,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service) {
         try {
+            LOGGER.debug("Fetching metadata documents from collection [{}]", this.collectionName);
             val documents = mongoTemplate.findAll(SamlMetadataDocument.class, this.collectionName);
             return documents
                 .stream()
