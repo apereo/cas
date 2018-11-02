@@ -7,6 +7,7 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.Cleanup;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.val;
@@ -52,6 +53,7 @@ public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsag
     @SneakyThrows
     public static void bootstrap() {
         ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+        @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(localhost,
             new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), "ou=people,dc=example,dc=org");

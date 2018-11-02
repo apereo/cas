@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.apereo.cas.web.security.authentication.LdapAuthenticationProvider;
+import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProvider;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -105,7 +105,7 @@ public class CasWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapte
      */
     protected void configureLdapAuthenticationProvider(final AuthenticationManagerBuilder auth, final MonitorProperties.Endpoints.LdapSecurity ldap) {
         if (isLdapAuthorizationActive()) {
-            val p = new LdapAuthenticationProvider(ldap, securityProperties);
+            val p = new MonitorEndpointLdapAuthenticationProvider(ldap, securityProperties);
             auth.authenticationProvider(p);
         }
     }

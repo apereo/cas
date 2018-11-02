@@ -6,6 +6,7 @@ import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.BeforeClass;
@@ -38,6 +39,7 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
     @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
+        @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(

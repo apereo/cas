@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.ldaptive.Credential;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.auth.AuthenticationRequest;
@@ -30,14 +31,14 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link LdapAuthenticationProvider}.
+ * This is {@link MonitorEndpointLdapAuthenticationProvider}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Slf4j
 @RequiredArgsConstructor
-public class LdapAuthenticationProvider implements AuthenticationProvider {
+public class MonitorEndpointLdapAuthenticationProvider implements AuthenticationProvider {
     private final MonitorProperties.Endpoints.LdapSecurity ldapProperties;
     private final SecurityProperties securityProperties;
 
@@ -47,10 +48,11 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
             val username = authentication.getPrincipal().toString();
             val credentials = authentication.getCredentials();
             val password = credentials == null ? null : credentials.toString();
-
+            if (StringUtils.isBlank(password)) {
+                throw new IllegalArgumentException("Password cannot be blank");
+            }
             LOGGER.debug("Preparing LDAP authentication request for user [{}]", username);
-            val request = new AuthenticationRequest(username,
-                new org.ldaptive.Credential(password), ReturnAttributes.ALL.value());
+            val request = new AuthenticationRequest(username, new Credential(password), ReturnAttributes.ALL.value());
             val authenticator = LdapUtils.newLdaptiveAuthenticator(ldapProperties);
             LOGGER.debug("Executing LDAP authentication request for user [{}]", username);
 

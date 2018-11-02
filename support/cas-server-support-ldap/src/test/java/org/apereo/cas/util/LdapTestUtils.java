@@ -123,20 +123,18 @@ public class LdapTestUtils {
     public static void modifyLdapEntry(final LDAPConnection serverCon, final String dn,
                                        final LdapAttribute attr,
                                        final AttributeModificationType add) {
-        try {
-            val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
-            try (val conn = DefaultConnectionFactory.getConnection(address)) {
-                try {
-                    conn.open();
-                    val modify = new ModifyOperation(conn);
-                    modify.execute(new ModifyRequest(dn, new AttributeModification(add, attr)));
-                } catch (final Exception e) {
-                    LOGGER.debug(e.getMessage(), e);
-                }
+
+        val address = "ldap://" + serverCon.getConnectedAddress() + ':' + serverCon.getConnectedPort();
+        try (val conn = DefaultConnectionFactory.getConnection(address)) {
+            try {
+                conn.open();
+                val modify = new ModifyOperation(conn);
+                modify.execute(new ModifyRequest(dn, new AttributeModification(add, attr)));
+            } catch (final Exception e) {
+                LOGGER.debug(e.getMessage(), e);
             }
-        } finally {
-            serverCon.close();
         }
+
     }
 
     /**

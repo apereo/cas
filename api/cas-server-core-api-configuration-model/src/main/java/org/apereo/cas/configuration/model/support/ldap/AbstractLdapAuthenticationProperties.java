@@ -34,7 +34,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * </ul>
      */
     @RequiredProperty
-    private AuthenticationTypes type;
+    private AuthenticationTypes type = AuthenticationTypes.AUTHENTICATED;
     /**
      * If principalAttributePassword is empty then a user simple bind is done to validate credentials
      * otherwise the given attribute is compared with the given principalAttributePassword
