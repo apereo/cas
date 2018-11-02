@@ -79,4 +79,13 @@ public class DefaultCasConfigurationPropertiesSourceLocatorTests {
         assertEquals("standaloneProfileProp", composite.getProperty("profile.override.me"));
         assertEquals("dirCasProp", composite.getProperty("test.dir.cas"));
     }
+
+    @Test
+    public void verifyGroovySlurper() {
+        val source = casConfigurationPropertiesSourceLocator.locate(environment, resourceLoader);
+        assertTrue(source instanceof CompositePropertySource);
+        val composite = (CompositePropertySource) source;
+        assertEquals("Static", composite.getProperty("cas.authn.accept.name"));
+        assertEquals("test::dev", composite.getProperty("cas.authn.accept.users"));
+    }
 }
