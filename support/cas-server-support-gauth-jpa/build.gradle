@@ -1,5 +1,7 @@
-
 description = "Apereo CAS Google Authenticator JPA"
+ext {
+    maxParallelForksForTests = 1
+}
 dependencies {
     implementation project(":support:cas-server-support-gauth")
     implementation project(":support:cas-server-support-gauth-core")
