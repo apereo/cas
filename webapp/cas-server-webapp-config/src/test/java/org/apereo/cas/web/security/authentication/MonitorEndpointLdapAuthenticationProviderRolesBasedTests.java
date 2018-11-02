@@ -38,7 +38,7 @@ import java.util.Collections;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link LdapAuthenticationProviderRolesBasedTests}.
+ * This is {@link MonitorEndpointLdapAuthenticationProviderRolesBasedTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -58,7 +58,7 @@ import static org.junit.Assert.*;
     "cas.monitor.endpoints.ldap.ldapAuthz.rolePrefix=ROLE_"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class LdapAuthenticationProviderRolesBasedTests {
+public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
 

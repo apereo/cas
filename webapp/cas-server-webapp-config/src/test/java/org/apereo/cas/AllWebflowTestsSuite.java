@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.web.security.authentication.LdapAuthenticationProviderRolesBasedTests;
+import org.apereo.cas.web.security.authentication.MonitorEndpointLdapAuthenticationProviderRolesBasedTests;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -16,7 +16,7 @@ import org.junit.runners.Suite;
     WiringConfigurationTests.class,
     CasWebflowServerSessionContextConfigurationTests.class,
     CasWebflowClientSessionContextConfigurationTests.class,
-    LdapAuthenticationProviderRolesBasedTests.class
+    MonitorEndpointLdapAuthenticationProviderRolesBasedTests.class
 })
 public class AllWebflowTestsSuite {
 }
