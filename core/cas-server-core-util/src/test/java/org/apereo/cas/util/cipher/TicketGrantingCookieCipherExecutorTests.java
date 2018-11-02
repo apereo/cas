@@ -26,7 +26,7 @@ public class TicketGrantingCookieCipherExecutorTests {
     @Test
     public void checkEncryptionWithDefaultSettings() {
         val cipherExecutor = new TicketGrantingCookieCipherExecutor("1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
-            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w");
+            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 0, 0);
         val result = cipherExecutor.decode(cipherExecutor.encode("CAS Test"));
         assertEquals("CAS Test", result);
     }

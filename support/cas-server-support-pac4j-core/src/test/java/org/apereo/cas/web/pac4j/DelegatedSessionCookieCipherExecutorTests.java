@@ -16,7 +16,7 @@ public class DelegatedSessionCookieCipherExecutorTests {
 
     @Test
     public void verifyCipheredToken() {
-        val c = new DelegatedSessionCookieCipherExecutor(null, null);
+        val c = new DelegatedSessionCookieCipherExecutor(null, null, 0, 0);
         val token = c.encode(ST);
         assertEquals(ST, c.decode(token));
         assertNotNull(c.getName());

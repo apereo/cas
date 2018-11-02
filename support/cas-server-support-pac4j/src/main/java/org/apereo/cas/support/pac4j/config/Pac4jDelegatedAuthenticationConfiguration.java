@@ -97,7 +97,10 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
         val c = casProperties.getAuthn().getPac4j().getCookie().getCrypto();
         if (c.isEnabled()) {
             return new DelegatedSessionCookieCipherExecutor(c.getEncryption().getKey(),
-                c.getSigning().getKey(), c.getAlg());
+                c.getSigning().getKey(),
+                c.getAlg(),
+                c.getSigning().getKeySize(),
+                c.getEncryption().getKeySize());
         }
         LOGGER.info("Delegated authentication cookie encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "

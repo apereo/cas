@@ -30,7 +30,7 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
                 val encryptionKey = getEncryptionKey(registeredService).get();
                 val signingKey = getSigningKey(registeredService).get();
                 val cipher = new TokenTicketCipherExecutor(encryptionKey, signingKey,
-                    StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey));
+                    StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
                 if (cipher.isEnabled()) {
                     return cipher.decode(data);
                 }
@@ -48,7 +48,7 @@ public class RegisteredServiceTokenTicketCipherExecutor extends TokenTicketCiphe
                 val encryptionKey = getEncryptionKey(registeredService).get();
                 val signingKey = getSigningKey(registeredService).get();
                 val cipher = new TokenTicketCipherExecutor(encryptionKey, signingKey,
-                    StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey));
+                    StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
                 if (cipher.isEnabled()) {
                     return cipher.encode(data);
                 }

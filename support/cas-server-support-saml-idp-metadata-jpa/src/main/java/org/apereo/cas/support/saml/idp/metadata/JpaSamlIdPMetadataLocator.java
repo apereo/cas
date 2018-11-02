@@ -31,7 +31,7 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     }
 
     @Override
-    public SamlIdPMetadataDocument fetch() {
+    public SamlIdPMetadataDocument fetchInternal() {
         try {
             setMetadataDocument(this.entityManager.createQuery("SELECT r FROM SamlIdPMetadataDocument r", SamlIdPMetadataDocument.class)
                 .setMaxResults(1)

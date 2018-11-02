@@ -1,4 +1,4 @@
-package org.apereo.cas.shell.commands.properties;
+package org.apereo.cas.shell.commands.jasypt;
 
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 
@@ -15,7 +15,7 @@ import org.springframework.shell.standard.ShellOption;
 import java.security.Security;
 
 /**
- * This is {@link EncryptPropertyCommand}.
+ * This is {@link JasyptEncryptPropertyCommand}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -23,7 +23,7 @@ import java.security.Security;
 @ShellCommandGroup("CAS Properties")
 @ShellComponent
 @Slf4j
-public class EncryptPropertyCommand {
+public class JasyptEncryptPropertyCommand {
     @Autowired
     private Environment environment;
 

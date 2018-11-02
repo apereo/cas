@@ -183,7 +183,9 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
                 crypto.getAlg(),
-                "Google Authenticator Token Account");
+                "Google Authenticator Token Account",
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.warn("Google Authenticator one-time token account encryption/signing is turned off. "
             + "Consider turning on encryption, signing to securely and safely store one-time token accounts.");

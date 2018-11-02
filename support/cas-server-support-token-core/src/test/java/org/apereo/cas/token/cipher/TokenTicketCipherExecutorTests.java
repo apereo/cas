@@ -18,7 +18,7 @@ public class TokenTicketCipherExecutorTests {
     @Test
     public void verifyCipheredToken() {
         val c = new TokenTicketCipherExecutor(null,
-            "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", true);
+            "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", true, 0, 0);
         val token = c.encode(ST);
         assertEquals(ST, c.decode(token));
     }
@@ -26,7 +26,7 @@ public class TokenTicketCipherExecutorTests {
     @Test
     public void verifyCipheredTokenWithoutEncryption() {
         val c = new TokenTicketCipherExecutor(null,
-            "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", false);
+            "qeALfMKRSME3mkHy0Qis6mhbGQFzps0ZiU-qyjsPOq_tYyR4fk2uAQR3wZfYTAlGGO3yhpJAMsq2JufeEC4fQg", false, 0, 0);
         val token = c.encode(ST);
         assertEquals(ST, c.decode(token));
     }

@@ -13,8 +13,10 @@ public class AttributeReleaseConsentCipherExecutor extends BaseStringCipherExecu
 
     public AttributeReleaseConsentCipherExecutor(final String secretKeyEncryption,
                                                  final String secretKeySigning,
-                                                 final String alg) {
-        super(secretKeyEncryption, secretKeySigning, alg);
+                                                 final String alg,
+                                                 final int signingKeySize,
+                                                 final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
     }
 
     @Override

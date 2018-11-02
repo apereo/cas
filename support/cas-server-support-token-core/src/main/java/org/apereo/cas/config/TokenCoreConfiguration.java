@@ -71,7 +71,9 @@ public class TokenCoreConfiguration {
                 crypto.getSigning().getKey(),
                 crypto.getAlg(),
                 crypto.isEncryptionEnabled(),
-                crypto.isSigningEnabled());
+                crypto.isSigningEnabled(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.info("Token cookie encryption/signing is turned off. This "
             + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "

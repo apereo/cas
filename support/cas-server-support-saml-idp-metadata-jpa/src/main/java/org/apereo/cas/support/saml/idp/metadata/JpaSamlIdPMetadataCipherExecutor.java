@@ -10,12 +10,17 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  */
 public class JpaSamlIdPMetadataCipherExecutor extends BaseStringCipherExecutor {
 
-    public JpaSamlIdPMetadataCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final String alg) {
-        super(secretKeyEncryption, secretKeySigning, alg);
+    public JpaSamlIdPMetadataCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+                                            final String alg,
+                                            final int signingKeySize,
+                                            final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
     }
 
-    public JpaSamlIdPMetadataCipherExecutor(final String secretKeyEncryption, final String secretKeySigning) {
-        super(secretKeyEncryption, secretKeySigning);
+    public JpaSamlIdPMetadataCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
+                                            final int signingKeySize,
+                                            final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, signingKeySize, encryptionKeySize);
     }
 
     @Override

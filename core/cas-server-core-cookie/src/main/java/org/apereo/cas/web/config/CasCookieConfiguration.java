@@ -65,7 +65,10 @@ public class CasCookieConfiguration {
 
         if (enabled) {
             return new TicketGrantingCookieCipherExecutor(crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(), crypto.getAlg());
+                crypto.getSigning().getKey(),
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
 
         LOGGER.warn("Ticket-granting cookie encryption/signing is turned off. This "

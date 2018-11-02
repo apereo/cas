@@ -12,8 +12,10 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 public class CookieDeviceFingerprintComponentCipherExecutor extends BaseStringCipherExecutor {
     public CookieDeviceFingerprintComponentCipherExecutor(final String secretKeyEncryption,
                                                           final String secretKeySigning,
-                                                          final String alg) {
-        super(secretKeyEncryption, secretKeySigning, alg);
+                                                          final String alg,
+                                                          final int signingKeySize,
+                                                          final int encryptionKeySize) {
+        super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
     }
 
     @Override

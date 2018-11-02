@@ -29,6 +29,16 @@ public interface CipherExecutor<I, O> {
         ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
 
     /**
+     * Encryption key size for text data and ciphers.
+     */
+    int DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE = 256;
+
+    /**
+     * Signing key size for text data and ciphers.
+     */
+    int DEFAULT_STRINGABLE_SIGNING_KEY_SIZE = 512;
+
+    /**
      * Factory method.
      *
      * @return Strongly -typed Noop {@code CipherExecutor Serializable -> Serializable}

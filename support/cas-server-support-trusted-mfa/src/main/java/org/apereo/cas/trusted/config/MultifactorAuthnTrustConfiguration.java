@@ -101,7 +101,9 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
             return new MultifactorAuthenticationTrustCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
-                crypto.getAlg());
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "

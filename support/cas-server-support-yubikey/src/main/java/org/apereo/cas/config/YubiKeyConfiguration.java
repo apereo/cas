@@ -139,7 +139,9 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
             return new YubikeyAccountCipherExecutor(
                 crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
-                crypto.getAlg());
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
         }
         LOGGER.info("YubiKey account encryption/signing is turned off and "
             + "MAY NOT be safe in a production environment. "

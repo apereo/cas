@@ -49,10 +49,13 @@ public class CasCoreAuthenticationMetadataConfiguration {
     public CipherExecutor cacheCredentialsCipherExecutor() {
         val cp = casProperties.getClearpass();
         if (cp.isCacheCredential()) {
-            if (cp.getCrypto().isEnabled()) {
-                return new CacheCredentialsCipherExecutor(cp.getCrypto().getEncryption().getKey(),
-                    cp.getCrypto().getSigning().getKey(),
-                    cp.getCrypto().getAlg());
+            val crypto = cp.getCrypto();
+            if (crypto.isEnabled()) {
+                return new CacheCredentialsCipherExecutor(crypto.getEncryption().getKey(),
+                    crypto.getSigning().getKey(),
+                    crypto.getAlg(),
+                    crypto.getSigning().getKeySize(),
+                    crypto.getEncryption().getKeySize());
             }
             LOGGER.warn("Cas is configured to capture and cache credentials via Clearpass yet crypto operations for the cached password are "
                 + "turned off. Consider enabling the crypto configuration in CAS settings that allow the system to sign & encrypt the captured credential.");
