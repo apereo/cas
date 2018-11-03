@@ -67,6 +67,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
+    @RefreshScope
     @Bean
     public DataSource dataSourceSamlMetadataIdP() {
         val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
@@ -100,6 +101,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
     }
 
 
+    @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "jpaSamlIdPMetadataCipherExecutor")
     public CipherExecutor jpaSamlIdPMetadataCipherExecutor() {
@@ -137,6 +139,7 @@ public class SamlIdPJpaIdPMetadataConfiguration {
             transactionTemplate);
     }
 
+    @RefreshScope
     @Bean
     @SneakyThrows
     public SamlIdPMetadataLocator samlIdPMetadataLocator() {
