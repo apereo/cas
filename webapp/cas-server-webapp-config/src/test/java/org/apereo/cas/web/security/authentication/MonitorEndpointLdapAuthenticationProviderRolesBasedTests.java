@@ -98,7 +98,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests {
         val securityProperties = new SecurityProperties();
         securityProperties.getUser().setRoles(Collections.singletonList("ROLE_888"));
         val provider = new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties);
-        val token = provider.authenticate(new UsernamePasswordAuthenticationToken("casuser", "123456"));
+        val token = provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
         assertNotNull(token);
     }
 
@@ -108,7 +108,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests {
         securityProperties.getUser().setRoles(Collections.singletonList("SOME_BAD_ROLE"));
         val provider = new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties);
         thrown.expect(BadCredentialsException.class);
-        provider.authenticate(new UsernamePasswordAuthenticationToken("casuser", "123456"));
+        provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "123456"));
     }
 
     @Test
@@ -126,7 +126,7 @@ public class MonitorEndpointLdapAuthenticationProviderRolesBasedTests {
         securityProperties.getUser().setRoles(Collections.singletonList("SOME_BAD_ROLE"));
         val provider = new MonitorEndpointLdapAuthenticationProvider(casProperties.getMonitor().getEndpoints().getLdap(), securityProperties);
         thrown.expect(BadCredentialsException.class);
-        provider.authenticate(new UsernamePasswordAuthenticationToken("casuser", "BAD_PASSWORD"));
+        provider.authenticate(new UsernamePasswordAuthenticationToken("authzcas", "BAD_PASSWORD"));
     }
 
 }
