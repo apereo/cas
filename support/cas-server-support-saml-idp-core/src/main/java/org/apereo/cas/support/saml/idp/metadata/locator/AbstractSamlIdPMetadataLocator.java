@@ -23,26 +23,24 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiredArgsConstructor
 @Slf4j
 @Getter
 @Setter
+@RequiredArgsConstructor
 public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
 
     /**
      * Cipher executor to encrypt/sign metadata.
      */
     protected final CipherExecutor<String, String> metadataCipherExecutor;
+
     /**
      * The idp metadata document fetched from storage.
      */
     protected SamlIdPMetadataDocument metadataDocument = new SamlIdPMetadataDocument();
 
-    private Cache<String, SamlIdPMetadataDocument> metadataCache = Caffeine.newBuilder()
-        .initialCapacity(1)
-        .maximumSize(1)
-        .expireAfterAccess(1, TimeUnit.HOURS)
-        .build();
+    private Cache<String, SamlIdPMetadataDocument> metadataCache;
+
 
     @Override
     public Resource getSigningCertificate() {
@@ -104,12 +102,16 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
 
     @Override
     public final SamlIdPMetadataDocument fetch() {
+        initializeCache();
+
         val map = metadataCache.asMap();
         if (map.containsKey("CasSamlIdentityProviderMetadata")) {
             return map.get("CasSamlIdentityProviderMetadata");
         }
         val document = fetchInternal();
-        map.put("CasSamlIdentityProviderMetadata", document);
+        if (isMetadataDocumentValid()) {
+            map.put("CasSamlIdentityProviderMetadata", this.metadataDocument);
+        }
         return document;
     }
 
@@ -122,5 +124,15 @@ public abstract class AbstractSamlIdPMetadataLocator implements SamlIdPMetadataL
 
     private boolean isMetadataDocumentValid() {
         return metadataDocument != null && metadataDocument.isValid();
+    }
+
+    private void initializeCache() {
+        if (metadataCache == null) {
+            metadataCache = Caffeine.newBuilder()
+                .initialCapacity(1)
+                .maximumSize(1)
+                .expireAfterAccess(1, TimeUnit.HOURS)
+                .build();
+        }
     }
 }

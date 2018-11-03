@@ -5,6 +5,7 @@ import org.apereo.cas.support.saml.idp.metadata.locator.AbstractSamlIdPMetadataL
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +34,8 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     @Override
     public SamlIdPMetadataDocument fetchInternal() {
         try {
-            setMetadataDocument(this.entityManager.createQuery("SELECT r FROM SamlIdPMetadataDocument r", SamlIdPMetadataDocument.class)
-                .setMaxResults(1)
-                .getSingleResult());
+            val query = this.entityManager.createQuery("SELECT r FROM SamlIdPMetadataDocument r", SamlIdPMetadataDocument.class);
+            setMetadataDocument(query.setMaxResults(1).getSingleResult());
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage(), e);
         }

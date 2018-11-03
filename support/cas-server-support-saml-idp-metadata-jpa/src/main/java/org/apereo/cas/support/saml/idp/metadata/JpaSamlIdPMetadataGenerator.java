@@ -55,7 +55,6 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
         val doc = getSamlIdPMetadataDocument();
         doc.setEncryptionCertificate(results.getKey());
         doc.setEncryptionKey(results.getValue());
-        saveSamlIdPMetadataDocument(doc);
         return results;
     }
 
@@ -66,7 +65,6 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
         val doc = getSamlIdPMetadataDocument();
         doc.setSigningCertificate(results.getKey());
         doc.setSigningKey(results.getValue());
-        saveSamlIdPMetadataDocument(doc);
         return results;
     }
 
@@ -83,13 +81,19 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator {
     public String writeMetadata(final String metadata) {
         val doc = getSamlIdPMetadataDocument();
         doc.setMetadata(metadata);
-        saveSamlIdPMetadataDocument(doc);
         return metadata;
+    }
+
+    @Override
+    protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc) {
+        saveSamlIdPMetadataDocument(doc);
+        return doc;
     }
 
     private SamlIdPMetadataDocument getSamlIdPMetadataDocument() {
         try {
-            return this.entityManager.createQuery("SELECT r FROM SamlIdPMetadataDocument r", SamlIdPMetadataDocument.class)
+            val query = this.entityManager.createQuery("SELECT r FROM SamlIdPMetadataDocument r", SamlIdPMetadataDocument.class);
+            return query
                 .setMaxResults(1)
                 .getSingleResult();
         } catch (final NoResultException e) {
