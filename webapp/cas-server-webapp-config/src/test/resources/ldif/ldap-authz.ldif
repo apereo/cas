@@ -1,11 +1,11 @@
-dn: cn=casuser,ou=people,dc=example,dc=org
+dn: cn=authzcas,ou=people,dc=example,dc=org
 objectClass: organizationalRole
 objectClass: inetOrgPerson
 objectClass: person
 objectClass: account
-cn: casuser
+cn: authzcas
 userPassword: 123456
-sn: casuser
-uid: casuser
-mail: casuser@example.org
+sn: authzcas
+uid: authzcas
+mail: authzcas@example.org
 roomNumber: 888
