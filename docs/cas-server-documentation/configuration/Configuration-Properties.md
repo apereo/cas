@@ -559,7 +559,7 @@ This check is off by default and may be enabled with a system property of `-DCAS
 The following properties describe access controls and settings for the `/actuator`
 endpoint of CAS which provides administrative functionality and oversight into the CAS software.
 
-To learn more about this topic, [please review this guide](../installation/Monitoring-Statistics.html).
+To learn more about this topic, [please review this guide](../monitoring/Monitoring-Statistics.html).
 
 ```properties
 # management.endpoints.enabled-by-default=true
@@ -635,7 +635,7 @@ To determine whether an endpoint is available, the calculation order for all end
 2. If undefined, the global endpoint security is consulted from CAS settings.
 3. If undefined, the default built-in setting for the endpoint in CAS is consulted, which is typically `false` by default.
 
-All available endpoint ids [should be listed here](../installation/Monitoring-Statistics.html).
+All available endpoint ids [should be listed here](../monitoring/Monitoring-Statistics.html).
 
 Endpoints may also be mapped to custom arbitrary endpoints. For example, to remap the `health` endpoint to `healthcheck`, 
 specify the following settings:
@@ -686,7 +686,7 @@ The following access levels are allowed for each individual endpoint:
     
 ### Spring Boot Admin Server
 
-To learn more about this topic, [please review this guide](../installation/Configuring-Monitoring-Administration.html).
+To learn more about this topic, [please review this guide](../monitoring/Configuring-Monitoring-Administration.html).
 
 ```properties
 # spring.boot.admin.url=https://bootadmin.example.org:8444
@@ -3267,7 +3267,7 @@ available [here](Configuration-Properties-Common.html#restful-integrations) unde
 
 ## Sleuth Distributed Tracing
 
-To learn more about this topic, [please review this guide](../installation/Monitoring-Statistics.html#distributed-tracing).
+To learn more about this topic, [please review this guide](../monitoring/Monitoring-Statistics.html#distributed-tracing).
 
 ```properties
 # spring.sleuth.sampler.percentage = 0.5
@@ -3279,7 +3279,7 @@ To learn more about this topic, [please review this guide](../installation/Monit
 
 ## Monitoring
 
-To learn more about this topic, [please review this guide](../installation/Monitoring-Statistics.html).
+To learn more about this topic, [please review this guide](../monitoring/Monitoring-Statistics.html).
 
 ### Ticket Granting Tickets
 
@@ -4137,7 +4137,7 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 
 ## Metrics
 
-To learn more about this topic, [please review this guide](../installation/Monitoring-Statistics.html).
+To learn more about this topic, [please review this guide](../monitoring/Monitoring-Statistics.html).
 
 ### Atlas
 
