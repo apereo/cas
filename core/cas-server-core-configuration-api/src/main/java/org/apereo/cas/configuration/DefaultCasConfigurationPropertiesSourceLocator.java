@@ -89,7 +89,8 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
      */
     private List<File> getAllPossibleExternalConfigDirFilenames(final File configDirectory, final List<String> profiles) {
         val applicationName = casConfigurationPropertiesEnvironmentManager.getApplicationName();
-        val fileNames = CollectionUtils.wrapList("application", applicationName.toLowerCase(), applicationName)
+        val appNameLowerCase = applicationName.toLowerCase();
+        val fileNames = CollectionUtils.wrapList("application", appNameLowerCase, applicationName)
             .stream()
             .distinct()
             .flatMap(appName -> EXTENSIONS
@@ -104,7 +105,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 .flatMap(ext -> PROFILE_PATTERNS
                     .stream().map(pattern -> new File(configDirectory, String.format(pattern, profile, ext))))).collect(Collectors.toList()));
 
-        fileNames.add(new File(configDirectory, applicationName.concat(".groovy")));
+        fileNames.add(new File(configDirectory, appNameLowerCase.concat(".groovy")));
         return fileNames;
     }
 
