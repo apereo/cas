@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvider {
     private final List<AuditPrincipalIdProvider> providers;
-    private int order = Integer.MAX_VALUE;
+    private final int order = Integer.MAX_VALUE;
 
     /**
      * Add provider.
