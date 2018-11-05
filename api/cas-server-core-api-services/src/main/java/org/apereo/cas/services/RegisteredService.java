@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -132,6 +131,15 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
     Set<String> getRequiredHandlers();
 
     /**
+     * Gets the set of  names that correspond to the environment to which this service belongs.
+     * This may be used as a filter at runtime to narrow down the list of services
+     * that are applicable to a particular environment, such as test, prod, etc.
+     *
+     * @return Non -null set of environment names.
+     */
+    Set<String> getEnvironments();
+
+    /**
      * Gets the access strategy that decides whether this registered
      * service is able to proceed with authentication requests.
      *
@@ -230,9 +238,7 @@ public interface RegisteredService extends Serializable, Comparable<RegisteredSe
      * @return map of custom metadata.
      * @since 4.2
      */
-    default Map<String, RegisteredServiceProperty> getProperties() {
-        return new LinkedHashMap<>(0);
-    }
+    Map<String, RegisteredServiceProperty> getProperties();
 
     /**
      * A list of contacts that are responsible for the clients that use

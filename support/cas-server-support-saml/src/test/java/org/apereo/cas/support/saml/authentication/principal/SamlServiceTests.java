@@ -25,6 +25,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -56,8 +57,8 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         val impl = samlServiceFactory.createService(request);
 
         val response = new SamlServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class))).build(impl, "ticketId",
-            CoreAuthenticationTestUtils.getAuthentication());
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
+            .build(impl, "ticketId", CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertTrue(response.getUrl().contains(SamlProtocolConstants.CONST_PARAM_ARTIFACT.concat("=")));
@@ -78,7 +79,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         val impl = samlServiceFactory.createService(request);
         val response = new SamlServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class), new HashSet<>()))
             .build(impl, null, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
