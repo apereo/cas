@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -58,7 +59,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         val dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(list);
 
-        val mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
+        val mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         mgmr.load();
 
         this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString()),

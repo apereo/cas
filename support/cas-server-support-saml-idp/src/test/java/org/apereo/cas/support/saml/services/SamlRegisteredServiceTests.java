@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -86,7 +87,7 @@ public class SamlRegisteredServiceTests {
 
         val dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(Collections.singletonList(service));
-        val impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
+        val impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         impl.load();
 
         val s = impl.findServiceBy(new WebApplicationServiceFactory()

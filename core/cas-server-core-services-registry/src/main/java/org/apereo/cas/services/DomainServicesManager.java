@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
@@ -37,8 +38,8 @@ public class DomainServicesManager extends AbstractServicesManager {
     private final Pattern domainExtractor = RegexUtils.createPattern("^\\^?https?\\??://(.*?)(?:[(]?[:/]|$)");
     private final Pattern domainPattern = RegexUtils.createPattern("^[a-z0-9-.]*$");
 
-    public DomainServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher) {
-        super(serviceRegistry, eventPublisher);
+    public DomainServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher, final Set<String> environments) {
+        super(serviceRegistry, eventPublisher, environments);
     }
 
     @Override
