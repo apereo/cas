@@ -187,7 +187,7 @@ control of some important aspects of CAS SSO session behavior:
 * SSO session duration (sliding expiration, absolute)
 * Ticket reuse
 
-See the [Configuring Ticketing Components](../installation/Configuring-Ticketing-Components.html) section for a
+See the [Configuring Ticketing Components](../ticketing/Configuring-Ticketing-Components.html) section for a
 detailed discussion of the various expiration policies and configuration instructions.
 
 ### Single Sign-Out
