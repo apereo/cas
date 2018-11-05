@@ -1052,7 +1052,7 @@ with the following configured properties:
 
 ### Couchbase
 
-This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attributeRepository.couchbase`.
+This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../ticketing/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attributeRepository.couchbase`.
 
 ```properties
 # cas.authn.attributeRepository.couchbase.usernameAttribute=username
@@ -3522,7 +3522,7 @@ To learn more about this topic, [please review this guide](../services/CouchDb-S
 
 ### Redis Service Registry
 
-To learn more about this topic, [please review this guide](../installation/Redis-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.serviceRegistry`.
+To learn more about this topic, [please review this guide](../services/Redis-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.serviceRegistry`.
 
 ### CosmosDb Service Registry
 
@@ -3612,7 +3612,7 @@ Hazelcast settings for this feature are available [here](Configuration-Propertie
 
 ## Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Configuring-Ticketing-Components.html).
+To learn more about this topic, [please review this guide](../ticketing/Configuring-Ticketing-Components.html).
 
 ### Signing & Encryption
 
@@ -3631,7 +3631,7 @@ This section controls how that process should behave.
 
 ### JPA Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/JPA-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.ticket.registry.jpa`.
+To learn more about this topic, [please review this guide](../ticketing/JPA-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.ticket.registry.jpa`.
 
 ```properties
 # cas.ticket.registry.jpa.ticketLockType=NONE
@@ -3642,13 +3642,13 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Couchbase Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Couchbase-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.ticket.registry.couchbase`.
+To learn more about this topic, [please review this guide](../ticketing/Couchbase-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.ticket.registry.couchbase`.
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.couchbase`.
 
 ### Hazelcast Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Hazelcast-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](../ticketing/Hazelcast-Ticket-Registry.html).
 
 Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
 
@@ -3656,7 +3656,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Infinispan Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Infinispan-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](../ticketing/Infinispan-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.infinispan.cacheName=
@@ -3683,7 +3683,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### JMS Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Messaging-JMS-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](../ticketing/Messaging-JMS-Ticket-Registry.html).
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.jms`.
 
@@ -3717,7 +3717,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Ehcache Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Ehcache-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](../ticketing/Ehcache-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.ehcache.replicateUpdatesViaCopy=true
@@ -3748,7 +3748,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Ignite Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Ignite-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](../ticketing/Ignite-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.ignite.keyAlgorithm=
@@ -3780,13 +3780,13 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Memcached Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Memcached-Ticket-Registry.html).Integration settings for this registry are available [here](Configuration-Properties-Common.html#memcached-integration-settings) under the configuration key `cas.ticket.registry.memcached`.
+To learn more about this topic, [please review this guide](../ticketing/Memcached-Ticket-Registry.html).Integration settings for this registry are available [here](Configuration-Properties-Common.html#memcached-integration-settings) under the configuration key `cas.ticket.registry.memcached`.
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.memcached`.
 
 ### DynamoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/DynamoDb-Ticket-Registry.html). 
+To learn more about this topic, [please review this guide](../ticketing/DynamoDb-Ticket-Registry.html). 
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) 
 under the configuration key `cas.ticket.registry`. 
@@ -3807,13 +3807,13 @@ under the configuration key `cas.ticket.registry.dynamoDb`.
 
 ### MongoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/MongoDb-Ticket-Registry.html). 
+To learn more about this topic, [please review this guide](../ticketing/MongoDb-Ticket-Registry.html). 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) 
 under the configuration key `cas.ticket.registry.mongo`.  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.ticket.registry`.
 
 ### Redis Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Redis-Ticket-Registry.html). 
+To learn more about this topic, [please review this guide](../ticketing/Redis-Ticket-Registry.html). 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
 under the configuration key `cas.ticket.registry`. Signing & encryption settings for this registry are 
 available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.redis`.

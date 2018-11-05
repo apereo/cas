@@ -93,7 +93,7 @@ either active/passive or active/active mode. In general the former offers simpli
 adequate failover; the latter, improved resource usage and reduced service interruptions at the cost of additional complexity.
 Active-passive configuration can be done with manual or automatic failover in the case where the primary CAS node fails.
 Active-active configuration is possible with a clustered ticket registry state such that any available CAS node
-can service any request for the CAS server. [A number of options are available](../installation/Configuring-Ticketing-Components.html) 
+can service any request for the CAS server. [A number of options are available](../ticketing/Configuring-Ticketing-Components.html) 
 for implementing an active-active configuration with shared ticket state.
 
 HA can be achieved by implementing a multi-node CAS deployment running on multiple VMs or physical hosts. 
@@ -196,7 +196,7 @@ desirable periods for node failover. A [reverse proxy](http://httpd.apache.org/d
 
 ### HA Ticket Registry
 
-The following [ticket storage components](../installation/Configuring-Ticketing-Components.html) provide the best tradeoff among ease of use, scalability, and
+The following [ticket storage components](../ticketing/Configuring-Ticketing-Components.html) provide the best tradeoff among ease of use, scalability, and
 fault tolerance and are suitable for both active/passive and active/active setups.
 
 The particular choice of storage technology should be driven by infrastructure and expertise as much as performance
