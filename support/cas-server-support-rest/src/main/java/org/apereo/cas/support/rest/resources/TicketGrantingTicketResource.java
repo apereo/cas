@@ -8,6 +8,8 @@ import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.ticket.InvalidTicketException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,7 @@ import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -61,8 +65,32 @@ public class TicketGrantingTicketResource {
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody(required=false) final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
         try {
-            val tgtId = createTicketGrantingTicketForRequest(requestBody, request);
-            return createResponseEntityForTicket(request, tgtId);
+            val credential = this.credentialFactory.fromRequest(request, requestBody);
+            if (credential == null || credential.isEmpty()) {
+                throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
+            }
+            val service = this.serviceFactory.createService(request);
+            String tgtId = request.getParameter(CasProtocolConstants.PARAMETER_RENEW);
+            TicketGrantingTicket ticketGrantingTicket = null;
+            String serviceTicketId = null;
+
+            val authenticationResult =
+                authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+
+            if (tgtId != null) {
+                ticketGrantingTicket = getTicketStatus(tgtId);
+            }
+
+            if (ticketGrantingTicket == null) {
+                ticketGrantingTicket = centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+            }
+
+            if (service != null) {
+                serviceTicketId = centralAuthenticationService.grantServiceTicket(ticketGrantingTicket.getId(), service, authenticationResult).getId();
+            }
+
+            return createResponseEntityForTicket(request, ticketGrantingTicket, serviceTicketId);
+
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e);
         } catch (final BadRestRequestException e) {
@@ -92,30 +120,34 @@ public class TicketGrantingTicketResource {
      *
      * @param request the request
      * @param tgtId   the tgt id
+     * @param stId    the st id
      * @return the response entity
      * @throws Exception the exception
      */
     protected ResponseEntity<String> createResponseEntityForTicket(final HttpServletRequest request,
-                                                                   final TicketGrantingTicket tgtId) throws Exception {
-        return this.ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
+                                                                   final TicketGrantingTicket tgtId,
+                                                                   final String stId) throws Exception {
+
+        ResponseEntity<String> resp = this.ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
+        HttpHeaders headers = HttpHeaders.writableHttpHeaders(resp.getHeaders());
+
+        if (stId != null) {
+            final String requestURL = request.getRequestURL().toString();
+            final URI stReference = new URI(requestURL + '/' + stId);
+            headers.add("Link", stReference.toString());
+        }
+
+        return new ResponseEntity<String>(resp.getBody(), headers, resp.getStatusCode());
     }
 
-    /**
-     * Create ticket granting ticket for request ticket granting ticket.
-     *
-     * @param requestBody the request body
-     * @param request     the request
-     * @return the ticket granting ticket
-     */
-    protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
-                                                                        final HttpServletRequest request) {
-        val credential = this.credentialFactory.fromRequest(request, requestBody);
-        if (credential == null || credential.isEmpty()) {
-            throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
+    private TicketGrantingTicket getTicketStatus(final String id) {
+        try {
+            return this.centralAuthenticationService.getTicket(id, TicketGrantingTicket.class);
+        } catch (final InvalidTicketException e) {
+            return null;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            return null;
         }
-        val service = this.serviceFactory.createService(request);
-        val authenticationResult =
-            authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
-        return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
     }
 }
