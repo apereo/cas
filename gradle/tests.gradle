@@ -147,30 +147,6 @@ task testRedis(type: Test) {
 test {
     include "**/*Tests.*"
     useJUnitPlatform {
-<<<<<<< HEAD
-        def set = new HashSet<String>()
-        set.add("org.apereo.cas.category.CassandraCategory")
-        set.add("org.apereo.cas.category.CosmosDbCategory")
-        set.add("org.apereo.cas.category.CouchbaseCategory")
-        set.add("org.apereo.cas.category.DynamoDbCategory")
-        set.add("org.apereo.cas.category.FileSystemCategory")
-        set.add("org.apereo.cas.category.IgniteCategory")
-        set.add("org.apereo.cas.category.InfluxDbCategory")
-        set.add("org.apereo.cas.category.CouchDbCategory")
-        set.add("org.apereo.cas.category.LdapCategory")
-        set.add("org.apereo.cas.category.MailCategory")
-        set.add("org.apereo.cas.category.MariaDbCategory")
-        set.add("org.apereo.cas.category.MemcachedCategory")
-        set.add("org.apereo.cas.category.MongoDbCategory")
-        set.add("org.apereo.cas.category.MsSqlServerCategory")
-        set.add("org.apereo.cas.category.MySQLCategory")
-        set.add("org.apereo.cas.category.PostgresCategory")
-        set.add("org.apereo.cas.category.RedisCategory")
-        set.add("org.apereo.cas.category.RadiusCategory")
-        set.add("org.apereo.cas.category.AmazonWebServicesS3Category")
-        set.add("org.apereo.cas.category.RestfulApiCategory")
-        setExcludeTags set
-=======
         excludeTags "org.apereo.cas.category.CassandraCategory",
                 "org.apereo.cas.category.CosmosDbCategory",
                 "org.apereo.cas.category.CouchbaseCategory",
@@ -191,7 +167,6 @@ test {
                 "org.apereo.cas.category.RadiusCategory",
                 "org.apereo.cas.category.AmazonWebServicesS3Category",
                 "org.apereo.cas.category.RestfulApiCategory"
->>>>>>> Fix CouchDb test failure
     }
     enabled = "SIMPLE".equalsIgnoreCase(rootProject.testCategoryType) && !Boolean.getBoolean("skipTests")
 }

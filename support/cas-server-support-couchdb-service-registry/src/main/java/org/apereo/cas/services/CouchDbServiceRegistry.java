@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.DbAccessException;
-import org.ektorp.DocumentNotFoundException;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -35,14 +34,17 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
         }
         try {
             val svc = dbClient.get(registeredService.getId());
-            val doc = new RegisteredServiceDocument(registeredService);
-            doc.setRevision(svc.getRevision());
-            dbClient.update(doc);
-        } catch (final DocumentNotFoundException ignored) {
-            LOGGER.debug("New service record created.");
-            dbClient.add(new RegisteredServiceDocument(registeredService));
+            if (svc != null) {
+                val doc = new RegisteredServiceDocument(registeredService);
+                doc.setRevision(svc.getRevision());
+                dbClient.update(doc);
+                LOGGER.debug("Service [{}] with id [{}] updated", registeredService.getName(), registeredService.getId());
+            } else {
+                dbClient.add(new RegisteredServiceDocument(registeredService));
+                LOGGER.debug("New service [{}] with id [{}] created", registeredService.getName(), registeredService.getId());
+            }
         } catch (final DbAccessException e) {
-            LOGGER.debug("Failed to update service [{}] {}", registeredService.getName(), e.getMessage());
+            LOGGER.debug("Failed to update service [{}] with id [{}] {}", registeredService.getName(), registeredService.getId(), e.getMessage());
             return null;
         }
         return registeredService;
@@ -54,10 +56,10 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
         try {
             dbClient.deleteRecord(new RegisteredServiceDocument(service));
-            LOGGER.debug("Successfully deleted service [{}].", service.getName());
+            LOGGER.debug("Successfully deleted service [{}] with id [{}].", service.getName(), service.getId());
             return true;
         } catch (final DbAccessException exception) {
-            LOGGER.debug("Could not delete service [{}] {}", service.getName(), exception.getMessage());
+            LOGGER.debug("Could not delete service [{}] with id [{}] {}", service.getName(), service.getId(),  exception.getMessage());
             return false;
         }
     }
@@ -69,12 +71,20 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return dbClient.get(id).getService();
+        val doc = dbClient.get(id);
+        if (doc == null) {
+            return null;
+        }
+        return doc.getService();
     }
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        return dbClient.get(id).getService();
+        val doc = dbClient.get(id);
+        if (doc == null) {
+            return null;
+        }
+        return doc.getService();
     }
 
     @Override
