@@ -1,5 +1,6 @@
 package org.apereo.cas.logging.web;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 
@@ -17,6 +18,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link ThreadContextMDCServletFilterTests}.
@@ -57,6 +59,9 @@ public class ThreadContextMDCServletFilterTests {
 
         val response = new MockHttpServletResponse();
         val filterChain = new MockFilterChain();
+
+        when(cookieRetrievingCookieGenerator.retrieveCookieValue(request)).thenReturn("TICKET");
+        when(ticketSupport.getAuthenticatedPrincipalFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getPrincipal());
 
         try {
             filter.doFilter(request, response, filterChain);
