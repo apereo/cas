@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.tomcat.CasTomcatServletWebServerFactory;
 import org.apereo.cas.util.ResourceUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -65,28 +66,6 @@ public class CasEmbeddedContainerTomcatConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
-        val field = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
-        ReflectionUtils.makeAccessible(field);
-        switch (protocol) {
-            case "AJP/2":
-                ReflectionUtils.setField(field, connector, new AjpNio2Protocol());
-                break;
-            case "AJP/1.3":
-                ReflectionUtils.setField(field, connector, new AjpNioProtocol());
-                break;
-            case "HTTP/2":
-                ReflectionUtils.setField(field, connector, new Http2Protocol());
-                break;
-            case "HTTP/1.2":
-                ReflectionUtils.setField(field, connector, new Http11Nio2Protocol());
-                break;
-            case "HTTP/1.1":
-            default:
-                ReflectionUtils.setField(field, connector, new Http11NioProtocol());
-                break;
-        }
-    }
 
     @ConditionalOnMissingBean(name = "casServletWebServerFactory")
     @Bean
@@ -115,6 +94,30 @@ public class CasEmbeddedContainerTomcatConfiguration {
             }
         };
     }
+
+    private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
+        val field = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
+        ReflectionUtils.makeAccessible(field);
+        switch (protocol) {
+            case "AJP/2":
+                ReflectionUtils.setField(field, connector, new AjpNio2Protocol());
+                break;
+            case "AJP/1.3":
+                ReflectionUtils.setField(field, connector, new AjpNioProtocol());
+                break;
+            case "HTTP/2":
+                ReflectionUtils.setField(field, connector, new Http2Protocol());
+                break;
+            case "HTTP/1.2":
+                ReflectionUtils.setField(field, connector, new Http11Nio2Protocol());
+                break;
+            case "HTTP/1.1":
+            default:
+                ReflectionUtils.setField(field, connector, new Http11NioProtocol());
+                break;
+        }
+    }
+
 
     private void configureBasicAuthn(final TomcatServletWebServerFactory tomcat) {
         val basic = casProperties.getServer().getTomcat().getBasicAuthn();
