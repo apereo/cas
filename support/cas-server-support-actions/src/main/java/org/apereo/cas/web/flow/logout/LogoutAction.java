@@ -53,9 +53,9 @@ public class LogoutAction extends AbstractLogoutAction {
             .get();
 
         val paramName = StringUtils.defaultIfEmpty(logoutProperties.getRedirectParameter(), CasProtocolConstants.PARAMETER_SERVICE);
-        LOGGER.debug("Using parameter name [{}] to detect destination service, if any", paramName);
+        LOGGER.trace("Using parameter name [{}] to detect destination service, if any", paramName);
         val service = request.getParameter(paramName);
-        LOGGER.debug("Located target service [{}] for redirection after logout", paramName);
+        LOGGER.trace("Located target service [{}] for redirection after logout", service);
 
         if (logoutProperties.isFollowServiceRedirects() && StringUtils.isNotBlank(service)) {
             val webAppService = webApplicationServiceFactory.createService(service);
@@ -73,10 +73,10 @@ public class LogoutAction extends AbstractLogoutAction {
         }
 
         if (needFrontSlo) {
-            LOGGER.debug("Proceeding forward with front-channel single logout");
+            LOGGER.trace("Proceeding forward with front-channel single logout");
             return new Event(this, CasWebflowConstants.TRANSITION_ID_FRONT);
         }
-        LOGGER.debug("Moving forward to finish the logout process");
+        LOGGER.trace("Moving forward to finish the logout process");
         return new Event(this, CasWebflowConstants.TRANSITION_ID_FINISH);
     }
 }

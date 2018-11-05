@@ -33,6 +33,5 @@ public class BeanNames {
     /**
      * The {@link RandomStringGenerator} used to generate device fingerprint cookie values.
      */
-    public static final String BEAN_DEVICE_FINGERPRINT_COOKIE_RANDOM_STRING_GENERATOR =
-        "deviceFingerprintCookieRandomStringGenerator";
+    public static final String BEAN_DEVICE_FINGERPRINT_COOKIE_RANDOM_STRING_GENERATOR = "deviceFingerprintCookieRandomStringGenerator";
 }

@@ -85,7 +85,7 @@ public class CasPersonDirectoryConfiguration implements PersonDirectoryAttribute
         list.addAll(scriptedAttributeRepositories());
         list.addAll(stubAttributeRepositories());
 
-        final List<PersonDirectoryAttributeRepositoryPlanConfigurer> configurers =
+        val configurers = (List<PersonDirectoryAttributeRepositoryPlanConfigurer>)
             ObjectUtils.defaultIfNull(attributeRepositoryConfigurers.getIfAvailable(), new ArrayList<>());
         val plan = new DefaultPersonDirectoryAttributeRepositoryPlan();
         configurers.forEach(c -> c.configureAttributeRepositoryPlan(plan));

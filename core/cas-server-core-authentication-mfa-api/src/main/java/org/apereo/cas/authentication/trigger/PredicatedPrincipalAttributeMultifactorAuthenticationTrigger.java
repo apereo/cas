@@ -61,9 +61,8 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
         }
 
         val principal = authentication.getPrincipal();
-        final Object[] args = {service, principal, providers, LOGGER};
-        final Predicate<MultifactorAuthenticationProvider> predicate =
-            ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS, args, Predicate.class);
+        val args = new Object[] {service, principal, providers, LOGGER};
+        val predicate = ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS, args, Predicate.class);
 
         LOGGER.debug("Created predicate instance [{}] from [{}] to filter multifactor authentication providers [{}]",
             predicate.getClass().getSimpleName(), predicateResource, providers);

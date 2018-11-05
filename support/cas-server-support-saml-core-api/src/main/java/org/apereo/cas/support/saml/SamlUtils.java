@@ -45,7 +45,6 @@ import java.util.ArrayList;
 @UtilityClass
 public class SamlUtils {
     private static final int SAML_OBJECT_LOG_ASTERIXLINE_LENGTH = 80;
-    private static final String NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
 
     /**
      * Read certificate x 509 certificate.

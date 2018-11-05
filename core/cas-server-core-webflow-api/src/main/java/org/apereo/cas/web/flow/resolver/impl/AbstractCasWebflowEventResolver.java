@@ -141,7 +141,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
 
     @Override
     public Set<Event> resolve(final RequestContext context) {
-        LOGGER.debug("Attempting to resolve authentication event using resolver [{}]", getName());
+        LOGGER.trace("Attempting to resolve authentication event using resolver [{}]", getName());
         WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);
         WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
         return resolveInternal(context);
