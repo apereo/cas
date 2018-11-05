@@ -43,7 +43,7 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable, O
      *
      * @param authentication - the authentication
      */
-    default void updateAuthenticationToForgetBypass(Authentication authentication) {
+    default void updateAuthenticationToForgetBypass(final Authentication authentication) {
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.FALSE);
     }
 
@@ -53,8 +53,8 @@ public interface MultifactorAuthenticationProviderBypass extends Serializable, O
      * @param authentication - the authentication
      * @param provider - the provider
      */
-    default void updateAuthenticationToRememberBypass(Authentication authentication,
-                                                      MultifactorAuthenticationProvider provider) {
+    default void updateAuthenticationToRememberBypass(final Authentication authentication,
+                                                      final MultifactorAuthenticationProvider provider) {
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA, Boolean.TRUE);
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_BYPASS_MFA_PROVIDER, provider.getId());
     }
