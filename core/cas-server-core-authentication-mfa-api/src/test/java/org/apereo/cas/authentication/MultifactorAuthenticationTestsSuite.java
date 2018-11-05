@@ -16,7 +16,9 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     DefaultMultifactorAuthenticationContextValidatorTests.class,
     DefaultMultifactorAuthenticationProviderBypassTests.class,
-    GroovyMultifactorAuthenticationProviderBypassTests.class
+    GroovyMultifactorAuthenticationProviderBypassTests.class,
+    DefaultMultifactorTriggerSelectionStrategyTests.class,
+    RestMultifactorAuthenticationProviderBypassTests.class
 })
 public class MultifactorAuthenticationTestsSuite {
 }

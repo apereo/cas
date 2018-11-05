@@ -59,4 +59,16 @@ public abstract class AbstractServicesManagerTests {
         this.servicesManager.save(r);
         assertNotNull(this.servicesManager.findServiceBy(1000));
     }
+
+    @Test
+    public void verifyDelete() {
+        val r = new RegexRegisteredService();
+        r.setId(1000);
+        r.setName(TEST);
+        r.setServiceId(TEST);
+        this.servicesManager.save(r);
+        assertNotNull(this.servicesManager.findServiceBy(r.getServiceId()));
+        this.servicesManager.delete(r);
+        assertNull(this.servicesManager.findServiceBy(r.getId()));
+    }
 }

@@ -26,9 +26,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DomainServicesManager extends AbstractServicesManager {
 
-
-    private static final long serialVersionUID = -8581398063126547772L;
-
     private static final String DEFAULT_DOMAIN_NAME = "default";
 
     private final Map<String, TreeSet<RegisteredService>> domains = new ConcurrentHashMap<>();
