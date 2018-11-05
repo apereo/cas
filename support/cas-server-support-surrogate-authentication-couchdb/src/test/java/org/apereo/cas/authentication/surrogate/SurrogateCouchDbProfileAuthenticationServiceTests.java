@@ -81,6 +81,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasThemesConfiguration.class,
     CasCoreAuthenticationServiceSelectionStrategyConfiguration.class
     }, properties = {
+    "cas.authn.surrogate.couchDb.dbName=surrogate_profile",
     "cas.authn.surrogate.couchDb.profileBased=true",
     "cas.authn.surrogate.couchDb.surrogatePrincipalsAttribute=surrogateFor",
     "cas.authn.surrogate.couchDb.username=cas",
