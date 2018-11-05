@@ -255,7 +255,7 @@ To review and learn more about these options, please visit [this guide][cas-sec-
 The CAS project uses Spring Webflow to manage and orchestrate the authentication process. The conversational state of the
 webflow used by CAS is managed by the client which is then passed and tracked throughout various states of the authentication
 process. This state must be secured and encrypted to prevent session hijacking. While CAS provides default encryption
-settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../installation/Webflow-Customization.html) be
+settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../webflow/Webflow-Customization.html) be
 evaluated prior to production deployments and regenerate this configuration to prevent attacks.
 
 ### Long Term Authentication
