@@ -13,7 +13,7 @@ to its own clients, such as the CAS server itself, which would act as *a client 
 server* expecting change notifications to quietly reload its configuration.
 
 Therefor, in order to broadcast such `change` events CAS
-presents [various endpoints](../installation/Monitoring-Statistics.html) that allow the adopter
+presents [various endpoints](../monitoring/Monitoring-Statistics.html) that allow the adopter
 to **refresh** the configuration as needed. This means that an adopter would simply
 change a required CAS settings and then would submit
 a request to CAS to refresh its current state. All CAS internal components that are affected
@@ -39,7 +39,7 @@ that house CAS settings and upon changes will auto-refresh itself.
 In the event that the [standalone configuration profile](Configuration-Server-Management.html#standalone)
 is used to control and direct settings and Spring Cloud configuration server is disabled,
 CAS will begin to automatically watch and monitor the configuration files indicated by the profile and will auto-reload the state of the runtime
-application context automatically. You may also attempt to [refresh settings manually](../installation/Monitoring-Statistics.html)
+application context automatically. You may also attempt to [refresh settings manually](../monitoring/Monitoring-Statistics.html)
 via the CAS admin screens.
 
 ### Spring Cloud
@@ -52,4 +52,4 @@ the application runtime without the need to restart the JVM.
 curl -X POST https://cas.server.url/cas/actuator/refresh
 ```
 
-[See this guide](../installation/Monitoring-Statistics.html) to learn more about various monitoring endpoints, etc.
+[See this guide](../monitoring/Monitoring-Statistics.html) to learn more about various monitoring endpoints, etc.
