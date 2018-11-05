@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.val;
 
 import java.util.List;
@@ -16,10 +17,11 @@ import java.util.List;
  * @since 5.3.0
  */
 @Getter
+@Setter
 @RequiredArgsConstructor
 public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvider {
     private final List<AuditPrincipalIdProvider> providers;
-    private final int order = Integer.MAX_VALUE;
+    private int order = Integer.MAX_VALUE;
 
     /**
      * Add provider.
