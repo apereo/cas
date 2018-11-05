@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  */
 @SpringBootTest(classes = {
     CasEmbeddedContainerTomcatConfiguration.class,
-    CasEmbeddedContainerTomcatFiltersConfiguration.class,
+    CasEmbeddedContainerTomcatFiltersConfiguration.class
 },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
     "cas.server.tomcat.basicAuthn.enabled=true",
     "cas.server.tomcat.extAccessLog.enabled=true",
     "cas.server.tomcat.extAccessLog.pattern=true",
-    "cas.server.tomcat.rewriteValve.location=classpath:/container/tomcat/rewrite.config",
+    "cas.server.tomcat.rewriteValve.location=classpath:/container/tomcat/rewrite.config"
 })
 @Slf4j
 public class CasTomcatServletWebServerFactoryTests {

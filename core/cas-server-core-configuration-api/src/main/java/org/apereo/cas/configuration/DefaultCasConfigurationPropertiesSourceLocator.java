@@ -104,7 +104,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
                 .flatMap(ext -> PROFILE_PATTERNS
                     .stream().map(pattern -> new File(configDirectory, String.format(pattern, profile, ext))))).collect(Collectors.toList()));
 
-        fileNames.add(new File(configDirectory, applicationName.toLowerCase().concat(".groovy")));
+        fileNames.add(new File(configDirectory, applicationName.concat(".groovy")));
         return fileNames;
     }
 

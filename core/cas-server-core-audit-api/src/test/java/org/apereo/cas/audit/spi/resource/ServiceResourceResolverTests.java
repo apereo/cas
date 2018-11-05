@@ -1,6 +1,5 @@
 package org.apereo.cas.audit.spi.resource;
 
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
