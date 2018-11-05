@@ -24,6 +24,7 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.Cookie;
 import java.util.Arrays;
+import java.util.HashSet;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -55,7 +56,7 @@ public class LogoutActionTests extends AbstractWebflowActionsTests {
         when(servletExternalContext.getNativeResponse()).thenReturn(new MockHttpServletResponse());
         when(this.requestContext.getFlowScope()).thenReturn(new LocalAttributeMap());
 
-        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(), mock(ApplicationEventPublisher.class));
+        this.serviceManager = new DefaultServicesManager(new InMemoryServiceRegistry(), mock(ApplicationEventPublisher.class), new HashSet<>());
         this.serviceManager.load();
     }
 

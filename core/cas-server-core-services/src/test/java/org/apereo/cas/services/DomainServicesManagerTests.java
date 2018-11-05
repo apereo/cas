@@ -3,6 +3,8 @@ package org.apereo.cas.services;
 import lombok.NoArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.HashSet;
+
 import static org.mockito.Mockito.*;
 
 /**
@@ -14,6 +16,6 @@ public class DomainServicesManagerTests extends AbstractServicesManagerTests {
 
     @Override
     protected ServicesManager getServicesManagerInstance() {
-        return new DomainServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class));
+        return new DomainServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>());
     }
 }

@@ -108,6 +108,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private HashSet<String> requiredHandlers = new HashSet<>();
 
     @Lob
+    @Column(name = "environments", length = Integer.MAX_VALUE)
+    private HashSet<String> environments = new HashSet<>();
+
+    @Lob
     @Column(name = "attribute_release", length = Integer.MAX_VALUE)
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
 

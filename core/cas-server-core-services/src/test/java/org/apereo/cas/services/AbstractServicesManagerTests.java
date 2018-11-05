@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -18,8 +19,6 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 public abstract class AbstractServicesManagerTests {
-
-
     private static final String TEST = "test";
     protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
     protected ServiceRegistry serviceRegistry;
@@ -42,7 +41,7 @@ public abstract class AbstractServicesManagerTests {
     }
 
     protected ServicesManager getServicesManagerInstance() {
-        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class));
+        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class), new HashSet<>());
     }
 
     protected ServiceRegistry getServiceRegistryInstance() {

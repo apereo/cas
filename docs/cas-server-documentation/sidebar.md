@@ -141,6 +141,7 @@ layout: null
     *   [Contacts & Owners](/$version/services/Configuring-Service-Contacts.html)
     *   [Expiration Policy](/$version/services/Configuring-Service-Expiration-Policy.html)
     *   [Required Authentication](/$version/services/Configuring-Service-Required-AuthN.html)
+    *   [Environments](/$version/services/Configuring-Service-Environments.html)
     *   [Replication](/$version/services/Configuring-Service-Replication.html)
     *   [Storage](#persistencesvcreg)
         *   [InMemory XML](/$version/services/InMemory-Service-Management.html)
