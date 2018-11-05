@@ -170,10 +170,10 @@ layout: null
     *   [Audits](/$version/installation/Audits.html)
     
 * [Monitoring & Statistics](#monitoroverview)
-    *   [Overview](/$version/installation/Monitoring-Statistics.html) 
-    *   [Administration Server](/$version/installation/Configuring-Monitoring-Administration.html)
-    *   [Metrics](/$version/installation/Configuring-Metrics.html)
-    *   [Monitors](/$version/installation/Configuring-Monitoring.html)
+    *   [Overview](/$version/monitoring/Monitoring-Statistics.html) 
+    *   [Administration Server](/$version/monitoring/Configuring-Monitoring-Administration.html)
+    *   [Metrics](/$version/monitoring/Configuring-Metrics.html)
+    *   [Monitors](/$version/monitoring/Configuring-Monitoring.html)
         
 * [User Interface](#user_interface)
     *   [Overview](/$version/ux/User-Interface-Customization.html)
