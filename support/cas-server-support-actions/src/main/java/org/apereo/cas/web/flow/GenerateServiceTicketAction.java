@@ -54,7 +54,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext context) {
         val service = WebUtils.getService(context);
-        LOGGER.debug("Service asking for service ticket is [{}]", service);
+        LOGGER.trace("Service asking for service ticket is [{}]", service);
 
         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         LOGGER.debug("Ticket-granting ticket found in the context is [{}]", ticketGrantingTicket);

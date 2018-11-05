@@ -77,7 +77,7 @@ public class HttpMessage implements Serializable {
      */
     protected String formatOutputMessageInternal(final String message) {
         try {
-            return EncodingUtils.urlEncode(message);
+           return EncodingUtils.urlEncode(message);
         } catch (final Exception e) {
             LOGGER.warn("Unable to encode URL " + message, e);
         }

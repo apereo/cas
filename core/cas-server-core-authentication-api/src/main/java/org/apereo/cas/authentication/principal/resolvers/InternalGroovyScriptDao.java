@@ -51,9 +51,8 @@ public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
         val finalAttributes = new HashMap<String, Object>();
         casProperties.getAuthn().getAttributeRepository().getGroovy()
             .forEach(groovy -> {
-                final Object[] args = {uid, LOGGER, casProperties, applicationContext};
-                final Map<String, Object> personAttributesMap =
-                    ScriptingUtils.executeGroovyScript(groovy.getLocation(), args, Map.class, true);
+                val args = new Object[] {uid, LOGGER, casProperties, applicationContext};
+                val personAttributesMap = ScriptingUtils.executeGroovyScript(groovy.getLocation(), args, Map.class, true);
                 finalAttributes.putAll(personAttributesMap);
             });
 

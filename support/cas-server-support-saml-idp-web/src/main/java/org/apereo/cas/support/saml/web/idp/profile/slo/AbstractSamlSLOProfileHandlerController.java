@@ -20,12 +20,9 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpReques
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.tuple.Pair;
-import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObject;
-import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 
@@ -76,8 +73,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
             return;
         }
 
-        final Pair<? extends SignableSAMLObject, MessageContext> pair =
-            this.samlHttpRequestExtractor.extract(request, decoder, LogoutRequest.class);
+        val pair = this.samlHttpRequestExtractor.extract(request, decoder, LogoutRequest.class);
         val logoutRequest = (LogoutRequest) pair.getKey();
         val ctx = pair.getValue();
 
@@ -87,9 +83,11 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
 
         if (SAMLBindingSupport.isMessageSigned(ctx)) {
             val entityId = SamlIdPUtils.getIssuerFromSamlObject(logoutRequest);
+            LOGGER.trace("SAML logout request from entity id [{}] is signed", entityId);
             val registeredService = this.servicesManager.findServiceBy(entityId, SamlRegisteredService.class);
-            val facade = SamlRegisteredServiceServiceProviderMetadataFacade
-                .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId).get();
+            LOGGER.trace("SAML registered service tied to [{}] is [{}]", entityId, registeredService);
+            val facade = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId).get();
+            LOGGER.trace("Verifying signature on the SAML logout request for [{}]", entityId);
             this.samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }
         SamlUtils.logSamlObject(this.configBean, logoutRequest);
