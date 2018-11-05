@@ -3954,7 +3954,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 Control how Spring Webflow's conversational session state should be managed by CAS,
 and all other webflow related settings.
 
-To learn more about this topic, [please review this guide](../installation/Webflow-Customization.html).
+To learn more about this topic, [please review this guide](../webflow/Webflow-Customization.html).
 
 ```properties
 # cas.webflow.alwaysPauseRedirect=false
@@ -3976,7 +3976,7 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 
 ### Spring Webflow Auto Configuration
 
-Options that control how the Spring Webflow context is dynamically altered and configured by CAS. To learn more about this topic, [please review this guide](../installation/Webflow-Customization-Extensions.html).
+Options that control how the Spring Webflow context is dynamically altered and configured by CAS. To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Extensions.html).
 
 ```properties
 # cas.webflow.autoconfigure=true
@@ -3992,7 +3992,7 @@ Control the Spring Webflow context via a custom Groovy script.
 
 ### Spring Webflow Session Management
 
-To learn more about this topic, [see this guide](../installation/Webflow-Customization-Sessions.html).
+To learn more about this topic, [see this guide](../webflow/Webflow-Customization-Sessions.html).
 
 ```properties
 # cas.webflow.session.lockTimeout=30
@@ -4051,7 +4051,7 @@ Signing & encryption settings for this feature are available [here](Configuratio
 
 Map custom authentication exceptions in the CAS webflow and link them to custom messages defined in message bundles.
 
-To learn more about this topic, [please review this guide](../installation/Webflow-Customization-Exceptions.html).
+To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Exceptions.html).
 
 ```properties
 # cas.authn.exceptions.exceptions=value1,value2,...
@@ -4059,7 +4059,7 @@ To learn more about this topic, [please review this guide](../installation/Webfl
 
 ### Authentication Interrupt
 
-Interrupt the authentication flow to reach out to external services. To learn more about this topic, [please review this guide](../installation/Webflow-Customization-Interrupt.html).
+Interrupt the authentication flow to reach out to external services. To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Interrupt.html).
 
 #### Authentication Interrupt JSON
 
@@ -4088,7 +4088,7 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 ### Acceptable Usage Policy
 
 Decide how CAS should attempt to determine whether AUP is accepted.
-To learn more about this topic, [please review this guide](../installation/Webflow-Customization-AUP.html).
+To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-AUP.html).
 
 ```properties
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
