@@ -1,4 +1,4 @@
-package org.apereo.cas.config;
+package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
 

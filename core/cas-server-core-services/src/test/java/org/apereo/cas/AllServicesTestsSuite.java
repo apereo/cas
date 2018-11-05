@@ -10,6 +10,7 @@ import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvid
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicyTests;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProviderTests;
+import org.apereo.cas.services.DefaultServicesManagerByEnvironmentTests;
 import org.apereo.cas.services.DefaultServicesManagerTests;
 import org.apereo.cas.services.DomainServicesManagerTests;
 import org.apereo.cas.services.GroovyRegisteredServiceAccessStrategyTests;
@@ -70,6 +71,7 @@ import org.junit.runners.Suite;
     UnauthorizedServiceExceptionTests.class,
     UnauthorizedSsoServiceExceptionTests.class,
     ResponseTests.class,
+    DefaultServicesManagerByEnvironmentTests.class,
     ScriptedRegisteredServiceUsernameProviderTests.class,
     RemoteEndpointServiceAccessStrategyTests.class,
     ShibbolethCompatiblePersistentIdGeneratorTests.class,

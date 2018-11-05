@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
 import org.apereo.cas.services.DefaultServicesManager;
@@ -50,11 +51,14 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.core.env.Environment;
 import org.springframework.http.converter.AbstractHttpMessageConverter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasCoreServicesConfiguration}.
@@ -78,6 +82,9 @@ public class CasCoreServicesConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private Environment environment;
 
     @Autowired
     private ObjectProvider<List<ServiceRegistryExecutionPlanConfigurer>> serviceRegistryDaoConfigurers;
@@ -122,15 +129,13 @@ public class CasCoreServicesConfiguration {
     @Bean
     @RefreshScope
     public ServicesManager servicesManager() {
-        switch (casProperties.getServiceRegistry().getManagementType()) {
-            case DOMAIN:
-                LOGGER.debug("Managing CAS service definitions via domains");
-                return new DomainServicesManager(serviceRegistry(), eventPublisher);
-            case DEFAULT:
-            default:
-                break;
+        val managementType = casProperties.getServiceRegistry().getManagementType();
+        val activeProfiles = Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toSet());
+        if (managementType == ServiceRegistryProperties.ServiceManagementTypes.DOMAIN) {
+            LOGGER.trace("Managing CAS service definitions via domains");
+            return new DomainServicesManager(serviceRegistry(), eventPublisher, activeProfiles);
         }
-        return new DefaultServicesManager(serviceRegistry(), eventPublisher);
+        return new DefaultServicesManager(serviceRegistry(), eventPublisher, activeProfiles);
     }
 
     @Bean

@@ -47,7 +47,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
         dao.setRegisteredServices(list);
 
-        this.defaultServicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
+        this.defaultServicesManager = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class), new HashSet<>());
         this.defaultServicesManager.load();
 
         val handler1 = new AcceptUsersAuthenticationHandler("handler1");
