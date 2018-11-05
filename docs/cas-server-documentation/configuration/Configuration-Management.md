@@ -39,7 +39,7 @@ are considered in the following order:
 
 <div class="alert alert-info"><strong>Managing Configuration</strong><p>In order to manage
 the CAS configuration, you should configure access
-to <a href="../installation/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
+to <a href="../monitoring/Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
 ## Configuration Server
 

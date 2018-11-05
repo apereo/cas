@@ -177,7 +177,7 @@ Please [see this guide](../installation/Ticket-Registry-Replication-Encryption.h
 CAS provides a large variety of web interfaces that are aimed at system administrators and deployers.
 These screens along with a number of REST endpoints allow a CAS deployer to manage and reconfigure CAS behavior without resorting to
 native command-line interfaces. Needless to say, these endpoints and screens must be secured and allowed proper access only to
-authorized parties. Please [see this guide](../installation/Monitoring-Statistics.html) for more info.
+authorized parties. Please [see this guide](../monitoring/Monitoring-Statistics.html) for more info.
 
 ### Ticket Expiration Policies
 
