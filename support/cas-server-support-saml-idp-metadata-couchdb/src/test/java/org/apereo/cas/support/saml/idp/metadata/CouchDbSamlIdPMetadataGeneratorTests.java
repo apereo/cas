@@ -49,6 +49,7 @@ import static org.junit.Assert.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = {
+    "cas.authn.samlIdp.metadata.couchDb.dbName=saml_generator",
     "cas.authn.samlIdp.metadata.couchDb.idpMetadataEnabled=true",
     "cas.authn.samlIdp.metadata.couchDb.username=cas",
     "cas.authn.samlIdp.metadata.couchdb.password=password"

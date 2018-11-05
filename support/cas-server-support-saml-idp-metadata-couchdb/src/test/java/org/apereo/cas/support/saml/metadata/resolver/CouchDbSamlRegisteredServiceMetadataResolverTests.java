@@ -115,6 +115,7 @@ import static org.junit.Assert.*;
 @Slf4j
 @TestPropertySource(properties = {
     "cas.authn.samlIdp.metadata.location=classpath:",
+    "cas.authn.samlIdp.metadata.couchDb.dbName=saml_resolver",
     "cas.authn.samlIdp.metadata.couchDb.username=cas",
     "cas.authn.samlIdp.metadata.couchdb.password=password"
 })

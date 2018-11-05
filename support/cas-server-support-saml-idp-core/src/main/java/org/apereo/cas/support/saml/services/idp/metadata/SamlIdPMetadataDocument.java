@@ -116,6 +116,7 @@ public class SamlIdPMetadataDocument {
      *
      * @return the signing certificate decoded
      */
+    @JsonIgnore
     public String getSigningCertificateDecoded() {
         if (EncodingUtils.isBase64(signingCertificate)) {
             return EncodingUtils.decodeBase64ToString(signingCertificate);
@@ -128,6 +129,7 @@ public class SamlIdPMetadataDocument {
      *
      * @return the encryption certificate decoded
      */
+    @JsonIgnore
     public String getEncryptionCertificateDecoded() {
         if (EncodingUtils.isBase64(encryptionCertificate)) {
             return EncodingUtils.decodeBase64ToString(encryptionCertificate);
@@ -140,6 +142,7 @@ public class SamlIdPMetadataDocument {
      *
      * @return the metadata decoded
      */
+    @JsonIgnore
     public String getMetadataDecoded() {
         if (EncodingUtils.isBase64(metadata)) {
             return EncodingUtils.decodeBase64ToString(metadata);
