@@ -559,7 +559,7 @@ This check is off by default and may be enabled with a system property of `-DCAS
 The following properties describe access controls and settings for the `/actuator`
 endpoint of CAS which provides administrative functionality and oversight into the CAS software.
 
-To learn more about this topic, [please review this guide](../installation/Monitoring-Statistics.html).
+To learn more about this topic, [please review this guide](../monitoring/Monitoring-Statistics.html).
 
 ```properties
 # management.endpoints.enabled-by-default=true
@@ -635,7 +635,7 @@ To determine whether an endpoint is available, the calculation order for all end
 2. If undefined, the global endpoint security is consulted from CAS settings.
 3. If undefined, the default built-in setting for the endpoint in CAS is consulted, which is typically `false` by default.
 
-All available endpoint ids [should be listed here](../installation/Monitoring-Statistics.html).
+All available endpoint ids [should be listed here](../monitoring/Monitoring-Statistics.html).
 
 Endpoints may also be mapped to custom arbitrary endpoints. For example, to remap the `health` endpoint to `healthcheck`, 
 specify the following settings:
@@ -686,7 +686,7 @@ The following access levels are allowed for each individual endpoint:
     
 ### Spring Boot Admin Server
 
-To learn more about this topic, [please review this guide](../installation/Configuring-Monitoring-Administration.html).
+To learn more about this topic, [please review this guide](../monitoring/Configuring-Monitoring-Administration.html).
 
 ```properties
 # spring.boot.admin.url=https://bootadmin.example.org:8444
@@ -1052,7 +1052,7 @@ with the following configured properties:
 
 ### Couchbase
 
-This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../installation/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attributeRepository.couchbase`.
+This option will fetch attributes from a Couchbase database for a given CAS principal. To learn more about this topic, [please review this guide](../ticketing/Couchbase-Authentication.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.authn.attributeRepository.couchbase`.
 
 ```properties
 # cas.authn.attributeRepository.couchbase.usernameAttribute=username
@@ -1419,7 +1419,7 @@ Email notifications settings are available [here](Configuration-Properties-Commo
 
 ## SMS Messaging
 
-To learn more about this topic, [please review this guide](../installation/SMS-Messaging-Configuration.html).
+To learn more about this topic, [please review this guide](../notifications/SMS-Messaging-Configuration.html).
 
 ### Groovy
 
@@ -3267,7 +3267,7 @@ available [here](Configuration-Properties-Common.html#restful-integrations) unde
 
 ## Sleuth Distributed Tracing
 
-To learn more about this topic, [please review this guide](../installation/Monitoring-Statistics.html#distributed-tracing).
+To learn more about this topic, [please review this guide](../monitoring/Monitoring-Statistics.html#distributed-tracing).
 
 ```properties
 # spring.sleuth.sampler.percentage = 0.5
@@ -3279,7 +3279,7 @@ To learn more about this topic, [please review this guide](../installation/Monit
 
 ## Monitoring
 
-To learn more about this topic, [please review this guide](../installation/Monitoring-Statistics.html).
+To learn more about this topic, [please review this guide](../monitoring/Monitoring-Statistics.html).
 
 ### Ticket Granting Tickets
 
@@ -3522,7 +3522,7 @@ To learn more about this topic, [please review this guide](../services/CouchDb-S
 
 ### Redis Service Registry
 
-To learn more about this topic, [please review this guide](../installation/Redis-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.serviceRegistry`.
+To learn more about this topic, [please review this guide](../services/Redis-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.serviceRegistry`.
 
 ### CosmosDb Service Registry
 
@@ -3612,7 +3612,7 @@ Hazelcast settings for this feature are available [here](Configuration-Propertie
 
 ## Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Configuring-Ticketing-Components.html).
+To learn more about this topic, [please review this guide](../ticketing/Configuring-Ticketing-Components.html).
 
 ### Signing & Encryption
 
@@ -3631,7 +3631,7 @@ This section controls how that process should behave.
 
 ### JPA Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/JPA-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.ticket.registry.jpa`.
+To learn more about this topic, [please review this guide](../ticketing/JPA-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.ticket.registry.jpa`.
 
 ```properties
 # cas.ticket.registry.jpa.ticketLockType=NONE
@@ -3642,13 +3642,13 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Couchbase Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Couchbase-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.ticket.registry.couchbase`.
+To learn more about this topic, [please review this guide](../ticketing/Couchbase-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#couchbase-integration-settings) under the configuration key `cas.ticket.registry.couchbase`.
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.couchbase`.
 
 ### Hazelcast Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Hazelcast-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](../ticketing/Hazelcast-Ticket-Registry.html).
 
 Hazelcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
 
@@ -3656,7 +3656,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Infinispan Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Infinispan-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](../ticketing/Infinispan-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.infinispan.cacheName=
@@ -3683,7 +3683,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### JMS Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Messaging-JMS-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](../ticketing/Messaging-JMS-Ticket-Registry.html).
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.jms`.
 
@@ -3717,7 +3717,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Ehcache Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Ehcache-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](../ticketing/Ehcache-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.ehcache.replicateUpdatesViaCopy=true
@@ -3748,7 +3748,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Ignite Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Ignite-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](../ticketing/Ignite-Ticket-Registry.html).
 
 ```properties
 # cas.ticket.registry.ignite.keyAlgorithm=
@@ -3780,13 +3780,13 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### Memcached Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Memcached-Ticket-Registry.html).Integration settings for this registry are available [here](Configuration-Properties-Common.html#memcached-integration-settings) under the configuration key `cas.ticket.registry.memcached`.
+To learn more about this topic, [please review this guide](../ticketing/Memcached-Ticket-Registry.html).Integration settings for this registry are available [here](Configuration-Properties-Common.html#memcached-integration-settings) under the configuration key `cas.ticket.registry.memcached`.
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.memcached`.
 
 ### DynamoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/DynamoDb-Ticket-Registry.html). 
+To learn more about this topic, [please review this guide](../ticketing/DynamoDb-Ticket-Registry.html). 
 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) 
 under the configuration key `cas.ticket.registry`. 
@@ -3807,13 +3807,13 @@ under the configuration key `cas.ticket.registry.dynamoDb`.
 
 ### MongoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/MongoDb-Ticket-Registry.html). 
+To learn more about this topic, [please review this guide](../ticketing/MongoDb-Ticket-Registry.html). 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) 
 under the configuration key `cas.ticket.registry.mongo`.  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.ticket.registry`.
 
 ### Redis Ticket Registry
 
-To learn more about this topic, [please review this guide](../installation/Redis-Ticket-Registry.html). 
+To learn more about this topic, [please review this guide](../ticketing/Redis-Ticket-Registry.html). 
 Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) 
 under the configuration key `cas.ticket.registry`. Signing & encryption settings for this registry are 
 available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.redis`.
@@ -3954,7 +3954,7 @@ To learn more about this topic, [please review this guide](../integration/Config
 Control how Spring Webflow's conversational session state should be managed by CAS,
 and all other webflow related settings.
 
-To learn more about this topic, [please review this guide](../installation/Webflow-Customization.html).
+To learn more about this topic, [please review this guide](../webflow/Webflow-Customization.html).
 
 ```properties
 # cas.webflow.alwaysPauseRedirect=false
@@ -3976,7 +3976,7 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 
 ### Spring Webflow Auto Configuration
 
-Options that control how the Spring Webflow context is dynamically altered and configured by CAS. To learn more about this topic, [please review this guide](../installation/Webflow-Customization-Extensions.html).
+Options that control how the Spring Webflow context is dynamically altered and configured by CAS. To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Extensions.html).
 
 ```properties
 # cas.webflow.autoconfigure=true
@@ -3992,7 +3992,7 @@ Control the Spring Webflow context via a custom Groovy script.
 
 ### Spring Webflow Session Management
 
-To learn more about this topic, [see this guide](../installation/Webflow-Customization-Sessions.html).
+To learn more about this topic, [see this guide](../webflow/Webflow-Customization-Sessions.html).
 
 ```properties
 # cas.webflow.session.lockTimeout=30
@@ -4051,7 +4051,7 @@ Signing & encryption settings for this feature are available [here](Configuratio
 
 Map custom authentication exceptions in the CAS webflow and link them to custom messages defined in message bundles.
 
-To learn more about this topic, [please review this guide](../installation/Webflow-Customization-Exceptions.html).
+To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Exceptions.html).
 
 ```properties
 # cas.authn.exceptions.exceptions=value1,value2,...
@@ -4059,7 +4059,7 @@ To learn more about this topic, [please review this guide](../installation/Webfl
 
 ### Authentication Interrupt
 
-Interrupt the authentication flow to reach out to external services. To learn more about this topic, [please review this guide](../installation/Webflow-Customization-Interrupt.html).
+Interrupt the authentication flow to reach out to external services. To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-Interrupt.html).
 
 #### Authentication Interrupt JSON
 
@@ -4088,7 +4088,7 @@ RESTful settings for this feature are available [here](Configuration-Properties-
 ### Acceptable Usage Policy
 
 Decide how CAS should attempt to determine whether AUP is accepted.
-To learn more about this topic, [please review this guide](../installation/Webflow-Customization-AUP.html).
+To learn more about this topic, [please review this guide](../webflow/Webflow-Customization-AUP.html).
 
 ```properties
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
@@ -4137,7 +4137,7 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 
 ## Metrics
 
-To learn more about this topic, [please review this guide](../installation/Monitoring-Statistics.html).
+To learn more about this topic, [please review this guide](../monitoring/Monitoring-Statistics.html).
 
 ### Atlas
 

@@ -61,7 +61,7 @@ Duo Security altogether and shall not challenge the user and will also **NOT** r
 ## Health Status
 
 CAS is able to contact Duo Security, on demand, in order to inquire the health status of the service using Duo Security's `ping` API. 
-The results of the operations are recorded and reported using `health` endpoint provided by [CAS Monitoring endpoints](../installation/Monitoring-Statistics.html).
+The results of the operations are recorded and reported using `health` endpoint provided by [CAS Monitoring endpoints](../monitoring/Monitoring-Statistics.html).
 Of course, the same result throughout the Duo authentication flow is also used to determine failure modes.
  
 ## Non-Browser MFA
