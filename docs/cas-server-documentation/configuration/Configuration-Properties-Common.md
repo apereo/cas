@@ -952,7 +952,7 @@ The parameters passed are as follows:
 
 ## Email Notifications
 
-To learn more about this topic, [please review this guide](../installation/Sending-Email-Configuration.html).
+To learn more about this topic, [please review this guide](../notifications/Sending-Email-Configuration.html).
 
 The following options are shared and apply when CAS is configured to send email notifications, given the provider's *configuration key*:
 
@@ -988,7 +988,7 @@ The following options are shared and apply when CAS is configured to send SMS no
 ```
 
 You will also need to ensure a provider is defined that is able to send SMS messages. To learn more about this 
-topic, [please review this guide](../installation/SMS-Messaging-Configuration.html).
+topic, [please review this guide](../notifications/SMS-Messaging-Configuration.html).
  
 ## Delegated Authentication Settings
 

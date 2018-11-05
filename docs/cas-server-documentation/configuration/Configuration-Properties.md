@@ -1419,7 +1419,7 @@ Email notifications settings are available [here](Configuration-Properties-Commo
 
 ## SMS Messaging
 
-To learn more about this topic, [please review this guide](../installation/SMS-Messaging-Configuration.html).
+To learn more about this topic, [please review this guide](../notifications/SMS-Messaging-Configuration.html).
 
 ### Groovy
 

@@ -217,8 +217,8 @@ layout: null
     *   [REST](/$version/protocol/REST-Protocol.html)
 
 * [Notifications](#casnotifications)
-    *   [Sending Email](/$version/installation/Sending-Email-Configuration.html)
-    *   [Sending Text Messages](/$version/installation/SMS-Messaging-Configuration.html)
+    *   [Sending Email](/$version/notifications/Sending-Email-Configuration.html)
+    *   [Sending Text Messages](/$version/notifications/SMS-Messaging-Configuration.html)
     
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/$version/integration/Configuring-SAML-SP-Integrations.html)
