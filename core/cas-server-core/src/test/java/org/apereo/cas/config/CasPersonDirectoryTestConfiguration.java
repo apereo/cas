@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.util.CollectionUtils;
 
+import lombok.val;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -27,10 +28,9 @@ public class CasPersonDirectoryTestConfiguration {
     @ConditionalOnMissingBean(name = "attributeRepository")
     @Bean
     public IPersonAttributeDao attributeRepository() {
-        final Map<String, List<Object>> attrs =
-            CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
+        val attrs = CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
                 "eduPersonAffiliation", CollectionUtils.wrap("developer"),
                 "groupMembership", CollectionUtils.wrap("adopters"));
-        return new StubPersonAttributeDao(attrs);
+        return new StubPersonAttributeDao((Map) attrs);
     }
 }

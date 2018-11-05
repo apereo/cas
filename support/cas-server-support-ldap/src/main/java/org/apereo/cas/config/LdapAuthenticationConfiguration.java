@@ -101,8 +101,7 @@ public class LdapAuthenticationConfiguration {
             .stream()
             .filter(ldapInstanceConfigurationPredicate())
             .forEach(l -> {
-                final Multimap<String, Object> multiMapAttributes =
-                    CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getPrincipalAttributeList());
+                val multiMapAttributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getPrincipalAttributeList());
                 LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, l.getLdapUrl());
 
                 LOGGER.debug("Creating LDAP authenticator for [{}] and baseDn [{}]", l.getLdapUrl(), l.getBaseDn());
@@ -162,7 +161,7 @@ public class LdapAuthenticationConfiguration {
     }
 
     private static AuthenticationPasswordPolicyHandlingStrategy<AuthenticationResponse, PasswordPolicyConfiguration>
-        createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
+    createLdapPasswordPolicyHandlingStrategy(final LdapAuthenticationProperties l) {
         if (l.getPasswordPolicy().getStrategy() == LdapPasswordPolicyProperties.PasswordPolicyHandlingOptions.REJECT_RESULT_CODE) {
             LOGGER.debug("Created LDAP password policy handling strategy based on blacklisted authentication result codes");
             return new RejectResultCodeLdapPasswordPolicyHandlingStrategy();

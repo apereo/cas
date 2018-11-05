@@ -15,6 +15,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 
+import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
@@ -101,8 +102,7 @@ public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHand
     public void handleSsoPostProfileRequest(final HttpServletResponse response,
                                             final HttpServletRequest request,
                                             final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        final Pair<? extends SignableSAMLObject, MessageContext> authnRequest =
-            this.samlHttpRequestExtractor.extract(request, decoder, AuthnRequest.class);
+        val authnRequest = this.samlHttpRequestExtractor.extract(request, decoder, AuthnRequest.class);
         initiateAuthenticationRequest(authnRequest, response, request);
     }
 

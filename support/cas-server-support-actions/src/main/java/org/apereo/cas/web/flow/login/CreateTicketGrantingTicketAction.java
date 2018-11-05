@@ -84,9 +84,9 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         val registeredService = WebUtils.getRegisteredService(context);
         val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(context);
 
-        LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
+        LOGGER.trace("Finalizing authentication transactions and issuing ticket-granting ticket");
         val authenticationResult = this.authenticationSystemSupport.finalizeAllAuthenticationTransactions(authenticationResultBuilder, service);
-        LOGGER.debug("Finalizing authentication event...");
+        LOGGER.trace("Finalizing authentication event...");
         val authentication = buildFinalAuthentication(authenticationResult);
         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(context);
         LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicket);
@@ -99,7 +99,7 @@ public class CreateTicketGrantingTicketAction extends AbstractAction {
         WebUtils.putAuthenticationResult(authenticationResult, context);
         WebUtils.putAuthentication(tgt.getAuthentication(), context);
 
-        LOGGER.debug("Calculating authentication warning messages...");
+        LOGGER.trace("Calculating authentication warning messages...");
         val warnings = calculateAuthenticationWarningMessages(tgt, context.getMessageContext());
         if (!warnings.isEmpty()) {
             val attributes = new LocalAttributeMap(CasWebflowConstants.ATTRIBUTE_ID_AUTHENTICATION_WARNINGS, warnings);

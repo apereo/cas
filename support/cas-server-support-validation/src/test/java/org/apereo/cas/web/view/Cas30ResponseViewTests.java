@@ -201,12 +201,12 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
     public static class AttributeRepositoryTestConfiguration {
         @Bean
         public IPersonAttributeDao attributeRepository() {
-            final Map<String, List<Object>> attrs =
+            val attrs =
                 CollectionUtils.wrap("uid", CollectionUtils.wrap("uid"),
                     "eduPersonAffiliation", CollectionUtils.wrap("developer"),
                     "groupMembership", CollectionUtils.wrap("adopters"),
                     "binaryAttribute", CollectionUtils.wrap("binaryAttributeValue".getBytes(StandardCharsets.UTF_8)));
-            return new StubPersonAttributeDao(attrs);
+            return new StubPersonAttributeDao((Map) attrs);
         }
     }
 }
