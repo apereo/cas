@@ -183,7 +183,7 @@ most load balancer equipment where the device performs state management for inco
 the same node for subsequent requests for a period of time. This feature is no longer required by default
 as CAS is able to maintain state for the CAS login/logout webflows directly on the client-side. Additional
 options are however provided to allow for servlet container session storage to be used with replication options
-if necessary. See [this guide](../installation/Webflow-Customization-Sessions.html) to learn more.
+if necessary. See [this guide](../webflow/Webflow-Customization-Sessions.html) to learn more.
 
 
 #### Avoid Round Robin DNS
