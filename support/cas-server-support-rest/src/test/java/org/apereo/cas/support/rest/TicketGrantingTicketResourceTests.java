@@ -10,10 +10,12 @@ import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.factory.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 
 import lombok.val;
@@ -50,6 +52,9 @@ public class TicketGrantingTicketResourceTests {
     private static final String OTHER_EXCEPTION = "Other exception";
     private static final String TEST_VALUE = "test";
     private static final String PASSWORD = "password";
+    private static final String RENEW = "renew";
+    private static final String SERVICE = "service";
+    private static final String SERVICE_URL = "https://service.example.com/foo";
     
     @Mock
     private CentralAuthenticationService casMock;
@@ -154,6 +159,25 @@ public class TicketGrantingTicketResourceTests {
     }
 
     @Test
+    public void creationOfTGTWithRenew() throws Throwable {
+        val expectedReturnEntityBody = "TGT-1";
+
+        configureCasMockToCreateValidTGTAndST();
+
+        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+            .param(USERNAME, TEST_VALUE)
+            .param(PASSWORD, TEST_VALUE)
+            .param(RENEW, "TGT-1")
+            .param(SERVICE, SERVICE_URL)
+            .accept(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(status().isCreated())
+            .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
+            .andExpect(header().string("Link", "http://localhost/cas/v1/tickets/ST-1"))
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().string(expectedReturnEntityBody));
+    }
+
+    @Test
     public void creationOfTGTWithAuthenticationException() throws Exception {
         configureCasMockTGTCreationToThrowAuthenticationException();
 
@@ -195,6 +219,15 @@ public class TicketGrantingTicketResourceTests {
         val tgt = mock(TicketGrantingTicket.class);
         when(tgt.getId()).thenReturn("TGT-1");
         when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
+    }
+
+    private void configureCasMockToCreateValidTGTAndST() {
+        val tgt = mock(TicketGrantingTicket.class);
+        val st = mock(ServiceTicket.class);
+        when(tgt.getId()).thenReturn("TGT-1");
+        when(st.getId()).thenReturn("ST-1");
+        when(this.casMock.createTicketGrantingTicket(any(AuthenticationResult.class))).thenReturn(tgt);
+        when(this.casMock.grantServiceTicket(anyString(), any(Service.class), any(AuthenticationResult.class))).thenReturn(st);
     }
 
     private void configureCasMockTGTCreationToThrowAuthenticationException() {
