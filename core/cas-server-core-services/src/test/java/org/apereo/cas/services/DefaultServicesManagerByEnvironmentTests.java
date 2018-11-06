@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;

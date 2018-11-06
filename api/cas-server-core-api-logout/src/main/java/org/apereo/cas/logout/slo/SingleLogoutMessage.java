@@ -2,6 +2,7 @@ package org.apereo.cas.logout.slo;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -13,6 +14,7 @@ import java.io.Serializable;
  */
 @Getter
 @Builder
+@ToString(of = {"payload"})
 public class SingleLogoutMessage<T> implements Serializable {
     private static final long serialVersionUID = -7763669015027355811L;
 

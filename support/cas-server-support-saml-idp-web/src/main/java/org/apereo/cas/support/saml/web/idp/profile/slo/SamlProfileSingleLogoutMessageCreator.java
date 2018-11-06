@@ -86,7 +86,7 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
 
         val attribute = new IdPAttribute(AttributePrincipal.class.getName());
         val principalName = request.getTicketGrantingTicket().getAuthentication().getPrincipal().getId();
-        LOGGER.debug("Preparing NameID attribute for principal [{}]", principalName);
+        LOGGER.trace("Preparing NameID attribute for principal [{}]", principalName);
         attribute.setValues(CollectionUtils.wrap(new StringAttributeValue(principalName)));
         val nameId = encoder.encode(attribute);
 
@@ -97,7 +97,7 @@ public class SamlProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectB
             nameId);
 
         if (samlIdPProperties.getLogout().isForceSignedLogoutRequests()) {
-            val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, samlService, samlService.getServiceId());
+            val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, samlService, samlService.getServiceId());
             val adaptor = adaptorRes.orElseThrow(() -> new IllegalArgumentException("Unable to find metadata for saml service " + samlService.getServiceId()));
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
