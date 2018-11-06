@@ -53,7 +53,10 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
             transitionSet.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
 
-            actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
+            // Clear credentials before login form but not before TGT (credential may be used for AUP)
+            val clearAction = createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS);
+            prependActionsToActionStateExecutionList(flow, CasWebflowConstants.TRANSITION_ID_WARN, clearAction);
+            prependActionsToActionStateExecutionList(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, clearAction);
 
             val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
             createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, EVENT_ID_START_X509, true);
