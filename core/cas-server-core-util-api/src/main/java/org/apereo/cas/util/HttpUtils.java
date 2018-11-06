@@ -40,8 +40,10 @@ public class HttpUtils {
     private static final int MAX_CONNECTIONS = 200;
     private static final int MAX_CONNECTIONS_PER_ROUTE = 20;
 
-    private static final HttpClient HTTP_CLIENT = HttpClientBuilder.create().setMaxConnTotal(MAX_CONNECTIONS)
-            .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE).build();
+    private static final HttpClient HTTP_CLIENT = HttpClientBuilder.create()
+        .setMaxConnTotal(MAX_CONNECTIONS)
+        .setMaxConnPerRoute(MAX_CONNECTIONS_PER_ROUTE)
+        .build();
 
     /**
      * Execute http response.
@@ -296,7 +298,7 @@ public class HttpUtils {
      * Execute post http response.
      *
      * @param url        the url
-     * @param entity the json entity
+     * @param entity     the json entity
      * @param parameters the parameters
      * @return the http response
      */
@@ -312,7 +314,7 @@ public class HttpUtils {
      * @param url               the url
      * @param basicAuthUsername the basic auth username
      * @param basicAuthPassword the basic auth password
-     * @param entity        the json entity
+     * @param entity            the json entity
      * @param parameters        the parameters
      * @return the http response
      */
@@ -322,7 +324,32 @@ public class HttpUtils {
                                            final String entity,
                                            final Map<String, Object> parameters) {
         try {
-            return execute(url, HttpMethod.POST.name(), basicAuthUsername, basicAuthPassword, parameters, new HashMap<>(), entity);
+            return executePost(url, basicAuthUsername, basicAuthPassword, entity, parameters, new HashMap<>());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Execute post http response.
+     *
+     * @param url               the url
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
+     * @param entity            the entity
+     * @param parameters        the parameters
+     * @param headers           the headers
+     * @return the http response
+     */
+    public static HttpResponse executePost(final String url,
+                                           final String basicAuthUsername,
+                                           final String basicAuthPassword,
+                                           final String entity,
+                                           final Map<String, Object> parameters,
+                                           final Map<String, Object> headers) {
+        try {
+            return execute(url, HttpMethod.POST.name(), basicAuthUsername, basicAuthPassword, parameters, headers, entity);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
