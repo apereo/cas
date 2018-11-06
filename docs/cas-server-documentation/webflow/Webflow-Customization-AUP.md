@@ -51,6 +51,11 @@ By default the task of remembering the user's choice is kept in memory by defaul
 container restarts and/or in clustered deployments. This option is only useful during development, testing
 and demos and is not at all suitable for production.
 
+The scope of the default storage mechanism can be adjusted from the default of GLOBAL (described above) to
+AUTHENTICATION which will result in the user having to agree to the policy during each authentication event.
+The user will not have to agree to the policy when CAS grants access based on an existing ticket granting
+ticket cookie. 
+
 ### LDAP
 
 Alternatively, CAS can be configured to use LDAP as the storage mechanism. Upon accepting the policy, the result will be stored back into LDAP and
