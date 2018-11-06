@@ -83,7 +83,8 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     @SneakyThrows
     private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                                     final SamlRegisteredService registeredService,
-                                                                                    final String entityID, final CriteriaSet criterions) {
+                                                                                    final String entityID,
+                                                                                    final CriteriaSet criterions) {
         LOGGER.debug("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
 
         criterions.add(new EntityIdCriterion(entityID), true);
