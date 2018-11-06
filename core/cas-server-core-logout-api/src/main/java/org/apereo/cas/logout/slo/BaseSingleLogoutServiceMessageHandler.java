@@ -177,9 +177,19 @@ public abstract class BaseSingleLogoutServiceMessageHandler implements SingleLog
         LOGGER.trace("Preparing logout request for [{}] to [{}]", logoutService.getId(), request.getLogoutUrl());
         val msg = getLogoutHttpMessageToSend(request, logoutMessage);
         LOGGER.debug("Prepared logout message to send is [{}]. Sending...", msg);
-        val result = this.httpClient.sendMessageToEndPoint(msg);
+        val result = sendMessageToEndpoint(msg);
         logoutService.setLoggedOutAlready(result);
         return result;
+    }
+
+    /**
+     * Send message to endpoint.
+     *
+     * @param msg the msg
+     * @return the boolean
+     */
+    protected boolean sendMessageToEndpoint(final LogoutHttpMessage msg) {
+        return this.httpClient.sendMessageToEndPoint(msg);
     }
 
     /**
