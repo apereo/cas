@@ -19,8 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * This is {@link RestAuditTrailManager}.
@@ -32,7 +30,6 @@ import java.util.concurrent.Executors;
 public class RestAuditTrailManager extends AbstractAuditTrailManager {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final AuditActionContextJsonSerializer serializer = new AuditActionContextJsonSerializer();
     private final AuditRestProperties properties;
 
@@ -43,9 +40,16 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
 
     @Override
     public void saveAuditRecord(final AuditActionContext audit) {
-        val auditJson = serializer.toString(audit);
-        LOGGER.debug("Sending audit action context to REST endpoint [{}]", properties.getUrl());
-        HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
+        HttpResponse response = null;
+        try {
+            val auditJson = serializer.toString(audit);
+            LOGGER.debug("Sending audit action context to REST endpoint [{}]", properties.getUrl());
+            response = HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
+        }
     }
 
     @Override

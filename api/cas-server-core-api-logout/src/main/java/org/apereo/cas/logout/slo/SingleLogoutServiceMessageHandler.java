@@ -39,7 +39,7 @@ public interface SingleLogoutServiceMessageHandler {
      * @param service the service
      * @return the boolean
      */
-    default boolean supports(WebApplicationService service) {
+    default boolean supports(final WebApplicationService service) {
         return service != null;
     }
 
