@@ -121,7 +121,7 @@ public class TerminateSessionAction extends AbstractAction {
      * @param response the response
      */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
-        LOGGER.debug("Destroying application session");
+        LOGGER.trace("Destroying application session");
         val manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
 

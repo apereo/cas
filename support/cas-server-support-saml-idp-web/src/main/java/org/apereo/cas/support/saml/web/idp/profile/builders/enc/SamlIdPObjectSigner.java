@@ -200,16 +200,14 @@ public class SamlIdPObjectSigner {
         LOGGER.trace("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
         @NonNull
         val params = resolver.resolveSingle(criteria);
-        LOGGER.debug("Created signature signing parameters."
+        LOGGER.trace("Created signature signing parameters."
                 + "\nSignature algorithm: [{}]"
                 + "\nSignature canonicalization algorithm: [{}]"
                 + "\nSignature reference digest methods: [{}]",
             params.getSignatureAlgorithm(),
             params.getSignatureCanonicalizationAlgorithm(),
             params.getSignatureReferenceDigestMethod());
-
         return params;
-
     }
 
     /**
@@ -292,7 +290,7 @@ public class SamlIdPObjectSigner {
         try {
             val credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
                 StringUtils.defaultIfBlank(service.getSigningCredentialType(), samlIdp.getResponse().getCredentialType().name()).toUpperCase());
-            LOGGER.debug("Requested credential type [{}] is found for service [{}]", credType, service);
+            LOGGER.debug("Requested credential type [{}] is found for service [{}]", credType, service.getName());
 
             switch (credType) {
                 case BASIC:
