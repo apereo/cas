@@ -21,5 +21,5 @@ For example, the below service definition is only recognized and loaded by CAS i
 }
 ```
 
-Note that a registered service definition without an assignment environment will be loaded regardless of the runtime profile. Similarly, all 
+Note that a registered service definition without an assigned environment will be loaded regardless of the runtime profile. Similarly, all 
 service definitions are considered eligible if CAS is set to run without an active profile.
