@@ -26,7 +26,7 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
 
     private static final String AUP_ACCEPTED = "AUP_ACCEPTED";
 
-    private AcceptableUsagePolicyProperties.Scope scope;
+    private final AcceptableUsagePolicyProperties.Scope scope;
 
     private final Map<String, Boolean> policyMap = new ConcurrentHashMap<>();
 
