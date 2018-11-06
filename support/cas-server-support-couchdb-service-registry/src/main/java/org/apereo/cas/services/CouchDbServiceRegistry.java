@@ -59,7 +59,7 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
             LOGGER.debug("Successfully deleted service [{}] with id [{}].", service.getName(), service.getId());
             return true;
         } catch (final DbAccessException exception) {
-            LOGGER.debug("Could not delete service [{}] with id [{}] {}", service.getName(), service.getId(),  exception.getMessage());
+            LOGGER.debug("Could not delete service [{}] with id [{}] {}", service.getName(), service.getId(), exception.getMessage());
             return false;
         }
     }

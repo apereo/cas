@@ -20,8 +20,8 @@ import java.util.List;
 @Setter
 @RequiredArgsConstructor
 public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvider {
+    private static final int ORDER = Integer.MAX_VALUE;
     private final List<AuditPrincipalIdProvider> providers;
-    private int order = Integer.MAX_VALUE;
 
     /**
      * Add provider.
@@ -53,5 +53,10 @@ public class ChainingAuditPrincipalIdProvider implements AuditPrincipalIdProvide
     @Override
     public boolean supports(final Authentication authentication, final Object resultValue, final Exception exception) {
         return true;
+    }
+
+    @Override
+    public int getOrder() {
+        return ORDER;
     }
 }
