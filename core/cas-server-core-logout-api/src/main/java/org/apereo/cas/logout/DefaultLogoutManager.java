@@ -65,7 +65,7 @@ public class DefaultLogoutManager implements LogoutManager {
                 .filter(handler -> handler.supports(entry.getValue()))
                 .map(handler -> {
                     val service = entry.getValue();
-                    LOGGER.debug("Handling single logout callback for [{}]", service.getId());
+                    LOGGER.trace("Handling single logout callback for [{}]", service.getId());
                     return handler.handle(service, entry.getKey(), ticketToBeLoggedOut);
                 })
                 .flatMap(Collection::stream)
