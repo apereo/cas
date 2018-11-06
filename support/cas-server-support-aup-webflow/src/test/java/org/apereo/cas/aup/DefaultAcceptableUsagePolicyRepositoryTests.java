@@ -1,6 +1,7 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -33,7 +34,16 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Test
-    public void verifyAction() {
+    public void verifyActionDefaultGlobal() {
+        verifyAction(AcceptableUsagePolicyProperties.Scope.GLOBAL);
+    }
+
+    @Test
+    public void verifyActionDefaultAuthentication() {
+        verifyAction(AcceptableUsagePolicyProperties.Scope.AUTHENTICATION);
+    }
+
+    private void verifyAction(final AcceptableUsagePolicyProperties.Scope scope) {
         val context = new MockRequestContext();
         val request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
@@ -41,7 +51,7 @@ public class DefaultAcceptableUsagePolicyRepositoryTests extends BaseAcceptableU
         val support = mock(TicketRegistrySupport.class);
         when(support.getAuthenticatedPrincipalFrom(anyString()))
             .thenReturn(CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("carLicense", "false")));
-        val repo = new DefaultAcceptableUsagePolicyRepository(support);
+        val repo = new DefaultAcceptableUsagePolicyRepository(support, scope);
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         WebUtils.putTicketGrantingTicketInScopes(context, "TGT-12345");

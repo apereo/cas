@@ -70,16 +70,14 @@ public class AcceptableUsagePolicyProperties implements Serializable {
      * Current options are global on the particular server (not replicated across CAS servers)
      * and once per authentication via credentials (not authentication events via TGT).
      */
-    public enum DefaultAupScope {
+    public enum Scope {
         /**
-         * Store in global map for life of server.
+         * Store in global in-memory map (for life of server).
          */
-        GLOBAL_SERVER,
+        GLOBAL,
 
         /**
-         * Store in flow scope and flow only reaches aup when user authenticates, not when they login via TGT.
-         * Using flow scope allows the AUP flow to finish and then AUP flow will not be invoked again until
-         * another authentication occurs.
+         * Store aup acceptance such that user is prompted when they authenticate via credentials (not TGT).
          */
         AUTHENTICATION
     };
@@ -87,8 +85,7 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     /**
      * Scope of map where the aup selection is stored.
      */
-    @RequiredProperty
-    private DefaultAupScope defaultAupScope = DefaultAupScope.GLOBAL_SERVER;
+    private Scope scope = Scope.GLOBAL;
 
     @RequiresModule(name = "cas-server-support-aup-couchdb")
     public static class CouchDb extends BaseAsynchronousCouchDbProperties {

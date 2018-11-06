@@ -26,12 +26,12 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
 
     private static final String AUP_ACCEPTED = "AUP_ACCEPTED";
 
-    private AcceptableUsagePolicyProperties.DefaultAupScope scope;
+    private AcceptableUsagePolicyProperties.Scope scope;
 
     private final Map<String, Boolean> policyMap = new ConcurrentHashMap<>();
 
     public DefaultAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                                  final AcceptableUsagePolicyProperties.DefaultAupScope scope) {
+                                                  final AcceptableUsagePolicyProperties.Scope scope) {
         super(ticketRegistrySupport, null);
         this.scope = scope;
     }
@@ -63,7 +63,7 @@ public class DefaultAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
 
     private Pair<String, Map> getKeyAndMap(final RequestContext requestContext, final Credential credential) {
         switch (scope) {
-            case GLOBAL_SERVER:
+            case GLOBAL:
                 return Pair.of(credential.getId(), policyMap);
             case AUTHENTICATION:
                 return Pair.of(AUP_ACCEPTED, requestContext.getFlowScope().asMap());

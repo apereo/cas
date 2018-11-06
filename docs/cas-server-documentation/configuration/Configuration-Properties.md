@@ -4092,6 +4092,7 @@ To learn more about this topic, [please review this guide](../webflow/Webflow-Cu
 
 ```properties
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
+# cas.acceptableUsagePolicy.scope=GLOBAL|AUTHENTICATION
 ```
 
 #### REST
