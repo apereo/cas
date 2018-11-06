@@ -64,6 +64,29 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @RequiredProperty
     private String aupAttributeName = "aupAccepted";
 
+    /**
+     * Scope options for the default aup repository can store flag indicating acceptance.
+     * Scope refers to duration that acceptance is kept.
+     * Current options are global on the particular server (not replicated across CAS servers)
+     * and once per authentication via credentials (not authentication events via TGT).
+     */
+    public enum Scope {
+        /**
+         * Store in global in-memory map (for life of server).
+         */
+        GLOBAL,
+
+        /**
+         * Store aup acceptance such that user is prompted when they authenticate via credentials (not TGT).
+         */
+        AUTHENTICATION
+    };
+
+    /**
+     * Scope of map where the aup selection is stored.
+     */
+    private Scope scope = Scope.GLOBAL;
+
     @RequiresModule(name = "cas-server-support-aup-couchdb")
     public static class CouchDb extends BaseAsynchronousCouchDbProperties {
 
