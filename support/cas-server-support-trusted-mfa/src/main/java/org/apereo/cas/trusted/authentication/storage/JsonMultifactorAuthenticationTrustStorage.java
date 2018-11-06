@@ -98,7 +98,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         this.storage = new LinkedHashMap<>();
         if (ResourceUtils.doesResourceExist(location)) {
             try (Reader reader = new InputStreamReader(location.getInputStream(), StandardCharsets.UTF_8)) {
-                val personList = new TypeReference<>() {
+                val personList = new TypeReference<Map<String, MultifactorAuthenticationTrustRecord>>() {
                 };
                 this.storage = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
             }
