@@ -98,10 +98,10 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
         val finalAssertion = encryptAssertion(assertion, request, response, service, adaptor);
 
         if (finalAssertion instanceof EncryptedAssertion) {
-            LOGGER.debug("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
+            LOGGER.trace("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
             samlResponse.getEncryptedAssertions().add(EncryptedAssertion.class.cast(finalAssertion));
         } else {
-            LOGGER.debug("Built assertion is not encrypted, so the response will add it to the assertions collection");
+            LOGGER.trace("Built assertion is not encrypted, so the response will add it to the assertions collection");
             samlResponse.getAssertions().add(Assertion.class.cast(finalAssertion));
         }
 
