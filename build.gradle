@@ -1,0 +1,53 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven { url "https://repo.spring.io/libs-milestone" }
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${project.springBootVersion}"
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
+    maven { url "https://repo.spring.io/milestone/" }
+    maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
+}
+
+apply from: "https://dl.bintray.com/scalding/generic/waroverlay.gradle"
+
+apply plugin: "war"
+apply plugin: "org.springframework.boot"
+
+war {
+    includeWarJars = true
+    entryCompression = ZipEntryCompression.STORED
+}
+
+springBoot {
+    mainClassName = "org.apereo.cas.web.CasWebApplication"
+}
+
+bootWar {
+	if (project.hasProperty('executable')) {
+    	launchScript()
+	}
+
+	archiveName 'cas.war'
+    baseName 'cas'
+    excludeDevtools = true
+}
+
+dependencies {
+    if (project.hasProperty("external")) {
+        compile "org.apereo.cas:cas-server-webapp:${project.'cas.version'}"
+    } else {
+        compile "org.apereo.cas:cas-server-webapp${project.appServer}:${project.'cas.version'}"
+    }
+    // Other dependencies may be listed here...
+}
