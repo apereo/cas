@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.RegexUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Transient;
 
@@ -22,6 +23,7 @@ import java.util.regex.Pattern;
  */
 @Entity
 @DiscriminatorValue("regex")
+@EqualsAndHashCode(callSuper = true)
 public class RegexRegisteredService extends AbstractRegisteredService {
 
     private static final long serialVersionUID = -8258660210826975771L;
