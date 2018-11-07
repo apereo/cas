@@ -156,6 +156,7 @@ public class ResourceUtils {
     public static Resource prepareClasspathResourceIfNeeded(final Resource resource,
                                                             final boolean isDirectory,
                                                             final String containsName) {
+        LOGGER.trace("Preparing possible classpath resource [{}]", resource);
         if (resource == null) {
             LOGGER.debug("No resource defined to prepare. Returning null");
             return null;
@@ -171,9 +172,11 @@ public class ResourceUtils {
         val casDirectory = new File(FileUtils.getTempDirectory(), "cas");
         val destination = new File(casDirectory, resource.getFilename());
         if (isDirectory) {
+            LOGGER.trace("Creating resource directory [{}]", destination);
             FileUtils.forceMkdir(destination);
             FileUtils.cleanDirectory(destination);
         } else if (destination.exists()) {
+            LOGGER.trace("Deleting resource directory [{}]", destination);
             FileUtils.forceDelete(destination);
         }
 
@@ -188,7 +191,7 @@ public class ResourceUtils {
                             val entryFileName = new File(entry.getName());
                             copyDestination = new File(destination, entryFileName.getName());
                         }
-
+                        LOGGER.trace("Copying resource entry [{}] to [{}]", entry.getName(), copyDestination);
                         try (val writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
                             IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
                         }

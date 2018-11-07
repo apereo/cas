@@ -151,6 +151,8 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
         }
         val file = servicesDirectory.getFile();
+        LOGGER.trace("Prepared service registry directory is specified at [{}]", file);
+
         initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher, eventPublisher,
             registeredServiceReplicationStrategy, resourceNamingStrategy);
     }
@@ -167,11 +169,13 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
         val pattern = String.join("|", getExtensions());
         this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME.concat(pattern));
+        LOGGER.trace("Constructed service name file pattern [{}]", serviceFileNamePattern.pattern());
 
         this.serviceRegistryDirectory = configDirectory;
         val file = this.serviceRegistryDirectory.toFile();
         Assert.isTrue(file.exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(file.isDirectory(), this.serviceRegistryDirectory + " is not a directory");
+        LOGGER.trace("Service registry directory is specified at [{}]", file);
         if (enableWatcher) {
             enableServicesDirectoryPathWatcher();
         }
@@ -242,7 +246,10 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public synchronized Collection<RegisteredService> load() {
+        LOGGER.trace("Loading files from [{}]", this.serviceRegistryDirectory);
         val files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), getExtensions(), true);
+        LOGGER.trace("Located [{}] files from [{}] are [{}]", getExtensions(), this.serviceRegistryDirectory, files);
+        
         this.serviceMap = files
             .stream()
             .map(this::load)
