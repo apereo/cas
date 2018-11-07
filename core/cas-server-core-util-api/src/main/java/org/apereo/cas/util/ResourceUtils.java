@@ -88,6 +88,9 @@ public class ResourceUtils {
             try {
                 IOUtils.read(res.getInputStream(), new byte[1]);
                 return res.contentLength() > 0;
+            } catch (final FileNotFoundException e) {
+                LOGGER.trace(e.getMessage());
+                return false;
             } catch (final Exception e) {
                 LOGGER.trace(e.getMessage(), e);
                 return false;
