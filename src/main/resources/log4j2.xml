@@ -6,6 +6,9 @@
         </Console>
     </Appenders>
     <Loggers>
+        <AsyncLogger name="org.apereo.cas" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </AsyncLogger>
         <AsyncRoot level="info">
             <AppenderRef ref="console"/>
         </AsyncRoot>
