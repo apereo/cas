@@ -13,8 +13,8 @@ repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-    maven { url 'https://build.shibboleth.net/nexus/content/repositories/releases/' }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "https://build.shibboleth.net/nexus/content/repositories/releases/" }
     maven { url "https://repo.spring.io/milestone/" }
     maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local" }
 }
@@ -23,6 +23,10 @@ apply from: "https://dl.bintray.com/scalding/generic/waroverlay.gradle"
 
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
 
 war {
     includeWarJars = true
@@ -45,9 +49,9 @@ bootWar {
 
 dependencies {
     if (project.hasProperty("external")) {
-        compile "org.apereo.cas:cas-server-webapp:${project.'cas.version'}"
+        compile group: "org.apereo.cas", name: "cas-server-webapp", version: "${project.'cas.version'}", changing: true
     } else {
-        compile "org.apereo.cas:cas-server-webapp${project.appServer}:${project.'cas.version'}"
+        compile group: "org.apereo.cas", name: "cas-server-webapp${project.appServer}", version: "${project.'cas.version'}", changing: true
     }
     // Other dependencies may be listed here...
 }
