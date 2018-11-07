@@ -47,7 +47,7 @@ public class DelegatedAuthenticationSAML2ClientLogoutAction extends AbstractActi
             Client<?, ?> client;
             try {
                 val currentClientName = findCurrentClientName(context);
-                client = (currentClientName == null) ? null : clients.findClient(currentClientName);
+                client = currentClientName == null ? null : clients.findClient(currentClientName);
             } catch (final TechnicalException e) {
                 LOGGER.debug("No SAML2 client found: " + e.getMessage(), e);
                 client = null;

@@ -44,7 +44,7 @@ public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefB
             casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAuthenticationContextClass(),
             AuthnContext.PPT_AUTHN_CTX);
 
-        val requestedAuthnContext = (authnRequest instanceof AuthnRequest)
+        val requestedAuthnContext = authnRequest instanceof AuthnRequest
             ? AuthnRequest.class.cast(authnRequest).getRequestedAuthnContext() : null;
         if (requestedAuthnContext == null) {
             LOGGER.debug("No specific authN context is requested. Returning [{}]", defClass);
