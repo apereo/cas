@@ -46,7 +46,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
     /**
      * String appended to exception class name to create a message bundle key for that particular error.
      */
-    private String messageBundlePrefix = DEFAULT_MESSAGE_BUNDLE_PREFIX;
+    private final String messageBundlePrefix = DEFAULT_MESSAGE_BUNDLE_PREFIX;
 
     public AuthenticationExceptionHandlerAction() {
         this(new LinkedHashSet<>());

@@ -28,7 +28,7 @@ public class Saml20ObjectBuilderTests {
             + "xmlns:saml2=\"urn:oasis:names:tc:SAML:2.0:assertion\">http://localhost:8081/callback</saml2:Issuer><saml2p:NameIDPolicy "
             + "AllowCreate=\"true\"/></saml2p:AuthnRequest>";
 
-    private AbstractSaml20ObjectBuilder builder = new TestableSaml20ObjectBuilder();
+    private final AbstractSaml20ObjectBuilder builder = new TestableSaml20ObjectBuilder();
 
     @Test
     public void decodeNonInflatedSamlAuthnRequest() {

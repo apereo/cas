@@ -23,7 +23,7 @@ public class CouchDbThrottledSubmissionHandlerInterceptorAdapter extends Abstrac
 
     private static final String NAME = "CouchDbThrottle";
 
-    private AuditActionContextCouchDbRepository repository;
+    private final AuditActionContextCouchDbRepository repository;
 
     public CouchDbThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold,
                                                                final int failureRangeInSeconds,

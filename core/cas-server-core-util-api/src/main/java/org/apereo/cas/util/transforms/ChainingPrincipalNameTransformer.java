@@ -21,7 +21,7 @@ public class ChainingPrincipalNameTransformer implements PrincipalNameTransforme
 
     private static final long serialVersionUID = 7586914936775326709L;
 
-    private List<PrincipalNameTransformer> transformers = new ArrayList<>();
+    private final List<PrincipalNameTransformer> transformers = new ArrayList<>();
 
     @Override
     public String transform(final String formUserId) {

@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
 
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link DefaultAuditPrincipalIdProvider}.
@@ -12,6 +13,7 @@ import lombok.Getter;
  * @since 5.3.0
  */
 @Getter
+@Setter
 public class DefaultAuditPrincipalIdProvider implements AuditPrincipalIdProvider {
     private int order = Integer.MAX_VALUE;
 

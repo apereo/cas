@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CouchDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
 
-    private SamlMetadataDocumentCouchDbRepository couchDb;
+    private final SamlMetadataDocumentCouchDbRepository couchDb;
 
     public CouchDbSamlRegisteredServiceMetadataResolver(final SamlIdPProperties idp, final OpenSamlConfigBean openSamlConfigBean,
                                                         final SamlMetadataDocumentCouchDbRepository couchDb) {
