@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -7,17 +8,16 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -70,7 +70,7 @@ public class TicketGrantingTicketResource {
                 throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
             }
             val service = this.serviceFactory.createService(request);
-            String tgtId = request.getParameter(CasProtocolConstants.PARAMETER_RENEW);
+            val tgtId = request.getParameter(CasProtocolConstants.PARAMETER_RENEW);
             TicketGrantingTicket ticketGrantingTicket = null;
             String serviceTicketId = null;
 
@@ -129,11 +129,11 @@ public class TicketGrantingTicketResource {
                                                                    final String stId) throws Exception {
 
         ResponseEntity<String> resp = this.ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
-        HttpHeaders headers = HttpHeaders.writableHttpHeaders(resp.getHeaders());
+        val headers = HttpHeaders.writableHttpHeaders(resp.getHeaders());
 
         if (stId != null) {
-            final String requestURL = request.getRequestURL().toString();
-            final URI stReference = new URI(requestURL + '/' + stId);
+            val requestURL = request.getRequestURL().toString();
+            val stReference = new URI(requestURL + '/' + stId);
             headers.add("Link", stReference.toString());
         }
 
