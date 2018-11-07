@@ -69,7 +69,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
                                            final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
         val logout = casProperties.getAuthn().getSamlIdp().getLogout();
         if (logout.isSingleLogoutCallbacksDisabled()) {
-            LOGGER.info("Processing SAML IdP SLO requests is disabled");
+            LOGGER.info("Processing SAML2 IdP SLO requests is disabled");
             return;
         }
 

@@ -88,7 +88,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
             val builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
             val authenticationResult = builder.build(principalElectionStrategy, service);
 
-            LOGGER.debug("Built the final authentication result [{}] to grant service ticket to [{}]", authenticationResult, service);
+            LOGGER.trace("Built the final authentication result [{}] to grant service ticket to [{}]", authenticationResult, service);
             val serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             LOGGER.debug("Granted service ticket [{}] and added it to the request scope", serviceTicketId);
