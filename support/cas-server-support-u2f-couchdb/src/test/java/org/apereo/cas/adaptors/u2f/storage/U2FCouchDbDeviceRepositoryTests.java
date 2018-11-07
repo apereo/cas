@@ -34,7 +34,11 @@ import org.springframework.test.context.junit4.rules.SpringMethodRule;
     AopAutoConfiguration.class,
     U2FConfiguration.class,
     RefreshAutoConfiguration.class},
-    properties = "cas.authn.mfa.u2f.couchDb.asynchronous=false")
+    properties = {
+        "cas.authn.mfa.u2f.couchDb.asynchronous=false",
+        "cas.authn.mfa.u2f.couchDb.username=cas",
+        "cas.authn.mfa.u2f.couchdb.password=password"
+    })
 @Getter
 public class U2FCouchDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
 
