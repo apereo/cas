@@ -78,7 +78,7 @@ public class CollectionUtils {
             LOGGER.debug("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
-            LOGGER.trace("Converting multi-valued attribute [{}]", obj);
+            LOGGER.trace("Converting multi-valued element [{}]", obj);
         } else if (obj instanceof Map) {
             val map = (Map) obj;
             val set = (Set<Map.Entry>) map.entrySet();
@@ -89,10 +89,10 @@ public class CollectionUtils {
             } else {
                 c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
             }
-            LOGGER.trace("Converting array attribute [{}]", obj);
+            LOGGER.trace("Converting array element [{}]", obj);
         } else {
             c.add(obj);
-            LOGGER.trace("Converting attribute [{}]", obj);
+            LOGGER.trace("Converting element [{}]", obj);
         }
         return c;
     }
