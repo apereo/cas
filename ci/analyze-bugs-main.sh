@@ -30,7 +30,7 @@ echo -e "***********************************************"
 echo -e "Installing NPM...\n"
 ./gradlew npmInstall --stacktrace -q
 
-gradleBuild="$gradleBuild spotbugsMain -x test -x javadoc \
+gradleBuild="$gradleBuild spotbugsMain -q -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel -DshowStandardStreams=true "
 

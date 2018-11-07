@@ -13,6 +13,7 @@ import lombok.val;
 
 import javax.persistence.NoResultException;
 import java.io.Serializable;
+import java.util.NoSuchElementException;
 
 /**
  * This is {@link BaseYubiKeyAccountRegistry}.
@@ -47,8 +48,8 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         try {
             val account = getAccount(uid);
-            return account.map(yubiKeyAccount -> yubiKeyAccount.getPublicId().equals(yubikeyPublicId)).orElse(false);
-        } catch (final NoResultException e) {
+            return account.map(yubiKeyAccount -> yubiKeyAccount.getPublicId().equals(yubikeyPublicId)).get();
+        } catch (final NoSuchElementException | NoResultException e) {
             LOGGER.debug("No registration record could be found for id [{}] and public id [{}]", uid, yubikeyPublicId);
         } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);

@@ -30,7 +30,7 @@ echo -e "***********************************************"
 echo -e "Installing NPM...\n"
 ./gradlew npmInstall --stacktrace -q
 
-gradleBuild="$gradleBuild spotbugsTest -x test -x javadoc \
+gradleBuild="$gradleBuild spotbugsTest -q -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel -DshowStandardStreams=true "
 
@@ -56,7 +56,7 @@ else
     waitRetVal=$?
 
     eval $prepCommand
-    eval $tasks
+    eval $tasks 2> /dev/null
     retVal=$?
 
     echo -e "***************************************************************************************"
