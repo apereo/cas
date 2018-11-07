@@ -74,7 +74,7 @@ public class RestfulAuthenticationPolicyTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();
 
     private MockRestServiceServer mockServer;
 

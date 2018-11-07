@@ -29,7 +29,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     private static final long serialVersionUID = 6180465589526463843L;
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
-    private List<Credential> providedCredentials = new ArrayList<>();
+    private final List<Credential> providedCredentials = new ArrayList<>();
 
     private static void buildAuthenticationHistory(final Set<Authentication> authentications,
                                                    final Map<String, Object> authenticationAttributes,

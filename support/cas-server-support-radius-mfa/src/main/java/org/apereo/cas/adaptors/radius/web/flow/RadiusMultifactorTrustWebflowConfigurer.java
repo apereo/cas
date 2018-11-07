@@ -15,7 +15,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 public class RadiusMultifactorTrustWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
 
-    private FlowDefinitionRegistry flowDefinitionRegistry;
+    private final FlowDefinitionRegistry flowDefinitionRegistry;
 
     public RadiusMultifactorTrustWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                    final boolean enableDeviceRegistration, final FlowDefinitionRegistry flowDefinitionRegistry,

@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Getter
 public class DefaultAuthenticationThrottlingExecutionPlan implements AuthenticationThrottlingExecutionPlan {
-    private List<HandlerInterceptor> authenticationThrottleInterceptors = new ArrayList<>();
+    private final List<HandlerInterceptor> authenticationThrottleInterceptors = new ArrayList<>();
 
     @Override
     public void registerAuthenticationThrottleInterceptor(final HandlerInterceptor handler) {

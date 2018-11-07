@@ -13,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.EncodingUtils;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -108,12 +109,9 @@ public class RegisteredServiceResourceTests {
         }
     }
 
+    @RequiredArgsConstructor
     private static class AuthenticationCredentialMatcher implements ArgumentMatcher<AuthenticationTransaction> {
-        private String id;
-
-        AuthenticationCredentialMatcher(final String id) {
-            this.id = id;
-        }
+        private final String id;
 
         @Override
         public boolean matches(final AuthenticationTransaction t) {

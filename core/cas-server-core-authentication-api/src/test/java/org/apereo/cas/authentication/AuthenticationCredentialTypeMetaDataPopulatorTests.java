@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 public class AuthenticationCredentialTypeMetaDataPopulatorTests {
-    private AuthenticationCredentialTypeMetaDataPopulator populator =
+    private final AuthenticationCredentialTypeMetaDataPopulator populator =
         new AuthenticationCredentialTypeMetaDataPopulator();
 
     @Test

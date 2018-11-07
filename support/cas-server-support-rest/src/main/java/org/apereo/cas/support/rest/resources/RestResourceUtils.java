@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class RestResourceUtils {
 
-    private static ObjectMapper MAPPER;
+    private static final ObjectMapper MAPPER;
 
     static {
         MAPPER = new ObjectMapper()

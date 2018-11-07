@@ -30,7 +30,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
 
     private final LdapServiceRegistryProperties ldap;
 
-    private StringSerializer<RegisteredService> jsonSerializer = new DefaultRegisteredServiceJsonSerializer();
+    private final StringSerializer<RegisteredService> jsonSerializer = new DefaultRegisteredServiceJsonSerializer();
 
     public DefaultLdapRegisteredServiceMapper(final LdapServiceRegistryProperties ldapProperties) {
         ldap = ldapProperties;

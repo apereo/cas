@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.core.Ordered;
 
@@ -16,6 +17,7 @@ import org.springframework.core.Ordered;
 @ToString
 @Getter
 @AllArgsConstructor
+@Setter
 public abstract class BaseAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     private int order = Ordered.HIGHEST_PRECEDENCE;

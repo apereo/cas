@@ -15,7 +15,7 @@ import java.security.Principal;
 @AllArgsConstructor
 public class MockUnsuccessfulJcifsAuthentication extends Authentication {
 
-    private boolean throwExceptionOnProcess;
+    private final boolean throwExceptionOnProcess;
 
     @Override
     public byte[] getNextToken() {

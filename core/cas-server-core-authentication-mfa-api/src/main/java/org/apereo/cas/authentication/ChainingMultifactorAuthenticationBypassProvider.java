@@ -15,7 +15,7 @@ import java.util.List;
 public class ChainingMultifactorAuthenticationBypassProvider implements MultifactorAuthenticationProviderBypass {
 
     private static final long serialVersionUID = 2397239625822397286L;
-    private List<MultifactorAuthenticationProviderBypass> bypasses = new ArrayList<>();
+    private final List<MultifactorAuthenticationProviderBypass> bypasses = new ArrayList<>();
 
     @Override
     public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,

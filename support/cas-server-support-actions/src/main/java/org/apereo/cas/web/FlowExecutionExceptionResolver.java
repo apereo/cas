@@ -30,7 +30,7 @@ import java.util.HashMap;
 @Slf4j
 @Getter
 public class FlowExecutionExceptionResolver implements HandlerExceptionResolver {
-    private String modelKey = "exception.message";
+    private final String modelKey = "exception.message";
 
     /**
      * Since FlowExecutionRepositoryException is a common ancestor to these exceptions and other

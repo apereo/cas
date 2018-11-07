@@ -143,8 +143,8 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
     private static class ClusterMemberDesc {
         private static final int UNIQUE_ID_LIMIT = 255;
         private static final int UNIQUE_ID_ITERATIONS = 16;
-        private String address;
-        private int port;
+        private final String address;
+        private final int port;
         private String uniqueId;
 
         ClusterMemberDesc(final String spec) {
@@ -152,7 +152,7 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
             address = values[0];
             port = Integer.parseInt(values[1]);
             var index = Integer.parseInt(values[2]);
-            if ((index < 0) || (index > UNIQUE_ID_LIMIT)) {
+            if (index < 0 || index > UNIQUE_ID_LIMIT) {
                 throw new IllegalArgumentException("invalid unique index: must be >= 0 and < 256");
             }
             uniqueId = "{";

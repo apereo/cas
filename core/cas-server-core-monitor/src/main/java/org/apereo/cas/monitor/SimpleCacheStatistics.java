@@ -26,7 +26,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
 
     private final long evictions;
 
-    private String name;
+    private final String name;
 
     public SimpleCacheStatistics(final long size, final long capacity, final long evictions) {
         this(size, capacity, evictions, "N/A");

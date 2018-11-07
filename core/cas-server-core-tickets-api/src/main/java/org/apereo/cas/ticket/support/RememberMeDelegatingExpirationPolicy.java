@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.support;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.util.CollectionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,11 +34,13 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
     @Override
     protected String getExpirationPolicyNameFor(final TicketState ticketState) {
         val attrs = ticketState.getAuthentication().getAttributes();
-        val b = (Boolean) attrs.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
-
-        if (b == null || b.equals(Boolean.FALSE)) {
-            LOGGER.debug("Ticket is not associated with a remember-me authentication.");
-            return PolicyTypes.DEFAULT.name();
+        val rememberMeRes = CollectionUtils.firstElement(attrs.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
+        if (rememberMeRes.isPresent()) {
+            val b = (Boolean) rememberMeRes.get();
+            if (b.equals(Boolean.FALSE)) {
+                LOGGER.trace("Ticket is not associated with a remember-me authentication.");
+                return PolicyTypes.DEFAULT.name();
+            }
         }
         return PolicyTypes.REMEMBER_ME.name();
     }

@@ -22,7 +22,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
     private static final long serialVersionUID = -6776499291439952013L;
     private final long timestamp;
     private final V value;
-    private Map<String, Object> properties = new LinkedHashMap<>();
+    private final Map<String, Object> properties = new LinkedHashMap<>();
 
     public DistributedCacheObject(final V value) {
         this(new Date().getTime(), value);

@@ -26,7 +26,7 @@ public class CouchDbAcceptableUsagePolicyRepository extends AbstractPrincipalAtt
 
     private static final long serialVersionUID = -2391630070546362552L;
     private final transient ProfileCouchDbRepository couchDb;
-    private int conflictRetries;
+    private final int conflictRetries;
 
     public CouchDbAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport, final String aupAttributeName,
                                                   final ProfileCouchDbRepository couchDb, final int conflictRetries) {
