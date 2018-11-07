@@ -181,9 +181,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addSuccess(final String key, final AuthenticationHandlerExecutionResult value) {
-        LOGGER.debug("Recording authentication handler result success under key [{}]", key);
+        LOGGER.trace("Recording authentication handler result success under key [{}]", key);
         if (this.successes.containsKey(key)) {
-            LOGGER.debug("Key mapped to authentication handler result [{}] is already recorded in the list of successful attempts. Overriding...", key);
+            LOGGER.trace("Key mapped to authentication handler result [{}] is already recorded in the list of successful attempts. Overriding...", key);
         }
         this.successes.put(key, value);
         return this;
