@@ -5,7 +5,7 @@ import org.apereo.cas.couchdb.trusted.MultifactorAuthenticationTrustRecordCouchD
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.CollectionUtils;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -16,10 +16,10 @@ import java.util.Set;
  * @author Timur Duehr
  * @since 6.0.0
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CouchDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
 
-    private MultifactorAuthenticationTrustRecordCouchDbRepository couchDb;
+    private final MultifactorAuthenticationTrustRecordCouchDbRepository couchDb;
 
     @Override
     protected MultifactorAuthenticationTrustRecord setInternal(final MultifactorAuthenticationTrustRecord record) {

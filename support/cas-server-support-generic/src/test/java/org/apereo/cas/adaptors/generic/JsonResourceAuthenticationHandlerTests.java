@@ -42,8 +42,8 @@ public class JsonResourceAuthenticationHandlerTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private Resource resource;
-    private JsonResourceAuthenticationHandler handler;
+    private final Resource resource;
+    private final JsonResourceAuthenticationHandler handler;
 
     public JsonResourceAuthenticationHandlerTests() throws Exception {
         val accounts = new LinkedHashMap<String, CasUserAccount>();

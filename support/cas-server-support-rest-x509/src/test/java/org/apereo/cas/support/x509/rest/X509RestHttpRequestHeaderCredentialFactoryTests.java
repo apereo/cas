@@ -32,7 +32,7 @@ public class X509RestHttpRequestHeaderCredentialFactoryTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private X509RestHttpRequestHeaderCredentialFactory factory = new X509RestHttpRequestHeaderCredentialFactory(new RequestHeaderX509CertificateExtractor(HEADER));
+    private final X509RestHttpRequestHeaderCredentialFactory factory = new X509RestHttpRequestHeaderCredentialFactory(new RequestHeaderX509CertificateExtractor(HEADER));
 
     @Test
     public void createX509Credential() throws IOException {

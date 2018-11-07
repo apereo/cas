@@ -13,7 +13,7 @@ import java.util.List;
  * @since 5.2.0
  */
 public class DefaultSamlRegisteredServiceMetadataResolutionPlan implements SamlRegisteredServiceMetadataResolutionPlan {
-    private List<SamlRegisteredServiceMetadataResolver> resolvers = new ArrayList<>();
+    private final List<SamlRegisteredServiceMetadataResolver> resolvers = new ArrayList<>();
 
     @Override
     public void registerMetadataResolver(final SamlRegisteredServiceMetadataResolver clazz) {

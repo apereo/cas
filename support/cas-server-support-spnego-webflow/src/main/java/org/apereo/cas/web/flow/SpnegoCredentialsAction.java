@@ -43,7 +43,7 @@ public class SpnegoCredentialsAction extends AbstractNonInteractiveCredentialsAc
      * <li>False : if an interactive view (eg: login page) should be send to user as SPNEGO failure fallback</li>
      * </ul>
      */
-    private boolean send401OnAuthenticationFailure;
+    private final boolean send401OnAuthenticationFailure;
 
     public SpnegoCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                    final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,

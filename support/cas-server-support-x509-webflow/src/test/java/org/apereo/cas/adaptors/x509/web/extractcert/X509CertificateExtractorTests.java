@@ -50,7 +50,7 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
         "WLu8gep+XCwSn0Wb6D3eFs4DoIiMvQ6g2rS/pk7o5eWj",
         "-----END CERTIFICATE-----"};
 
-    private RequestHeaderX509CertificateExtractor extractX509CertificateFromHeader
+    private final RequestHeaderX509CertificateExtractor extractX509CertificateFromHeader
         = new RequestHeaderX509CertificateExtractor("ssl_client_cert");
 
     private static String certificateSingleLine(final String[] lines, final String separator) {
