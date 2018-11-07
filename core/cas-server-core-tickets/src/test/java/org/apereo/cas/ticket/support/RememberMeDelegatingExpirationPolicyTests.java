@@ -56,7 +56,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
         final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication(
                 this.principalFactory.createPrincipal("test"),
                 Collections.singletonMap(
-                        RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
+                        RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Collections.singletonList(true)));
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertFalse(t.isExpired());
         t.grantServiceTicket("55", RegisteredServiceTestUtils.getService(), this.p, false, true);
@@ -77,7 +77,7 @@ public class RememberMeDelegatingExpirationPolicyTests {
         final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication(
                 this.principalFactory.createPrincipal("test"),
                 Collections.singletonMap(
-                        RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
+                        RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Collections.singletonList(true)));
         final TicketGrantingTicketImpl t = new TicketGrantingTicketImpl("111", authentication, this.p);
         assertEquals(REMEMBER_ME_TTL, p.getTimeToLive(t));
     }
