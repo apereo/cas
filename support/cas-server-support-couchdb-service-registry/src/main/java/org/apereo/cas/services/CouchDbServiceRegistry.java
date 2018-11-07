@@ -2,11 +2,12 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.couchdb.services.RegisteredServiceCouchDbRepository;
 import org.apereo.cas.couchdb.services.RegisteredServiceDocument;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.ektorp.UpdateConflictException;
+import org.ektorp.DbAccessException;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -29,35 +30,38 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService save(final RegisteredService registeredService) {
         LOGGER.debug("Saving service [{}]", registeredService.getName());
         if (registeredService.getId() < 0) {
-            registeredService.setId(registeredService.hashCode());
+            registeredService.setId(RandomUtils.getNativeInstance().nextLong());
         }
-        dbClient.add(new RegisteredServiceDocument(registeredService));
+        try {
+            val svc = dbClient.get(registeredService.getId());
+            if (svc != null) {
+                val doc = new RegisteredServiceDocument(registeredService);
+                doc.setRevision(svc.getRevision());
+                dbClient.update(doc);
+                LOGGER.debug("Service [{}] with id [{}] updated", registeredService.getName(), registeredService.getId());
+            } else {
+                dbClient.add(new RegisteredServiceDocument(registeredService));
+                LOGGER.debug("New service [{}] with id [{}] created", registeredService.getName(), registeredService.getId());
+            }
+        } catch (final DbAccessException e) {
+            LOGGER.debug("Failed to update service [{}] with id [{}] {}", registeredService.getName(), registeredService.getId(), e.getMessage());
+            return null;
+        }
         return registeredService;
     }
 
     @Override
     public boolean delete(final RegisteredService service) {
         LOGGER.debug("Deleting service [{}]", service.getName());
-        var exception = (UpdateConflictException) null;
-        var success = false;
-        for (var retries = 0; retries < conflictRetries; retries++) {
-            try {
-                exception = null;
-                val serviceDocument = dbClient.get(service.getId());
-                dbClient.remove(serviceDocument);
-                success = true;
-            } catch (final UpdateConflictException e) {
-                exception = e;
-            }
-            if (success) {
-                LOGGER.debug("Successfully deleted service [{}].", service.getName());
-                return true;
-            }
+
+        try {
+            dbClient.deleteRecord(new RegisteredServiceDocument(service));
+            LOGGER.debug("Successfully deleted service [{}] with id [{}].", service.getName(), service.getId());
+            return true;
+        } catch (final DbAccessException exception) {
+            LOGGER.debug("Could not delete service [{}] with id [{}] {}", service.getName(), service.getId(), exception.getMessage());
+            return false;
         }
-        if (exception != null) {
-            LOGGER.debug("Could not delete service [{}] {}", service.getName(), exception.getMessage());
-        }
-        return false;
     }
 
     @Override
@@ -67,12 +71,20 @@ public class CouchDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return dbClient.get(id).getService();
+        val doc = dbClient.get(id);
+        if (doc == null) {
+            return null;
+        }
+        return doc.getService();
     }
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        return dbClient.get(id).getService();
+        val doc = dbClient.get(id);
+        if (doc == null) {
+            return null;
+        }
+        return doc.getService();
     }
 
     @Override

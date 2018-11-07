@@ -83,6 +83,8 @@ import static org.junit.Assert.*;
     "cas.authn.couchDb.attributes=loc,state",
     "cas.authn.couchDb.usernameAttribute=username",
     "cas.authn.couchDb.passwordAttribute=password",
+    "cas.authn.couchDb.username=cas",
+    "cas.authn.couchdb.password=password",
     "cas.authn.pac4j.typedIdUsed=false"
 })
 @Category(CouchDbCategory.class)

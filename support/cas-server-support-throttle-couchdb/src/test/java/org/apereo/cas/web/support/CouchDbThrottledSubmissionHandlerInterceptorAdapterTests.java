@@ -74,7 +74,9 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(properties = {
     "cas.audit.couchDb.dbName=throttle",
     "cas.audit.couchDb.asynchronous=false",
-    "org.ektorp.support.AutoUpdateViewOnChange=true"})
+    "cas.audit.couchDb.username=cas",
+    "cas.audit.couchdb.password=password"
+})
 @Getter
 public class CouchDbThrottledSubmissionHandlerInterceptorAdapterTests extends
     BaseThrottledSubmissionHandlerInterceptorAdapterTests {

@@ -46,7 +46,7 @@ public class Cas10ResponseView extends AbstractCasView {
             super.prepareCasResponseAttributesForViewModel(model);
             writer.print("yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + '\n');
             val attributes = (Collection) model.get(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES);
-            attributes.forEach(attribute -> writer.print(String.format("%s\n", attribute.toString())));
+            attributes.forEach(writer::println);
         } else {
             writer.print("no\n\n");
         }

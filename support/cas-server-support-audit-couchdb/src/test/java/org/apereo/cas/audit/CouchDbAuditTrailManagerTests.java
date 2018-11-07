@@ -37,7 +37,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         RefreshAutoConfiguration.class,
         CasCoreWebConfiguration.class
     },
-    properties = {"cas.audit.couchDb.asynchronous=false"})
+    properties = {
+        "cas.audit.couchDb.asynchronous=false",
+        "cas.audit.couchDb.username=cas",
+        "cas.audit.couchdb.password=password"
+    })
 @Category(CouchDbCategory.class)
 @Getter
 public class CouchDbAuditTrailManagerTests extends BaseAuditConfigurationTests {

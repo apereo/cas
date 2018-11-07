@@ -2,6 +2,7 @@ package org.apereo.cas.couchdb.gauth.credential;
 
 import lombok.val;
 import org.ektorp.CouchDbConnector;
+import org.ektorp.DocumentNotFoundException;
 import org.ektorp.support.CouchDbRepositorySupport;
 import org.ektorp.support.UpdateHandler;
 import org.ektorp.support.View;
@@ -29,7 +30,11 @@ public class OneTimeTokenAccountCouchDbRepository extends CouchDbRepositorySuppo
     @View(name = "by_username", map = "function(doc) { if(doc.secretKey) { emit(doc.username, doc) } }")
     public CouchDbOneTimeTokenAccount findOneByUsername(final String username) {
         val view = createQuery("by_username").key(username).limit(1);
-        return db.queryView(view, CouchDbOneTimeTokenAccount.class).stream().findFirst().orElse(null);
+        try {
+            return db.queryView(view, CouchDbOneTimeTokenAccount.class).stream().findFirst().orElse(null);
+        } catch (final DocumentNotFoundException ignored) {
+            return null;
+        }
     }
 
     /**
@@ -38,7 +43,11 @@ public class OneTimeTokenAccountCouchDbRepository extends CouchDbRepositorySuppo
      * @return one time token accounts for user
      */
     public List<CouchDbOneTimeTokenAccount> findByUsername(final String username) {
-        return queryView("by_username", username);
+        try {
+            return queryView("by_username", username);
+        } catch (final DocumentNotFoundException ignored) {
+            return null;
+        }
     }
 
     /**

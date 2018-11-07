@@ -102,7 +102,7 @@ public class CouchbaseServiceRegistry extends AbstractServiceRegistry implements
     private N1qlQueryResult executeViewQueryForAllServices() {
         val theBucket = couchbase.getBucket();
         val statement = Select.select("*")
-            .from(Expression.i(this.couchbase.getBucket().name()))
+            .from(Expression.i(theBucket.name()))
             .where(Expression.i("@class").like('"' + RegisteredService.class.getPackageName().concat("%") + '"'));
 
         val n1q1Query = N1qlQuery.simple(statement);
