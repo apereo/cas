@@ -60,7 +60,7 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
         val config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
-        if (config.isDirectory() && config.exists()) {
+        if (config != null && config.isDirectory() && config.exists()) {
             val sourceProfiles = loadSettingsByApplicationProfiles(environment, config);
             compositePropertySource.addPropertySource(sourceProfiles);
         } else {
