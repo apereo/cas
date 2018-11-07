@@ -75,7 +75,12 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         CasWebApplicationServiceFactoryConfiguration.class,
         RefreshAutoConfiguration.class
     },
-    properties = {"cas.authn.mfa.yubikey.clientId=18423", "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As="})
+    properties = {
+        "cas.authn.mfa.yubikey.clientId=18423",
+        "cas.authn.mfa.yubikey.secretKey=zAIqhjui12mK8x82oe9qzBEb0As=",
+        "cas.authn.mfa.yubikey.couchDb.username=cas",
+        "cas.authn.mfa.yubikey.couchdb.password=password"
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CouchDbYubiKeyAccountRegistryTests extends BaseYubiKeyAccountRegistryTests {
     @Autowired
