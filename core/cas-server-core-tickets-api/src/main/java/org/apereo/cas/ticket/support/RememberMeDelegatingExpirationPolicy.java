@@ -35,12 +35,13 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
     protected String getExpirationPolicyNameFor(final TicketState ticketState) {
         val attrs = ticketState.getAuthentication().getAttributes();
         val rememberMeRes = CollectionUtils.firstElement(attrs.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
-        if (rememberMeRes.isPresent()) {
-            val b = (Boolean) rememberMeRes.get();
-            if (b.equals(Boolean.FALSE)) {
-                LOGGER.trace("Ticket is not associated with a remember-me authentication.");
-                return PolicyTypes.DEFAULT.name();
-            }
+        if (rememberMeRes.isEmpty()) {
+            return PolicyTypes.DEFAULT.name();
+        }
+        val b = (Boolean) rememberMeRes.get();
+        if (b.equals(Boolean.FALSE)) {
+            LOGGER.trace("Ticket is not associated with a remember-me authentication.");
+            return PolicyTypes.DEFAULT.name();
         }
         return PolicyTypes.REMEMBER_ME.name();
     }
