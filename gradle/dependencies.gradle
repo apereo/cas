@@ -12,6 +12,10 @@ ext.libraries = [
                     force = true
                     transitive = false
                 },
+                dependencies.create("org.glassfish.main.javaee-api:javax.jms:$javaxJmsVersion") {
+                    force = true
+                    transitive = false
+                },
                 dependencies.create("javax.xml.soap:javax.xml.soap-api:$javaxSoapApiVersion") {
                     force = true
                     transitive = false
@@ -572,7 +576,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        hazelcastkubernetes : [
+        hazelcastkubernetes     : [
                 dependencies.create("com.hazelcast:hazelcast-kubernetes:$hazelcastKubernetesVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -581,7 +585,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        hazelcastswarm : [
+        hazelcastswarm          : [
                 dependencies.create("org.bitsofinfo:hazelcast-docker-swarm-discovery-spi:$hazelcastSwarmVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
                     exclude(group: "org.slf4j", module: "slf4j-api")
@@ -1897,7 +1901,7 @@ ext.libraries = [
                 }
         ],
 
-        pac4jCouchDb             : dependencies.create("org.pac4j:pac4j-couch:$pac4jVersion") {
+        pac4jCouchDb            : dependencies.create("org.pac4j:pac4j-couch:$pac4jVersion") {
             exclude(group: "org.pac4j", module: "pac4j-core")
             exclude(group: "org.ektorp", module: "org.ektorp")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
@@ -1941,7 +1945,7 @@ ext.libraries = [
             exclude(group: "org.apache.httpcomponents", module: "httpclient")
             force = true
         },
-        nexmo                  : dependencies.create("com.nexmo:client:$nexmoVersion") {
+        nexmo                   : dependencies.create("com.nexmo:client:$nexmoVersion") {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
             exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
@@ -2034,7 +2038,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springbootdevtools : [
+        springbootdevtools      : [
                 dependencies.create("org.springframework.boot:spring-boot-devtools:$springBootVersion") {
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.hibernate", module: "hibernate-core")
@@ -2785,7 +2789,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springsessionhazelcast           : [
+        springsessionhazelcast  : [
                 dependencies.create("org.springframework.session:spring-session-hazelcast:$springSessionVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
@@ -2794,7 +2798,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springsessionjdbc           : [
+        springsessionjdbc       : [
                 dependencies.create("org.springframework.session:spring-session-jdbc:$springSessionVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
@@ -2803,7 +2807,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springsessionredis          : [
+        springsessionredis      : [
                 dependencies.create("org.springframework.session:spring-session-data-redis:$springSessionVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
@@ -2812,7 +2816,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springsessionmongo : [
+        springsessionmongo      : [
                 dependencies.create("org.springframework.session:spring-session-data-mongodb:$springSessionMongoVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-core")
