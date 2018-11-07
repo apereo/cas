@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.logout.slo.SingleLogoutRequest;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -601,33 +602,17 @@ public class WebUtils {
     }
 
     /**
-     * Put recaptcha site key into flow scope.
+     * Put recaptcha settings flow scope.
      *
-     * @param context the context
-     * @param value   the value
+     * @param context         the context
+     * @param googleRecaptcha the properties
      */
-    public static void putRecaptchaSiteKeyIntoFlowScope(final RequestContext context, final Object value) {
-        context.getFlowScope().put("recaptchaSiteKey", value);
-    }
-
-    /**
-     * Put recaptcha invisible into flow scope.
-     *
-     * @param context the context
-     * @param value   the value
-     */
-    public static void putRecaptchaInvisibleIntoFlowScope(final RequestContext context, final Object value) {
-        context.getFlowScope().put("recaptchaInvisible", value);
-    }
-
-    /**
-     * Put recaptcha position into flow scope.
-     *
-     * @param context the context
-     * @param value   the value
-     */
-    public static void putRecaptchaPositionIntoFlowScope(final RequestContext context, final Object value) {
-        context.getFlowScope().put("recaptchaPosition", value);
+    public static void putRecaptchaPropertiesFlowScope(final RequestContext context, final GoogleRecaptchaProperties googleRecaptcha) {
+        val flowScope = context.getFlowScope();
+        flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
+        flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
+        flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
+        flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase());
     }
 
     /**
