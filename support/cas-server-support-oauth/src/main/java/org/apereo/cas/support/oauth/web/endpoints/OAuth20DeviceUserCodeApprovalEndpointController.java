@@ -78,13 +78,14 @@ public class OAuth20DeviceUserCodeApprovalEndpointController extends BaseOAuth20
     @PostMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.DEVICE_AUTHZ_URL)
     public ModelAndView handlePostRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val userCode = request.getParameter(PARAMETER_USER_CODE);
+        val codeNotfound = getModelAndViewForFailure("codenotfound");
         if (StringUtils.isBlank(userCode)) {
-            return getModelAndViewForFailure("codenotfound");
+            return codeNotfound;
         }
         val codeId = deviceTokenFactory.generateDeviceUserCode(userCode);
         val deviceUserCode = this.ticketRegistry.getTicket(codeId, DeviceUserCode.class);
         if (deviceUserCode == null) {
-            return getModelAndViewForFailure("codenotfound");
+            return codeNotfound;
         }
         if (deviceUserCode.isExpired()) {
             return getModelAndViewForFailure("codeexpired");

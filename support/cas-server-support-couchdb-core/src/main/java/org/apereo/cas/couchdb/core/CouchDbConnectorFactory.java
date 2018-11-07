@@ -97,6 +97,10 @@ public class CouchDbConnectorFactory {
             }
         }
 
+        if (StringUtils.isNotBlank(couchDbProperties.getUsername())) {
+            builder.username(couchDbProperties.getUsername());
+        }
+
         if (StringUtils.isNotBlank(couchDbProperties.getPassword())) {
             builder.password(couchDbProperties.getPassword());
         }
