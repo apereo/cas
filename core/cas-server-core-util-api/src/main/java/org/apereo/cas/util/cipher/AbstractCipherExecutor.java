@@ -119,7 +119,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      */
     protected void configureSigningKeyFromPrivateKeyResource(final String signingSecretKey) throws Exception {
         val object = extractPrivateKeyFromResource(signingSecretKey);
-        LOGGER.debug("Located signing key resource [{}]", signingSecretKey);
+        LOGGER.trace("Located signing key resource [{}]", signingSecretKey);
         setSigningKey(object);
     }
 
