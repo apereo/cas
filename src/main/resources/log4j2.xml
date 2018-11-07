@@ -9,6 +9,15 @@
         <AsyncLogger name="org.apereo.cas" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </AsyncLogger>
+        <AsyncLogger name="de.codecentric.boot.admin.client" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springframework.cloud" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springframework.boot.admin" level="debug" additivity="false">
+            <AppenderRef ref="console"/>
+        </AsyncLogger>
         <AsyncRoot level="info">
             <AppenderRef ref="console"/>
         </AsyncRoot>
