@@ -113,7 +113,12 @@ import static org.junit.Assert.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @Slf4j
-@TestPropertySource(properties = "cas.authn.samlIdp.metadata.location=classpath:")
+@TestPropertySource(properties = {
+    "cas.authn.samlIdp.metadata.location=classpath:",
+    "cas.authn.samlIdp.metadata.couchDb.dbName=saml_resolver",
+    "cas.authn.samlIdp.metadata.couchDb.username=cas",
+    "cas.authn.samlIdp.metadata.couchdb.password=password"
+})
 public class CouchDbSamlRegisteredServiceMetadataResolverTests {
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();

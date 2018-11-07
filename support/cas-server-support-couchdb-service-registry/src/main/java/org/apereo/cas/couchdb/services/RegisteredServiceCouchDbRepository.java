@@ -1,8 +1,13 @@
 package org.apereo.cas.couchdb.services;
 
+import org.apereo.cas.util.CollectionUtils;
+
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ektorp.CouchDbConnector;
+import org.ektorp.DocumentNotFoundException;
 import org.ektorp.support.CouchDbRepositorySupport;
+import org.ektorp.support.UpdateHandler;
 import org.ektorp.support.View;
 
 /**
@@ -11,7 +16,8 @@ import org.ektorp.support.View;
  * @author Timur Duehr
  * @since 5.3.0
  */
-@View(name = "all", map = "function(doc) { emit(null, doc._id) }")
+@View(name = "all", map = "function(doc) { if (doc.service) { emit(doc._id, doc) } }")
+@Slf4j
 public class RegisteredServiceCouchDbRepository extends CouchDbRepositorySupport<RegisteredServiceDocument> {
     public RegisteredServiceCouchDbRepository(final CouchDbConnector db) {
         this(db, true);
@@ -40,7 +46,12 @@ public class RegisteredServiceCouchDbRepository extends CouchDbRepositorySupport
      */
     @View(name = "by_serviceName", map = "function(doc) { emit(doc.service.name, doc._id) }")
     public RegisteredServiceDocument findByServiceName(final String serviceName) {
-        return queryView("by_serviceName", serviceName).stream().findFirst().orElse(null);
+        try {
+            return queryView("by_serviceName", serviceName).stream().findFirst().orElse(null);
+        } catch (final DocumentNotFoundException e) {
+            LOGGER.debug("Service [{}] not found. [{}]", serviceName, e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -50,7 +61,12 @@ public class RegisteredServiceCouchDbRepository extends CouchDbRepositorySupport
      * @return service
      */
     public RegisteredServiceDocument get(final long id) {
-        return this.get(String.valueOf(id));
+        try {
+            return this.get(String.valueOf(id));
+        } catch (final DocumentNotFoundException e) {
+            LOGGER.debug("Service [{}] not found. [{}]", id, e.getMessage());
+            return null;
+        }
     }
 
     /**
@@ -64,4 +80,25 @@ public class RegisteredServiceCouchDbRepository extends CouchDbRepositorySupport
         return r.getRows().get(0).getValueAsInt();
     }
 
+    /**
+     * Delete a record without revision checks.
+     * @param record record to be deleted
+     */
+    @UpdateHandler(name = "delete_record", file = "RegisteredServiceDocument_delete.js")
+    public void deleteRecord(final RegisteredServiceDocument record) {
+        db.callUpdateHandler(stdDesignDocumentId, "delete_record", record.getId(), null);
+    }
+
+    /**
+     * Update a record without revision checks.
+     * @param record record to be updated
+     */
+    @UpdateHandler(name = "update_record", file = "RegisteredServiceDocument_update.js")
+    public void updateRecord(final RegisteredServiceDocument record) {
+        if (record.getId() == null) {
+            add(record);
+        } else {
+            db.callUpdateHandler(stdDesignDocumentId, "update_record", record.getId(), CollectionUtils.wrap("doc", record));
+        }
+    }
 }

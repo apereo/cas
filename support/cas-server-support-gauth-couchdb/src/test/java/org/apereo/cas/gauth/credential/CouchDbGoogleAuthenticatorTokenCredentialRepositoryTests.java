@@ -73,7 +73,11 @@ import org.springframework.test.context.ContextConfiguration;
         CasCoreUtilConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreWebConfiguration.class},
-    properties = {"cas.authn.mfa.gauth.crypto.enabled=false"})
+    properties = {
+        "cas.authn.mfa.gauth.crypto.enabled=false",
+        "cas.authn.mfa.gauth.couchDb.username=cas",
+        "cas.authn.mfa.gauth.couchdb.password=password"
+    })
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
