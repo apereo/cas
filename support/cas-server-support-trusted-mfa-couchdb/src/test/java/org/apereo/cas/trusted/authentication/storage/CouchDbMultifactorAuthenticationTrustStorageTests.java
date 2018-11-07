@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.test.context.TestPropertySource;
 
 /**
  * This is {@link CouchDbMultifactorAuthenticationTrustStorageTests}.
@@ -36,6 +37,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     MultifactorAuthnTrustWebflowConfiguration.class,
     MultifactorAuthnTrustConfiguration.class,
     MultifactorAuthnTrustedDeviceFingerprintConfiguration.class})
+@TestPropertySource(properties = {
+    "cas.authn.mfa.trusted.couchDb.username=cas",
+    "cas.authn.mfa.trusted.couchdb.password=password"
+})
 @Getter
 public class CouchDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
