@@ -125,6 +125,16 @@
                         <input type="hidden" name="_eventId" value="submit"/>
                         <input type="hidden" name="geolocation"/>
 
+                        <input class="btn btn-block btn-submit"
+                               th:if="${recaptchaSiteKey == null}"
+                               name="submit"
+                               accesskey="l"
+                               th:value="#{screen.welcome.button.login}"
+                               tabindex="6"
+                               type="submit"
+                               value="Login8"
+                        />
+
                         <span th:if="${recaptchaVersion=='v2'}" th:remove="tag">
                             <input class="btn btn-block btn-submit"
                                    th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
