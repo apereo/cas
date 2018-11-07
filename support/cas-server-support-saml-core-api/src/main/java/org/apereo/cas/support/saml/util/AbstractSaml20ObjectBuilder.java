@@ -340,9 +340,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public AuthnStatement newAuthnStatement(final String contextClassRef, final ZonedDateTime authnInstant,
                                             final String sessionIndex) {
-        LOGGER.debug("Building authentication statement with context class ref [{}] @ [{}] with index [{}]",
+        LOGGER.trace("Building authentication statement with context class ref [{}] @ [{}] with index [{}]",
             contextClassRef, authnInstant, sessionIndex);
-
         val stmt = newSamlObject(AuthnStatement.class);
         val ctx = newSamlObject(AuthnContext.class);
 
