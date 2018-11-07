@@ -164,7 +164,7 @@ public class TicketGrantingTicketResourceTests {
 
         configureCasMockToCreateValidTGTAndST();
 
-        this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
+        val content = this.mockMvc.perform(post(TICKETS_RESOURCE_URL)
             .param(USERNAME, TEST_VALUE)
             .param(PASSWORD, TEST_VALUE)
             .param(RENEW, "TGT-1")
@@ -174,7 +174,9 @@ public class TicketGrantingTicketResourceTests {
             .andExpect(header().string("Location", "http://localhost/cas/v1/tickets/TGT-1"))
             .andExpect(header().string("Link", "http://localhost/cas/v1/tickets/ST-1"))
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(content().string(expectedReturnEntityBody));
+            .andExpect(content().string(expectedReturnEntityBody))
+            .andReturn().getResponse().getContentAsString();
+        assertTrue(content.contains(expectedReturnEntityBody));
     }
 
     @Test
