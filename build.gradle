@@ -53,5 +53,7 @@ dependencies {
     } else {
         compile group: "org.apereo.cas", name: "cas-server-webapp${project.appServer}", version: "${project.'cas.version'}", changing: true
     }
-    // Other dependencies may be listed here...
+    compile group: "org.apereo.cas", name: "cas-server-support-bootadmin-client", version: "${project.'cas.version'}", changing: true
+    compile group: "org.apereo.cas", name: "cas-server-support-sleuth", version: "${project.'cas.version'}", changing: true
+    compile group: "org.apereo.cas", name: "cas-server-support-eureka-client", version: "${project.'cas.version'}", changing: true
 }
