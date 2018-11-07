@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @since 6.0.0
  */
 public class CouchDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
-    private YubiKeyAccountCouchDbRepository couchDb;
+    private final YubiKeyAccountCouchDbRepository couchDb;
 
     public CouchDbYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator, final YubiKeyAccountCouchDbRepository couchDb) {
         super(accountValidator);

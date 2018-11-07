@@ -23,8 +23,8 @@ import java.util.List;
 @Slf4j
 public class SurrogateCouchDbProfileAuthenticationService extends BaseSurrogateAuthenticationService {
 
-    private ProfileCouchDbRepository couchDb;
-    private String surrogatePrincipalsAttribute;
+    private final ProfileCouchDbRepository couchDb;
+    private final String surrogatePrincipalsAttribute;
 
     public SurrogateCouchDbProfileAuthenticationService(final ProfileCouchDbRepository couchDb, final String surrogatePrincipalsAttribute, final ServicesManager servicesManager) {
         super(servicesManager);

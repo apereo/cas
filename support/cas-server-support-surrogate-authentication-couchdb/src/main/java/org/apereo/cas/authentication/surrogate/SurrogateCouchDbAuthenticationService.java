@@ -18,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class SurrogateCouchDbAuthenticationService extends BaseSurrogateAuthenticationService {
 
-    private SurrogateAuthorizationCouchDbRepository couchDb;
+    private final SurrogateAuthorizationCouchDbRepository couchDb;
 
     public SurrogateCouchDbAuthenticationService(final SurrogateAuthorizationCouchDbRepository couchDb, final ServicesManager servicesManager) {
         super(servicesManager);

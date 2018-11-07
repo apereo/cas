@@ -23,7 +23,7 @@ public class CouchDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
     /**
      * CouchDb instance for tokens storage.
      */
-    private OneTimeTokenAccountCouchDbRepository couchDb;
+    private final OneTimeTokenAccountCouchDbRepository couchDb;
 
     public CouchDbGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
                                                                final OneTimeTokenAccountCouchDbRepository googleAuthenticatorAccountRepository,
