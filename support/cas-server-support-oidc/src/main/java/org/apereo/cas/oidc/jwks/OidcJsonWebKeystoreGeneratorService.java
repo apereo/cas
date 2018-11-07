@@ -60,7 +60,7 @@ public class OidcJsonWebKeystoreGeneratorService {
             val rsaJsonWebKey = RsaJwkGenerator.generateJwk(bits);
             val jsonWebKeySet = new JsonWebKeySet(rsaJsonWebKey);
             val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-            val location = (file instanceof FileSystemResource)
+            val location = file instanceof FileSystemResource
                 ? FileSystemResource.class.cast(file).getFile()
                 : DEFAULT_JWKS_LOCATION;
             FileUtils.write(location, data, StandardCharsets.UTF_8);
