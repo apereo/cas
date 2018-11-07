@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -14,6 +15,8 @@ import org.apereo.cas.util.RandomUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -53,7 +56,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                 final String binding,
                                 final MessageContext messageContext) throws SamlException {
-        return buildAuthnStatement(assertion, authnRequest, adaptor, service, binding, messageContext);
+        return buildAuthnStatement(assertion, authnRequest, adaptor, service, binding, messageContext, request);
     }
 
     /**
@@ -65,16 +68,24 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
      * @param service        the service
      * @param binding        the binding
      * @param messageContext the message context
+     * @param request        the request
      * @return constructed authentication statement
      * @throws SamlException the saml exception
      */
-    private AuthnStatement buildAuthnStatement(final Object casAssertion, final RequestAbstractType authnRequest,
+    private AuthnStatement buildAuthnStatement(final Object casAssertion,
+                                               final RequestAbstractType authnRequest,
                                                final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                               final SamlRegisteredService service, final String binding,
-                                               final MessageContext messageContext) throws SamlException {
+                                               final SamlRegisteredService service,
+                                               final String binding,
+                                               final MessageContext messageContext,
+                                               final HttpServletRequest request) throws SamlException {
         val assertion = Assertion.class.cast(casAssertion);
         val authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
-        val id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
+        var id = CommonUtils.safeGetParameter(request, CasProtocolConstants.PARAMETER_TICKET);
+        if (StringUtils.isBlank(id)) {
+            LOGGER.warn("Unable to locate service ticket as the session index; Generating random identifier instead...");
+            id = '_' + String.valueOf(RandomUtils.getNativeInstance().nextLong());
+        }
         val statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
         if (assertion.getValidUntilDate() != null) {
             val dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
