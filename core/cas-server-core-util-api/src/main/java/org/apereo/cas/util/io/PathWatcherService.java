@@ -123,8 +123,8 @@ public class PathWatcherService implements Runnable, Closeable {
      */
     @SneakyThrows
     public void start(final String name) {
-        this.thread = new Thread(this);
-        this.thread.setName(name);
+        thread = new Thread(this);
+        thread.setName(name);
         thread.start();
     }
 }
