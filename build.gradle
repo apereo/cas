@@ -332,7 +332,10 @@ subprojects {
     if (!Boolean.getBoolean("skipCheckstyle")) {
         checkstyle {
             configFile new File(rootDir, "style/checkstyle-rules.xml")
-            configProperties = ["checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml")]
+            configProperties = [
+                    "checkstyle.suppressions.file": new File(rootDir, "style/checkstyle-suppressions.xml"),
+                    "checkstyle.importcontrol.file": new File(rootDir, "style/import-control.xml")
+            ]
             ignoreFailures false
             showViolations true
             toolVersion "${checkstyleVersion}"

@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!DOCTYPE import-control PUBLIC "-//Checkstyle//DTD ImportControl Configuration 1.4//EN" "https://checkstyle.org/dtds/import_control_1_4.dtd">
+<import-control pkg="org.apereo.cas" strategyOnMismatch="allowed">
+    <!--Use JUnit5 annotations.-->
+    <allow pkg="org.junit.jupiter"/>
+    <disallow pkg="org.junit" exact-match="true"/>
+    <disallow pkg="org\.junit\.runners?" regex="true"/>
+</import-control>
