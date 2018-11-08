@@ -7,9 +7,9 @@ import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -20,7 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
-import redis.embedded.RedisServer;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,29 +33,17 @@ import java.util.Collection;
 @RunWith(Parameterized.class)
 @SpringBootTest(classes = {RedisServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 @EnableScheduling
-@TestPropertySource(locations = {"classpath:/svc-redis.properties"})
+@TestPropertySource(properties = {"cas.serviceRegistry.redis.host=localhost", "cas.serviceRegistry.redis.port=6379"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Category(RedisCategory.class)
-public class RedisServiceRegistryTests extends AbstractServiceRegistryTests {
-    private static RedisServer REDIS_SERVER;
-
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+public class RedisServerServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("redisServiceRegistry")
     private ServiceRegistry dao;
 
-    public RedisServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
+    public RedisServerServiceRegistryTests(final Class<? extends RegisteredService> registeredServiceClass) {
         super(registeredServiceClass);
-    }
-
-    @BeforeClass
-    public static void startRedis() throws Exception {
-        REDIS_SERVER = new RedisServer(6380);
-        REDIS_SERVER.start();
-    }
-
-    @AfterClass
-    public static void stopRedis() {
-        REDIS_SERVER.stop();
     }
 
     @Parameterized.Parameters
