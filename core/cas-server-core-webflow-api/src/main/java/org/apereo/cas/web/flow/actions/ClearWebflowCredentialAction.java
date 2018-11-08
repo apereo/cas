@@ -13,7 +13,10 @@ import org.springframework.webflow.execution.RequestContext;
 
 /**
  * This is {@link ClearWebflowCredentialAction} invoked ONLY as an exit-action for non-interactive authn flows.
- *
+ * Don't clear credentials when "success" occurs which leads to STATE_ID_CREATE_TICKET_GRANTING_TICKET but
+ * map be overridden by the AUP flow. AUP flow needs credentials in some cases.
+ * Credentials mainly need to be cleared if flow is to login page where credentials that may not have username
+ * property will interfere with the login form.
  * @author Misagh Moayyed
  * @since 5.0.0
  */
@@ -25,9 +28,13 @@ public class ClearWebflowCredentialAction extends AbstractAction {
     @Override
     @SneakyThrows
     protected Event doExecute(final RequestContext requestContext) {
+        val current = requestContext.getCurrentEvent().getId();
+        if (current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_SUCCESS)) {
+            return null;
+        }
+
         WebUtils.putCredential(requestContext, null);
 
-        val current = requestContext.getCurrentEvent().getId();
         if (current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)
             || current.equalsIgnoreCase(CasWebflowConstants.TRANSITION_ID_ERROR)) {
             LOGGER.debug("Current event signaled a failure. Recreating credentials instance from the context");
@@ -35,7 +42,6 @@ public class ClearWebflowCredentialAction extends AbstractAction {
             val flow = (Flow) requestContext.getFlowExecutionContext().getDefinition();
             val var = flow.getVariable(CasWebflowConstants.VAR_ID_CREDENTIAL);
             var.create(requestContext);
-
         }
         return null;
     }
