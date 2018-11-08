@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
