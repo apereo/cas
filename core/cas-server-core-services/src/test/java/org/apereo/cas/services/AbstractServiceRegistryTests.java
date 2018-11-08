@@ -206,6 +206,8 @@ public abstract class AbstractServiceRegistryTests {
         val r2 = this.serviceRegistry.save(r);
         val r3 = this.serviceRegistry.findServiceById(r2.getId());
         assertEquals(r2, r3);
+        assertNotNull(this.serviceRegistry.findServiceByExactServiceId(r.getServiceId()));
+        assertNotNull(this.serviceRegistry.findServiceByExactServiceName(r.getName()));
     }
 
     @Test
