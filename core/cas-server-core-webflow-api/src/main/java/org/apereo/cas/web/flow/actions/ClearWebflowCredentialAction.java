@@ -12,18 +12,18 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
- * This is {@link ClearWebflowCredentialAction} invoked ONLY as an exit-action for non-interactive authn flows.
- * Don't clear credentials when "success" occurs which leads to STATE_ID_CREATE_TICKET_GRANTING_TICKET but
- * map be overridden by the AUP flow. AUP flow needs credentials in some cases.
- * Credentials mainly need to be cleared if flow is to login page where credentials that may not have username
- * property will interfere with the login form.
+ * This action {@link ClearWebflowCredentialAction} is invoked ONLY as an exit-action for non-interactive authn flows.
+ * Don't clear credentials when {@value CasWebflowConstants#TRANSITION_ID_SUCCESS} occurs which leads the webflow to
+ * {@value CasWebflowConstants#STATE_ID_CREATE_TICKET_GRANTING_TICKET} but may be overridden by the AUP flow
+ * which needs credentials in some cases.
+ * Credentials need to be cleared if webflow is returning to login page where credentials without
+ * a username property will not bind correctly to the login form in the thymeleaf template.
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 
 @Slf4j
 public class ClearWebflowCredentialAction extends AbstractAction {
-
 
     @Override
     @SneakyThrows
