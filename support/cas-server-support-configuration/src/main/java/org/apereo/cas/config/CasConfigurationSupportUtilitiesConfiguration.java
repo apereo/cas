@@ -36,11 +36,10 @@ import java.util.function.Consumer;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasConfigurationSupportUtilitiesConfiguration {
-
-
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationCreatedEvent = file -> new CasConfigurationCreatedEvent(this, file.toPath());
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationModifiedEvent = file -> new CasConfigurationModifiedEvent(this, file.toPath());
     private final ComposableFunction<File, AbstractCasEvent> createConfigurationDeletedEvent = file -> new CasConfigurationDeletedEvent(this, file.toPath());
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -74,7 +73,7 @@ public class CasConfigurationSupportUtilitiesConfiguration {
         @SneakyThrows
         public void runNativeConfigurationDirectoryPathWatchService() {
             val config = configurationPropertiesEnvironmentManager.getIfAvailable().getStandaloneProfileConfigurationDirectory();
-            if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
+            if (casProperties.getEvents().isTrackConfigurationModifications() && config != null && config.exists()) {
                 LOGGER.debug("Starting to watch configuration directory [{}]", config);
                 this.watcher = new PathWatcherService(config.toPath(),
                     createConfigurationCreatedEvent.andNext(publish),

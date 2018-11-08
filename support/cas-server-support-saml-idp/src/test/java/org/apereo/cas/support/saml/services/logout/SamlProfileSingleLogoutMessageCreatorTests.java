@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.logout.DefaultSingleLogoutRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
@@ -36,7 +37,7 @@ public class SamlProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfi
         val logoutRequest = DefaultSingleLogoutRequest.builder()
             .logoutUrl(new URL("https://sp.example.org/slo"))
             .registeredService(SamlIdPTestUtils.getSamlRegisteredService())
-            .service(CoreAuthenticationTestUtils.getWebApplicationService())
+            .service(RegisteredServiceTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
             .ticketId("ST-123456789")
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .logoutType(RegisteredServiceLogoutType.BACK_CHANNEL)
