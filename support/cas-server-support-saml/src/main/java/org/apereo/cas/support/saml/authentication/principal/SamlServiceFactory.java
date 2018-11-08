@@ -48,6 +48,8 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
         final String id = cleanupUrl(service);
 
         if (StringUtils.hasText(requestBody)) {
+            LOGGER.debug("Request Body: [{}]", requestBody);
+
             request.setAttribute(SamlProtocolConstants.PARAMETER_SAML_REQUEST, requestBody);
 
             final Document document = saml10ObjectBuilder.constructDocumentFromXml(requestBody);
@@ -71,7 +73,7 @@ public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
             }
         }
 
-        LOGGER.debug("Request Body: [{}]\n\"Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", requestBody, artifactId, requestId);
+        LOGGER.debug("Extracted ArtifactId: [{}]. Extracted Request Id: [{}]", artifactId, requestId);
         final SamlService samlService = new SamlService(id, service, artifactId, requestId);
         samlService.setSource(SamlProtocolConstants.CONST_PARAM_TARGET);
         return samlService;
