@@ -43,7 +43,6 @@ dependencies {
     implementation project(":core:cas-server-core-web")
 
     implementation project(":support:cas-server-support-actions")
-    implementation project(":support:cas-server-support-configuration")
     implementation project(":support:cas-server-support-geolocation")
     implementation project(":support:cas-server-support-person-directory")
     implementation project(":support:cas-server-support-pm-webflow")

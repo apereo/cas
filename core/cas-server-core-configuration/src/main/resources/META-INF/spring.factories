@@ -1,3 +1,5 @@
 org.springframework.cloud.bootstrap.BootstrapConfiguration=org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneLocatorConfiguration,\
   org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneConfiguration,\
   org.apereo.cas.configuration.config.CasCoreEnvironmentConfiguration
+
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.configuration.config.CasCoreBootstrapStandaloneWatchConfiguration
