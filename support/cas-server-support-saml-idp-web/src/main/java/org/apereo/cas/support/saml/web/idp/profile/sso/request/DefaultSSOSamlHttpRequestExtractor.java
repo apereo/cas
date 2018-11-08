@@ -36,14 +36,14 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
     public Pair<? extends SignableSAMLObject, MessageContext> extract(final HttpServletRequest request,
                                                                       final BaseHttpServletRequestXMLMessageDecoder decoder,
                                                                       final Class<? extends SignableSAMLObject> clazz) {
-        LOGGER.info("Received SAML profile request [{}]", request.getRequestURI());
+        LOGGER.trace("Received SAML profile request [{}]", request.getRequestURI());
         decoder.setHttpServletRequest(request);
         decoder.setParserPool(this.parserPool);
         decoder.initialize();
         decoder.decode();
 
         val messageContext = decoder.getMessageContext();
-        LOGGER.debug("Locating SAML object from message context...");
+        LOGGER.trace("Locating SAML object from message context...");
         @NonNull
         val object = (SignableSAMLObject) messageContext.getMessage();
         if (!clazz.isAssignableFrom(object.getClass())) {
