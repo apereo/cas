@@ -11,9 +11,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * This is {@link InfinispanTicketRegistryTests}.
  *
@@ -26,20 +23,11 @@ import java.util.Collection;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class
 })
-public class InfinispanTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class InfinispanTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public InfinispanTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {

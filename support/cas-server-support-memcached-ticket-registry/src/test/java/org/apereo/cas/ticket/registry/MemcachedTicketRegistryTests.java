@@ -20,7 +20,7 @@ import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.junit.experimental.categories.Category;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +29,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -59,19 +56,10 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfContinuousIntegration
 @Category(MemcachedCategory.class)
-public class MemcachedTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry registry;
-
-    public MemcachedTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {
@@ -83,7 +71,7 @@ public class MemcachedTicketRegistryTests extends BaseSpringRunnableTicketRegist
         return false;
     }
 
-    @Test
+    @RepeatedTest(2)
     public void verifyOAuthCodeIsAddedToMemcached() {
         val factory = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy());
         val code = factory.create(RegisteredServiceTestUtils.getService(), CoreAuthenticationTestUtils.getAuthentication(),

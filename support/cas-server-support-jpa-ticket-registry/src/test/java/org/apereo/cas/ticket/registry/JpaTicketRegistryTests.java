@@ -34,9 +34,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 
 /**
  * Unit test for {@link JpaTicketRegistry} class.
@@ -71,20 +68,11 @@ import java.util.Collection;
 })
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Transactional(transactionManager = "ticketTransactionManager", isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRED)
-public class JpaTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public JpaTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false);
-    }
 
     @Override
     protected TicketRegistry getNewTicketRegistry() {

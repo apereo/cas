@@ -33,9 +33,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -69,20 +66,11 @@ import static org.mockito.Mockito.*;
     CasCoreServicesConfiguration.class,
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
-public class EhCacheTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class EhCacheTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public EhCacheTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {

@@ -37,9 +37,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * This is {@link MongoDbTicketRegistryTests}.
  *
@@ -85,20 +82,11 @@ import java.util.Collection;
 @DirtiesContext
 @EnabledIfContinuousIntegration
 @EnabledIfPortOpen(port = 27017)
-public class MongoDbTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public MongoDbTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(true, false);
-    }
 
     @BeforeEach
     public void before() {

@@ -21,6 +21,8 @@ import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.junit.EnabledIfContinuousIntegration;
+import org.apereo.cas.util.junit.EnabledIfPortOpen;
 
 import org.junit.experimental.categories.Category;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +32,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * This is {@link AbstractDynamoDbTicketRegistryTests}.
+ * This is {@link DynamoDbTicketRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -60,8 +62,9 @@ import org.springframework.test.context.TestPropertySource;
     RefreshAutoConfiguration.class
 })
 @TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
-public abstract class AbstractDynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
-
+@EnabledIfContinuousIntegration
+@EnabledIfPortOpen(port = 8000)
+public class DynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
     static {
         System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
         System.setProperty("aws.secretKey", "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");
@@ -70,10 +73,6 @@ public abstract class AbstractDynamoDbTicketRegistryTests extends BaseTicketRegi
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public AbstractDynamoDbTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {

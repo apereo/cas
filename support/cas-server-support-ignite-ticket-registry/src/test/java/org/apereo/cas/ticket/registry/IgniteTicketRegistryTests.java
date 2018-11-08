@@ -30,10 +30,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * This is {@link AbstractIgniteTicketRegistryTests}.
+ * Unit test for {@link IgniteTicketRegistry}.
  *
- * @author Misagh Moayyed
- * @since 5.3.0
+ * @author Scott Battaglia
+ * @author Timur Duehr timur.duehr@nccgroup.trust
+ * @since 3.0.0
  */
 @Category(IgniteCategory.class)
 @SpringBootTest(classes = {
@@ -66,15 +67,10 @@ import org.springframework.test.context.TestPropertySource;
     "cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED",
     "cas.ticket.registry.ignite.igniteAddress[0]=localhost:47500"
 })
-public abstract class AbstractIgniteTicketRegistryTests extends BaseTicketRegistryTests {
-
+public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public AbstractIgniteTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
 
     @Override
     protected TicketRegistry getNewTicketRegistry() {

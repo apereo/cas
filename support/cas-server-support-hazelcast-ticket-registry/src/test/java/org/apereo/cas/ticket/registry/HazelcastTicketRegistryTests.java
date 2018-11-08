@@ -30,9 +30,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * Unit tests for {@link HazelcastTicketRegistry}.
  *
@@ -66,20 +63,11 @@ import java.util.Collection;
     CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(properties = {"cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance"})
-public class HazelcastTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class HazelcastTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public HazelcastTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {

@@ -8,8 +8,6 @@ import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 
 import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -19,16 +17,12 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * Unit test for {@link RedisTicketRegistry}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(Parameterized.class)
 @Category(RedisCategory.class)
 @SpringBootTest(classes = {
     RedisTicketRegistryConfiguration.class,
@@ -45,20 +39,11 @@ import java.util.Collection;
 })
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-public class RedisServerTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class RedisServerTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public RedisServerTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {

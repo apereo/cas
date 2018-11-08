@@ -30,9 +30,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * This is {@link CouchbaseTicketRegistryTests}.
  *
@@ -64,20 +61,11 @@ import java.util.Collection;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class},
     properties = {"cas.ticket.registry.couchbase.password=password", "cas.ticket.registry.couchbase.bucket=testbucket"})
-public class CouchbaseTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
+public class CouchbaseTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public CouchbaseTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {

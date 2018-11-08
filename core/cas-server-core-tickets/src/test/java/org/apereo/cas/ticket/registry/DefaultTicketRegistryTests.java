@@ -26,11 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class
 })
-public class DefaultTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
-
-    public DefaultTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
+public class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
