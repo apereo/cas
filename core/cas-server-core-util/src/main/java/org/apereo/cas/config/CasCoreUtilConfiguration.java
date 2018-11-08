@@ -121,7 +121,7 @@ public class CasCoreUtilConfiguration implements InitializingBean {
         conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
         ctx.getEnvironment().setConversionService(conversionService);
         if (ctx.getParent() != null) {
-            final var env = (ConfigurableEnvironment) ctx.getParent().getEnvironment();
+            var env = (ConfigurableEnvironment) ctx.getParent().getEnvironment();
             env.setConversionService(conversionService);
         }
         val registry = (ConverterRegistry) DefaultConversionService.getSharedInstance();
