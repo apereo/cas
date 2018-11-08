@@ -36,14 +36,14 @@ public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegist
         return Arrays.asList(RegexRegisteredService.class);
     }
 
-    @Override
     @SneakyThrows
-    public void initializeServiceRegistry() {
+    @Override
+    public ServiceRegistry getNewServiceRegistry() {
         this.dao = new JsonServiceRegistry(RESOURCE, true,
             mock(ApplicationEventPublisher.class),
             new NoOpRegisteredServiceReplicationStrategy(),
             new DefaultRegisteredServiceResourceNamingStrategy());
-        super.initializeServiceRegistry();
+        return this.dao;
     }
 
     @Test
