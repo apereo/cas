@@ -6,9 +6,9 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -20,7 +20,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import redis.embedded.RedisServer;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -48,33 +47,20 @@ import java.util.Collection;
 })
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-public class RedisTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
-
-    private static RedisServer REDIS_SERVER;
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+public class RedisServerTicketRegistryTests extends BaseSpringRunnableTicketRegistryTests {
 
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
-    public RedisTicketRegistryTests(final boolean useEncryption) {
+    public RedisServerTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);
     }
 
     @Parameterized.Parameters
     public static Collection<Object> getTestParameters() {
         return Arrays.asList(false, true);
-    }
-
-
-    @BeforeClass
-    public static void startRedis() throws Exception {
-        REDIS_SERVER = new RedisServer(6379);
-        REDIS_SERVER.start();
-    }
-
-    @AfterClass
-    public static void stopRedis() {
-        REDIS_SERVER.stop();
     }
 
     @Override
