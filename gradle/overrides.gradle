@@ -26,7 +26,7 @@ ext["groovyVersion"] = "2.5.3"
 ext["log4jVersion"] = "2.11.1"
 ext["commonsBeansVersion"] = "1.9.3"
 ext["caffeinVersion"] = "2.6.2"
-ext["couchbaseVersion"] = "2.7.0"
+ext["couchbaseVersion"] = "2.7.1"
 
 ext["mysqlVersion"] = "8.0.13"
 ext["postgresqlVersion"] = "42.2.5"
