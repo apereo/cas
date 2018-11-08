@@ -9,8 +9,8 @@ dependencies {
 
     implementation libraries.caffein
     
-    testImplementation project(":core:cas-server-core")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-util")
