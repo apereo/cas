@@ -1,12 +1,13 @@
 package org.apereo.cas.ws.idp.authentication;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ws.idp.WSFederationConstants;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URIBuilder;
 import org.springframework.core.Ordered;
 
 import java.util.Optional;
@@ -31,9 +32,12 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
     @Override
     public Service resolveServiceFrom(final Service service) {
         if (service != null) {
-            final String serviceReply = getReplyAsParameter(service).get().getValue();
-            LOGGER.debug("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
-            return this.webApplicationServiceFactory.createService(serviceReply);
+            final Optional<NameValuePair> replyAsParameter = getReplyAsParameter(service);
+            if (replyAsParameter.isPresent()) {
+                final String serviceReply = replyAsParameter.get().getValue();
+                LOGGER.debug("Located service id [{}] from service authentication request at [{}]", serviceReply, service.getId());
+                return this.webApplicationServiceFactory.createService(serviceReply);
+            }
         }
         return service;
     }
@@ -47,9 +51,9 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
             final Optional param = builder.getQueryParams()
-                    .stream()
-                    .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
-                    .findFirst();
+                .stream()
+                .filter(p -> p.getName().equals(WSFederationConstants.WTREALM))
+                .findFirst();
             return param;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -61,9 +65,9 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
         try {
             final URIBuilder builder = new URIBuilder(service.getId());
             final Optional param = builder.getQueryParams()
-                    .stream()
-                    .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
-                    .findFirst();
+                .stream()
+                .filter(p -> p.getName().equals(WSFederationConstants.WREPLY))
+                .findFirst();
             return param;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
