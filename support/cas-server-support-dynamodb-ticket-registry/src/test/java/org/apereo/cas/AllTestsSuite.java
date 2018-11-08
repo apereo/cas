@@ -2,8 +2,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryFacilitatorTests;
-import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryWithEncryptionTests;
-import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryWithoutEncryptionTests;
+import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryTests;
 
 import org.junit.platform.suite.api.SelectClasses;
 
@@ -14,9 +13,8 @@ import org.junit.platform.suite.api.SelectClasses;
  * @since 6.0.0-RC3
  */
 @SelectClasses({
-    DynamoDbTicketRegistryWithoutEncryptionTests.class,
     DynamoDbTicketRegistryFacilitatorTests.class,
-    DynamoDbTicketRegistryWithEncryptionTests.class
+    DynamoDbTicketRegistryTests.class
 })
 public class AllTestsSuite {
 }

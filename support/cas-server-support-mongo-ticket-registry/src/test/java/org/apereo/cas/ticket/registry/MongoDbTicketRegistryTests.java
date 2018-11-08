@@ -26,8 +26,6 @@ import org.apereo.cas.util.test.junit.EnabledIfPortOpen;
 
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -37,16 +35,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * This is {@link MongoDbTicketRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@RunWith(Parameterized.class)
 @Category(MongoDbCategory.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
@@ -90,15 +84,6 @@ public class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public MongoDbTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(true, false);
-    }
 
     @BeforeEach
     public void before() {

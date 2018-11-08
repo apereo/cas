@@ -25,15 +25,10 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 /**
  * This is {@link CouchDbTicketRegistryTests}.
@@ -41,7 +36,6 @@ import java.util.Collection;
  * @author Timur Duehr
  * @since 5.3.0
  */
-@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     CasCouchDbCoreConfiguration.class,
     CouchDbTicketRegistryConfiguration.class,
@@ -83,15 +77,6 @@ public class CouchDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistryCouchDbRepository")
     private TicketRepository ticketRepository;
-
-    public CouchDbTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
 
     @AfterEach
     public void afterEachTest() {

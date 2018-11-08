@@ -70,7 +70,7 @@ public class TicketGrantingTicketImplTests {
 
     @Test
     public void verifyNullAuthentication() {
-        assertThrows(IllegalArgumentException.class,
+        assertThrows(NullPointerException.class,
             () -> new TicketGrantingTicketImpl(TGT_ID, null, null, null, new NeverExpiresExpirationPolicy()));
     }
 

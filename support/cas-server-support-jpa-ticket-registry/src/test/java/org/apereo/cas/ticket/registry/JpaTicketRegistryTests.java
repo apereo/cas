@@ -22,8 +22,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -34,9 +32,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
-import java.util.Collections;
-
 
 /**
  * Unit test for {@link JpaTicketRegistry} class.
@@ -44,7 +39,6 @@ import java.util.Collections;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     JpaTicketRegistryTicketCatalogConfiguration.class,
     JpaTicketRegistryConfiguration.class,
@@ -76,15 +70,6 @@ public class JpaTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public JpaTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(false);
-    }
 
     @Override
     protected TicketRegistry getNewTicketRegistry() {

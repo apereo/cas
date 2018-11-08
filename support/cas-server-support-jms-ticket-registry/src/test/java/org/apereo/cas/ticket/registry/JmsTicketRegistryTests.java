@@ -20,8 +20,6 @@ import org.apereo.cas.config.JmsTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration;
@@ -29,16 +27,12 @@ import org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfigura
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
-import java.util.Collection;
-import java.util.Collections;
-
 /**
  * This is {@link JmsTicketRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     ActiveMQAutoConfiguration.class,
     JmsAutoConfiguration.class,
@@ -68,15 +62,6 @@ public class JmsTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public JmsTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Collections.singletonList(false);
-    }
 
     @Override
     public TicketRegistry getNewTicketRegistry() {

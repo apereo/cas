@@ -10,8 +10,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.junit.experimental.categories.Category;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -22,16 +20,12 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import redis.embedded.RedisServer;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * Unit test for {@link RedisTicketRegistry}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RunWith(Parameterized.class)
 @Category(RedisCategory.class)
 @SpringBootTest(classes = {
     RedisTicketRegistryConfiguration.class,
@@ -55,16 +49,6 @@ public class RedisEmbeddedTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
-    public RedisEmbeddedTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
-
 
     @BeforeAll
     public static void startRedis() throws Exception {

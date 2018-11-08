@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.category.DynamoDbCategory;
+import org.apereo.cas.category.IgniteCategory;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -17,8 +17,8 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
-import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
+import org.apereo.cas.config.IgniteTicketRegistryConfiguration;
+import org.apereo.cas.config.IgniteTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 
@@ -30,53 +30,50 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * This is {@link AbstractDynamoDbTicketRegistryTests}.
+ * Unit test for {@link IgniteTicketRegistry}.
  *
- * @author Misagh Moayyed
- * @since 5.1.0
+ * @author Scott Battaglia
+ * @author Timur Duehr timur.duehr@nccgroup.trust
+ * @since 3.0.0
  */
-@Category(DynamoDbCategory.class)
+@Category(IgniteCategory.class)
 @SpringBootTest(classes = {
-    DynamoDbTicketRegistryConfiguration.class,
-    DynamoDbTicketRegistryTicketCatalogConfiguration.class,
+    IgniteTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
+    IgniteTicketRegistryTicketCatalogConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
     CasCoreLogoutConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreServicesConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class
 })
-@TestPropertySource(locations = "classpath:/dynamodb-ticketregistry.properties")
-public abstract class AbstractDynamoDbTicketRegistryTests extends BaseTicketRegistryTests {
-
-    static {
-        System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
-        System.setProperty("aws.secretKey", "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");
-    }
-
+@TestPropertySource(properties = {
+    "cas.ticket.registry.ignite.ticketsCache.writeSynchronizationMode=FULL_ASYNC",
+    "cas.ticket.registry.ignite.ticketsCache.atomicityMode=ATOMIC",
+    "cas.ticket.registry.ignite.ticketsCache.cacheMode=REPLICATED",
+    "cas.ticket.registry.ignite.igniteAddress[0]=localhost:47500"
+})
+public class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
-    public AbstractDynamoDbTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
     @Override
-    public TicketRegistry getNewTicketRegistry() {
+    protected TicketRegistry getNewTicketRegistry() {
         return ticketRegistry;
     }
 }

@@ -20,18 +20,13 @@ import org.apereo.cas.util.test.junit.EnabledIfContinuousIntegration;
 
 import lombok.val;
 import org.junit.experimental.categories.Category;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.RepeatedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Middleware Services
  * @since 3.0.0
  */
-@RunWith(Parameterized.class)
 @SpringBootTest(classes = {
     MemcachedTicketRegistryConfiguration.class,
     CasOAuthComponentSerializationConfiguration.class,
@@ -64,15 +58,6 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry registry;
 
-    public MemcachedTicketRegistryTests(final boolean useEncryption) {
-        super(useEncryption);
-    }
-
-    @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() {
-        return Arrays.asList(false, true);
-    }
-
     @Override
     public TicketRegistry getNewTicketRegistry() {
         return registry;
@@ -83,7 +68,7 @@ public class MemcachedTicketRegistryTests extends BaseTicketRegistryTests {
         return false;
     }
 
-    @Test
+    @RepeatedTest(2)
     public void verifyOAuthCodeIsAddedToMemcached() {
         val factory = new DefaultOAuthCodeFactory(new NeverExpiresExpirationPolicy());
         val code = factory.create(RegisteredServiceTestUtils.getService(), CoreAuthenticationTestUtils.getAuthentication(),
