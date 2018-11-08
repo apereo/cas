@@ -97,7 +97,7 @@ public class CasCoreUtilConfiguration {
         final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
         conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
         ctx.getEnvironment().setConversionService(conversionService);
-        if(ctx.getParent() != null) {
+        if (ctx.getParent() != null) {
             final ConfigurableEnvironment env = (ConfigurableEnvironment) ctx.getParent().getEnvironment();
             env.setConversionService(conversionService);
         }
